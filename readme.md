@@ -24,7 +24,7 @@
 | Prénom   | Nom               | Matricule |
 |----------|-------------------|-----------|
 | Yasmina  | Bou Khaled        | 000587781 |
-| Philippe | Brisbois          | XXXXXXXXX |
+| Philippe | Brisbois          | 000575939 |
 | Romain   | Dejean            | 000587614 |
 | Martin   | Gouverneur        | 000586541 |
 | Romain   | Liefferinckx      | 000591790 |
@@ -41,5 +41,3 @@ Pour vérifier le nombre de commits de chaque membre du groupe :
 ```bash
  git shortlog -se --all
 ```
-
-<!--TODO: ajouter noms et matricules>
