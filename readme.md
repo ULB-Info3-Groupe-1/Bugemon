@@ -18,13 +18,14 @@
 
 ## Auteurs
 
-| Prénom  | Nom          | Matricule |
-|---------|--------------|-----------|
-| Yasmina | Bou Khaled   | 000587781 |
-| Romain  | Dejean       | 000587614 |
-| Martin  | Gouverneur   | 000586541 |
-| Romain  | Liefferinckx | 000591790 |
-| Matteo  | Morbée       | 000549684 |
-| Manuel  | Rocca        | 000596086 |
+| Prénom   | Nom          | Matricule |
+|----------|--------------|-----------|
+| Yasmina  | Bou Khaled   | 000587781 |
+| Romain   | Dejean       | 000587614 |
+| Martin   | Gouverneur   | 000586541 |
+| Romain   | Liefferinckx | 000591790 |
+| Matteo   | Morbée       | 000549684 |
+| Manuel   | Rocca        | 000596086 |
+| Philippe | Brisbois     | 000575939 |
 
 <!--TODO: ajouter noms et matricules>
