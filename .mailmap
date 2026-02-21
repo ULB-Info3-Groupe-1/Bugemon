@@ -1,7 +1,10 @@
-Ethan_Van_Ruyskensvelde	<ethan.van.ruyskensvelde@ulb.be>	Ethan Van Ruyskensvelde	<ethan.van.ruyskensvelde@ulb.be>
-Ethan_Van_Ruyskensvelde	<ethan.van.ruyskensvelde@ulb.be>	Evr5	<ethanvr3@gmail.com>
-Ethan_Van_Ruyskensvelde	<ethan.van.ruyskensvelde@ulb.be>	evr5	<ethanvr3@gmail.com>
-Ethan_Van_Ruyskensvelde	<ethan.van.ruyskensvelde@ulb.be>	ethan	<ethanvr3@gmail.com>
-Lucas_Verbeiren	<lucas.verbeiren@ulb.be>	Lucas Verbeiren	<lucas.verbeiren@ulb.be>
-Lucas_Verbeiren	<lucas.verbeiren@ulb.be>	lulu	<lucas.verbeiren@gmail.com>
-# vim: ts=36 noexpandtab list listchars=tab\:\ -\  ft=conf
+# Format: Prenom Nom <email@final.com> <email@commit.com>
+
+Ethan Van Ruyskensvelde	<ethan.van.ruyskensvelde@ulb.be>	<ethanvr3@gmail.com>
+Lucas Verbeiren	        <lucas.verbeiren@ulb.be>            <lucas.verbeiren@gmail.com>
+Romain Dejean           <romain.dejean@ulb.be>              <romaindejean22@gmail.com>
+Manuel Rocca            <manuel.rocca@ulb.be>               <manuel.rocca@ulb.be>
+
+# Assistants
+Yannick Molinghen       <yannick.molinghen@ulb.be>          <yannick.molinghen@ulb.be>
+Martin Colot            <martin.colot@ulb.be>               <martin.colot@ulb.be>
