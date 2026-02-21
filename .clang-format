@@ -1,0 +1,28 @@
+Language: Java
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+
+JavaImportGroups: ["java", "javax", "org", "com"]
+
+AlignTrailingComments: true
+AlignOperands: true
+AlignAfterOpenBracket: Align
+
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Attach
+
+IndentCaseLabels: true
+ContinuationIndentWidth: 8
+
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+
+ReflowComments: true
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false

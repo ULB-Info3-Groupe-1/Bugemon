@@ -2,6 +2,12 @@ image: maven:4.0.0-rc-5-ibm-semeru-25-noble
 
 stages:
   - test
+  - package
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG" # Separate cache for all branches
+  paths:
+    - .m2/repository
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
@@ -9,5 +15,16 @@ variables:
 test:
   stage: test
   script:
-    - mvn test
+    - mvn clean test
 
+# Create a jar package only on the main branch (useful to give a .jar to the client)
+package:
+  stage: package
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 7 days
