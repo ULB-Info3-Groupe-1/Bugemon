@@ -1,0 +1,360 @@
+{
+  "attaques": [
+    {
+      "id": "fouet_liane",
+      "nom": "Fouet-Liane",
+      "type": "Flora",
+      "description": "Inflige des dégâts et réduit légèrement la défense adverse.",
+      "puissance": 40,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "adversaire",
+          "stat": "defense",
+          "modificateur": -5,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "pollen_sournois",
+      "nom": "Pollen Sournois",
+      "type": "Flora",
+      "description": "Inflige des dégâts et réduit l'initiative adverse au prochain tour.",
+      "puissance": 35,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "adversaire",
+          "stat": "initiative",
+          "modificateur": -10,
+          "duree": "1_tour"
+        }
+      ]
+    },
+    {
+      "id": "racines_vives",
+      "nom": "Racines Vives",
+      "type": "Flora",
+      "description": "Inflige des dégâts et augmente légèrement la défense du lanceur.",
+      "puissance": 35,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "defense",
+          "modificateur": 5,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "spore_collante",
+      "nom": "Spore Collante",
+      "type": "Flora",
+      "description": "Inflige des dégâts et diminue l'initiative adverse.",
+      "puissance": 30,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "adversaire",
+          "stat": "initiative",
+          "modificateur": -8,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "feuille_tranchante",
+      "nom": "Feuille Tranchante",
+      "type": "Flora",
+      "description": "Inflige des dégâts élevés.",
+      "puissance": 55,
+      "effets": []
+    },
+    {
+      "id": "vieux_ronce",
+      "nom": "Vieux Ronce",
+      "type": "Flora",
+      "description": "Inflige des dégâts moyens et réduit légèrement l'attaque adverse.",
+      "puissance": 40,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "adversaire",
+          "stat": "attaque",
+          "modificateur": -5,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "croissance_brutale",
+      "nom": "Croissance Brutale",
+      "type": "Flora",
+      "description": "Inflige des dégâts et augmente l'attaque du lanceur.",
+      "puissance": 40,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "attaque",
+          "modificateur": 8,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "charge_sylvestre",
+      "nom": "Charge Sylvestre",
+      "type": "Flora",
+      "description": "Inflige de lourds dégâts mais réduit la défense du lanceur.",
+      "puissance": 60,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "defense",
+          "modificateur": -8,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "mur_de_lianes",
+      "nom": "Mur de Lianes",
+      "type": "Flora",
+      "description": "Inflige peu de dégâts et augmente fortement la défense du lanceur.",
+      "puissance": 15,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "defense",
+          "modificateur": 15,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "explosion_ardente",
+      "nom": "Explosion Ardente",
+      "type": "Pyro",
+      "description": "Inflige de très gros dégâts.",
+      "puissance": 70,
+      "effets": []
+    },
+    {
+      "id": "flammes_folles",
+      "nom": "Flammes Folles",
+      "type": "Pyro",
+      "description": "Inflige des dégâts et réduit la défense adverse.",
+      "puissance": 45,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "adversaire",
+          "stat": "defense",
+          "modificateur": -6,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "choc_brulant",
+      "nom": "Choc Brûlant",
+      "type": "Pyro",
+      "description": "Inflige des dégâts et augmente légèrement l'attaque du lanceur.",
+      "puissance": 40,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "attaque",
+          "modificateur": 6,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "surchauffe",
+      "nom": "Surchauffe",
+      "type": "Pyro",
+      "description": "Inflige de lourds dégâts mais réduit l'attaque du lanceur.",
+      "puissance": 65,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "attaque",
+          "modificateur": -10,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "brasier_sauvage",
+      "nom": "Brasier Sauvage",
+      "type": "Pyro",
+      "description": "Inflige des dégâts et réduit l'initiative du lanceur.",
+      "puissance": 50,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "initiative",
+          "modificateur": -8,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "vague_rapide",
+      "nom": "Vague Rapide",
+      "type": "Aqua",
+      "description": "Inflige des dégâts et augmente l'initiative du lanceur au prochain tour.",
+      "puissance": 40,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "initiative",
+          "modificateur": 10,
+          "duree": "1_tour"
+        }
+      ]
+    },
+    {
+      "id": "courant_croise",
+      "nom": "Courant Croisé",
+      "type": "Aqua",
+      "description": "Inflige des dégâts et réduit l'initiative adverse.",
+      "puissance": 40,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "adversaire",
+          "stat": "initiative",
+          "modificateur": -8,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "pluie_calme",
+      "nom": "Pluie Calme",
+      "type": "Aqua",
+      "description": "Inflige peu de dégâts et restaure légèrement les PV du lanceur.",
+      "puissance": 20,
+      "effets": [
+        {
+          "type": "soin",
+          "cible": "lanceur",
+          "valeur": 15
+        }
+      ]
+    },
+    {
+      "id": "maree_stable",
+      "nom": "Marée Stable",
+      "type": "Aqua",
+      "description": "Inflige des dégâts et augmente la défense du lanceur.",
+      "puissance": 35,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "defense",
+          "modificateur": 6,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "eau_pure",
+      "nom": "Eau Pure",
+      "type": "Aqua",
+      "description": "Inflige peu de dégâts et restaure légèrement les PV de l'équipe du lanceur.",
+      "puissance": 15,
+      "effets": [
+        {
+          "type": "soin",
+          "cible": "equipe",
+          "valeur": 10
+        }
+      ]
+    },
+    {
+      "id": "jet_de_pierres",
+      "nom": "Jet de Pierres",
+      "type": "Litho",
+      "description": "Inflige des dégâts moyens.",
+      "puissance": 45,
+      "effets": []
+    },
+    {
+      "id": "armure_minerale",
+      "nom": "Armure Minérale",
+      "type": "Litho",
+      "description": "Inflige peu de dégâts et augmente fortement la défense du lanceur.",
+      "puissance": 20,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "defense",
+          "modificateur": 12,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "fracas_rocheux",
+      "nom": "Fracas Rocheux",
+      "type": "Litho",
+      "description": "Inflige de lourds dégâts mais réduit la défense du lanceur.",
+      "puissance": 65,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "defense",
+          "modificateur": -6,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "avalanche",
+      "nom": "Avalanche",
+      "type": "Litho",
+      "description": "Inflige de très gros dégâts mais réduit l'initiative du lanceur.",
+      "puissance": 70,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "lanceur",
+          "stat": "initiative",
+          "modificateur": -10,
+          "duree": "permanent"
+        }
+      ]
+    },
+    {
+      "id": "pluie_de_graviers",
+      "nom": "Pluie de Graviers",
+      "type": "Litho",
+      "description": "Inflige des dégâts et réduit légèrement l'initiative adverse.",
+      "puissance": 35,
+      "effets": [
+        {
+          "type": "stat_modifier",
+          "cible": "adversaire",
+          "stat": "initiative",
+          "modificateur": -6,
+          "duree": "permanent"
+        }
+      ]
+    }
+  ]
+}

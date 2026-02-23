@@ -1,0 +1,208 @@
+{
+  "skill_tree": {
+    "nodes": [
+      {
+        "id": "start",
+        "nom": "Départ",
+        "description": "Point de départ de l'arbre",
+        "cout": 0,
+        "max_niveau": 1,
+        "effet": null,
+        "position": {"x": 0, "y": 0},
+        "prerequis": [],
+        "deverrouille": true
+      },
+      {
+        "id": "hp_1",
+        "nom": "+10 HP",
+        "description": "Tous vos Bugémons commencent avec +10 HP maximum",
+        "cout": 1,
+        "max_niveau": 3,
+        "effet": {
+          "type": "stat_bonus",
+          "stat": "hp",
+          "valeur": 10
+        },
+        "position": {"x": -1, "y": 1},
+        "prerequis": ["start"],
+        "deverrouille": false
+      },
+      {
+        "id": "attaque_1",
+        "nom": "+3 Attaque",
+        "description": "Tous vos Bugémons commencent avec +3 Attaque",
+        "cout": 1,
+        "max_niveau": 3,
+        "effet": {
+          "type": "stat_bonus",
+          "stat": "attaque",
+          "valeur": 3
+        },
+        "position": {"x": 1, "y": 1},
+        "prerequis": ["start"],
+        "deverrouille": false
+      },
+      {
+        "id": "defense_1",
+        "nom": "+3 Défense",
+        "description": "Tous vos Bugémons commencent avec +3 Défense",
+        "cout": 1,
+        "max_niveau": 3,
+        "effet": {
+          "type": "stat_bonus",
+          "stat": "defense",
+          "valeur": 3
+        },
+        "position": {"x": 0, "y": 1},
+        "prerequis": ["start"],
+        "deverrouille": false
+      },
+      {
+        "id": "initiative_1",
+        "nom": "+5 Initiative",
+        "description": "Tous vos Bugémons commencent avec +5 Initiative",
+        "cout": 1,
+        "max_niveau": 2,
+        "effet": {
+          "type": "stat_bonus",
+          "stat": "initiative",
+          "valeur": 5
+        },
+        "position": {"x": -1, "y": 2},
+        "prerequis": ["hp_1"],
+        "deverrouille": false
+      },
+      {
+        "id": "regen_combat",
+        "nom": "Régénération",
+        "description": "Restaure 10% des PV max de tous vos Bugémons après chaque combat",
+        "cout": 2,
+        "max_niveau": 1,
+        "effet": {
+          "type": "regen_post_combat",
+          "valeur_pourcent": 10
+        },
+        "position": {"x": 0, "y": 2},
+        "prerequis": ["defense_1"],
+        "deverrouille": false
+      },
+      {
+        "id": "xp_boost",
+        "nom": "Apprentissage rapide",
+        "description": "+20% XP gagnée après chaque combat",
+        "cout": 2,
+        "max_niveau": 2,
+        "effet": {
+          "type": "xp_multiplicateur",
+          "valeur": 1.2
+        },
+        "position": {"x": 1, "y": 2},
+        "prerequis": ["attaque_1"],
+        "deverrouille": false
+      },
+      {
+        "id": "objets_depart",
+        "nom": "Préparation",
+        "description": "Commencez avec +2 objets de soin au choix",
+        "cout": 2,
+        "max_niveau": 1,
+        "effet": {
+          "type": "objets_bonus",
+          "quantite": 2,
+          "categorie": "soin"
+        },
+        "position": {"x": -2, "y": 2},
+        "prerequis": ["hp_1"],
+        "deverrouille": false
+      },
+      {
+        "id": "critique_chance",
+        "nom": "Œil critique",
+        "description": "+5% de chance de coup critique",
+        "cout": 3,
+        "max_niveau": 1,
+        "effet": {
+          "type": "critique_bonus",
+          "valeur": 5
+        },
+        "position": {"x": 2, "y": 2},
+        "prerequis": ["attaque_1"],
+        "deverrouille": false
+      },
+      {
+        "id": "hp_2",
+        "nom": "+15 HP",
+        "description": "Tous vos Bugémons commencent avec +15 HP maximum supplémentaires",
+        "cout": 2,
+        "max_niveau": 2,
+        "effet": {
+          "type": "stat_bonus",
+          "stat": "hp",
+          "valeur": 15
+        },
+        "position": {"x": -1, "y": 3},
+        "prerequis": ["initiative_1", "regen_combat"],
+        "deverrouille": false
+      },
+      {
+        "id": "type_boost_flora",
+        "nom": "Maîtrise Flora",
+        "description": "+10% dégâts pour les attaques de type Flora",
+        "cout": 3,
+        "max_niveau": 1,
+        "effet": {
+          "type": "type_multiplicateur",
+          "type_cible": "Flora",
+          "valeur": 1.1
+        },
+        "position": {"x": -2, "y": 3},
+        "prerequis": ["objets_depart"],
+        "deverrouille": false
+      },
+      {
+        "id": "type_boost_pyro",
+        "nom": "Maîtrise Pyro",
+        "description": "+10% dégâts pour les attaques de type Pyro",
+        "cout": 3,
+        "max_niveau": 1,
+        "effet": {
+          "type": "type_multiplicateur",
+          "type_cible": "Pyro",
+          "valeur": 1.1
+        },
+        "position": {"x": 0, "y": 3},
+        "prerequis": ["regen_combat"],
+        "deverrouille": false
+      },
+      {
+        "id": "type_boost_aqua",
+        "nom": "Maîtrise Aqua",
+        "description": "+10% dégâts pour les attaques de type Aqua",
+        "cout": 3,
+        "max_niveau": 1,
+        "effet": {
+          "type": "type_multiplicateur",
+          "type_cible": "Aqua",
+          "valeur": 1.1
+        },
+        "position": {"x": 1, "y": 3},
+        "prerequis": ["xp_boost"],
+        "deverrouille": false
+      },
+      {
+        "id": "recompense_extra",
+        "nom": "Chance du collectionneur",
+        "description": "Chaque récompense de lvl up propose 4 choix au lieu de 3",
+        "cout": 4,
+        "max_niveau": 1,
+        "effet": {
+          "type": "recompense_choix",
+          "valeur": 4
+        },
+        "position": {"x": 2, "y": 3},
+        "prerequis": ["xp_boost", "critique_chance"],
+        "deverrouille": false
+      }
+    ]
+  }
+}

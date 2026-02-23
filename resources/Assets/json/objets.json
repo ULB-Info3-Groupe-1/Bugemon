@@ -1,0 +1,73 @@
+{
+  "objets": [
+    {
+      "id": "baie_revigorante",
+      "nom": "Baie Revigorante",
+      "description": "Restaure 20 PV au Bugémon actif.",
+      "categorie": "soin",
+      "effet": {
+        "type": "soin",
+        "cible": "lanceur",
+        "valeur": 20
+      },
+      "sprite": "baie_revigorante.png"
+    },
+    {
+      "id": "baie_tonique",
+      "nom": "Baie Tonique",
+      "description": "Restaure 50 PV au Bugémon actif.",
+      "categorie": "soin",
+      "effet": {
+        "type": "soin",
+        "cible": "lanceur",
+        "valeur": 50
+      },
+      "sprite": "baie_tonique.png"
+    },
+    {
+      "id": "gel_defensif",
+      "nom": "Gel Défensif",
+      "description": "Augmente la défense du Bugémon actif de 10 jusqu'à la fin du combat.",
+      "categorie": "boost",
+      "effet": {
+        "type": "stat_modifier",
+        "cible": "lanceur",
+        "stat": "defense",
+        "modificateur": 10,
+        "duree": "permanent"
+      },
+      "sprite": "gel_defensif.png"
+    },
+    {
+      "id": "serum_offensif",
+      "nom": "Sérum Offensif",
+      "description": "Augmente l'attaque du Bugémon actif de 10 jusqu'à la fin du combat.",
+      "categorie": "boost",
+      "effet": {
+        "type": "stat_modifier",
+        "cible": "lanceur",
+        "stat": "attaque",
+        "modificateur": 10,
+        "duree": "permanent"
+      },
+      "sprite": "serum_offensif.png"
+    },
+    {
+      "id": "baume_reparateur",
+      "nom": "Baume Réparateur",
+      "description": "Annule tous les malus de statistiques du Bugémon actif.",
+      "categorie": "soin",
+      "effet": {
+        "type": "reset_malus",
+        "cible": "lanceur"
+      },
+      "sprite": "baume_reparateur.png"
+    }
+  ],
+  "inventaire_depart": {
+    "baie_revigorante": 3,
+    "baie_tonique": 2,
+    "gel_defensif": 1,
+    "serum_offensif": 1
+  }
+}

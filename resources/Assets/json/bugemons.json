@@ -1,0 +1,340 @@
+{
+  "bugemons": [
+    {
+      "id": "florachu",
+      "nom": "Florachu",
+      "type": "Flora",
+      "stats": {
+        "pv": 90,
+        "attaque": 55,
+        "defense": 40,
+        "initiative": 50
+      },
+      "attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+      "sprite": "florachu.png",
+      "starter": true
+    },
+    {
+      "id": "moussil",
+      "nom": "Moussil",
+      "type": "Flora",
+      "stats": {
+        "pv": 80,
+        "attaque": 60,
+        "defense": 45,
+        "initiative": 55
+      },
+      "attaques": ["spore_collante", "feuille_tranchante", "vieux_ronce"],
+      "sprite": "moussil.png",
+      "starter": false
+    },
+    {
+      "id": "verdurion",
+      "nom": "Verdurion",
+      "type": "Flora",
+      "stats": {
+        "pv": 100,
+        "attaque": 70,
+        "defense": 30,
+        "initiative": 45
+      },
+      "attaques": ["croissance_brutale", "charge_sylvestre", "fouet_liane"],
+      "sprite": "verdurion.png",
+      "starter": false
+    },
+    {
+      "id": "loopine",
+      "nom": "Loopine",
+      "type": "Flora",
+      "stats": {
+        "pv": 85,
+        "attaque": 50,
+        "defense": 50,
+        "initiative": 60
+      },
+      "attaques": ["racines_vives", "pollen_sournois", "feuille_tranchante"],
+      "sprite": "loopine.png",
+      "starter": false
+    },
+    {
+      "id": "lichenox",
+      "nom": "Lichenox",
+      "type": "Flora",
+      "stats": {
+        "pv": 95,
+        "attaque": 45,
+        "defense": 55,
+        "initiative": 40
+      },
+      "attaques": ["spore_collante", "vieux_ronce", "mur_de_lianes"],
+      "sprite": "lichenox.png",
+      "starter": false
+    },
+    {
+      "id": "bugzilla",
+      "nom": "Bugzilla",
+      "type": "Flora",
+      "stats": {
+        "pv": 120,
+        "attaque": 70,
+        "defense": 35,
+        "initiative": 35
+      },
+      "attaques": ["charge_sylvestre", "croissance_brutale", "spore_collante"],
+      "sprite": "bugzilla.png",
+      "starter": false
+    },
+    {
+      "id": "exceflam",
+      "nom": "Exceflam",
+      "type": "Pyro",
+      "stats": {
+        "pv": 85,
+        "attaque": 65,
+        "defense": 40,
+        "initiative": 60
+      },
+      "attaques": ["explosion_ardente", "flammes_folles", "choc_brulant"],
+      "sprite": "exceflam.png",
+      "starter": true
+    },
+    {
+      "id": "pyricore",
+      "nom": "Pyricore",
+      "type": "Pyro",
+      "stats": {
+        "pv": 75,
+        "attaque": 70,
+        "defense": 35,
+        "initiative": 65
+      },
+      "attaques": ["flammes_folles", "surchauffe", "explosion_ardente"],
+      "sprite": "pyricore.png",
+      "starter": false
+    },
+    {
+      "id": "inferlin",
+      "nom": "Inferlin",
+      "type": "Pyro",
+      "stats": {
+        "pv": 90,
+        "attaque": 75,
+        "defense": 30,
+        "initiative": 55
+      },
+      "attaques": ["surchauffe", "choc_brulant", "brasier_sauvage"],
+      "sprite": "inferlin.png",
+      "starter": false
+    },
+    {
+      "id": "crasheon",
+      "nom": "Crasheon",
+      "type": "Pyro",
+      "stats": {
+        "pv": 100,
+        "attaque": 80,
+        "defense": 20,
+        "initiative": 50
+      },
+      "attaques": ["explosion_ardente", "flammes_folles", "choc_brulant"],
+      "sprite": "crasheon.png",
+      "starter": false
+    },
+    {
+      "id": "pyroxis",
+      "nom": "Pyroxis",
+      "type": "Pyro",
+      "stats": {
+        "pv": 85,
+        "attaque": 60,
+        "defense": 45,
+        "initiative": 55
+      },
+      "attaques": ["explosion_ardente", "surchauffe", "brasier_sauvage"],
+      "sprite": "pyroxis.png",
+      "starter": false
+    },
+    {
+      "id": "finalboss",
+      "nom": "FinalBoss",
+      "type": "Pyro",
+      "stats": {
+        "pv": 150,
+        "attaque": 85,
+        "defense": 40,
+        "initiative": 45
+      },
+      "attaques": ["explosion_ardente", "surchauffe", "flammes_folles"],
+      "sprite": "finalboss.png",
+      "starter": false
+    },
+    {
+      "id": "commitide",
+      "nom": "Commitide",
+      "type": "Aqua",
+      "stats": {
+        "pv": 95,
+        "attaque": 55,
+        "defense": 55,
+        "initiative": 50
+      },
+      "attaques": ["vague_rapide", "courant_croise", "pluie_calme"],
+      "sprite": "commitide.png",
+      "starter": true
+    },
+    {
+      "id": "mergeau",
+      "nom": "Mergeau",
+      "type": "Aqua",
+      "stats": {
+        "pv": 90,
+        "attaque": 60,
+        "defense": 50,
+        "initiative": 55
+      },
+      "attaques": ["courant_croise", "vague_rapide", "maree_stable"],
+      "sprite": "mergeau.png",
+      "starter": false
+    },
+    {
+      "id": "refaquix",
+      "nom": "Refaquix",
+      "type": "Aqua",
+      "stats": {
+        "pv": 85,
+        "attaque": 50,
+        "defense": 65,
+        "initiative": 45
+      },
+      "attaques": ["maree_stable", "pluie_calme", "vague_rapide"],
+      "sprite": "refaquix.png",
+      "starter": false
+    },
+    {
+      "id": "testide",
+      "nom": "Testide",
+      "type": "Aqua",
+      "stats": {
+        "pv": 100,
+        "attaque": 40,
+        "defense": 70,
+        "initiative": 40
+      },
+      "attaques": ["pluie_calme", "eau_pure", "maree_stable"],
+      "sprite": "testide.png",
+      "starter": false
+    },
+    {
+      "id": "buildwave",
+      "nom": "Buildwave",
+      "type": "Aqua",
+      "stats": {
+        "pv": 95,
+        "attaque": 45,
+        "defense": 60,
+        "initiative": 50
+      },
+      "attaques": ["eau_pure", "vague_rapide", "maree_stable"],
+      "sprite": "buildwave.png",
+      "starter": false
+    },
+    {
+      "id": "tidehunter",
+      "nom": "Tidehunter",
+      "type": "Aqua",
+      "stats": {
+        "pv": 110,
+        "attaque": 65,
+        "defense": 50,
+        "initiative": 35
+      },
+      "attaques": ["vague_rapide", "courant_croise", "eau_pure"],
+      "sprite": "tidehunter.png",
+      "starter": false
+    },
+    {
+      "id": "rockachu",
+      "nom": "Rockachu",
+      "type": "Litho",
+      "stats": {
+        "pv": 100,
+        "attaque": 60,
+        "defense": 65,
+        "initiative": 30
+      },
+      "attaques": ["jet_de_pierres", "armure_minerale", "fracas_rocheux"],
+      "sprite": "rockachu.png",
+      "starter": false
+    },
+    {
+      "id": "granitron",
+      "nom": "Granitron",
+      "type": "Litho",
+      "stats": {
+        "pv": 110,
+        "attaque": 70,
+        "defense": 60,
+        "initiative": 25
+      },
+      "attaques": ["fracas_rocheux", "avalanche", "jet_de_pierres"],
+      "sprite": "granitron.png",
+      "starter": false
+    },
+    {
+      "id": "geodrift",
+      "nom": "Geodrift",
+      "type": "Litho",
+      "stats": {
+        "pv": 95,
+        "attaque": 55,
+        "defense": 70,
+        "initiative": 35
+      },
+      "attaques": ["armure_minerale", "jet_de_pierres", "pluie_de_graviers"],
+      "sprite": "geodrift.png",
+      "starter": false
+    },
+    {
+      "id": "bouldax",
+      "nom": "Bouldax",
+      "type": "Litho",
+      "stats": {
+        "pv": 120,
+        "attaque": 75,
+        "defense": 55,
+        "initiative": 20
+      },
+      "attaques": ["avalanche", "fracas_rocheux", "armure_minerale"],
+      "sprite": "bouldax.png",
+      "starter": false
+    },
+    {
+      "id": "pebblit",
+      "nom": "Pebblit",
+      "type": "Litho",
+      "stats": {
+        "pv": 80,
+        "attaque": 50,
+        "defense": 75,
+        "initiative": 40
+      },
+      "attaques": ["pluie_de_graviers", "armure_minerale", "jet_de_pierres"],
+      "sprite": "pebblit.png",
+      "starter": false
+    },
+    {
+      "id": "obsidian",
+      "nom": "Obsidian",
+      "type": "Litho",
+      "stats": {
+        "pv": 105,
+        "attaque": 65,
+        "defense": 65,
+        "initiative": 30
+      },
+      "attaques": ["fracas_rocheux", "jet_de_pierres", "avalanche"],
+      "sprite": "obsidian.png",
+      "starter": false
+    }
+  ]
+}
