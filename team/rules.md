@@ -1,0 +1,86 @@
+# Règles
+
+## Git
+
+### Commit de paire
+
+```git
+Titre du commit
+Message du commit
+Co-authored-by: Frédéric <prenom.nom@ulb.be>
+```
+
+### Nom de branche
+
+Si nouvelle fonctionnalité : `feat/nom_fonctionnalite`
+Si fix : `fix/fix_en_question`
+
+### Merge branche
+
+Avant de merge :
+
+```bash
+git switch ma-branche
+git fetch origin
+git rebase origin/branche-principale
+```
+
+Puis :
+
+```bash
+git switch branche-principale
+git merge ma-branche
+```
+
+### Workflow Git
+
+- Ne jamais commit directement sur main. On ne merge que sur main à la fin de chaque itération
+- Branche principale en dehors de `main` : `development`
+- Toujours passer par une branche
+
+## Code
+
+### Langue
+
+Tous les commentaires, nom de méthodes, etc se font en anglais.
+
+### Documentation
+
+On document toutes les méthodes avec la **Javadoc** :
+
+```java
+/**
+ * 
+ * @param args
+ */
+```
+
+Pas besoin de commenter les tests.
+
+### Tests
+
+- Chaque fonctionnalité doit être testée
+- Utiliser des tests unitaires (JUnit)
+- Nom des tests : shouldDoSomething_whenCondition
+- Les tests doivent passer avant chaque commit
+
+### Structure
+
+- Architecture MVC (model / view / controller)
+- Un fichier = une classe
+- Packages en minuscules (ex: com.project.service)
+- Nom de fichier java commance en MAJUSCULE (ex: Bugemon.java)
+
+### Naming
+
+- Classes : PascalCase → UserService
+- Méthodes : camelCase → getUserById
+- Variables : camelCase → userName
+- Constantes : UPPER_CASE → MAX_SIZE
+- Packages : lowercase → com.project.app
+
+### Bonnes pratiques
+
+- Pas de duplication de code
+- Méthodes courtes (< 30 lignes si possible)
+- Une seule responsabilité par classe
