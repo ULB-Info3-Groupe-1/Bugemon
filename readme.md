@@ -16,6 +16,7 @@
   - [Description générale](#description-générale)
   - [Auteurs](#auteurs)
   - [Liste du nombre de commits de chaque membre](#liste-du-nombre-de-commits-de-chaque-membre)
+  - [Lancer le projet](#lancer-le-projet)
 
 ## Description générale
 
@@ -40,4 +41,10 @@ Pour vérifier le nombre de commits de chaque membre du groupe :
 
 ```bash
  git shortlog -se --all
+```
+
+## Lancer le projet
+
+```bash
+mvn clean javafx:run
 ```

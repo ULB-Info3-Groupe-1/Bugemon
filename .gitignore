@@ -141,6 +141,7 @@ hs_err_pid*
 replay_pid*
 
 ### VisualStudioCode ###
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
