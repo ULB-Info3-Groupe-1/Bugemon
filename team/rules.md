@@ -38,6 +38,12 @@ git merge ma-branche
 - Branche principale en dehors de `main` : `development`
 - Toujours passer par une branche
 
+### Annuler son dernier commit local
+
+```bash
+git reset --soft HEAD~1
+```
+
 ## Code
 
 ### Langue

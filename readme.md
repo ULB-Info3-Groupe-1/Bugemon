@@ -40,7 +40,7 @@
 Pour vérifier le nombre de commits de chaque membre du groupe :
 
 ```bash
- git shortlog -se --all
+git shortlog -se --all
 ```
 
 ## Lancer le projet
