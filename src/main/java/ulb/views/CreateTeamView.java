@@ -31,7 +31,7 @@ public class CreateTeamView extends View {
 
     @FXML
     private Group teamPane;
-    
+
     @FXML
     private Button validateButton;
 
@@ -44,7 +44,6 @@ public class CreateTeamView extends View {
     // Lists of ImageViews
     private List<ImageView> teamBugemons = new java.util.ArrayList<>();
     private List<ImageView> allBugemons = new java.util.ArrayList<>();
-
 
     /**
      * Loads the create-team FXML layout and initializes button actions.
@@ -87,11 +86,11 @@ public class CreateTeamView extends View {
         return "Create Team";
     }
 
-    protected void wrongSelect(ImageView iv){
+    protected void wrongSelect(ImageView iv) {
         iv.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
     }
 
-    protected void show_team(List<BugemonDTO> bugList) {
+    protected void showTeam(List<BugemonDTO> bugList) {
         assert bugList.size() <= 6 : "A team cannot have more than 6 Bugemons.";
         int sizeList = bugList.size();
         Image unknownImage = new Image("Assets/png/unknown.png");
@@ -107,7 +106,7 @@ public class CreateTeamView extends View {
         }
     }
 
-    protected void show_all(List<BugemonDTO> bugList) {
+    protected void showAll(List<BugemonDTO> bugList) {
         assert bugList.size() <= 20 : "There cannot be more than 20 Bugemons in the list for now.";
         int sizeList = bugList.size();
         Image unknownImage = new Image("/unknown.png");
