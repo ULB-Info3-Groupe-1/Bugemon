@@ -1,6 +1,6 @@
 package ulb.bugemon_team.models;
 
-import ulb.models.bugemon.Bugemon;
+import ulb.bugemon.models.Bugemon;
 import ulb.bugemon_team.exceptions.BugemonAlreadyExistsException;
 
 /**

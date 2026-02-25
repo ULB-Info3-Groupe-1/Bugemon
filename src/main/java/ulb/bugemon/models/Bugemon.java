@@ -1,13 +1,13 @@
 /**
- * Nom du fichier : Bugemon.java
+ * File name : Bugemon.java
  * Description : Class representing a bugemon.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
-package ulb.models.bugemon;
+package ulb.bugemon.models;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.

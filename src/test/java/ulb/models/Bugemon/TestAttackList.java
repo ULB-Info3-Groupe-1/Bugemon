@@ -1,9 +1,9 @@
 /**
- * Nom du fichier : TestAttackList.java
+ * File name : TestAttackList.java
  * Description : Test class for the AttackList class.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
@@ -14,6 +14,10 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import org.junit.Test;
+
+import ulb.bugemon.models.Attack;
+import ulb.bugemon.models.AttackList;
+import ulb.bugemon.models.Effect;
 
 public class TestAttackList {
     @Test

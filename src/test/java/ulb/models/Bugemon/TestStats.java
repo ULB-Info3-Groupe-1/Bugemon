@@ -1,9 +1,9 @@
 /**
- * Nom du fichier : TestStats.java
+ * File name : TestStats.java
  * Description : Test class for the Stats class.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
@@ -12,6 +12,8 @@ package ulb.models.bugemon;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import ulb.bugemon.models.Stats;
 
 public class TestStats {
     @Test

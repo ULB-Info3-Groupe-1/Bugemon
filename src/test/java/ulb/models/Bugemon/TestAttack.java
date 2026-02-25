@@ -1,9 +1,9 @@
 /**
- * Nom du fichier : TestAttack.java
+ * File name : TestAttack.java
  * Description : Test class for the Attack class.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
@@ -12,6 +12,9 @@ package ulb.models.bugemon;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import ulb.bugemon.models.Attack;
+import ulb.bugemon.models.Effect;
 
 public class TestAttack {
     @Test

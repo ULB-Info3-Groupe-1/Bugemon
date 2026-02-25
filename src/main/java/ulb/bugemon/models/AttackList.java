@@ -1,13 +1,13 @@
 /**
- * Nom du fichier : AttackList.java
+ * File name : AttackList.java
  * Description : Class representing a list of attacks.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
-package ulb.models.bugemon;
+package ulb.bugemon.models;
 
 import java.util.List;
 

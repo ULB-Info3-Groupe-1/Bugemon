@@ -1,9 +1,9 @@
 /**
- * Nom du fichier : TestBugemon.java
+ * File name : TestBugemon.java
  * Description : Test class for the Bugemon class.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
@@ -16,11 +16,16 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ulb.bugemon.models.Attack;
+import ulb.bugemon.models.AttackList;
+import ulb.bugemon.models.Bugemon;
+import ulb.bugemon.models.Stats;
+
 public class TestBugemon {
     @Test
     public void testIsAlive() {
         Stats stats = new Stats(100, 20, 10, 5);
-        ulb.models.bugemon.Effect effect = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        ulb.bugemon.models.Effect effect = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
@@ -36,7 +41,7 @@ public class TestBugemon {
     @Test
     public void testTakeDamage() {
         Stats stats = new Stats(100, 20, 10, 5);
-        ulb.models.bugemon.Effect effect = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        ulb.bugemon.models.Effect effect = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
@@ -52,7 +57,7 @@ public class TestBugemon {
     @Test
     public void testCreationBugemon() {
         Stats stats = new Stats(100, 20, 10, 5);
-        ulb.models.bugemon.Effect effect = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        ulb.bugemon.models.Effect effect = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
@@ -71,9 +76,9 @@ public class TestBugemon {
     public void testEquals() {
         Stats stats1 = new Stats(100, 20, 10, 5);
         Stats stats2 = new Stats(100, 20, 10, 5);
-        ulb.models.bugemon.Effect effect1 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        ulb.bugemon.models.Effect effect1 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
-        ulb.models.bugemon.Effect effect2 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        ulb.bugemon.models.Effect effect2 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect1);
@@ -92,9 +97,9 @@ public class TestBugemon {
     public void testHashCode() {
         Stats stats1 = new Stats(100, 20, 10, 5);
         Stats stats2 = new Stats(100, 20, 10, 5);
-        ulb.models.bugemon.Effect effect1 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        ulb.bugemon.models.Effect effect1 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
-        ulb.models.bugemon.Effect effect2 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        ulb.bugemon.models.Effect effect2 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect1);

@@ -1,13 +1,13 @@
 /**
- * Nom du fichier : Effect.java
+ * File name : Effect.java
  * Description : Data class representing an effect of an attack.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
-package ulb.models.bugemon;
+package ulb.bugemon.models;
 
 /**
  * Class representing an effect that can be applied to a bugemon during battle.

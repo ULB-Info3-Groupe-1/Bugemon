@@ -1,13 +1,13 @@
 /**
- * Nom du fichier : Stats.java
+ * File name : Stats.java
  * Description : Data class representing the stats of a bugemon.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 feb. 2026
  * @version 1.0
  */
 
-package ulb.models.bugemon;
+package ulb.bugemon.models;
 
 /**
  * This class represents the stats of a bugemon, including HP, attack, defense,

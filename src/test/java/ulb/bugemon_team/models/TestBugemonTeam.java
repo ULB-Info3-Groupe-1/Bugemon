@@ -4,9 +4,9 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 import org.junit.Test;
-import ulb.models.bugemon.Bugemon;
-import ulb.utils.TestUtilsBugemons;
 
+import ulb.utils.TestUtilsBugemons;
+import ulb.bugemon.models.Bugemon;
 import ulb.bugemon_team.exceptions.BugemonAlreadyExistsException;
 
 import static org.junit.Assert.*;
