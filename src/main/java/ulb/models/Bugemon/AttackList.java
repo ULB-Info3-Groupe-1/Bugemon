@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.models.Bugemon;
+package ulb.models.bugemon;
 
 import java.util.List;
 

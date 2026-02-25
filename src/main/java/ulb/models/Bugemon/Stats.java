@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.models.Bugemon;
+package ulb.models.bugemon;
 
 /**
  * This class represents the stats of a bugemon, including HP, attack, defense,
