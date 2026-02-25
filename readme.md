@@ -48,3 +48,9 @@ git shortlog -se --all
 ```bash
 mvn clean javafx:run
 ```
+
+## Lancer le projet
+
+```bash
+mvn clean javafx:run
+```
