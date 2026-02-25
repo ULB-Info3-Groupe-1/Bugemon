@@ -4,8 +4,20 @@ import java.io.IOException;
 
 import javafx.stage.Stage;
 
+/**
+ * MetaController
+ *
+ * Central controller responsible for managing other controllers (corresponding
+ * to other application screens).
+ * Instantiates all controllers and handles window transitions.
+ */
 public class MetaController {
 
+    /**
+     * Window
+     *
+     * Available application screens.
+     */
     public enum Window {
         MAIN_MENU,
         CREATE_TEAM,
@@ -19,6 +31,12 @@ public class MetaController {
     private final CombatController combatController;
     private final CombatResultController combatResultController;
 
+    /**
+     * Creates the meta-controller and initializes all screen controllers.
+     *
+     * @param primaryStage main JavaFX stage of the application
+     * @throws IOException if a controller or view fails to initialize
+     */
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
         this.mainMenuController = new MainMenuController(this);
@@ -27,6 +45,12 @@ public class MetaController {
         this.combatResultController = new CombatResultController(this);
     }
 
+    /**
+     * Switches the current screen to the specified window.
+     *
+     * @param window target screen to display
+     * @throws IllegalArgumentException if the window is invalid
+     */
     public final void switchTo(Window window) {
         switch (window) {
             case MAIN_MENU ->
