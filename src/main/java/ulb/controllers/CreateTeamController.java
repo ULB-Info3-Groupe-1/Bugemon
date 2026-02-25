@@ -15,8 +15,15 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public void startCombat() {
         this.metaController.switchTo(Window.COMBAT);
     }
-    public void mouseClick(javafx.scene.input.MouseEvent e){
-        System.out.println("Clicked on " + e.getSource());
-        return;
+
+    public void addToTeam(String bugemonId) {
+        System.out.println("adding: " + bugemonId);
+        // TODO: impl
     }
+
+    public void removeFromTeam(String bugemonId) {
+        System.out.println("removing" + bugemonId);
+        // TODO: impl
+    }
+
 }

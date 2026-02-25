@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import ulb.common.BugemonDTO;
 import ulb.controllers.CreateTeamController;
+import ulb.models.bugemon.Bugemon;
 
 /**
  * CreateTeamView
@@ -54,21 +55,32 @@ public class CreateTeamView extends View {
         super("/fxml/CreateTeam.fxml");
         this.controller = null;
         for (Node node : listPane.getChildren()) {
-            if (node instanceof ImageView) {
-                this.allBugemons.add((ImageView) node);
-                node.setOnMouseClicked(e -> {
-                    this.controller.mouseClick(e);
+            if (node instanceof ImageView imageView) {
+                this.allBugemons.add(imageView);
+
+                imageView.setOnMouseClicked(e -> {
+                    BugemonDTO dto = (BugemonDTO) imageView.getUserData();
+                    if (dto != null) {
+                        this.controller.addToTeam(dto.getId());
+                    }
                 });
             }
         }
+
         for (Node node : teamPane.getChildren()) {
-            if (node instanceof ImageView) {
-                this.teamBugemons.add((ImageView) node);
-                node.setOnMouseClicked(e -> {
-                    this.controller.mouseClick(e);
+            if (node instanceof ImageView imageView) {
+                this.teamBugemons.add(imageView);
+
+                imageView.setOnMouseClicked(e -> {
+                    BugemonDTO dto = (BugemonDTO) imageView.getUserData();
+                    if (dto != null) {
+                        this.controller.removeFromTeam(dto.getId());
+                    }
                 });
+
             }
         }
+
         this.validateButton.setOnAction((e) -> this.controller.startCombat());
     }
 
@@ -90,6 +102,7 @@ public class CreateTeamView extends View {
         iv.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
     }
 
+    // TODO: code duplication with showAll?
     protected void showTeam(List<BugemonDTO> bugList) {
         assert bugList.size() <= 6 : "A team cannot have more than 6 Bugemons.";
         int sizeList = bugList.size();
