@@ -13,16 +13,23 @@ package ulb.bugemon.models;
  * This class represents a bugemon, which has an ID, name, type, and stats.
  */
 public class Bugemon {
+
+    // Enums
+
+    // Enum for the type of the bugemon
+    public enum Type {
+        FLORA, AQUA, PYRO, LITHO
+    }
+
     // Attributes
 
     private String id;
     private String name;
-    private String type;
+    private Type type;
     private String sprite; // The link to the representation image of the bugemon
     private Stats stats;
     private AttackList attackList; // The list of attacks that the bugemon can have
     private boolean isStarter;
-    private boolean isAlive;
 
     // Constructor
 
@@ -31,13 +38,13 @@ public class Bugemon {
      * 
      * @param id     (String) the unique identifier for the bugemon.
      * @param name   (String) the name of the bugemon.
-     * @param type   (String) the type of the bugemon.
+     * @param type   (Type) the type of the bugemon.
      * @param sprite (String) the sprite link of the bugemon.
      * @param stats  (Stats) the stats of the bugemon, including HP, attack,
      *               defense,
      *               and initiative.
      */
-    public Bugemon(String id, String name, String type, String sprite, Stats stats, AttackList attackList,
+    public Bugemon(String id, String name, Type type, String sprite, Stats stats, AttackList attackList,
             boolean isStarter) {
         this.id = id;
         this.name = name;
@@ -46,14 +53,12 @@ public class Bugemon {
         this.stats = stats;
         this.attackList = attackList;
         this.isStarter = isStarter;
-        this.isAlive = true;
     }
 
     // Methods
 
     /**
-     * Apply damage to the bugemon, reducing its HP by the specified amount and
-     * updating its alive status accordingly.
+     * Apply damage to the bugemon, reducing its HP by the specified amount.
      * 
      * @param damage (int) the amount of damage to apply to the bugemon, reducing
      *               its HP.
@@ -61,20 +66,14 @@ public class Bugemon {
     public void takeDamage(int damage) {
         int newHp = this.stats.getHp() - damage;
         this.stats.setHp(newHp);
-        setAlive();
     }
 
     /**
-     * Set the alive status of the bugemon based on its current HP. If the HP is
-     * less than or equal to 0, the bugemon is considered not alive; otherwise, it
-     * is alive.
+     * Check if the bugemon is alive, which is determined by whether its HP is
+     * greater than 0.
      */
-    public void setAlive() {
-        if (this.stats.getHp() <= 0) {
-            this.isAlive = false;
-        } else {
-            this.isAlive = true;
-        }
+    public boolean isAlive() {
+        return this.stats.getHp() > 0;
     }
 
     /**
@@ -140,18 +139,18 @@ public class Bugemon {
     /**
      * Get the type of the bugemon.
      * 
-     * @return (String) the type of the bugemon.
+     * @return (Type) the type of the bugemon.
      */
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
     /**
      * Set the type of the bugemon to a new value.
      * 
-     * @param type (String) the new type to set for the bugemon.
+     * @param type (Type) the new type to set for the bugemon.
      */
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -229,9 +228,5 @@ public class Bugemon {
      */
     public void setStarter(boolean isStarter) {
         this.isStarter = isStarter;
-    }
-
-    public boolean isAlive() {
-        return isAlive;
     }
 }

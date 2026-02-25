@@ -18,6 +18,6 @@ public final class TestUtilsBugemons {
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        return new Bugemon(id, "TestBugemon_" + id, "Flora", "TestSprite", stats, attackList, false);
+        return new Bugemon(id, "TestBugemon_" + id, Bugemon.Type.FLORA, "TestSprite", stats, attackList, false);
     }
 }
