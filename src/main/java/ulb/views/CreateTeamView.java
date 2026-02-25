@@ -12,7 +12,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import ulb.common.BugemonDTO;
 import ulb.controllers.CreateTeamController;
-import ulb.models.bugemon.Bugemon;
 
 /**
  * CreateTeamView
@@ -102,10 +101,10 @@ public class CreateTeamView extends View {
     }
 
     // TODO: code duplication with showAll?
-    protected void showTeam(List<BugemonDTO> bugList) {
+    public void showTeam(List<BugemonDTO> bugList) {
         assert bugList.size() <= 6 : "A team cannot have more than 6 Bugemons.";
         int sizeList = bugList.size();
-        Image unknownImage = new Image("Assets/png/unknown.png");
+        Image unknownImage = new Image("resources/Assets/png/unknown.png");
         for (int i = 0; i < this.teamBugemons.size(); i++) {
             Image img;
             if (i < sizeList) {
@@ -118,10 +117,10 @@ public class CreateTeamView extends View {
         }
     }
 
-    protected void showAll(List<BugemonDTO> bugList) {
+    public void showAll(List<BugemonDTO> bugList) {
         assert bugList.size() <= 20 : "There cannot be more than 20 Bugemons in the list for now.";
         int sizeList = bugList.size();
-        Image unknownImage = new Image("/unknown.png");
+        Image unknownImage = new Image("resources/Assets/png/unknown.png");
         for (int i = 0; i < this.allBugemons.size(); i++) {
             Image img;
             if (i < sizeList) {
