@@ -3,7 +3,7 @@
  * Description : Class representing a bugemon.
  * 
  * @author Liefferinckx Romain
- * @date 24 fÃ©vr. 2026
+ * @date 24 févr. 2026
  * @version 1.0
  */
 
