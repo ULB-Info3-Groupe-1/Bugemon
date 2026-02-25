@@ -16,6 +16,11 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.AttackList;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Stats;
+
 public class TestBugemon {
     @Test
     public void testIsAlive() {
