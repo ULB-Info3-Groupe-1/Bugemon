@@ -3,7 +3,7 @@
  * Description : Class representing a bugemon.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 fÃ©vr. 2026
  * @version 1.0
  */
 
@@ -75,6 +75,28 @@ public class Bugemon {
         } else {
             this.isAlive = true;
         }
+    }
+
+    /**
+     * Override the equals method to compare bugemons based on their unique ID.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Bugemon other = (Bugemon) obj;
+        return id.equals(other.id);
+    }
+
+    /**
+     * Override the hashCode method to generate a hash code based on the unique ID
+     * of the bugemon.
+     */
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     // Getters and Setters

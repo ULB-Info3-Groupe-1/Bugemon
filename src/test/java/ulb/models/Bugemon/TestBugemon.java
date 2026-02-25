@@ -3,7 +3,7 @@
  * Description : Test class for the Bugemon class.
  * 
  * @author Liefferinckx Romain
- * @date 24 févr. 2026
+ * @date 24 fÃ©vr. 2026
  * @version 1.0
  */
 
@@ -65,5 +65,47 @@ public class TestBugemon {
         assertEquals(stats, bugemon.getStats());
         assertEquals(attackList, bugemon.getAttackList());
         assertFalse(bugemon.isStarter());
+    }
+
+    @Test
+    public void testEquals() {
+        Stats stats1 = new Stats(100, 20, 10, 5);
+        Stats stats2 = new Stats(100, 20, 10, 5);
+        ulb.models.bugemon.Effect effect1 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+                "1 turn");
+        ulb.models.bugemon.Effect effect2 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+                "1 turn");
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect1);
+        Attack attack3 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect2);
+        Attack attack4 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect2);
+        AttackList attackList1 = new AttackList(List.of(attack1, attack2));
+        AttackList attackList2 = new AttackList(List.of(attack3, attack4));
+        Bugemon bugemon1 = new Bugemon("TestBugemon1", "TestBugemon1", "Flora", "testSprite", stats1, attackList1,
+                false);
+        Bugemon bugemon2 = new Bugemon("TestBugemon1", "TestBugemon1", "Flora", "testSprite", stats2, attackList2,
+                false);
+        assertTrue(bugemon1.equals(bugemon2));
+    }
+
+    @Test
+    public void testHashCode() {
+        Stats stats1 = new Stats(100, 20, 10, 5);
+        Stats stats2 = new Stats(100, 20, 10, 5);
+        ulb.models.bugemon.Effect effect1 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+                "1 turn");
+        ulb.models.bugemon.Effect effect2 = new ulb.models.bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+                "1 turn");
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect1);
+        Attack attack3 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect2);
+        Attack attack4 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect2);
+        AttackList attackList1 = new AttackList(List.of(attack1, attack2));
+        AttackList attackList2 = new AttackList(List.of(attack3, attack4));
+        Bugemon bugemon1 = new Bugemon("TestBugemon1", "TestBugemon1", "Flora", "testSprite", stats1, attackList1,
+                false);
+        Bugemon bugemon2 = new Bugemon("TestBugemon1", "TestBugemon1", "Flora", "testSprite", stats2, attackList2,
+                false);
+        assertTrue(bugemon1.hashCode() == bugemon2.hashCode());
     }
 }
