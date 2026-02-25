@@ -9,11 +9,12 @@
 
 package ulb.models.bugemon;
 
+import ulb.common.BugemonDTO;
+
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
  */
-public class Bugemon {
-
+public class Bugemon implements BugemonDTO {
     // Enums
 
     // Enum for the type of the bugemon
@@ -105,6 +106,7 @@ public class Bugemon {
      * 
      * @return (String) the unique identifier of the bugemon.
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -159,7 +161,8 @@ public class Bugemon {
      * 
      * @return (String) the sprite link of the bugemon.
      */
-    public String getSprite() {
+    @Override
+    public String getSpriteURL() {
         return sprite;
     }
 

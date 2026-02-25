@@ -77,7 +77,6 @@ public class CreateTeamView extends View {
                         this.controller.removeFromTeam(dto.getId());
                     }
                 });
-
             }
         }
 
@@ -110,7 +109,7 @@ public class CreateTeamView extends View {
         for (int i = 0; i < this.teamBugemons.size(); i++) {
             Image img;
             if (i < sizeList) {
-                img = new Image(bugList.get(i).getSpriteUrl());
+                img = new Image(bugList.get(i).getSpriteURL());
             } else {
                 img = unknownImage;
             }
@@ -126,7 +125,7 @@ public class CreateTeamView extends View {
         for (int i = 0; i < this.allBugemons.size(); i++) {
             Image img;
             if (i < sizeList) {
-                img = new Image(bugList.get(i).getSpriteUrl());
+                img = new Image(bugList.get(i).getSpriteURL());
             } else {
                 img = unknownImage;
             }
