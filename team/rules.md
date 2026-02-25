@@ -10,6 +10,12 @@ Message du commit
 Co-authored-by: Frédéric <prenom.nom@ulb.be>
 ```
 
+Pour le faire :
+
+```bash
+git commit -m "Titre du commit" -m "Message du commit" -m "Co-authored-by: Frédéric <prenom.nom@ulb.be>"
+```
+
 ### Nom de branche
 
 Si nouvelle fonctionnalité : `feat/nom_fonctionnalite`
