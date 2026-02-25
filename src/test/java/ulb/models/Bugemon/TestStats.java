@@ -13,8 +13,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import ulb.models.bugemon.Stats;
-
 public class TestStats {
     @Test
     public void shouldGetAndSetHp() {

@@ -13,9 +13,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Effect;
-
 public class TestAttack {
     @Test
     public void testCreationAttack() {
