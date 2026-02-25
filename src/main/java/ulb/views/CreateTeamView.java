@@ -61,7 +61,7 @@ public class CreateTeamView extends View {
                 imageView.setOnMouseClicked(e -> {
                     BugemonDTO dto = (BugemonDTO) imageView.getUserData();
                     if (dto != null) {
-                        this.controller.addToTeam(dto.getId());
+                        this.controller.addToTeam(dto);
                     }
                 });
             }
@@ -74,7 +74,7 @@ public class CreateTeamView extends View {
                 imageView.setOnMouseClicked(e -> {
                     BugemonDTO dto = (BugemonDTO) imageView.getUserData();
                     if (dto != null) {
-                        this.controller.removeFromTeam(dto.getId());
+                        this.controller.removeFromTeam(dto);
                     }
                 });
             }
