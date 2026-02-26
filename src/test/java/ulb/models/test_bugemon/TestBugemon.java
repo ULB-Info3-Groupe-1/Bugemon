@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.models.bugemon;
+package ulb.models.test_bugemon;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -15,6 +15,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
+
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.AttackList;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Effect;
+import ulb.models.bugemon.Stats;
 
 public class TestBugemon {
         @Test
