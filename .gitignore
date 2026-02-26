@@ -181,4 +181,7 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+# macOS Desktop Services Store
+.DS_Store
+
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,visualstudiocode
