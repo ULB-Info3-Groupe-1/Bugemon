@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ulb.controllers.MetaController.Window;
-import ulb.views.CreateTeamView;
-import ulb.models.bugemon.Bugemon;
-import ulb.bugemon_team.models.BugemonTeam;
 import ulb.common.BugemonDTO;
+import ulb.controllers.MetaController.Window;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.views.CreateTeamView;
 
 public class CreateTeamController extends Controller<CreateTeamView> {
 
