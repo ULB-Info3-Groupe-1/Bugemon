@@ -50,6 +50,59 @@ git merge ma-branche
 git reset --soft HEAD~1
 ```
 
+### Issues
+
+#### Contexte
+
+Description rapide du problème ou du besoin.
+
+#### Objectif
+
+Ce que l’on veut obtenir concrètement.
+
+#### Tâches
+
+- [ ] Étape 1
+- [ ] Étape 2
+- [ ] Étape 3
+
+#### Critères d’acceptation
+
+- Condition 1
+- Condition 2
+
+### Merge request
+
+#### Choix des branches à merge et titre de la MR
+
+Nom de la branche:
+feature/nom-court
+bugfix/nom-court
+refactor/nom-court
+
+Titre de la MR:
+Même format que l’issue:
+[TYPE] Description courte 
+
+#### Changements effectués
+
+- Modification 1
+- Modification 2
+
+#### Type de modification
+
+- [ ] Feature
+- [ ] Bug fix
+- [ ] Refactor
+- [ ] Documentation
+
+#### Vérifications
+
+- [ ] Le code compile
+- [ ] Les tests passent
+- [ ] Pas de code mort ajouté
+- [ ] Relecture effectuée
+
 ## Code
 
 ### Langue
