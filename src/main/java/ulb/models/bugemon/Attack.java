@@ -9,6 +9,10 @@
 
 package ulb.models.bugemon;
 
+import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Class representing an attack that a bugemon can perform during battle.
  */
@@ -16,11 +20,19 @@ public class Attack {
     // Attributes
 
     private String id;
+
+    @SerializedName("nom")
     private String name;
+
     private String type;
+
     private String description;
+
+    @SerializedName("puissance")
     private int power;
-    private Effect effect;
+
+    @SerializedName("effets")
+    private List<Effect> effects;
 
     // Constructor
     /**
@@ -33,16 +45,16 @@ public class Attack {
      *                    mechanics.
      * @param power       (int) the power of the attack, determining its damage
      *                    output.
-     * @param effect      (Effect) the effect of the attack, which can apply
+     * @param effects      (Effect) the effects of the attack, which can apply
      *                    status changes or stat modifications to the target.
      */
-    public Attack(String id, String name, String type, String description, int power, Effect effect) {
+    public Attack(String id, String name, String type, String description, int power, List<Effect> effects) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.description = description;
         this.power = power;
-        this.effect = effect;
+        this.effects = effects;
     }
 
     // Getters and Setters
@@ -138,20 +150,20 @@ public class Attack {
     }
 
     /**
-     * Get the effect of the attack.
+     * Get the effects of the attack.
      * 
      * @return (Effect) the effect of the attack.
      */
-    public Effect getEffect() {
-        return effect;
+    public List<Effect> getEffects() {
+        return effects;
     }
 
     /**
-     * Set the effect of the attack to a new value.
+     * Add an effect to the attack.
      * 
      * @param effect (Effect) the new effect to set for the attack.
      */
-    public void setEffect(Effect effect) {
-        this.effect = effect;
+    public void addEffect(Effect effect) {
+        this.effects.add(effect);
     }
 }

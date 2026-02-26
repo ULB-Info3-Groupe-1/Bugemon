@@ -23,8 +23,9 @@ public class TestAttackList {
     @Test
     public void testCreationAttackList() {
         Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+        List<Effect> effects = List.of(effect);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
         assertTrue(attackList.getAttacks().size() == 2);
         assertTrue(attackList.getAttacks().get(0) == attack1);
@@ -34,10 +35,11 @@ public class TestAttackList {
     @Test
     public void testGettersAndSetters() {
         Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+        List<Effect> effects = List.of(effect);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", "Flora", "", 40, effect);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", "Flora", "", 40, effects);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().size() == 3);
         assertTrue(attackList.getAttacks().get(0) == attack1);

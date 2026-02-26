@@ -10,6 +10,7 @@
 package ulb.models.bugemon;
 
 import ulb.common.BugemonDTO;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
@@ -25,11 +26,18 @@ public class Bugemon implements BugemonDTO {
     // Attributes
 
     private String id;
+
+    @SerializedName("nom")
     private String name;
     private Type type;
     private String sprite; // The link to the representation image of the bugemon
+
     private Stats stats;
+
+    @SerializedName("attaques")
     private AttackList attackList; // The list of attacks that the bugemon can have
+
+    @SerializedName("starter")
     private boolean isStarter;
 
     // Constructor

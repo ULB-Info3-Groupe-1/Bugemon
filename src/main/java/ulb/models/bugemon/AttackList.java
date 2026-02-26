@@ -11,12 +11,15 @@ package ulb.models.bugemon;
 
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * This class represents a list of attacks that a bugemon can have.
  */
 public class AttackList {
     // Attributes
 
+    @SerializedName("attaques")
     private List<Attack> attacks;
 
     // Constructor
