@@ -15,7 +15,7 @@ import ulb.views.CreateTeamView;
 public class CreateTeamController extends Controller<CreateTeamView> {
 
     private BugemonTeam bugemonTeam;
-    private Map<String, Bugemon> allBugemonsById;
+    private final Map<String, Bugemon> allBugemonsById; // TODO: This will have to move somewhere else
 
     public CreateTeamController(MetaController metaController) throws IOException {
         super(metaController, new CreateTeamView());
@@ -51,20 +51,19 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     public void addToTeam(String bugemonId) {
-        System.out.println("adding" + bugemonId);
-
         // TODO: would probably be cleaner to have a get-by-id method in BugemonTeam
         // instead of usng this map here?
         Bugemon bugemon = allBugemonsById.get(bugemonId);
-
         bugemonTeam.addBugemon(bugemon);
+
+        this.updateBugemonsTeamView();
     }
 
     public void removeFromTeam(String bugemonId) {
-        System.out.println("removing" + bugemonId);
-
         Bugemon bugemon = this.allBugemonsById.get(bugemonId);
         bugemonTeam.removeBugemon(bugemon);
+
+        this.updateBugemonsTeamView();
     }
 
 }

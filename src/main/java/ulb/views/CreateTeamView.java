@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import ulb.common.BugemonDTO;
 import ulb.controllers.CreateTeamController;
+import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 
 /**
  * CreateTeamView
@@ -63,7 +64,11 @@ public class CreateTeamView extends View {
                 imageView.setOnMouseClicked(e -> {
                     BugemonDTO dto = (BugemonDTO) imageView.getUserData();
                     if (dto != null) {
-                        this.controller.addToTeam(dto.getId());
+                        try {
+                            this.controller.addToTeam(dto.getId());
+                        } catch (BugemonAlreadyExistsException exception) {
+                            // TODO: Ask the client if and how we should signal this exception to the user
+                        }
                     }
                 });
             }
@@ -76,7 +81,11 @@ public class CreateTeamView extends View {
                 imageView.setOnMouseClicked(e -> {
                     BugemonDTO dto = (BugemonDTO) imageView.getUserData();
                     if (dto != null) {
-                        this.controller.removeFromTeam(dto.getId());
+                        try {
+                            this.controller.removeFromTeam(dto.getId());
+                        } catch (IllegalStateException exception) {
+                            // TODO: Ask the client if and how we should signal this exception to the user
+                        }
                     }
                 });
             }
@@ -107,11 +116,17 @@ public class CreateTeamView extends View {
         int MAX_TEAM_DISPLAY_SIZE = 6;
         assert bugemonList.size() <= MAX_TEAM_DISPLAY_SIZE : "Cannot display teams bigger than 6 Bugemons.";
         for (int idx = 0; idx < this.teamBugemons.size(); idx++) {
-            BugemonDTO bugemonDTO = bugemonList.get(idx);
 
+            BugemonDTO bugemon = bugemonList.get(idx);
             ImageView iv = this.teamBugemons.get(idx);
-            Image img = (bugemonDTO != null) ? new Image(bugemonList.get(idx).getSpriteURL()) : this.UNKNOWN_IMAGE;
+
+            Image img = (bugemon != null)
+                    ? new Image(bugemon.getSpriteURL())
+                    : this.UNKNOWN_IMAGE;
+
             iv.setImage(img);
+            iv.setUserData(bugemon);
+
         }
     }
 
@@ -121,9 +136,16 @@ public class CreateTeamView extends View {
                 : "There cannot be more than 20 Bugemons.";
         for (int idx = 0; idx < this.allBugemons.size(); idx++) {
 
-            Image img = (idx < bugemonList.size()) ? new Image(bugemonList.get(idx).getSpriteURL()) : this.UNKNOWN_IMAGE;
+            BugemonDTO bugemon = (idx < bugemonList.size()) ? bugemonList.get(idx) : null;
             ImageView iv = this.allBugemons.get(idx);
+
+            Image img = (bugemon != null)
+                    ? new Image(bugemon.getSpriteURL())
+                    : this.UNKNOWN_IMAGE;
+
             iv.setImage(img);
+            iv.setUserData(bugemon);
+
         }
     }
 }
