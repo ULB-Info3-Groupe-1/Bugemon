@@ -21,42 +21,27 @@ import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.Stats;
+import ulb.utils.TestUtilsBugemons;
 
 public class TestBugemon {
         @Test
         public void testIsAlive() {
-                Stats stats = new Stats(100, 20, 10, 5);
-                Effect effect = new Effect("TestEffect", "TestEffect", "Flora",
-                                10,
-                                "1 turn");
-                Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-                Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
-                AttackList attackList = new AttackList(List.of(attack1, attack2));
-                Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", Bugemon.Type.FLORA, "testSprite", stats,
-                                attackList, false);
-                assertTrue(bugemon.isAlive());
-                bugemon.takeDamage(50);
-                assertTrue(bugemon.isAlive());
-                bugemon.takeDamage(50);
-                assertFalse(bugemon.isAlive());
+                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+                assertTrue(expectedBugemon1.isAlive());
+                expectedBugemon1.takeDamage(50);
+                assertTrue(expectedBugemon1.isAlive());
+                expectedBugemon1.takeDamage(50);
+                assertFalse(expectedBugemon1.isAlive());
         }
 
         @Test
         public void testTakeDamage() {
-                Stats stats = new Stats(100, 20, 10, 5);
-                Effect effect = new Effect("TestEffect", "TestEffect", "Flora",
-                                10,
-                                "1 turn");
-                Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-                Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
-                AttackList attackList = new AttackList(List.of(attack1, attack2));
-                Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", Bugemon.Type.FLORA, "testSprite", stats,
-                                attackList, false);
-                assertTrue(bugemon.getStats().getHp() == 100);
-                bugemon.takeDamage(30);
-                assertTrue(bugemon.getStats().getHp() == 70);
-                bugemon.takeDamage(50);
-                assertTrue(bugemon.getStats().getHp() == 20);
+                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+                assertTrue(expectedBugemon1.getStats().getHp() == 100);
+                expectedBugemon1.takeDamage(30);
+                assertTrue(expectedBugemon1.getStats().getHp() == 70);
+                expectedBugemon1.takeDamage(50);
+                assertTrue(expectedBugemon1.getStats().getHp() == 20);
         }
 
         @Test
@@ -81,51 +66,15 @@ public class TestBugemon {
 
         @Test
         public void testEquals() {
-                Stats stats1 = new Stats(100, 20, 10, 5);
-                Stats stats2 = new Stats(100, 20, 10, 5);
-                Effect effect1 = new Effect("TestEffect", "TestEffect", "Flora",
-                                10,
-                                "1 turn");
-                Effect effect2 = new Effect("TestEffect", "TestEffect", "Flora",
-                                10,
-                                "1 turn");
-                Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);
-                Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect1);
-                Attack attack3 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect2);
-                Attack attack4 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect2);
-                AttackList attackList1 = new AttackList(List.of(attack1, attack2));
-                AttackList attackList2 = new AttackList(List.of(attack3, attack4));
-                Bugemon bugemon1 = new Bugemon("TestBugemon1", "TestBugemon1", Bugemon.Type.FLORA, "testSprite", stats1,
-                                attackList1,
-                                false);
-                Bugemon bugemon2 = new Bugemon("TestBugemon1", "TestBugemon1", Bugemon.Type.FLORA, "testSprite", stats2,
-                                attackList2,
-                                false);
-                assertTrue(bugemon1.equals(bugemon2));
+                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+                Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
+                assertTrue(expectedBugemon1.equals(expectedBugemon2));
         }
 
         @Test
         public void testHashCode() {
-                Stats stats1 = new Stats(100, 20, 10, 5);
-                Stats stats2 = new Stats(100, 20, 10, 5);
-                Effect effect1 = new Effect("TestEffect", "TestEffect", "Flora",
-                                10,
-                                "1 turn");
-                Effect effect2 = new Effect("TestEffect", "TestEffect", "Flora",
-                                10,
-                                "1 turn");
-                Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);
-                Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect1);
-                Attack attack3 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect2);
-                Attack attack4 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect2);
-                AttackList attackList1 = new AttackList(List.of(attack1, attack2));
-                AttackList attackList2 = new AttackList(List.of(attack3, attack4));
-                Bugemon bugemon1 = new Bugemon("TestBugemon1", "TestBugemon1", Bugemon.Type.FLORA, "testSprite", stats1,
-                                attackList1,
-                                false);
-                Bugemon bugemon2 = new Bugemon("TestBugemon1", "TestBugemon1", Bugemon.Type.FLORA, "testSprite", stats2,
-                                attackList2,
-                                false);
-                assertTrue(bugemon1.hashCode() == bugemon2.hashCode());
+                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+                Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
+                assertTrue(expectedBugemon1.hashCode() == expectedBugemon2.hashCode());
         }
 }
