@@ -45,6 +45,8 @@ public abstract class View {
     public void show(Stage stage) {
         stage.setScene(this.scene);
         stage.setTitle(this.getTitle());
+        stage.setMinHeight(500);
+        stage.setMinWidth(800);
         stage.show();
     }
 

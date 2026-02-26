@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javafx.fxml.FXML;
-import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -27,10 +27,10 @@ public class CreateTeamView extends View {
     @FXML
     private AnchorPane rootPane;
     @FXML
-    private Group listPane;
+    private Pane listPane;
 
     @FXML
-    private Group teamPane;
+    private Pane teamPane;
 
     @FXML
     private Button validateButton;
@@ -44,6 +44,9 @@ public class CreateTeamView extends View {
     // Lists of ImageViews
     private List<ImageView> teamBugemons = new java.util.ArrayList<>();
     private List<ImageView> allBugemons = new java.util.ArrayList<>();
+
+    // Unknown image if no Bugemon available
+    private final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
 
     /**
      * Loads the create-team FXML layout and initializes button actions.
@@ -103,14 +106,11 @@ public class CreateTeamView extends View {
     public void showTeam(List<BugemonDTO> bugemonList) {
         int MAX_TEAM_DISPLAY_SIZE = 6;
         assert bugemonList.size() <= MAX_TEAM_DISPLAY_SIZE : "Cannot display teams bigger than 6 Bugemons.";
-
-        Image unknownImage = new Image("/png/unknown.png");
-
         for (int idx = 0; idx < this.teamBugemons.size(); idx++) {
             BugemonDTO bugemonDTO = bugemonList.get(idx);
 
             ImageView iv = this.teamBugemons.get(idx);
-            Image img = (bugemonDTO != null) ? new Image(bugemonList.get(idx).getSpriteURL()) : unknownImage;
+            Image img = (bugemonDTO != null) ? new Image(bugemonList.get(idx).getSpriteURL()) : this.UNKNOWN_IMAGE;
             iv.setImage(img);
         }
     }
@@ -119,12 +119,9 @@ public class CreateTeamView extends View {
         int MAX_ALL_BUGEMONS_DISPLAY_SIZE = 20;
         assert bugemonList.size() <= MAX_ALL_BUGEMONS_DISPLAY_SIZE
                 : "There cannot be more than 20 Bugemons.";
-
-        Image unknownImage = new Image("/png/unknown.png");
-
         for (int idx = 0; idx < this.allBugemons.size(); idx++) {
 
-            Image img = (idx < bugemonList.size()) ? new Image(bugemonList.get(idx).getSpriteURL()) : unknownImage;
+            Image img = (idx < bugemonList.size()) ? new Image(bugemonList.get(idx).getSpriteURL()) : this.UNKNOWN_IMAGE;
             ImageView iv = this.allBugemons.get(idx);
             iv.setImage(img);
         }
