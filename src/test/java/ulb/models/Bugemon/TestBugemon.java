@@ -16,17 +16,23 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.Effect;
+import ulb.models.bugemon.Stats;
+import ulb.models.bugemon.Bugemon.Type;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.AttackList;
+import ulb.models.bugemon.Bugemon;
+
 public class TestBugemon {
     @Test
     public void testIsAlive() {
         Stats stats = new Stats(100, 20, 10, 5);
-        ulb.models.Bugemon.Effect effect = new ulb.models.Bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
-                "1 turn");
+        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
         List<Effect> effects = List.of(effect);
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effects);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", "Flora", "testSprite", stats, attackList, false);
+        Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", Type.FLORA, "testSprite", stats, attackList, false);
         assertTrue(bugemon.isAlive());
         bugemon.takeDamage(50);
         assertTrue(bugemon.isAlive());
@@ -37,13 +43,13 @@ public class TestBugemon {
     @Test
     public void testTakeDamage() {
         Stats stats = new Stats(100, 20, 10, 5);
-        ulb.models.Bugemon.Effect effect = new ulb.models.Bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
         List<Effect> effects = List.of(effect);
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effects);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", "Flora", "testSprite", stats, attackList, false);
+        Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", Type.FLORA, "testSprite", stats, attackList, false);
         assertTrue(bugemon.getStats().getHp() == 100);
         bugemon.takeDamage(30);
         assertTrue(bugemon.getStats().getHp() == 70);
@@ -54,16 +60,16 @@ public class TestBugemon {
     @Test
     public void testCreationBugemon() {
         Stats stats = new Stats(100, 20, 10, 5);
-        ulb.models.Bugemon.Effect effect = new ulb.models.Bugemon.Effect("TestEffect", "TestEffect", "Flora", 10,
+        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
         List<Effect> effects = List.of(effect);
         Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effects);
         Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", "Flora", "testSprite", stats, attackList, false);
+        Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", Type.FLORA, "testSprite", stats, attackList, false);
         assertEquals("TestBugemon1", bugemon.getId());
         assertEquals("TestBugemon1", bugemon.getName());
-        assertEquals("Flora", bugemon.getType());
+        assertEquals(Type.FLORA, bugemon.getType());
         assertEquals("testSprite", bugemon.getSprite());
         assertEquals(stats, bugemon.getStats());
         assertEquals(attackList, bugemon.getAttackList());

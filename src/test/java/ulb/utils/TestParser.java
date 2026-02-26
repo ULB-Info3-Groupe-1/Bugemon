@@ -12,11 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.nio.file.*;
-import ulb.models.Bugemon.Attack;
-import ulb.models.Bugemon.AttackList;
-import ulb.models.Bugemon.Bugemon;
-import ulb.models.Bugemon.Stats;
-import ulb.models.Bugemon.Effect;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.AttackList;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Stats;
+import ulb.models.bugemon.Bugemon.Type;
+import ulb.models.bugemon.Effect;
 
 public class TestParser {
 
@@ -59,7 +60,7 @@ public class TestParser {
 
         // check attributes
         assertEquals(bugemonsList.get(0).getName(), "Florachu");
-        assertEquals(bugemonsList.get(1).getType(), "Flora");
+        assertEquals(bugemonsList.get(1).getType(), Type.FLORA);
 
         // check attacks
         Bugemon bugemon2 = bugemonsList.get(2);

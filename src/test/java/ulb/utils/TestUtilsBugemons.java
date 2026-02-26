@@ -1,5 +1,6 @@
 package ulb.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.models.bugemon.Attack;
@@ -17,8 +18,10 @@ public final class TestUtilsBugemons {
         Stats stats = new Stats(100, 20, 10, 5);
         Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10,
                 "1 turn");
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+        List<Effect> effectList = new ArrayList<>();
+        effectList.add(effect);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effectList);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effectList);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
         return new Bugemon(id, "TestBugemon_" + id, Bugemon.Type.FLORA, "TestSprite", stats, attackList, false);
     }

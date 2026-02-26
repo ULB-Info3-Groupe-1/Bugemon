@@ -1,6 +1,6 @@
 package ulb.utils;
 
-import ulb.models.Bugemon.*;
+import ulb.models.bugemon.*;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -27,7 +27,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
 
         String id = obj.get("id").getAsString();
         String name = obj.get("nom").getAsString();
-        String type = obj.get("type").getAsString();
+        Bugemon.Type type = Bugemon.Type.valueOf(obj.get("type").getAsString().toUpperCase());
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 

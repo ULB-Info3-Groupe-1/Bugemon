@@ -1,8 +1,8 @@
 package ulb.utils;
 
-import ulb.models.Bugemon.Attack;
-import ulb.models.Bugemon.AttackList;
-import ulb.models.Bugemon.Bugemon;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.AttackList;
+import ulb.models.bugemon.Bugemon;
 
 import java.io.File;
 import java.io.FileReader;
