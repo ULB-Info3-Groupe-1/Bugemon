@@ -60,7 +60,7 @@ public class CreateTeamView extends View {
                 imageView.setOnMouseClicked(e -> {
                     BugemonDTO dto = (BugemonDTO) imageView.getUserData();
                     if (dto != null) {
-                        this.controller.addToTeam(dto);
+                        this.controller.addToTeam(dto.getId());
                     }
                 });
             }
@@ -73,7 +73,7 @@ public class CreateTeamView extends View {
                 imageView.setOnMouseClicked(e -> {
                     BugemonDTO dto = (BugemonDTO) imageView.getUserData();
                     if (dto != null) {
-                        this.controller.removeFromTeam(dto);
+                        this.controller.removeFromTeam(dto.getId());
                     }
                 });
             }
@@ -100,35 +100,32 @@ public class CreateTeamView extends View {
         iv.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
     }
 
-    // TODO: code duplication with showAll?
-    public void showTeam(List<BugemonDTO> bugList) {
-        assert bugList.size() <= 6 : "A team cannot have more than 6 Bugemons.";
-        int sizeList = bugList.size();
-        Image unknownImage = new Image("resources/Assets/png/unknown.png");
-        for (int i = 0; i < this.teamBugemons.size(); i++) {
-            Image img;
-            if (i < sizeList) {
-                img = new Image(bugList.get(i).getSpriteURL());
-            } else {
-                img = unknownImage;
-            }
-            ImageView iv = this.teamBugemons.get(i);
+    public void showTeam(List<BugemonDTO> bugemonList) {
+        int MAX_TEAM_DISPLAY_SIZE = 6;
+        assert bugemonList.size() <= MAX_TEAM_DISPLAY_SIZE : "Cannot display teams bigger than 6 Bugemons.";
+
+        Image unknownImage = new Image("/png/unknown.png");
+
+        for (int idx = 0; idx < this.teamBugemons.size(); idx++) {
+            BugemonDTO bugemonDTO = bugemonList.get(idx);
+
+            ImageView iv = this.teamBugemons.get(idx);
+            Image img = (bugemonDTO != null) ? new Image(bugemonList.get(idx).getSpriteURL()) : unknownImage;
             iv.setImage(img);
         }
     }
 
-    public void showAll(List<BugemonDTO> bugList) {
-        assert bugList.size() <= 20 : "There cannot be more than 20 Bugemons in the list for now.";
-        int sizeList = bugList.size();
-        Image unknownImage = new Image("resources/Assets/png/unknown.png");
-        for (int i = 0; i < this.allBugemons.size(); i++) {
-            Image img;
-            if (i < sizeList) {
-                img = new Image(bugList.get(i).getSpriteURL());
-            } else {
-                img = unknownImage;
-            }
-            ImageView iv = this.allBugemons.get(i);
+    public void showAll(List<BugemonDTO> bugemonList) {
+        int MAX_ALL_BUGEMONS_DISPLAY_SIZE = 20;
+        assert bugemonList.size() <= MAX_ALL_BUGEMONS_DISPLAY_SIZE
+                : "There cannot be more than 20 Bugemons.";
+
+        Image unknownImage = new Image("/png/unknown.png");
+
+        for (int idx = 0; idx < this.allBugemons.size(); idx++) {
+
+            Image img = (idx < bugemonList.size()) ? new Image(bugemonList.get(idx).getSpriteURL()) : unknownImage;
+            ImageView iv = this.allBugemons.get(idx);
             iv.setImage(img);
         }
     }

@@ -50,14 +50,21 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.metaController.switchTo(Window.COMBAT);
     }
 
-    public void addToTeam(BugemonDTO bugemon) {
-        System.out.println("removing" + bugemon.getId());
-        bugemonTeam.addBugemon((Bugemon) bugemon);
+    public void addToTeam(String bugemonId) {
+        System.out.println("adding" + bugemonId);
+
+        // TODO: would probably be cleaner to have a get-by-id method in BugemonTeam
+        // instead of usng this map here?
+        Bugemon bugemon = allBugemonsById.get(bugemonId);
+
+        bugemonTeam.addBugemon(bugemon);
     }
 
-    public void removeFromTeam(BugemonDTO bugemon) {
-        System.out.println("removing" + bugemon.getId());
-        bugemonTeam.removeBugemon((Bugemon) bugemon);
+    public void removeFromTeam(String bugemonId) {
+        System.out.println("removing" + bugemonId);
+
+        Bugemon bugemon = this.allBugemonsById.get(bugemonId);
+        bugemonTeam.removeBugemon(bugemon);
     }
 
 }
