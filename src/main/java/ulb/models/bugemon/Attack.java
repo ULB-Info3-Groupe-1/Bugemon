@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.bugemon.models;
+package ulb.models.bugemon;
 
 /**
  * Class representing an attack that a bugemon can perform during battle.

@@ -1,14 +1,10 @@
-package ulb.bugemon_team.models;
-
-import java.lang.reflect.Array;
-import java.util.List;
+package ulb.models.bugemon_team;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.TestUtilsBugemons;
-import ulb.bugemon.models.Bugemon;
-import ulb.bugemon_team.exceptions.BugemonAlreadyExistsException;
-
 import static org.junit.Assert.*;
 
 public class TestBugemonTeam {
@@ -164,7 +160,7 @@ public class TestBugemonTeam {
         team.addBugemon(expectedBugemon2);
         team.addBugemon(expectedBugemon3);
 
-        Bugemon[] expectedTeam = {expectedBugemon1, expectedBugemon2, expectedBugemon3};
+        Bugemon[] expectedTeam = { expectedBugemon1, expectedBugemon2, expectedBugemon3 };
         Bugemon[] teamClone = team.getTeam();
 
         for (int i = 0; i < 3; i++) {

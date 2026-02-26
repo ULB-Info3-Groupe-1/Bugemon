@@ -15,10 +15,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import ulb.bugemon.models.Attack;
-import ulb.bugemon.models.AttackList;
-import ulb.bugemon.models.Effect;
-
 public class TestAttackList {
     @Test
     public void testCreationAttackList() {

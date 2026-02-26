@@ -16,16 +16,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import ulb.bugemon.models.Attack;
-import ulb.bugemon.models.AttackList;
-import ulb.bugemon.models.Bugemon;
-import ulb.bugemon.models.Stats;
-
 public class TestBugemon {
         @Test
         public void testIsAlive() {
                 Stats stats = new Stats(100, 20, 10, 5);
-                ulb.bugemon.models.Effect effect = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora",
+                Effect effect = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
                 Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
@@ -43,7 +38,7 @@ public class TestBugemon {
         @Test
         public void testTakeDamage() {
                 Stats stats = new Stats(100, 20, 10, 5);
-                ulb.bugemon.models.Effect effect = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora",
+                Effect effect = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
                 Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
@@ -61,7 +56,7 @@ public class TestBugemon {
         @Test
         public void testCreationBugemon() {
                 Stats stats = new Stats(100, 20, 10, 5);
-                ulb.bugemon.models.Effect effect = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora",
+                Effect effect = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
                 Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
@@ -82,10 +77,10 @@ public class TestBugemon {
         public void testEquals() {
                 Stats stats1 = new Stats(100, 20, 10, 5);
                 Stats stats2 = new Stats(100, 20, 10, 5);
-                ulb.bugemon.models.Effect effect1 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora",
+                Effect effect1 = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
-                ulb.bugemon.models.Effect effect2 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora",
+                Effect effect2 = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
                 Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);
@@ -107,10 +102,10 @@ public class TestBugemon {
         public void testHashCode() {
                 Stats stats1 = new Stats(100, 20, 10, 5);
                 Stats stats2 = new Stats(100, 20, 10, 5);
-                ulb.bugemon.models.Effect effect1 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora",
+                Effect effect1 = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
-                ulb.bugemon.models.Effect effect2 = new ulb.bugemon.models.Effect("TestEffect", "TestEffect", "Flora",
+                Effect effect2 = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
                 Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect1);

@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.bugemon.models;
+package ulb.models.bugemon;
 
 /**
  * Class representing an effect that can be applied to a bugemon during battle.

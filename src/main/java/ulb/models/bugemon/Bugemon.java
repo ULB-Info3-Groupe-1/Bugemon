@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.bugemon.models;
+package ulb.models.bugemon;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
