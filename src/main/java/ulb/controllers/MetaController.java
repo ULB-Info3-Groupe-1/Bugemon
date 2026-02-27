@@ -35,6 +35,7 @@ public class MetaController {
         AUTOMATIC_COMBAT,
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
+        LevelUp,
     }
 
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
@@ -49,6 +50,7 @@ public class MetaController {
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final BugemonTeam playerTeam;
+    private final LevelUpController levelUpController;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -67,6 +69,7 @@ public class MetaController {
         this.automaticCombatController = new AutomaticCombatController(this);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
+        this.levelUpController = new LevelUpController(this);
     }
 
     /**
@@ -89,6 +92,8 @@ public class MetaController {
                 this.combatVictoryController.show(this.stage);
             case COMBAT_DEFEAT ->
                 this.combatDefeatController.show(this.stage);
+            case LevelUp ->
+                this.levelUpController.show(this.stage);
             default ->
                 throw new IllegalArgumentException("Invalid window");
         }
