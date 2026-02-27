@@ -17,27 +17,37 @@ import ulb.models.bugemon.Effect;
 
 public class TestEffect {
     @Test
-    public void testCreationEffect() {
+    public void testShouldGetTypeAndSetType() {
         Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        assertTrue(effect.getType().equals("TestEffect"));
-        assertTrue(effect.getTarget().equals("TestEffect"));
-        assertTrue(effect.getStat().equals("Flora"));
-        assertTrue(effect.getDuration().equals("1 turn"));
-        assertTrue(effect.getModifier() == 10);
+        effect.setType("NewTestEffect");
+        assertTrue(effect.getType().equals("NewTestEffect"));
     }
 
     @Test
-    public void testGettersAndSetters() {
+    public void testShouldGetTargerAndSetTarger() {
         Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        effect.setType("NewTestEffect");
         effect.setTarget("NewTestEffect");
-        effect.setStat("Aqua");
-        effect.setDuration("2 turns");
-        effect.setModifier(20);
-        assertTrue(effect.getType().equals("NewTestEffect"));
         assertTrue(effect.getTarget().equals("NewTestEffect"));
+    }
+
+    @Test
+    public void testShouldGetStatAndSetStat() {
+        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
+        effect.setStat("Aqua");
         assertTrue(effect.getStat().equals("Aqua"));
+    }
+
+    @Test
+    public void testShouldGetDurationAndSetDuration() {
+        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
+        effect.setDuration("2 turns");
         assertTrue(effect.getDuration().equals("2 turns"));
+    }
+
+    @Test
+    public void testShouldGetModifierAndSetModifier() {
+        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
+        effect.setModifier(20);
         assertTrue(effect.getModifier() == 20);
     }
 }

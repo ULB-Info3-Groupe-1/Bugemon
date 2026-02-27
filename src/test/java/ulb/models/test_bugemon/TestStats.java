@@ -17,7 +17,7 @@ import ulb.models.bugemon.Stats;
 
 public class TestStats {
     @Test
-    public void shouldGetAndSetHp() {
+    public void testShouldGetAndSetHp() {
         Stats s = new Stats(99, 26, 44, 20);
         assertTrue(s.getHp() == 99);
         s.setHp(80);
@@ -25,7 +25,7 @@ public class TestStats {
     }
 
     @Test
-    public void shouldGetAndSetAttack() {
+    public void testShouldGetAndSetAttack() {
         Stats s = new Stats(99, 26, 44, 20);
         assertTrue(s.getAttack() == 26);
         s.setAttack(60);
@@ -33,7 +33,7 @@ public class TestStats {
     }
 
     @Test
-    public void shouldGetAndSetDefense() {
+    public void testShouldGetAndSetDefense() {
         Stats s = new Stats(99, 26, 44, 20);
         assertTrue(s.getDefense() == 44);
         s.setDefense(50);
@@ -41,7 +41,7 @@ public class TestStats {
     }
 
     @Test
-    public void shouldGetAndSetInitiative() {
+    public void testShouldGetAndSetInitiative() {
         Stats s = new Stats(99, 26, 44, 20);
         assertTrue(s.getInitiative() == 20);
         s.setInitiative(25);
