@@ -112,8 +112,7 @@ public class Parser {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray attacksArray = root.getAsJsonArray("attaques");
 
-            Type destType = new TypeToken<List<Attack>>() {
-            }.getType();
+            Type destType = new TypeToken<List<Attack>>() {}.getType();
 
             List<Attack> attacks = gson.fromJson(attacksArray, destType);
 
@@ -152,8 +151,7 @@ public class Parser {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
 
-            Type destType = new TypeToken<List<Bugemon>>() {
-            }.getType();
+            Type destType = new TypeToken<List<Bugemon>>() {}.getType();
 
             List<Bugemon> bugemons = gson.fromJson(bugemonsArray, destType);
 
