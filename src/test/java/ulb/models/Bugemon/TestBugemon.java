@@ -70,7 +70,7 @@ public class TestBugemon {
         assertEquals("TestBugemon1", bugemon.getId());
         assertEquals("TestBugemon1", bugemon.getName());
         assertEquals(Type.FLORA, bugemon.getType());
-        assertEquals("testSprite", bugemon.getSprite());
+        assertEquals("testSprite", bugemon.getSpriteURL());
         assertEquals(stats, bugemon.getStats());
         assertEquals(attackList, bugemon.getAttackList());
         assertFalse(bugemon.isStarter());
