@@ -69,7 +69,6 @@ public class CreateTeamView extends View {
                         try {
                             this.controller.addToTeam(dto.getId());
                         } catch (BugemonAlreadyExistsException exception) {
-                            this.wrongSelect((ImageView) e.getSource());
                         }
                     }
                 });
@@ -86,7 +85,6 @@ public class CreateTeamView extends View {
                         try {
                             this.controller.removeFromTeam(dto.getId());
                         } catch (IllegalStateException exception) {
-                            this.wrongSelect((ImageView) e.getSource());
                         }
                     }
                 });
@@ -105,8 +103,12 @@ public class CreateTeamView extends View {
         this.controller = controller;
     }
 
-    protected void wrongSelect(ImageView iv) {
-        iv.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+    private void select(ImageView iv) {
+        iv.setStyle("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
+    }
+
+    private void unselect(ImageView iv) {
+        iv.setStyle("");
     }
 
     public void showTeam(List<BugemonDTO> bugemonList) {
@@ -123,7 +125,6 @@ public class CreateTeamView extends View {
 
             iv.setImage(img);
             iv.setUserData(bugemon);
-
         }
     }
 
@@ -143,6 +144,11 @@ public class CreateTeamView extends View {
             iv.setImage(img);
             iv.setUserData(bugemon);
 
+            if (bugemon != null && this.controller.checkBugemonInTeam(bugemon.getId())) {
+                this.select(iv);
+            } else {
+                this.unselect(iv);
+            }
         }
     }
 }
