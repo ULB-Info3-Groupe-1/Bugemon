@@ -1,7 +1,7 @@
 /**
  * File name : Attack.java
  * Description : Data class representing an attack of a bugemon.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 24 feb. 2026
  * @version 1.0
@@ -9,20 +9,21 @@
 
 package ulb.models.bugemon;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 /**
  * Class representing an attack that a bugemon can perform during battle.
  */
 public class Attack {
+
     // Attributes
 
     private String id;
 
     @SerializedName("nom")
     private String name;
+
     private Bugemon.BType type;
     private String description;
 
@@ -35,7 +36,7 @@ public class Attack {
     // Constructor
     /**
      * Constructor for the Attack class, initializing all attributes.
-     * 
+     *
      * @param id          (String) the unique identifier for the attack.
      * @param name        (String) the name of the attack.
      * @param type        (Type) the type of the attack.
@@ -46,7 +47,14 @@ public class Attack {
      * @param effects      (Effect) the effects of the attack, which can apply
      *                    status changes or stat modifications to the target.
      */
-    public Attack(String id, String name, Bugemon.BType type, String description, int power, List<Effect> effects) {
+    public Attack(
+        String id,
+        String name,
+        Bugemon.BType type,
+        String description,
+        int power,
+        List<Effect> effects
+    ) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -59,7 +67,7 @@ public class Attack {
 
     /**
      * Get the unique identifier of the attack.
-     * 
+     *
      * @return (String) the unique identifier of the attack.
      */
     public String getId() {
@@ -68,7 +76,7 @@ public class Attack {
 
     /**
      * Set the unique identifier of the attack to a new value.
-     * 
+     *
      * @param id (String) the new unique identifier to set for the attack.
      */
     public void setId(String id) {
@@ -77,7 +85,7 @@ public class Attack {
 
     /**
      * Get the name of the attack.
-     * 
+     *
      * @return (String) the name of the attack.
      */
     public String getName() {
@@ -86,7 +94,7 @@ public class Attack {
 
     /**
      * Set the name of the attack to a new value.
-     * 
+     *
      * @param name (String) the new name to set for the attack.
      */
     public void setName(String name) {
@@ -95,7 +103,7 @@ public class Attack {
 
     /**
      * Get the type of the attack.
-     * 
+     *
      * @return (Type) the type of the attack.
      */
     public Bugemon.BType getType() {
@@ -104,7 +112,7 @@ public class Attack {
 
     /**
      * Set the type of the attack to a new value.
-     * 
+     *
      * @param type (Type) the new type to set for the attack.
      */
     public void setType(Bugemon.BType type) {
@@ -113,7 +121,7 @@ public class Attack {
 
     /**
      * Get the description of the attack.
-     * 
+     *
      * @return (String) the description of the attack.
      */
     public String getDescription() {
@@ -122,7 +130,7 @@ public class Attack {
 
     /**
      * Set the description of the attack to a new value.
-     * 
+     *
      * @param description (String) the new description to set for the attack.
      */
     public void setDescription(String description) {
@@ -131,7 +139,7 @@ public class Attack {
 
     /**
      * Get the power of the attack.
-     * 
+     *
      * @return (int) the power of the attack.
      */
     public int getPower() {
@@ -140,7 +148,7 @@ public class Attack {
 
     /**
      * Set the power of the attack to a new value.
-     * 
+     *
      * @param power (int) the new power to set for the attack.
      */
     public void setPower(int power) {
@@ -149,7 +157,7 @@ public class Attack {
 
     /**
      * Get the effects of the attack.
-     * 
+     *
      * @return (Effect) the effect of the attack.
      */
     public List<Effect> getEffects() {
@@ -158,7 +166,7 @@ public class Attack {
 
     /**
      * Add an effect to the attack.
-     * 
+     *
      * @param effect (Effect) the new effect to set for the attack.
      */
     public void addEffect(Effect effect) {

@@ -1,7 +1,7 @@
 /**
  * File name : Stats.java
  * Description : Data class representing the stats of a bugemon.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 24 feb. 2026
  * @version 1.0
@@ -17,6 +17,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Stats {
+
     // Attributes
 
     @SerializedName("pv")
@@ -26,13 +27,13 @@ public class Stats {
     private int attack;
 
     private int defense;
-    
+
     private int initiative;
 
     // Constructor
     /**
      * Constructor for the Stats class, initializing all attributes.
-     * 
+     *
      * @param hp         (int) the hit points of the bugemon, representing its
      *                   health.
      * @param attack     (int) the attack stat of the bugemon, determining its
@@ -53,7 +54,7 @@ public class Stats {
 
     /**
      * Get the current HP of the bugemon.
-     * 
+     *
      * @return (int) the current HP of the bugemon.
      */
     public int getHp() {
@@ -62,7 +63,7 @@ public class Stats {
 
     /**
      * Set the HP of the bugemon to a new value.
-     * 
+     *
      * @param hp (int) the new HP value to set for the bugemon.
      */
     public void setHp(int hp) {
@@ -71,7 +72,7 @@ public class Stats {
 
     /**
      * Get the attack stat of the bugemon.
-     * 
+     *
      * @return (int) the attack stat of the bugemon.
      */
     public int getAttack() {
@@ -80,7 +81,7 @@ public class Stats {
 
     /**
      * Set the attack stat of the bugemon to a new value.
-     * 
+     *
      * @param attack (int) the new attack value to set for the bugemon.
      */
     public void setAttack(int attack) {
@@ -89,7 +90,7 @@ public class Stats {
 
     /**
      * Get the defense stat of the bugemon.
-     * 
+     *
      * @return (int) the defense stat of the bugemon.
      */
     public int getDefense() {
@@ -98,7 +99,7 @@ public class Stats {
 
     /**
      * Set the defense stat of the bugemon to a new value.
-     * 
+     *
      * @param defense (int) the new defense value to set for the bugemon.
      */
     public void setDefense(int defense) {
@@ -108,7 +109,7 @@ public class Stats {
     /**
      * Get the initiative stat of the bugemon.
      * in battle.
-     * 
+     *
      * @return (int) the initiative stat of the bugemon.
      */
     public int getInitiative() {
@@ -117,7 +118,7 @@ public class Stats {
 
     /**
      * Set the initiative stat of the bugemon to a new value.
-     * 
+     *
      * @param initiative (int) the new initiative value to set for the bugemon.
      */
     public void setInitiative(int initiative) {

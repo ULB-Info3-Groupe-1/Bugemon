@@ -7,18 +7,18 @@ import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
  * This class represents a team of up to 6 Bugemons
  */
 public class BugemonTeam {
+
     // Attributes
 
     private final int MAX_SIZE = 6;
     private final Bugemon[] team = new Bugemon[MAX_SIZE];
     private int size = 0;
 
-    public BugemonTeam() {
-    }
+    public BugemonTeam() {}
 
     /**
      * Returns the number of Bugemons in the team
-     * 
+     *
      * @return (int) the number of Bugemons currently in the team
      */
     public int size() {
@@ -28,7 +28,7 @@ public class BugemonTeam {
     /**
      * Checks if the team is full (i.e., has 6 Bugemons) or empty (i.e., has 0
      * Bugemons)
-     * 
+     *
      * @return (boolean) true if the team is full, false otherwise; true if the team
      *         is empty, false otherwise
      */
@@ -38,7 +38,7 @@ public class BugemonTeam {
 
     /**
      * Checks if the team is empty (i.e., has 0 Bugemons)
-     * 
+     *
      * @return (boolean) true if the team is empty, false otherwise
      */
     public boolean isEmpty() {
@@ -49,7 +49,7 @@ public class BugemonTeam {
      * Adds a Bugemon to the team if there is space and it is not already in the
      * team. If the
      * team is full or the Bugemon is already in the team, an exception is thrown.
-     * 
+     *
      * @param bugemon (Bugemon) the Bugemon to be added to the team
      */
     public void addBugemon(Bugemon bugemon) {
@@ -58,7 +58,9 @@ public class BugemonTeam {
         }
 
         if (this.isDuplicate(bugemon)) {
-            throw new BugemonAlreadyExistsException("This Bugemon already in the team!");
+            throw new BugemonAlreadyExistsException(
+                "This Bugemon already in the team!"
+            );
         }
 
         for (int i = 0; i < MAX_SIZE; i++) {
@@ -74,7 +76,7 @@ public class BugemonTeam {
     /**
      * Removes a Bugemon from the team if it is in the team. If the team is empty or
      * the Bugemon is not in the team, an exception is thrown.
-     * 
+     *
      * @param bugemon (Bugemon) the Bugemon to be removed from the team
      */
     public void removeBugemon(Bugemon bugemon) {
@@ -101,7 +103,7 @@ public class BugemonTeam {
      * Removes a Bugemon from the team at the specified index if it is in the team.
      * If the
      * team is empty.
-     * 
+     *
      * @param index (int) the index of the Bugemon to be removed from the team
      */
     public void removeBugemon(int index) {
@@ -121,7 +123,7 @@ public class BugemonTeam {
 
     /**
      * Returns a copy of the team array
-     * 
+     *
      * @return (Bugemon[]) a copy of the team array
      */
     public Bugemon[] getTeam() {
@@ -131,7 +133,7 @@ public class BugemonTeam {
     /**
      * Returns the Bugemon at the specified index if it is in the team. If the index
      * is out of bounds or the slot is empty, an exception is thrown.
-     * 
+     *
      * @param index (int) the index of the Bugemon to be returned
      * @return (Bugemon) the Bugemon at the specified index
      */
@@ -148,7 +150,7 @@ public class BugemonTeam {
 
     /**
      * Checks if a Bugemon with the same ID is already in the team
-     * 
+     *
      * @param bugemon (Bugemon) the Bugemon to be checked for duplication
      * @return (boolean) true if a Bugemon with the same ID is already in the team,
      *         false otherwise
@@ -157,8 +159,7 @@ public class BugemonTeam {
         // TODO : @Romain override equals and hash method in Bugemon
 
         for (Bugemon b : this.team) {
-            if (b != null && bugemon.getId().equals(b.getId()))
-                return true;
+            if (b != null && bugemon.getId().equals(b.getId())) return true;
         }
         return false;
     }

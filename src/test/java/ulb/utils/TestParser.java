@@ -2,18 +2,19 @@ package ulb.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import org.junit.Test;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import org.junit.Test;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Stats;
 import ulb.models.bugemon.Effect;
+import ulb.models.bugemon.EffectType;
+import ulb.models.bugemon.Stats;
 
 public class TestParser {
 
@@ -21,7 +22,9 @@ public class TestParser {
 
     @Test
     public void testAttackParsing() {
-        AttackList attackList = Parser.parseAttacks(dirPath.resolve("attaques.json"));
+        AttackList attackList = Parser.parseAttacks(
+            dirPath.resolve("attaques.json")
+        );
 
         List<Attack> attacks = attackList.getAttacks();
 
@@ -34,13 +37,15 @@ public class TestParser {
 
         // check effects
         List<Effect> effects = attacks.get(2).getEffects();
-        assertEquals(effects.get(0).getType(), "stat_modifier");
+        assertEquals(effects.get(0).getTypeEffect(), EffectType.STAT_MODIFIER);
         assertEquals(effects.get(0).getModifier(), 5);
     }
 
     @Test
     public void testBugemonParsing() {
-        AttackList attackList = Parser.parseAttacks(dirPath.resolve("attaques.json"));
+        AttackList attackList = Parser.parseAttacks(
+            dirPath.resolve("attaques.json")
+        );
 
         List<Attack> attacks = attackList.getAttacks();
         Map<String, Attack> attacksMap = new HashMap<>();
@@ -49,7 +54,10 @@ public class TestParser {
             attacksMap.put(a.getId(), a);
         }
 
-        List<Bugemon> bugemonsList = Parser.parseBugemons(dirPath.resolve("bugemons.json"), attacksMap);
+        List<Bugemon> bugemonsList = Parser.parseBugemons(
+            dirPath.resolve("bugemons.json"),
+            attacksMap
+        );
 
         // check if a list has been returned
         assertNotNull(bugemonsList);

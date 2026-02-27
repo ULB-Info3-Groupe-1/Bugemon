@@ -1,20 +1,19 @@
 package ulb.utils;
 
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 
 public class TestUtilsBugemonTeam {
 
-    private TestUtilsBugemonTeam() {
-    }
+    private TestUtilsBugemonTeam() {}
 
     public static BugemonTeam createDefaultBugemonTeam() {
         Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1"),
-                expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2"),
-                expectedBugemon3 = TestUtilsBugemons.createDefaultBugemon("3"),
-                expectedBugemon4 = TestUtilsBugemons.createDefaultBugemon("4"),
-                expectedBugemon5 = TestUtilsBugemons.createDefaultBugemon("5"),
-                expectedBugemon6 = TestUtilsBugemons.createDefaultBugemon("6");
+            expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2"),
+            expectedBugemon3 = TestUtilsBugemons.createDefaultBugemon("3"),
+            expectedBugemon4 = TestUtilsBugemons.createDefaultBugemon("4"),
+            expectedBugemon5 = TestUtilsBugemons.createDefaultBugemon("5"),
+            expectedBugemon6 = TestUtilsBugemons.createDefaultBugemon("6");
         BugemonTeam bugemonTeam = new BugemonTeam();
         bugemonTeam.addBugemon(expectedBugemon1);
         bugemonTeam.addBugemon(expectedBugemon2);
@@ -24,5 +23,4 @@ public class TestUtilsBugemonTeam {
         bugemonTeam.addBugemon(expectedBugemon6);
         return bugemonTeam;
     }
-
 }
