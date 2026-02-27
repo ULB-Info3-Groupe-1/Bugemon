@@ -1,3 +1,13 @@
+/**
+ * File name : BugemonTeam.java
+ * Description : Data class representing a team of Bugemons
+ * 
+ * @author Brisbois Philippe
+ * @coauthor Morbee Matteo
+ * @date 27 feb. 2026
+ * @version 1.1
+ */
+
 package ulb.models.bugemon_team;
 
 import ulb.models.bugemon.Bugemon;
@@ -145,6 +155,21 @@ public class BugemonTeam {
         }
 
         return this.team[index];
+    }
+
+    /**
+     * Returns the select Bugemon with the given ID if it's in the team.
+     * 
+     * @param id (String) the ID of the Bugemon to be returned
+     * @return (Bugemon) the Bugemon with the given ID
+     */
+    public Bugemon getBugemonById(String id) {
+        for (Bugemon bugemon : this.team) {
+            if (bugemon != null && bugemon.getId().equals(id)) {
+                return bugemon;
+            }
+        }
+        throw new IllegalArgumentException("No Bugemon with the given ID found in the team!");
     }
 
     /**
