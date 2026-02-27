@@ -16,12 +16,6 @@ import com.google.gson.annotations.SerializedName;
  * This class represents a bugemon, which has an ID, name, type, and stats.
  */
 public class Bugemon implements BugemonDTO {
-    // Enums
-
-    // Enum for the type of the bugemon
-    public enum Type {
-        FLORA, AQUA, PYRO, LITHO
-    }
 
     // Attributes
 
@@ -114,7 +108,6 @@ public class Bugemon implements BugemonDTO {
      * 
      * @return (String) the unique identifier of the bugemon.
      */
-    @Override
     public String getId() {
         return id;
     }
@@ -169,7 +162,6 @@ public class Bugemon implements BugemonDTO {
      * 
      * @return (String) the sprite link of the bugemon.
      */
-    @Override
     public String getSpriteURL() {
         return sprite;
     }

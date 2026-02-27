@@ -27,7 +27,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
 
         String id = obj.get("id").getAsString();
         String name = obj.get("nom").getAsString();
-        Bugemon.Type type = Bugemon.Type.valueOf(obj.get("type").getAsString().toUpperCase());
+        ulb.models.bugemon.Type type = context.deserialize(obj.get("type"), ulb.models.bugemon.Type.class);
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 

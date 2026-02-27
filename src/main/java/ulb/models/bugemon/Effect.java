@@ -18,8 +18,6 @@ public class Effect {
     // Attributes
 
     private String type;
-
-    @SerializedName("cible")
     private String target;
 
     private String stat;

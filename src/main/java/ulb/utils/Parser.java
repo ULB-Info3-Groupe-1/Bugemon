@@ -20,6 +20,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.reflect.TypeToken;
 
 public class Parser {
@@ -44,26 +46,44 @@ public class Parser {
         List<Bugemon> bugemons = parseBugemons(bugemonPath, attacksMap);
     }
 
+    static class TypeDeserializer implements JsonDeserializer<ulb.models.bugemon.Type> {
+
+        @Override
+        public ulb.models.bugemon.Type deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+                JsonDeserializationContext context) {
+            String value = json.getAsString();
+            return ulb.models.bugemon.Type.valueOf(value.toUpperCase());
+        }
+    }
+
     static AttackList parseAttacks(Path fileName) {
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(
+                        ulb.models.bugemon.Type.class,
+                        new TypeDeserializer())
+                .create();
 
         try (FileReader reader = new FileReader(fileName.toFile())) {
 
-            Type destType = new TypeToken<AttackList>() {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonArray attacksArray = root.getAsJsonArray("attaques");
+
+            Type destType = new TypeToken<List<Attack>>() {
             }.getType();
 
-            AttackList attacks = gson.fromJson(reader, destType);
+            List<Attack> attacks = gson.fromJson(attacksArray, destType);
 
             reader.close();
 
-            return attacks;
+            return new AttackList(attacks);
 
         } catch (Exception e) {
             // TODO: Use of a Logger or external error management ?
             String errorMessage = "Error when trying to open %s";
             String errorOutput = String.format(errorMessage, fileName);
             System.out.println(errorOutput);
+            e.printStackTrace();
         }
         return null;
     }
@@ -74,6 +94,9 @@ public class Parser {
                 .registerTypeAdapter(
                         Bugemon.class,
                         new BugemonDeserializer(attackMap))
+                .registerTypeAdapter(
+                        ulb.models.bugemon.Type.class,
+                        new TypeDeserializer())
                 .create();
 
         try (FileReader reader = new FileReader(fileName.toFile())) {

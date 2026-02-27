@@ -16,7 +16,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Stats;
-import ulb.models.bugemon.Bugemon.Type;
+import ulb.models.bugemon.Type;
 import ulb.models.bugemon.Effect;
 
 public class TestParser {
@@ -34,7 +34,7 @@ public class TestParser {
 
         // check if the attacks were parsed correctly
         assertEquals(attacks.get(0).getId(), "fouet_liane");
-        assertEquals(attacks.get(1).getType(), "Flora");
+        assertEquals(attacks.get(1).getType(), Type.FLORA);
 
         // check effects
         List<Effect> effects = attacks.get(2).getEffects();
@@ -60,6 +60,7 @@ public class TestParser {
 
         // check attributes
         assertEquals(bugemonsList.get(0).getName(), "Florachu");
+        System.out.println(bugemonsList.get(1).getType());
         assertEquals(bugemonsList.get(1).getType(), Type.FLORA);
 
         // check attacks

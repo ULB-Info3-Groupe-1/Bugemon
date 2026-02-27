@@ -23,9 +23,7 @@ public class Attack {
 
     @SerializedName("nom")
     private String name;
-
-    private String type;
-
+    private Type type;
     private String description;
 
     @SerializedName("puissance")
@@ -40,7 +38,7 @@ public class Attack {
      * 
      * @param id          (String) the unique identifier for the attack.
      * @param name        (String) the name of the attack.
-     * @param type        (String) the type of the attack.
+     * @param type        (Type) the type of the attack.
      * @param description (String) a description of the attack's effects and
      *                    mechanics.
      * @param power       (int) the power of the attack, determining its damage
@@ -48,7 +46,7 @@ public class Attack {
      * @param effects      (Effect) the effects of the attack, which can apply
      *                    status changes or stat modifications to the target.
      */
-    public Attack(String id, String name, String type, String description, int power, List<Effect> effects) {
+    public Attack(String id, String name, Type type, String description, int power, List<Effect> effects) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -98,18 +96,18 @@ public class Attack {
     /**
      * Get the type of the attack.
      * 
-     * @return (String) the type of the attack.
+     * @return (Type) the type of the attack.
      */
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
     /**
      * Set the type of the attack to a new value.
      * 
-     * @param type (String) the new type to set for the attack.
+     * @param type (Type) the new type to set for the attack.
      */
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
