@@ -1,0 +1,14 @@
+.progress-bar {
+    -fx-accent: #278A27;
+    -fx-control-inner-background: #8A0000;
+}
+
+.bugemon-name {
+    -fx-font-style: bold;
+    -fx-font-size: 18px;
+}
+
+.bugemon-type {
+    -fx-font-style: italic;
+    -fx-font-size: 14px;
+}

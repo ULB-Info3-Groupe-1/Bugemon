@@ -36,6 +36,13 @@ public abstract class View {
     }
 
     /**
+     * Returns the root pane of this view.
+     */
+    public Pane getRoot() {
+        return this.root;
+    }
+
+    /**
      * Displays this view on the given stage.
      *
      * @param stage JavaFX stage where the view is shown

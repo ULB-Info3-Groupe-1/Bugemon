@@ -1,0 +1,29 @@
+package ulb.controllers;
+
+import java.io.IOException;
+
+import ulb.controllers.MetaController.Window;
+import ulb.views.CombatDefeatView;
+
+public class CombatDefeatController extends Controller<CombatDefeatView> {
+
+    public CombatDefeatController(MetaController metaController) throws IOException {
+        super(metaController, new CombatDefeatView());
+        this.view.setController(this);
+    }
+
+    /**
+     * Callback invoked when the user presses the retry button.
+     */
+    public void retry() {
+        // TODO: impl
+    }
+
+    /**
+     * Callback invoked when the user switches back to the main menu.
+     */
+    public void backToMainMenu() {
+        this.metaController.switchTo(Window.MAIN_MENU);
+    }
+
+}
