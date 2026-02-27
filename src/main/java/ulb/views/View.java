@@ -35,6 +35,9 @@ public abstract class View {
 
         this.root = loader.load();
         this.scene = new Scene(root);
+        this.root.prefWidthProperty().bind(this.scene.widthProperty());
+        this.root.prefHeightProperty().bind(this.scene.heightProperty());
+
     }
 
     /**
@@ -45,8 +48,7 @@ public abstract class View {
     public void show(Stage stage) {
         stage.setScene(this.scene);
         stage.setTitle(this.getTitle());
-        stage.setMinHeight(500);
-        stage.setMinWidth(800);
+        stage.setMaximized(true);
         stage.show();
     }
 

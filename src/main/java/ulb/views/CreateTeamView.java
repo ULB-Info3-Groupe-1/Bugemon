@@ -22,6 +22,9 @@ import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
  */
 public class CreateTeamView extends View {
 
+    private final static String FXML_PATH = "/fxml/CreateTeam.fxml";
+    private final String TITLE = "Sélectionnez votre équipe";
+
     private CreateTeamController controller;
 
     // FXML elements
@@ -55,7 +58,7 @@ public class CreateTeamView extends View {
      * @throws IOException if the FXML file cannot be loaded
      */
     public CreateTeamView() throws IOException {
-        super("/fxml/CreateTeam.fxml");
+        super(FXML_PATH);
         this.controller = null;
         for (Node node : listPane.getChildren()) {
             if (node instanceof ImageView imageView) {
@@ -67,7 +70,7 @@ public class CreateTeamView extends View {
                         try {
                             this.controller.addToTeam(dto.getId());
                         } catch (BugemonAlreadyExistsException exception) {
-                            // TODO: Ask the client if and how we should signal this exception to the user
+                            this.wrongSelect((ImageView) e.getSource());
                         }
                     }
                 });
@@ -84,7 +87,7 @@ public class CreateTeamView extends View {
                         try {
                             this.controller.removeFromTeam(dto.getId());
                         } catch (IllegalStateException exception) {
-                            // TODO: Ask the client if and how we should signal this exception to the user
+                            this.wrongSelect((ImageView) e.getSource());
                         }
                     }
                 });
@@ -105,7 +108,7 @@ public class CreateTeamView extends View {
 
     @Override
     protected String getTitle() {
-        return "Create Team";
+        return this.TITLE;
     }
 
     protected void wrongSelect(ImageView iv) {
