@@ -22,44 +22,44 @@ import ulb.models.bugemon.Effect;
 public class TestAttackList {
     @Test
     public void testAttackListSize() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", ulb.models.bugemon.Type.FLORA, "", 30, effect);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", ulb.models.bugemon.Type.FLORA, "", 20, effect);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", "Flora", "", 40, effect);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", ulb.models.bugemon.Type.FLORA, "", 40, effect);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().size() == 3);
     }
 
     @Test
     public void testShouldGetAttack1InCorrectOrder() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", ulb.models.bugemon.Type.FLORA, "", 30, effect);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", ulb.models.bugemon.Type.FLORA, "", 20, effect);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", "Flora", "", 40, effect);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", ulb.models.bugemon.Type.FLORA, "", 40, effect);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().get(0) == attack1);
     }
 
     @Test
     public void testShouldGetAttack2InCorrectOrder() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", ulb.models.bugemon.Type.FLORA, "", 30, effect);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", ulb.models.bugemon.Type.FLORA, "", 20, effect);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", "Flora", "", 40, effect);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", ulb.models.bugemon.Type.FLORA, "", 40, effect);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().get(1) == attack2);
     }
 
     @Test
     public void testShouldGetAttack3InCorrectOrder() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", ulb.models.bugemon.Type.FLORA, "", 30, effect);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", ulb.models.bugemon.Type.FLORA, "", 20, effect);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", "Flora", "", 40, effect);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", ulb.models.bugemon.Type.FLORA, "", 40, effect);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().get(2) == attack3);
     }

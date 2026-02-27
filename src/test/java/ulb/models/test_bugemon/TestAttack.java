@@ -19,49 +19,49 @@ import ulb.models.bugemon.Effect;
 public class TestAttack {
     @Test
     public void testShouldGetIdAndSetId() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack = new Attack("TestAttack", "TestAttack", "Flora", "", 30, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack = new Attack("TestAttack", "TestAttack", ulb.models.bugemon.Type.FLORA, "", 30, effect);
         attack.setId("NewTestAttack");
         assertTrue(attack.getId().equals("NewTestAttack"));
     }
 
     @Test
     public void testShouldGetNameAndSetName() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack = new Attack("TestAttack", "TestAttack", "Flora", "", 30, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack = new Attack("TestAttack", "TestAttack", ulb.models.bugemon.Type.FLORA, "", 30, effect);
         attack.setName("NewTestAttack");
         assertTrue(attack.getName().equals("NewTestAttack"));
     }
 
     @Test
     public void testShouldGetTypeAndSetType() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack = new Attack("TestAttack", "TestAttack", "Flora", "", 30, effect);
-        attack.setType("Aqua");
-        assertTrue(attack.getType().equals("Aqua"));
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack = new Attack("TestAttack", "TestAttack", ulb.models.bugemon.Type.FLORA, "", 30, effect);
+        attack.setType(ulb.models.bugemon.Type.AQUA);
+        assertTrue(attack.getType().equals(ulb.models.bugemon.Type.AQUA));
     }
 
     @Test
     public void testShouldGetDescriptionAndSetDescription() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack = new Attack("TestAttack", "TestAttack", "Flora", "", 30, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack = new Attack("TestAttack", "TestAttack", ulb.models.bugemon.Type.FLORA, "", 30, effect);
         attack.setDescription("New description");
         assertTrue(attack.getDescription().equals("New description"));
     }
 
     @Test
     public void testShouldGetPowerAndSetPower() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack = new Attack("TestAttack", "TestAttack", "Flora", "", 30, effect);
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack = new Attack("TestAttack", "TestAttack", ulb.models.bugemon.Type.FLORA, "", 30, effect);
         attack.setPower(40);
         assertTrue(attack.getPower() == 40);
     }
 
     @Test
     public void testShouldGetEffectAndSetEffect() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        Attack attack = new Attack("TestAttack", "TestAttack", "Flora", "", 30, effect);
-        Effect newEffect = new Effect("NewTestEffect", "NewTestEffect", "Aqua", 20, "2 turns");
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        Attack attack = new Attack("TestAttack", "TestAttack", ulb.models.bugemon.Type.FLORA, "", 30, effect);
+        Effect newEffect = new Effect(ulb.models.bugemon.Type.AQUA, "NewTestEffect", "Aqua", 20, "2 turns");
         attack.setEffect(newEffect);
         assertTrue(attack.getEffect() == newEffect);
     }

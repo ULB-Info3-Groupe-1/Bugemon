@@ -14,13 +14,6 @@ package ulb.models.bugemon;
  */
 public class Bugemon {
 
-    // Enums
-
-    // Enum for the type of the bugemon
-    public enum Type {
-        FLORA, AQUA, PYRO, LITHO
-    }
-
     // Attributes
 
     private String id;

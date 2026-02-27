@@ -15,7 +15,7 @@ package ulb.models.bugemon;
 public class Effect {
     // Attributes
 
-    private String type;
+    private Type type;
     private String target;
     private String stat;
     private int modifier;
@@ -26,13 +26,13 @@ public class Effect {
     /**
      * Constructor for the Effect class, initializing all attributes.
      * 
-     * @param type     (String) the type of the effect.
+     * @param type     (Type) the type of the effect.
      * @param target   (String) the target of the effect.
      * @param stat     (String) the stat affected by the effect.
      * @param modifier (int) the modifier value of the effect.
      * @param duration (String) the duration of the effect.
      */
-    public Effect(String type, String target, String stat, int modifier, String duration) {
+    public Effect(Type type, String target, String stat, int modifier, String duration) {
         this.type = type;
         this.target = target;
         this.stat = stat;
@@ -45,18 +45,18 @@ public class Effect {
     /**
      * Get the type of the effect.
      * 
-     * @return (String) the type of the effect
+     * @return (Type) the type of the effect
      */
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
     /**
      * Set the type of the effect to a new value.
      * 
-     * @param type (String) the new type to set for the effect
+     * @param type (Type) the new type to set for the effect
      */
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

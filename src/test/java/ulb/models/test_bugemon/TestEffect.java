@@ -18,35 +18,35 @@ import ulb.models.bugemon.Effect;
 public class TestEffect {
     @Test
     public void testShouldGetTypeAndSetType() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
-        effect.setType("NewTestEffect");
-        assertTrue(effect.getType().equals("NewTestEffect"));
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
+        effect.setType(ulb.models.bugemon.Type.AQUA);
+        assertTrue(effect.getType().equals(ulb.models.bugemon.Type.AQUA));
     }
 
     @Test
-    public void testShouldGetTargerAndSetTarger() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
+    public void testShouldGetTargetAndSetTarget() {
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
         effect.setTarget("NewTestEffect");
         assertTrue(effect.getTarget().equals("NewTestEffect"));
     }
 
     @Test
     public void testShouldGetStatAndSetStat() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
         effect.setStat("Aqua");
         assertTrue(effect.getStat().equals("Aqua"));
     }
 
     @Test
     public void testShouldGetDurationAndSetDuration() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
         effect.setDuration("2 turns");
         assertTrue(effect.getDuration().equals("2 turns"));
     }
 
     @Test
     public void testShouldGetModifierAndSetModifier() {
-        Effect effect = new Effect("TestEffect", "TestEffect", "Flora", 10, "1 turn");
+        Effect effect = new Effect(ulb.models.bugemon.Type.FLORA, "TestEffect", "Flora", 10, "1 turn");
         effect.setModifier(20);
         assertTrue(effect.getModifier() == 20);
     }
