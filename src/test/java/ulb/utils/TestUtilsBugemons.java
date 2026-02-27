@@ -8,6 +8,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectType;
 import ulb.models.bugemon.Stats;
+import ulb.models.bugemon_team.BugemonTeam;
 
 public final class TestUtilsBugemons {
 
@@ -50,5 +51,21 @@ public final class TestUtilsBugemons {
             attackList,
             false
         );
+    }
+
+    public static List<Bugemon> createDefaultBugemons(int count) {
+        List<Bugemon> bugemons = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            bugemons.add(createDefaultBugemon(String.valueOf(i)));
+        }
+        return bugemons;
+    }
+
+    public static BugemonTeam createDefaultTeam(int size) {
+        BugemonTeam team = new BugemonTeam();
+        for (Bugemon bugemon : createDefaultBugemons(size)) {
+            team.addBugemon(bugemon);
+        }
+        return team;
     }
 }
