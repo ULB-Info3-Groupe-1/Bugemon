@@ -9,6 +9,8 @@
 
 package ulb.models.bugemon;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Class representing an effect that can be applied to a bugemon during battle.
  */
@@ -16,9 +18,15 @@ public class Effect {
     // Attributes
 
     private String type;
+
+    @SerializedName("cible")
     private String target;
+
     private String stat;
+
+    @SerializedName("modificateur")
     private int modifier;
+
     private String duration;
 
     // Constructor

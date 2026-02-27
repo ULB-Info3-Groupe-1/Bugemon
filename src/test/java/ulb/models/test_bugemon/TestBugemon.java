@@ -12,6 +12,8 @@ package ulb.models.test_bugemon;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -50,8 +52,10 @@ public class TestBugemon {
                 Effect effect = new Effect("TestEffect", "TestEffect", "Flora",
                                 10,
                                 "1 turn");
-                Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effect);
-                Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effect);
+                List<Effect> effectList = new ArrayList<>();
+                effectList.add(effect);
+                Attack attack1 = new Attack("TestAttack1", "TestAttack1", "Flora", "", 30, effectList);
+                Attack attack2 = new Attack("TestAttack2", "TestAttack2", "Flora", "", 20, effectList);
                 AttackList attackList = new AttackList(List.of(attack1, attack2));
                 Bugemon bugemon = new Bugemon("TestBugemon1", "TestBugemon1", Bugemon.Type.FLORA, "testSprite", stats,
                                 attackList, false);

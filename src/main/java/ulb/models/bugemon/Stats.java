@@ -9,6 +9,10 @@
 
 package ulb.models.bugemon;
 
+import java.io.Serial;
+
+import com.google.gson.annotations.SerializedName;
+
 /**
  * This class represents the stats of a bugemon, including HP, attack, defense,
  * and initiative.
@@ -17,9 +21,14 @@ package ulb.models.bugemon;
 public class Stats {
     // Attributes
 
+    @SerializedName("pv")
     private int hp;
+
+    @SerializedName("attaque")
     private int attack;
+
     private int defense;
+    
     private int initiative;
 
     // Constructor
