@@ -23,7 +23,6 @@ import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 public class CreateTeamView extends View {
 
     private final static String FXML_PATH = "/fxml/CreateTeam.fxml";
-    private final String TITLE = "Sélectionnez votre équipe";
 
     private CreateTeamController controller;
 
@@ -104,11 +103,6 @@ public class CreateTeamView extends View {
      */
     public void setController(CreateTeamController controller) {
         this.controller = controller;
-    }
-
-    @Override
-    protected String getTitle() {
-        return this.TITLE;
     }
 
     protected void wrongSelect(ImageView iv) {

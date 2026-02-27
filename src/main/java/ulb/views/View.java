@@ -16,6 +16,8 @@ import javafx.stage.Stage;
  */
 public abstract class View {
 
+    private String STAGE_TITLE = "Bugemon";
+
     protected final Pane root;
     protected final Scene scene;
 
@@ -47,16 +49,9 @@ public abstract class View {
      */
     public void show(Stage stage) {
         stage.setScene(this.scene);
-        stage.setTitle(this.getTitle());
         stage.setMaximized(true);
+        stage.setTitle(STAGE_TITLE);
         stage.show();
     }
-
-    /**
-     * Returns the title of the window for this view.
-     *
-     * @return window title
-     */
-    protected abstract String getTitle();
 
 }

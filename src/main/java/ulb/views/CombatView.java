@@ -41,9 +41,4 @@ public class CombatView extends View {
         this.controller = controller;
     }
 
-    @Override
-    protected String getTitle() {
-        return "Combat";
-    }
-
 }

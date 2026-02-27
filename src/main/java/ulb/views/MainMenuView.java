@@ -38,9 +38,4 @@ public class MainMenuView extends View {
         this.controller = controller;
     }
 
-    @Override
-    protected String getTitle() {
-        return "Main Menu";
-    }
-
 }
