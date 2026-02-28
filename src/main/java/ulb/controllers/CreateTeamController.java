@@ -55,13 +55,11 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public void removeFromTeam(String bugemonId) {
         bugemonTeam.removeBugemon(bugemonId);
         this.updateBugemonsTeamView();
+        this.updateAllBugemonsView();
     }
 
     public boolean checkBugemonInTeam(String bugemonId) {
-        // TODO: impl this method
-        // return (this.contains(bugemonId));
-
-        return true; // FIXME
+        return (this.bugemonTeam.contains(bugemonId));
     }
 
 }
