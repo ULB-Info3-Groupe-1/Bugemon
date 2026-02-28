@@ -7,6 +7,8 @@ public class TestUtilsTrainer {
     private TestUtilsTrainer() {}
 
     public static Trainer createDefaultTrainer() {
-        return new Trainer(TestUtilsBugemonTeam.createDefaultBugemonTeam());
+        return new Trainer(
+            TestUtilsBugemonTeam.createDefaultBugemonTeam(false)
+        );
     }
 }

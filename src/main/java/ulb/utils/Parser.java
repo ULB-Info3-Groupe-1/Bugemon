@@ -19,6 +19,7 @@ import java.util.Map;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.EffectType;
 
 public class Parser {
 
@@ -54,9 +55,25 @@ public class Parser {
         }
     }
 
+    static class EffectTypeDeserializer
+        implements JsonDeserializer<ulb.models.bugemon.EffectType>
+    {
+
+        @Override
+        public ulb.models.bugemon.EffectType deserialize(
+            JsonElement json,
+            java.lang.reflect.Type typeOfT,
+            JsonDeserializationContext context
+        ) {
+            String value = json.getAsString();
+            return ulb.models.bugemon.EffectType.valueOf(value.toUpperCase());
+        }
+    }
+
     static AttackList parseAttacks(Path fileName) {
         Gson gson = new GsonBuilder()
             .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
+            .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
             .create();
 
         try (FileReader reader = new FileReader(fileName.toFile())) {
