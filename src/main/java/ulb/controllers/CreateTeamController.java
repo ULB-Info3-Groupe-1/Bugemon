@@ -28,6 +28,18 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.updateBugemonsTeamView();
     }
 
+    public void onBugemonClicked(String id) {
+        if (this.bugemonTeam.contains(id)) {
+            this.bugemonTeam.removeBugemon(id);
+        } else {
+            Bugemon bugemon = allBugemonsById.get(id);
+            this.bugemonTeam.addBugemon(bugemon);
+        }
+
+        this.updateBugemonsTeamView();
+        this.updateAllBugemonsView();
+    }
+
     private void updateAllBugemonsView() {
         List<BugemonDTO> bugemonList = new ArrayList<>();
         bugemonList.addAll(this.allBugemonsById.values());
@@ -42,20 +54,6 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     public void startCombat() {
         this.metaController.switchTo(Window.COMBAT);
-    }
-
-    public void addToTeam(String bugemonId) {
-        Bugemon bugemon = allBugemonsById.get(bugemonId);
-        bugemonTeam.addBugemon(bugemon);
-
-        this.updateBugemonsTeamView();
-        this.updateAllBugemonsView();
-    }
-
-    public void removeFromTeam(String bugemonId) {
-        bugemonTeam.removeBugemon(bugemonId);
-        this.updateBugemonsTeamView();
-        this.updateAllBugemonsView();
     }
 
     public boolean checkBugemonInTeam(String bugemonId) {

@@ -67,7 +67,7 @@ public class CreateTeamView extends View {
                     BugemonDTO dto = (BugemonDTO) imageView.getUserData();
                     if (dto != null) {
                         try {
-                            this.controller.addToTeam(dto.getId());
+                            this.controller.onBugemonClicked(dto.getId());
                         } catch (BugemonAlreadyExistsException exception) {
                         }
                     }
@@ -78,16 +78,6 @@ public class CreateTeamView extends View {
         for (Node node : teamPane.getChildren()) {
             if (node instanceof ImageView imageView) {
                 this.teamBugemons.add(imageView);
-
-                imageView.setOnMouseClicked(e -> {
-                    BugemonDTO dto = (BugemonDTO) imageView.getUserData();
-                    if (dto != null) {
-                        try {
-                            this.controller.removeFromTeam(dto.getId());
-                        } catch (IllegalStateException exception) {
-                        }
-                    }
-                });
             }
         }
 
