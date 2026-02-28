@@ -35,7 +35,7 @@ public class Trainer {
      */
     public Trainer(BugemonTeam team) {
         this.team = team;
-        this.currentBugemon = team.getTeam()[0];
+        this.currentBugemon = team.getTeam().get(0);
     }
 
     // Methods
