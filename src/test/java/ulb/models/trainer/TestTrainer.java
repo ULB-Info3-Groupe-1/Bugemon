@@ -19,19 +19,17 @@ import ulb.utils.TestUtilsBugemonTeam;
 
 public class TestTrainer {
 
-    private void killBugemon(BugemonTeam team, int index) {
-        team
-            .getBugemon(index)
-            .takeDamage(team.getBugemon(index).getStats().getHp());
+    private void killBugemon(BugemonTeam team, String id) {
+        team.getBugemon(id).takeDamage(team.getBugemon(id).getStats().getHp());
     }
 
     @Test
     public void testTeamStatus() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        killBugemon(team, 2);
+        killBugemon(team, "2");
         Trainer trainer = new Trainer(team);
         Map<Bugemon, Boolean> expectedStatus = trainer.teamStatus();
-        assertFalse(expectedStatus.get(team.getBugemon(2)));
+        assertFalse(expectedStatus.get(team.getBugemon("2")));
     }
 
     @Test

@@ -22,10 +22,8 @@ public class TestUtilsBugemonTeam {
         bugemonTeam.addBugemon(expectedBugemon5);
         bugemonTeam.addBugemon(expectedBugemon6);
         if (isDefeated) {
-            for (int i = 0; i < 6; i++) {
-                bugemonTeam
-                    .getBugemon(i)
-                    .takeDamage(bugemonTeam.getBugemon(i).getStats().getHp());
+            for (Integer i = 0; i < 6; i++) {
+                bugemonTeam.getBugemon(i.toString()).takeDamage(bugemonTeam.getBugemon(i.toString()).getStats().getHp());
             }
         }
         return bugemonTeam;
