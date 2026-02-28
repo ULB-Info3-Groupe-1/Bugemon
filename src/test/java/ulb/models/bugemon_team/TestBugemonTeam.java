@@ -1,11 +1,23 @@
 package ulb.models.bugemon_team;
 
+/**
+* File name : TestBugemonTeam.java
+* Description : Data class representing a team of Bugemons
+*
+* @author Brisbois Philippe
+* @coauthor Morbee Matteo
+* @date 27 feb. 2026
+* @version 1.1
+*/
+
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.TestUtilsBugemons;
 import static org.junit.Assert.*;
+
+import java.util.List;
 
 public class TestBugemonTeam {
 
@@ -15,39 +27,7 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
 
-        assertEquals(expectedBugemon, team.getBugemon(0));
-    }
-
-    @Test
-    public void testIndexBugemon() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
-        Bugemon expectedBugemon3 = TestUtilsBugemons.createDefaultBugemon("3");
-
-        BugemonTeam team = new BugemonTeam();
-
-        team.addBugemon(expectedBugemon1);
-        team.addBugemon(expectedBugemon2);
-        team.addBugemon(expectedBugemon3);
-
-        assertEquals(expectedBugemon1, team.getBugemon(0));
-        assertEquals(expectedBugemon2, team.getBugemon(1));
-        assertEquals(expectedBugemon3, team.getBugemon(2));
-    }
-
-    @Test
-    public void testIndexOutOfBound() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon1);
-
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            team.removeBugemon(6);
-        });
-
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            team.getBugemon(6);
-        });
+        assertEquals(expectedBugemon, team.getBugemon("1"));
     }
 
     @Test
@@ -57,11 +37,11 @@ public class TestBugemonTeam {
         team.addBugemon(expectedBugemon1);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            team.removeBugemon(1);
+            team.removeBugemon("0");
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
-            team.getBugemon(1);
+            team.getBugemon("0");
         });
     }
 
@@ -70,7 +50,7 @@ public class TestBugemonTeam {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
-        Bugemon bugemon = team.getBugemon(0);
+        Bugemon bugemon = team.getBugemon("1");
 
         assertEquals(1, team.size());
         assertEquals(expectedBugemon, bugemon);
@@ -88,7 +68,7 @@ public class TestBugemonTeam {
         assertEquals(0, team.size());
 
         team.addBugemon(expectedBugemon1);
-        team.removeBugemon(0);
+        team.removeBugemon("1");
 
         assertEquals(0, team.size());
 
@@ -116,55 +96,31 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
 
         assertThrows(IllegalStateException.class, () -> {
-            team.removeBugemon(1);
+            team.removeBugemon("1");
         });
     }
 
     @Test
     public void testTeamSize() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
-        Bugemon expectedBugemon3 = TestUtilsBugemons.createDefaultBugemon("3");
-        Bugemon expectedBugemon4 = TestUtilsBugemons.createDefaultBugemon("4");
-        Bugemon expectedBugemon5 = TestUtilsBugemons.createDefaultBugemon("5");
-        Bugemon expectedBugemon6 = TestUtilsBugemons.createDefaultBugemon("6");
-        Bugemon expectedBugemon7 = TestUtilsBugemons.createDefaultBugemon("7");
-
         BugemonTeam team = new BugemonTeam();
-
         assertTrue(team.isEmpty());
 
-        team.addBugemon(expectedBugemon1);
-        team.addBugemon(expectedBugemon2);
-        team.addBugemon(expectedBugemon3);
-        team.addBugemon(expectedBugemon4);
-        team.addBugemon(expectedBugemon5);
-        team.addBugemon(expectedBugemon6);
+        BugemonTeam fullTeam = TestUtilsBugemons.createDefaultTeam(6);
+        assertTrue(fullTeam.isFull());
 
-        assertTrue(team.isFull());
-
+        Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("7");
         assertThrows(IllegalStateException.class, () -> {
-            team.addBugemon(expectedBugemon7);
+            fullTeam.addBugemon(extraBugemon);
         });
     }
 
     @Test
     public void testTeam() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
-        Bugemon expectedBugemon3 = TestUtilsBugemons.createDefaultBugemon("3");
-
-        BugemonTeam team = new BugemonTeam();
-
-        team.addBugemon(expectedBugemon1);
-        team.addBugemon(expectedBugemon2);
-        team.addBugemon(expectedBugemon3);
-
-        Bugemon[] expectedTeam = { expectedBugemon1, expectedBugemon2, expectedBugemon3 };
-        Bugemon[] teamClone = team.getTeam();
+        BugemonTeam team = TestUtilsBugemons.createDefaultTeam(3);
+        List<Bugemon> teamClone = team.getTeam();
 
         for (int i = 0; i < 3; i++) {
-            assertEquals(expectedTeam[i].getId(), teamClone[i].getId());
+            assertEquals(String.valueOf(i + 1), teamClone.get(i).getId());
         }
     }
 }
