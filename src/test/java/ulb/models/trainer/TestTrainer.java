@@ -1,7 +1,7 @@
 /**
  * File name : TestTrainer.java
  * Description : Test class for the Trainer class.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 26 feb. 2026
  * @version 1.0
@@ -9,20 +9,21 @@
 
 package ulb.models.trainer;
 
-import java.util.Map;
+import static org.junit.Assert.*;
 
+import java.util.Map;
+import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 import ulb.utils.TestUtilsBugemonTeam;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class TestTrainer {
 
     private void killBugemon(BugemonTeam team, int index) {
-        team.getBugemon(index).takeDamage(team.getBugemon(index).getStats().getHp());
+        team
+            .getBugemon(index)
+            .takeDamage(team.getBugemon(index).getStats().getHp());
     }
 
     @Test
