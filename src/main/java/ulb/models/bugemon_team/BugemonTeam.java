@@ -10,6 +10,9 @@
 
 package ulb.models.bugemon_team;
 
+import java.util.Arrays;
+import java.util.List;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 
@@ -114,10 +117,10 @@ public class BugemonTeam {
     /**
      * Returns a copy of the team array
      * 
-     * @return (Bugemon[]) a copy of the team array
+     * @return (List<Bugemon>) a copy of the team array
      */
-    public Bugemon[] getTeam() {
-        return this.team.clone();
+    public List<Bugemon> getTeam() {
+        return Arrays.asList(team.clone());
     }
 
     /**
