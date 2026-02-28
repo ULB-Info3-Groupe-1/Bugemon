@@ -25,32 +25,7 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
 
-        assertEquals(expectedBugemon, team.getBugemon(0));
-        assertEquals(expectedBugemon, team.getBugemonById("1"));
-    }
-
-    @Test
-    public void testIndexBugemon() {
-        BugemonTeam team = TestUtilsBugemons.createDefaultTeam(3);
-
-        assertEquals("1", team.getBugemon(0).getId());
-        assertEquals("2", team.getBugemon(1).getId());
-        assertEquals("3", team.getBugemon(2).getId());
-    }
-
-    @Test
-    public void testIndexOutOfBound() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon1);
-
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            team.removeBugemon(6);
-        });
-
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            team.getBugemon(6);
-        });
+        assertEquals(expectedBugemon, team.getBugemon("1"));
     }
 
     @Test
@@ -60,15 +35,11 @@ public class TestBugemonTeam {
         team.addBugemon(expectedBugemon1);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            team.removeBugemon(1);
+            team.removeBugemon("0");
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
-            team.getBugemon(1);
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            team.getBugemonById("2");
+            team.getBugemon("0");
         });
     }
 
@@ -77,7 +48,7 @@ public class TestBugemonTeam {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
-        Bugemon bugemon = team.getBugemon(0);
+        Bugemon bugemon = team.getBugemon("1");
 
         assertEquals(1, team.size());
         assertEquals(expectedBugemon, bugemon);
@@ -95,7 +66,7 @@ public class TestBugemonTeam {
         assertEquals(0, team.size());
 
         team.addBugemon(expectedBugemon1);
-        team.removeBugemon(0);
+        team.removeBugemon("1");
 
         assertEquals(0, team.size());
 
@@ -124,7 +95,7 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
 
         assertThrows(IllegalStateException.class, () -> {
-            team.removeBugemon(1);
+            team.removeBugemon("1");
         });
     }
 

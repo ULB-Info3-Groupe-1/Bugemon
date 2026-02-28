@@ -67,10 +67,8 @@ public class BugemonTeam {
             throw new IllegalStateException("Team already full!");
         }
 
-        if (this.isDuplicate(bugemon)) {
-            throw new BugemonAlreadyExistsException(
-                "This Bugemon already in the team!"
-            );
+        if (this.contains(bugemon)) {
+            throw new BugemonAlreadyExistsException("This Bugemon already in the team!");
         }
 
         for (int i = 0; i < MAX_SIZE; i++) {
@@ -83,13 +81,17 @@ public class BugemonTeam {
         this.size++;
     }
 
+    public void removeBugemon(Bugemon bugemon) {
+        this.removeBugemon(bugemon.getId());
+    }
+
     /**
      * Removes a Bugemon from the team if it is in the team. If the team is empty or
      * the Bugemon is not in the team, an exception is thrown.
      *
      * @param bugemon (Bugemon) the Bugemon to be removed from the team
      */
-    public void removeBugemon(Bugemon bugemon) {
+    public void removeBugemon(String id) {
         if (this.size == 0) {
             throw new IllegalStateException("Team already empty!");
         }
@@ -97,7 +99,7 @@ public class BugemonTeam {
         int currentSize = this.size;
 
         for (int i = 0; i < MAX_SIZE; i++) {
-            if (this.team[i] != null && this.team[i].equals(bugemon)) {
+            if (this.team[i] != null && id.equals(this.team[i].getId())) {
                 this.team[i] = null;
                 this.size--;
                 break;
@@ -110,28 +112,6 @@ public class BugemonTeam {
     }
 
     /**
-     * Removes a Bugemon from the team at the specified index if it is in the team.
-     * If the
-     * team is empty.
-     *
-     * @param index (int) the index of the Bugemon to be removed from the team
-     */
-    public void removeBugemon(int index) {
-        if (this.size == 0) {
-            throw new IllegalStateException("Team already full!");
-        }
-        if (index >= MAX_SIZE || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("Index out of bounds!");
-        }
-        if (this.team[index] == null) {
-            throw new IllegalArgumentException("Cannot remove an empty slot!");
-        }
-
-        this.team[index] = null;
-        this.size--;
-    }
-
-    /**
      * Returns a copy of the team array
      *
      * @return (Bugemon[]) a copy of the team array
@@ -141,32 +121,14 @@ public class BugemonTeam {
     }
 
     /**
-     * Returns the Bugemon at the specified index if it is in the team. If the index
-     * is out of bounds or the slot is empty, an exception is thrown.
-     *
-     * @param index (int) the index of the Bugemon to be returned
-     * @return (Bugemon) the Bugemon at the specified index
-     */
-    public Bugemon getBugemon(int index) {
-        if (index >= MAX_SIZE || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("Index out of bounds!");
-        }
-        if (this.team[index] == null) {
-            throw new IllegalArgumentException("Cannot get an empty slot!");
-        }
-
-        return this.team[index];
-    }
-
-    /**
      * Returns the select Bugemon with the given ID if it's in the team.
      * 
      * @param id (String) the ID of the Bugemon to be returned
      * @return (Bugemon) the Bugemon with the given ID
      */
-    public Bugemon getBugemonById(String id) {
+    public Bugemon getBugemon(String id) {
         for (Bugemon bugemon : this.team) {
-            if (bugemon != null && bugemon.getId().equals(id)) {
+            if (bugemon != null && id.equals(bugemon.getId())) {
                 return bugemon;
             }
         }
@@ -175,15 +137,28 @@ public class BugemonTeam {
 
     /**
      * Checks if a Bugemon with the same ID is already in the team
-     *
-     * @param bugemon (Bugemon) the Bugemon to be checked for duplication
+     * 
+     * @param bugemon (Bugemon) the Bugemon to search for
      * @return (boolean) true if a Bugemon with the same ID is already in the team,
      *         false otherwise
      */
-    private boolean isDuplicate(Bugemon bugemon) {
+    public boolean contains(Bugemon bugemon) {
+        // TODO : @Romain override equals and hash method in Bugemon
 
-        for (Bugemon b : this.team) {
-            if (b != null && bugemon.getId().equals(b.getId())) return true;
+        return this.contains(bugemon.getId());
+    }
+
+    /**
+     * Checks if a Bugemon with the same ID is already in the team
+     *
+     * @param id (String) the ID of Bugemon to search for
+     * @return (boolean) true if a Bugemon with the given ID is already in the team,
+     *         false otherwise
+     */
+    public boolean contains(String id) {
+        for (Bugemon bugemon : this.team) {
+            if (bugemon != null && id.equals(bugemon.getId()))
+                return true;
         }
         return false;
     }
