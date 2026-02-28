@@ -15,7 +15,6 @@ import java.util.Map;
 import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.trainer.Trainer;
 import ulb.utils.TestUtilsBugemonTeam;
 
 public class TestTrainer {

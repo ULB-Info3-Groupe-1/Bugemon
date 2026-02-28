@@ -14,8 +14,8 @@ import ulb.models.trainer.Trainer;
 public class Combat {
     // Attributes
 
-    private Trainer trainer1;
-    private Trainer trainer2;
+    private Trainer trainer1; // allied trainer 
+    private Trainer trainer2; // adversary trainer
     private int turn;
 
     // Constructor

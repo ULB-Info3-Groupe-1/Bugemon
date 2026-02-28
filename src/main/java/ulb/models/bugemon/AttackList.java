@@ -51,4 +51,8 @@ public class AttackList {
     public void setAttacks(List<Attack> attacks) {
         this.attacks = attacks;
     }
+
+    public Attack get(int index) {
+        return attacks.get(index);
+    }
 }

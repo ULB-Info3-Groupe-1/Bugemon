@@ -26,6 +26,7 @@ public class Trainer {
     private Bugemon currentBugemon = null;
 
     // Constructor
+
     /**
      * Constructor for the Trainer class, initializing the team of the trainer.
      * 
@@ -96,5 +97,18 @@ public class Trainer {
      */
     public void setCurrentBugemon(Bugemon bugemon) {
         this.currentBugemon = bugemon;
+    }
+
+    /**
+     * Returns the team of the trainer.
+     * 
+     * @return (BugemonTeam) the team of the trainer.
+     */
+    public BugemonTeam getTeam() {
+        return team;
+    }
+
+    public int getTeamSize() {
+        return team.size();
     }
 }

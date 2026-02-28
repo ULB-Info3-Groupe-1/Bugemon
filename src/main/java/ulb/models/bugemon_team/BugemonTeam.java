@@ -156,7 +156,6 @@ public class BugemonTeam {
      *         false otherwise
      */
     private boolean isDuplicate(Bugemon bugemon) {
-        // TODO : @Romain override equals and hash method in Bugemon
 
         for (Bugemon b : this.team) {
             if (b != null && bugemon.getId().equals(b.getId())) return true;
