@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 */
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
