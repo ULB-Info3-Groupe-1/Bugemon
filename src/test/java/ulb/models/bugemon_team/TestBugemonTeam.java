@@ -17,6 +17,8 @@ import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.TestUtilsBugemons;
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 public class TestBugemonTeam {
 
     @Test
@@ -115,10 +117,10 @@ public class TestBugemonTeam {
     @Test
     public void testTeam() {
         BugemonTeam team = TestUtilsBugemons.createDefaultTeam(3);
-        Bugemon[] teamClone = team.getTeam();
+        List<Bugemon> teamClone = team.getTeam();
 
         for (int i = 0; i < 3; i++) {
-            assertEquals(String.valueOf(i + 1), teamClone[i].getId());
+            assertEquals(String.valueOf(i + 1), teamClone.get(i).getId());
         }
     }
 }

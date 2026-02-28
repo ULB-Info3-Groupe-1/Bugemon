@@ -29,7 +29,7 @@ public class Trainer {
      */
     public Trainer(BugemonTeam team) {
         this.team = team;
-        this.bugemonAlive = team.getTeam().length;
+        this.bugemonAlive = team.getTeam().size();
     }
 
     // Methods
