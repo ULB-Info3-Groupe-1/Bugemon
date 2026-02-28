@@ -1,5 +1,7 @@
 package ulb.models.bugemon_team;
 
+import java.util.List;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 

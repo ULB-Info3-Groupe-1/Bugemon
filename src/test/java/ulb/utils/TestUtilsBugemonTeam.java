@@ -7,7 +7,7 @@ public class TestUtilsBugemonTeam {
 
     private TestUtilsBugemonTeam() {}
 
-    public static BugemonTeam createDefaultBugemonTeam() {
+    public static BugemonTeam createDefaultBugemonTeam(boolean isDefeated) {
         Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1"),
             expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2"),
             expectedBugemon3 = TestUtilsBugemons.createDefaultBugemon("3"),
@@ -21,6 +21,11 @@ public class TestUtilsBugemonTeam {
         bugemonTeam.addBugemon(expectedBugemon4);
         bugemonTeam.addBugemon(expectedBugemon5);
         bugemonTeam.addBugemon(expectedBugemon6);
+        if (isDefeated) {
+            for (int i = 0; i < 6; i++) {
+                bugemonTeam.getBugemon(i).takeDamage(bugemonTeam.getBugemon(i).getStats().getHp());
+            }
+        }
         return bugemonTeam;
     }
 }

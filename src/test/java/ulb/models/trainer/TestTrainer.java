@@ -9,23 +9,35 @@
 
 package ulb.models.trainer;
 
+import java.util.Map;
+
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.trainer.Trainer;
+import ulb.utils.TestUtilsBugemonTeam;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class TestTrainer {
+
+    private void killBugemon(BugemonTeam team, int index) {
+        team.getBugemon(index).takeDamage(team.getBugemon(index).getStats().getHp());
+    }
+
     @Test
-    public void testTrainerCreation() {
-        assertNotNull(ulb.utils.TestUtilsTrainer.createDefaultTrainer());
+    public void testTeamStatus() {
+        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        killBugemon(team, 2);
+        Trainer trainer = new Trainer(team);
+        Map<Bugemon, Boolean> expectedStatus = trainer.teamStatus();
+        assertFalse(expectedStatus.get(team.getBugemon(2)));
     }
 
     @Test
     public void testIsDefeated() {
-        ulb.models.trainer.Trainer trainer = ulb.utils.TestUtilsTrainer.createDefaultTrainer();
-        assertFalse(trainer.isDefeated());
-        for (int i = 0; i < 6; i++) {
-            trainer.decreaseBugemonAlive();
-        }
+        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(true);
+        Trainer trainer = new Trainer(team);
         assertTrue(trainer.isDefeated());
     }
 }
