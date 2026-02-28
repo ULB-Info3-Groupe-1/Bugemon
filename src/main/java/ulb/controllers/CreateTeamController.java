@@ -36,13 +36,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     private void updateBugemonsTeamView() {
         List<BugemonDTO> bugemonList = new ArrayList<>();
-
-        // TODO: UGLY, should change the return type of getTeam to make this cleaner
-        // (cf. updateAllBugemonsView)
-        for (Bugemon bugemon : this.bugemonTeam.getTeam()) {
-            bugemonList.add(bugemon);
-        }
-
+        bugemonList.addAll(this.bugemonTeam.getTeam());
         this.view.showTeam(bugemonList);
     }
 
@@ -51,8 +45,6 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     public void addToTeam(String bugemonId) {
-        // TODO: would probably be cleaner to have a get-by-id method in BugemonTeam
-        // instead of usng this map here?
         Bugemon bugemon = allBugemonsById.get(bugemonId);
         bugemonTeam.addBugemon(bugemon);
 
@@ -61,9 +53,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     public void removeFromTeam(String bugemonId) {
-        Bugemon bugemon = this.allBugemonsById.get(bugemonId);
-        bugemonTeam.removeBugemon(bugemon);
-
+        bugemonTeam.removeBugemon(bugemonId);
         this.updateBugemonsTeamView();
     }
 
