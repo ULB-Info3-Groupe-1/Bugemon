@@ -20,7 +20,7 @@ public class Bugemon implements BugemonDTO {
     /**
      * This enum represents the type of a bugemon.
      */
-    public enum Type {
+    public enum BType {
         FLORA, AQUA, PYRO, LITHO
     }
 
@@ -30,7 +30,7 @@ public class Bugemon implements BugemonDTO {
 
     @SerializedName("nom")
     private String name;
-    private Type type;
+    private BType type;
     private String sprite; // The link to the representation image of the bugemon
 
     private Stats stats;
@@ -54,7 +54,7 @@ public class Bugemon implements BugemonDTO {
      *               defense,
      *               and initiative.
      */
-    public Bugemon(String id, String name, Type type, String sprite, Stats stats, AttackList attackList,
+    public Bugemon(String id, String name, BType type, String sprite, Stats stats, AttackList attackList,
             boolean isStarter) {
         this.id = id;
         this.name = name;
@@ -151,7 +151,7 @@ public class Bugemon implements BugemonDTO {
      * 
      * @return (Type) the type of the bugemon.
      */
-    public Type getType() {
+    public BType getType() {
         return type;
     }
 
@@ -160,7 +160,7 @@ public class Bugemon implements BugemonDTO {
      * 
      * @param type (Type) the new type to set for the bugemon.
      */
-    public void setType(Type type) {
+    public void setType(BType type) {
         this.type = type;
     }
 

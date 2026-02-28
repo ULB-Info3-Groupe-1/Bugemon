@@ -20,9 +20,9 @@ public final class TestUtilsBugemons {
                 "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.Type.FLORA, "", 30, effects);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.Type.FLORA, "", 20, effects);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.BType.FLORA, "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        return new Bugemon(id, "TestBugemon_" + id, Bugemon.Type.FLORA, "TestSprite", stats, attackList, false);
+        return new Bugemon(id, "TestBugemon_" + id, Bugemon.BType.FLORA, "TestSprite", stats, attackList, false);
     }
 }

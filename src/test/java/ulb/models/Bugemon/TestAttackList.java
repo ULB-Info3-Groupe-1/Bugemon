@@ -23,10 +23,10 @@ public class TestAttackList {
         Effect effect = new Effect("TypeEffect", "TestEffect", "Flora", 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.Type.FLORA, "", 30, effects);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.Type.FLORA, "", 20, effects);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.BType.FLORA, "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.Type.FLORA, "", 40, effects);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.BType.FLORA, "", 40, effects);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().size() == 3);
     }
@@ -36,10 +36,10 @@ public class TestAttackList {
         Effect effect = new Effect("TypeEffect", "TestEffect", "Flora", 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.Type.FLORA, "", 30, effects);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.Type.FLORA, "", 20, effects);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.BType.FLORA, "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.Type.FLORA, "", 40, effects);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.BType.FLORA, "", 40, effects);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().get(0) == attack1);
     }
@@ -49,10 +49,10 @@ public class TestAttackList {
         Effect effect = new Effect("TypeEffect", "TestEffect", "Flora", 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.Type.FLORA, "", 30, effects);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.Type.FLORA, "", 20, effects);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.BType.FLORA, "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.Type.FLORA, "", 40, effects);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.BType.FLORA, "", 40, effects);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().get(1) == attack2);
     }
@@ -62,10 +62,10 @@ public class TestAttackList {
         Effect effect = new Effect("TypeEffect", "TestEffect", "Flora", 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.Type.FLORA, "", 30, effects);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.Type.FLORA, "", 20, effects);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", Bugemon.BType.FLORA, "", 20, effects);
         AttackList attackList = new AttackList(List.of(attack1, attack2));
-        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.Type.FLORA, "", 40, effects);
+        Attack attack3 = new Attack("TestAttack3", "TestAttack3", Bugemon.BType.FLORA, "", 40, effects);
         attackList.setAttacks(List.of(attack1, attack2, attack3));
         assertTrue(attackList.getAttacks().get(2) == attack3);
     }
