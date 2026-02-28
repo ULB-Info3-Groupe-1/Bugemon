@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.models.test_trainer;
+package ulb.models.trainer;
 
 import org.junit.Test;
 

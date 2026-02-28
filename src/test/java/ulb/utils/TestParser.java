@@ -1,11 +1,7 @@
 package ulb.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -16,7 +12,6 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Stats;
-import ulb.models.bugemon.Type;
 import ulb.models.bugemon.Effect;
 
 public class TestParser {
@@ -34,7 +29,7 @@ public class TestParser {
 
         // check if the attacks were parsed correctly
         assertEquals(attacks.get(0).getId(), "fouet_liane");
-        assertEquals(attacks.get(1).getType(), Type.FLORA);
+        assertEquals(attacks.get(1).getType(), Bugemon.Type.FLORA);
 
         // check effects
         List<Effect> effects = attacks.get(2).getEffects();
@@ -61,7 +56,7 @@ public class TestParser {
         // check attributes
         assertEquals(bugemonsList.get(0).getName(), "Florachu");
         System.out.println(bugemonsList.get(1).getType());
-        assertEquals(bugemonsList.get(1).getType(), Type.FLORA);
+        assertEquals(bugemonsList.get(1).getType(), Bugemon.Type.FLORA);
 
         // check attacks
         Bugemon bugemon2 = bugemonsList.get(2);

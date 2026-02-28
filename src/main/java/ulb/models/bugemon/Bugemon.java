@@ -17,6 +17,13 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Bugemon implements BugemonDTO {
 
+    /**
+     * This enum represents the type of a bugemon.
+     */
+    public enum Type {
+        FLORA, AQUA, PYRO, LITHO
+    }
+
     // Attributes
 
     private String id;

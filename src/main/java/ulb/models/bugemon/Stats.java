@@ -9,8 +9,6 @@
 
 package ulb.models.bugemon;
 
-import java.io.Serial;
-
 import com.google.gson.annotations.SerializedName;
 
 /**

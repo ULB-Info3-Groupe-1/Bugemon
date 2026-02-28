@@ -1,6 +1,5 @@
 package ulb.utils;
 
-import ulb.models.bugemon.*;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -10,6 +9,11 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.AttackList;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Stats;
 
 public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
 
@@ -27,7 +31,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
 
         String id = obj.get("id").getAsString();
         String name = obj.get("nom").getAsString();
-        ulb.models.bugemon.Type type = context.deserialize(obj.get("type"), ulb.models.bugemon.Type.class);
+        Bugemon.Type type = context.deserialize(obj.get("type"), Type.class);
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 
