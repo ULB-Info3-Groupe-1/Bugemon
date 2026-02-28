@@ -12,7 +12,6 @@ public class BugemonTeam {
     private final int MAX_SIZE = 6;
     private final Bugemon[] team = new Bugemon[MAX_SIZE];
     private int size = 0;
-    private String name; // Not currently used
 
     public BugemonTeam() {
     }

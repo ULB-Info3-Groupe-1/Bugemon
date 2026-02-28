@@ -1,9 +1,8 @@
-package ulb.models.test_bugemon_team;
+package ulb.models.bugemon_team;
 
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.TestUtilsBugemons;
 import static org.junit.Assert.*;

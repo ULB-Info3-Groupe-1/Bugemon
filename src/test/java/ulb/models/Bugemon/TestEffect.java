@@ -7,13 +7,11 @@
  * @version 1.0
  */
 
-package ulb.models.test_bugemon;
+package ulb.models.bugemon;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
-import ulb.models.bugemon.Effect;
 
 public class TestEffect {
     @Test

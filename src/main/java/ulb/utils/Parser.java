@@ -4,13 +4,11 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 
-import java.io.File;
 import java.io.FileReader;
-import java.lang.reflect.*;
-import java.nio.file.*;
+import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,13 +44,13 @@ public class Parser {
         List<Bugemon> bugemons = parseBugemons(bugemonPath, attacksMap);
     }
 
-    static class TypeDeserializer implements JsonDeserializer<ulb.models.bugemon.Type> {
+    static class TypeDeserializer implements JsonDeserializer<Bugemon.BType> {
 
         @Override
-        public ulb.models.bugemon.Type deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+        public Bugemon.BType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
                 JsonDeserializationContext context) {
             String value = json.getAsString();
-            return ulb.models.bugemon.Type.valueOf(value.toUpperCase());
+            return Bugemon.BType.valueOf(value.toUpperCase());
         }
     }
 
@@ -60,7 +58,7 @@ public class Parser {
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(
-                        ulb.models.bugemon.Type.class,
+                        Bugemon.BType.class,
                         new TypeDeserializer())
                 .create();
 
@@ -95,12 +93,11 @@ public class Parser {
                         Bugemon.class,
                         new BugemonDeserializer(attackMap))
                 .registerTypeAdapter(
-                        ulb.models.bugemon.Type.class,
+                        Bugemon.BType.class,
                         new TypeDeserializer())
                 .create();
 
         try (FileReader reader = new FileReader(fileName.toFile())) {
-
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
 

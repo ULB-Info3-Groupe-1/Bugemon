@@ -23,7 +23,7 @@ public class Attack {
 
     @SerializedName("nom")
     private String name;
-    private Type type;
+    private Bugemon.BType type;
     private String description;
 
     @SerializedName("puissance")
@@ -46,7 +46,7 @@ public class Attack {
      * @param effects      (Effect) the effects of the attack, which can apply
      *                    status changes or stat modifications to the target.
      */
-    public Attack(String id, String name, Type type, String description, int power, List<Effect> effects) {
+    public Attack(String id, String name, Bugemon.BType type, String description, int power, List<Effect> effects) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -98,7 +98,7 @@ public class Attack {
      * 
      * @return (Type) the type of the attack.
      */
-    public Type getType() {
+    public Bugemon.BType getType() {
         return type;
     }
 
@@ -107,7 +107,7 @@ public class Attack {
      * 
      * @param type (Type) the new type to set for the attack.
      */
-    public void setType(Type type) {
+    public void setType(Bugemon.BType type) {
         this.type = type;
     }
 
