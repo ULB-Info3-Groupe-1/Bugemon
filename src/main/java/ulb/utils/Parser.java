@@ -1,3 +1,12 @@
+/**
+ * File name : Parser.java
+ * Description : Class to parse the json files.
+ * 
+ * @author Rocca Manuel
+ * @date 28 feb. 2026
+ * @version 1.0
+ */
+
 package ulb.utils;
 
 import com.google.gson.Gson;
@@ -21,8 +30,19 @@ import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.EffectType;
 
+/**
+ * Class with static methods to parse the json files containing the data about
+ * the Bugemon game.
+ */
 public class Parser {
 
+    /**
+     * The main parsing method used to parse every file. Calls annex methods to
+     * achieve its task.
+     * 
+     * @param directory The directory containing the json files.
+     *                  The path must be relative to the place of executions.
+     */
     public static void parse(String directory) {
         Path dirPath = Paths.get(directory);
 
@@ -42,45 +62,58 @@ public class Parser {
         List<Bugemon> bugemons = parseBugemons(bugemonPath, attacksMap);
     }
 
+    /**
+     * Implements a custom deserializer for the Bugemon class. Specific to the Gson
+     * library.
+     */
     static class TypeDeserializer implements JsonDeserializer<Bugemon.BType> {
 
         @Override
         public Bugemon.BType deserialize(
-            JsonElement json,
-            java.lang.reflect.Type typeOfT,
-            JsonDeserializationContext context
-        ) {
+                JsonElement json,
+                java.lang.reflect.Type typeOfT,
+                JsonDeserializationContext context) {
             String value = json.getAsString();
             return Bugemon.BType.valueOf(value.toUpperCase());
         }
     }
 
+    /**
+     * Implements a custom deserializer for the Effect class. Specific to the Gson
+     * library.
+     */
     static class EffectTypeDeserializer
-        implements JsonDeserializer<ulb.models.bugemon.EffectType>
-    {
+            implements JsonDeserializer<ulb.models.bugemon.EffectType> {
 
         @Override
         public ulb.models.bugemon.EffectType deserialize(
-            JsonElement json,
-            java.lang.reflect.Type typeOfT,
-            JsonDeserializationContext context
-        ) {
+                JsonElement json,
+                java.lang.reflect.Type typeOfT,
+                JsonDeserializationContext context) {
             String value = json.getAsString();
             return ulb.models.bugemon.EffectType.valueOf(value.toUpperCase());
         }
     }
 
+    /**
+     * Specific method for the parsing of the Attacks.
+     * 
+     * @param fileName The path to the json file.
+     * @return (AttackList) AttackList containing a List of every Attack in the json
+     *         file.
+     */
     static AttackList parseAttacks(Path fileName) {
         Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
-            .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
-            .create();
+                .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
+                .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
+                .create();
 
         try (FileReader reader = new FileReader(fileName.toFile())) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray attacksArray = root.getAsJsonArray("attaques");
 
-            Type destType = new TypeToken<List<Attack>>() {}.getType();
+            Type destType = new TypeToken<List<Attack>>() {
+            }.getType();
 
             List<Attack> attacks = gson.fromJson(attacksArray, destType);
 
@@ -97,23 +130,30 @@ public class Parser {
         return null;
     }
 
+    /**
+     * Specific method for the parsing of the Bugemons
+     * 
+     * @param fileName  The path to the json file.
+     * @param attackMap (Map<String, Attack>) A map containing every loaded attack
+     *                  with their ids. Used to build the bugemons.
+     * @return (List<Bugemon>) The list of the newly build Bugemon objects.
+     */
     static List<Bugemon> parseBugemons(
-        Path fileName,
-        Map<String, Attack> attackMap
-    ) {
+            Path fileName,
+            Map<String, Attack> attackMap) {
         Gson gson = new GsonBuilder()
-            .registerTypeAdapter(
-                Bugemon.class,
-                new BugemonDeserializer(attackMap)
-            )
-            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
-            .create();
+                .registerTypeAdapter(
+                        Bugemon.class,
+                        new BugemonDeserializer(attackMap))
+                .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
+                .create();
 
         try (FileReader reader = new FileReader(fileName.toFile())) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
 
-            Type destType = new TypeToken<List<Bugemon>>() {}.getType();
+            Type destType = new TypeToken<List<Bugemon>>() {
+            }.getType();
 
             List<Bugemon> bugemons = gson.fromJson(bugemonsArray, destType);
 
@@ -127,7 +167,9 @@ public class Parser {
         return null;
     }
 
-    static void parseObjects(Path fileName) {}
+    static void parseObjects(Path fileName) {
+    }
 
-    static void parseSkillTree(Path fileName) {}
+    static void parseSkillTree(Path fileName) {
+    }
 }
