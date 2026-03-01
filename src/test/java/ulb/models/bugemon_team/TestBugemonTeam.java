@@ -1,5 +1,6 @@
 package ulb.models.bugemon_team;
 
+import static org.junit.Assert.*;
 /**
 * File name : TestBugemonTeam.java
 * Description : Data class representing a team of Bugemons
@@ -11,11 +12,13 @@ package ulb.models.bugemon_team;
 */
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.TestUtilsBugemons;
-import static org.junit.Assert.*;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -81,7 +84,8 @@ public class TestBugemonTeam {
     @Test
     public void testAddDuplicate() {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemonDuplicate = TestUtilsBugemons.createDefaultBugemon("1");
+        Bugemon expectedBugemonDuplicate =
+            TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
 
         team.addBugemon(expectedBugemon);

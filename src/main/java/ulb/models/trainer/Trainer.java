@@ -9,18 +9,25 @@
 
 package ulb.models.trainer;
 
+import java.util.Map;
+import java.util.HashMap;
+
+import ulb.models.bugemon.AttackList;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * This class represents a trainer, which has a team of bugemon.
  */
 public class Trainer {
+
     // Attributes
 
-    private BugemonTeam team;
-    private int bugemonAlive;
+    protected BugemonTeam team;
+    protected Bugemon currentBugemon = null;
 
     // Constructor
+
     /**
      * Constructor for the Trainer class, initializing the team of the trainer.
      * 
@@ -29,46 +36,97 @@ public class Trainer {
      */
     public Trainer(BugemonTeam team) {
         this.team = team;
-        this.bugemonAlive = team.getTeam().size();
+        this.currentBugemon = team.getTeam().get(0);
     }
 
     // Methods
 
     /**
-     * Returns true if the trainer is defeated, which means that all the bugemon in
-     * the team are dead.
+     * Returns a map of the bugemon in the team of the trainer, with their status
+     * (alive or not).
+     * 
+     * @return (Map<Bugemon, Boolean>) a map of the bugemon in the team of the
+     *         trainer, with their status (alive or not).
+     */
+    public Map<Bugemon, Boolean> teamStatus() {
+        Map<Bugemon, Boolean> bugemonStatus = new HashMap<>();
+        for (Bugemon bugemon : team.getTeam()) {
+            bugemonStatus.put(bugemon, bugemon.isAlive());
+        }
+        return bugemonStatus;
+    }
+
+    /**
+     * Returns true if the trainer is defeated (all bugemon in the team are
+     * defeated), false otherwise.
      * 
      * @return (boolean) true if the trainer is defeated, false otherwise.
      */
     public boolean isDefeated() {
-        return bugemonAlive == 0;
+        for (Bugemon bugemon : team.getTeam()) {
+            if (bugemon.isAlive()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Decreases the number of bugemon alive in the team of the trainer.
+     * Return the initiative of the current bugemon.
      * 
-     * @return (int) the number of bugemon alive in the team of the trainer.
+     * @return (int) the initiative of the bugemon.
      */
-    public void decreaseBugemonAlive() {
-        this.bugemonAlive--;
+    public int getCurrentBugemonInitiative() {
+        return currentBugemon.getStats().getInitiative();
     }
 
     /**
-     * Increases the number of bugemon alive in the team of the trainer.
+     * Return the current bugemon in the team of the trainer.
+     * 
+     * @return (Bugemon) the current bugemon in the team of the trainer.
      */
-    public void increaseBugemonAlive() {
-        this.bugemonAlive++;
+    public Bugemon getCurrentBugemon() {
+        return currentBugemon;
+    }
+
+    /**
+     * Return the list of attacks of the current bugemon in the team of the trainer.
+     * 
+     * @return (AttackList) the list of attacks of the current bugemon.
+     */
+    public AttackList getCurrentBugemonAttackList() {
+        return currentBugemon.getAttackList();
+    }
+
+    /**
+     * Get the HP of the current bugemon in the team of the trainer.
+     * 
+     * @return (int) the HP of the current bugemon in the team of the trainer.
+     */
+    public int getCurrentBugemonHp() {
+        return currentBugemon.getStats().getHp();
+    }
+
+    /**
+     * Takes damage to the current bugemon in the team of the trainer, reducing its
+     * HP.
+     * 
+     * @param damage (int) the amount of damage to be taken by the current bugemon
+     *               in the team of the trainer, reducing its HP.
+     */
+    public void takeDamage(int damage) {
+        currentBugemon.takeDamage(damage);
     }
 
     // Getters and setters
 
     /**
-     * Returns the number of bugemon alive in the team of the trainer.
+     * Sets the current bugemon in the team of the trainer to the specified bugemon.
      * 
-     * @return (int) the number of bugemon alive in the team of the trainer.
+     * @param bugemon (Bugemon) the new current bugemon in the team of the trainer.
      */
-    public int countBugemonAlive() {
-        return bugemonAlive;
+    public void setCurrentBugemon(Bugemon bugemon) {
+        this.currentBugemon = bugemon;
     }
 
     /**
