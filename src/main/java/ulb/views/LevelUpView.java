@@ -47,8 +47,9 @@ public class LevelUpView extends View {
 
         StringBuilder texte = new StringBuilder();
         texte.append(bugemon.getName());
-        texte.append(" a atteint le niveau ");
+        texte.append(" has just reached level ");
         texte.append(bugemon.getLevel());
+        texte.append(" !");
 
         levelUpText.setText(texte.toString());
         bugemonImage.setImage(sprite);
