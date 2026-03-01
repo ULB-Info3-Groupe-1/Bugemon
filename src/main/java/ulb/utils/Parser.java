@@ -36,14 +36,44 @@ import ulb.models.bugemon.EffectType;
  */
 public class Parser {
 
+     /**
+     * Class representing the result of the parsing to get the list of the available bugemons and the list of the attacks
+     */
+    public static class ParseResult {
+
+        private final Map<String, Attack> attacksMap;
+        private final List<Bugemon> bugemonList;
+
+        public ParseResult(Map<String, Attack> attacksMap, List<Bugemon> bugemonList) {
+            this.attacksMap = attacksMap;
+            this.bugemonList = bugemonList;
+        }
+
+        /**
+         * Return the list of the available attacks
+         * @return Map<String, Attack> Map String and Attack class for
+         */
+        public Map<String, Attack> getAttacksMap() {
+            return attacksMap;
+        }
+
+        /**
+         * Return the list of the available bugemons
+         * @return List<Bugemon> The list of the available bugemons
+         */
+        public List<Bugemon> getBugemonsList() {
+            return bugemonList;
+        }
+    }
+
     /**
      * The main parsing method used to parse every file. Calls annex methods to
      * achieve its task.
-     * 
+     *
      * @param directory The directory containing the json files.
      *                  The path must be relative to the place of executions.
      */
-    public static void parse(String directory) {
+    public static ParseResult parse(String directory) {
         Path dirPath = Paths.get(directory);
 
         // load attacks
@@ -60,6 +90,8 @@ public class Parser {
         // load bugemons
         Path bugemonPath = dirPath.resolve("bugemons.json");
         List<Bugemon> bugemons = parseBugemons(bugemonPath, attacksMap);
+
+        return new ParseResult(attacksMap, bugemons);
     }
 
     /**

@@ -16,6 +16,7 @@ import static org.junit.Assert.*;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
 
 import java.util.List;
@@ -127,4 +128,13 @@ public class TestBugemonTeam {
             assertEquals(String.valueOf(i + 1), teamClone.get(i).getId());
         }
     }
+
+    @Test
+    public void testRandomTeamNumber(){
+        Parser.ParseResult parseResult = Parser.parse("resources/Assets/json");
+        BugemonTeam teamOfSix = BugemonTeam.CreatRandomTeam(parseResult.getBugemonsList());
+        assertEquals(6, teamOfSix.size());
+    }
+
+
 }
