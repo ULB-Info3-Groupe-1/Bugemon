@@ -68,20 +68,4 @@ public final class TestUtilsBugemons {
         }
         return team;
     }
-
-    public static List<Bugemon> createDefaultBugemons(int count) {
-        List<Bugemon> bugemons = new ArrayList<>();
-        for (int i = 1; i <= count; i++) {
-            bugemons.add(createDefaultBugemon(String.valueOf(i)));
-        }
-        return bugemons;
-    }
-
-    public static BugemonTeam createDefaultTeam(int size) {
-        BugemonTeam team = new BugemonTeam();
-        for (Bugemon bugemon : createDefaultBugemons(size)) {
-            team.addBugemon(bugemon);
-        }
-        return team;
-    }
 }
