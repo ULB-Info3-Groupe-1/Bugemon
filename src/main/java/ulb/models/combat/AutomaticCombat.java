@@ -9,15 +9,7 @@
 
 package ulb.models.combat;
 
-import ulb.models.bugemon.AttackList;
-import ulb.models.trainer.Trainer;
-import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.Random;
+import ulb.models.trainer.AutoTrainer;
 
 /**
  * The AutomaticCombat class represents a combat between two trainers where the
@@ -25,71 +17,67 @@ import java.util.Random;
  */
 public class AutomaticCombat extends Combat {
 
-    // Attributes
-
     // Constructor
 
     /**
      * Constructor for the AutomaticCombat class, initializing the two trainers and
      * the turn of the combat.
      */
-    public AutomaticCombat(Trainer trainer1, Trainer trainer2) {
-        super(trainer1, trainer2);
+    public AutomaticCombat(AutoTrainer allyTrainer, AutoTrainer adversaryTrainer) {
+        super(allyTrainer, adversaryTrainer);
     }
 
     // Methods
 
     /**
-     * Choose a random attack from the list of attacks of the current bugemon of the
-     * attacker.
+     * Simulates a turn of the combat.
      * 
-     * @param attacks (AttackList) the list of attacks of the current bugemon of the
-     *                attacker.
-     * @return (Attack) a random attack from the list of attacks of the current
-     *         bugemon of the attacker.
+     * @return (AutoTrainer) the winner of the turn if there is one, null otherwise.
      */
-    private Attack getRandomAttack(AttackList attacks) {
-        Random rand = new Random();
-        int attackIndex = rand.nextInt(attacks.getAttacks().size());
-        return attacks.get(attackIndex);
+    public AutoTrainer turn() {
+        applyDamage();
+        AutoTrainer winner = (AutoTrainer) getWinner();
+        if (winner != null) {
+            return winner;
+        }
+        nextTurn();
+        return null;
     }
 
     /**
-     * Apply the damage of the attack of the attacker to the defender, reducing the
-     * HP of the current bugemon of the defender.
+     * Applies the damage of the attacks of both trainers to each other and returns
+     * the winner of the turn if there is one.
      * 
-     * @param defender (Trainer) the trainer who is defending against the attack of
-     *                 the attacker.
-     * @param attacker (Trainer) the trainer who is attacking the defender.
+     * @return (AutoTrainer) the winner of the turn if there is one, null otherwise.
      */
-    private void applyDamage(Trainer defender, Trainer attacker) {
-        int attackPower = attacker.getCurrentBugemon().getStats().getAttack();
-        defender.getCurrentBugemon().takeDamage(attackPower);
-        if (defender.getCurrentBugemon().getStats().getHp() <= 0) {
-            defender.setCurrentBugemon(selectRandomBugemon(defender));
-        }
+    private void applyDamage() {
+        AutoTrainer allyTrainer = (AutoTrainer) getAllyTrainer();
+        AutoTrainer adversaryTrainer = (AutoTrainer) getAdversaryTrainer();
+        int allyAttack = allyTrainer.getRandomAttack();
+        int adversaryAttack = adversaryTrainer.getRandomAttack();
+        applyDamageHelper(allyTrainer, adversaryTrainer, allyAttack);
+        applyDamageHelper(adversaryTrainer, allyTrainer, adversaryAttack);
     }
 
     /**
-     * Choose a random bugemon from the team of the trainer.
+     * Helper method to apply damage from one trainer to another and check if the
+     * trainer is defeated.
      * 
-     * @param trainer (Trainer) the trainer from which to choose a random bugemon.
-     * @return (Bugemon) a random bugemon from the team of the trainer.
+     * @param attacker    (AutoTrainer) the trainer who is attacking.
+     * @param defender    (AutoTrainer) the trainer who is defending.
+     * @param attackPower (int) the power of the attack being applied.
+     * @return (AutoTrainer) the winner of the turn if defender is defeated, null
+     *         otherwise.
      */
-    private Bugemon selectRandomBugemon(Trainer trainer) {
-        if (trainer.isDefeated()) {
-            return null;
-        }
+    private void applyDamageHelper(AutoTrainer attacker, AutoTrainer defender, int attackPower) {
+        defender.takeDamage(attackPower);
 
-        List<Bugemon> aliveBugemons = new ArrayList<>();
-
-        for (Bugemon b : trainer.getTeam().getTeam()) {
-            if (b.isAlive()) {
-                aliveBugemons.add(b);
-            }
+        if (defender.isDefeated()) {
+            return;
         }
-        Random rand = new Random();
-        int randomBugemonIndex = rand.nextInt(aliveBugemons.size());
-        return aliveBugemons.get(randomBugemonIndex);
+        if (!defender.getCurrentBugemon().isAlive()) {
+            defender.selectRandomBugemon();
+        }
+        return;
     }
 }

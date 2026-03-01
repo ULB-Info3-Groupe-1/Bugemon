@@ -14,9 +14,9 @@ import ulb.models.trainer.Trainer;
 public class Combat {
     // Attributes
 
-    private Trainer trainer1; // allied trainer 
-    private Trainer trainer2; // adversary trainer
-    private int turn;
+    protected Trainer allyTrainer; // allied trainer
+    protected Trainer adversaryTrainer; // adversary trainer
+    protected int turn;
 
     // Constructor
 
@@ -24,19 +24,33 @@ public class Combat {
      * Constructor for the Combat class, initializing the two trainers and the turn
      * of the combat.
      */
-    public Combat(Trainer trainer1, Trainer trainer2) {
-        this.trainer1 = trainer1;
-        this.trainer2 = trainer2;
+    public Combat(Trainer allyTrainer, Trainer adversaryTrainer) {
+        this.allyTrainer = allyTrainer;
+        this.adversaryTrainer = adversaryTrainer;
         this.turn = 0;
     }
 
     // Methods
 
     /**
-     * Returns true if the combat is over, false otherwise.
+     * Returns the winner of the combat if it is over, null otherwise.
      */
-    public boolean isCombatOver() {
-        return trainer1.isDefeated() || trainer2.isDefeated();
+    public Trainer getWinner() {
+        if (isFinished()) {
+            if (allyTrainer.isDefeated()) {
+                return adversaryTrainer;
+            } else {
+                return allyTrainer;
+            }
+        }
+        return null;
+    }
+
+    public boolean isFinished() {
+        if (allyTrainer.isDefeated() || adversaryTrainer.isDefeated()) {
+            return true;
+        }
+        return false;
     }
 
     public void nextTurn() {
@@ -53,16 +67,16 @@ public class Combat {
     }
 
     /**
-     * Returns the trainer 1.
+     * Returns the ally trainer.
      */
-    public Trainer getTrainer1() {
-        return trainer1;
+    public Trainer getAllyTrainer() {
+        return this.allyTrainer;
     }
 
     /**
-     * Returns the trainer 2.
+     * Returns the adversary trainer.
      */
-    public Trainer getTrainer2() {
-        return trainer2;
+    public Trainer getAdversaryTrainer() {
+        return this.adversaryTrainer;
     }
 }

@@ -12,6 +12,7 @@ package ulb.models.trainer;
 import java.util.Map;
 import java.util.HashMap;
 
+import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -22,8 +23,8 @@ public class Trainer {
 
     // Attributes
 
-    private BugemonTeam team;
-    private Bugemon currentBugemon = null;
+    protected BugemonTeam team;
+    protected Bugemon currentBugemon = null;
 
     // Constructor
 
@@ -88,6 +89,35 @@ public class Trainer {
         return currentBugemon;
     }
 
+    /**
+     * Return the list of attacks of the current bugemon in the team of the trainer.
+     * 
+     * @return (AttackList) the list of attacks of the current bugemon.
+     */
+    public AttackList getCurrentBugemonAttackList() {
+        return currentBugemon.getAttackList();
+    }
+
+    /**
+     * Get the HP of the current bugemon in the team of the trainer.
+     * 
+     * @return (int) the HP of the current bugemon in the team of the trainer.
+     */
+    public int getCurrentBugemonHp() {
+        return currentBugemon.getStats().getHp();
+    }
+
+    /**
+     * Takes damage to the current bugemon in the team of the trainer, reducing its
+     * HP.
+     * 
+     * @param damage (int) the amount of damage to be taken by the current bugemon
+     *               in the team of the trainer, reducing its HP.
+     */
+    public void takeDamage(int damage) {
+        currentBugemon.takeDamage(damage);
+    }
+
     // Getters and setters
 
     /**
@@ -106,9 +136,5 @@ public class Trainer {
      */
     public BugemonTeam getTeam() {
         return team;
-    }
-
-    public int getTeamSize() {
-        return team.size();
     }
 }

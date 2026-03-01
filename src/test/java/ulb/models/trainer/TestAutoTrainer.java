@@ -1,0 +1,30 @@
+/**
+ * File name : TestAutoTrainer.java
+ * Description : Test class for the AutoTrainer class.
+ *
+ * @author Liefferinckx Romain
+ * @date 01 march. 2026
+ * @version 1.0
+ */
+
+package ulb.models.trainer;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.utils.TestUtilsBugemonTeam;
+
+public class TestAutoTrainer {
+    @Test
+    public void testSelectRandomBugemon() {
+        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        AutoTrainer trainer = new AutoTrainer(team);
+        TestTrainer.killBugemon(team, 0);
+        trainer.selectRandomBugemon();
+        assertTrue(trainer.getCurrentBugemon().isAlive());
+        assertFalse(trainer.getCurrentBugemon().equals(team.getBugemon(0)));
+    }
+}
