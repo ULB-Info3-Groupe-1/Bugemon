@@ -10,8 +10,10 @@
 
 package ulb.models.bugemon_team;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
@@ -164,5 +166,21 @@ public class BugemonTeam {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Generates a random bugemon team of 6 bugemons
+     * @return the bugemon list created
+     */
+    public static BugemonTeam CreatRandomTeam(List<Bugemon> bugemonList) {
+        Random rand = new Random();
+        BugemonTeam randomTeam= new BugemonTeam();
+
+        for (int i=0; i<6; i++) {
+            int randomIndex = rand.nextInt(bugemonList.size());
+            randomTeam.addBugemon(bugemonList.get(randomIndex));
+            bugemonList.remove(randomIndex);
+        }
+        return randomTeam;
     }
 }
