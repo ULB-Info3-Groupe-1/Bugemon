@@ -35,7 +35,7 @@ public class MetaController {
         AUTOMATIC_COMBAT,
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
-        LevelUp,
+        LEVEL_UP,
     }
 
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
@@ -92,7 +92,7 @@ public class MetaController {
                 this.combatVictoryController.show(this.stage);
             case COMBAT_DEFEAT ->
                 this.combatDefeatController.show(this.stage);
-            case LevelUp ->
+            case LEVEL_UP ->
                 this.levelUpController.show(this.stage);
             default ->
                 throw new IllegalArgumentException("Invalid window");
