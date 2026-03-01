@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import ulb.common.BugemonDTO;
+import ulb.common.LevelUpDTO;
 import ulb.controllers.LevelUpController;
 
 /**
@@ -17,15 +19,15 @@ import ulb.controllers.LevelUpController;
 public class LevelUpView extends View {
 
     @FXML
-    private Label TextLevelUp;
+    private Label levelUpText;
     @FXML
-    private Button Stat1;
+    private Button choice1Button;
     @FXML
-    private Button Stat2;
+    private Button choice2Button;
     @FXML
-    private Button Stat3;
+    private Button choice3Button;
     @FXML
-    private ImageView imageBugemon;
+    private ImageView bugemonImage;
 
     private LevelUpController controller;
 
@@ -33,26 +35,25 @@ public class LevelUpView extends View {
         super("/fxml/LevelUp.fxml");
         this.controller = null;
 
-        this.Stat1.setOnAction((e) -> this.controller.chooseOption(1));
-
-
-        this.Stat2.setOnAction((e) -> this.controller.chooseOption(2));
-
-
-        this.Stat3.setOnAction((e) -> this.controller.chooseOption(3));
+        this.choice1Button.setOnAction((e) -> this.controller.chooseOption(1));
+        this.choice2Button.setOnAction((e) -> this.controller.chooseOption(2));
+        this.choice2Button.setOnAction((e) -> this.controller.chooseOption(3));
     }
-    public void setLevelUp() {
+
+    public void setLevelUp(LevelUpDTO levelUp) {
+        BugemonDTO bugemon = levelUp.getBugemon();
+
+        Image sprite = new Image(bugemon.getSpriteURL());
+
         StringBuilder texte = new StringBuilder();
-        String filename = "ressources/Assets/png/" + LevelUpDTO.getBugemonName() + ".png";
-        Image image = new Image(filename);
-
-        texte.append(LevelUpDTO.getBugemonName());
+        texte.append(bugemon.getName());
         texte.append(" a atteint le niveau ");
-        texte.append(LevelUpDTO.getNextLevel());
+        texte.append(bugemon.getLevel());
 
-        TextLevelUp.setText(texte.toString());
-        imageBugemon.setImage(image);
+        levelUpText.setText(texte.toString());
+        bugemonImage.setImage(sprite);
     }
+
     /**
      * Binds Level up view to its controller.
      *
@@ -61,6 +62,5 @@ public class LevelUpView extends View {
     public void setController(LevelUpController controller) {
         this.controller = controller;
     }
-
 
 }

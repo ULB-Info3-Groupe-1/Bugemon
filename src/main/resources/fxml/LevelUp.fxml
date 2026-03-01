@@ -14,23 +14,23 @@
                 <Font size="19.0" />
             </font>
         </Label>
-        <Label fx:id="TextLevelUp" layoutX="286.0" layoutY="98.0" text="Label" />
-        <Button fx:id="Stat1" layoutX="235.0" layoutY="298.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="129.0" text="Button">
+        <Label fx:id="levelUpText" layoutX="286.0" layoutY="98.0" text="Label" />
+        <Button fx:id="choice1Button" layoutX="235.0" layoutY="298.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="129.0" text="Button">
             <font>
                 <Font size="14.0" />
             </font>
         </Button>
-        <Button fx:id="Stat2" layoutX="397.0" layoutY="298.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="129.0" text="Button">
+        <Button fx:id="choice2Button" layoutX="397.0" layoutY="298.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="129.0" text="Button">
             <font>
                 <Font size="14.0" />
             </font>
         </Button>
-        <Button fx:id="Stat3" layoutX="67.0" layoutY="298.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="129.0" text="Button">
+        <Button fx:id="choice3Button" layoutX="67.0" layoutY="298.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="129.0" text="Button">
             <font>
                 <Font size="14.0" />
             </font>
         </Button>
-        <ImageView fx:id="imageBugemon" fitHeight="126.0" fitWidth="136.0" layoutX="232.0" layoutY="137.0" pickOnBounds="true" preserveRatio="true" />
+        <ImageView fx:id="bugemonImage" fitHeight="126.0" fitWidth="136.0" layoutX="232.0" layoutY="137.0" pickOnBounds="true" preserveRatio="true" />
     </children>
 </Pane>
 

@@ -96,4 +96,8 @@ public interface BugemonDTO {
      * @return (int) the maximum health points of the Bugemon as an integer
      */
     int getMaxHp();
+
+    
+    int getLevel();
+
 }

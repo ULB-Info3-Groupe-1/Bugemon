@@ -510,6 +510,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *
      * @return (String) the unique identifier of the bugemon.
      */
+    @Override
     public String getId() {
         return this.id;
     }
@@ -519,6 +520,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *
      * @return (String) the name of the bugemon.
      */
+    @Override
     public String getName() {
         return this.name;
     }
@@ -635,4 +637,11 @@ public class Bugemon implements BugemonDTO, Cloneable {
     public void reset() {
         this.state = new State(this.initialState);
     }
+
+    @Override
+    public int getLevel() {
+        // TODO: impl
+        return 0;
+    }
+
 }
