@@ -20,6 +20,8 @@ import ulb.utils.TestUtilsBugemons;
 
 import java.util.List;
 
+import java.util.List;
+
 public class TestBugemonTeam {
 
     @Test
