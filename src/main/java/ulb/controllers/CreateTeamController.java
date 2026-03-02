@@ -10,6 +10,7 @@ import ulb.common.BugemonDTO;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.utils.UtilsBugemons;
 import ulb.views.CreateTeamView;
 
 public class CreateTeamController extends Controller<CreateTeamView> {
@@ -58,6 +59,22 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     public boolean checkBugemonInTeam(String bugemonId) {
         return (this.bugemonTeam.contains(bugemonId));
+    }
+
+    /**
+     * Return the team chosen by the player to run a combat
+     * @return BugemonTeam the team of bugemons chosen by the player
+     */
+    public final BugemonTeam getFinalTeam() {
+        // TODO: change method to get the real player team
+        BugemonTeam bgTeam = new BugemonTeam();
+        bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("1"));
+        bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("2"));
+        bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("3"));
+        bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("4"));
+        bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("5"));
+        bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("6"));
+        return bgTeam;
     }
 
 }

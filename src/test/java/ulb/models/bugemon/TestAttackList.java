@@ -186,7 +186,7 @@ public class TestAttackList {
 
     @Test
     public void testNullAttackList() {
-        AttackList attackList = new AttackList(null);
+        AttackList attackList = new AttackList((List<Attack>) null);
         assertNull(attackList.getAttacks());
     }
 }

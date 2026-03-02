@@ -65,6 +65,20 @@ public class Bugemon implements BugemonDTO {
         this.isStarter = isStarter;
     }
 
+    /**
+     * Make a copy of a Bugemon
+     * @param other A bugemon class
+     */
+    public Bugemon(Bugemon other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.type = other.type;
+        this.sprite = other.sprite;
+        this.stats = new Stats(other.stats);
+        this.attackList = new AttackList(other.attackList);
+        this.isStarter = other.isStarter;
+    }
+
     // Methods
 
     /**

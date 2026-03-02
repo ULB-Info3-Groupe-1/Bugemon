@@ -10,7 +10,6 @@
 
 package ulb.models.bugemon_team;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -172,15 +171,17 @@ public class BugemonTeam {
      * Generates a random bugemon team of 6 bugemons
      * @return the bugemon list created
      */
-    public static BugemonTeam CreatRandomTeam(List<Bugemon> bugemonList) {
+    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
         Random rand = new Random();
-        BugemonTeam randomTeam= new BugemonTeam();
-
-        for (int i=0; i<6; i++) {
+        BugemonTeam randomTeam = new BugemonTeam();
+        
+        while (randomTeam.size() != teamSize) {
             int randomIndex = rand.nextInt(bugemonList.size());
-            randomTeam.addBugemon(bugemonList.get(randomIndex));
-            bugemonList.remove(randomIndex);
+            if (!randomTeam.contains(bugemonList.get(randomIndex).getId())) {
+                randomTeam.addBugemon(new Bugemon(bugemonList.get(randomIndex)));
+            }
         }
+
         return randomTeam;
     }
 }

@@ -32,6 +32,14 @@ public class AttackList {
         this.attacks = attacks;
     }
 
+    /**
+     * Constructor copy
+     * @param other An other AttackList to copy
+     */
+    public AttackList(AttackList other) {
+        this.attacks = other.attacks;
+    }
+
     // Getters and Setters
 
     /**

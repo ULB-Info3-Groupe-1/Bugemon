@@ -50,6 +50,17 @@ public class Stats {
         this.initiative = initiative;
     }
 
+    /**
+     * Copy constructor
+     * @param other A stats class to opy
+     */
+    public Stats(Stats other) {
+        this.hp = other.hp;
+        this.attack = other.attack;
+        this.defense = other.defense;
+        this.initiative = other.initiative;
+    }
+
     // Getters and Setters
 
     /**

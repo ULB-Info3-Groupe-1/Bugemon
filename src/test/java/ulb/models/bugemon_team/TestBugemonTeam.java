@@ -12,14 +12,11 @@ import static org.junit.Assert.*;
 */
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
-
-import java.util.List;
 
 import java.util.List;
 
@@ -132,7 +129,7 @@ public class TestBugemonTeam {
     @Test
     public void testRandomTeamNumber(){
         Parser.ParseResult parseResult = Parser.parse("resources/Assets/json");
-        BugemonTeam teamOfSix = BugemonTeam.CreatRandomTeam(parseResult.getBugemonsList());
+        BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(parseResult.getBugemonsList(), 6);
         assertEquals(6, teamOfSix.size());
     }
 

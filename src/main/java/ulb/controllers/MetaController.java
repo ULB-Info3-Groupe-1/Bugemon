@@ -3,6 +3,7 @@ package ulb.controllers;
 import java.io.IOException;
 
 import javafx.stage.Stage;
+import ulb.utils.Parser;
 
 /**
  * MetaController
@@ -25,11 +26,14 @@ public class MetaController {
         COMBAT_RESULT,
     }
 
+    private final String JSON_FILES_PATH = "resources/Assets/json";
+
     private final Stage stage;
     private final MainMenuController mainMenuController;
     private final CreateTeamController createTeamController;
     private final CombatController combatController;
     private final CombatResultController combatResultController;
+    private final Parser.ParseResult parseResult;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -39,9 +43,11 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
+        this.parseResult = Parser.parse(JSON_FILES_PATH);
+
         this.mainMenuController = new MainMenuController(this);
         this.createTeamController = new CreateTeamController(this);
-        this.combatController = new CombatController(this);
+        this.combatController = new CombatController(this, parseResult.getBugemonsList());
         this.combatResultController = new CombatResultController(this);
     }
 
@@ -53,14 +59,19 @@ public class MetaController {
      */
     public final void switchTo(Window window) {
         switch (window) {
-            case MAIN_MENU ->
+            case MAIN_MENU -> {
                 this.mainMenuController.show(this.stage);
-            case CREATE_TEAM ->
+            }
+            case CREATE_TEAM -> {
                 this.createTeamController.show(this.stage);
-            case COMBAT ->
+            } 
+            case COMBAT -> {
                 this.combatController.show(this.stage);
-            case COMBAT_RESULT ->
+                this.combatController.runCombat(createTeamController.getFinalTeam());
+            }
+            case COMBAT_RESULT -> {
                 this.combatResultController.show(this.stage);
+            }
             default ->
                 throw new IllegalArgumentException("Invalid window");
         }
