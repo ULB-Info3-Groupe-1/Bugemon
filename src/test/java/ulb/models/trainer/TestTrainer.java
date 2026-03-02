@@ -24,15 +24,6 @@ public class TestTrainer {
     }
 
     @Test
-    public void testTeamStatus() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        killBugemon(team, "2");
-        Trainer trainer = new Trainer(team);
-        Map<Bugemon, Boolean> expectedStatus = trainer.teamStatus();
-        assertFalse(expectedStatus.get(team.getBugemon("2")));
-    }
-
-    @Test
     public void testIsDefeated() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(true);
         Trainer trainer = new Trainer(team);

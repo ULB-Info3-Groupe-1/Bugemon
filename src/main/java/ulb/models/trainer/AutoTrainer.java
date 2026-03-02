@@ -17,6 +17,11 @@ import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
+/**
+ * This class represents an automatic trainer, which has a team of bugemon and
+ * can
+ * select a random action during a combat.
+ */
 public class AutoTrainer extends Trainer {
 
     // Constructor
@@ -32,10 +37,6 @@ public class AutoTrainer extends Trainer {
     }
 
     // Methods
-
-    public BugemonTeam generateRandomTeam() {
-        return null;
-    }
 
     /**
      * Choose a random attack from the list of attacks of the current bugemon of the

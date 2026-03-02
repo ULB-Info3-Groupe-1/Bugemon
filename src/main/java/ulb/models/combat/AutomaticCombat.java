@@ -22,6 +22,11 @@ public class AutomaticCombat extends Combat {
     /**
      * Constructor for the AutomaticCombat class, initializing the two trainers and
      * the turn of the combat.
+     * 
+     * @param allyTrainer      (AutoTrainer) the allied trainer participating in the
+     *                         combat.
+     * @param adversaryTrainer (AutoTrainer) the adversary trainer participating in
+     *                         the combat.
      */
     public AutomaticCombat(AutoTrainer allyTrainer, AutoTrainer adversaryTrainer) {
         super(allyTrainer, adversaryTrainer);
