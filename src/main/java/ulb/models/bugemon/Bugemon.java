@@ -548,6 +548,33 @@ public class Bugemon implements BugemonDTO, Cloneable {
     }
 
     /**
+     * Add/Substract a given value to a given stat.
+     *
+     * @param stat  (String) The stat id to edit.
+     * @param value (int) The value to add to the stat.
+     */
+    public void editStat(String stat, int value) throws KeyException {
+        switch (stat) {
+            case "pv":
+                this.stats.setHp(this.stats.getHp() + value);
+                break;
+            case "attaque":
+                this.stats.setAttack(this.stats.getAttack() + value);
+                break;
+            case "defense":
+                this.stats.setDefense(this.stats.getDefense() + value);
+                break;
+            case "initiative":
+                this.stats.setInitiative(this.stats.getInitiative() + value);
+                break;
+            default:
+                throw new KeyException(
+                    "Invalid stat key when trying to edit stat value"
+                );
+        }
+    }
+
+    /**
      * Get the list of attacks that the bugemon can have.
      *
      * @return (AttackList) the list of attacks that the bugemon can have.
