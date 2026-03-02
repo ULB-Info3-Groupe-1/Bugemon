@@ -41,9 +41,6 @@ public class ManualCombat extends Combat {
 
     // Methods
 
-    public void selectTAction() {
-    }
-
     public Trainer turn(ManualTrainer.TAction action) {
         if (action == ManualTrainer.TAction.ATTACK) {
             Attack allyAttack = this.allyTrainer.getSelectedAttack();
