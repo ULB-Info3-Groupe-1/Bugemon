@@ -2,7 +2,6 @@ package ulb.views;
 
 import java.io.IOException;
 import java.util.List;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import ulb.common.BugemonDTO;
@@ -16,13 +15,14 @@ import ulb.controllers.CreateTeamController;
  */
 public class CreateTeamView extends View {
 
-    private final static String FXML_PATH = "/fxml/CreateTeam.fxml";
+    private static final String FXML_PATH = "/fxml/CreateTeam.fxml";
 
     private CreateTeamController controller;
 
     // FXML elements
     @FXML
     private AllBugemonsGridView allBugemonsGridView;
+
     @FXML
     private BugemonTeamView bugemonsTeamView;
 
@@ -38,12 +38,14 @@ public class CreateTeamView extends View {
         super(FXML_PATH);
         this.controller = null;
 
-        this.allBugemonsGridView.setOnClickCallback((dto) -> {
+        this.allBugemonsGridView.setOnClickCallback(dto -> {
             this.controller.onBugemonClicked(dto.getId());
         });
 
-        this.validateButton.setOnAction((e) -> this.controller.startCombat());
-        this.validateButton.setStyle("-fx-font-size: 24; -fx-background-color: green; -fx-text-fill: white;");
+        this.validateButton.setOnAction(e -> this.controller.startCombat());
+        this.validateButton.setStyle(
+            "-fx-font-size: 24; -fx-background-color: green; -fx-text-fill: white;"
+        );
     }
 
     /**
@@ -55,7 +57,9 @@ public class CreateTeamView extends View {
         this.controller = controller;
 
         // set selection callback
-        this.allBugemonsGridView.setSelectionChecker(b -> this.controller.checkBugemonInTeam(b.getId()));
+        this.allBugemonsGridView.setSelectionChecker(b ->
+            this.controller.checkBugemonInTeam(b.getId())
+        );
     }
 
     public void showTeam(List<BugemonDTO> bugemonList) {
