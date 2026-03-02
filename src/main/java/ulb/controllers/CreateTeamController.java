@@ -34,12 +34,11 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         if (this.bugemonTeam.contains(id)) {
             this.bugemonTeam.removeBugemon(id);
         } else {
-            for (Bugemon bugemon : this.bugemonList) {
-                if (bugemon.getId().equals(id)) {
-                    this.bugemonTeam.addBugemon(bugemon);
-                    break;
-                }
-            }
+            this.bugemonList
+            .stream()
+            .filter(b -> b.getId().equals(id))
+            .findFirst()
+            .ifPresent(bugemon -> this.bugemonTeam.addBugemon(bugemon));
         }
 
         this.updateBugemonsTeamView();
