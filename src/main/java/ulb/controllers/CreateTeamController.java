@@ -2,9 +2,7 @@ package ulb.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ulb.common.BugemonDTO;
 import ulb.controllers.MetaController.Window;
@@ -80,5 +78,4 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("6"));
         return bgTeam;
     }
-
 }

@@ -9,76 +9,72 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button fx:id="validateButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="144.0" text="Valider" AnchorPane.rightAnchor="25.0" AnchorPane.bottomAnchor="45.0"/>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 25; -fx-font-weight: BOLD;" text="Sélection de ton équipe" textAlignment="CENTER" wrappingWidth="300.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="20.0">
+      <Button fx:id="validateButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="432.0" style="-fx-font-size: 30;  -fx-background-color: green; -fx-text-fill: white;" text="Valider" AnchorPane.rightAnchor="75.0" AnchorPane.bottomAnchor="50.0"/>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 67; -fx-font-weight: BOLD;" text="Sélection de ton équipe" textAlignment="CENTER" wrappingWidth="900.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="60.0">
          <font>
-            <Font name="InconsolataGo Nerd Font" size="12.0" />
+            <Font name="InconsolataGo Nerd Font" size="36.0" />
          </font>
       </Text>
-      <Pane fx:id="listPane" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="23.0">
+      <Pane fx:id="listPane" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="75.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="50.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="50.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="100.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="100.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="150.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="150.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="200.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="200.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="250.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="250.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="300.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="300.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="350.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="350.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="400.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="400.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="450.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="450.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="500.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="500.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="0.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="0.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="50.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="50.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="100.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="100.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="150.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="150.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="200.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="200.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="250.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="250.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="300.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="300.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="350.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="350.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="400.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="400.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="450.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="450.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" layoutX="500.0" layoutY="50.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="50.0" />
-            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="500.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="165.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="165.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="330.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="330.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="495.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="495.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="660.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="660.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="825.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="825.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="990.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="990.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="1155.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="1155.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="1320.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="1320.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="1485.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="1485.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="0.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="0.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="165.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="165.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="330.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="330.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="495.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="495.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="660.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="660.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="825.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="825.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="990.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="990.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="1155.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="1155.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="1320.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="1320.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="1485.0" layoutY="165.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="150.0" />
+            <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="1485.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
-      <Pane fx:id="teamPane" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="14.0">
+      <Pane fx:id="teamPane" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="45.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="70.0" />
-            <ImageView fitHeight="70.0" fitWidth="70.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="77.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="70.0" />
-            <ImageView fitHeight="70.0" fitWidth="70.0" layoutX="77.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="154.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="70.0" />
-            <ImageView fitHeight="70.0" fitWidth="70.0" layoutX="154.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="0.0" layoutY="77.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="70.0" />
-            <ImageView fitHeight="70.0" fitWidth="70.0" layoutX="0.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="77.0" layoutY="77.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="70.0" />
-            <ImageView fitHeight="70.0" fitWidth="70.0" layoutX="77.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="70.0" layoutX="154.0" layoutY="77.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="70.0" />
-            <ImageView fitHeight="70.0" fitWidth="70.0" layoutX="154.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="210.0" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="210.0" />
+            <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="210.0" layoutX="231.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="210.0" />
+            <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="231.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="210.0" layoutX="462.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="210.0" />
+            <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="462.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="210.0" layoutX="0.0" layoutY="231.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="210.0" />
+            <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="0.0" layoutY="231.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="210.0" layoutX="231.0" layoutY="231.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="210.0" />
+            <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="231.0" layoutY="231.0" pickOnBounds="true" preserveRatio="true" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="210.0" layoutX="462.0" layoutY="231.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" width="210.0" />
+            <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="462.0" layoutY="231.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
    </children>
