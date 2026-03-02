@@ -59,7 +59,7 @@ public class Bugemon implements BugemonDTO {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.sprite = sprite;
+        this.sprite = "png/" + sprite; // TODO: do that somewhere else ?
         this.stats = stats;
         this.attackList = attackList;
         this.isStarter = isStarter;
