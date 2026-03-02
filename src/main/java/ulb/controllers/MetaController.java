@@ -46,7 +46,7 @@ public class MetaController {
         this.parseResult = Parser.parse(JSON_FILES_PATH);
 
         this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(this);
+        this.createTeamController = new CreateTeamController(this, parseResult.getBugemonsList());
         this.combatController = new CombatController(this, parseResult.getBugemonsList());
         this.combatResultController = new CombatResultController(this);
     }

@@ -16,14 +16,15 @@ import ulb.views.CreateTeamView;
 public class CreateTeamController extends Controller<CreateTeamView> {
 
     private BugemonTeam bugemonTeam;
-    private final Map<String, Bugemon> allBugemonsById; // TODO: This will have to move somewhere else
+    private final List<Bugemon> bugemonList;
 
-    public CreateTeamController(MetaController metaController) throws IOException {
+    public CreateTeamController(MetaController metaController, List<Bugemon> bugemonList) throws IOException {
         super(metaController, new CreateTeamView());
         this.view.setController(this);
+        
+        this.bugemonList = bugemonList;
 
         this.bugemonTeam = new BugemonTeam();
-        this.allBugemonsById = new HashMap<>();
 
         this.updateAllBugemonsView();
         this.updateBugemonsTeamView();
@@ -33,8 +34,11 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         if (this.bugemonTeam.contains(id)) {
             this.bugemonTeam.removeBugemon(id);
         } else {
-            Bugemon bugemon = allBugemonsById.get(id);
-            this.bugemonTeam.addBugemon(bugemon);
+            this.bugemonList
+            .stream()
+            .filter(b -> b.getId().equals(id))
+            .findFirst()
+            .ifPresent(bugemon -> this.bugemonTeam.addBugemon(bugemon));
         }
 
         this.updateBugemonsTeamView();
@@ -43,7 +47,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     private void updateAllBugemonsView() {
         List<BugemonDTO> bugemonList = new ArrayList<>();
-        bugemonList.addAll(this.allBugemonsById.values());
+        bugemonList.addAll(this.bugemonList);
         this.view.showAll(bugemonList);
     }
 
