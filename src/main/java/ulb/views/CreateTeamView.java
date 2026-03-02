@@ -110,7 +110,7 @@ public class CreateTeamView extends View {
             ImageView iv = this.teamBugemons.get(idx);
 
             Image img = (bugemon != null)
-                    ? new Image(bugemon.getSpriteURL())
+                    ? new Image("/png/" + bugemon.getSpriteURL()) // TODO : Retirer le /png/ 
                     : this.UNKNOWN_IMAGE;
 
             iv.setImage(img);
@@ -128,7 +128,7 @@ public class CreateTeamView extends View {
             ImageView iv = this.allBugemons.get(idx);
 
             Image img = (bugemon != null)
-                    ? new Image(bugemon.getSpriteURL())
+                    ? new Image("/png/" + bugemon.getSpriteURL()) // TODO : Retirer le /png/ 
                     : this.UNKNOWN_IMAGE;
 
             iv.setImage(img);
