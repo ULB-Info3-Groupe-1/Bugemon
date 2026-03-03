@@ -10,6 +10,7 @@
 package ulb.models.trainer;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -36,9 +37,6 @@ public class TestManualTrainer {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         TestTrainer.killBugemon(team, "2");
         ManualTrainer trainer = new ManualTrainer(team);
-        trainer.selectBugemon(team.getBugemon("2"));
-        assertNull(trainer.getSelectedBugemon());
+        assertThrows(IllegalArgumentException.class, () -> trainer.selectBugemon(team.getBugemon("2")));
     }
-
-
 }
