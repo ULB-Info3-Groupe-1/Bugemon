@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.List;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+
 import ulb.common.BugemonDTO;
 import ulb.controllers.CreateTeamController;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
@@ -30,10 +32,10 @@ public class CreateTeamView extends View {
     @FXML
     private AnchorPane rootPane;
     @FXML
-    private Pane listPane;
+    private TilePane listPane;
 
     @FXML
-    private Pane teamPane;
+    private TilePane teamPane;
 
     @FXML
     private Button validateButton;
@@ -59,25 +61,35 @@ public class CreateTeamView extends View {
     public CreateTeamView() throws IOException {
         super(FXML_PATH);
         this.controller = null;
-        for (Node node : listPane.getChildren()) {
-            if (node instanceof ImageView imageView) {
-                this.allBugemons.add(imageView);
 
-                imageView.setOnMouseClicked(e -> {
-                    BugemonDTO dto = (BugemonDTO) imageView.getUserData();
-                    if (dto != null) {
-                        try {
-                            this.controller.onBugemonClicked(dto.getId());
-                        } catch (BugemonAlreadyExistsException exception) {
-                        }
+        // Get all the ImageViews from the FXML and add them
+        for (Node node : listPane.getChildren()) {
+            if (node instanceof StackPane stackPane) {
+                for (Node child : stackPane.getChildren()) {
+                    if (child instanceof ImageView imageView) {
+                        this.allBugemons.add(imageView);
+
+                        imageView.setOnMouseClicked(e -> {
+                            BugemonDTO dto = (BugemonDTO) imageView.getUserData();
+                            if (dto != null) {
+                                try {
+                                    this.controller.onBugemonClicked(dto.getId());
+                                } catch (BugemonAlreadyExistsException exception) {
+                                }
+                            }
+                        });
                     }
-                });
+                }
             }
         }
 
         for (Node node : teamPane.getChildren()) {
-            if (node instanceof ImageView imageView) {
-                this.teamBugemons.add(imageView);
+            if (node instanceof StackPane stackPane) {
+                for (Node child : stackPane.getChildren()) {
+                    if (child instanceof ImageView imageView) {
+                        this.teamBugemons.add(imageView);
+                    }
+                }
             }
         }
 
@@ -108,8 +120,6 @@ public class CreateTeamView extends View {
 
             BugemonDTO bugemon = bugemonList.get(idx);
             ImageView iv = this.teamBugemons.get(idx);
-            iv.setScaleX(0.75);
-            iv.setScaleY(0.75);
 
             Image img = (bugemon != null)
                     ? new Image("/png/" + bugemon.getSpriteURL()) // TODO : Retirer le /png/ 
@@ -128,8 +138,6 @@ public class CreateTeamView extends View {
 
             BugemonDTO bugemon = (idx < bugemonList.size()) ? bugemonList.get(idx) : null;
             ImageView iv = this.allBugemons.get(idx);
-            iv.setScaleX(0.75);
-            iv.setScaleY(0.75);
 
             Image img = (bugemon != null)
                     ? new Image("/png/" + bugemon.getSpriteURL()) // TODO : Retirer le /png/ 
