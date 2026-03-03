@@ -130,6 +130,20 @@ public class Effect {
     }
 
     /**
+     * Get the duration of the effect in integer format.
+     * 
+     * @return (int) the value of the duration.
+     */
+    public int extractDuration() {
+        if (this.duration == null || !this.duration.contains("_")) {
+            throw new IllegalArgumentException("Format invalide");
+        }
+
+        String numberPart = this.duration.split("_")[0];
+        return Integer.parseInt(numberPart);
+    }
+
+    /**
      * Set the duration of the effect to a new value.
      * 
      * @param duration (String) the new duration to set for the effect
