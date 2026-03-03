@@ -1,7 +1,6 @@
 package ulb.views;
 
 import javafx.stage.Stage;
-import junit.framework.Assert;
 import ulb.controllers.CreateTeamController;
 
 import ulb.models.bugemon.Bugemon;
@@ -32,6 +31,19 @@ public class TestCreateTeamView extends ApplicationTest {
         Bugemon b = new Bugemon("test", "test", null, "bugzilla.png", null, null, false);
         CreateTeamController controller = new CreateTeamController(null, List.of(b));
         controller.show(stage);
+         // --- Stabilize TestFX in Headless mode ---
+        stage.setWidth(1920);
+        stage.setHeight(1080);
+
+        stage.show();
+        stage.toFront();
+        stage.requestFocus();
+        
+        // Force le moteur JavaFX à calculer tout de suite les coordonnées (bounds) des éléments
+        if (stage.getScene() != null && stage.getScene().getRoot() != null) {
+            stage.getScene().getRoot().applyCss();
+            stage.getScene().getRoot().layout();
+        }
     }
 
     /**
