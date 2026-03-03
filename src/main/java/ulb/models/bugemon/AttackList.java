@@ -63,4 +63,8 @@ public class AttackList {
     public Attack get(int index) {
         return attacks.get(index);
     }
+
+    public boolean contains(Attack attack) {
+        return attacks.contains(attack);
+    }
 }

@@ -42,21 +42,6 @@ public class Trainer {
     // Methods
 
     /**
-     * Returns a map of the bugemon in the team of the trainer, with their status
-     * (alive or not).
-     * 
-     * @return (Map<Bugemon, Boolean>) a map of the bugemon in the team of the
-     *         trainer, with their status (alive or not).
-     */
-    public Map<Bugemon, Boolean> teamStatus() {
-        Map<Bugemon, Boolean> bugemonStatus = new HashMap<>();
-        for (Bugemon bugemon : team.getTeam()) {
-            bugemonStatus.put(bugemon, bugemon.isAlive());
-        }
-        return bugemonStatus;
-    }
-
-    /**
      * Returns true if the trainer is defeated (all bugemon in the team are
      * defeated), false otherwise.
      * 
