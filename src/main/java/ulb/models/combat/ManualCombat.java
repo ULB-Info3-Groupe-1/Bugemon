@@ -41,46 +41,60 @@ public class ManualCombat extends Combat {
 
     // Methods
 
+    /**
+     * Perform a turn of the combat, where the allied trainer selects an action and
+     * the adversary trainer responds accordingly. The method returns the winning
+     * trainer if the combat is over, or null if the combat is still ongoing.
+     * 
+     * @param action (Action) the action selected by the allied trainer for this
+     *               turn, which can be an attack, a switch, or a forfeit.
+     * @return (Trainer) the winning trainer if the combat is over, or null if the
+     *         combat is still ongoing.
+     */
     public Trainer turn(ManualTrainer.TAction action) {
-        if (action == ManualTrainer.TAction.ATTACK) {
-            Attack allyAttack = this.allyTrainer.getSelectedAttack();
-            if (allyAttack != null) {
-                applyDamage();
-            }
-        } else if (action == ManualTrainer.TAction.SWITCH) {
-            Bugemon selectedBugemon = this.allyTrainer.getSelectedBugemon();
-            if (selectedBugemon != null) {
-                this.allyTrainer.setCurrentBugemon(selectedBugemon);
-            }
-        } else if (action == ManualTrainer.TAction.FORFEIT) {
-            return adversaryTrainer;
-        }
-        ManualTrainer winner = (ManualTrainer) getWinner();
-        if (winner != null) {
-            return winner;
+        switch (action) {
+            case ATTACK:
+                Attack allyAttack = this.allyTrainer.getSelectedAttack();
+                if (allyAttack != null) {
+                    applyDamage();
+                }
+                break;
+            case SWITCH:
+                Bugemon selectedBugemon = this.allyTrainer.getSelectedBugemon();
+                if (selectedBugemon != null) {
+                    this.allyTrainer.setCurrentBugemon(selectedBugemon);
+                }
+                break;
+            case FORFEIT:
+                return this.adversaryTrainer;
+            default:
+                throw new IllegalArgumentException("Illegal action: " + action);
         }
         nextTurn();
         return null;
     }
 
+    /**
+     * Apply the damage of the attack selected by the allied trainer to the
+     * adversary trainer, and the damage of a random attack of the adversary trainer
+     * to the allied trainer.
+     */
     private void applyDamage() {
-        AutoTrainer adversaryTrainer = (AutoTrainer) getAdversaryTrainer();
-        ManualTrainer allyTrainer = (ManualTrainer) getAllyTrainer();
-        int adversaryAttack = adversaryTrainer.getRandomAttack();
-        int allyAttackPower = allyTrainer.getSelectedAttack().getPower();
-        adversaryTrainer.takeDamage(allyAttackPower);
-        if (adversaryTrainer.isDefeated()) {
+        int adversaryAttack = this.adversaryTrainer.getRandomAttack();
+        int allyAttackPower = this.allyTrainer.getSelectedAttack().getPower();
+        this.adversaryTrainer.takeDamage(allyAttackPower);
+        if (this.adversaryTrainer.isDefeated()) {
             return;
         }
-        if (!adversaryTrainer.getCurrentBugemon().isAlive()) {
-            adversaryTrainer.selectRandomBugemon();
+        if (!this.adversaryTrainer.getCurrentBugemon().isAlive()) {
+            this.adversaryTrainer.selectRandomBugemon();
         }
-        allyTrainer.takeDamage(adversaryAttack);
-        if (allyTrainer.isDefeated()) {
+        this.allyTrainer.takeDamage(adversaryAttack);
+        if (this.allyTrainer.isDefeated()) {
             return;
         }
-        if (!allyTrainer.getCurrentBugemon().isAlive()) {
-            allyTrainer.getSelectedBugemon();
+        if (!this.allyTrainer.getCurrentBugemon().isAlive()) {
+            this.allyTrainer.getSelectedBugemon();
         }
         return;
     }

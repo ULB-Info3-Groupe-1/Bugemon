@@ -25,7 +25,7 @@ public class ManualTrainer extends Trainer {
      * Enum representing the possible actions of a trainer during a combat: attack,
      * switch, or forfeit.
      */
-    public enum TAction {
+    public static enum TAction {
         ATTACK, SWITCH, FORFEIT
     }
 
@@ -62,12 +62,16 @@ public class ManualTrainer extends Trainer {
         if (this.isDefeated()) {
             return;
         }
-        for (Bugemon b : team.getTeam()) {
-            if (b.equals(bugemon) && b.isAlive()) {
+        for (Bugemon b : this.team.getTeam()) {
+            if (b.equals(bugemon)) {
+                if (!b.isAlive()) {
+                    throw new IllegalArgumentException("The selected bugemon is not alive.");
+                }
                 this.selectedBugemon = b;
                 return;
             }
         }
+        throw new IllegalArgumentException("The selected bugemon is not in the team of the trainer.");
     }
 
     /**
@@ -78,8 +82,10 @@ public class ManualTrainer extends Trainer {
      *               current bugemon of the trainer.
      */
     public void selectAttack(Attack attack) {
-        if (getCurrentBugemonAttackList().contains(attack)) {
+        if (this.getCurrentBugemonAttackList().contains(attack)) {
             this.selectedAttack = attack;
+        } else {
+            throw new IllegalArgumentException("The selected attack is not in the list of attacks of the current bugemon of the trainer.");
         }
     }
 
@@ -90,10 +96,10 @@ public class ManualTrainer extends Trainer {
      *         current bugemon of the trainer, 0 otherwise.
      */
     public int getAttackPower() {
-        if (this.selectedAttack != null && getCurrentBugemonAttackList().contains(this.selectedAttack)) {
-            return this.selectedAttack.getPower();
+        if (this.selectedAttack == null) {
+            return 0;
         }
-        return 0;
+        return this.selectedAttack.getPower();
     }
 
     // Getters and setters
@@ -104,7 +110,7 @@ public class ManualTrainer extends Trainer {
      * @return (TAction) the selected action for the trainer during a combat.
      */
     public TAction getSelectedAction() {
-        return selectedAction;
+        return this.selectedAction;
     }
 
     /**
@@ -122,7 +128,7 @@ public class ManualTrainer extends Trainer {
      * @return (Attack) the selected attack for the trainer during a combat.
      */
     public Attack getSelectedAttack() {
-        return selectedAttack;
+        return this.selectedAttack;
     }
 
     /**
@@ -131,7 +137,7 @@ public class ManualTrainer extends Trainer {
      * @return (Bugemon) the selected bugemon for the trainer during a combat.
      */
     public Bugemon getSelectedBugemon() {
-        return selectedBugemon;
+        return this.selectedBugemon;
     }
 
     /**
