@@ -14,8 +14,11 @@ variables:
 
 test:
   stage: test
+  before_script:
+    - apt-get update -y
+    - apt-get install -y xvfb libx11-6 libxext6 libxrender1 libxtst6 libgtk-3-0 libgl1-mesa-glx
   script:
-    - mvn clean test
+    - xvfb-run -a mvn clean test
 
 # Create a jar package only on the main branch (useful to give a .jar to the client)
 package:
