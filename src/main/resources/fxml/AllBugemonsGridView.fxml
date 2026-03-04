@@ -14,7 +14,7 @@
 
         <ScrollPane fitToWidth="true"
                     hbarPolicy="NEVER"
-                    prefHeight="250.0"
+                    prefHeight="275.0"
                     VBox.vgrow="NEVER">
 
             <content>

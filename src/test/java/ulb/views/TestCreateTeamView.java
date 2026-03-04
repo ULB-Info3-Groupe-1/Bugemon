@@ -19,7 +19,6 @@ import java.util.function.Predicate;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 
 import org.assertj.core.api.Assertions;
 

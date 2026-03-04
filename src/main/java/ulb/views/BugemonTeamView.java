@@ -12,6 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import ulb.common.BugemonDTO;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable
@@ -51,13 +53,13 @@ public class BugemonTeamView extends VBox {
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
 
-            StackPane cell = createImageView(bugemon);
+            VBox cell = createBugemonCell(bugemon);
 
             gridPane.add(cell, col, row);
         }
     }
 
-    private StackPane createImageView(BugemonDTO bugemon) {
+    private VBox createBugemonCell(BugemonDTO bugemon) {
         Image image = (bugemon != null)
                 ? new Image("/png/" + bugemon.getSpriteURL()) // TODO : Retirer le /png/
                 : this.UNKNOWN_IMAGE;
@@ -67,11 +69,22 @@ public class BugemonTeamView extends VBox {
         imageView.setFitHeight(IMAGE_SIZE);
         imageView.setPreserveRatio(true);
 
-        StackPane pane = new StackPane(imageView);
-        pane.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 5;");
-        pane.setUserData(bugemon);
+        StackPane imagePane = new StackPane(imageView);
+        imagePane.setMinSize(IMAGE_SIZE, IMAGE_SIZE);
+        imagePane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
 
-        return pane;
+        String name = (bugemon != null) ? bugemon.getName() : "Vide";
+        Label nameLabel = new Label(name);
+        nameLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+
+        VBox cell = new VBox(2);
+        cell.setAlignment(Pos.CENTER);
+        cell.getChildren().addAll(imagePane, nameLabel);
+        
+        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3;");
+        cell.setUserData(bugemon);
+
+        return cell;
     }
 
 }

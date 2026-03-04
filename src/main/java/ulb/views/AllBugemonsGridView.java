@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -65,49 +67,62 @@ public class AllBugemonsGridView extends VBox {
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
 
-            StackPane cell = createImageView(bugemon);
+            VBox cell = createBugemonCell(bugemon);
 
             gridPane.add(cell, col, row);
         }
     }
 
-    private StackPane createImageView(BugemonDTO bugemon) {
+    private VBox createBugemonCell(BugemonDTO bugemon) {
         Image image = new Image("/png/" + bugemon.getSpriteURL());
 
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(IMAGE_SIZE);
         imageView.setFitHeight(IMAGE_SIZE);
         imageView.setPreserveRatio(true);
+        // keep image within a stackpane with fixed size so labels align perfectly
+        StackPane imagePane = new StackPane(imageView);
+        imagePane.setMinSize(IMAGE_SIZE, IMAGE_SIZE);
+        imagePane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
 
-        StackPane pane = new StackPane(imageView);
-        pane.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 5;");
-        pane.setUserData(bugemon);
+        Label nameLabel = new Label(bugemon.getName());
+        nameLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+
+        VBox cell = new VBox(2); // spacing exactly 2
+        cell.setAlignment(Pos.CENTER);
+        cell.getChildren().addAll(imagePane, nameLabel);
+        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;");
+        cell.setUserData(bugemon);
 
         if (selectionChecker != null && selectionChecker.apply(bugemon)) {
-            select(pane);
+            select(cell);
         } else {
-            unselect(pane);
+            unselect(cell);
         }
 
         if (this.setOnBugemonClicked != null) {
-            pane.setOnMouseClicked((e) -> {
-                BugemonDTO dto = (BugemonDTO) pane.getUserData();
+            cell.setOnMouseClicked((e) -> {
+                BugemonDTO dto = (BugemonDTO) cell.getUserData();
                 if (dto != null) {
                     this.setOnBugemonClicked.accept(dto);
                 }
             });
         }
 
-        return pane;
+        return cell;
     }
 
-    private void select(StackPane pane) {
-        ImageView iv = (ImageView) pane.getChildren().get(0);
+    private void select(VBox cell) {
+        StackPane imagePane = (StackPane) cell.getChildren().get(0);
+        ImageView iv = (ImageView) imagePane.getChildren().get(0);
         iv.setStyle("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
-        pane.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-padding: 4; -fx-background-color: lightcoral;");
+        cell.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-padding: 2; -fx-background-color: lightcoral;");
     }
 
-    private void unselect(StackPane pane) {
-        pane.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 5;");
+    private void unselect(VBox cell) {
+        StackPane imagePane = (StackPane) cell.getChildren().get(0);
+        ImageView iv = (ImageView) imagePane.getChildren().get(0);
+        iv.setStyle("");
+        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;");
     }
 }
