@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import ulb.common.BugemonDTO;
-import ulb.common.BugemonDTO;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
