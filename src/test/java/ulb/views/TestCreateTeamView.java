@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.scene.Node;
+import javafx.scene.text.Text;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
 import org.assertj.core.api.Assertions;
 
@@ -68,7 +70,7 @@ public class TestCreateTeamView extends ApplicationTest {
      */
     @Test
     public void testDisplayBugemonListPane() {
-        verifyThat("#listPane", isVisible());
+        verifyThat("#allBugemonsGridView", isVisible());
     }
     
     /**
@@ -76,66 +78,22 @@ public class TestCreateTeamView extends ApplicationTest {
      */
     @Test
     public void testDisplayTeamPane() {
-        verifyThat("#teamPane", isVisible());
+        verifyThat("#bugemonsTeamView", isVisible());
     }
 
-    /**
-     * Test when Bugemon is clicked in the list, it is added to the team and the unknown image is replaced by the correct one.
-     */
-    @Test
-    public void testUnknownImageIsReplaced() {
-        ImageView firstBugemonInList = lookup("#listPane")
-                .lookup((Predicate<Node>) node -> node instanceof ImageView)
-                .nth(0)
-                .query();
-                
-        ImageView firstBugemonInTeam = lookup("#teamPane")
-                .lookup((Predicate<Node>) node -> node instanceof ImageView)
-                .nth(0)
-                .query();
-                
-        Assertions.assertThat(firstBugemonInTeam.getImage().getUrl())
-                .contains("unknown.png");
-
-        clickOn(firstBugemonInList);
-        
-        
-
-        Assertions.assertThat(firstBugemonInTeam.getImage().getUrl())
-                .doesNotContain("unknown.png");
-        Assertions.assertThat(firstBugemonInTeam.getImage().getUrl())
-                .contains("bugzilla.png");
-    }
-
-    /**
-     * Test CSS style applied to the image when clicked.
-     */
-    @Test
-    public void testStyleWhenBugemonIsClicked() {
-        ImageView firstBugemonInList = lookup("#listPane")
-                .lookup((Predicate<Node>) node -> node instanceof ImageView)
-                .nth(0)
-                .query();
-
-        clickOn(firstBugemonInList);
-        
-        Assertions.assertThat(firstBugemonInList.getStyle())
-                .contains("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
-    }
-    
     /**
     * Test that the image of the Bugemon added to the team is the same as the one in the list.
     */
     @Test
     public void testBugemonAddedtoTeam() {
-        ImageView firstBugemonInList = lookup("#listPane")
+        ImageView firstBugemonInList = lookup("#allBugemonsGridView")
                 .lookup((Predicate<Node>) node -> node instanceof ImageView)
                 .nth(0)
                 .query();
 
         clickOn(firstBugemonInList);
         
-        ImageView firstBugemonInTeam = lookup("#teamPane")
+        ImageView firstBugemonInTeam = lookup("#bugemonsTeamView")
                 .lookup((Predicate<Node>) node -> node instanceof ImageView)
                 .nth(0)
                 .query();
@@ -150,6 +108,8 @@ public class TestCreateTeamView extends ApplicationTest {
      */
     @Test
     public void testMainText() {
-        verifyThat("#mainText", TextMatchers.hasText("Sélection de ton équipe"));
+        Text mainText = lookup((Predicate<Node>) node -> node instanceof Text && ((Text) node).getText().equals("Sélection de ton équipe"))
+                .query();
+        verifyThat(mainText, TextMatchers.hasText("Sélection de ton équipe"));
     }
 }

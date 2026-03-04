@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import ulb.common.BugemonDTO;
 
@@ -50,13 +51,13 @@ public class BugemonTeamView extends VBox {
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
 
-            ImageView iv = createImageView(bugemon);
+            StackPane cell = createImageView(bugemon);
 
-            gridPane.add(iv, col, row);
+            gridPane.add(cell, col, row);
         }
     }
 
-    private ImageView createImageView(BugemonDTO bugemon) {
+    private StackPane createImageView(BugemonDTO bugemon) {
         Image image = (bugemon != null)
                 ? new Image("/png/" + bugemon.getSpriteURL()) // TODO : Retirer le /png/
                 : this.UNKNOWN_IMAGE;
@@ -66,9 +67,11 @@ public class BugemonTeamView extends VBox {
         imageView.setFitHeight(IMAGE_SIZE);
         imageView.setPreserveRatio(true);
 
-        imageView.setUserData(bugemon);
+        StackPane pane = new StackPane(imageView);
+        pane.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 5;");
+        pane.setUserData(bugemon);
 
-        return imageView;
+        return pane;
     }
 
 }

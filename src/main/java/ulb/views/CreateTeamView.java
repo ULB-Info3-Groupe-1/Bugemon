@@ -4,14 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-
 import javafx.scene.control.Button;
 import ulb.common.BugemonDTO;
 import ulb.controllers.CreateTeamController;
@@ -37,12 +29,6 @@ public class CreateTeamView extends View {
     @FXML
     private Button validateButton;
 
-    @FXML
-    private Button loadButton;
-
-    @FXML
-    private Button saveButton;
-
     /**
      * Loads the create-team FXML layout and initializes button actions.
      *
@@ -57,6 +43,7 @@ public class CreateTeamView extends View {
         });
 
         this.validateButton.setOnAction((e) -> this.controller.startCombat());
+        this.validateButton.setStyle("-fx-font-size: 24; -fx-background-color: green; -fx-text-fill: white;");
     }
 
     /**

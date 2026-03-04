@@ -10,7 +10,6 @@
          spacing="0">
 
     <children>
-
         <ScrollPane fitToWidth="true"
                     VBox.vgrow="ALWAYS">
 
@@ -20,7 +19,6 @@
                           vgap="10"
                           style="-fx-padding: 10;" />
             </content>
-
         </ScrollPane>
 
     </children>

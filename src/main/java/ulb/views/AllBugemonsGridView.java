@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import ulb.common.BugemonDTO;
 
@@ -64,13 +65,13 @@ public class AllBugemonsGridView extends VBox {
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
 
-            ImageView iv = createImageView(bugemon);
+            StackPane cell = createImageView(bugemon);
 
-            gridPane.add(iv, col, row);
+            gridPane.add(cell, col, row);
         }
     }
 
-    private ImageView createImageView(BugemonDTO bugemon) {
+    private StackPane createImageView(BugemonDTO bugemon) {
         Image image = new Image("/png/" + bugemon.getSpriteURL());
 
         ImageView imageView = new ImageView(image);
@@ -78,31 +79,35 @@ public class AllBugemonsGridView extends VBox {
         imageView.setFitHeight(IMAGE_SIZE);
         imageView.setPreserveRatio(true);
 
-        imageView.setUserData(bugemon);
+        StackPane pane = new StackPane(imageView);
+        pane.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 5;");
+        pane.setUserData(bugemon);
 
         if (selectionChecker != null && selectionChecker.apply(bugemon)) {
-            select(imageView);
+            select(pane);
         } else {
-            unselect(imageView);
+            unselect(pane);
         }
 
         if (this.setOnBugemonClicked != null) {
-            imageView.setOnMouseClicked((e) -> {
-                BugemonDTO dto = (BugemonDTO) imageView.getUserData();
+            pane.setOnMouseClicked((e) -> {
+                BugemonDTO dto = (BugemonDTO) pane.getUserData();
                 if (dto != null) {
                     this.setOnBugemonClicked.accept(dto);
                 }
             });
         }
 
-        return imageView;
+        return pane;
     }
 
-    private void select(ImageView iv) {
+    private void select(StackPane pane) {
+        ImageView iv = (ImageView) pane.getChildren().get(0);
         iv.setStyle("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
+        pane.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-padding: 4; -fx-background-color: lightcoral;");
     }
 
-    private void unselect(ImageView iv) {
-        iv.setStyle("");
+    private void unselect(StackPane pane) {
+        pane.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 5;");
     }
 }
