@@ -556,16 +556,16 @@ public class Bugemon implements BugemonDTO, Cloneable {
     public void editStat(String stat, int value) throws KeyException {
         switch (stat) {
             case "pv":
-                this.stats.setHp(this.stats.getHp() + value);
+                this.stats.setHp(this.stats.getHp() - value);
                 break;
             case "attaque":
-                this.stats.setAttack(this.stats.getAttack() + value);
+                this.stats.setAttack(this.stats.getAttack() - value);
                 break;
             case "defense":
-                this.stats.setDefense(this.stats.getDefense() + value);
+                this.stats.setDefense(this.stats.getDefense() - value);
                 break;
             case "initiative":
-                this.stats.setInitiative(this.stats.getInitiative() + value);
+                this.stats.setInitiative(this.stats.getInitiative() - value);
                 break;
             default:
                 throw new KeyException(
