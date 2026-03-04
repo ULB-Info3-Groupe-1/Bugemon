@@ -35,6 +35,10 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 
+        if (sprite != null && !sprite.startsWith("png/")) {
+            sprite = "png/" + sprite;
+        }
+
         Stats stats = context.deserialize(obj.get("stats"), Stats.class);
 
         List<Attack> attacks = new ArrayList<>();
