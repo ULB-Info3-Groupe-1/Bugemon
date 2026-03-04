@@ -66,6 +66,9 @@ public class TestParser {
         assertEquals(bugemonsList.get(0).getName(), "Florachu");
         assertEquals(bugemonsList.get(1).getType(), Bugemon.BType.FLORA);
 
+        // check sprite URL begins with "png/"
+        assertEquals(bugemonsList.get(0).getSpriteURL(), "png/florachu.png");
+
         // check attacks
         Bugemon bugemon2 = bugemonsList.get(2);
         AttackList bugemon2AttackList = bugemon2.getAttackList();

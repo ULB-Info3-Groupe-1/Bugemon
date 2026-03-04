@@ -57,8 +57,7 @@ public class TestBugemon {
 
         @Test
         public void testCorrectPathSprite() {
-                String spriteFile = "bouldax.png"; 
-                Bugemon bugemon = new Bugemon("1", "Buggy", BType.LITHO, spriteFile, null, null, true);
+                Bugemon bugemon = new Bugemon("1", "Buggy", BType.LITHO, "png/bouldax.png", null, null, true);
                 String path = bugemon.getSpriteURL();
                 URL resource = getClass().getClassLoader().getResource(path);
                 assertNotNull(resource, "The sprite file has not been found");
