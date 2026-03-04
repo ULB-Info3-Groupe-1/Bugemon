@@ -11,6 +11,7 @@ package ulb.models.bugemon;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.Test;
 
@@ -48,6 +49,7 @@ public class TestBugemon {
         public void testHashCode() {
                 Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
                 Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertTrue(expectedBugemon1.hashCode() == expectedBugemon2.hashCode());
+                assertEquals(expectedBugemon1, expectedBugemon2);
+                assertEquals(expectedBugemon1.hashCode(), expectedBugemon2.hashCode());
         }
 }

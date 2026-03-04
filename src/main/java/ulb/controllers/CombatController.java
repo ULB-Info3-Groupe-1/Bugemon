@@ -49,7 +49,7 @@ public class CombatController extends Controller<CombatView> {
             winner = combat.turn();
         }
 
-        if (winner.equals(player)) {this.handleVictory();}
+        if (winner == player) {this.handleVictory();}
         else {this.handleDefeat();}
     }
 

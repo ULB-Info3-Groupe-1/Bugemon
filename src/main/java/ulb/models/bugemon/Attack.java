@@ -11,6 +11,7 @@ package ulb.models.bugemon;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing an attack that a bugemon can perform during battle.
@@ -171,5 +172,18 @@ public class Attack {
      */
     public void addEffect(Effect effect) {
         this.effects.add(effect);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Attack)) return false;
+        Attack attack = (Attack) o;
+        return Objects.equals(id, attack.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
