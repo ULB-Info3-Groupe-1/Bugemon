@@ -74,7 +74,7 @@ public class AllBugemonsGridView extends VBox {
     }
 
     private VBox createBugemonCell(BugemonDTO bugemon) {
-        Image image = new Image("/png/" + bugemon.getSpriteURL());
+        Image image = new Image(bugemon.getSpriteURL());
 
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(IMAGE_SIZE);

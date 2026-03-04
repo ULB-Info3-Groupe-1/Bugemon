@@ -61,7 +61,7 @@ public class BugemonTeamView extends VBox {
 
     private VBox createBugemonCell(BugemonDTO bugemon) {
         Image image = (bugemon != null)
-                ? new Image("/png/" + bugemon.getSpriteURL()) // TODO : Retirer le /png/
+                ? new Image(bugemon.getSpriteURL())
                 : this.UNKNOWN_IMAGE;
 
         ImageView imageView = new ImageView(image);

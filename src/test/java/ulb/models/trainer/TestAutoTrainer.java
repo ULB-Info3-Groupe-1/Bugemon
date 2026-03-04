@@ -9,7 +9,7 @@
 
 package ulb.models.trainer;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -25,6 +25,6 @@ public class TestAutoTrainer {
         TestTrainer.killBugemon(team, "1");
         trainer.selectRandomBugemon();
         assertTrue(trainer.getCurrentBugemon().isAlive());
-        assertFalse(trainer.getCurrentBugemon().equals(team.getBugemon("1")));
+        assertNotEquals(team.getBugemon("1"), trainer.getCurrentBugemon());
     }
 }

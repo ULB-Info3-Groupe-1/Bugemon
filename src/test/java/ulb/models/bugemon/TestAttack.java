@@ -9,6 +9,7 @@
 
 package ulb.models.bugemon;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class TestAttack {
             effects
         );
         attack.setId("NewTestAttack");
-        assertTrue(attack.getId().equals("NewTestAttack"));
+        assertEquals("NewTestAttack", attack.getId());
     }
 
     @Test
@@ -61,7 +62,7 @@ public class TestAttack {
             effects
         );
         attack.setName("NewTestAttack");
-        assertTrue(attack.getName().equals("NewTestAttack"));
+        assertEquals("NewTestAttack", attack.getName());
     }
 
     @Test
@@ -85,7 +86,7 @@ public class TestAttack {
             effects
         );
         attack.setType(Bugemon.BType.AQUA);
-        assertTrue(attack.getType().equals(Bugemon.BType.AQUA));
+        assertEquals(Bugemon.BType.AQUA, attack.getType());
     }
 
     @Test
@@ -108,7 +109,7 @@ public class TestAttack {
             effects
         );
         attack.setDescription("New description");
-        assertTrue(attack.getDescription().equals("New description"));
+        assertEquals("New description", attack.getDescription());
     }
 
     @Test
@@ -131,7 +132,7 @@ public class TestAttack {
             effects
         );
         attack.setPower(40);
-        assertTrue(attack.getPower() == 40);
+        assertEquals(40, attack.getPower());
     }
 
     @Test

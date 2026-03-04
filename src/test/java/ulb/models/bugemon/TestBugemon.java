@@ -11,9 +11,14 @@ package ulb.models.bugemon;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.net.URL;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.Bugemon.BType;
 import ulb.utils.TestUtilsBugemons;
 
 public class TestBugemon {
@@ -30,24 +35,33 @@ public class TestBugemon {
         @Test
         public void testTakeDamage() {
                 Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertTrue(expectedBugemon1.getStats().getHp() == 100);
+                assertEquals(100, expectedBugemon1.getStats().getHp());
                 expectedBugemon1.takeDamage(30);
-                assertTrue(expectedBugemon1.getStats().getHp() == 70);
+                assertEquals(70, expectedBugemon1.getStats().getHp());
                 expectedBugemon1.takeDamage(50);
-                assertTrue(expectedBugemon1.getStats().getHp() == 20);
+                assertEquals(20, expectedBugemon1.getStats().getHp());
         }
 
         @Test
         public void testEquals() {
                 Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
                 Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertTrue(expectedBugemon1.equals(expectedBugemon2));
+                assertEquals(expectedBugemon2, expectedBugemon1);
         }
 
         @Test
         public void testHashCode() {
                 Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
                 Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertTrue(expectedBugemon1.hashCode() == expectedBugemon2.hashCode());
+                assertEquals(expectedBugemon1, expectedBugemon2);
+                assertEquals(expectedBugemon1.hashCode(), expectedBugemon2.hashCode());
+        }
+
+        @Test
+        public void testCorrectPathSprite() {
+                Bugemon bugemon = new Bugemon("1", "Buggy", BType.LITHO, "png/bouldax.png", null, null, true);
+                String path = bugemon.getSpriteURL();
+                URL resource = getClass().getClassLoader().getResource(path);
+                assertNotNull(resource, "The sprite file has not been found");
         }
 }

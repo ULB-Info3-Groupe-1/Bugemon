@@ -29,7 +29,7 @@ public class TestCreateTeamView extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        Bugemon b = new Bugemon("test", "test", null, "bugzilla.png", null, null, false);
+        Bugemon b = new Bugemon("test", "test", null, "png/bugzilla.png", null, null, false);
         CreateTeamController controller = new CreateTeamController(null, List.of(b));
         controller.show(stage);
          // --- Stabilize TestFX in Headless mode ---

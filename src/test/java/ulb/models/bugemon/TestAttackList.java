@@ -10,7 +10,7 @@
 package ulb.models.bugemon;
 
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertTrue(attackList.getAttacks().size() == 3);
+        assertEquals(3, attackList.getAttacks().size());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertTrue(attackList.getAttacks().get(0) == attack1);
+        assertEquals(attack1, attackList.getAttacks().get(0));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertTrue(attackList.getAttacks().get(1) == attack2);
+        assertEquals(attack2, attackList.getAttacks().get(1));
     }
 
     @Test
@@ -175,13 +175,13 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertTrue(attackList.getAttacks().get(2) == attack3);
+        assertEquals(attack3, attackList.getAttacks().get(2));
     }
 
     @Test
     public void testEmptyAttackList() {
         AttackList attackList = new AttackList(List.of());
-        assertTrue(attackList.getAttacks().size() == 0);
+        assertEquals(0, attackList.getAttacks().size());
     }
 
     @Test

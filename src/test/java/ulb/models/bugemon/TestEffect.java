@@ -9,7 +9,7 @@
 
 package ulb.models.bugemon;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -24,9 +24,9 @@ public class TestEffect {
             10,
             "1 turn"
         );
-        assertTrue(effect.getTypeEffect().equals(EffectType.STAT_MODIFIER));
+        assertEquals(EffectType.STAT_MODIFIER, effect.getTypeEffect());
         effect.setTypeEffect(EffectType.SOIN);
-        assertTrue(effect.getTypeEffect().equals(EffectType.SOIN));
+        assertEquals(EffectType.SOIN, effect.getTypeEffect());
     }
 
     @Test
@@ -38,9 +38,9 @@ public class TestEffect {
             10,
             "1 turn"
         );
-        assertTrue(effect.getTarget().equals("TestEffect"));
+        assertEquals("TestEffect", effect.getTarget());
         effect.setTarget("NewTestEffect");
-        assertTrue(effect.getTarget().equals("NewTestEffect"));
+        assertEquals("NewTestEffect", effect.getTarget());
     }
 
     @Test
@@ -52,9 +52,9 @@ public class TestEffect {
             10,
             "1 turn"
         );
-        assertTrue(effect.getStat().equals("Flora"));
+        assertEquals("Flora", effect.getStat());
         effect.setStat("Aqua");
-        assertTrue(effect.getStat().equals("Aqua"));
+        assertEquals("Aqua", effect.getStat());
     }
 
     @Test
@@ -66,9 +66,9 @@ public class TestEffect {
             10,
             "1 turn"
         );
-        assertTrue(effect.getDuration().equals("1 turn"));
+        assertEquals("1 turn", effect.getDuration());
         effect.setDuration("2 turns");
-        assertTrue(effect.getDuration().equals("2 turns"));
+        assertEquals("2 turns", effect.getDuration());
     }
 
     @Test
@@ -80,8 +80,8 @@ public class TestEffect {
             10,
             "1 turn"
         );
-        assertTrue(effect.getModifier() == 10);
+        assertEquals(10, effect.getModifier());
         effect.setModifier(20);
-        assertTrue(effect.getModifier() == 20);
+        assertEquals(20, effect.getModifier());
     }
 }
