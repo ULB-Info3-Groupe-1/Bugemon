@@ -9,9 +9,8 @@
 
 package ulb.models.trainer;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -29,7 +28,7 @@ public class TestManualTrainer {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
         trainer.selectBugemon(team.getBugemon("2"));
-        assertTrue(trainer.getSelectedBugemon().equals(team.getBugemon("2")));
+        assertEquals(team.getBugemon("2"), trainer.getSelectedBugemon());
     }
 
     @Test
