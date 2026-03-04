@@ -9,6 +9,7 @@
 
 package ulb.models.bugemon;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class TestActiveEffect {
                 "1_tour");
         int duration = effect.extractDuration();
         ActiveEffect activeEffect = new ActiveEffect(effect, duration);
-        assertTrue(activeEffect.getEffect() == effect);
+        assertEquals(activeEffect.getEffect(), effect);
     }
 
     @Test
@@ -38,9 +39,9 @@ public class TestActiveEffect {
                 "1_tour");
         int duration = effect.extractDuration();
         ActiveEffect activeEffect = new ActiveEffect(effect, duration);
-        assertTrue(activeEffect.getDuration() == duration);
+        assertEquals(activeEffect.getDuration(), duration);
         activeEffect.decrementDuration();
-        assertTrue(activeEffect.getDuration() == duration - 1);
+        assertEquals(activeEffect.getDuration(), duration - 1);
         assertTrue(activeEffect.isExpired());
     }
 }
