@@ -2,6 +2,11 @@ package ulb.controllers;
 
 import java.io.IOException;
 
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.combat.ManualCombat;
+import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.ManualTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.views.combat.ManualCombatView;
 
 public class ManualCombatController extends CombatController<ManualCombatView> {
@@ -11,5 +16,20 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.view.showDialog("Oh nice a fucking hardcoded thing...", "fuck yeah");
 
         this.view.setController(this);
+    }
+
+    /**
+     * Run a manuel combat
+     * @param playerTeam the team of the player
+     */
+    public void runManuelCombat(final ManualTrainer player) {
+        AutoTrainer opponent = new AutoTrainer(BugemonTeam.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+        ManualCombat combat = new ManualCombat(player, opponent);
+
+        Trainer winner = null;
+        while (winner == null) {
+            winner = combat.turn(null); // TODO: get the action from the GUI
+        }
+        handleCombatResult(winner, player);
     }
 }

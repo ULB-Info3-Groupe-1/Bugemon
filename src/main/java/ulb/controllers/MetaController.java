@@ -2,7 +2,12 @@ package ulb.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
 import javafx.stage.Stage;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.ManualTrainer;
 import ulb.utils.Parser;
 
 /**
@@ -64,15 +69,12 @@ public class MetaController {
      */
     public final void switchTo(Window window) {
         switch (window) {
-            case MAIN_MENU -> {
+            case MAIN_MENU ->
                 this.mainMenuController.show(this.stage);
-            }
-            case CREATE_TEAM -> {
+            case CREATE_TEAM ->
                 this.createTeamController.show(this.stage);
-            }
-            case COMBAT -> {
+            case COMBAT ->
                 this.manualCombatController.show(this.stage);
-            }
             case COMBAT_VICTORY ->
                 this.combatVictoryController.show(this.stage);
             case COMBAT_DEFEAT ->
@@ -101,5 +103,29 @@ public class MetaController {
             }
             return Parser.parse(attacksStream, bugemonsStream);
         }
+    }
+
+    /** Tell the CombatController to launch the AutoCombat
+     * @param player the AutoTrainer player
+     */
+    public void launchAutoCombat(final AutoTrainer player) {
+        this.automaticCombatController.runAutoCombat(player);
+    }
+
+    /**
+     * Tell the CombatController to launch the ManuelCombat
+     * @param player the ManuelTrainer player
+     */
+    public void launchManuelCombat(final ManualTrainer player) {
+        this.manualCombatController.runManuelCombat(player);
+    }
+
+    /**
+     * Retrieves the complete list of all available Bugemons in the game
+     *
+     * @return a List containing all Bugemon objects loaded from the game resources
+     */
+    public final List<Bugemon> getAllBugemonsAvailable() {
+        return this.parseResult.getBugemonsList();
     }
 }

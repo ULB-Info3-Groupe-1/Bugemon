@@ -7,6 +7,8 @@ import ulb.common.BugemonDTO;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.ManualTrainer;
 import ulb.views.CreateTeamView;
 
 public class CreateTeamController extends Controller<CreateTeamView> {
@@ -55,8 +57,20 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.showTeam(bugemonList);
     }
 
-    public void startCombat() {
+    /**
+     * Warns the metaController to launch the AutoCombat
+     */
+    public void startAutoCombat() {
         this.metaController.switchTo(Window.COMBAT);
+        this.metaController.launchAutoCombat(new AutoTrainer(this.bugemonTeam));
+    }
+
+    /**
+     * Warns the metaController to launch the ManuelCombat
+     */
+    public void startManuelCombat() {
+        this.metaController.switchTo(Window.COMBAT);
+        this.metaController.launchManuelCombat(new ManualTrainer(this.bugemonTeam));
     }
 
     public boolean checkBugemonInTeam(String bugemonId) {

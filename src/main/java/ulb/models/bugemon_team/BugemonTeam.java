@@ -219,6 +219,8 @@ public class BugemonTeam implements Iterable<Bugemon> {
 
     @Override
     public Iterator<Bugemon> iterator() {
-        return Arrays.asList(this.team).iterator();
+        return Arrays.stream(this.team)
+                    .filter(b -> b != null)
+                    .iterator();
     }
 }

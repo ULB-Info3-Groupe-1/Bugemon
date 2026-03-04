@@ -70,13 +70,4 @@ public class AutoTrainer extends Trainer {
         int randomBugemonIndex = rand.nextInt(aliveBugemons.size());
         this.currentBugemon = aliveBugemons.get(randomBugemonIndex);
     }
-
-    /**
-     * Returns the size of the team of the trainer.
-     *
-     * @return (int) the size of the team of the trainer.
-     */
-    public int getTeamSize() {
-        return team.size();
-    }
 }

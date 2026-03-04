@@ -1,14 +1,9 @@
 package ulb.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
 import ulb.controllers.MetaController.Window;
-
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.combat.AutomaticCombat;
-import ulb.models.trainer.AutoTrainer;
 import ulb.views.combat.CombatView;
+import ulb.models.trainer.Trainer;
 
 public abstract class CombatController<View extends CombatView> extends Controller<View> {
     
@@ -43,22 +38,14 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.metaController.switchTo(Window.COMBAT_DEFEAT);
     }
 
+
     /**
-     * Run a combat
-     * 
-     * @param playerTeam the team of the player
+     * Verify if the winner is the player or not and handle victory or defeat of the winner
+     * @param winner The Trainer winner of the combat
+     * @param player The Trainer player
      */
-    public void runCombat(final BugemonTeam playerTeam) {
-        // AutoTrainer player = new AutoTrainer(playerTeam);
-        // AutoTrainer opponent = new AutoTrainer(BugemonTeam.createRandomTeam(this.bugemonList, player.getTeamSize()));
-        // AutomaticCombat combat = new AutomaticCombat(player, opponent);
-
-        // AutoTrainer winner = null;
-        // while (winner == null) {
-        //     winner = combat.turn();
-        // }
-
-        // if (winner == player) {this.handleVictory();}
-        // else {this.handleDefeat();}
+    protected void handleCombatResult(Trainer winner, Trainer player) {
+        if (winner == player) {this.handleVictory();}
+        else {this.handleDefeat();}
     }
 }

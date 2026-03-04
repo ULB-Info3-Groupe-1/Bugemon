@@ -135,4 +135,14 @@ public class Trainer {
     public BugemonTeam getTeam() {
         return this.team;
     }
+
+    /**
+     * Returns the size of the team of the trainer.
+     * 
+     * @return (int) the size of the team of the trainer.
+     */
+    public int getTeamSize() {
+        return team.size();
+    }
+
 }
