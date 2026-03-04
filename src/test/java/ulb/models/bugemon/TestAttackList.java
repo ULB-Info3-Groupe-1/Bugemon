@@ -10,7 +10,6 @@
 package ulb.models.bugemon;
 
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertTrue(attackList.getAttacks().size() == 3);
+        assertEquals(3, attackList.getAttacks().size());
     }
 
     @Test
@@ -182,7 +181,7 @@ public class TestAttackList {
     @Test
     public void testEmptyAttackList() {
         AttackList attackList = new AttackList(List.of());
-        assertTrue(attackList.getAttacks().size() == 0);
+        assertEquals(0, attackList.getAttacks().size());
     }
 
     @Test

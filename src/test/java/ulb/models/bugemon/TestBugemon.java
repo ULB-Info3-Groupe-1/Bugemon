@@ -31,18 +31,18 @@ public class TestBugemon {
         @Test
         public void testTakeDamage() {
                 Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertTrue(expectedBugemon1.getStats().getHp() == 100);
+                assertEquals(100, expectedBugemon1.getStats().getHp());
                 expectedBugemon1.takeDamage(30);
-                assertTrue(expectedBugemon1.getStats().getHp() == 70);
+                assertEquals(70, expectedBugemon1.getStats().getHp());
                 expectedBugemon1.takeDamage(50);
-                assertTrue(expectedBugemon1.getStats().getHp() == 20);
+                assertEquals(20, expectedBugemon1.getStats().getHp());
         }
 
         @Test
         public void testEquals() {
                 Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
                 Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertTrue(expectedBugemon1.equals(expectedBugemon2));
+                assertEquals(expectedBugemon2, expectedBugemon1);
         }
 
         @Test
