@@ -4,15 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.Pane;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import ulb.common.BugemonDTO;
 import ulb.controllers.CreateTeamController;
-import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 
 /**
  * CreateTeamView
@@ -28,28 +22,12 @@ public class CreateTeamView extends View {
 
     // FXML elements
     @FXML
-    private AnchorPane rootPane;
+    private AllBugemonsGridView allBugemonsGridView;
     @FXML
-    private Pane listPane;
-
-    @FXML
-    private Pane teamPane;
+    private BugemonTeamView bugemonsTeamView;
 
     @FXML
     private Button validateButton;
-
-    @FXML
-    private Button loadButton;
-
-    @FXML
-    private Button saveButton;
-
-    // Lists of ImageViews
-    private List<ImageView> teamBugemons = new java.util.ArrayList<>();
-    private List<ImageView> allBugemons = new java.util.ArrayList<>();
-
-    // Unknown image if no Bugemon available
-    private final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
 
     /**
      * Loads the create-team FXML layout and initializes button actions.
@@ -59,29 +37,13 @@ public class CreateTeamView extends View {
     public CreateTeamView() throws IOException {
         super(FXML_PATH);
         this.controller = null;
-        for (Node node : listPane.getChildren()) {
-            if (node instanceof ImageView imageView) {
-                this.allBugemons.add(imageView);
 
-                imageView.setOnMouseClicked(e -> {
-                    BugemonDTO dto = (BugemonDTO) imageView.getUserData();
-                    if (dto != null) {
-                        try {
-                            this.controller.onBugemonClicked(dto.getId());
-                        } catch (BugemonAlreadyExistsException exception) {
-                        }
-                    }
-                });
-            }
-        }
-
-        for (Node node : teamPane.getChildren()) {
-            if (node instanceof ImageView imageView) {
-                this.teamBugemons.add(imageView);
-            }
-        }
+        this.allBugemonsGridView.setOnClickCallback((dto) -> {
+            this.controller.onBugemonClicked(dto.getId());
+        });
 
         this.validateButton.setOnAction((e) -> this.controller.startCombat());
+        this.validateButton.setStyle("-fx-font-size: 24; -fx-background-color: green; -fx-text-fill: white;");
     }
 
     /**
@@ -91,54 +53,16 @@ public class CreateTeamView extends View {
      */
     public void setController(CreateTeamController controller) {
         this.controller = controller;
-    }
 
-    private void select(ImageView iv) {
-        iv.setStyle("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
-    }
-
-    private void unselect(ImageView iv) {
-        iv.setStyle("");
+        // set selection callback
+        this.allBugemonsGridView.setSelectionChecker(b -> this.controller.checkBugemonInTeam(b.getId()));
     }
 
     public void showTeam(List<BugemonDTO> bugemonList) {
-        int MAX_TEAM_DISPLAY_SIZE = 6;
-        assert bugemonList.size() <= MAX_TEAM_DISPLAY_SIZE : "Cannot display teams bigger than 6 Bugemons.";
-        for (int idx = 0; idx < this.teamBugemons.size(); idx++) {
-
-            BugemonDTO bugemon = bugemonList.get(idx);
-            ImageView iv = this.teamBugemons.get(idx);
-
-            Image img = (bugemon != null)
-                    ? new Image(bugemon.getSpriteURL())
-                    : this.UNKNOWN_IMAGE;
-
-            iv.setImage(img);
-            iv.setUserData(bugemon);
-        }
+        this.bugemonsTeamView.showTeam(bugemonList);
     }
 
     public void showAll(List<BugemonDTO> bugemonList) {
-        int MAX_ALL_BUGEMONS_DISPLAY_SIZE = 20;
-        assert bugemonList.size() <= MAX_ALL_BUGEMONS_DISPLAY_SIZE
-                : "There cannot be more than 20 Bugemons.";
-        for (int idx = 0; idx < this.allBugemons.size(); idx++) {
-
-            BugemonDTO bugemon = (idx < bugemonList.size()) ? bugemonList.get(idx) : null;
-            ImageView iv = this.allBugemons.get(idx);
-
-            Image img = (bugemon != null)
-                    ? new Image(bugemon.getSpriteURL())
-                    : this.UNKNOWN_IMAGE;
-
-            iv.setImage(img);
-            iv.setUserData(bugemon);
-
-            if (bugemon != null && this.controller.checkBugemonInTeam(bugemon.getId())) {
-                this.select(iv);
-            } else {
-                this.unselect(iv);
-            }
-        }
+        this.allBugemonsGridView.showAll(bugemonList);
     }
 }

@@ -5,17 +5,27 @@ stages:
   - package
 
 cache:
-  key: "$CI_COMMIT_REF_SLUG" # Separate cache for all branches
+  key: "$CI_COMMIT_REF_SLUG"
   paths:
     - .m2/repository
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-test:
+# 1. Job backend
+test-backend:
   stage: test
   script:
-    - mvn clean test
+    - mvn clean test -Dtest=\!ulb.views.*Test*
+
+# 2. Job UI
+test-ui:
+  stage: test
+  before_script:
+    - apt-get update -y
+    - apt-get install -y xvfb libx11-6 libxext6 libxrender1 libxtst6 libgtk-3-0 libgl1 libglx-mesa0
+  script:
+    - xvfb-run -a -s "-screen 0 1920x1080x24" mvn clean test -Dtest="ulb.views.**.*"
 
 # Create a jar package only on the main branch (useful to give a .jar to the client)
 package:

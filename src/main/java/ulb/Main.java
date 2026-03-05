@@ -22,7 +22,7 @@ public class Main extends Application {
         try {
             primaryStage.setMaximized(true);
             Rectangle2D rectangle2d = Screen.getPrimary().getVisualBounds();
-            primaryStage.setMinWidth(rectangle2d.getWidth() * 0.5);
+            primaryStage.setMinWidth(rectangle2d.getWidth() * 0.6);
             primaryStage.setMinHeight(rectangle2d.getHeight() * 0.5);
             primaryStage.setTitle(STAGE_TITLE);
 

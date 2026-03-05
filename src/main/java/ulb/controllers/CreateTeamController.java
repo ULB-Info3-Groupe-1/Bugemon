@@ -19,7 +19,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public CreateTeamController(MetaController metaController, List<Bugemon> bugemonList) throws IOException {
         super(metaController, new CreateTeamView());
         this.view.setController(this);
-        
+
         this.bugemonList = bugemonList;
 
         this.bugemonTeam = new BugemonTeam();
@@ -65,6 +65,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     /**
      * Return the team chosen by the player to run a combat
+     *
      * @return BugemonTeam the team of bugemons chosen by the player
      */
     public final BugemonTeam getFinalTeam() {
@@ -78,5 +79,4 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         bgTeam.addBugemon(UtilsBugemons.createDefaultBugemon("6"));
         return bgTeam;
     }
-
 }

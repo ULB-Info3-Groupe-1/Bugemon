@@ -6,4 +6,6 @@ public interface BugemonDTO {
 
     String getId();
 
+    String getName();
+
 }
