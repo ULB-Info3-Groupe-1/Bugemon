@@ -1,3 +1,17 @@
+/**
+ * Utility class providing helper methods for combat calculations.
+ *
+ * <p>Handles attack priority resolution, damage computation, and type
+ * effectiveness based on a fixed cycle defined by the {@link ulb.models.bugemon.Bugemon.BType}
+ * enum order.</p>
+ *
+ * @author  Matteo Morbée
+ * @author Lucas Verbeiren
+ * @author Martin Gouverneur
+ * @version 1.0
+ * @date    05 mar. 2026
+ */
+
 package ulb.models.combat;
 
 import java.util.ArrayList;
@@ -7,17 +21,38 @@ import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.bugemon.Stats;
 import ulb.models.trainer.Trainer;
 
+/**
+ * Utility class providing helper methods for combat calculations.
+ * Handles attack priority, damage computation, and type effectiveness.
+ */
 public class CombatHelper {
 
+    /**
+     * Represents the effectiveness of an attack type against a defender's type.
+     */
     public enum Efficiency {
+        /** Normal effectiveness — no bonus or penalty. */
         NEUTRAL,
+        /** Reduced effectiveness — deals less damage. */
         LOW,
+        /** Super effectiveness — deals more damage. */
         HIGH,
     }
 
-    public static Trainer attackPriority(Trainer trainer1, Trainer trainer2) {
-        int initiativeTrainer1 = trainer1.getCurrentBugemonInitiative();
-        int initiativeTrainer2 = trainer2.getCurrentBugemonInitiative();
+    /**
+     * Determines which trainer's Bugemon attacks first based on initiative.
+     * In case of a tie, the winner is chosen randomly.
+     *
+     * @param trainer1 the first trainer
+     * @param trainer2 the second trainer
+     * @return the trainer whose Bugemon attacks first
+     */
+    public static Trainer attackPriority(
+        final Trainer trainer1,
+        final Trainer trainer2
+    ) {
+        final int initiativeTrainer1 = trainer1.getCurrentBugemonInitiative();
+        final int initiativeTrainer2 = trainer2.getCurrentBugemonInitiative();
 
         if (initiativeTrainer1 < initiativeTrainer2) {
             return trainer2;
@@ -28,29 +63,52 @@ public class CombatHelper {
         }
     }
 
+    /**
+     * Calculates the damage dealt by an attack, factoring in the striker's
+     * attack stat, the defender's defense stat, type effectiveness, and a
+     * random critical hit chance (10% chance of 1.5x damage).
+     *
+     * @param attack        the attack being used
+     * @param strikerStats  the stats of the attacking Bugemon
+     * @param defenderStats the stats of the defending Bugemon
+     * @param defenderType  the type of the defending Bugemon
+     * @return the computed damage as a double
+     */
     public static double calculateDamage(
-        Attack attack,
-        Stats strikerStats,
-        Stats defenderStats,
-        BType defenderType
+        final Attack attack,
+        final Stats strikerStats,
+        final Stats defenderStats,
+        final BType defenderType
     ) {
-        int power = attack.getPower();
-        double attackFactor = (100.0 + strikerStats.getAttack()) / 100.0;
-        double reductionFactor = 100.0 / (defenderStats.getDefense() + 100.0);
-        double typeFactor = getEfficiencyFactor(attack, defenderType);
-        double criticFactor = Math.random() <= 0.1 ? 1.5 : 1.0;
+        final int power = attack.getPower();
+        final double attackFactor = (100.0 + strikerStats.getAttack()) / 100.0;
+        final double reductionFactor =
+            100.0 / (defenderStats.getDefense() + 100.0);
+        final double typeFactor = getEfficiencyFactor(attack, defenderType);
+        final double criticFactor = Math.random() <= 0.1 ? 1.5 : 1.0;
 
-        double result =
+        final double result =
             power * attackFactor * reductionFactor * typeFactor * criticFactor;
 
         return result;
     }
 
+    /**
+     * Returns the damage multiplier corresponding to the effectiveness of an
+     * attack's type against the defender's type.
+     *
+     * @param attack       the attack being used
+     * @param defenderType the type of the defending Bugemon
+     * @return {@code 0.75} for LOW, {@code 1.50} for HIGH, or {@code 1.00} for NEUTRAL
+     */
     public static double getEfficiencyFactor(
-        Attack attack,
-        BType defenderType
+        final Attack attack,
+        final BType defenderType
     ) {
-        Efficiency efficiency = compareBType(attack.getType(), defenderType);
+        final Efficiency efficiency = compareBType(
+            attack.getType(),
+            defenderType
+        );
 
         if (efficiency.equals(Efficiency.LOW)) {
             return 0.75;
@@ -62,33 +120,40 @@ public class CombatHelper {
     }
 
     /**
-     * Compare 2 types of a striker and a defender. Uses the logic of a cycle between the types.
-     * @param strikerType The type of the striker
-     * @param defenderType The type of the defender
-     * @return (enum Efficiency) The Efficiency of the striker type on the defender type
+     * Determines the type effectiveness of a striker's type against a defender's type.
+     * The types follow a fixed cycle defined by the {@link BType} enum order, where each
+     * type is strong against the one before it and weak against the one after it.
+     *
+     * @param strikerType  the type of the attacking Bugemon
+     * @param defenderType the type of the defending Bugemon
+     * @return {@link Efficiency#HIGH} if the striker's type is strong against the defender's,
+     *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
      */
+
     public static Efficiency compareBType(
-        BType strikerType,
-        BType defenderType
+        final BType strikerType,
+        final BType defenderType
     ) {
-        // It transforms first the enum BType in a list (already ordered) and get the index of both types.
-        // Using modulo on the difference allows to return the correct efficiency.
-        List<BType> typeCycle = new ArrayList<BType>(List.of(BType.values()));
+        // Use the BType enum declaration order as the type cycle
+        final List<BType> typeCycle = new ArrayList<BType>(
+            List.of(BType.values())
+        );
 
-        int strikerIdx = typeCycle.indexOf(strikerType);
-        int defenderIdx = typeCycle.indexOf(defenderType);
+        final int strikerIdx = typeCycle.indexOf(strikerType);
+        final int defenderIdx = typeCycle.indexOf(defenderType);
 
-        int difference = Math.floorMod(
+        // floorMod keeps the difference positive, wrapping around the cycle
+        final int difference = Math.floorMod(
             strikerIdx - defenderIdx,
             typeCycle.size()
         );
 
         if (difference == 1) {
-            return Efficiency.LOW; //
+            return Efficiency.LOW; // striker is one step behind defender
         } else if (difference == typeCycle.size() - 1) {
-            return Efficiency.HIGH;
+            return Efficiency.HIGH; // striker is one step ahead of defender
         } else {
-            return Efficiency.NEUTRAL; // All other possibilities are neutral
+            return Efficiency.NEUTRAL;
         }
     }
 }

@@ -1,3 +1,16 @@
+/**
+ * Unit tests for {@link CombatHelper}.
+ *
+ * <p>Covers attack priority resolution, damage computation, and type
+ * effectiveness calculations.</p>
+ *
+ * @author  Matteo Morbée
+ * @author Lucas Verbeiren
+ * @author Martin Gouverneur
+ * @version 1.0
+ * @date    05 mar. 2026
+ */
+
 package ulb.models.combat;
 
 import static org.junit.Assert.assertEquals;
