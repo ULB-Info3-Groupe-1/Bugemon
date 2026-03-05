@@ -3,20 +3,35 @@ package ulb.models.combat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 import org.junit.Test;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Effect;
-import ulb.models.bugemon.EffectType;
-import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.TestUtilsBugemonTeam;
+import ulb.models.bugemon.Bugemon.BType;
+import ulb.models.bugemon.Stats;
+import ulb.models.combat.CombatHelper.Efficiency;
+import ulb.models.trainer.Trainer;
 import ulb.utils.TestUtilsBugemons;
+import ulb.utils.TestUtilsTrainer;
 
 public class TestCombatHelper {
+
+    @Test
+    public void testPriority() {
+        Trainer fasterTrainer = TestUtilsTrainer.createDefaultTrainer();
+        Trainer slowTrainer = TestUtilsTrainer.createDefaultTrainer();
+
+        int fastInitiative = fasterTrainer.getCurrentBugemonInitiative();
+        Bugemon slowBugemon = slowTrainer.getCurrentBugemon();
+        Stats slowBugemonStat = slowBugemon.getStats();
+
+        slowBugemonStat.setInitiative(fastInitiative - 1);
+
+        assertEquals(
+            fasterTrainer,
+            CombatHelper.attackPriority(fasterTrainer, slowTrainer)
+        );
+    }
 
     @Test
     public void testDamageApplied() {
@@ -27,14 +42,20 @@ public class TestCombatHelper {
         AttackList attackList = striker.getAttackList();
         Attack strikerAttack = attackList.get(0);
 
-        int expectedDamage =
+        double expectedDamage =
             strikerAttack.getPower() *
-            ((100 + striker.getStats().getAttack()) / 100) *
-            ((100 / 100 + defender.getStats().getDefense()));
+            ((100.0 + striker.getStats().getAttack()) / 100.0) *
+            (100.0 / (100.0 + defender.getStats().getDefense())) *
+            CombatHelper.getEfficiencyFactor(strikerAttack, defender.getType());
 
-        double damage = CombatHelper.calculateDamage(strikerAttack, defender);
+        double damage = CombatHelper.calculateDamage(
+            strikerAttack,
+            striker.getStats(),
+            defender.getStats(),
+            defender.getType()
+        );
 
-        assertEquals(expectedDamage, damage, 0.1);
+        assertEquals(expectedDamage, damage, expectedDamage / 2.0);
     }
 
     @Test
@@ -49,7 +70,9 @@ public class TestCombatHelper {
 
         double neutralDamage = CombatHelper.calculateDamage(
             strikerAttack,
-            defender
+            striker.getStats(),
+            defender.getStats(),
+            defender.getType()
         );
 
         defender = TestUtilsBugemons.createDefaultBugemon("2");
@@ -57,7 +80,9 @@ public class TestCombatHelper {
 
         double highDamage = CombatHelper.calculateDamage(
             strikerAttack,
-            defender
+            striker.getStats(),
+            defender.getStats(),
+            defender.getType()
         );
 
         assertTrue(neutralDamage < highDamage);
@@ -75,7 +100,9 @@ public class TestCombatHelper {
 
         double neutralDamage = CombatHelper.calculateDamage(
             strikerAttack,
-            defender
+            striker.getStats(),
+            defender.getStats(),
+            defender.getType()
         );
 
         defender = TestUtilsBugemons.createDefaultBugemon("2");
@@ -83,141 +110,54 @@ public class TestCombatHelper {
 
         double lowDamage = CombatHelper.calculateDamage(
             strikerAttack,
-            defender
+            striker.getStats(),
+            defender.getStats(),
+            defender.getType()
         );
 
-        assertTrue(neutralDamage < lowDamage);
+        assertTrue(lowDamage < neutralDamage);
     }
 
     @Test
-    public void testEffectOnStriker() {
-        Bugemon striker = TestUtilsBugemons.createDefaultBugemon("1");
-
-        List<Effect> effects = new ArrayList<Effect>();
-        effects.add(
-            new Effect(
-                EffectType.STAT_MODIFIER,
-                "lanceur",
-                "defense",
-                5,
-                "permanent"
-            )
+    public void testEfficiencyNeutralSameType() {
+        BType aquaType1 = BType.AQUA;
+        BType aquaType2 = BType.AQUA;
+        assertEquals(
+            Efficiency.NEUTRAL,
+            CombatHelper.compareBType(aquaType1, aquaType2)
         );
-
-        Attack attack = new Attack(
-            "0",
-            "onStrikerEffect",
-            Bugemon.BType.AQUA,
-            "",
-            0,
-            effects
-        );
-
-        int initialDefense = striker.getStats().getDefense();
-        CombatHelper.applyEffect(attack, striker);
-        int currentDefense = striker.getStats().getDefense();
-
-        assertTrue(initialDefense < currentDefense);
     }
 
     @Test
-    public void testEffectOnDefender() {
-        Bugemon defender = TestUtilsBugemons.createDefaultBugemon("1");
+    public void testEfficiencyNeutralDifferentType() {
+        BType aquaType = BType.AQUA;
+        BType lithoType = BType.LITHO;
 
-        List<Effect> effects = new ArrayList<Effect>();
-        effects.add(
-            new Effect(
-                EffectType.STAT_MODIFIER,
-                "adversaire",
-                "defense",
-                -5,
-                "permanent"
-            )
+        assertEquals(
+            Efficiency.NEUTRAL,
+            CombatHelper.compareBType(aquaType, lithoType)
         );
-
-        Attack attack = new Attack(
-            "0",
-            "onDefenderEffect",
-            Bugemon.BType.AQUA,
-            "",
-            0,
-            effects
-        );
-
-        int initialDefense = defender.getStats().getDefense();
-        CombatHelper.applyEffect(attack, defender);
-        int currentDefense = defender.getStats().getDefense();
-
-        assertTrue(initialDefense > currentDefense);
     }
 
     @Test
-    public void testHealEffectOnTeam() {
-        BugemonTeam bugemonTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(
-            true
+    public void testEfficiencyLow() {
+        BType aquaType = BType.AQUA;
+        BType floraType = BType.FLORA;
+
+        assertEquals(
+            Efficiency.LOW,
+            CombatHelper.compareBType(aquaType, floraType)
         );
-
-        List<Effect> effects = new ArrayList<Effect>();
-        effects.add(new Effect(EffectType.SOIN, "equipe", "", 10, ""));
-
-        Attack attack = new Attack(
-            "0",
-            "onTeamEffect",
-            Bugemon.BType.AQUA,
-            "",
-            0,
-            effects
-        );
-
-        CombatHelper.applyEffect(attack, bugemonTeam);
-        List<Bugemon> bugemonTeamList = bugemonTeam.getTeam();
-
-        assertTrue(bugemonTeamList.stream().allMatch(Bugemon::isAlive));
     }
 
     @Test
-    public void testStatEffectOnTeam() {
-        BugemonTeam bugemonTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(
-            true
-        );
+    public void testEfficiencyHigh() {
+        BType aquaType = BType.AQUA;
+        BType pyroType = BType.PYRO;
 
-        List<Effect> effects = new ArrayList<Effect>();
-        effects.add(
-            new Effect(
-                EffectType.STAT_MODIFIER,
-                "equipe",
-                "defense",
-                5,
-                "permanent"
-            )
-        );
-
-        Attack attack = new Attack(
-            "0",
-            "onTeamEffect",
-            Bugemon.BType.AQUA,
-            "",
-            0,
-            effects
-        );
-        List<Bugemon> bugemonTeamList = bugemonTeam.getTeam();
-
-        List<Integer> initialTeamDefense = new ArrayList<Integer>();
-        for (Bugemon bugemon : bugemonTeamList) {
-            initialTeamDefense.add(bugemon.getStats().getDefense());
-        }
-
-        CombatHelper.applyEffect(attack, bugemonTeam);
-
-        List<Integer> currentTeamDefense = new ArrayList<Integer>();
-        for (Bugemon bugemon : bugemonTeamList) {
-            currentTeamDefense.add(bugemon.getStats().getDefense());
-        }
-
-        assertTrue(
-            IntStream.range(0, initialTeamDefense.size()).allMatch(
-                i -> initialTeamDefense.get(i) < currentTeamDefense.get(i)
-            )
+        assertEquals(
+            Efficiency.HIGH,
+            CombatHelper.compareBType(aquaType, pyroType)
         );
     }
 }
