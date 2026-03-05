@@ -12,7 +12,7 @@
 <?import ulb.views.BugemonTeamView?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Button fx:id="validateButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Valider" AnchorPane.rightAnchor="40.0" AnchorPane.bottomAnchor="45.0"/>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 25; -fx-font-weight: BOLD;" text="Sélection de ton équipe" textAlignment="CENTER" wrappingWidth="300.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="20.0">
@@ -22,6 +22,6 @@
       </Text>
       <AllBugemonsGridView fx:id="allBugemonsGridView" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="23.0" />
 
-      <BugemonTeamView fx:id="bugemonsTeamView" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="14.0" />
+      <BugemonTeamView fx:id="bugemonsTeamView" AnchorPane.topAnchor="14.0" AnchorPane.leftAnchor="30.0" maxWidth="-2.0" maxHeight="-2.0"/>
    </children>
 </AnchorPane>
