@@ -26,7 +26,7 @@ public class MetaController {
         COMBAT_RESULT,
     }
 
-    private final String JSON_FILES_PATH = "resources/Assets/json";
+    private final String JSON_FILES_PATH = "src/main/resources/json";
 
     private final Stage stage;
     private final MainMenuController mainMenuController;

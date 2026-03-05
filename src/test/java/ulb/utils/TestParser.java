@@ -18,7 +18,7 @@ import ulb.models.bugemon.Stats;
 
 public class TestParser {
 
-    private Path dirPath = Paths.get("resources/Assets/json/");
+    private Path dirPath = Paths.get("src/main/resources/json");
 
     @Test
     public void testAttackParsing() {
