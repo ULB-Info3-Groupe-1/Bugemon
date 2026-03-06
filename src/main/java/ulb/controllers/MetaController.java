@@ -1,6 +1,8 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Paths;
 
 import javafx.stage.Stage;
 import ulb.utils.Parser;
@@ -26,7 +28,7 @@ public class MetaController {
         COMBAT_RESULT,
     }
 
-    private final String JSON_FILES_PATH = "src/main/resources/json";
+    private final String JSON_RESOURCE_PATH = "/json";
 
     private final Stage stage;
     private final MainMenuController mainMenuController;
@@ -43,8 +45,7 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
-        this.parseResult = Parser.parse(JSON_FILES_PATH);
-
+        this.parseResult = loadResources();        
         this.mainMenuController = new MainMenuController(this);
         this.createTeamController = new CreateTeamController(this, parseResult.getBugemonsList());
         this.combatController = new CombatController(this, parseResult.getBugemonsList());
@@ -74,6 +75,24 @@ public class MetaController {
             }
             default ->
                 throw new IllegalArgumentException("Invalid window");
+        }
+    }
+
+    /**
+     * Loads and parses the game data from JSON resource files.
+     * @return a Parser.ParseResult containing the maps of attacks and the list of Bugemons
+     * @throws IOException if the JSON directory is missing or if an error occurs during path conversion or file reading
+     */
+    private Parser.ParseResult loadResources() throws IOException {
+        URL resourceUrl = getClass().getResource(JSON_RESOURCE_PATH);
+        if (resourceUrl == null) {
+            throw new IOException("JSON directory not found in resources: " + JSON_RESOURCE_PATH);
+        }
+        try {
+            String path = Paths.get(resourceUrl.toURI()).toFile().getAbsolutePath();
+            return Parser.parse(path);
+        } catch (Exception e) {
+            throw new IOException("Error converting resource path", e);
         }
     }
 
