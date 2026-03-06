@@ -128,7 +128,7 @@ public class TestBugemonTeam {
 
     @Test
     public void testRandomTeamNumber(){
-        Parser.ParseResult parseResult = Parser.parse("resources/Assets/json");
+        Parser.ParseResult parseResult = Parser.parse("src/main/resources/json");
         BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(parseResult.getBugemonsList(), 6);
         assertEquals(6, teamOfSix.size());
     }
