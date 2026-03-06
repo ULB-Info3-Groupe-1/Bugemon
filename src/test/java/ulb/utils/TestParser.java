@@ -3,6 +3,8 @@ package ulb.utils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.FileReader;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -21,9 +23,9 @@ public class TestParser {
     private Path dirPath = Paths.get("src/main/resources/json");
 
     @Test
-    public void testAttackParsing() {
+    public void testAttackParsing() throws Exception {
         AttackList attackList = Parser.parseAttacks(
-            dirPath.resolve("attaques.json")
+            new FileReader(dirPath.resolve("attaques.json").toFile())
         );
 
         List<Attack> attacks = attackList.getAttacks();
@@ -42,9 +44,9 @@ public class TestParser {
     }
 
     @Test
-    public void testBugemonParsing() {
+    public void testBugemonParsing() throws Exception {
         AttackList attackList = Parser.parseAttacks(
-            dirPath.resolve("attaques.json")
+            new FileReader(dirPath.resolve("attaques.json").toFile())
         );
 
         List<Attack> attacks = attackList.getAttacks();
@@ -55,7 +57,7 @@ public class TestParser {
         }
 
         List<Bugemon> bugemonsList = Parser.parseBugemons(
-            dirPath.resolve("bugemons.json"),
+            new FileReader(dirPath.resolve("bugemons.json").toFile()),
             attacksMap
         );
 
@@ -86,5 +88,31 @@ public class TestParser {
         assertEquals(bugemon3Stats.getHp(), 85);
         assertEquals(bugemon3Stats.getDefense(), 50);
         assertEquals(bugemon3Stats.getInitiative(), 60);
+    }
+
+    @Test
+    public void testParseWithInputStreams() {
+        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
+        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
+
+        assertNotNull(attacksStream, "attaques.json not found in resources");
+        assertNotNull(bugemonsStream, "bugemons.json not found in resources");
+
+        Parser.ParseResult result = Parser.parse(attacksStream, bugemonsStream);
+
+        assertNotNull(result);
+        assertNotNull(result.getAttacksMap());
+        assertNotNull(result.getBugemonsList());
+
+        // check attacks
+        Map<String, Attack> attacksMap = result.getAttacksMap();
+        Attack fouetLiane = attacksMap.get("fouet_liane");
+        assertNotNull(fouetLiane);
+        assertEquals("fouet_liane", fouetLiane.getId());
+
+        // check bugemons
+        List<Bugemon> bugemons = result.getBugemonsList();
+        assertEquals("Florachu", bugemons.get(0).getName());
+        assertEquals(Bugemon.BType.FLORA, bugemons.get(1).getType());
     }
 }

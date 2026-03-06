@@ -1,8 +1,7 @@
 package ulb.controllers;
 
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.InputStream;
 
 import javafx.stage.Stage;
 import ulb.utils.Parser;
@@ -28,7 +27,8 @@ public class MetaController {
         COMBAT_RESULT,
     }
 
-    private final String JSON_RESOURCE_PATH = "/json";
+    private static final String JSON_ATTACK_PATH = "/json/attaques.json";
+    private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
 
     private final Stage stage;
     private final MainMenuController mainMenuController;
@@ -84,15 +84,14 @@ public class MetaController {
      * @throws IOException if the JSON directory is missing or if an error occurs during path conversion or file reading
      */
     private Parser.ParseResult loadResources() throws IOException {
-        URL resourceUrl = getClass().getResource(JSON_RESOURCE_PATH);
-        if (resourceUrl == null) {
-            throw new IOException("JSON directory not found in resources: " + JSON_RESOURCE_PATH);
-        }
-        try {
-            String path = Paths.get(resourceUrl.toURI()).toFile().getAbsolutePath();
-            return Parser.parse(path);
-        } catch (Exception e) {
-            throw new IOException("Error converting resource path", e);
+        try (
+            InputStream attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
+            InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
+        ) {
+            if (attacksStream == null || bugemonsStream == null) {
+                throw new IOException("JSON files not found in resources: ");
+            }
+            return Parser.parse(attacksStream, bugemonsStream);
         }
     }
 
