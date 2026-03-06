@@ -32,7 +32,6 @@ package:
   stage: package
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_COMMIT_BRANCH == "test-package"'
   script:
     - mvn clean package -DskipTests
   artifacts:
