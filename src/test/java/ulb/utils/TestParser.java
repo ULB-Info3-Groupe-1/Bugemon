@@ -3,10 +3,9 @@ package ulb.utils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.FileReader;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +19,9 @@ import ulb.models.bugemon.Stats;
 
 public class TestParser {
 
-    private Path dirPath = Paths.get("src/main/resources/json");
-
     @Test
-    public void testAttackParsing() throws Exception {
-        AttackList attackList = Parser.parseAttacks(
-            new FileReader(dirPath.resolve("attaques.json").toFile())
-        );
+    public void testAttackParsing() {
+        AttackList attackList = Parser.parseAttacks(new InputStreamReader(getClass().getResourceAsStream("/json/attaques.json"), StandardCharsets.UTF_8));
 
         List<Attack> attacks = attackList.getAttacks();
 
@@ -44,10 +39,8 @@ public class TestParser {
     }
 
     @Test
-    public void testBugemonParsing() throws Exception {
-        AttackList attackList = Parser.parseAttacks(
-            new FileReader(dirPath.resolve("attaques.json").toFile())
-        );
+    public void testBugemonParsing() {
+        AttackList attackList = Parser.parseAttacks(new InputStreamReader(getClass().getResourceAsStream("/json/attaques.json"), StandardCharsets.UTF_8));
 
         List<Attack> attacks = attackList.getAttacks();
         Map<String, Attack> attacksMap = new HashMap<>();
@@ -57,7 +50,7 @@ public class TestParser {
         }
 
         List<Bugemon> bugemonsList = Parser.parseBugemons(
-            new FileReader(dirPath.resolve("bugemons.json").toFile()),
+            new InputStreamReader(getClass().getResourceAsStream("/json/bugemons.json"), StandardCharsets.UTF_8),
             attacksMap
         );
 
