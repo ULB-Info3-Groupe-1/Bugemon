@@ -133,8 +133,17 @@ public class TestBugemonTeam {
     }
 
     @Test
-    public void testRandomTeamNumber() throws IOException {
-        Parser.ParseResult parseResult = loadResources();
+    public void testRandomTeamNumber() {
+        InputStream attacksStream = getClass().getResourceAsStream(
+            "/json/attaques.json"
+        );
+        InputStream bugemonsStream = getClass().getResourceAsStream(
+            "/json/bugemons.json"
+        );
+        Parser.ParseResult parseResult = Parser.parse(
+            attacksStream,
+            bugemonsStream
+        );
         BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(
             parseResult.getBugemonsList(),
             6
