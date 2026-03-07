@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -47,7 +46,7 @@ public class AutoTrainer extends Trainer {
      */
     public Attack getRandomAttack() {
         Random rand = new Random();
-        AttackList attacks = getCurrentBugemonAttackList();
+        List<Attack> attacks = this.currentBugemon.getAttackList();
         int attackIndex = rand.nextInt(attacks.size());
         return attacks.get(attackIndex);
     }

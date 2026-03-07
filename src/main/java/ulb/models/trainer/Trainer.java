@@ -9,8 +9,8 @@
 
 package ulb.models.trainer;
 
+import java.util.List;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -65,7 +65,7 @@ public class Trainer {
     }
 
     public boolean currentBugemonContainsAttack(Attack attack) {
-        AttackList attackList = this.currentBugemon.getAttackList();
+        List<Attack> attackList = this.currentBugemon.getAttackList();
         return attackList.contains(attack);
     }
 
@@ -75,7 +75,7 @@ public class Trainer {
      * @return (int) the initiative of the bugemon.
      */
     public int getCurrentBugemonInitiative() {
-        return this.currentBugemon.getStats().getInitiative();
+        return this.currentBugemon.getInitiative();
     }
 
     /**
@@ -92,7 +92,7 @@ public class Trainer {
      *
      * @return (AttackList) the list of attacks of the current bugemon.
      */
-    public AttackList getCurrentBugemonAttackList() {
+    public List<Attack> getCurrentBugemonAttackList() {
         return this.currentBugemon.getAttackList();
     }
 
@@ -102,7 +102,7 @@ public class Trainer {
      * @return (int) the HP of the current bugemon in the team of the trainer.
      */
     public int getCurrentBugemonHp() {
-        return this.currentBugemon.getStats().getHp();
+        return this.currentBugemon.getHp();
     }
 
     /**

@@ -3,11 +3,9 @@ package ulb.utils;
 import java.util.ArrayList;
 import java.util.List;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectType;
-import ulb.models.bugemon.Stats;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public final class TestUtilsBugemons {
@@ -15,7 +13,6 @@ public final class TestUtilsBugemons {
     private TestUtilsBugemons() {}
 
     public static Bugemon createDefaultBugemon(String id) {
-        Stats stats = new Stats(100, 20, 10, 5);
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
@@ -41,16 +38,20 @@ public final class TestUtilsBugemons {
             20,
             effects
         );
-        AttackList attackList = new AttackList(List.of(attack1, attack2));
-        return new Bugemon(
-            id,
-            "TestBugemon_" + id,
-            Bugemon.BType.FLORA,
-            "TestSprite",
-            stats,
-            attackList,
-            false
-        );
+        List<Attack> attackList = List.of(attack1, attack2);
+
+        Bugemon bugemon = new Bugemon.Builder()
+            .id(id)
+            .name("TestBugemon_" + id)
+            .hp(100)
+            .attack(20)
+            .defense(10)
+            .initiative(5)
+            .attackList(attackList)
+            .isStarter(false)
+            .build();
+
+        return bugemon;
     }
 
     public static List<Bugemon> createDefaultBugemons(int count) {

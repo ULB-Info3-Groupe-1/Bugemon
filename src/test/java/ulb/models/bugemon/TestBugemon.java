@@ -1,7 +1,7 @@
 /**
  * File name : TestBugemon.java
  * Description : Test class for the Bugemon class.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 24 feb. 2026
  * @version 1.0
@@ -15,53 +15,53 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
-
 import org.junit.Test;
-
-import ulb.models.bugemon.Bugemon.BType;
 import ulb.utils.TestUtilsBugemons;
 
 public class TestBugemon {
-        @Test
-        public void testIsAlive() {
-                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertTrue(expectedBugemon1.isAlive());
-                expectedBugemon1.takeDamage(50);
-                assertTrue(expectedBugemon1.isAlive());
-                expectedBugemon1.takeDamage(50);
-                assertFalse(expectedBugemon1.isAlive());
-        }
 
-        @Test
-        public void testTakeDamage() {
-                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertEquals(100, expectedBugemon1.getStats().getHp());
-                expectedBugemon1.takeDamage(30);
-                assertEquals(70, expectedBugemon1.getStats().getHp());
-                expectedBugemon1.takeDamage(50);
-                assertEquals(20, expectedBugemon1.getStats().getHp());
-        }
+    @Test
+    public void testIsAlive() {
+        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+        assertTrue(expectedBugemon1.isAlive());
+        expectedBugemon1.takeDamage(50);
+        assertTrue(expectedBugemon1.isAlive());
+        expectedBugemon1.takeDamage(50);
+        assertFalse(expectedBugemon1.isAlive());
+    }
 
-        @Test
-        public void testEquals() {
-                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-                Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertEquals(expectedBugemon2, expectedBugemon1);
-        }
+    @Test
+    public void testTakeDamage() {
+        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+        assertEquals(100, expectedBugemon1.getHp());
+        expectedBugemon1.takeDamage(30);
+        assertEquals(70, expectedBugemon1.getHp());
+        expectedBugemon1.takeDamage(50);
+        assertEquals(20, expectedBugemon1.getHp());
+    }
 
-        @Test
-        public void testHashCode() {
-                Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-                Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-                assertEquals(expectedBugemon1, expectedBugemon2);
-                assertEquals(expectedBugemon1.hashCode(), expectedBugemon2.hashCode());
-        }
+    @Test
+    public void testEquals() {
+        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
+        assertEquals(expectedBugemon2, expectedBugemon1);
+    }
 
-        @Test
-        public void testCorrectPathSprite() {
-                Bugemon bugemon = new Bugemon("1", "Buggy", BType.LITHO, "png/bouldax.png", null, null, true);
-                String path = bugemon.getSpriteURL();
-                URL resource = getClass().getClassLoader().getResource(path);
-                assertNotNull(resource, "The sprite file has not been found");
-        }
+    @Test
+    public void testHashCode() {
+        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
+        assertEquals(expectedBugemon1, expectedBugemon2);
+        assertEquals(expectedBugemon1.hashCode(), expectedBugemon2.hashCode());
+    }
+
+    @Test
+    public void testCorrectPathSprite() {
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+
+        String path = bugemon.getSpriteURL();
+        System.out.println("Testing sprite path: " + path);
+        URL resource = getClass().getResource(path);
+        assertNotNull(resource, "The sprite file has not been found");
+    }
 }

@@ -12,7 +12,6 @@ package ulb.models.bugemon_team;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
@@ -116,25 +115,18 @@ public class TestBugemonTeam {
         });
     }
 
-    private Parser.ParseResult loadResources() throws IOException {
-        try (
-            InputStream attacksStream = getClass().getResourceAsStream(
-                "/json/attaques.json"
-            );
-            InputStream bugemonsStream = getClass().getResourceAsStream(
-                "/json/bugemons.json"
-            );
-        ) {
-            if (attacksStream == null || bugemonsStream == null) {
-                throw new IOException("JSON files not found in resources: ");
-            }
-            return Parser.parse(attacksStream, bugemonsStream);
-        }
-    }
-
     @Test
-    public void testRandomTeamNumber() throws IOException {
-        Parser.ParseResult parseResult = loadResources();
+    public void testRandomTeamNumber() {
+        InputStream attacksStream = getClass().getResourceAsStream(
+            "/json/attaques.json"
+        );
+        InputStream bugemonsStream = getClass().getResourceAsStream(
+            "/json/bugemons.json"
+        );
+        Parser.ParseResult parseResult = Parser.parse(
+            attacksStream,
+            bugemonsStream
+        );
         BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(
             parseResult.getBugemonsList(),
             6
