@@ -64,8 +64,7 @@ public class TestCombatHelper {
         double damage = CombatHelper.calculateDamage(
             strikerAttack,
             striker.getStats(),
-            defender.getStats(),
-            defender.getType()
+            defender
         );
 
         assertEquals(expectedDamage, damage, expectedDamage / 2.0);
@@ -84,8 +83,7 @@ public class TestCombatHelper {
         double neutralDamage = CombatHelper.calculateDamage(
             strikerAttack,
             striker.getStats(),
-            defender.getStats(),
-            defender.getType()
+            defender
         );
 
         defender = TestUtilsBugemons.createDefaultBugemon("2");
@@ -94,8 +92,7 @@ public class TestCombatHelper {
         double highDamage = CombatHelper.calculateDamage(
             strikerAttack,
             striker.getStats(),
-            defender.getStats(),
-            defender.getType()
+            defender
         );
 
         assertTrue(neutralDamage < highDamage);
@@ -114,8 +111,7 @@ public class TestCombatHelper {
         double neutralDamage = CombatHelper.calculateDamage(
             strikerAttack,
             striker.getStats(),
-            defender.getStats(),
-            defender.getType()
+            defender
         );
 
         defender = TestUtilsBugemons.createDefaultBugemon("2");
@@ -124,8 +120,7 @@ public class TestCombatHelper {
         double lowDamage = CombatHelper.calculateDamage(
             strikerAttack,
             striker.getStats(),
-            defender.getStats(),
-            defender.getType()
+            defender
         );
 
         assertTrue(lowDamage < neutralDamage);

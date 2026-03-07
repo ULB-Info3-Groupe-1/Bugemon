@@ -17,6 +17,7 @@ package ulb.models.combat;
 import java.util.ArrayList;
 import java.util.List;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.bugemon.Stats;
 import ulb.models.trainer.Trainer;
@@ -70,16 +71,17 @@ public class CombatHelper {
      *
      * @param attack        the attack being used
      * @param strikerStats  the stats of the attacking Bugemon
-     * @param defenderStats the stats of the defending Bugemon
-     * @param defenderType  the type of the defending Bugemon
+     * @param defenderBugemon the defending Bugemon, used to access its stats and type
      * @return the computed damage as a double
      */
     public static double calculateDamage(
         final Attack attack,
         final Stats strikerStats,
-        final Stats defenderStats,
-        final BType defenderType
+        final Bugemon defenderBugemon
     ) {
+        BType defenderType = defenderBugemon.getType();
+        Stats defenderStats = defenderBugemon.getStats();
+
         final int power = attack.getPower();
         final double attackFactor = (100.0 + strikerStats.getAttack()) / 100.0;
         final double reductionFactor =
@@ -124,34 +126,34 @@ public class CombatHelper {
      * The types follow a fixed cycle defined by the {@link BType} enum order, where each
      * type is strong against the one before it and weak against the one after it.
      *
-     * @param strikerType  the type of the attacking Bugemon
-     * @param defenderType the type of the defending Bugemon
+     * @param offensiveType  the type of the offensive Bugemon
+     * @param defensiveType the type of the defensive Bugemon
      * @return {@link Efficiency#HIGH} if the striker's type is strong against the defender's,
      *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
      */
 
     public static Efficiency compareBType(
-        final BType strikerType,
-        final BType defenderType
+        final BType offensiveType,
+        final BType defensiveType
     ) {
         // Use the BType enum declaration order as the type cycle
         final List<BType> typeCycle = new ArrayList<BType>(
             List.of(BType.values())
         );
 
-        final int strikerIdx = typeCycle.indexOf(strikerType);
-        final int defenderIdx = typeCycle.indexOf(defenderType);
+        final int offensiveIdx = typeCycle.indexOf(offensiveType);
+        final int defensiveIdx = typeCycle.indexOf(defensiveType);
 
         // floorMod keeps the difference positive, wrapping around the cycle
         final int difference = Math.floorMod(
-            strikerIdx - defenderIdx,
+            offensiveIdx - defensiveIdx,
             typeCycle.size()
         );
 
         if (difference == 1) {
-            return Efficiency.LOW; // striker is one step behind defender
+            return Efficiency.LOW; // offender is one step ahead of defender
         } else if (difference == typeCycle.size() - 1) {
-            return Efficiency.HIGH; // striker is one step ahead of defender
+            return Efficiency.HIGH; // offender is one step behind of defender
         } else {
             return Efficiency.NEUTRAL;
         }
