@@ -60,12 +60,12 @@ public class AutoTrainer extends Trainer {
         if (isDefeated()) {
             return;
         }
-        List<Bugemon> aliveBugemons = new ArrayList<>();
-        for (Bugemon b : this.team) {
-            if (b.isAlive()) {
-                aliveBugemons.add(b);
-            }
-        }
+
+        List<Bugemon> aliveBugemons = this.team
+                .stream()
+                .filter(Bugemon::isAlive)
+                .toList();
+
         Random rand = new Random();
         int randomBugemonIndex = rand.nextInt(aliveBugemons.size());
         this.currentBugemon = aliveBugemons.get(randomBugemonIndex);

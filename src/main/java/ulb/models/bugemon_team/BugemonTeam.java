@@ -10,18 +10,19 @@
 
 package ulb.models.bugemon_team;
 
-import java.lang.Iterable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.AbstractCollection;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 
 /**
  * This class represents a team of up to 6 Bugemons
  */
-public class BugemonTeam implements Iterable<Bugemon> {
+public class BugemonTeam extends AbstractCollection<Bugemon> {
 
     // Attributes
 
@@ -36,6 +37,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
      *
      * @return (int) the number of Bugemons currently in the team
      */
+    @Override
     public int size() {
         return this.size;
     }
