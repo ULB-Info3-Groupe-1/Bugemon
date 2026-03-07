@@ -2,7 +2,6 @@ package ulb.views;
 
 import java.io.IOException;
 import java.net.URL;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -28,16 +27,12 @@ public abstract class View {
     public View(String fxmlPath) throws IOException {
         URL url = View.class.getResource(fxmlPath);
         FXMLLoader loader = new FXMLLoader(url);
-
-        // TODO: understand what this means (comes from the TP):
-        // Casting `this` to get rid of the warning "Leaking `this` in constructor"
         loader.setController((Object) this);
 
         this.root = loader.load();
         this.scene = new Scene(root);
         this.root.prefWidthProperty().bind(this.scene.widthProperty());
         this.root.prefHeightProperty().bind(this.scene.heightProperty());
-
     }
 
     /**
@@ -49,5 +44,4 @@ public abstract class View {
         stage.setScene(this.scene);
         stage.show();
     }
-
 }

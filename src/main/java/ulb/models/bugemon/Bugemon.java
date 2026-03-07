@@ -1,7 +1,7 @@
 /**
  * File name : Bugemon.java
  * Description : Class representing a bugemon.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 24 feb. 2026
  * @version 1.0
@@ -9,19 +9,22 @@
 
 package ulb.models.bugemon;
 
-import ulb.common.BugemonDTO;
 import com.google.gson.annotations.SerializedName;
+import ulb.common.BugemonDTO;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
  */
-public class Bugemon implements BugemonDTO {
+public class Bugemon implements BugemonDTO, Cloneable {
 
     /**
      * This enum represents the type of a bugemon.
      */
     public enum BType {
-        FLORA, AQUA, PYRO, LITHO
+        FLORA,
+        AQUA,
+        PYRO,
+        LITHO,
     }
 
     // Attributes
@@ -30,6 +33,7 @@ public class Bugemon implements BugemonDTO {
 
     @SerializedName("nom")
     private String name;
+
     private BType type;
     private String sprite; // The link to the representation image of the bugemon
 
@@ -45,7 +49,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Constructor for the Bugemon class, initializing all attributes.
-     * 
+     *
      * @param id     (String) the unique identifier for the bugemon.
      * @param name   (String) the name of the bugemon.
      * @param type   (Type) the type of the bugemon.
@@ -54,8 +58,15 @@ public class Bugemon implements BugemonDTO {
      *               defense,
      *               and initiative.
      */
-    public Bugemon(String id, String name, BType type, String sprite, Stats stats, AttackList attackList,
-            boolean isStarter) {
+    public Bugemon(
+        String id,
+        String name,
+        BType type,
+        String sprite,
+        Stats stats,
+        AttackList attackList,
+        boolean isStarter
+    ) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -83,7 +94,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Apply damage to the bugemon, reducing its HP by the specified amount.
-     * 
+     *
      * @param damage (int) the amount of damage to apply to the bugemon, reducing
      *               its HP.
      */
@@ -105,10 +116,8 @@ public class Bugemon implements BugemonDTO {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         Bugemon other = (Bugemon) obj;
         return id.equals(other.id);
     }
@@ -126,7 +135,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the unique identifier of the bugemon.
-     * 
+     *
      * @return (String) the unique identifier of the bugemon.
      */
     public String getId() {
@@ -135,7 +144,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Set the unique identifier of the bugemon to a new value.
-     * 
+     *
      * @param id (String) the new unique identifier to set for the bugemon.
      */
     public void setId(String id) {
@@ -144,7 +153,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the name of the bugemon.
-     * 
+     *
      * @return (String) the name of the bugemon.
      */
     public String getName() {
@@ -153,7 +162,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Set the name of the bugemon to a new value.
-     * 
+     *
      * @param name (String) the new name to set for the bugemon.
      */
     public void setName(String name) {
@@ -162,7 +171,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the type of the bugemon.
-     * 
+     *
      * @return (Type) the type of the bugemon.
      */
     public BType getType() {
@@ -171,7 +180,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Set the type of the bugemon to a new value.
-     * 
+     *
      * @param type (Type) the new type to set for the bugemon.
      */
     public void setType(BType type) {
@@ -180,7 +189,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the image link of the bugemon.
-     * 
+     *
      * @return (String) the sprite link of the bugemon.
      */
     public String getSpriteURL() {
@@ -189,7 +198,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Set the sprite link of the bugemon to a new value.
-     * 
+     *
      * @param sprite (String) the new sprite link to set for the bugemon.
      */
     public void setSprite(String sprite) {
@@ -198,7 +207,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the stats of the bugemon.
-     * 
+     *
      * @return (Stats) the stats of the bugemon, including HP, attack, defense,
      *         and initiative.
      */
@@ -208,7 +217,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Set the stats of the bugemon to new values.
-     * 
+     *
      * @param stats (Stats) the new stats to set for the bugemon, including HP,
      *              attack, defense, and initiative.
      */
@@ -218,7 +227,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the list of attacks that the bugemon can have.
-     * 
+     *
      * @return (AttackList) the list of attacks that the bugemon can have.
      */
     public AttackList getAttackList() {
@@ -227,7 +236,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Set the list of attacks that the bugemon can have to a new value.
-     * 
+     *
      * @param attackList (AttackList) the new list of attacks to set for the
      *                   bugemon.
      */
@@ -237,7 +246,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get whether the bugemon is a starter or not.
-     * 
+     *
      * @return (boolean) true if the bugemon is a starter, false otherwise.
      */
     public boolean isStarter() {
@@ -246,11 +255,21 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Set whether the bugemon is a starter or not to a new value.
-     * 
+     *
      * @param isStarter (boolean) the new value to set for whether the bugemon is a
      *                  starter or not.
      */
     public void setStarter(boolean isStarter) {
         this.isStarter = isStarter;
+    }
+
+    /**
+     * Creates and returns a shallow copy of this Bugemon.
+     *
+     * @return a clone of this Bugemon instance
+     * @throws CloneNotSupportedException if the object's class does not support cloning
+     */
+    public Bugemon clone() throws CloneNotSupportedException {
+        return (Bugemon) super.clone();
     }
 }

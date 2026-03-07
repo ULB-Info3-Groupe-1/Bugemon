@@ -156,6 +156,10 @@ public class Attack {
         this.power = power;
     }
 
+    public boolean containsEffect(Effect effect) {
+        return effects.contains(effect);
+    }
+
     /**
      * Get the effects of the attack.
      *

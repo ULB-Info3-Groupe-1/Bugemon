@@ -1,25 +1,24 @@
+/**
+ * File name : TestBugemonTeam.java
+ * Description : Data class representing a team of Bugemons
+ *
+ * @author Brisbois Philippe
+ * @coauthor Morbee Matteo
+ * @date 27 feb. 2026
+ * @version 1.1
+ */
+
 package ulb.models.bugemon_team;
 
 import static org.junit.Assert.*;
-/**
-* File name : TestBugemonTeam.java
-* Description : Data class representing a team of Bugemons
-*
-* @author Brisbois Philippe
-* @coauthor Morbee Matteo
-* @date 27 feb. 2026
-* @version 1.1
-*/
 
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Test;
-
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
-
-import java.io.InputStream;
-import java.util.List;
 
 public class TestBugemonTeam {
 
@@ -117,24 +116,29 @@ public class TestBugemonTeam {
         });
     }
 
-    @Test
-    public void testTeam() {
-        BugemonTeam team = TestUtilsBugemons.createDefaultTeam(3);
-        List<Bugemon> teamClone = team.getTeam();
-
-        for (int i = 0; i < 3; i++) {
-            assertEquals(String.valueOf(i + 1), teamClone.get(i).getId());
+    private Parser.ParseResult loadResources() throws IOException {
+        try (
+            InputStream attacksStream = getClass().getResourceAsStream(
+                "/json/attaques.json"
+            );
+            InputStream bugemonsStream = getClass().getResourceAsStream(
+                "/json/bugemons.json"
+            );
+        ) {
+            if (attacksStream == null || bugemonsStream == null) {
+                throw new IOException("JSON files not found in resources: ");
+            }
+            return Parser.parse(attacksStream, bugemonsStream);
         }
     }
 
     @Test
-    public void testRandomTeamNumber() {
-        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
-        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
-        Parser.ParseResult parseResult = Parser.parse(attacksStream, bugemonsStream);
-        BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(parseResult.getBugemonsList(), 6);
+    public void testRandomTeamNumber() throws IOException {
+        Parser.ParseResult parseResult = loadResources();
+        BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(
+            parseResult.getBugemonsList(),
+            6
+        );
         assertEquals(6, teamOfSix.size());
     }
-
-
 }

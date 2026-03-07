@@ -1,7 +1,7 @@
 /**
  * File name : ManualTrainer.java
  * Description : Class representing a manual trainer.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 02 March. 2026
  * @version 1.0
@@ -9,8 +9,8 @@
 
 package ulb.models.trainer;
 
-import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
@@ -26,7 +26,9 @@ public class ManualTrainer extends Trainer {
      * switch, or forfeit.
      */
     public static enum TAction {
-        ATTACK, SWITCH, FORFEIT
+        ATTACK,
+        SWITCH,
+        FORFEIT,
     }
 
     // Attributes
@@ -40,7 +42,7 @@ public class ManualTrainer extends Trainer {
     /**
      * Constructor for the ManualTrainer class, initializing the team of the
      * trainer.
-     * 
+     *
      * @param team (BugemonTeam) the team of the trainer, which is a list of
      *             bugemon.
      */
@@ -55,37 +57,43 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Select a bugemon from the team of the trainer if it is alive.
-     * 
+     *
      * @param bugemon (Bugemon) the bugemon to select from the team of the trainer.
      */
     public void selectBugemon(Bugemon bugemon) {
         if (this.isDefeated()) {
             return;
         }
-        for (Bugemon b : this.team.getTeam()) {
+        for (Bugemon b : this.team) {
             if (b.equals(bugemon)) {
                 if (!b.isAlive()) {
-                    throw new IllegalArgumentException("The selected bugemon is not alive.");
+                    throw new IllegalArgumentException(
+                        "The selected bugemon is not alive."
+                    );
                 }
                 this.selectedBugemon = b;
                 return;
             }
         }
-        throw new IllegalArgumentException("The selected bugemon is not in the team of the trainer.");
+        throw new IllegalArgumentException(
+            "The selected bugemon is not in the team of the trainer."
+        );
     }
 
     /**
      * Select an attack from the list of attacks of the current bugemon of the
      * trainer
-     * 
+     *
      * @param attack (Attack) the attack to select from the list of attacks of the
      *               current bugemon of the trainer.
      */
     public void selectAttack(Attack attack) {
-        if (this.getCurrentBugemonAttackList().contains(attack)) {
+        if (this.currentBugemonContainsAttack(attack)) {
             this.selectedAttack = attack;
         } else {
-            throw new IllegalArgumentException("The selected attack is not in the list of attacks of the current bugemon of the trainer.");
+            throw new IllegalArgumentException(
+                "The selected attack is not in the list of attacks of the current bugemon of the trainer."
+            );
         }
     }
 
@@ -106,7 +114,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Returns the selected action for the trainer during a combat.
-     * 
+     *
      * @return (TAction) the selected action for the trainer during a combat.
      */
     public TAction getSelectedAction() {
@@ -115,7 +123,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Select an action for the trainer during a combat.
-     * 
+     *
      * @param action (TAction) the action to select for the trainer during a combat.
      */
     public void selectAction(TAction action) {
@@ -124,7 +132,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Returns the selected attack for the trainer during a combat.
-     * 
+     *
      * @return (Attack) the selected attack for the trainer during a combat.
      */
     public Attack getSelectedAttack() {
@@ -133,7 +141,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Returns the selected bugemon for the trainer during a combat.
-     * 
+     *
      * @return (Bugemon) the selected bugemon for the trainer during a combat.
      */
     public Bugemon getSelectedBugemon() {
@@ -142,7 +150,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Select a bugemon for the trainer during a combat.
-     * 
+     *
      * @param selectedBugemon (Bugemon) the bugemon to select for the trainer during
      *                        a combat.
      */

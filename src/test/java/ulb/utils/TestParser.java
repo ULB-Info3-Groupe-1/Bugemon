@@ -21,7 +21,12 @@ public class TestParser {
 
     @Test
     public void testAttackParsing() {
-        AttackList attackList = Parser.parseAttacks(new InputStreamReader(getClass().getResourceAsStream("/json/attaques.json"), StandardCharsets.UTF_8));
+        AttackList attackList = Parser.parseAttacks(
+            new InputStreamReader(
+                getClass().getResourceAsStream("/json/attaques.json"),
+                StandardCharsets.UTF_8
+            )
+        );
 
         List<Attack> attacks = attackList.getAttacks();
 
@@ -40,7 +45,12 @@ public class TestParser {
 
     @Test
     public void testBugemonParsing() {
-        AttackList attackList = Parser.parseAttacks(new InputStreamReader(getClass().getResourceAsStream("/json/attaques.json"), StandardCharsets.UTF_8));
+        AttackList attackList = Parser.parseAttacks(
+            new InputStreamReader(
+                getClass().getResourceAsStream("/json/attaques.json"),
+                StandardCharsets.UTF_8
+            )
+        );
 
         List<Attack> attacks = attackList.getAttacks();
         Map<String, Attack> attacksMap = new HashMap<>();
@@ -50,7 +60,10 @@ public class TestParser {
         }
 
         List<Bugemon> bugemonsList = Parser.parseBugemons(
-            new InputStreamReader(getClass().getResourceAsStream("/json/bugemons.json"), StandardCharsets.UTF_8),
+            new InputStreamReader(
+                getClass().getResourceAsStream("/json/bugemons.json"),
+                StandardCharsets.UTF_8
+            ),
             attacksMap
         );
 
@@ -85,8 +98,12 @@ public class TestParser {
 
     @Test
     public void testParseWithInputStreams() {
-        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
-        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
+        InputStream attacksStream = getClass().getResourceAsStream(
+            "/json/attaques.json"
+        );
+        InputStream bugemonsStream = getClass().getResourceAsStream(
+            "/json/bugemons.json"
+        );
 
         assertNotNull(attacksStream, "attaques.json not found in resources");
         assertNotNull(bugemonsStream, "bugemons.json not found in resources");
