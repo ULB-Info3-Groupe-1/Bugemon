@@ -5,13 +5,12 @@ import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -41,7 +40,10 @@ public class AllBugemonsGridView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load AllBugemonsGridView.fxml", e);
+            throw new RuntimeException(
+                "Failed to load AllBugemonsGridView.fxml",
+                e
+            );
         }
     }
 
@@ -61,7 +63,6 @@ public class AllBugemonsGridView extends VBox {
         this.gridPane.getChildren().clear();
 
         for (int i = 0; i < bugemonList.size(); i++) {
-
             BugemonDTO bugemon = bugemonList.get(i);
 
             int row = i / IMAGES_PER_ROW;
@@ -91,7 +92,9 @@ public class AllBugemonsGridView extends VBox {
         VBox cell = new VBox(2); // spacing exactly 2
         cell.setAlignment(Pos.CENTER);
         cell.getChildren().addAll(imagePane, nameLabel);
-        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;");
+        cell.setStyle(
+            "-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;"
+        );
         cell.setUserData(bugemon);
 
         if (selectionChecker != null && selectionChecker.apply(bugemon)) {
@@ -101,7 +104,7 @@ public class AllBugemonsGridView extends VBox {
         }
 
         if (this.setOnBugemonClicked != null) {
-            cell.setOnMouseClicked((e) -> {
+            cell.setOnMouseClicked(e -> {
                 BugemonDTO dto = (BugemonDTO) cell.getUserData();
                 if (dto != null) {
                     this.setOnBugemonClicked.accept(dto);
@@ -113,16 +116,22 @@ public class AllBugemonsGridView extends VBox {
     }
 
     private void select(VBox cell) {
-        StackPane imagePane = (StackPane) cell.getChildren().get(0);
+        StackPane imagePane = (StackPane) cell.getChildren().get(0); // TODO: Could break code with an exeption "IndexOutOfBoundsException"
         ImageView iv = (ImageView) imagePane.getChildren().get(0);
-        iv.setStyle("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
-        cell.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-padding: 2; -fx-background-color: lightcoral;");
+        iv.setStyle(
+            "-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);"
+        );
+        cell.setStyle(
+            "-fx-border-color: red; -fx-border-width: 3; -fx-padding: 2; -fx-background-color: lightcoral;"
+        );
     }
 
     private void unselect(VBox cell) {
         StackPane imagePane = (StackPane) cell.getChildren().get(0);
         ImageView iv = (ImageView) imagePane.getChildren().get(0);
         iv.setStyle("");
-        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;");
+        cell.setStyle(
+            "-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;"
+        );
     }
 }

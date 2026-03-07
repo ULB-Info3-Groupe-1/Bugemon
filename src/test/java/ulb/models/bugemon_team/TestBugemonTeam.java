@@ -1,25 +1,24 @@
+/**
+ * File name : TestBugemonTeam.java
+ * Description : Data class representing a team of Bugemons
+ *
+ * @author Brisbois Philippe
+ * @coauthor Morbee Matteo
+ * @date 27 feb. 2026
+ * @version 1.1
+ */
+
 package ulb.models.bugemon_team;
 
 import static org.junit.Assert.*;
-/**
-* File name : TestBugemonTeam.java
-* Description : Data class representing a team of Bugemons
-*
-* @author Brisbois Philippe
-* @coauthor Morbee Matteo
-* @date 27 feb. 2026
-* @version 1.1
-*/
 
+import java.io.InputStream;
+import java.util.List;
 import org.junit.Test;
-
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
-
-import java.io.InputStream;
-import java.util.List;
 
 public class TestBugemonTeam {
 
@@ -129,12 +128,20 @@ public class TestBugemonTeam {
 
     @Test
     public void testRandomTeamNumber() {
-        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
-        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
-        Parser.ParseResult parseResult = Parser.parse(attacksStream, bugemonsStream);
-        BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(parseResult.getBugemonsList(), 6);
+        InputStream attacksStream = getClass().getResourceAsStream(
+            "/json/attaques.json"
+        );
+        InputStream bugemonsStream = getClass().getResourceAsStream(
+            "/json/bugemons.json"
+        );
+        Parser.ParseResult parseResult = Parser.parse(
+            attacksStream,
+            bugemonsStream
+        );
+        BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(
+            parseResult.getBugemonsList(),
+            6
+        );
         assertEquals(6, teamOfSix.size());
     }
-
-
 }

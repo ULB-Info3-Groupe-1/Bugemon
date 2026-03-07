@@ -55,7 +55,7 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertEquals(3, attackList.getAttacks().size());
+        assertEquals(3, attackList.size());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertEquals(attack1, attackList.getAttacks().get(0));
+        assertEquals(attack1, attackList.get(0));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertEquals(attack2, attackList.getAttacks().get(1));
+        assertEquals(attack2, attackList.get(1));
     }
 
     @Test
@@ -175,13 +175,13 @@ public class TestAttackList {
             effects
         );
         attackList.setAttacks(List.of(attack1, attack2, attack3));
-        assertEquals(attack3, attackList.getAttacks().get(2));
+        assertEquals(attack3, attackList.get(2));
     }
 
     @Test
     public void testEmptyAttackList() {
         AttackList attackList = new AttackList(List.of());
-        assertEquals(0, attackList.getAttacks().size());
+        assertEquals(0, attackList.size());
     }
 
     @Test

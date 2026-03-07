@@ -1,7 +1,7 @@
 /**
  * File name : ManualCombat.java
  * Description : Class representing a manual combat.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 02 March. 2026
  * @version 1.0
@@ -26,14 +26,17 @@ public class ManualCombat extends Combat {
     /**
      * Constructor for the ManualCombat class, initializing the two trainers of the
      * combat.
-     * 
+     *
      * @param allyTrainer      (ManualTrainer) the allied trainer participating in
      *                         the
      *                         combat.
      * @param adversaryTrainer (AutoTrainer) the adversary trainer participating in
      *                         the combat.
      */
-    public ManualCombat(ManualTrainer allyTrainer, AutoTrainer adversaryTrainer) {
+    public ManualCombat(
+        ManualTrainer allyTrainer,
+        AutoTrainer adversaryTrainer
+    ) {
         super(allyTrainer, adversaryTrainer);
         this.allyTrainer = allyTrainer;
         this.adversaryTrainer = adversaryTrainer;
@@ -45,7 +48,7 @@ public class ManualCombat extends Combat {
      * Perform a turn of the combat, where the allied trainer selects an action and
      * the adversary trainer responds accordingly. The method returns the winning
      * trainer if the combat is over, or null if the combat is still ongoing.
-     * 
+     *
      * @param action (Action) the action selected by the allied trainer for this
      *               turn, which can be an attack, a switch, or a forfeit.
      * @return (Trainer) the winning trainer if the combat is over, or null if the
@@ -70,7 +73,7 @@ public class ManualCombat extends Combat {
             default:
                 throw new IllegalArgumentException("Illegal action: " + action);
         }
-        nextTurn();
+        incrementTurn();
         return null;
     }
 
@@ -80,22 +83,28 @@ public class ManualCombat extends Combat {
      * to the allied trainer.
      */
     private void applyDamage() {
-        int adversaryAttack = this.adversaryTrainer.getRandomAttack();
+        Attack adversaryAttack = this.adversaryTrainer.getRandomAttack();
         int allyAttackPower = this.allyTrainer.getSelectedAttack().getPower();
+
         this.adversaryTrainer.takeDamage(allyAttackPower);
+
         if (this.adversaryTrainer.isDefeated()) {
             return;
         }
-        if (!this.adversaryTrainer.getCurrentBugemon().isAlive()) {
+
+        if (!this.adversaryTrainer.isCurrentBugemonAlive()) {
             this.adversaryTrainer.selectRandomBugemon();
+            return;
         }
-        this.allyTrainer.takeDamage(adversaryAttack);
+
+        this.allyTrainer.takeDamage(adversaryAttack.getPower());
+
         if (this.allyTrainer.isDefeated()) {
             return;
         }
-        if (!this.allyTrainer.getCurrentBugemon().isAlive()) {
+
+        if (!this.allyTrainer.isCurrentBugemonAlive()) {
             this.allyTrainer.getSelectedBugemon();
         }
-        return;
     }
 }

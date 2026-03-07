@@ -162,6 +162,6 @@ public class TestAttack {
             "2 turns"
         );
         attack.addEffect(newEffect);
-        assertTrue(attack.getEffects().contains(newEffect));
+        assertTrue(attack.containsEffect(newEffect));
     }
 }

@@ -2,7 +2,6 @@ package ulb.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javafx.stage.Stage;
 import ulb.utils.Parser;
 
@@ -45,10 +44,16 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
-        this.parseResult = loadResources();        
+        this.parseResult = loadResources();
         this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(this, parseResult.getBugemonsList());
-        this.combatController = new CombatController(this, parseResult.getBugemonsList());
+        this.createTeamController = new CreateTeamController(
+            this,
+            parseResult.getBugemonsList()
+        );
+        this.combatController = new CombatController(
+            this,
+            parseResult.getBugemonsList()
+        );
         this.combatResultController = new CombatResultController(this);
     }
 
@@ -65,16 +70,15 @@ public class MetaController {
             }
             case CREATE_TEAM -> {
                 this.createTeamController.show(this.stage);
-            } 
+            }
             case COMBAT -> {
                 this.combatController.show(this.stage);
-                this.combatController.runCombat(createTeamController.getFinalTeam());
+                this.combatController.runCombat(null); // TODO: Get back to real method (@Ethan for info)
             }
             case COMBAT_RESULT -> {
                 this.combatResultController.show(this.stage);
             }
-            default ->
-                throw new IllegalArgumentException("Invalid window");
+            default -> throw new IllegalArgumentException("Invalid window");
         }
     }
 
@@ -85,8 +89,12 @@ public class MetaController {
      */
     private Parser.ParseResult loadResources() throws IOException {
         try (
-            InputStream attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
-            InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
+            InputStream attacksStream = getClass().getResourceAsStream(
+                JSON_ATTACK_PATH
+            );
+            InputStream bugemonsStream = getClass().getResourceAsStream(
+                JSON_BUGEMON_PATH
+            );
         ) {
             if (attacksStream == null || bugemonsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
@@ -94,5 +102,4 @@ public class MetaController {
             return Parser.parse(attacksStream, bugemonsStream);
         }
     }
-
 }

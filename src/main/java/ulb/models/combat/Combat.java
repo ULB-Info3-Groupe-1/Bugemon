@@ -1,7 +1,7 @@
 /**
  * File name : Combat.java
  * Description : Class representing a combat between two trainers.
- * 
+ *
  * @author Liefferinckx Romain
  * @date 26 feb. 2026
  * @version 1.0
@@ -12,6 +12,7 @@ package ulb.models.combat;
 import ulb.models.trainer.Trainer;
 
 public class Combat {
+
     // Attributes
 
     protected Trainer allyTrainer; // allied trainer
@@ -53,7 +54,7 @@ public class Combat {
         return false;
     }
 
-    public void nextTurn() {
+    public void incrementTurn() {
         this.turn++;
     }
 
