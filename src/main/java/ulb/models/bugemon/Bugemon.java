@@ -10,6 +10,7 @@
 package ulb.models.bugemon;
 
 import com.google.gson.annotations.SerializedName;
+import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -556,16 +557,16 @@ public class Bugemon implements BugemonDTO, Cloneable {
     public void editStat(String stat, int value) throws KeyException {
         switch (stat) {
             case "pv":
-                this.stats.setHp(this.stats.getHp() - value);
+                this.state.hp = this.state.hp + value;
                 break;
             case "attaque":
-                this.stats.setAttack(this.stats.getAttack() - value);
+                this.state.attack = this.state.attack + value;
                 break;
             case "defense":
-                this.stats.setDefense(this.stats.getDefense() - value);
+                this.state.defense = this.state.defense + value;
                 break;
             case "initiative":
-                this.stats.setInitiative(this.stats.getInitiative() - value);
+                this.state.initiative = this.state.initiative + value;
                 break;
             default:
                 throw new KeyException(

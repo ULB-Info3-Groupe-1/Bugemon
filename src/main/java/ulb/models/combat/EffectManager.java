@@ -1,8 +1,8 @@
 /**
  * File name : EffectManager.java
- * Description : A helper class for the Combat 
+ * Description : A helper class for the Combat
  * instances for the management of the Effects of an Attack.
- * 
+ *
  * @author Rocca Manuel
  * @date 3 mar. 2026
  * @version 1.0
@@ -15,16 +15,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import ulb.models.bugemon.ActiveEffect;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
-import ulb.models.bugemon.Effect;
 
 /**
- * 
+ *
  */
 public class EffectManager {
 
@@ -44,7 +43,11 @@ public class EffectManager {
             if (current.isExpired()) {
                 // restore effect and pop from map
                 Effect currentEffect = current.getEffect();
-                handleEffect(key, currentEffect.getStat(), -currentEffect.getModifier());
+                handleEffect(
+                    key,
+                    currentEffect.getStat(),
+                    -currentEffect.getModifier()
+                );
                 effects.remove(key, current);
             } else {
                 current.decrementDuration();
@@ -54,12 +57,13 @@ public class EffectManager {
 
     /**
      * Applies the effect of the attack based on its target.
-     * 
+     *
      * @param attacker (Trainer) The trainer that launched the attack.
      * @param defender (Trainer) The trainer that takes the attack.
      * @param attack   (Attack) The thrown attack by the attacker.
      */
-    public void applyEffect(Trainer attacker, Trainer defender, Attack attack) throws KeyException {
+    public void applyEffect(Trainer attacker, Trainer defender, Attack attack)
+        throws KeyException {
         List<Effect> effects = attack.getEffects();
 
         for (Effect e : effects) {
@@ -68,11 +72,19 @@ public class EffectManager {
             switch (target) {
                 case "adversaire":
                     bugemons.add(defender.getCurrentBugemon());
-                    handleEffect(defender.getCurrentBugemon(), e.getStat(), e.getModifier());
+                    handleEffect(
+                        defender.getCurrentBugemon(),
+                        e.getStat(),
+                        e.getModifier()
+                    );
                     break;
                 case "lanceur":
                     bugemons.add(attacker.getCurrentBugemon());
-                    handleEffect(attacker.getCurrentBugemon(), e.getStat(), e.getModifier());
+                    handleEffect(
+                        attacker.getCurrentBugemon(),
+                        e.getStat(),
+                        e.getModifier()
+                    );
                     break;
                 case "equipe":
                     BugemonTeam team = attacker.getTeam();
@@ -88,7 +100,7 @@ public class EffectManager {
             // saving the effects
             for (Bugemon bugemon : bugemons) {
                 int duration = 0; // default value; if duration couldn't be extracted, the effect expires
-                                  // immediately
+                // immediately
                 try {
                     duration = e.extractDuration() - 1;
                 } catch (Exception exception) {
