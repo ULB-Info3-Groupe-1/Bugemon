@@ -18,7 +18,9 @@ public class Effect {
     // Attributes
 
     private EffectType type;
-    private String target;
+
+    @SerializedName("cible")
+    private EffectTarget target;
 
     private EffectStat stat;
 
@@ -33,12 +35,12 @@ public class Effect {
      * Constructor for the Effect class, initializing all attributes.
      * 
      * @param type     (EffectType) the type of the effect.
-     * @param target   (String) the target of the effect.
+     * @param target   (EffectTarget) the target of the effect.
      * @param stat     (EffectStat) the stat affected by the effect.
      * @param modifier (int) the modifier value of the effect.
      * @param duration (String) the duration of the effect.
      */
-    public Effect(EffectType type, String target, EffectStat stat, int modifier, String duration) {
+    public Effect(EffectType type, EffectTarget target, EffectStat stat, int modifier, String duration) {
         this.type = type;
         this.target = target;
         this.stat = stat;
@@ -69,25 +71,25 @@ public class Effect {
     /**
      * Get the target of the effect.
      * 
-     * @return (String) the target of the effect
+     * @return (EffectTarget) the target of the effect
      */
-    public String getTarget() {
+    public EffectTarget getTarget() {
         return target;
     }
 
     /**
      * Set the target of the effect to a new value.
      * 
-     * @param target (String) the new target to set for the effect
+     * @param target (EffectTarget) the new target to set for the effect
      */
-    public void setTarget(String target) {
+    public void setTarget(EffectTarget target) {
         this.target = target;
     }
 
     /**
      * Get the stat affected by the effect.
      * 
-     * @return (String) the stat affected by the effect
+     * @return (EffectStat) the stat affected by the effect
      */
     public EffectStat getStat() {
         return stat;
@@ -96,7 +98,7 @@ public class Effect {
     /**
      * Set the stat affected by the effect to a new value.
      * 
-     * @param stat (String) the new stat to set for the effect
+     * @param stat (EffectStat) the new stat to set for the effect
      */
     public void setStat(EffectStat stat) {
         this.stat = stat;

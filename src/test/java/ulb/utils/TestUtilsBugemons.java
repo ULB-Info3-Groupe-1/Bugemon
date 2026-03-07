@@ -6,6 +6,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectStat;
+import ulb.models.bugemon.EffectTarget;
 import ulb.models.bugemon.EffectType;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -16,7 +17,7 @@ public final class TestUtilsBugemons {
     public static Bugemon createDefaultBugemon(String id) {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
-            "TestEffect",
+            EffectTarget.ADVERSARY,
             EffectStat.ATTACK,
             10,
             "1 turn"

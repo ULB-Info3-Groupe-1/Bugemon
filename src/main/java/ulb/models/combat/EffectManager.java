@@ -20,6 +20,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectStat;
+import ulb.models.bugemon.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 
@@ -45,10 +46,9 @@ public class EffectManager {
                 // restore effect and pop from map
                 Effect currentEffect = current.getEffect();
                 handleEffect(
-                    key,
-                    currentEffect.getStat(),
-                    -currentEffect.getModifier()
-                );
+                        key,
+                        currentEffect.getStat(),
+                        -currentEffect.getModifier());
                 effects.remove(key, current);
             } else {
                 current.decrementDuration();
@@ -64,30 +64,28 @@ public class EffectManager {
      * @param attack   (Attack) The thrown attack by the attacker.
      */
     public void applyEffect(Trainer attacker, Trainer defender, Attack attack)
-        throws KeyException {
+            throws KeyException {
         List<Effect> effects = attack.getEffects();
 
         for (Effect e : effects) {
-            String target = e.getTarget();
+            EffectTarget target = e.getTarget();
             List<Bugemon> bugemons = new ArrayList<>();
             switch (target) {
-                case "adversaire":
+                case EffectTarget.ADVERSARY:
                     bugemons.add(defender.getCurrentBugemon());
                     handleEffect(
-                        defender.getCurrentBugemon(),
-                        e.getStat(),
-                        e.getModifier()
-                    );
+                            defender.getCurrentBugemon(),
+                            e.getStat(),
+                            e.getModifier());
                     break;
-                case "lanceur":
+                case EffectTarget.THROWER:
                     bugemons.add(attacker.getCurrentBugemon());
                     handleEffect(
-                        attacker.getCurrentBugemon(),
-                        e.getStat(),
-                        e.getModifier()
-                    );
+                            attacker.getCurrentBugemon(),
+                            e.getStat(),
+                            e.getModifier());
                     break;
-                case "equipe":
+                case EffectTarget.TEAM:
                     BugemonTeam team = attacker.getTeam();
                     for (Bugemon bugemon : team.getTeam()) {
                         bugemons.add(bugemon);
@@ -95,7 +93,7 @@ public class EffectManager {
                     }
                     break;
                 default:
-                    throw new KeyException("Invalid effect target");
+                    throw new KeyException("Invalid or unhandled effect target");
             }
 
             // saving the effects

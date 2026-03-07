@@ -20,7 +20,7 @@ public class TestActiveEffect {
     public void testGetEffect() {
         Effect effect = new Effect(
                 EffectType.STAT_MODIFIER,
-                "TestEffect",
+                EffectTarget.ADVERSARY,
                 EffectStat.DEFENSE,
                 10,
                 "1_tour");
@@ -33,7 +33,7 @@ public class TestActiveEffect {
     public void testDecrement() {
         Effect effect = new Effect(
                 EffectType.STAT_MODIFIER,
-                "TestEffect",
+                EffectTarget.ADVERSARY,
                 EffectStat.DEFENSE,
                 10,
                 "1_tour");
