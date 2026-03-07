@@ -18,10 +18,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,15 +72,16 @@ public class Parser {
      * The main parsing method used to parse every file. Calls annex methods to
      * achieve its task.
      *
-     * @param directory The directory containing the json files.
-     *                  The path must be relative to the place of executions.
+     * @param attacksStream  input stream for the attacks JSON file
+     * @param bugemonsStream input stream for the bugemons JSON file
+     * @return a ParseResult containing the attacks map and the list of bugemons
      */
-    public static ParseResult parse(String directory) {
-        Path dirPath = Paths.get(directory);
+    public static ParseResult parse(InputStream attacksStream, InputStream bugemonsStream) {
+        Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
+        Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
 
         // load attacks
-        Path attacksPath = dirPath.resolve("attaques.json");
-        AttackList attackList = parseAttacks(attacksPath);
+        AttackList attackList = parseAttacks(attacksReader);
 
         List<Attack> attacks = attackList.getAttacks();
         Map<String, Attack> attacksMap = new HashMap<>();
@@ -88,8 +91,7 @@ public class Parser {
         }
 
         // load bugemons
-        Path bugemonPath = dirPath.resolve("bugemons.json");
-        List<Bugemon> bugemons = parseBugemons(bugemonPath, attacksMap);
+        List<Bugemon> bugemons = parseBugemons(bugemonsReader, attacksMap);
 
         return new ParseResult(attacksMap, bugemons);
     }
@@ -130,17 +132,17 @@ public class Parser {
     /**
      * Specific method for the parsing of the Attacks.
      * 
-     * @param fileName The path to the json file.
+     * @param reader reader providing the attacks JSON content
      * @return (AttackList) AttackList containing a List of every Attack in the json
      *         file.
      */
-    static AttackList parseAttacks(Path fileName) {
+    static AttackList parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
                 .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
                 .create();
 
-        try (FileReader reader = new FileReader(fileName.toFile())) {
+        try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray attacksArray = root.getAsJsonArray("attaques");
 
@@ -153,9 +155,7 @@ public class Parser {
             return new AttackList(attacks);
         } catch (Exception e) {
             // TODO: Use of a Logger or external error management ?
-            String errorMessage = "Error when trying to open %s";
-            String errorOutput = String.format(errorMessage, fileName);
-            System.out.println(errorOutput);
+            System.out.println("Error when parsing attacks");
             e.printStackTrace();
         }
         return null;
@@ -164,13 +164,13 @@ public class Parser {
     /**
      * Specific method for the parsing of the Bugemons
      * 
-     * @param fileName  The path to the json file.
+     * @param reader reader providing the bugemons JSON content
      * @param attackMap (Map<String, Attack>) A map containing every loaded attack
      *                  with their ids. Used to build the bugemons.
      * @return (List<Bugemon>) The list of the newly build Bugemon objects.
      */
     static List<Bugemon> parseBugemons(
-            Path fileName,
+            Reader reader,
             Map<String, Attack> attackMap) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(
@@ -179,7 +179,7 @@ public class Parser {
                 .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
                 .create();
 
-        try (FileReader reader = new FileReader(fileName.toFile())) {
+        try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
 
@@ -191,7 +191,7 @@ public class Parser {
             return bugemons;
         } catch (Exception e) {
             // TODO: Use of a Logger or external error management ?
-
+            System.out.println("Error when parsing bugemons");
             e.printStackTrace();
         }
         return null;

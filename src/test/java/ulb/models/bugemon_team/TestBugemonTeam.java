@@ -18,6 +18,7 @@ import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
 
+import java.io.InputStream;
 import java.util.List;
 
 public class TestBugemonTeam {
@@ -127,8 +128,10 @@ public class TestBugemonTeam {
     }
 
     @Test
-    public void testRandomTeamNumber(){
-        Parser.ParseResult parseResult = Parser.parse("src/main/resources/json");
+    public void testRandomTeamNumber() {
+        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
+        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
+        Parser.ParseResult parseResult = Parser.parse(attacksStream, bugemonsStream);
         BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(parseResult.getBugemonsList(), 6);
         assertEquals(6, teamOfSix.size());
     }

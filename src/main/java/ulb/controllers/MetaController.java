@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javafx.stage.Stage;
 import ulb.utils.Parser;
@@ -26,7 +27,8 @@ public class MetaController {
         COMBAT_RESULT,
     }
 
-    private final String JSON_FILES_PATH = "src/main/resources/json";
+    private static final String JSON_ATTACK_PATH = "/json/attaques.json";
+    private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
 
     private final Stage stage;
     private final MainMenuController mainMenuController;
@@ -43,8 +45,7 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
-        this.parseResult = Parser.parse(JSON_FILES_PATH);
-
+        this.parseResult = loadResources();        
         this.mainMenuController = new MainMenuController(this);
         this.createTeamController = new CreateTeamController(this, parseResult.getBugemonsList());
         this.combatController = new CombatController(this, parseResult.getBugemonsList());
@@ -74,6 +75,23 @@ public class MetaController {
             }
             default ->
                 throw new IllegalArgumentException("Invalid window");
+        }
+    }
+
+    /**
+     * Loads and parses the game data from JSON resource files.
+     * @return a Parser.ParseResult containing the maps of attacks and the list of Bugemons
+     * @throws IOException if the JSON directory is missing or if an error occurs during path conversion or file reading
+     */
+    private Parser.ParseResult loadResources() throws IOException {
+        try (
+            InputStream attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
+            InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
+        ) {
+            if (attacksStream == null || bugemonsStream == null) {
+                throw new IOException("JSON files not found in resources: ");
+            }
+            return Parser.parse(attacksStream, bugemonsStream);
         }
     }
 
