@@ -17,30 +17,87 @@ import ulb.common.BugemonDTO;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
+ * <p>
+ * A {@code Bugemon} is the central entity of the game. It holds identifying
+ * information (ID, name, type, sprite), combat statistics (HP, attack, defense,
+ * initiative), a list of available {@link Attack}s, and a flag indicating
+ * whether the bugemon is a starter.
+ * </p>
+ * <p>
+ * Instances must be created via the nested {@link Builder} class. The class
+ * implements {@link Cloneable} to support deep-copying of bugemon instances,
+ * and {@link BugemonDTO} to expose a common data-transfer interface.
+ * </p>
+ *
+ * @see Builder
+ * @see BType
+ * @see Attack
  */
 public class Bugemon implements BugemonDTO, Cloneable {
 
     /**
-     * This enum represents the type of a bugemon.
+     * Represents the elemental type of a bugemon.
+     * <p>
+     * Each type may have strengths and weaknesses against other types during
+     * combat.
+     * </p>
+     *
+     * <ul>
+     *   <li>{@link #FLORA}  – plant/nature-based type.</li>
+     *   <li>{@link #AQUA}   – water-based type.</li>
+     *   <li>{@link #PYRO}   – fire-based type.</li>
+     *   <li>{@link #LITHO}  – rock/earth-based type.</li>
+     * </ul>
      */
     public enum BType {
+        /** Plant/nature-based elemental type. */
         FLORA,
+        /** Water-based elemental type. */
         AQUA,
+        /** Fire-based elemental type. */
         PYRO,
+        /** Rock/earth-based elemental type. */
         LITHO,
     }
 
+    /**
+     * Encapsulates the mutable combat statistics of a {@link Bugemon}.
+     * <p>
+     * A {@code State} holds the four core stats used during battle:
+     * hit points ({@code hp}), attack power ({@code attack}),
+     * defensive rating ({@code defense}), and turn-order priority
+     * ({@code initiative}).
+     * </p>
+     * <p>
+     * Two constructors are provided: one to initialise from raw values, and a
+     * copy-constructor to create an independent duplicate of an existing
+     * {@code State}.
+     * </p>
+     */
     private class State {
 
+        /** Current hit points of the bugemon. Serialised as {@code "pv"}. */
         @SerializedName("pv")
         private int hp;
 
+        /** Attack power of the bugemon. Serialised as {@code "attaque"}. */
         @SerializedName("attaque")
         private int attack;
 
+        /** Defensive rating of the bugemon. */
         private int defense;
+
+        /** Initiative value determining turn order in combat. */
         private int initiative;
 
+        /**
+         * Constructs a new {@code State} with the given stat values.
+         *
+         * @param hp         the initial hit points.
+         * @param attack     the attack power.
+         * @param defense    the defense rating.
+         * @param initiative the initiative (turn-order priority).
+         */
         public State(int hp, int attack, int defense, int initiative) {
             this.hp = hp;
             this.attack = attack;
@@ -48,6 +105,13 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.initiative = initiative;
         }
 
+        /**
+         * Copy-constructor. Creates an independent duplicate of the given
+         * {@code State}.
+         *
+         * @param other the {@code State} instance to copy; must not be
+         *              {@code null}.
+         */
         public State(State other) {
             this.hp = other.hp;
             this.attack = other.attack;
@@ -56,100 +120,244 @@ public class Bugemon implements BugemonDTO, Cloneable {
         }
     }
 
-    // Attributes
-
+    /** Unique identifier of this bugemon. */
     private String id;
 
+    /** Display name of this bugemon. Serialised as {@code "nom"}. */
     @SerializedName("nom")
     private String name;
 
+    /** Elemental type of this bugemon. */
     private BType type;
+
+    /** Path or URL to the sprite image of this bugemon. */
     private String sprite;
 
+    /**
+     * The baseline stats of this bugemon, set once at construction and used to
+     * reset the bugemon to its original condition.
+     */
     State initialState;
+
+    /**
+     * The current (mutable) combat stats of this bugemon. These values change
+     * during battles (e.g. when damage is taken).
+     */
     State state;
 
+    /**
+     * Whether this bugemon is available as a starter choice. Serialised as
+     * {@code "starter"}.
+     */
     @SerializedName("starter")
     private boolean isStarter;
 
+    /**
+     * The list of attacks available to this bugemon. Serialised as
+     * {@code "attaques"}.
+     */
     @SerializedName("attaques")
     private List<Attack> attackList;
 
     /**
-     * Private constructor used by the builder.
+     * Private no-arg constructor used exclusively by the {@link Builder}.
+     * <p>
+     * Direct instantiation is not supported; use {@link Builder} instead.
+     * </p>
      */
     private Bugemon() {}
 
     /**
-     * Builder for new instances
+     * Fluent builder for constructing {@link Bugemon} instances.
+     * <p>
+     * Every property except {@code id} has a sensible default value so that
+     * callers only need to supply the fields that differ from the defaults.
+     * Calling {@link #build()} without setting an {@code id} will throw an
+     * {@link IllegalStateException}.
+     * </p>
      *
-     * Builder for new instancesc of Bugemon.
+     * <p><b>Default values:</b></p>
+     * <ul>
+     *   <li>name        – {@value #DEFAULT_NAME}</li>
+     *   <li>type        – {@link BType#AQUA}</li>
+     *   <li>sprite      – {@value #DEFAULT_SPRITE}</li>
+     *   <li>hp          – {@value #DEFAULT_HP}</li>
+     *   <li>attack      – {@value #DEFAULT_ATTACK}</li>
+     *   <li>defense     – {@value #DEFAULT_DEFENSE}</li>
+     *   <li>initiative  – {@value #DEFAULT_INITIATIVE}</li>
+     *   <li>isStarter   – {@value #DEFAULT_IS_STARTER}</li>
+     *   <li>attackList  – empty list</li>
+     * </ul>
+     *
+     * <p><b>Typical usage:</b></p>
+     * <pre>{@code
+     * Bugemon b = new Bugemon.Builder()
+     *     .id("001")
+     *     .name("Florasect")
+     *     .type(BType.FLORA)
+     *     .hp(120)
+     *     .build();
+     * }</pre>
      */
     public static class Builder {
 
+        /** Default display name applied when none is provided. */
         private static final String DEFAULT_NAME = "default name";
-        private static final BType DEFAULT_TYPE = BType.AQUA;
+
+        /** Default elemental type applied when none is provided. */
+        private static final BType DEFAULT_TYPE = BType.FLORA;
+
+        /** Default sprite path applied when none is provided. */
         private static final String DEFAULT_SPRITE = "/png/unknown.png";
+
+        /** Default hit-point value applied when none is provided. */
         private static final int DEFAULT_HP = 100;
+
+        /** Default starter flag applied when none is provided. */
         private static final boolean DEFAULT_IS_STARTER = false;
+
+        /** Default attack stat applied when none is provided. */
         private static final int DEFAULT_ATTACK = 10;
+
+        /** Default defense stat applied when none is provided. */
         private static final int DEFAULT_DEFENSE = 10;
+
+        /** Default initiative stat applied when none is provided. */
         private static final int DEFAULT_INITIATIVE = 10;
 
+        /** The unique identifier to assign to the bugemon. */
         private Optional<String> id = Optional.empty();
 
+        /** The display name to assign to the bugemon. */
         private Optional<String> name = Optional.empty();
+
+        /** The elemental type to assign to the bugemon. */
         private Optional<BType> type = Optional.empty();
+
+        /** The sprite path/URL to assign to the bugemon. */
         private Optional<String> sprite = Optional.empty();
 
+        /** The hit-point value for the bugemon's initial state. */
         private Optional<Integer> hp = Optional.empty();
+
+        /** The attack stat for the bugemon's initial state. */
         private Optional<Integer> attack = Optional.empty();
+
+        /** The defense stat for the bugemon's initial state. */
         private Optional<Integer> defense = Optional.empty();
+
+        /** The initiative stat for the bugemon's initial state. */
         private Optional<Integer> initiative = Optional.empty();
 
+        /** Whether the bugemon should be flagged as a starter. */
         private Optional<Boolean> isStarter = Optional.empty();
+
+        /** The list of attacks to assign to the bugemon. */
         private Optional<List<Attack>> attackList = Optional.empty();
 
+        /**
+         * Sets the unique identifier for the bugemon under construction.
+         * <p>
+         * This field is <b>mandatory</b>; {@link #build()} will throw an
+         * {@link IllegalStateException} if it is not supplied.
+         * </p>
+         *
+         * @param id the non-null unique identifier string.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder id(String id) {
             this.id = Optional.of(id);
             return this;
         }
 
+        /**
+         * Sets the display name for the bugemon under construction.
+         *
+         * @param name the non-null display name.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder name(String name) {
             this.name = Optional.of(name);
             return this;
         }
 
+        /**
+         * Sets the elemental type for the bugemon under construction.
+         *
+         * @param type the non-null {@link BType} to assign.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder type(BType type) {
             this.type = Optional.of(type);
             return this;
         }
 
+        /**
+         * Sets the sprite path or URL for the bugemon under construction.
+         *
+         * @param sprite the non-null sprite path or URL string.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder sprite(String sprite) {
             this.sprite = Optional.of(sprite);
             return this;
         }
 
+        /**
+         * Sets the initial hit-point value for the bugemon under construction.
+         *
+         * @param hp the hit-point value (typically a positive integer).
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder hp(int hp) {
             this.hp = Optional.of(hp);
             return this;
         }
 
+        /**
+         * Sets the attack stat for the bugemon under construction.
+         *
+         * @param attack the attack power value.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder attack(int attack) {
             this.attack = Optional.of(attack);
             return this;
         }
 
+        /**
+         * Sets the defense stat for the bugemon under construction.
+         *
+         * @param defense the defense rating value.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder defense(int defense) {
             this.defense = Optional.of(defense);
             return this;
         }
 
+        /**
+         * Sets the initiative stat for the bugemon under construction.
+         *
+         * @param initiative the initiative (turn-order priority) value.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder initiative(int initiative) {
             this.initiative = Optional.of(initiative);
             return this;
         }
 
+        /**
+         * Appends an {@link Attack} to the bugemon's attack list.
+         * <p>
+         * May be called multiple times to add several attacks. If no attack
+         * list has been initialised yet, a new {@link ArrayList} is created
+         * automatically.
+         * </p>
+         *
+         * @param attack the non-null {@link Attack} to add.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder addAttack(Attack attack) {
             this.attackList = Optional.of(attackList.orElseGet(ArrayList::new));
 
@@ -158,11 +366,50 @@ public class Bugemon implements BugemonDTO, Cloneable {
             return this;
         }
 
+        /**
+         * Sets the complete list of attacks for the bugemon under construction.
+         * <p>
+         * Replaces any attacks previously added via {@link #addAttack(Attack)}.
+         * If individual attacks need to be appended incrementally, use
+         * {@link #addAttack(Attack)} instead.
+         * </p>
+         *
+         * @param attackList the non-null {@link List} of {@link Attack} instances
+         *                   to assign to the bugemon.
+         * @return this {@code Builder} instance for method chaining.
+         */
+        public Builder attackList(List<Attack> attackList) {
+            this.attackList = Optional.of(attackList);
+            return this;
+        }
+
+        /**
+         * Sets whether the bugemon under construction should be considered a
+         * starter bugemon.
+         *
+         * @param isStarter {@code true} if the bugemon is a starter;
+         *                  {@code false} otherwise.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder isStarter(boolean isStarter) {
             this.isStarter = Optional.of(isStarter);
             return this;
         }
 
+        /**
+         * Constructs and returns the configured {@link Bugemon} instance.
+         * <p>
+         * All fields that were not explicitly set will receive their default
+         * values (see {@link Builder} class-level documentation). The
+         * bugemon's {@code state} is initialised as an independent copy of
+         * {@code initialState}, so that the initial stats can always be
+         * recovered.
+         * </p>
+         *
+         * @return a fully initialised {@link Bugemon}.
+         * @throws IllegalStateException if no {@code id} was provided via
+         *                               {@link #id(String)}.
+         */
         public Bugemon build() {
             Bugemon bugemon = new Bugemon();
 
@@ -191,24 +438,26 @@ public class Bugemon implements BugemonDTO, Cloneable {
         }
     }
 
-    // Constructor
-
     /**
-     * Make a copy of a Bugemon
+     * Creates and returns a deep copy of this Bugemon instance.
+     * <p>
+     * The cloned Bugemon will have independent copies of both the current
+     * {@code state} and the {@code initialState}, ensuring that modifications
+     * to the clone's state do not affect the original, and vice versa.
+     * All other fields are shallow-copied via {@link Object#clone()}.
+     * </p>
      *
-     * @param other A bugemon class
+     * @return a new {@code Bugemon} instance that is a deep copy of this object.
+     * @throws CloneNotSupportedException if the object's class does not support
+     *                                    the {@link Cloneable} interface.
      */
-    public Bugemon(Bugemon other) {
-        this.id = other.id;
-        this.name = other.name;
-        this.type = other.type;
-        this.sprite = other.sprite;
+    @Override
+    public Bugemon clone() throws CloneNotSupportedException {
+        Bugemon cloned = (Bugemon) super.clone();
+        cloned.state = new State(this.state);
+        cloned.initialState = new State(this.initialState);
 
-        this.state = new State(other.state);
-        this.initialState = new State(other.initialState);
-
-        this.isStarter = other.isStarter;
-        this.attackList = other.attackList;
+        return cloned;
     }
 
     // Methods
@@ -226,6 +475,9 @@ public class Bugemon implements BugemonDTO, Cloneable {
     /**
      * Check if the bugemon is alive, which is determined by whether its HP is
      * greater than 0.
+     *
+     * @return {@code true} if the bugemon's current HP is greater than 0;
+     *         {@code false} otherwise.
      */
     public boolean isAlive() {
         return this.state.hp > 0;
@@ -233,6 +485,10 @@ public class Bugemon implements BugemonDTO, Cloneable {
 
     /**
      * Override the equals method to compare bugemons based on their unique ID.
+     *
+     * @param obj the object to compare with this bugemon.
+     * @return {@code true} if {@code obj} is a {@code Bugemon} with the same
+     *         ID as this instance; {@code false} otherwise.
      */
     @Override
     public boolean equals(Object obj) {
@@ -245,6 +501,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
     /**
      * Override the hashCode method to generate a hash code based on the unique ID
      * of the bugemon.
+     *
+     * @return an {@code int} hash code derived from the bugemon's unique ID.
      */
     @Override
     public int hashCode() {
@@ -296,6 +554,43 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     public List<Attack> getAttackList() {
         return this.attackList;
+    }
+
+    /**
+     * Get the current hit points of the bugemon.
+     *
+     * @return (int) the current hit points of the bugemon.
+     */
+    public int getHp() {
+        return this.state.hp;
+    }
+
+    /**
+     * Get the attack power of the bugemon.
+     *
+     * @return (int) the current attack power of the bugemon.
+     */
+    public int getAttack() {
+        return this.state.attack;
+    }
+
+    /**
+     * Get the defense rating of the bugemon.
+     *
+     * @return (int) the current defense rating of the bugemon.
+     */
+    public int getDefense() {
+        return this.state.defense;
+    }
+
+    /**
+     * Get the initiative value of the bugemon, which determines turn order in
+     * combat.
+     *
+     * @return (int) the initiative value of the bugemon.
+     */
+    public int getInitiative() {
+        return this.state.initiative;
     }
 
     /**

@@ -11,51 +11,46 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectType;
-import ulb.models.bugemon.Stats;
 
 public class TestParser {
 
     @Test
     public void testAttackParsing() {
-        AttackList attackList = Parser.parseAttacks(
+        List<Attack> attackList = Parser.parseAttacks(
             new InputStreamReader(
                 getClass().getResourceAsStream("/json/attaques.json"),
                 StandardCharsets.UTF_8
             )
         );
 
-        List<Attack> attacks = attackList.getAttacks();
-
         // check if a list has been returned
-        assertNotNull(attacks);
+        assertNotNull(attackList);
 
         // check if the attacks were parsed correctly
-        assertEquals(attacks.get(0).getId(), "fouet_liane");
-        assertEquals(attacks.get(1).getType(), Bugemon.BType.FLORA);
+        assertEquals(attackList.get(0).getId(), "fouet_liane");
+        assertEquals(attackList.get(1).getType(), Bugemon.BType.FLORA);
 
         // check effects
-        List<Effect> effects = attacks.get(2).getEffects();
+        List<Effect> effects = attackList.get(2).getEffects();
         assertEquals(effects.get(0).getTypeEffect(), EffectType.STAT_MODIFIER);
         assertEquals(effects.get(0).getModifier(), 5);
     }
 
     @Test
     public void testBugemonParsing() {
-        AttackList attackList = Parser.parseAttacks(
+        List<Attack> attackList = Parser.parseAttacks(
             new InputStreamReader(
                 getClass().getResourceAsStream("/json/attaques.json"),
                 StandardCharsets.UTF_8
             )
         );
 
-        List<Attack> attacks = attackList.getAttacks();
         Map<String, Attack> attacksMap = new HashMap<>();
 
-        for (Attack a : attacks) {
+        for (Attack a : attackList) {
             attacksMap.put(a.getId(), a);
         }
 
@@ -79,21 +74,19 @@ public class TestParser {
 
         // check attacks
         Bugemon bugemon2 = bugemonsList.get(2);
-        AttackList bugemon2AttackList = bugemon2.getAttackList();
-        List<Attack> bugemon2Attacks = bugemon2AttackList.getAttacks();
+        List<Attack> bugemon2AttackList = bugemon2.getAttackList();
 
-        for (Attack a : bugemon2Attacks) {
-            assertEquals(a, attacks.get(attacks.indexOf(a)));
+        for (Attack a : bugemon2AttackList) {
+            assertEquals(a, attackList.get(attackList.indexOf(a)));
         }
 
         // check stats
         Bugemon bugemon3 = bugemonsList.get(3);
-        Stats bugemon3Stats = bugemon3.getStats();
 
-        assertEquals(bugemon3Stats.getAttack(), 50);
-        assertEquals(bugemon3Stats.getHp(), 85);
-        assertEquals(bugemon3Stats.getDefense(), 50);
-        assertEquals(bugemon3Stats.getInitiative(), 60);
+        assertEquals(bugemon3.getAttack(), 50);
+        assertEquals(bugemon3.getHp(), 85);
+        assertEquals(bugemon3.getDefense(), 50);
+        assertEquals(bugemon3.getInitiative(), 60);
     }
 
     @Test

@@ -170,8 +170,6 @@ public class BugemonTeam implements Iterable<Bugemon> {
      *         false otherwise
      */
     public boolean contains(Bugemon bugemon) {
-        // TODO : @Romain override equals and hash method in Bugemon
-
         return this.contains(bugemon.getId());
     }
 
@@ -221,6 +219,6 @@ public class BugemonTeam implements Iterable<Bugemon> {
 
     @Override
     public Iterator<Bugemon> iterator() {
-        return Arrays.asList(team).iterator();
+        return Arrays.asList(this.team).iterator();
     }
 }

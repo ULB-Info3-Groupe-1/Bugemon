@@ -24,15 +24,8 @@ public class TestCreateTeamView extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        Bugemon b = new Bugemon(
-            "test",
-            "test",
-            null,
-            "png/bugzilla.png",
-            null,
-            null,
-            false
-        );
+        Bugemon b = new Bugemon.Builder().id("1").build();
+
         CreateTeamController controller = new CreateTeamController(
             null,
             List.of(b)
@@ -104,7 +97,7 @@ public class TestCreateTeamView extends ApplicationTest {
             .query();
 
         Assertions.assertThat(firstBugemonInTeam.getImage().getUrl()).contains(
-            "bugzilla.png"
+            "unknown.png"
         );
         assert (firstBugemonInList
                 .getImage()

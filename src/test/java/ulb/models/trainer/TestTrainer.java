@@ -18,7 +18,7 @@ import ulb.utils.TestUtilsBugemonTeam;
 public class TestTrainer {
 
     public static void killBugemon(BugemonTeam team, String id) {
-        team.getBugemon(id).takeDamage(team.getBugemon(id).getStats().getHp());
+        team.getBugemon(id).takeDamage(team.getBugemon(id).getHp());
     }
 
     @Test
