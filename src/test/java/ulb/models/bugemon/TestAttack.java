@@ -23,7 +23,7 @@ public class TestAttack {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -46,7 +46,7 @@ public class TestAttack {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -70,7 +70,7 @@ public class TestAttack {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -94,7 +94,7 @@ public class TestAttack {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -117,7 +117,7 @@ public class TestAttack {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -140,7 +140,7 @@ public class TestAttack {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -157,7 +157,7 @@ public class TestAttack {
         Effect newEffect = new Effect(
             EffectType.STAT_MODIFIER,
             "NewTestEffect",
-            "Aqua",
+            EffectStat.DEFENSE,
             20,
             "2 turns"
         );

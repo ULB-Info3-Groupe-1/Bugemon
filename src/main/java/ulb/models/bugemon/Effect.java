@@ -20,7 +20,7 @@ public class Effect {
     private EffectType type;
     private String target;
 
-    private String stat;
+    private EffectStat stat;
 
     @SerializedName("modificateur")
     private int modifier;
@@ -34,11 +34,11 @@ public class Effect {
      * 
      * @param type     (EffectType) the type of the effect.
      * @param target   (String) the target of the effect.
-     * @param stat     (String) the stat affected by the effect.
+     * @param stat     (EffectStat) the stat affected by the effect.
      * @param modifier (int) the modifier value of the effect.
      * @param duration (String) the duration of the effect.
      */
-    public Effect(EffectType type, String target, String stat, int modifier, String duration) {
+    public Effect(EffectType type, String target, EffectStat stat, int modifier, String duration) {
         this.type = type;
         this.target = target;
         this.stat = stat;
@@ -89,7 +89,7 @@ public class Effect {
      * 
      * @return (String) the stat affected by the effect
      */
-    public String getStat() {
+    public EffectStat getStat() {
         return stat;
     }
 
@@ -98,7 +98,7 @@ public class Effect {
      * 
      * @param stat (String) the new stat to set for the effect
      */
-    public void setStat(String stat) {
+    public void setStat(EffectStat stat) {
         this.stat = stat;
     }
 

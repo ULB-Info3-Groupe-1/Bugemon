@@ -551,21 +551,21 @@ public class Bugemon implements BugemonDTO, Cloneable {
     /**
      * Add/Substract a given value to a given stat.
      *
-     * @param stat  (String) The stat id to edit.
+     * @param stat  (EffectStat) The stat id to edit.
      * @param value (int) The value to add to the stat.
      */
-    public void editStat(String stat, int value) throws KeyException {
+    public void editStat(EffectStat stat, int value) throws KeyException {
         switch (stat) {
-            case "pv":
+            case EffectStat.HP:
                 this.state.hp = this.state.hp + value;
                 break;
-            case "attaque":
+            case EffectStat.ATTACK:
                 this.state.attack = this.state.attack + value;
                 break;
-            case "defense":
+            case EffectStat.DEFENSE:
                 this.state.defense = this.state.defense + value;
                 break;
-            case "initiative":
+            case EffectStat.INITIATIVE:
                 this.state.initiative = this.state.initiative + value;
                 break;
             default:

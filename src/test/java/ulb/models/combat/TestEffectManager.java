@@ -18,6 +18,7 @@ import org.junit.Test;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
+import ulb.models.bugemon.EffectStat;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.EffectManager;
 import ulb.models.trainer.Trainer;
@@ -46,7 +47,7 @@ public class TestEffectManager {
 
         // @Test invalid target
         // applying an effect with an invalid target; should throw a KeyException
-        Effect effect1 = new Effect(null, "invalid", "defense", 5, "1_tour");
+        Effect effect1 = new Effect(null, "invalid", EffectStat.DEFENSE, 5, "1_tour");
 
         Attack invalAttack = new Attack(
             "null",
@@ -63,7 +64,7 @@ public class TestEffectManager {
 
         // @Test valid target
         // applying a valid effect; shouldn't throw any exception
-        Effect effect2 = new Effect(null, "adversaire", "attaque", 5, "2_tour");
+        Effect effect2 = new Effect(null, "adversaire", EffectStat.ATTACK, 5, "2_tour");
         Attack attack = new Attack(
             "null",
             null,

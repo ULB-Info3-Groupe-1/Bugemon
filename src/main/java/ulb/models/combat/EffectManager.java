@@ -19,6 +19,7 @@ import ulb.models.bugemon.ActiveEffect;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
+import ulb.models.bugemon.EffectStat;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 
@@ -113,7 +114,7 @@ public class EffectManager {
         }
     }
 
-    private void handleEffect(Bugemon bugemon, String stat, int value) {
+    private void handleEffect(Bugemon bugemon, EffectStat stat, int value) {
         try {
             bugemon.editStat(stat, value);
         } catch (Exception e) {

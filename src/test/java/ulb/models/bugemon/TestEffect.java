@@ -20,7 +20,7 @@ public class TestEffect {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -34,7 +34,7 @@ public class TestEffect {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -48,13 +48,13 @@ public class TestEffect {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
-        assertEquals("Flora", effect.getStat());
-        effect.setStat("Aqua");
-        assertEquals("Aqua", effect.getStat());
+        assertEquals(EffectStat.DEFENSE, effect.getStat());
+        effect.setStat(EffectStat.ATTACK);
+        assertEquals(EffectStat.ATTACK, effect.getStat());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class TestEffect {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );
@@ -76,7 +76,7 @@ public class TestEffect {
         Effect effect = new Effect(
             EffectType.STAT_MODIFIER,
             "TestEffect",
-            "Flora",
+            EffectStat.DEFENSE,
             10,
             "1 turn"
         );

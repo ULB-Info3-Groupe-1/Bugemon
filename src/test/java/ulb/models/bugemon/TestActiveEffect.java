@@ -21,7 +21,7 @@ public class TestActiveEffect {
         Effect effect = new Effect(
                 EffectType.STAT_MODIFIER,
                 "TestEffect",
-                "Flora",
+                EffectStat.DEFENSE,
                 10,
                 "1_tour");
         int duration = effect.extractDuration();
@@ -34,7 +34,7 @@ public class TestActiveEffect {
         Effect effect = new Effect(
                 EffectType.STAT_MODIFIER,
                 "TestEffect",
-                "Flora",
+                EffectStat.DEFENSE,
                 10,
                 "1_tour");
         int duration = effect.extractDuration();
