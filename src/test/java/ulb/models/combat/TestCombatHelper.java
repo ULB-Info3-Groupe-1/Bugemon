@@ -16,29 +16,38 @@ package ulb.models.combat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import org.junit.Test;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.AttackList;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Bugemon.BType;
-import ulb.models.bugemon.Stats;
+import ulb.models.bugemon.Effect;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.CombatHelper.Efficiency;
 import ulb.models.trainer.Trainer;
-import ulb.utils.TestUtilsBugemons;
-import ulb.utils.TestUtilsTrainer;
 
 public class TestCombatHelper {
 
     @Test
     public void testPriority() {
-        Trainer fasterTrainer = TestUtilsTrainer.createDefaultTrainer();
-        Trainer slowTrainer = TestUtilsTrainer.createDefaultTrainer();
+        Bugemon slowBugemon = new Bugemon.Builder()
+            .id("1")
+            .initiative(0)
+            .build();
 
-        int fastInitiative = fasterTrainer.getCurrentBugemonInitiative();
-        Bugemon slowBugemon = slowTrainer.getCurrentBugemon();
-        Stats slowBugemonStat = slowBugemon.getStats();
+        Bugemon fastBugemon = new Bugemon.Builder()
+            .id("2")
+            .initiative(1000)
+            .build();
 
-        slowBugemonStat.setInitiative(fastInitiative - 1);
+        BugemonTeam slowTeam = new BugemonTeam();
+        slowTeam.addBugemon(slowBugemon);
+
+        BugemonTeam fastTeam = new BugemonTeam();
+        fastTeam.addBugemon(fastBugemon);
+
+        Trainer fasterTrainer = new Trainer(fastTeam);
+        Trainer slowTrainer = new Trainer(slowTeam);
 
         assertEquals(
             fasterTrainer,
@@ -48,50 +57,82 @@ public class TestCombatHelper {
 
     @Test
     public void testDamageApplied() {
-        Bugemon striker = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon defender = TestUtilsBugemons.createDefaultBugemon("2");
-        defender.setType(Bugemon.BType.PYRO);
+        Attack attack = new Attack(
+            "1",
+            "",
+            Bugemon.BType.FLORA,
+            "",
+            30,
+            new ArrayList<Effect>()
+        );
 
-        AttackList attackList = striker.getAttackList();
-        Attack strikerAttack = attackList.get(0);
+        Bugemon striker = new Bugemon.Builder()
+            .id("1")
+            .attack(50)
+            .defense(30)
+            .addAttack(attack)
+            .build();
+        Bugemon defender = new Bugemon.Builder()
+            .id("2")
+            .attack(20)
+            .defense(20)
+            .addAttack(attack)
+            .type(Bugemon.BType.PYRO)
+            .build();
 
         double expectedDamage =
-            strikerAttack.getPower() *
-            ((100.0 + striker.getStats().getAttack()) / 100.0) *
-            (100.0 / (100.0 + defender.getStats().getDefense())) *
-            CombatHelper.getEfficiencyFactor(strikerAttack, defender.getType());
+            attack.getPower() *
+            ((100.0 + striker.getAttack()) / 100.0) *
+            (100.0 / (100.0 + defender.getDefense())) *
+            CombatHelper.getEfficiencyFactor(attack, defender.getType());
 
-        double damage = CombatHelper.calculateDamage(
-            strikerAttack,
-            striker.getStats(),
-            defender
-        );
+        double damage = CombatHelper.calculateDamage(attack, striker, defender);
 
         assertEquals(expectedDamage, damage, expectedDamage / 2.0);
     }
 
     @Test
     public void testDamageMultiplicatorHigh() {
-        Bugemon striker = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon defender = TestUtilsBugemons.createDefaultBugemon("2");
+        Attack attack = new Attack(
+            "1",
+            "",
+            Bugemon.BType.FLORA,
+            "",
+            30,
+            new ArrayList<Effect>()
+        );
 
-        defender.setType(Bugemon.BType.PYRO);
-
-        AttackList attackList = striker.getAttackList();
-        Attack strikerAttack = attackList.get(0);
+        Bugemon striker = new Bugemon.Builder()
+            .id("1")
+            .attack(50)
+            .defense(30)
+            .addAttack(attack)
+            .build();
+        Bugemon defender = new Bugemon.Builder()
+            .id("2")
+            .attack(20)
+            .defense(20)
+            .addAttack(attack)
+            .type(Bugemon.BType.PYRO)
+            .build();
 
         double neutralDamage = CombatHelper.calculateDamage(
-            strikerAttack,
-            striker.getStats(),
+            attack,
+            striker,
             defender
         );
 
-        defender = TestUtilsBugemons.createDefaultBugemon("2");
-        defender.setType(Bugemon.BType.AQUA);
+        defender = new Bugemon.Builder()
+            .id("2")
+            .attack(20)
+            .defense(20)
+            .addAttack(attack)
+            .type(Bugemon.BType.AQUA)
+            .build();
 
         double highDamage = CombatHelper.calculateDamage(
-            strikerAttack,
-            striker.getStats(),
+            attack,
+            striker,
             defender
         );
 
@@ -100,26 +141,46 @@ public class TestCombatHelper {
 
     @Test
     public void testDamageMultiplicatorLow() {
-        Bugemon striker = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon defender = TestUtilsBugemons.createDefaultBugemon("2");
+        Attack attack = new Attack(
+            "1",
+            "",
+            Bugemon.BType.FLORA,
+            "",
+            30,
+            new ArrayList<Effect>()
+        );
 
-        defender.setType(Bugemon.BType.PYRO);
-
-        AttackList attackList = striker.getAttackList();
-        Attack strikerAttack = attackList.get(0);
+        Bugemon striker = new Bugemon.Builder()
+            .id("1")
+            .attack(50)
+            .defense(30)
+            .addAttack(attack)
+            .build();
+        Bugemon defender = new Bugemon.Builder()
+            .id("2")
+            .attack(20)
+            .defense(20)
+            .addAttack(attack)
+            .type(Bugemon.BType.PYRO)
+            .build();
 
         double neutralDamage = CombatHelper.calculateDamage(
-            strikerAttack,
-            striker.getStats(),
+            attack,
+            striker,
             defender
         );
 
-        defender = TestUtilsBugemons.createDefaultBugemon("2");
-        defender.setType(Bugemon.BType.LITHO);
+        defender = new Bugemon.Builder()
+            .id("2")
+            .attack(20)
+            .defense(20)
+            .addAttack(attack)
+            .type(Bugemon.BType.LITHO)
+            .build();
 
         double lowDamage = CombatHelper.calculateDamage(
-            strikerAttack,
-            striker.getStats(),
+            attack,
+            striker,
             defender
         );
 

@@ -19,7 +19,6 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Bugemon.BType;
-import ulb.models.bugemon.Stats;
 import ulb.models.trainer.Trainer;
 
 /**
@@ -76,16 +75,16 @@ public class CombatHelper {
      */
     public static double calculateDamage(
         final Attack attack,
-        final Stats strikerStats,
+        final Bugemon offenderBugemon,
         final Bugemon defenderBugemon
     ) {
         BType defenderType = defenderBugemon.getType();
-        Stats defenderStats = defenderBugemon.getStats();
 
         final int power = attack.getPower();
-        final double attackFactor = (100.0 + strikerStats.getAttack()) / 100.0;
+        final double attackFactor =
+            (100.0 + offenderBugemon.getAttack()) / 100.0;
         final double reductionFactor =
-            100.0 / (defenderStats.getDefense() + 100.0);
+            100.0 / (defenderBugemon.getDefense() + 100.0);
         final double typeFactor = getEfficiencyFactor(attack, defenderType);
         final double criticFactor = Math.random() <= 0.1 ? 1.5 : 1.0;
 
