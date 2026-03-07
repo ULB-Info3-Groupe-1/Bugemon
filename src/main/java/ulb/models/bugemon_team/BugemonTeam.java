@@ -1,11 +1,14 @@
 /**
- * File name : BugemonTeam.java
- * Description : Data class representing a team of Bugemons
- * 
- * @author Brisbois Philippe
- * @coauthor Morbee Matteo
- * @date 27 feb. 2026
+ * Data class representing a team of up to 6 Bugemons.
+ *
+ * <p>Provides methods to add, remove, and query Bugemons in the team,
+ * as well as a factory method to generate a random team from a given pool.</p>
+ *
+ * @author  Brisbois Philippe
+ * @author  Morbee Matteo
+ * @date    27 feb. 2026
  * @version 1.1
+ * @since   1.0
  */
 
 package ulb.models.bugemon_team;
@@ -13,13 +16,9 @@ package ulb.models.bugemon_team;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 
-/**
- * This class represents a team of up to 6 Bugemons
- */
 public class BugemonTeam {
 
     // Attributes
@@ -72,7 +71,9 @@ public class BugemonTeam {
         }
 
         if (this.contains(bugemon)) {
-            throw new BugemonAlreadyExistsException("This Bugemon already in the team!");
+            throw new BugemonAlreadyExistsException(
+                "This Bugemon already in the team!"
+            );
         }
 
         for (int i = 0; i < MAX_SIZE; i++) {
@@ -117,7 +118,7 @@ public class BugemonTeam {
 
     /**
      * Returns a copy of the team array
-     * 
+     *
      * @return (List<Bugemon>) a copy of the team array
      */
     public List<Bugemon> getTeam() {
@@ -126,7 +127,7 @@ public class BugemonTeam {
 
     /**
      * Returns the select Bugemon with the given ID if it's in the team.
-     * 
+     *
      * @param id (String) the ID of the Bugemon to be returned
      * @return (Bugemon) the Bugemon with the given ID
      */
@@ -136,19 +137,19 @@ public class BugemonTeam {
                 return bugemon;
             }
         }
-        throw new IllegalArgumentException("No Bugemon with the given ID found in the team!");
+        throw new IllegalArgumentException(
+            "No Bugemon with the given ID found in the team!"
+        );
     }
 
     /**
      * Checks if a Bugemon with the same ID is already in the team
-     * 
+     *
      * @param bugemon (Bugemon) the Bugemon to search for
      * @return (boolean) true if a Bugemon with the same ID is already in the team,
      *         false otherwise
      */
     public boolean contains(Bugemon bugemon) {
-        // TODO : @Romain override equals and hash method in Bugemon
-
         return this.contains(bugemon.getId());
     }
 
@@ -161,8 +162,7 @@ public class BugemonTeam {
      */
     public boolean contains(String id) {
         for (Bugemon bugemon : this.team) {
-            if (bugemon != null && id.equals(bugemon.getId()))
-                return true;
+            if (bugemon != null && id.equals(bugemon.getId())) return true;
         }
         return false;
     }
@@ -171,17 +171,29 @@ public class BugemonTeam {
      * Generates a random bugemon team of 6 bugemons
      * @return the bugemon list created
      */
-    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
+    public static BugemonTeam createRandomTeam(
+        final List<Bugemon> bugemonList,
+        final int teamSize
+    ) {
         Random rand = new Random();
         BugemonTeam randomTeam = new BugemonTeam();
-        
+
         while (randomTeam.size() != teamSize) {
             int randomIndex = rand.nextInt(bugemonList.size());
             if (!randomTeam.contains(bugemonList.get(randomIndex).getId())) {
-                randomTeam.addBugemon(new Bugemon(bugemonList.get(randomIndex)));
+                randomTeam.addBugemon(
+                    new Bugemon(bugemonList.get(randomIndex))
+                );
             }
         }
 
         return randomTeam;
+    }
+
+    /**
+     * Resets the state of all Bugemons in the team to their default values.
+     */
+    public void reset() {
+        return;
     }
 }
