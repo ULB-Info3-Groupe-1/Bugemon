@@ -86,7 +86,12 @@ public class TestCombatHelper {
             (100.0 / (100.0 + defender.getDefense())) *
             CombatHelper.getEfficiencyFactor(attack, defender.getType());
 
-        double damage = CombatHelper.calculateDamage(attack, striker, defender);
+        double damage = CombatHelper.calculateDamage(
+            attack,
+            striker,
+            defender,
+            1.0
+        );
 
         assertEquals(expectedDamage, damage, expectedDamage / 2.0);
     }
@@ -119,7 +124,8 @@ public class TestCombatHelper {
         double neutralDamage = CombatHelper.calculateDamage(
             attack,
             striker,
-            defender
+            defender,
+            1.0
         );
 
         defender = new Bugemon.Builder()
@@ -133,7 +139,8 @@ public class TestCombatHelper {
         double highDamage = CombatHelper.calculateDamage(
             attack,
             striker,
-            defender
+            defender,
+            1.0
         );
 
         assertTrue(neutralDamage < highDamage);
@@ -167,7 +174,8 @@ public class TestCombatHelper {
         double neutralDamage = CombatHelper.calculateDamage(
             attack,
             striker,
-            defender
+            defender,
+            1.0
         );
 
         defender = new Bugemon.Builder()
@@ -181,7 +189,8 @@ public class TestCombatHelper {
         double lowDamage = CombatHelper.calculateDamage(
             attack,
             striker,
-            defender
+            defender,
+            1.0
         );
 
         assertTrue(lowDamage < neutralDamage);
