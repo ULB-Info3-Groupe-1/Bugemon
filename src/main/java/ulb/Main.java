@@ -1,12 +1,3 @@
-/**
- * File name : Main.java
- * Description : Entry point of the Bugemon JavaFX application.
- *
- * @author Liefferinckx Romain
- * @date 24 feb. 2026
- * @version 1.0
- */
-
 package ulb;
 
 import java.io.IOException;
