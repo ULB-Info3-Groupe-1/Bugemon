@@ -11,6 +11,12 @@ import ulb.models.trainer.Trainer;
 import ulb.views.combat.ManualCombatView;
 
 public class ManualCombatController extends CombatController<ManualCombatView> {
+
+    /**
+     * Constructor of the ManualCombatController which initializes the view and sets the controller for the view
+     * @param metaController The MetaController of the application
+     * @throws IOException if the view cannot be initialized
+     */
     public ManualCombatController(MetaController metaController) throws IOException {
         super(metaController, new ManualCombatView());
 

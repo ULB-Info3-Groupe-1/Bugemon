@@ -9,10 +9,17 @@ import javafx.stage.Stage;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 
+/**
+ * Main class of the application. It initializes the primary stage and the MetaController, and switches to the main menu.
+ */
 public class Main extends Application {
 
     private String STAGE_TITLE = "Bugemon";
 
+    /**
+     * Main method of the application. It launches the JavaFX application.
+     * @param args the command line arguments (not used)
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -32,7 +39,5 @@ public class Main extends Application {
             e.printStackTrace();
             System.exit(1);
         }
-
     }
-
 }

@@ -112,6 +112,13 @@ public class EffectManager {
         }
     }
 
+    /**
+     * Handles the application of an effect on a Bugemon by editing the stat of the Bugemon based on the stat 
+     * and the modifier of the effect.
+     * @param bugemon the Bugemon on which the effect is applied
+     * @param stat the stat that is affected by the effect
+     * @param value the value of the modifier of the effect to be applied to the stat of the Bugemon
+     */
     private void handleEffect(Bugemon bugemon, EffectStat stat, int value) {
         try {
             bugemon.editStat(stat, value);

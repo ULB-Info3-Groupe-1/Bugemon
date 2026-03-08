@@ -7,6 +7,11 @@ import ulb.views.CombatVictoryView;
 
 public class CombatVictoryController extends Controller<CombatVictoryView> {
 
+    /**
+     * Constructor of the CombatVictoryController which initializes the view and sets the controller for the view
+     * @param metaController The MetaController of the application
+     * @throws IOException if the view cannot be initialized
+     */
     public CombatVictoryController(MetaController metaController) throws IOException {
         super(metaController, new CombatVictoryView());
         this.view.setController(this);

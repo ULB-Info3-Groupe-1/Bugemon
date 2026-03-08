@@ -63,10 +63,18 @@ public class CreateTeamView extends View {
         );
     }
 
+    /**
+     * Displays the player's current team in the team view.
+     * @param bugemonList the list of BugemonDTOs representing the player's current team to be displayed
+     */
     public void showTeam(List<BugemonDTO> bugemonList) {
         this.bugemonsTeamView.showTeam(bugemonList);
     }
 
+    /**
+     * Displays all available Bugemons in the grid view.
+     * @param bugemonList the list of all available Bugemons to be displayed
+     */
     public void showAll(List<BugemonDTO> bugemonList) {
         this.allBugemonsGridView.showAll(bugemonList);
     }

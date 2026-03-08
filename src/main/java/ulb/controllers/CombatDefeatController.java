@@ -7,6 +7,11 @@ import ulb.views.CombatDefeatView;
 
 public class CombatDefeatController extends Controller<CombatDefeatView> {
 
+    /**
+     * Constructor of the CombatDefeatController which initializes the view and sets the controller for the view
+     * @param metaController The MetaController of the application
+     * @throws IOException if the view cannot be initialized
+     */
     public CombatDefeatController(MetaController metaController) throws IOException {
         super(metaController, new CombatDefeatView());
         this.view.setController(this);

@@ -10,6 +10,11 @@ import ulb.views.combat.AutomaticCombatView;
 
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
     
+    /**
+     * Constructor for the AutomaticCombatController class.
+     * @param metaController the MetaController instance to manage the overall application state
+     * @throws IOException if an I/O error occurs during view initialization
+     */
     public AutomaticCombatController(MetaController metaController) throws IOException {
         super(metaController, new AutomaticCombatView());
         this.view.setController(this);

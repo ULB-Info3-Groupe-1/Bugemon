@@ -88,6 +88,11 @@ public class BugemonTeam implements Iterable<Bugemon> {
         this.size++;
     }
 
+    /**
+     * Removes a Bugemon from the team if it is in the team. If the team is empty or
+     * the Bugemon is not in the team, an exception is thrown.
+     * @param bugemon (Bugemon) the Bugemon to be removed from the team
+     */
     public void removeBugemon(Bugemon bugemon) {
         this.removeBugemon(bugemon.getId());
     }
