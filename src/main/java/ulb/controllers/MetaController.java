@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
@@ -114,18 +116,28 @@ public class MetaController {
     }
 
     /** Tell the CombatController to launch the AutoCombat
-     * @param player the AutoTrainer player
      */
-    public void launchAutoCombat(final AutoTrainer player) {
-        this.automaticCombatController.runAutoCombat(player);
+    public void launchAutoCombat() {
+        if (this.trainer.teamIsEmpty()) {
+            showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
+        }
+        else {
+            this.automaticCombatController.runAutoCombat((AutoTrainer) this.trainer);
+            switchTo(Window.COMBAT);
+        }
     }
 
     /**
      * Tell the CombatController to launch the ManuelCombat
-     * @param player the ManuelTrainer player
      */
-    public void launchManuelCombat(final ManualTrainer player) {
-        this.manualCombatController.runManuelCombat(player);
+    public void launchManuelCombat() {
+        if (this.trainer.teamIsEmpty()) {
+            showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
+        }
+        else {
+            this.manualCombatController.runManuelCombat((ManualTrainer) this.trainer);
+            switchTo(Window.COMBAT);
+        }
     }
 
     /**
@@ -142,5 +154,18 @@ public class MetaController {
      */
     public void resetTeam() {
         this.trainer.resetBugemonTeam();
+    }
+
+    /**
+     * Displays an alert dialog with the specified title and message.
+     * @param title the title of the alert dialog
+     * @param message the content message of the alert dialog
+     */
+    public void showAlert(String title, String message) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

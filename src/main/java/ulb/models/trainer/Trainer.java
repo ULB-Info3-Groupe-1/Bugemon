@@ -152,4 +152,13 @@ public class Trainer {
         this.team.reset();
     }
 
+    /**
+     * Returns true if the team of the trainer is empty, false otherwise.
+     *
+     * @return (boolean) true if the team of the trainer is empty, false otherwise.
+     */
+    public boolean teamIsEmpty() {
+        return this.team.isEmpty();
+    }
+
 }

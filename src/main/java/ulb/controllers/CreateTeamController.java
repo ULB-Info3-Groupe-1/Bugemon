@@ -37,6 +37,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public void onBugemonClicked(String id) {
         if (this.bugemonTeam.contains(id)) {
             this.bugemonTeam.removeBugemon(id);
+        } else if (this.bugemonTeam.isFull()) {
+            metaController.showAlert("Team Full", "Your team is full! Please remove a Bugemon before adding another one.");
         } else {
             metaController.getAllBugemonsAvailable().stream()
                 .filter(b -> b.getId().equals(id))
@@ -70,16 +72,14 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * Warns the metaController to launch the AutoCombat
      */
     public void startAutoCombat() {
-        this.metaController.switchTo(Window.COMBAT);
-        this.metaController.launchAutoCombat(new AutoTrainer(this.bugemonTeam));
+        this.metaController.launchAutoCombat();
     }
 
     /**
      * Warns the metaController to launch the ManuelCombat
      */
     public void startManuelCombat() {
-        this.metaController.switchTo(Window.COMBAT);
-        this.metaController.launchManuelCombat(new ManualTrainer(this.bugemonTeam));
+        this.metaController.launchManuelCombat();
     }
 
     /**

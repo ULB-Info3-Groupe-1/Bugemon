@@ -21,6 +21,8 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @param playerTeam the team of the player
      */
     public void runAutoCombat(final AutoTrainer player) {
+        this.view.initCombatMode();
+
         AutoTrainer opponent = new AutoTrainer(BugemonTeam.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         AutomaticCombat combat = new AutomaticCombat(player, opponent);
 
@@ -29,7 +31,25 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
             combat.turn();
             winner = (AutoTrainer) combat.getWinner();
             combat.incrementTurn();
+            updateCombatView(player, opponent);
         }
         handleCombatResult(winner, player);
+    }
+
+    private void updateCombatView(AutoTrainer player, AutoTrainer opponent) {
+        for (int i = 0; i < player.getTeamSize(); i++) {
+            view.updateTrainerBugemon(player.getTeam().get(i));
+        }
+
+        for (int i = 0; i < opponent.getTeamSize(); i++) {
+            view.updateOpponentBugemon(opponent.getTeam().get(i));
+        }
+
+        try {
+            Thread.sleep(1000); // wait for 1 second before the next turn to allow the player to see the changes
+        } catch (InterruptedException e) {
+            // Restore interrupted state
+            Thread.currentThread().interrupt();
+        }
     }
 }
