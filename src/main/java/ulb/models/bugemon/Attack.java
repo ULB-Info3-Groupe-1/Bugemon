@@ -14,7 +14,17 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Class representing an attack that a bugemon can perform during battle.
+ * Represents an attack that a {@link Bugemon} can perform during battle.
+ *
+ * <p>
+ * Each {@code Attack} has a unique identifier, a display name, an elemental
+ * {@link Bugemon.BType type}, a textual description, a base power value, and a
+ * list of {@link Effect}s that may be applied to one or more targets when the
+ * attack is used.
+ * </p>
+ *
+ * @see Effect
+ * @see Bugemon.BType
  */
 public class Attack {
 
@@ -156,6 +166,14 @@ public class Attack {
         this.power = power;
     }
 
+    /**
+     * Returns {@code true} if this attack's effect list contains the specified
+     * {@link Effect}.
+     *
+     * @param effect the {@link Effect} to search for; must not be {@code null}.
+     * @return {@code true} if the effect is present in this attack's effect list,
+     *         {@code false} otherwise.
+     */
     public boolean containsEffect(Effect effect) {
         return effects.contains(effect);
     }
