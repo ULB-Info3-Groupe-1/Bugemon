@@ -1,0 +1,65 @@
+.action-menu {
+    -fx-background-color: #EDEBE0; 
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-border-color: #b4b4b4;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+    -fx-alignment: center;
+}
+
+.action-separator {
+    -fx-spacing: 20;
+    -fx-alignment: center;
+}
+
+.action-button {
+    -fx-background-color: #7F7F7F;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-border-color: #cbcbcb;
+    -fx-text-fill: white;
+    -fx-font-style: bold;
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: #b8b8b8;
+}
+
+.action-attack {
+    -fx-background-color: #DB1B3E;
+    -fx-border-color: #ff234b;
+}
+
+.action-attack:hover {
+    -fx-background-color: #ff234b;
+}
+
+.action-switch {
+    -fx-background-color: #4881B3;
+    -fx-border-color: #58a2e3;
+}
+
+.action-switch:hover {
+    -fx-background-color: #58a2e3;
+}
+
+.action-item {
+    -fx-background-color: #FFA300;
+    -fx-border-color: #ffbc47;
+}
+
+.action-item:hover {
+    -fx-background-color: #ffbc47;
+}
+
+.attack {
+    -fx-background-color: #278A27;
+    -fx-border-color: #37b437;
+}
+
+.attack:hover {
+    -fx-background-color: #37b437;
+}

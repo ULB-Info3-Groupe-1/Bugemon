@@ -23,18 +23,21 @@ public class MetaController {
         MAIN_MENU,
         CREATE_TEAM,
         COMBAT,
-        COMBAT_RESULT,
+        COMBAT_VICTORY,
+        COMBAT_DEFEAT,
     }
 
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
     private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
 
     private final Stage stage;
+    private final Parser.ParseResult parseResult;
     private final MainMenuController mainMenuController;
     private final CreateTeamController createTeamController;
-    private final CombatController combatController;
-    private final CombatResultController combatResultController;
-    private final Parser.ParseResult parseResult;
+    private final AutomaticCombatController automaticCombatController;
+    private final ManualCombatController manualCombatController;
+    private final CombatVictoryController combatVictoryController;
+    private final CombatDefeatController combatDefeatController;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -46,15 +49,11 @@ public class MetaController {
         this.stage = primaryStage;
         this.parseResult = loadResources();
         this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(
-            this,
-            parseResult.getBugemonsList()
-        );
-        this.combatController = new CombatController(
-            this,
-            parseResult.getBugemonsList()
-        );
-        this.combatResultController = new CombatResultController(this);
+        this.createTeamController = new CreateTeamController(this, parseResult.getBugemonsList());
+        this.manualCombatController = new ManualCombatController(this);
+        this.automaticCombatController = new AutomaticCombatController(this);
+        this.combatVictoryController = new CombatVictoryController(this);
+        this.combatDefeatController = new CombatDefeatController(this);
     }
 
     /**
@@ -72,13 +71,14 @@ public class MetaController {
                 this.createTeamController.show(this.stage);
             }
             case COMBAT -> {
-                this.combatController.show(this.stage);
-                this.combatController.runCombat(null); // TODO: Get back to real method (@Ethan for info)
+                this.manualCombatController.show(this.stage);
             }
-            case COMBAT_RESULT -> {
-                this.combatResultController.show(this.stage);
-            }
-            default -> throw new IllegalArgumentException("Invalid window");
+            case COMBAT_VICTORY ->
+                this.combatVictoryController.show(this.stage);
+            case COMBAT_DEFEAT ->
+                this.combatDefeatController.show(this.stage);
+            default ->
+                throw new IllegalArgumentException("Invalid window");
         }
     }
 
