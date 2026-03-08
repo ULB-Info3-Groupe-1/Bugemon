@@ -10,6 +10,7 @@
 package ulb.models.bugemon;
 
 import com.google.gson.annotations.SerializedName;
+import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -545,6 +546,33 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     public String getSpriteURL() {
         return this.sprite;
+    }
+
+    /**
+     * Add/Substract a given value to a given stat.
+     *
+     * @param stat  (EffectStat) The stat id to edit.
+     * @param value (int) The value to add to the stat.
+     */
+    public void editStat(EffectStat stat, int value) throws KeyException {
+        switch (stat) {
+            case EffectStat.HP:
+                this.state.hp = this.state.hp + value;
+                break;
+            case EffectStat.ATTACK:
+                this.state.attack = this.state.attack + value;
+                break;
+            case EffectStat.DEFENSE:
+                this.state.defense = this.state.defense + value;
+                break;
+            case EffectStat.INITIATIVE:
+                this.state.initiative = this.state.initiative + value;
+                break;
+            default:
+                throw new KeyException(
+                    "Invalid stat key when trying to edit stat value"
+                );
+        }
     }
 
     /**

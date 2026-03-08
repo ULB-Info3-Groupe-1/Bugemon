@@ -21,22 +21,20 @@ public class TestAttack {
     @Test
     public void testShouldGetIdAndSetId() {
         Effect effect = new Effect(
-            EffectType.STAT_MODIFIER,
-            "TestEffect",
-            "Flora",
-            10,
-            "1 turn"
-        );
+                EffectType.STAT_MODIFIER,
+                EffectTarget.ADVERSARY,
+                EffectStat.DEFENSE,
+                10,
+                "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         Attack attack = new Attack(
-            "TestAttack",
-            "TestAttack",
-            Bugemon.BType.FLORA,
-            "",
-            30,
-            effects
-        );
+                "TestAttack",
+                "TestAttack",
+                Bugemon.BType.FLORA,
+                "",
+                30,
+                effects);
         attack.setId("NewTestAttack");
         assertEquals("NewTestAttack", attack.getId());
     }
@@ -44,23 +42,21 @@ public class TestAttack {
     @Test
     public void testShouldGetNameAndSetName() {
         Effect effect = new Effect(
-            EffectType.STAT_MODIFIER,
-            "TestEffect",
-            "Flora",
-            10,
-            "1 turn"
-        );
+                EffectType.STAT_MODIFIER,
+                EffectTarget.ADVERSARY,
+                EffectStat.DEFENSE,
+                10,
+                "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
 
         Attack attack = new Attack(
-            "TestAttack",
-            "TestAttack",
-            Bugemon.BType.FLORA,
-            "",
-            30,
-            effects
-        );
+                "TestAttack",
+                "TestAttack",
+                Bugemon.BType.FLORA,
+                "",
+                30,
+                effects);
         attack.setName("NewTestAttack");
         assertEquals("NewTestAttack", attack.getName());
     }
@@ -68,23 +64,21 @@ public class TestAttack {
     @Test
     public void testShouldGetTypeAndSetType() {
         Effect effect = new Effect(
-            EffectType.STAT_MODIFIER,
-            "TestEffect",
-            "Flora",
-            10,
-            "1 turn"
-        );
+                EffectType.STAT_MODIFIER,
+                EffectTarget.ADVERSARY,
+                EffectStat.DEFENSE,
+                10,
+                "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
 
         Attack attack = new Attack(
-            "TestAttack",
-            "TestAttack",
-            Bugemon.BType.FLORA,
-            "",
-            30,
-            effects
-        );
+                "TestAttack",
+                "TestAttack",
+                Bugemon.BType.FLORA,
+                "",
+                30,
+                effects);
         attack.setType(Bugemon.BType.AQUA);
         assertEquals(Bugemon.BType.AQUA, attack.getType());
     }
@@ -92,22 +86,20 @@ public class TestAttack {
     @Test
     public void testShouldGetDescriptionAndSetDescription() {
         Effect effect = new Effect(
-            EffectType.STAT_MODIFIER,
-            "TestEffect",
-            "Flora",
-            10,
-            "1 turn"
-        );
+                EffectType.STAT_MODIFIER,
+                EffectTarget.ADVERSARY,
+                EffectStat.DEFENSE,
+                10,
+                "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         Attack attack = new Attack(
-            "TestAttack",
-            "TestAttack",
-            Bugemon.BType.FLORA,
-            "",
-            30,
-            effects
-        );
+                "TestAttack",
+                "TestAttack",
+                Bugemon.BType.FLORA,
+                "",
+                30,
+                effects);
         attack.setDescription("New description");
         assertEquals("New description", attack.getDescription());
     }
@@ -115,22 +107,20 @@ public class TestAttack {
     @Test
     public void testShouldGetPowerAndSetPower() {
         Effect effect = new Effect(
-            EffectType.STAT_MODIFIER,
-            "TestEffect",
-            "Flora",
-            10,
-            "1 turn"
-        );
+                EffectType.STAT_MODIFIER,
+                EffectTarget.ADVERSARY,
+                EffectStat.DEFENSE,
+                10,
+                "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         Attack attack = new Attack(
-            "TestAttack",
-            "TestAttack",
-            Bugemon.BType.FLORA,
-            "",
-            30,
-            effects
-        );
+                "TestAttack",
+                "TestAttack",
+                Bugemon.BType.FLORA,
+                "",
+                30,
+                effects);
         attack.setPower(40);
         assertEquals(40, attack.getPower());
     }
@@ -138,29 +128,26 @@ public class TestAttack {
     @Test
     public void testShouldGetEffectAndSetEffect() {
         Effect effect = new Effect(
-            EffectType.STAT_MODIFIER,
-            "TestEffect",
-            "Flora",
-            10,
-            "1 turn"
-        );
+                EffectType.STAT_MODIFIER,
+                EffectTarget.ADVERSARY,
+                EffectStat.DEFENSE,
+                10,
+                "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         Attack attack = new Attack(
-            "TestAttack",
-            "TestAttack",
-            Bugemon.BType.FLORA,
-            "",
-            30,
-            effects
-        );
+                "TestAttack",
+                "TestAttack",
+                Bugemon.BType.FLORA,
+                "",
+                30,
+                effects);
         Effect newEffect = new Effect(
-            EffectType.STAT_MODIFIER,
-            "NewTestEffect",
-            "Aqua",
-            20,
-            "2 turns"
-        );
+                EffectType.STAT_MODIFIER,
+                EffectTarget.ADVERSARY,
+                EffectStat.DEFENSE,
+                20,
+                "2 turns");
         attack.addEffect(newEffect);
         assertTrue(attack.containsEffect(newEffect));
     }

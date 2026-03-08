@@ -14,6 +14,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectType;
+import ulb.models.bugemon.EffectStat;
 
 public class TestParser {
 
@@ -37,6 +38,7 @@ public class TestParser {
         List<Effect> effects = attackList.get(2).getEffects();
         assertEquals(effects.get(0).getTypeEffect(), EffectType.STAT_MODIFIER);
         assertEquals(effects.get(0).getModifier(), 5);
+        assertEquals(effects.get(0).getStat(), EffectStat.DEFENSE);
     }
 
     @Test

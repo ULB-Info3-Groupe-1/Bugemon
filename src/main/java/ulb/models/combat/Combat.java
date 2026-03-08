@@ -11,6 +11,7 @@ package ulb.models.combat;
 
 import ulb.models.trainer.Trainer;
 
+
 public class Combat {
 
     // Attributes

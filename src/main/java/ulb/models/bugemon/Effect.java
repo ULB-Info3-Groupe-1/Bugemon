@@ -18,9 +18,11 @@ public class Effect {
     // Attributes
 
     private EffectType type;
-    private String target;
 
-    private String stat;
+    @SerializedName("cible")
+    private EffectTarget target;
+
+    private EffectStat stat;
 
     @SerializedName("modificateur")
     private int modifier;
@@ -33,12 +35,12 @@ public class Effect {
      * Constructor for the Effect class, initializing all attributes.
      * 
      * @param type     (EffectType) the type of the effect.
-     * @param target   (String) the target of the effect.
-     * @param stat     (String) the stat affected by the effect.
+     * @param target   (EffectTarget) the target of the effect.
+     * @param stat     (EffectStat) the stat affected by the effect.
      * @param modifier (int) the modifier value of the effect.
      * @param duration (String) the duration of the effect.
      */
-    public Effect(EffectType type, String target, String stat, int modifier, String duration) {
+    public Effect(EffectType type, EffectTarget target, EffectStat stat, int modifier, String duration) {
         this.type = type;
         this.target = target;
         this.stat = stat;
@@ -69,36 +71,36 @@ public class Effect {
     /**
      * Get the target of the effect.
      * 
-     * @return (String) the target of the effect
+     * @return (EffectTarget) the target of the effect
      */
-    public String getTarget() {
+    public EffectTarget getTarget() {
         return target;
     }
 
     /**
      * Set the target of the effect to a new value.
      * 
-     * @param target (String) the new target to set for the effect
+     * @param target (EffectTarget) the new target to set for the effect
      */
-    public void setTarget(String target) {
+    public void setTarget(EffectTarget target) {
         this.target = target;
     }
 
     /**
      * Get the stat affected by the effect.
      * 
-     * @return (String) the stat affected by the effect
+     * @return (EffectStat) the stat affected by the effect
      */
-    public String getStat() {
+    public EffectStat getStat() {
         return stat;
     }
 
     /**
      * Set the stat affected by the effect to a new value.
      * 
-     * @param stat (String) the new stat to set for the effect
+     * @param stat (EffectStat) the new stat to set for the effect
      */
-    public void setStat(String stat) {
+    public void setStat(EffectStat stat) {
         this.stat = stat;
     }
 
@@ -127,6 +129,20 @@ public class Effect {
      */
     public String getDuration() {
         return duration;
+    }
+
+    /**
+     * Get the duration of the effect in integer format.
+     * 
+     * @return (int) the value of the duration.
+     */
+    public int extractDuration() {
+        if (this.duration == null || !this.duration.contains("_")) {
+            throw new IllegalArgumentException("Format invalide");
+        }
+
+        String numberPart = this.duration.split("_")[0];
+        return Integer.parseInt(numberPart);
     }
 
     /**
