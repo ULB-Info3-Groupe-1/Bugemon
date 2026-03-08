@@ -1,7 +1,8 @@
-package ulb.controllers;
+package ulb.controllers.combat;
 
 import java.io.IOException;
 
+import ulb.controllers.MetaController;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;

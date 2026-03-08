@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import ulb.common.BugemonDTO;
-
-import ulb.controllers.ManualCombatController;
+import ulb.controllers.combat.ManualCombatController;
 
 /**
  * CombatView

@@ -1,5 +1,7 @@
-package ulb.controllers;
+package ulb.controllers.combat;
 
+import ulb.controllers.Controller;
+import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.views.combat.CombatView;

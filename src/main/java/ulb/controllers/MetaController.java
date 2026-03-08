@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import javafx.stage.Stage;
+import ulb.controllers.combat.AutomaticCombatController;
+import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;

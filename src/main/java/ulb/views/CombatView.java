@@ -3,7 +3,7 @@ package ulb.views;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import ulb.controllers.CombatController;
+import ulb.controllers.combat.CombatController;
 
 /**
  * CombatView

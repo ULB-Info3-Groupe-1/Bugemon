@@ -2,7 +2,7 @@ package ulb.views.combat;
 
 import java.io.IOException;
 
-import ulb.controllers.AutomaticCombatController;
+import ulb.controllers.combat.AutomaticCombatController;
 
 public class AutomaticCombatView extends CombatView {
     private AutomaticCombatController controller;
