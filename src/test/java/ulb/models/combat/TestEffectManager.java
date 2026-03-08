@@ -7,7 +7,7 @@
  * @version 1.0
  */
 
-package ulb.models.test_combat;
+package ulb.models.combat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,7 +21,6 @@ import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectStat;
 import ulb.models.bugemon.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.combat.EffectManager;
 import ulb.models.trainer.Trainer;
 import ulb.utils.TestUtilsBugemons;
 
@@ -47,23 +46,25 @@ public class TestEffectManager {
         // @Test invalid target
         // applying an effect with an invalid target; should throw a KeyException
         Effect effect = new Effect(
-                null,
-                EffectTarget.NONE,
-                EffectStat.DEFENSE,
-                5,
-                "1_tour");
+            null,
+            EffectTarget.NONE,
+            EffectStat.DEFENSE,
+            5,
+            "1_tour"
+        );
 
         Attack invalAttack = new Attack(
-                "null",
-                null,
-                null,
-                null,
-                0,
-                List.of(effect));
+            "null",
+            null,
+            null,
+            null,
+            0,
+            List.of(effect)
+        );
 
-        assertThrows(
-                KeyException.class,
-                () -> effectManager.applyEffect(attacker, defender, invalAttack));
+        assertThrows(KeyException.class, () ->
+            effectManager.applyEffect(attacker, defender, invalAttack)
+        );
     }
 
     @Test
@@ -86,19 +87,21 @@ public class TestEffectManager {
         // @Test valid target
         // applying a valid effect; shouldn't throw any exception
         Effect effect = new Effect(
-                null,
-                EffectTarget.ADVERSARY,
-                EffectStat.ATTACK,
-                5,
-                "2_tour");
+            null,
+            EffectTarget.ADVERSARY,
+            EffectStat.ATTACK,
+            5,
+            "2_tour"
+        );
 
         Attack attack = new Attack(
-                "null",
-                null,
-                null,
-                null,
-                0,
-                List.of(effect));
+            "null",
+            null,
+            null,
+            null,
+            0,
+            List.of(effect)
+        );
         try {
             effectManager.applyEffect(attacker, defender, attack);
         } catch (KeyException e) {
@@ -126,19 +129,21 @@ public class TestEffectManager {
         Trainer defender = new Trainer(team2);
 
         Effect effect = new Effect(
-                null,
-                EffectTarget.ADVERSARY,
-                EffectStat.ATTACK,
-                +5,
-                "2_tour");
+            null,
+            EffectTarget.ADVERSARY,
+            EffectStat.ATTACK,
+            +5,
+            "2_tour"
+        );
 
         Attack attack = new Attack(
-                "null",
-                null,
-                null,
-                null,
-                0,
-                List.of(effect));
+            "null",
+            null,
+            null,
+            null,
+            0,
+            List.of(effect)
+        );
         try {
             effectManager.applyEffect(attacker, defender, attack);
         } catch (KeyException e) {
@@ -148,14 +153,16 @@ public class TestEffectManager {
         // @Test effect application and expiration
         // testing the expiration of the effect and the stat modification
         assertEquals(
-                defender.getCurrentBugemon().getAttack(),
-                defaultAttack + effect.getModifier());
+            defender.getCurrentBugemon().getAttack(),
+            defaultAttack + effect.getModifier()
+        );
 
         effectManager.update();
 
         assertEquals(
-                defender.getCurrentBugemon().getAttack(),
-                defaultAttack + effect.getModifier());
+            defender.getCurrentBugemon().getAttack(),
+            defaultAttack + effect.getModifier()
+        );
 
         effectManager.update();
 

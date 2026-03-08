@@ -6,7 +6,6 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import java.util.List;
 import java.util.function.Predicate;
 import javafx.scene.Node;
-import javafx.scene.text.Text;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
