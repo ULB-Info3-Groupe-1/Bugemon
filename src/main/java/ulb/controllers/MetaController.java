@@ -8,8 +8,10 @@ import javafx.stage.Stage;
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.utils.Parser;
 
 /**
@@ -45,6 +47,7 @@ public class MetaController {
     private final ManualCombatController manualCombatController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
+    private final Trainer trainer;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -55,8 +58,11 @@ public class MetaController {
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
         this.parseResult = loadResources();
+
+        this.trainer = new Trainer(new BugemonTeam());
+
         this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(this, parseResult.getBugemonsList());
+        this.createTeamController = new CreateTeamController(this, trainer.getTeam());
         this.manualCombatController = new ManualCombatController(this);
         this.automaticCombatController = new AutomaticCombatController(this);
         this.combatVictoryController = new CombatVictoryController(this);
@@ -129,5 +135,12 @@ public class MetaController {
      */
     public final List<Bugemon> getAllBugemonsAvailable() {
         return this.parseResult.getBugemonsList();
+    }
+
+    /**
+     * Resets the bugemon team of the trainer.
+     */
+    public void resetTeam() {
+        this.trainer.resetBugemonTeam();
     }
 }

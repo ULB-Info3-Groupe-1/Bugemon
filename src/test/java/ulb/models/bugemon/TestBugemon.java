@@ -64,4 +64,16 @@ public class TestBugemon {
         URL resource = getClass().getResource(path);
         assertNotNull(resource, "The sprite file has not been found");
     }
+
+    @Test
+    public void testResetBugemon() {
+        Bugemon bugemon = new Bugemon.Builder()
+            .id("1")
+            .hp(100)
+            .build();
+        bugemon.takeDamage(50);
+        assertEquals(50, bugemon.getHp());
+        bugemon.reset();
+        assertEquals(100, bugemon.getHp());
+    }
 }

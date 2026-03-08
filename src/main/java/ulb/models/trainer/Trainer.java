@@ -145,4 +145,11 @@ public class Trainer {
         return team.size();
     }
 
+    /**
+     * Resets the state of all bugemon in the team of the trainer to their initial state, restoring their original stats.
+     */
+    public void resetBugemonTeam() {
+        this.team.reset();
+    }
+
 }

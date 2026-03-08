@@ -12,11 +12,11 @@ cache:
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-# 1. Job backend
-test-backend:
+# Job test
+test:
   stage: test
   script:
-    - mvn clean test -Dtest=\!ulb.views.*Test*
+    - mvn clean test
 
 # Create a jar package only on the main branch (useful to give a .jar to the client)
 package:

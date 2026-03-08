@@ -133,4 +133,31 @@ public class TestBugemonTeam {
         );
         assertEquals(6, teamOfSix.size());
     }
+
+    @Test 
+    public void testResetTeam() {
+        Bugemon expectedBugemon1 = new Bugemon.Builder()
+            .id("1")
+            .hp(100)
+            .build();
+        Bugemon expectedBugemon2 = new Bugemon.Builder()
+            .id("2")
+            .hp(100)
+            .build();
+
+        BugemonTeam team = new BugemonTeam();
+        team.addBugemon(expectedBugemon1);
+        team.addBugemon(expectedBugemon2);
+
+        expectedBugemon1.takeDamage(50);
+        expectedBugemon2.takeDamage(30);
+
+        assertEquals(50, expectedBugemon1.getHp());
+        assertEquals(70, expectedBugemon2.getHp());
+
+        team.reset();
+
+        assertEquals(100, expectedBugemon1.getHp());
+        assertEquals(100, expectedBugemon2.getHp());
+    }
 }

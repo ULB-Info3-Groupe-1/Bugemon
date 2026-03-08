@@ -26,6 +26,7 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
         // if level up -> switch to level up screen
         // otherwise -> back to main menu
         this.metaController.switchTo(Window.MAIN_MENU);
+        this.metaController.resetTeam();
     }
 
 }

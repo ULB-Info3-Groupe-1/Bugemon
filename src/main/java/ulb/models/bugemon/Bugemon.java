@@ -629,4 +629,11 @@ public class Bugemon implements BugemonDTO, Cloneable {
     public boolean isStarter() {
         return this.isStarter;
     }
+
+    /**
+     * Reset the bugemon's current state to its initial state, restoring its original stats.
+     */
+    public void reset() {
+        this.state = new State(this.initialState);
+    }
 }

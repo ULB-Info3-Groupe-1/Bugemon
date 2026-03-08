@@ -223,4 +223,13 @@ public class BugemonTeam implements Iterable<Bugemon> {
                     .filter(b -> b != null)
                     .iterator();
     }
+
+    /**
+     * Reset the state of all Bugemons in the team to their initial state, restoring their original stats.
+     */
+    public void reset() {
+        this.getTeam().stream()
+            .filter(b -> b != null)
+            .forEach(Bugemon::reset);
+    }
 }
