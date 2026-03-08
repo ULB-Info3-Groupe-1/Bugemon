@@ -27,7 +27,10 @@ public class CreateTeamView extends View {
     private BugemonTeamView bugemonsTeamView;
 
     @FXML
-    private Button validateButton;
+    private Button launchAutomaticCombat;
+
+    @FXML
+    private Button launchManuelCombat;
 
     /**
      * Loads the create-team FXML layout and initializes button actions.
@@ -42,10 +45,8 @@ public class CreateTeamView extends View {
             this.controller.onBugemonClicked(dto.getId());
         });
 
-        this.validateButton.setOnAction(e -> this.controller.startCombat());
-        this.validateButton.setStyle(
-            "-fx-font-size: 24; -fx-background-color: green; -fx-text-fill: white;"
-        );
+        this.launchAutomaticCombat.setOnAction(e -> this.controller.startAutoCombat());
+        this.launchManuelCombat.setOnAction(e -> this.controller.startManuelCombat());
     }
 
     /**

@@ -17,6 +17,8 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      */
     public void retry() {
         // TODO: impl
+        this.metaController.switchTo(Window.CREATE_TEAM);
+        this.metaController.resetTeam();
     }
 
     /**
@@ -24,6 +26,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      */
     public void backToMainMenu() {
         this.metaController.switchTo(Window.MAIN_MENU);
+        this.metaController.resetTeam();
     }
 
 }
