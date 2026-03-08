@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import ulb.common.BugemonDTO;
-import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.trainer.AutoTrainer;
-import ulb.models.trainer.ManualTrainer;
 import ulb.views.CreateTeamView;
 
 public class CreateTeamController extends Controller<CreateTeamView> {

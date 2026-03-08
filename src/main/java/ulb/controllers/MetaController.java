@@ -122,7 +122,7 @@ public class MetaController {
             showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
         }
         else {
-            this.automaticCombatController.runAutoCombat((AutoTrainer) this.trainer);
+            this.automaticCombatController.runAutoCombat(new AutoTrainer(this.trainer.getTeam()));
             switchTo(Window.COMBAT);
         }
     }
@@ -135,7 +135,7 @@ public class MetaController {
             showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
         }
         else {
-            this.manualCombatController.runManuelCombat((ManualTrainer) this.trainer);
+            this.manualCombatController.runManuelCombat(new ManualTrainer(this.trainer.getTeam()));
             switchTo(Window.COMBAT);
         }
     }
