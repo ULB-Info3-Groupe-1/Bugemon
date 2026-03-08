@@ -1,12 +1,3 @@
-/**
- * File name : BugemonDTO.java
- * Description : Data Transfer Object interface for Bugemon entities.
- *
- * @author Liefferinckx Romain
- * @date 24 feb. 2026
- * @version 1.0
- */
-
 package ulb.common;
 
 import ulb.models.bugemon.Bugemon;

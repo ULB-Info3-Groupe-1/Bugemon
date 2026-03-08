@@ -1,12 +1,3 @@
-/**
- * File name : AppLauncher.java
- * Description : Neutral entry point for launching the Bugemon JavaFX application.
- *
- * @author Liefferinckx Romain
- * @date 24 feb. 2026
- * @version 1.0
- */
-
 package ulb;
 
 /**
