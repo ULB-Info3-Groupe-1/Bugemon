@@ -14,20 +14,60 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * This class represents a manual trainer, which has a team of bugemon and can
- * select an action during a combat.
+ * Represents a human-controlled trainer who selects actions explicitly during
+ * combat.
+ *
+ * <p>
+ * A {@code ManualTrainer} extends {@link Trainer} by adding the concept of a
+ * <em>selected action</em>: before each turn the player (or the controller
+ * layer) must call {@link #selectAction(TAction)} to choose whether to attack,
+ * switch the active Bugemon, or forfeit. Supporting selection methods
+ * ({@link #selectAttack}, {@link #selectBugemon}) let the player further
+ * specify the details of the chosen action.
+ * </p>
+ *
+ * <p>
+ * All selection state is held locally and is not cleared automatically between
+ * turns; the controller is responsible for resetting or overwriting it as
+ * needed.
+ * </p>
+ *
+ * @see AutoTrainer
+ * @see ulb.models.combat.ManualCombat
+ * @see TAction
  */
 public class ManualTrainer extends Trainer {
 
     // Enums
 
     /**
-     * Enum representing the possible actions of a trainer during a combat: attack,
-     * switch, or forfeit.
+     * Enumerates the actions a {@link ManualTrainer} can take during a combat turn.
+     *
+     * <p>
+     * The selected action is passed to
+     * {@link ulb.models.combat.ManualCombat#turn(TAction)} to drive the turn
+     * resolution logic:
+     * <ul>
+     *   <li>{@link #ATTACK}  — use the currently {@link ManualTrainer#selectAttack
+     *       selected attack} against the opponent.</li>
+     *   <li>{@link #SWITCH}  — swap the active Bugemon for the one set via
+     *       {@link ManualTrainer#selectBugemon}.</li>
+     *   <li>{@link #FORFEIT} — immediately concede the match; the opponent is
+     *       declared the winner.</li>
+     * </ul>
+     * </p>
      */
     public static enum TAction {
+        /** Use the currently selected {@link Attack} against the opponent. */
         ATTACK,
+
+        /**
+         * Switch the active {@link Bugemon} for the one chosen via
+         * {@link ManualTrainer#selectBugemon}.
+         */
         SWITCH,
+
+        /** Concede the match; the opponent wins immediately. */
         FORFEIT,
     }
 
@@ -97,10 +137,16 @@ public class ManualTrainer extends Trainer {
     }
 
     /**
-     * Select an action for the trainer during a combat.
+     * Returns the base power of the currently selected {@link Attack}.
      *
-     * @return (int) the power of the attack if it is in the list of attacks of the
-     *         current bugemon of the trainer, 0 otherwise.
+     * <p>
+     * This is a convenience accessor used by the combat layer to determine
+     * how much damage the trainer's chosen attack will deal before modifiers
+     * are applied.
+     * </p>
+     *
+     * @return the {@link Attack#getPower() power} of the selected attack, or
+     *         {@code 0} if no attack has been selected yet.
      */
     public int getAttackPower() {
         if (this.selectedAttack == null) {
@@ -148,10 +194,18 @@ public class ManualTrainer extends Trainer {
     }
 
     /**
-     * Select a bugemon for the trainer during a combat.
+     * Directly sets the Bugemon that will be switched in on the next
+     * {@link TAction#SWITCH} turn, bypassing the validation performed by
+     * {@link #selectBugemon(Bugemon)}.
      *
-     * @param selectedBugemon (Bugemon) the bugemon to select for the trainer during
-     *                        a combat.
+     * <p>
+     * This setter is primarily intended for use by the controller layer when
+     * it needs to programmatically pre-assign a switch target without triggering
+     * the alive-check guard in {@link #selectBugemon}.
+     * </p>
+     *
+     * @param selectedBugemon the {@link Bugemon} to set as the switch target;
+     *                        may be {@code null} to clear a previous selection.
      */
     public void setSelectedBugemon(Bugemon selectedBugemon) {
         this.selectedBugemon = selectedBugemon;

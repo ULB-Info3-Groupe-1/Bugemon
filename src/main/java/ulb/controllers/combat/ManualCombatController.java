@@ -16,6 +16,41 @@ import ulb.models.trainer.Trainer;
 import ulb.models.trainer.ManualTrainer.TAction;
 import ulb.views.combat.ManualCombatView;
 
+/**
+ * Controller responsible for the manual combat screen, where the player
+ * actively selects actions each turn while the opponent acts automatically.
+ *
+ * <p>
+ * {@code ManualCombatController} extends {@link CombatController} and drives a
+ * {@link ManualCombat} session. The combat loop runs until one side has no
+ * remaining alive {@link ulb.models.bugemon.Bugemon}s, at which point the
+ * inherited
+ * {@link CombatController#handleCombatResult(Trainer, Trainer)}
+ * method navigates to either the
+ * {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY} or the
+ * {@link ulb.controllers.MetaController.Window#COMBAT_DEFEAT} screen depending
+ * on whether the player won.
+ * </p>
+ *
+ * <p>
+ * The opponent team is constructed automatically by randomly sampling
+ * {@link BugemonTeam#createRandomTeam(java.util.List, int)} from the full pool
+ * of available Bugemons, using the same team size as the player's team.
+ * </p>
+ *
+ * <p>
+ * <strong>Note:</strong> action selection from the UI is not yet implemented.
+ * {@link ManualCombat#turn(ManualTrainer.TAction)} is currently called with
+ * {@code null}, which will cause an {@link IllegalArgumentException}. This is a
+ * known stub awaiting integration with the view layer.
+ * </p>
+ *
+ * @see CombatController
+ * @see ManualCombat
+ * @see ManualTrainer
+ * @see AutoTrainer
+ * @see ManualCombatView
+ */
 public class ManualCombatController extends CombatController<ManualCombatView> {
 
     private ManualCombat combat;
@@ -23,18 +58,67 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     private AutoTrainer opponent;
 
     /**
-     * Constructor of the ManualCombatController which initializes the view and sets the controller for the view
-     * @param metaController The MetaController of the application
-     * @throws IOException if the view cannot be initialized
+     * Constructs a {@code ManualCombatController}, initialises its
+     * {@link ManualCombatView}, and registers this controller as the view's
+     * event handler.
+     *
+     * <p>
+     * The view is instantiated here so that its FXML layout is loaded and its
+     * scene graph is ready before the controller is used for the first time.
+     * The parent constructor ({@link CombatController}) also pre-populates the
+     * view with placeholder {@link ulb.models.bugemon.Bugemon}s and calls
+     * {@link ulb.views.combat.CombatView#initCombatMode()}.
+     * </p>
+     *
+     * @param metaController the application-level {@link MetaController} used for
+     *                       screen navigation and shared state access; must not be
+     *                       {@code null}.
+     * @throws IOException if the {@link ManualCombatView} fails to load its FXML
+     *                     resource.
      */
-    public ManualCombatController(MetaController metaController) throws IOException {
+    public ManualCombatController(MetaController metaController)
+        throws IOException {
         super(metaController, new ManualCombatView());
         this.view.setController(this);
     }
 
     /**
-     * Run a manuel combat
-     * @param playerTeam the team of the player
+     * Runs a complete manual combat session from start to finish using the given
+     * player {@link ManualTrainer}.
+     *
+     * <p>
+     * The method performs the following steps:
+     * <ol>
+     *   <li>Builds the opponent's {@link BugemonTeam} by randomly sampling from
+     *       the pool of all available Bugemons (same size as the player's team)
+     *       via {@link BugemonTeam#createRandomTeam(java.util.List, int)}.</li>
+     *   <li>Creates a {@link ManualCombat} between the player
+     *       ({@link ManualTrainer}) and the opponent ({@link AutoTrainer}).</li>
+     *   <li>Loops until {@link ManualCombat#turn(ManualTrainer.TAction)} returns
+     *       a non-{@code null} {@link Trainer} (the winner), passing the
+     *       player-selected action each iteration.</li>
+     *   <li>Delegates to {@link #handleCombatResult(Trainer, Trainer)} to
+     *       navigate to the appropriate outcome screen.</li>
+     * </ol>
+     * </p>
+     *
+     * <p>
+     * <strong>Note:</strong> action selection from the UI is not yet wired up.
+     * The action is currently passed as {@code null}, which will cause an
+     * {@link IllegalArgumentException} inside {@link ManualCombat#turn}. This
+     * method is therefore a stub pending full integration with the view layer.
+     * </p>
+     *
+     * <p>
+     * <strong>Note:</strong> this method runs the entire combat loop
+     * synchronously on the calling thread. Because it is currently invoked on
+     * the JavaFX Application Thread, long-running combats may cause the UI to
+     * become unresponsive. A future refactor should move the loop to a background
+     * thread and update the view incrementally.
+     * </p>
+     *
+     * @param player the {@link ManualTrainer} representing the player's side;
+     *               must not be {@code null} and must have a non-empty team.
      */
     public void runManuelCombat(final ManualTrainer player) {
         this.player = player;

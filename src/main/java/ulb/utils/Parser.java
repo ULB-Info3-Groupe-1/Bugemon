@@ -34,19 +34,62 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.EffectType;
 
 /**
- * Class with static methods to parse the json files containing the data about
- * the Bugemon game.
+ * Provides static utility methods for parsing the JSON data files that
+ * describe the Bugemon game's content (attacks and Bugemons).
+ *
+ * <p>
+ * The main entry point is {@link #parse(InputStream, InputStream)}, which
+ * reads the attacks file first, builds an ID-to-{@link Attack} map, and then
+ * parses the Bugemons file using that map to resolve attack references. Both
+ * files are expected to be in the JSON format defined by the game's data
+ * schema.
+ * </p>
+ *
+ * <p>
+ * Internally, parsing is delegated to two private static helpers —
+ * {@link #parseAttacks(java.io.Reader)} and
+ * {@link #parseBugemons(java.io.Reader, Map)} — each of which uses a
+ * customised {@link com.google.gson.Gson} instance equipped with the
+ * appropriate type adapters.
+ * </p>
+ *
+ * @see BugemonDeserializer
+ * @see ulb.models.bugemon.Bugemon
+ * @see ulb.models.bugemon.Attack
  */
 public class Parser {
 
     /**
-     * Class representing the result of the parsing to get the list of the available bugemons and the list of the attacks
+     * Immutable value object returned by {@link #parse(InputStream, InputStream)}
+     * containing the fully constructed game data loaded from the JSON files.
+     *
+     * <p>
+     * A {@code ParseResult} bundles two collections:
+     * <ul>
+     *   <li>an {@link Attack} map keyed by attack ID, suitable for fast
+     *       look-ups when resolving references; and</li>
+     *   <li>a {@link List} of fully built {@link ulb.models.bugemon.Bugemon}
+     *       objects, each with its attack list already resolved.</li>
+     * </ul>
+     * </p>
+     *
+     * @see Parser#parse(InputStream, InputStream)
      */
     public static class ParseResult {
 
         private final Map<String, Attack> attacksMap;
         private final List<Bugemon> bugemonList;
 
+        /**
+         * Constructs a {@code ParseResult} with the given attacks map and
+         * Bugemon list.
+         *
+         * @param attacksMap  a map of attack IDs to their corresponding
+         *                    {@link Attack} objects; must not be {@code null}.
+         * @param bugemonList the list of fully constructed
+         *                    {@link ulb.models.bugemon.Bugemon} objects; must
+         *                    not be {@code null}.
+         */
         public ParseResult(
             Map<String, Attack> attacksMap,
             List<Bugemon> bugemonList
@@ -56,16 +99,22 @@ public class Parser {
         }
 
         /**
-         * Return the list of the available attacks
-         * @return Map<String, Attack> Map String and Attack class for
+         * Returns the map of all available attacks, keyed by their unique
+         * string identifier.
+         *
+         * @return an unmodifiable view (or the raw map) of attack ID to
+         *         {@link Attack}; never {@code null}.
          */
         public Map<String, Attack> getAttacksMap() {
             return attacksMap;
         }
 
         /**
-         * Return the list of the available bugemons
-         * @return List<Bugemon> The list of the available bugemons
+         * Returns the list of all available {@link ulb.models.bugemon.Bugemon}s
+         * loaded from the game data files.
+         *
+         * @return the list of parsed {@link ulb.models.bugemon.Bugemon} objects;
+         *         never {@code null}.
          */
         public List<Bugemon> getBugemonsList() {
             return bugemonList;
@@ -106,8 +155,17 @@ public class Parser {
     }
 
     /**
-     * Implements a custom deserializer for the Bugemon class. Specific to the Gson
-     * library.
+     * Custom Gson type adapter that deserialises a JSON string into a
+     * {@link ulb.models.bugemon.Bugemon.BType} enum constant.
+     *
+     * <p>
+     * The adapter converts the raw JSON string to upper-case before calling
+     * {@link Bugemon.BType#valueOf(String)}, making the matching
+     * case-insensitive with respect to the data file (e.g., {@code "flora"}
+     * and {@code "FLORA"} both resolve to {@link Bugemon.BType#FLORA}).
+     * </p>
+     *
+     * @see Bugemon.BType
      */
     static class TypeDeserializer implements JsonDeserializer<Bugemon.BType> {
 
@@ -123,8 +181,17 @@ public class Parser {
     }
 
     /**
-     * Implements a custom deserializer for the Effect class. Specific to the Gson
-     * library.
+     * Custom Gson type adapter that deserialises a JSON string into an
+     * {@link ulb.models.bugemon.EffectType} enum constant.
+     *
+     * <p>
+     * The adapter converts the raw JSON string to upper-case before calling
+     * {@link ulb.models.bugemon.EffectType#valueOf(String)}, making the
+     * matching case-insensitive (e.g., {@code "stat_modifier"} resolves to
+     * {@link ulb.models.bugemon.EffectType#STAT_MODIFIER}).
+     * </p>
+     *
+     * @see ulb.models.bugemon.EffectType
      */
     static class EffectTypeDeserializer
         implements JsonDeserializer<ulb.models.bugemon.EffectType>
@@ -211,7 +278,17 @@ public class Parser {
         return null;
     }
 
+    /**
+     * Placeholder for future parsing of in-game objects (items, etc.).
+     *
+     * @param fileName path to the objects JSON file (not yet used).
+     */
     static void parseObjects(Path fileName) {}
 
+    /**
+     * Placeholder for future parsing of the skill tree data.
+     *
+     * @param fileName path to the skill-tree JSON file (not yet used).
+     */
     static void parseSkillTree(Path fileName) {}
 }

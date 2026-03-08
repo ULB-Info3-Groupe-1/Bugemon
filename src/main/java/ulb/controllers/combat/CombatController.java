@@ -10,6 +10,8 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.views.combat.CombatView;
+import ulb.views.combat.CombatView;
 
 public abstract class CombatController<View extends CombatView> extends Controller<View> {
     
@@ -37,13 +39,38 @@ public abstract class CombatController<View extends CombatView> extends Controll
     }
 
     /**
-     * Verify if the winner is the player or not and handle victory or defeat of the winner
-     * @param winner The Trainer winner of the combat
-     * @param player The Trainer player
+     * Resolves the end of a combat session by navigating to the appropriate
+     * outcome screen based on whether the given {@code winner} is the player.
+     *
+     * <p>
+     * The navigation rules are:
+     * <ul>
+     *   <li>If {@code winner == player}, the player won: navigate to
+     *       {@link Window#COMBAT_VICTORY}.</li>
+     *   <li>Otherwise the player lost: navigate to
+     *       {@link Window#COMBAT_DEFEAT}.</li>
+     * </ul>
+     * </p>
+     *
+     * <p>
+     * This method should be called by a subclass as soon as
+     * {@link ulb.models.combat.Combat#isFinished()} returns {@code true} and
+     * {@link ulb.models.combat.Combat#getWinner()} returns a non-{@code null}
+     * value.
+     * </p>
+     *
+     * @param winner the {@link Trainer} that won the combat; must not be
+     *               {@code null}.
+     * @param player the {@link Trainer} representing the local player, used to
+     *               determine whether the outcome is a victory or a defeat; must
+     *               not be {@code null}.
      */
     protected void handleCombatResult(Trainer winner, Trainer player) {
-        if (winner == player) {this.metaController.switchTo(Window.COMBAT_VICTORY);}
-        else {this.metaController.switchTo(Window.COMBAT_DEFEAT);}
+        if (winner == player) {
+            this.metaController.switchTo(Window.COMBAT_VICTORY);
+        } else {
+            this.metaController.switchTo(Window.COMBAT_DEFEAT);
+        }
     }
 
     /**
