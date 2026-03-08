@@ -189,3 +189,6 @@ buildNumber.properties
 Todo.md
 
 .gitlab-ci-local/
+
+# Personal settings file
+.settings/*
