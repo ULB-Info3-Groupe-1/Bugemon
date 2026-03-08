@@ -11,7 +11,7 @@ package ulb.models.bugemon;
 
 
 /**
- * 
+ *
  */
 public class ActiveEffect {
 

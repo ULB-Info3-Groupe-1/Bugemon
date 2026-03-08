@@ -48,6 +48,11 @@ public class Combat {
         return null;
     }
 
+    /**
+     * Returns true if the combat is finished, false otherwise. A combat is finished if
+     * one of the trainers is defeated (i.e., has no more Bugemon able to fight).
+     * @return (boolean) true if the combat is finished, false otherwise
+     */
     public boolean isFinished() {
         if (allyTrainer.isDefeated() || adversaryTrainer.isDefeated()) {
             return true;
@@ -55,6 +60,9 @@ public class Combat {
         return false;
     }
 
+    /**
+     * Increments the turn of the combat by 1.
+     */
     public void incrementTurn() {
         this.turn++;
     }

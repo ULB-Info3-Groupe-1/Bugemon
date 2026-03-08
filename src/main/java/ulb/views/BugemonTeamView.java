@@ -43,6 +43,10 @@ public class BugemonTeamView extends VBox {
         }
     }
 
+    /**
+     * Displays the player's current team in the team view.
+     * @param bugemonList
+     */
     public void showTeam(List<BugemonDTO> bugemonList) {
         this.gridPane.getChildren().clear();
 
@@ -59,6 +63,11 @@ public class BugemonTeamView extends VBox {
         }
     }
 
+    /**
+     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon. If the Bugemon is null, it displays an unknown image and an empty name.
+     * @param bugemon the BugemonDTO representing the Bugemon to be displayed in the cell
+     * @return a VBox containing the image and name of the Bugemon to be displayed in the grid view
+     */
     private VBox createBugemonCell(BugemonDTO bugemon) {
         Image image = (bugemon != null)
                 ? new Image(bugemon.getSpriteURL())
