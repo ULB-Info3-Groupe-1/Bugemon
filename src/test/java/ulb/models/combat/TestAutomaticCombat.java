@@ -7,19 +7,18 @@
  * @version 1.0
  */
 
-package ulb.models.test_combat;
+package ulb.models.combat;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.Test;
-
-import ulb.models.combat.AutomaticCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.utils.TestUtilsTrainer;
 
 public class TestAutomaticCombat {
+
     @Test
     public void testBasicTurn() {
         AutoTrainer trainer1 = TestUtilsTrainer.createDefaultAutoTrainer();
@@ -55,4 +54,6 @@ public class TestAutomaticCombat {
         assertTrue(finalHp1 < initialHp1);
         assertTrue(finalHp2 < initialHp2);
     }
+
+    // TODO: Need to implement a test on the persistency of the permanent effect
 }
