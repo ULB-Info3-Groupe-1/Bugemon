@@ -28,9 +28,6 @@ public class CombatView extends View {
     public CombatView() throws IOException {
         super("/fxml/Combat.fxml");
         this.controller = null;
-
-        this.victoryButton.setOnAction(e -> this.controller.handleVictory());
-        this.defeatButton.setOnAction(e -> this.controller.handleDefeat());
     }
 
     /**

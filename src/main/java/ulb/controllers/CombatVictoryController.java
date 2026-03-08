@@ -2,6 +2,7 @@ package ulb.controllers;
 
 import java.io.IOException;
 
+import ulb.controllers.MetaController.Window;
 import ulb.views.CombatVictoryView;
 
 public class CombatVictoryController extends Controller<CombatVictoryView> {
@@ -24,6 +25,7 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
 
         // if level up -> switch to level up screen
         // otherwise -> back to main menu
+        this.metaController.switchTo(Window.MAIN_MENU);
     }
 
 }

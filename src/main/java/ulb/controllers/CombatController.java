@@ -25,27 +25,12 @@ public abstract class CombatController<View extends CombatView> extends Controll
     }
 
     /**
-     * Show the victory screen
-     */
-    public void handleVictory() {
-        this.metaController.switchTo(Window.COMBAT_VICTORY);
-    }
-
-    /**
-     * Show the defeat screen
-     */
-    public void handleDefeat() {
-        this.metaController.switchTo(Window.COMBAT_DEFEAT);
-    }
-
-
-    /**
      * Verify if the winner is the player or not and handle victory or defeat of the winner
      * @param winner The Trainer winner of the combat
      * @param player The Trainer player
      */
     protected void handleCombatResult(Trainer winner, Trainer player) {
-        if (winner == player) {this.handleVictory();}
-        else {this.handleDefeat();}
+        if (winner == player) {this.metaController.switchTo(Window.COMBAT_VICTORY);}
+        else {this.metaController.switchTo(Window.COMBAT_DEFEAT);}
     }
 }
