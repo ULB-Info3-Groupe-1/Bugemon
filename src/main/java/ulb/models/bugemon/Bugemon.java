@@ -230,31 +230,31 @@ public class Bugemon implements BugemonDTO, Cloneable {
         private Optional<String> id = Optional.empty();
 
         /** The display name to assign to the bugemon. */
-        private Optional<String> name = Optional.empty();
+        private String name = DEFAULT_NAME;
 
         /** The elemental type to assign to the bugemon. */
-        private Optional<BType> type = Optional.empty();
+        private BType type = DEFAULT_TYPE;
 
         /** The sprite path/URL to assign to the bugemon. */
-        private Optional<String> sprite = Optional.empty();
+        private String sprite = DEFAULT_SPRITE;
 
         /** The hit-point value for the bugemon's initial state. */
-        private Optional<Integer> hp = Optional.empty();
+        private int hp = DEFAULT_HP;
 
         /** The attack stat for the bugemon's initial state. */
-        private Optional<Integer> attack = Optional.empty();
+        private int attack = DEFAULT_ATTACK;
 
         /** The defense stat for the bugemon's initial state. */
-        private Optional<Integer> defense = Optional.empty();
+        private int defense = DEFAULT_DEFENSE;
 
         /** The initiative stat for the bugemon's initial state. */
-        private Optional<Integer> initiative = Optional.empty();
+        private int initiative = DEFAULT_INITIATIVE;
 
         /** Whether the bugemon should be flagged as a starter. */
-        private Optional<Boolean> isStarter = Optional.empty();
+        private boolean isStarter = DEFAULT_IS_STARTER;
 
         /** The list of attacks to assign to the bugemon. */
-        private Optional<List<Attack>> attackList = Optional.empty();
+        private List<Attack> attackList = new ArrayList<>();
 
         /**
          * Sets the unique identifier for the bugemon under construction.
@@ -278,7 +278,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder name(String name) {
-            this.name = Optional.of(name);
+            this.name = name;
             return this;
         }
 
@@ -289,7 +289,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder type(BType type) {
-            this.type = Optional.of(type);
+            this.type = type;
             return this;
         }
 
@@ -300,7 +300,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder sprite(String sprite) {
-            this.sprite = Optional.of(sprite);
+            this.sprite = sprite;
             return this;
         }
 
@@ -311,7 +311,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder hp(int hp) {
-            this.hp = Optional.of(hp);
+            this.hp = hp;
             return this;
         }
 
@@ -322,7 +322,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder attack(int attack) {
-            this.attack = Optional.of(attack);
+            this.attack = attack;
             return this;
         }
 
@@ -333,7 +333,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder defense(int defense) {
-            this.defense = Optional.of(defense);
+            this.defense = defense;
             return this;
         }
 
@@ -344,7 +344,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder initiative(int initiative) {
-            this.initiative = Optional.of(initiative);
+            this.initiative = initiative;
             return this;
         }
 
@@ -360,10 +360,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder addAttack(Attack attack) {
-            this.attackList = Optional.of(attackList.orElseGet(ArrayList::new));
-
-            this.attackList.get().add(attack);
-
+            this.attackList.add(attack);
             return this;
         }
 
@@ -380,7 +377,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder attackList(List<Attack> attackList) {
-            this.attackList = Optional.of(attackList);
+            this.attackList = attackList;
             return this;
         }
 
@@ -393,7 +390,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder isStarter(boolean isStarter) {
-            this.isStarter = Optional.of(isStarter);
+            this.isStarter = isStarter;
             return this;
         }
 
@@ -419,21 +416,21 @@ public class Bugemon implements BugemonDTO, Cloneable {
                 new IllegalStateException("Bugemon id must be provided")
             );
 
-            bugemon.name = this.name.orElse(DEFAULT_NAME);
-            bugemon.type = this.type.orElse(DEFAULT_TYPE);
-            bugemon.sprite = this.sprite.orElse(DEFAULT_SPRITE);
+            bugemon.name = this.name;
+            bugemon.type = this.type;
+            bugemon.sprite = this.sprite;
 
             bugemon.initialState = bugemon.new State(
-                this.hp.orElse(DEFAULT_HP),
-                this.attack.orElse(DEFAULT_ATTACK),
-                this.defense.orElse(DEFAULT_DEFENSE),
-                this.initiative.orElse(DEFAULT_INITIATIVE)
+                this.hp,
+                this.attack,
+                this.defense,
+                this.initiative
             );
 
             bugemon.state = bugemon.new State(bugemon.initialState);
 
-            bugemon.attackList = this.attackList.orElseGet(ArrayList::new); // defaults to empty attacklist
-            bugemon.isStarter = this.isStarter.orElse(DEFAULT_IS_STARTER);
+            bugemon.attackList = this.attackList;
+            bugemon.isStarter = this.isStarter;
 
             return bugemon;
         }
