@@ -20,7 +20,7 @@
     -fx-border-radius: 5;
     -fx-border-color: #37b437;
     -fx-text-fill: white;
-    -fx-font-style: bold;
+    -fx-font-weight: bold;
     -fx-font-size: 10px;
     -fx-cursor: hand;
 }

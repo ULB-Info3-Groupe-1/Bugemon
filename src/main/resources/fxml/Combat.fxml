@@ -16,7 +16,7 @@
 <?import ulb.views.ActionMenuView?>
 <?import ulb.views.DialogZoneView?>
 
-<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <AnchorPane prefHeight="400.0" prefWidth="600.0">
       <Text fx:id="combatTitle" text="In Combat" AnchorPane.topAnchor="80.0" AnchorPane.leftAnchor="80.0">
          <font>
