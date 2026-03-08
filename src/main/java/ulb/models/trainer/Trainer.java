@@ -46,12 +46,7 @@ public class Trainer {
      * @return (boolean) true if the trainer is defeated, false otherwise.
      */
     public boolean isDefeated() {
-        for (Bugemon bugemon : this.team) {
-            if (bugemon.isAlive()) {
-                return false;
-            }
-        }
-        return true;
+        return this.team.stream().allMatch(b -> !b.isAlive());
     }
 
     /**

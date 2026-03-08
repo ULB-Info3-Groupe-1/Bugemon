@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -50,11 +52,8 @@ public class TestParser {
             )
         );
 
-        Map<String, Attack> attacksMap = new HashMap<>();
-
-        for (Attack a : attackList) {
-            attacksMap.put(a.getId(), a);
-        }
+        Map<String, Attack> attacksMap = attackList.stream()
+                .collect(Collectors.toMap(Attack::getId, Function.identity()));
 
         List<Bugemon> bugemonsList = Parser.parseBugemons(
             new InputStreamReader(

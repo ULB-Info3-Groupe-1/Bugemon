@@ -24,9 +24,11 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.EffectType;
@@ -94,11 +96,8 @@ public class Parser {
         // load attacks
         List<Attack> attackList = parseAttacks(attacksReader);
 
-        Map<String, Attack> attacksMap = new HashMap<>();
-
-        for (Attack a : attackList) {
-            attacksMap.put(a.getId(), a);
-        }
+        Map<String, Attack> attacksMap = attackList.stream()
+                .collect(Collectors.toMap(Attack::getId, Function.identity()));
 
         // load bugemons
         List<Bugemon> bugemons = parseBugemons(bugemonsReader, attacksMap);

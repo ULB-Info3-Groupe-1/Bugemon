@@ -64,20 +64,19 @@ public class ManualTrainer extends Trainer {
         if (this.isDefeated()) {
             return;
         }
-        for (Bugemon b : this.team) {
-            if (b.equals(bugemon)) {
-                if (!b.isAlive()) {
-                    throw new IllegalArgumentException(
-                        "The selected bugemon is not alive."
-                    );
-                }
-                this.selectedBugemon = b;
-                return;
-            }
+
+        Bugemon found = this.team
+                .stream()
+                .filter(b -> b.equals(bugemon))
+                .findFirst()
+                .orElseThrow(
+                        () -> new IllegalArgumentException("The selected bugemon is not in the team of the trainer."));
+
+        if (!found.isAlive()) {
+            throw new IllegalArgumentException("The selected bugemon is not alive.");
         }
-        throw new IllegalArgumentException(
-            "The selected bugemon is not in the team of the trainer."
-        );
+
+        this.selectedBugemon = found;
     }
 
     /**
