@@ -20,10 +20,7 @@
             <Text fx:id="dialogText" text="Dialog text goes here" />
         </TextFlow>
         <HBox>
-            <Text fx:id="additionalInfo" styleClass="additional-info"/>
-            <HBox alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">
-                <Button alignment="CENTER_RIGHT" fx:id="nextButton" styleClass="next-button" text="Next"/>
-            </HBox>
+            <Text fx:id="additionalInfo" styleClass="additional-info" />
         </HBox>
     </VBox>
 
