@@ -12,14 +12,11 @@ package ulb.models.trainer;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.TestUtilsBugemonTeam;
 
 public class TestTrainer {
-
-    public static void killBugemon(BugemonTeam team, String id) {
-        team.getBugemon(id).takeDamage(team.getBugemon(id).getHp());
-    }
 
     @Test
     public void testIsDefeated() {
@@ -27,4 +24,5 @@ public class TestTrainer {
         Trainer trainer = new Trainer(team);
         assertTrue(trainer.isDefeated());
     }
+
 }

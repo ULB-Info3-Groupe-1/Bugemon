@@ -71,4 +71,9 @@ public final class TestUtilsBugemons {
         }
         return team;
     }
+
+    public static void killBugemon(BugemonTeam team, String id) {
+        Bugemon bugemon = team.getBugemon(id).get();
+        bugemon.takeDamage(bugemon.getHp());
+    }
 }

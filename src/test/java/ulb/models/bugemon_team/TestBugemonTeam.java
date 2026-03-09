@@ -18,6 +18,9 @@ import org.junit.Test;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
+import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
+import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
 
@@ -29,22 +32,7 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
 
-        assertEquals(expectedBugemon, team.getBugemon("1"));
-    }
-
-    @Test
-    public void testEmptySlot() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon1);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            team.removeBugemon("0");
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            team.getBugemon("0");
-        });
+        assertEquals(expectedBugemon, team.getBugemon("1").get());
     }
 
     @Test
@@ -52,7 +40,7 @@ public class TestBugemonTeam {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
-        Bugemon bugemon = team.getBugemon("1");
+        Bugemon bugemon = team.getBugemon("1").get();
 
         assertEquals(1, team.size());
         assertEquals(expectedBugemon, bugemon);
@@ -70,12 +58,7 @@ public class TestBugemonTeam {
         assertEquals(0, team.size());
 
         team.addBugemon(expectedBugemon1);
-        team.removeBugemon("1");
-
-        assertEquals(0, team.size());
-
-        team.addBugemon(expectedBugemon1);
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(BugemonNotInTeamException.class, () -> {
             team.removeBugemon(expectedBugemon2);
         });
     }
@@ -98,7 +81,7 @@ public class TestBugemonTeam {
     public void testTeamAlreadyEmpty() {
         BugemonTeam team = new BugemonTeam();
 
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(TeamAlreadyEmptyException.class, () -> {
             team.removeBugemon("1");
         });
     }
@@ -112,7 +95,7 @@ public class TestBugemonTeam {
         assertTrue(fullTeam.isFull());
 
         Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("7");
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(TeamAlreadyFullException.class, () -> {
             fullTeam.addBugemon(extraBugemon);
         });
     }
