@@ -1,5 +1,6 @@
 package ulb.views.combat;
 
+import ulb.controllers.combat.ManualCombatController;
 import ulb.views.ActionMenuView;
 
 public class MainActionMenu extends ActionMenuView {
@@ -12,5 +13,15 @@ public class MainActionMenu extends ActionMenuView {
         this.action3.setText("Use Item");
         this.action3.getStyleClass().add("action-item");
         this.action4.setText("Surrender");
+    }
+
+    /**
+     * Set the controller for the main action menu and connect the buttons to the corresponding actions in the controller
+     * @param controller The ManualCombatController to set for the main action menu
+     */
+    public void setController(ManualCombatController controller) {
+        this.action1.setOnAction(e -> controller.showAttackMenu());
+        this.action4.setOnAction(e -> controller.surrender());
+        // TODO: connect action2, action3
     }
 }

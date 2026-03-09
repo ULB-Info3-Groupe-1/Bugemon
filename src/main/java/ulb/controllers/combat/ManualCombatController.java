@@ -4,13 +4,19 @@ import java.io.IOException;
 
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
+import ulb.models.bugemon.Attack;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.models.trainer.ManualTrainer.TAction;
 import ulb.views.combat.ManualCombatView;
 
 public class ManualCombatController extends CombatController<ManualCombatView> {
+
+    private ManualCombat combat;
+    private ManualTrainer player;
+    private AutoTrainer opponent;
 
     /**
      * Constructor of the ManualCombatController which initializes the view and sets the controller for the view
@@ -27,15 +33,64 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @param playerTeam the team of the player
      */
     public void runManuelCombat(final ManualTrainer player) {
-        AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
-        ManualCombat combat = new ManualCombat(player, opponent);
-
+        this.player = player;
+        this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+        this.combat = new ManualCombat(player, opponent);
         updateCombatView(player, opponent);
-
-        Trainer winner = null;
-        while (winner == null) {
-            winner = combat.turn(null); // TODO: get the action from the GUI
-        }
-        handleCombatResult(winner, player);
     }
+
+    /**
+     * Handle the player's attack action
+     * @param attack the attack selected by the player
+     */
+    public void playerAttack(Attack attack) {
+        System.out.println("Player attacks!");
+        this.player.selectAttack(attack);
+        this.player.selectAction(TAction.ATTACK);
+        Trainer winner = this.combat.turn(this.player.getSelectedAction());
+        handlePlayerTurn(winner);
+    }
+
+    /**
+     * Handle the player's switch action
+     */
+    public void playerSwitch() {
+        Trainer winner = this.combat.turn(TAction.SWITCH);
+        handlePlayerTurn(winner);
+    }
+
+    /**
+     * Handle the player's surrender action
+     */
+    public void surrender() {
+        this.player.selectAction(TAction.FORFEIT);
+        Trainer winner = this.combat.turn(this.player.getSelectedAction());
+        handlePlayerTurn(winner);
+    }
+
+    /**
+     * Handle the end of the player's turn, update the view and check if there is a winner
+     */
+    private void handlePlayerTurn(Trainer winner) {
+        System.out.println("Player turn ended. Updating view...");
+        updateCombatView(this.player, this.opponent);
+        if (winner != null) {
+            handleCombatResult(winner, player);
+        }
+    }
+
+    /**
+     * Show the attack menu to the player with the list of available attacks
+     */
+    public void showAttackMenu() {
+        this.view.showAttackMenu(this.player.getCurrentBugemonAttackList());
+    }
+
+    /**
+     * Show the main action menu to the player (Attack, Switch, Surrender)
+     */
+    public void showMainActionMenu() {
+        this.view.showMainActionMenu();
+    }
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import ulb.common.BugemonDTO;
 import ulb.controllers.combat.ManualCombatController;
+import ulb.models.bugemon.Attack;
 
 /**
  * CombatView
@@ -15,7 +16,6 @@ import ulb.controllers.combat.ManualCombatController;
  */
 public class ManualCombatView extends CombatView {
 
-    private ManualCombatController controller;
     private MainActionMenu         mainActionMenu;
     private AttackActionMenu       attackActionMenu;
 
@@ -32,7 +32,7 @@ public class ManualCombatView extends CombatView {
 
     @Override
     public void initCombatMode() {
-        showMainMenu();
+        showMainActionMenu();
     }
 
     /**
@@ -40,25 +40,22 @@ public class ManualCombatView extends CombatView {
      * @param controller the controller to set for this view
      */
     public void setController(ManualCombatController controller) {
-        this.controller = controller;
-        
-        // actionMenuView.setAction1Handler(controller::showAttackMenu);
-        // actionMenuView.setAction2Handler(controller::showSwitchPanel);
-        // actionMenuView.setAction3Handler(controller::showItemPanel);
-        // actionMenuView.setAction4Handler(controller::handleSurrender);
+        this.mainActionMenu.setController(controller);
+        this.attackActionMenu.setController(controller);
     }
 
     /**
      * show the main action menu.
      */
-    public void showMainMenu() {
+    public void showMainActionMenu() {
         this.actionMenuView.getChildren().setAll(mainActionMenu);
     }
 
     /**
      * show the attack menu.
      */
-    public void showAttackMenu(/*TODO: add attack dto */) {
+    public void showAttackMenu(List<Attack> attackNames) {
+        this.attackActionMenu.setAttacks(attackNames.get(0), attackNames.get(1), attackNames.get(2));
         this.actionMenuView.getChildren().setAll(attackActionMenu);
     }
 
