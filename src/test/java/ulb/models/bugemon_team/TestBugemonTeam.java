@@ -18,6 +18,8 @@ import org.junit.Test;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
+import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
@@ -56,7 +58,7 @@ public class TestBugemonTeam {
         assertEquals(0, team.size());
 
         team.addBugemon(expectedBugemon1);
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(BugemonNotInTeamException.class, () -> {
             team.removeBugemon(expectedBugemon2);
         });
     }
@@ -79,7 +81,7 @@ public class TestBugemonTeam {
     public void testTeamAlreadyEmpty() {
         BugemonTeam team = new BugemonTeam();
 
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(TeamAlreadyEmptyException.class, () -> {
             team.removeBugemon("1");
         });
     }

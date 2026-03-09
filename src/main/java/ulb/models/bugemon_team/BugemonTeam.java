@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
+import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 
 /**
@@ -68,7 +70,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *
      * @param bugemon (Bugemon) the Bugemon to be added to the team
      */
-    public void addBugemon(Bugemon bugemon) {
+    public void addBugemon(Bugemon bugemon) throws TeamAlreadyFullException, BugemonAlreadyExistsException {
         if (this.isFull()) {
             throw new TeamAlreadyFullException("Team already full!");
         }
@@ -97,9 +99,9 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *
      * @param bugemon (Bugemon) the Bugemon to be removed from the team
      */
-    public void removeBugemon(String id) {
+    public void removeBugemon(String id) throws TeamAlreadyEmptyException, BugemonNotInTeamException {
         if (this.size() == 0) {
-            throw new IllegalStateException("Team already empty!");
+            throw new TeamAlreadyEmptyException("Team already empty!");
         }
 
         this.team.stream()
@@ -110,7 +112,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
                     this.team.remove(b);
                 },
                 () -> {
-                    throw new IllegalArgumentException("Bugemon not in the team!");
+                    throw new BugemonNotInTeamException("Bugemon not in the team!");
                 }
             );
     }
