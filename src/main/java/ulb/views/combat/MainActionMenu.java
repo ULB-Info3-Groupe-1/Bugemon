@@ -21,10 +21,7 @@ public class MainActionMenu extends ActionMenuView {
      */
     public void setController(ManualCombatController controller) {
         this.action1.setOnAction(e -> controller.showAttackMenu());
-
         this.action2.setOnAction(e -> controller.showSwitchMenu());
-
         this.action4.setOnAction(e -> controller.surrender());
-        // TODO: connect action2, action3
     }
 }

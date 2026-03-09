@@ -147,7 +147,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             handlePlayerTurn(winner, attack);
 
         } catch (CloneNotSupportedException e) {
-            // TODO Auto-generated catch block
+            System.err.println("Error cloning opponent's Bugemon for attack display: " + e.getMessage());
             e.printStackTrace();
         }
     }
