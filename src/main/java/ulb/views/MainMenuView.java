@@ -16,6 +16,8 @@ public class MainMenuView extends View {
     private MainMenuController controller;
     @FXML
     private Button createTeamButton;
+    @FXML
+    private Button quitButton;
 
     /**
      * Loads the main menu FXML layout and initializes button actions.
@@ -27,6 +29,7 @@ public class MainMenuView extends View {
         this.controller = null;
 
         this.createTeamButton.setOnAction((e) -> this.controller.createTeam());
+        this.quitButton.setOnAction((e) -> this.controller.quit());
     }
 
     /**

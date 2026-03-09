@@ -28,4 +28,11 @@ public class MainMenuController extends Controller<MainMenuView> {
         this.metaController.switchTo(Window.CREATE_TEAM);
     }
 
+    /**
+     * Callback invoked when the player wants to quit the application.
+     */
+    public void quit() {
+        javafx.application.Platform.exit();
+    }
+
 }
