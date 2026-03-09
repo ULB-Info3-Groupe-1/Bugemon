@@ -8,12 +8,12 @@ import javafx.util.Duration;
 
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
-import ulb.models.combat.AutomaticCombat;
-import ulb.models.trainer.AutoTrainer;
-import ulb.models.trainer.Trainer;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.combat.AutomaticCombat;
+import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.views.combat.AutomaticCombatView;
 
 /**
@@ -120,15 +120,14 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
             try {
                 Bugemon enemyBugemon = opponent.getCurrentBugemon().clone();
-                
+
                 this.view.hideDialog();
                 Attack allyAttack = combat.turn();
-                
-                
+
                 Trainer winner = combat.getWinner();
                 combat.incrementTurn();
                 updateCombatView(player, opponent, allyAttack);
-                if (enemyBugemon.getId() !=  opponent.getCurrentBugemon().getId()){
+                if (enemyBugemon.getId() != opponent.getCurrentBugemon().getId()) {
                     this.view.hideDialog();
                 }
 
@@ -141,7 +140,6 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        
         });
 
         timeline.getKeyFrames().add(keyFrame);

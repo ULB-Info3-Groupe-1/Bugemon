@@ -1,6 +1,7 @@
 /**
  * File name : LevelUp.java
- * Description : Class representing the level-up process for a Bugemon, including the choices available to the player.
+ * Description : Class representing the level-up process for a Bugemon, including the choices
+ * available to the player.
  * @author Gouverneur Martin
  * @co-author Verbeiren Lucas
  * @date 09 mar. 2026
@@ -14,9 +15,7 @@ import java.util.Random;
 import ulb.common.LevelUpDTO;
 import ulb.models.bugemon.Bugemon;
 
-
-public class LevelUp implements LevelUpDTO{
-    
+public class LevelUp implements LevelUpDTO {
     // Attributes
     private Bugemon bugemon;
     private List<Choice> choices;
@@ -24,17 +23,20 @@ public class LevelUp implements LevelUpDTO{
     // Constructor
 
     /**
-     * Constructor for the LevelUp class, initializing the Bugemon and generating random choices for the level-up process.
-     * 
+     * Constructor for the LevelUp class, initializing the Bugemon and generating random choices for
+     * the level-up process.
+     *
      * @param bugemon (Bugemon) the Bugemon that is leveling up
      */
-    public LevelUp(Bugemon bugemon){
+    public LevelUp(Bugemon bugemon) {
         this.bugemon = bugemon;
-        this.choices = List.of(generateRandomChoice(), generateRandomChoice(), generateRandomChoice());
+        this.choices =
+                List.of(generateRandomChoice(), generateRandomChoice(), generateRandomChoice());
     }
 
     /**
-     * Generates a random choice of stat bonuses for the level-up process, ensuring that the total points allocated across all stats equals 10.
+     * Generates a random choice of stat bonuses for the level-up process, ensuring that the total
+     * points allocated across all stats equals 10.
      */
     private Choice generateRandomChoice() {
         Random rand = new Random();
@@ -42,7 +44,7 @@ public class LevelUp implements LevelUpDTO{
         for (int i = 0; i < 10; i++) {
             int choice = rand.nextInt(4); // 0: HP, 1: Attack, 2: Defense, 3: Initiative
 
-            switch(choice) {
+            switch (choice) {
                 case 0 -> hp++;
                 case 1 -> attack++;
                 case 2 -> defense++;

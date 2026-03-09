@@ -181,13 +181,14 @@ public class CombatHelper {
 
     public static int calculateXP(Trainer winner, Trainer loser) {
         int combatType = 1; // TODO: get actual combat type
-        int floor = 1; // TODO: get actual floor
-        //long nAdversaries = loser.getTeam().stream().filter(b -> b.getParticipation()).count();
+        int floor = 1;      // TODO: get actual floor
+        // long nAdversaries = loser.getTeam().stream().filter(b -> b.getParticipation()).count();
         long nAdversaries = 1;
-        long numParticipatingBugemon = winner.getTeam().stream().filter(b -> b.getParticipation()).count();
+        long numParticipatingBugemon =
+                winner.getTeam().stream().filter(b -> b.getParticipation()).count();
 
         long xpWon = 30 * floor * combatType * nAdversaries;
-        int xpPerBugemon = (int) (xpWon / numParticipatingBugemon);
+        int xpPerBugemon = (int)(xpWon / numParticipatingBugemon);
 
         return xpPerBugemon;
     }

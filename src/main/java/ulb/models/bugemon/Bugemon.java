@@ -138,7 +138,6 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.xp = other.xp;
             this.level = other.level;
             this.participatedLastFight = other.participatedLastFight;
-
         }
     }
 
@@ -466,14 +465,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
             bugemon.type = this.type;
             bugemon.sprite = this.sprite;
 
-            bugemon.initialState = bugemon.new State(
-                this.hp,
-                this.attack,
-                this.defense,
-                this.initiative,
-                this.xp,
-                this.level
-            );
+            bugemon.initialState = bugemon.new State(this.hp, this.attack, this.defense,
+                                                     this.initiative, this.xp, this.level);
 
             bugemon.state = bugemon.new State(bugemon.initialState);
 
@@ -720,7 +713,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     public Optional<LevelUp> addXp(int xp) {
         this.state.xp += xp;
-        
+
         switch (this.state.level) {
             case 1 -> {
                 if (this.state.xp >= 50){

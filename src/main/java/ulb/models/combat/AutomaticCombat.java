@@ -84,16 +84,12 @@ public class AutomaticCombat extends Combat {
      * </p>
      */
     private Attack applyDamage() {
-        AutoTrainer allyTrainer = (AutoTrainer) getAllyTrainer();
-        AutoTrainer adversaryTrainer = (AutoTrainer) getAdversaryTrainer();
+        AutoTrainer allyTrainer = (AutoTrainer)getAllyTrainer();
+        AutoTrainer adversaryTrainer = (AutoTrainer)getAdversaryTrainer();
         Attack allyAttack = allyTrainer.getRandomAttack();
         Attack adversaryAttack = adversaryTrainer.getRandomAttack();
         applyDamageHelper(allyTrainer, adversaryTrainer, allyAttack.getPower());
-        applyDamageHelper(
-            adversaryTrainer,
-            allyTrainer,
-            adversaryAttack.getPower()
-        );
+        applyDamageHelper(adversaryTrainer, allyTrainer, adversaryAttack.getPower());
         return allyAttack;
     }
 
