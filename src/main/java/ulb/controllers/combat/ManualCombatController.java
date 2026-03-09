@@ -36,6 +36,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.player = player;
         this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         this.combat = new ManualCombat(player, opponent);
+        showMainActionMenu();
         updateCombatView(player, opponent);
     }
 
