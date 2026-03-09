@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
 
@@ -67,7 +67,7 @@ public class TestBugemon {
         Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
         String path = bugemon.getSpriteURL();
         URL resource = getClass().getResource(path);
-        assertNotNull(resource, "The sprite file has not been found");
+        assertNotNull(resource);
     }
 
     @Test

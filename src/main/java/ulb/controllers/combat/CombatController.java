@@ -10,6 +10,7 @@ import ulb.controllers.MetaController.Window;
 import ulb.views.combat.CombatView;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon.BType;
+import ulb.models.combat.CombatHelper;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
@@ -63,16 +64,11 @@ public abstract class CombatController<View extends CombatView> extends Controll
     protected void handleCombatResult(Trainer winner, Trainer player) {
         List<LevelUp> levelUps = new ArrayList<>();
         if (winner == player) {
-            int combatType = 1; // TODO: get actual combat type
-            int floor = 1; // TODO: get actual floor
-            long nAdversaries = 1; // TODO: get actual number of adversaries
-            long numParticipatingBugemon = winner.getTeam().stream().filter(b -> b.getParticipation()).count();
-            long xpWon = 30 * floor * combatType * nAdversaries;
-            int xpPerBugemon = (int) (xpWon / numParticipatingBugemon);
+            int xp = CombatHelper.calculateXP(winner, player);
             winner.getTeam().stream()
                 .filter(b -> b.getParticipation())
                 .forEach(b -> {
-                    b.addXp(xpPerBugemon).ifPresent(lvlup -> levelUps.add(lvlup));
+                    b.addXp(xp).ifPresent(lvlup -> levelUps.add(lvlup));
                 });
             this.metaController.setLevelUp(levelUps);
         } else {
