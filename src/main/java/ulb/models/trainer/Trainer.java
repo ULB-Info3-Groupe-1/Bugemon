@@ -139,4 +139,12 @@ public class Trainer {
     public int getTeamSize() {
         return team.size();
     }
+
+    /**
+     * Returns the bugemon with the specified ID from the team of the trainer.
+     */
+    public Bugemon getBugemonById(String bugemonId) {
+        // TODO: is this correct usage of optional ?
+        return this.team.getBugemon(bugemonId).get();
+    }
 }

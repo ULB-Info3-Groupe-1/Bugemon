@@ -3,6 +3,7 @@ package ulb.views;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +27,8 @@ public class BugemonTeamView extends VBox {
 
     private static final int IMAGES_PER_ROW = 3;
     private static final double IMAGE_SIZE = 96;
+   
+    private Consumer<BugemonDTO> onBugemonClicked;
 
     // Unknown image if no Bugemon available
     private final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
@@ -93,8 +96,24 @@ public class BugemonTeamView extends VBox {
         cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3;");
         cell.setUserData(bugemon);
 
+        if (this.onBugemonClicked != null) {
+            cell.setOnMouseClicked(e -> {
+                BugemonDTO dto = (BugemonDTO) cell.getUserData();
+                if (dto != null) {
+                    this.onBugemonClicked.accept(dto);
+                }
+            });
+        }
+
         return cell;
     }
 
+    /**
+     * Sets the callback used to handle clicks on bugemon cells. The callback receives the BugemonDTO of the clicked cell.
+     * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is clicked, receiving the BugemonDTO of the clicked cell
+     */
+    public void setOnClickCallback(Consumer<BugemonDTO> callback) {
+        this.onBugemonClicked = callback;
+    }
 }
 

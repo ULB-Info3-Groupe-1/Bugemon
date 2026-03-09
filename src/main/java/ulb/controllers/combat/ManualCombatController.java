@@ -1,7 +1,9 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
+import java.util.List;
 
+import ulb.common.BugemonDTO;
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Attack;
@@ -53,11 +55,24 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
     /**
      * Handle the player's switch action
+     * @param bugemonId the id of the Bugemon to switch to
      */
-    public void playerSwitch() {
-        // TODO: Implement the logic for switching Bugemon
+    public void switchBugemon(String bugemonId) {
+        this.player.setSelectedBugemon(this.player.getBugemonById(bugemonId));
+        this.player.selectAction(TAction.SWITCH);
         Trainer winner = this.combat.turn();
         handlePlayerTurn(winner);
+    }
+
+    /**
+     * Show the switch menu to the player to select a Bugemon to switch to
+     */
+    public void showSwitchMenu() {
+        // TODO: change that
+        List<BugemonDTO> bugemonList = this.player.getTeam().stream()
+            .map(b -> (BugemonDTO) b)
+            .toList();
+        this.view.showSwitchMenu(bugemonList);
     }
 
     /**

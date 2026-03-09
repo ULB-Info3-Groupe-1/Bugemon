@@ -16,6 +16,8 @@ import ulb.models.bugemon.Attack;
  */
 public class ManualCombatView extends CombatView {
 
+    private ManualCombatController controller;
+
     private MainActionMenu         mainActionMenu;
     private AttackActionMenu       attackActionMenu;
 
@@ -40,8 +42,9 @@ public class ManualCombatView extends CombatView {
      * @param controller the controller to set for this view
      */
     public void setController(ManualCombatController controller) {
-        this.mainActionMenu.setController(controller);
-        this.attackActionMenu.setController(controller);
+        this.controller = controller;
+        this.mainActionMenu.setController(this.controller);
+        this.attackActionMenu.setController(this.controller);
     }
 
     /**
@@ -59,13 +62,24 @@ public class ManualCombatView extends CombatView {
         this.actionMenuView.getChildren().setAll(attackActionMenu);
     }
 
-    public void showSwitchPanel(List<BugemonDTO> bugemonList) {
+    /**
+     * show the switch menu, which is the bugemon team view. The player can click on a bugemon to switch to it.
+     * @param bugemonList the list of bugemons in the player's team to be displayed in the switch menu
+     */
+    public void showSwitchMenu(List<BugemonDTO> bugemonList) {
         this.bugemonTeamPane.setVisible(true);
         this.bugemonTeamPane.setManaged(true);
-
+        this.bugemonTeamView.setOnClickCallback(bugemon -> {
+            if (bugemon != null) {
+                this.controller.switchBugemon(bugemon.getId());
+            }
+        });
         this.bugemonTeamView.showTeam(bugemonList);
     }
 
+    /**
+     * hide the switch menu, which is the bugemon team view.
+     */
     public void hideSwitchPanel() {
         this.bugemonTeamPane.setVisible(false);
         this.bugemonTeamPane.setManaged(false);
