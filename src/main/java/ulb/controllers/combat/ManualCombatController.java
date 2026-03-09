@@ -52,7 +52,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.player.selectAttack(attack);
         this.player.selectAction(TAction.ATTACK);
         Trainer winner = this.combat.turn();
-        handlePlayerTurn(winner);
+        this.view.showDialog(attack.getName().toString(), null);
+        handlePlayerTurn(winner, attack);
     }
 
     /**
@@ -63,7 +64,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.player.setSelectedBugemon(this.player.getBugemonById(bugemonId));
         this.player.selectAction(TAction.SWITCH);
         Trainer winner = this.combat.turn();
-        handlePlayerTurn(winner);
+        handlePlayerTurn(winner, null);
     }
 
     /**
@@ -85,14 +86,14 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void surrender() {
         this.player.selectAction(TAction.FORFEIT);
         Trainer winner = this.combat.turn();
-        handlePlayerTurn(winner);
+        handlePlayerTurn(winner, null);
     }
 
     /**
      * Handle the end of the player's turn, update the view and check if there is a winner
      */
-    private void handlePlayerTurn(Trainer winner) {
-        updateCombatView(this.player, this.opponent, null);
+    private void handlePlayerTurn(Trainer winner, Attack attack) {
+        updateCombatView(this.player, this.opponent, attack);
         if (winner != null) {
             handleCombatResult(winner, player);
         } if (!this.player.isCurrentBugemonAlive()) {
