@@ -1,0 +1,33 @@
+.main-menu {
+    -fx-background-color: #ffffff;
+    -fx-padding: 40 40 60 40;
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+.main-title {
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+}
+
+.menu-button {
+    -fx-background-color: #4682B4;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 30 12 30;
+    -fx-border-color: transparent;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-min-width: 380;
+}
+
+.menu-button:hover {
+    -fx-background-color: #b8b8b8;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #b8b8b8;
+}
