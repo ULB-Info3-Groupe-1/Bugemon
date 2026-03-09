@@ -19,9 +19,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public ManualCombatController(MetaController metaController) throws IOException {
         super(metaController, new ManualCombatView());
-
-        this.view.showDialog("Oh nice a fucking hardcoded thing...", "fuck yeah");
-
         this.view.setController(this);
     }
 
@@ -32,6 +29,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void runManuelCombat(final ManualTrainer player) {
         AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         ManualCombat combat = new ManualCombat(player, opponent);
+
+        updateCombatView(player, opponent);
 
         Trainer winner = null;
         while (winner == null) {

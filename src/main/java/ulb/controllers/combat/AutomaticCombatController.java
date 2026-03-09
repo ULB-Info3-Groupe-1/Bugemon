@@ -50,16 +50,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         });
 
         timeline.getKeyFrames().add(keyFrame);
+        timeline.setDelay(Duration.seconds(1)); // Wait 1 second before starting the combat to let the player see the initial state
         timeline.play();
-    }
-
-    /**
-     * Update the combat view with the current state of the player's and opponent's bugemon
-     * @param player the player trainer whose bugemon is being updated in the view
-     * @param opponent the opponent trainer whose bugemon is being updated in the view
-     */
-    public void updateCombatView(AutoTrainer player, AutoTrainer opponent) {
-        this.view.updateTrainerBugemon(player.getCurrentBugemon());
-        this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
     }
 }
