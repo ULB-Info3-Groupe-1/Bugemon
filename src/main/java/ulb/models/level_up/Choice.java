@@ -34,4 +34,8 @@ public class Choice {
     public int getBonusInitiative() {
         return bonusInitiative;
     }
+
+    public String toString() {
+        return String.format("HP: +%d, Attack: +%d, Defense: +%d, Initiative: +%d", bonusHP, bonusAttack, bonusDefense, bonusInitiative);
+    }
 }

@@ -17,6 +17,7 @@ import java.util.Optional;
 import com.google.gson.annotations.SerializedName;
 
 import ulb.common.BugemonDTO;
+import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;
 
 /**
@@ -755,5 +756,12 @@ public class Bugemon implements BugemonDTO, Cloneable {
         this.state.level += 1;
         this.restoreHp();
         return new LevelUp(this);
+    }
+
+    public void applyChoice(Choice choice){
+        this.state.hp += choice.getBonusHP();
+        this.state.attack += choice.getBonusAttack();
+        this.state.defense += choice.getBonusDefense();
+        this.state.initiative += choice.getBonusInitiative();
     }
 }
