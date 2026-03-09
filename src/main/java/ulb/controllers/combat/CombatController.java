@@ -11,7 +11,6 @@ import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.CombatView;
-import ulb.views.combat.CombatView;
 
 public abstract class CombatController<View extends CombatView> extends Controller<View> {
     
