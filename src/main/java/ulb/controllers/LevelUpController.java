@@ -33,14 +33,13 @@ public class LevelUpController extends Controller<LevelUpView> {
 
     public void setLevelUp(List<LevelUp> lvlsUp) {
         if (!lvlsUp.isEmpty()) {
-            System.out.println("level up");
+            this.levelUps = lvlsUp;
+            this.currentIdx = 0;
+            this.view.setLevelUp(this.levelUps.get(this.currentIdx));
             this.metaController.switchTo(Window.LEVEL_UP);
         } else {
             this.metaController.switchTo(Window.COMBAT_VICTORY);
         }
-        this.levelUps = lvlsUp;
-        this.currentIdx = 0;
-        this.view.setLevelUp(this.levelUps.get(this.currentIdx));
     }
 
     public void cont(){

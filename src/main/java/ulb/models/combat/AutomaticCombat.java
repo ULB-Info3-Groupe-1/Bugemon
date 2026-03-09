@@ -65,10 +65,10 @@ public class AutomaticCombat extends Combat {
      * @see #applyDamage()
      * @see Combat#isFinished()
      */
-    public void turn() {
+    public Attack turn() {
         this.allyTrainer.getCurrentBugemon().setParticipation(true);
         this.adversaryTrainer.getCurrentBugemon().setParticipation(true);
-        applyDamage();
+        return applyDamage();
     }
 
     /**
