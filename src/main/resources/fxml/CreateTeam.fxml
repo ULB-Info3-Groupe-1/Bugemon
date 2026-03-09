@@ -16,6 +16,7 @@
     minWidth="-Infinity"
     prefHeight="500.0"
     prefWidth="800.0"
+    stylesheets="@../css/create-team-menu.css"
     xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
 >
@@ -23,18 +24,16 @@
       <Button
         fx:id="launchAutomaticCombat"
         mnemonicParsing="false"
-        prefHeight="25.0"
-        prefWidth="200.0"
+        styleClass="menu-button"
         text="Lancer combat automatique"
         AnchorPane.rightAnchor="40.0"
-        AnchorPane.bottomAnchor="80.0"
+        AnchorPane.bottomAnchor="120.0"
     />
 
         <Button
             fx:id="launchManuelCombat"
             mnemonicParsing="false"
-            prefHeight="25.0"
-            prefWidth="200.0"
+            styleClass="menu-button"
             text="Lancer combat manuel"
             AnchorPane.rightAnchor="40.0"
             AnchorPane.bottomAnchor="45.0"
