@@ -26,7 +26,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
 
     // Attributes
 
-    private final int MAX_SIZE = 6;
+    private static final int MAX_SIZE = 6;
     private final Bugemon[] team = new Bugemon[MAX_SIZE];
     private int size = 0;
 
