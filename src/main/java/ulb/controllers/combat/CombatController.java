@@ -65,17 +65,16 @@ public abstract class CombatController<View extends CombatView> extends Controll
         if (winner == player) {
             int combatType = 1; // TODO: get actual combat type
             int floor = 1; // TODO: get actual floor
-            long nAdversaries = player.getTeam().stream().filter(b -> b.participatedLastFight()).count();
-            long numParticipatingBugemon = winner.getTeam().stream().filter(b -> b.participatedLastFight()).count();
+            long nAdversaries = 1; // TODO: get actual number of adversaries
+            long numParticipatingBugemon = winner.getTeam().stream().filter(b -> b.getParticipation()).count();
             long xpWon = 30 * floor * combatType * nAdversaries;
             int xpPerBugemon = (int) (xpWon / numParticipatingBugemon);
             winner.getTeam().stream()
-                .filter(b -> b.participatedLastFight())
+                .filter(b -> b.getParticipation())
                 .forEach(b -> {
                     b.addXp(xpPerBugemon).ifPresent(lvlup -> levelUps.add(lvlup));
                 });
             this.metaController.setLevelUp(levelUps);
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
         }

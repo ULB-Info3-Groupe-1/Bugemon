@@ -80,6 +80,8 @@ public class ManualCombat extends Combat {
      */
     public Trainer turn() {
         // TODO: Refactor this method
+        this.allyTrainer.getCurrentBugemon().setParticipation(true);
+        this.adversaryTrainer.getCurrentBugemon().setParticipation(true);
         switch (this.allyTrainer.getSelectedAction()) {
             case ATTACK:
                 Attack allyAttack = this.allyTrainer.getSelectedAttack();

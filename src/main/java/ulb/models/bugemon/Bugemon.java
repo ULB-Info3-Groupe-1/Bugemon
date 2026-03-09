@@ -769,7 +769,11 @@ public class Bugemon implements BugemonDTO, Cloneable {
         this.state.initiative += choice.getBonusInitiative();
     }
 
-    public boolean participatedLastFight() {
+    public boolean getParticipation() {
         return this.state.participatedLastFight;
+    }
+
+    public void setParticipation(boolean participated) {
+        this.state.participatedLastFight = participated;
     }
 }
