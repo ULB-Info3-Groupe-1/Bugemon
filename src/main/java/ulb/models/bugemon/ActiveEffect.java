@@ -30,7 +30,6 @@ package ulb.models.bugemon;
  * @see EffectStat
  */
 public class ActiveEffect {
-
     /** The underlying effect being tracked. */
     private final Effect effect;
 

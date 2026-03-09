@@ -1,9 +1,9 @@
 package ulb.views;
 
 import java.io.IOException;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+
 import ulb.controllers.CombatVictoryController;
 
 /**
@@ -12,10 +12,8 @@ import ulb.controllers.CombatVictoryController;
  * View for the combat victory screen.
  */
 public class CombatVictoryView extends View {
-
     private CombatVictoryController controller;
-    @FXML
-    private Button continueButton;
+    @FXML private Button continueButton;
 
     /**
      * Loads the combat victory FXML layout and initializes UI bindings.
@@ -37,5 +35,4 @@ public class CombatVictoryView extends View {
     public void setController(CombatVictoryController controller) {
         this.controller = controller;
     }
-
 }

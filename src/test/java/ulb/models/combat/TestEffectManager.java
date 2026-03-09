@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.security.KeyException;
 import java.util.List;
+
 import org.junit.Test;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
@@ -25,7 +27,6 @@ import ulb.models.trainer.Trainer;
 import ulb.utils.TestUtilsBugemons;
 
 public class TestEffectManager {
-
     @Test
     public void testApplyInvalidEffect() {
         // init objects to test
@@ -45,26 +46,12 @@ public class TestEffectManager {
 
         // @Test invalid target
         // applying an effect with an invalid target; should throw a KeyException
-        Effect effect = new Effect(
-            null,
-            EffectTarget.NONE,
-            EffectStat.DEFENSE,
-            5,
-            "1_tour"
-        );
+        Effect effect = new Effect(null, EffectTarget.NONE, EffectStat.DEFENSE, 5, "1_tour");
 
-        Attack invalAttack = new Attack(
-            "null",
-            null,
-            null,
-            null,
-            0,
-            List.of(effect)
-        );
+        Attack invalAttack = new Attack("null", null, null, null, 0, List.of(effect));
 
-        assertThrows(KeyException.class, () ->
-            effectManager.applyEffect(attacker, defender, invalAttack)
-        );
+        assertThrows(KeyException.class,
+                     () -> effectManager.applyEffect(attacker, defender, invalAttack));
     }
 
     @Test
@@ -86,22 +73,9 @@ public class TestEffectManager {
 
         // @Test valid target
         // applying a valid effect; shouldn't throw any exception
-        Effect effect = new Effect(
-            null,
-            EffectTarget.ADVERSARY,
-            EffectStat.ATTACK,
-            5,
-            "2_tour"
-        );
+        Effect effect = new Effect(null, EffectTarget.ADVERSARY, EffectStat.ATTACK, 5, "2_tour");
 
-        Attack attack = new Attack(
-            "null",
-            null,
-            null,
-            null,
-            0,
-            List.of(effect)
-        );
+        Attack attack = new Attack("null", null, null, null, 0, List.of(effect));
         try {
             effectManager.applyEffect(attacker, defender, attack);
         } catch (KeyException e) {
@@ -128,22 +102,9 @@ public class TestEffectManager {
         Trainer attacker = new Trainer(team1);
         Trainer defender = new Trainer(team2);
 
-        Effect effect = new Effect(
-            null,
-            EffectTarget.ADVERSARY,
-            EffectStat.ATTACK,
-            +5,
-            "2_tour"
-        );
+        Effect effect = new Effect(null, EffectTarget.ADVERSARY, EffectStat.ATTACK, +5, "2_tour");
 
-        Attack attack = new Attack(
-            "null",
-            null,
-            null,
-            null,
-            0,
-            List.of(effect)
-        );
+        Attack attack = new Attack("null", null, null, null, 0, List.of(effect));
         try {
             effectManager.applyEffect(attacker, defender, attack);
         } catch (KeyException e) {
@@ -152,17 +113,13 @@ public class TestEffectManager {
 
         // @Test effect application and expiration
         // testing the expiration of the effect and the stat modification
-        assertEquals(
-            defender.getCurrentBugemon().getAttack(),
-            defaultAttack + effect.getModifier()
-        );
+        assertEquals(defender.getCurrentBugemon().getAttack(),
+                     defaultAttack + effect.getModifier());
 
         effectManager.update();
 
-        assertEquals(
-            defender.getCurrentBugemon().getAttack(),
-            defaultAttack + effect.getModifier()
-        );
+        assertEquals(defender.getCurrentBugemon().getAttack(),
+                     defaultAttack + effect.getModifier());
 
         effectManager.update();
 

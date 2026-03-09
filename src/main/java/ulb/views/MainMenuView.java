@@ -1,9 +1,9 @@
 package ulb.views;
 
 import java.io.IOException;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+
 import ulb.controllers.MainMenuController;
 
 /**
@@ -12,12 +12,9 @@ import ulb.controllers.MainMenuController;
  * View for the main menu screen.
  */
 public class MainMenuView extends View {
-
     private MainMenuController controller;
-    @FXML
-    private Button createTeamButton;
-    @FXML
-    private Button quitButton;
+    @FXML private Button createTeamButton;
+    @FXML private Button quitButton;
 
     /**
      * Loads the main menu FXML layout and initializes button actions.
@@ -40,5 +37,4 @@ public class MainMenuView extends View {
     public void setController(MainMenuController controller) {
         this.controller = controller;
     }
-
 }

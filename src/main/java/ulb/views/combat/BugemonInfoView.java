@@ -2,7 +2,6 @@ package ulb.views.combat;
 
 import java.io.IOException;
 import java.net.URL;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
@@ -14,15 +13,11 @@ import ulb.common.BugemonDTO;
  * Reusable custom component displaying Bugemon info.
  */
 public class BugemonInfoView extends VBox {
-
     private final static String FXML_PATH = "/fxml/BugemonInfo.fxml";
 
-    @FXML 
-    private Text bugemonName;
-    @FXML 
-    private Text bugemonType;
-    @FXML 
-    private javafx.scene.control.ProgressBar bugemonHPBar;
+    @FXML private Text bugemonName;
+    @FXML private Text bugemonType;
+    @FXML private javafx.scene.control.ProgressBar bugemonHPBar;
 
     /**
      * Constructor for BugemonInfoView.
@@ -32,7 +27,7 @@ public class BugemonInfoView extends VBox {
     public BugemonInfoView() {
         URL url = getClass().getResource(FXML_PATH);
         FXMLLoader loader = new FXMLLoader(url);
-        
+
         loader.setRoot(this);
         loader.setController(this);
 
@@ -52,6 +47,6 @@ public class BugemonInfoView extends VBox {
         this.bugemonName.getStyleClass().add(bugemon.getType().toString());
         this.bugemonName.setText(bugemon.getName());
         this.bugemonType.setText("(" + bugemon.getType().toString() + ")");
-        this.bugemonHPBar.setProgress((double) bugemon.getHp() / bugemon.getMaxHp());
+        this.bugemonHPBar.setProgress((double)bugemon.getHp() / bugemon.getMaxHp());
     }
 }

@@ -41,7 +41,6 @@ import ulb.models.trainer.Trainer;
  * @see Trainer
  */
 public class Combat {
-
     // Attributes
 
     /** The allied (player-side) trainer participating in this combat. */

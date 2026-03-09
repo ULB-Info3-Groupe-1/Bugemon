@@ -16,7 +16,8 @@ public class MainActionMenu extends ActionMenuView {
     }
 
     /**
-     * Set the controller for the main action menu and connect the buttons to the corresponding actions in the controller
+     * Set the controller for the main action menu and connect the buttons to the corresponding
+     * actions in the controller
      * @param controller The ManualCombatController to set for the main action menu
      */
     public void setController(ManualCombatController controller) {

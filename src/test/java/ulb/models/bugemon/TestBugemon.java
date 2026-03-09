@@ -16,16 +16,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
+
 import org.junit.Test;
+
 import ulb.utils.TestUtilsBugemons;
 
 public class TestBugemon {
-
     @Test
     public void testBuilderNoIdThrows() {
-        assertThrows(IllegalStateException.class, () -> {
-            new Bugemon.Builder().build();
-        });
+        assertThrows(IllegalStateException.class, () -> { new Bugemon.Builder().build(); });
     }
 
     @Test
@@ -73,10 +72,7 @@ public class TestBugemon {
 
     @Test
     public void testResetBugemon() {
-        Bugemon bugemon = new Bugemon.Builder()
-            .id("1")
-            .hp(100)
-            .build();
+        Bugemon bugemon = new Bugemon.Builder().id("1").hp(100).build();
         bugemon.takeDamage(50);
         assertEquals(50, bugemon.getHp());
         bugemon.reset();

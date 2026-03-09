@@ -1,11 +1,11 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
 import ulb.models.combat.AutomaticCombat;
@@ -28,8 +28,8 @@ import ulb.views.combat.AutomaticCombatView;
  *
  * <p>
  * Once the combat ends, the inherited
- * {@link CombatController#handleCombatResult(ulb.models.trainer.Trainer, ulb.models.trainer.Trainer)}
- * method is called to navigate to either the
+ * {@link CombatController#handleCombatResult(ulb.models.trainer.Trainer,
+ * ulb.models.trainer.Trainer)} method is called to navigate to either the
  * {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY} or the
  * {@link ulb.controllers.MetaController.Window#COMBAT_DEFEAT} screen depending
  * on whether the player won.
@@ -46,10 +46,7 @@ import ulb.views.combat.AutomaticCombatView;
  * @see AutoTrainer
  * @see AutomaticCombatView
  */
-public class AutomaticCombatController
-    extends CombatController<AutomaticCombatView>
-{
-
+public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
     /**
      * Constructs an {@code AutomaticCombatController}, initialises its
      * {@link AutomaticCombatView}, and registers this controller as the view's
@@ -69,8 +66,7 @@ public class AutomaticCombatController
      * @throws IOException if the {@link AutomaticCombatView} fails to load its
      *                     FXML resource.
      */
-    public AutomaticCombatController(MetaController metaController)
-        throws IOException {
+    public AutomaticCombatController(MetaController metaController) throws IOException {
         super(metaController, new AutomaticCombatView());
     }
 
@@ -109,7 +105,8 @@ public class AutomaticCombatController
      *               must not be {@code null} and must have a non-empty team.
      */
     public void runAutoCombat(final AutoTrainer player) {
-        AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+        AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(
+                metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         AutomaticCombat combat = new AutomaticCombat(player, opponent);
 
         updateCombatView(player, opponent);
@@ -130,7 +127,8 @@ public class AutomaticCombatController
         });
 
         timeline.getKeyFrames().add(keyFrame);
-        timeline.setDelay(Duration.seconds(1)); // Wait 1 second before starting the combat to let the player see the initial state
+        timeline.setDelay(Duration.seconds(1)); // Wait 1 second before starting the combat to let
+                                                // the player see the initial state
         timeline.play();
     }
 }

@@ -3,6 +3,7 @@ package ulb.controllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import ulb.common.BugemonDTO;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.CreateTeamView;
@@ -37,7 +38,6 @@ import ulb.views.CreateTeamView;
  * @see ulb.models.bugemon_team.BugemonTeam
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
-
     private BugemonTeam bugemonTeam;
 
     /**
@@ -61,10 +61,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * @throws IOException if the {@link ulb.views.CreateTeamView} fails to load
      *                     its FXML resource.
      */
-    public CreateTeamController(
-        MetaController metaController,
-        BugemonTeam bugemonTeam
-    ) throws IOException {
+    public CreateTeamController(MetaController metaController, BugemonTeam bugemonTeam)
+            throws IOException {
         super(metaController, new CreateTeamView());
         this.view.setController(this);
 
@@ -99,14 +97,15 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         if (this.bugemonTeam.contains(id)) {
             this.bugemonTeam.removeBugemon(id);
         } else if (this.bugemonTeam.isFull()) {
-            metaController.showAlert("Équipe pleine", "Votre équipe est déjà plaine. Veuillez en retirer un avant d'en ajouter un nouveau.");
+            metaController.showAlert("Équipe pleine",
+                                     "Votre équipe est déjà plaine. Veuillez en retirer un avant "
+                                     + "d'en ajouter un nouveau.");
         } else {
-            metaController
-                .getAllBugemonsAvailable()
-                .stream()
-                .filter(b -> b.getId().equals(id))
-                .findFirst()
-                .ifPresent(bugemon -> this.bugemonTeam.addBugemon(bugemon));
+            metaController.getAllBugemonsAvailable()
+                    .stream()
+                    .filter(b -> b.getId().equals(id))
+                    .findFirst()
+                    .ifPresent(bugemon -> this.bugemonTeam.addBugemon(bugemon));
         }
 
         this.updateBugemonsTeamView();
