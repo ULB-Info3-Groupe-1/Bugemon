@@ -22,7 +22,24 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 
 /**
- * This class represents a team of up to 6 Bugemons
+ * Represents a team of up to {@value #MAX_SIZE} {@link Bugemon}s owned by a
+ * trainer.
+ *
+ * <p>
+ * A {@code BugemonTeam} stores Bugemons in a fixed-size array and exposes
+ * operations to add, remove, and query members. The team implements
+ * {@link Iterable} so it can be used directly in enhanced for-loops; the
+ * iterator skips {@code null} slots transparently.
+ * </p>
+ *
+ * <p>
+ * All mutating operations ({@link #addBugemon}, {@link #removeBugemon}) enforce
+ * the team's capacity and uniqueness constraints, throwing the appropriate
+ * unchecked exceptions on violation.
+ * </p>
+ *
+ * @see Bugemon
+ * @see ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException
  */
 public class BugemonTeam extends AbstractCollection<Bugemon> {
 
@@ -31,6 +48,14 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
     private static final int MAX_SIZE = 6;
     private final ArrayList<Bugemon> team =  new ArrayList<>();
 
+    /**
+     * Constructs an empty {@code BugemonTeam} with no members.
+     *
+     * <p>
+     * After construction {@link #size()} returns {@code 0} and
+     * {@link #isEmpty()} returns {@code true}.
+     * </p>
+     */
     public BugemonTeam() {}
 
     /**
@@ -44,11 +69,9 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
     }
 
     /**
-     * Checks if the team is full (i.e., has 6 Bugemons) or empty (i.e., has 0
-     * Bugemons)
+     * Checks if the team is full (i.e., has 6 Bugemons)
      *
-     * @return (boolean) true if the team is full, false otherwise; true if the team
-     *         is empty, false otherwise
+     * @return (boolean) true if the team is full, false otherwise
      */
     public boolean isFull() {
         return this.size() == MAX_SIZE;
@@ -97,7 +120,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      * Removes a Bugemon from the team if it is in the team. If the team is empty or
      * the Bugemon is not in the team, an exception is thrown.
      *
-     * @param bugemon (Bugemon) the Bugemon to be removed from the team
+     * @param id (String) the ID of the Bugemon to be removed from the team
      */
     public void removeBugemon(String id) throws TeamAlreadyEmptyException, BugemonNotInTeamException {
         if (this.size() == 0) {
@@ -151,13 +174,34 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
         return this.getBugemon(id).isPresent();
     }
 
+    /**
+     * Returns an {@link Iterator} over the non-{@code null} {@link Bugemon}s
+     * in this team, in the order they were added.
+     *
+     * <p>
+     * Empty slots (i.e., {@code null} entries in the backing array) are
+     * silently skipped, so the iterator always yields exactly {@link #size()}
+     * elements.
+     * </p>
+     *
+     * @return an iterator over the live members of this team.
+     */
     @Override
     public Iterator<Bugemon> iterator() {
         return this.team.iterator();
     }
 
     /**
-     * Reset the state of all Bugemons in the team to their initial state, restoring their original stats.
+     * Resets every {@link Bugemon} in the team to its initial state, restoring
+     * all stats to the values they had when the Bugemon was first constructed.
+     *
+     * <p>
+     * This method is typically called at the end of a combat session so that
+     * the team can be reused for a subsequent battle without retaining any
+     * in-combat stat modifications.
+     * </p>
+     *
+     * @see Bugemon#reset()
      */
     public void reset() {
         this.team.forEach(Bugemon::reset);

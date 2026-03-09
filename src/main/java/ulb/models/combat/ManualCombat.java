@@ -15,6 +15,36 @@ import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 
+/**
+ * Represents a player-driven combat between a {@link ManualTrainer} (the ally)
+ * and an {@link AutoTrainer} (the adversary).
+ *
+ * <p>
+ * Each turn is resolved by calling {@link #turn(ManualTrainer.TAction)} with
+ * the action chosen by the player:
+ * <ul>
+ *   <li>{@link ManualTrainer.TAction#ATTACK} — the ally uses the attack
+ *       previously set via {@link ManualTrainer#selectAttack}, and the
+ *       adversary retaliates with a random attack.</li>
+ *   <li>{@link ManualTrainer.TAction#SWITCH} — the ally swaps the active
+ *       {@link ulb.models.bugemon.Bugemon} for the one set via
+ *       {@link ManualTrainer#selectBugemon}; no damage is exchanged this
+ *       turn.</li>
+ *   <li>{@link ManualTrainer.TAction#FORFEIT} — the ally immediately concedes;
+ *       the adversary is returned as the winner.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * The turn counter is incremented at the end of every non-forfeit turn via
+ * the inherited {@link Combat#incrementTurn()} method.
+ * </p>
+ *
+ * @see Combat
+ * @see ManualTrainer
+ * @see AutoTrainer
+ * @see ulb.models.combat.CombatHelper
+ */
 public class ManualCombat extends Combat {
 
     // Attributes
@@ -82,9 +112,27 @@ public class ManualCombat extends Combat {
     }
 
     /**
-     * Apply the damage of the attack selected by the allied trainer to the
-     * adversary trainer, and the damage of a random attack of the adversary trainer
-     * to the allied trainer.
+     * Resolves the damage exchange for an {@link ManualTrainer.TAction#ATTACK}
+     * turn.
+     *
+     * <p>
+     * The sequence of events is:
+     * <ol>
+     *   <li>The adversary selects a random attack for retaliation.</li>
+     *   <li>The ally's selected attack power is applied to the adversary's
+     *       active {@link ulb.models.bugemon.Bugemon}.</li>
+     *   <li>If the adversary is fully defeated, the method returns early.</li>
+     *   <li>If the adversary's active Bugemon fainted but the trainer is not
+     *       yet defeated, the adversary switches to a random alive Bugemon
+     *       and the method returns (the ally does not take damage this turn).</li>
+     *   <li>Otherwise the adversary's random attack power is applied to the
+     *       ally's active Bugemon.</li>
+     *   <li>If the ally is fully defeated, the method returns early.</li>
+     *   <li>If the ally's active Bugemon fainted, the ally must manually select
+     *       a new Bugemon via {@link ManualTrainer#getSelectedBugemon()} (the
+     *       switch itself is handled externally by the controller).</li>
+     * </ol>
+     * </p>
      */
     private void applyDamage() {
         Attack adversaryAttack = this.adversaryTrainer.getRandomAttack();

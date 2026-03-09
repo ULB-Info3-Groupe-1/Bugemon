@@ -1,28 +1,58 @@
 package ulb.controllers;
 
 import java.io.IOException;
-
 import ulb.controllers.MetaController.Window;
 import ulb.views.MainMenuView;
 
 /**
- * MainMenuController
- *
  * Controller responsible for the main menu screen.
+ *
+ * <p>
+ * {@code MainMenuController} manages the first screen the player sees when
+ * launching the application. From this screen the player can navigate to the
+ * team creation screen to build their {@link ulb.models.bugemon_team.BugemonTeam}
+ * before starting a combat.
+ * </p>
+ *
+ * <p>
+ * User interactions originating from {@link MainMenuView} are forwarded to
+ * this controller via callback methods (e.g., {@link #createTeam()}), which
+ * then delegate navigation decisions to the {@link MetaController}.
+ * </p>
+ *
+ * @see MetaController
+ * @see MainMenuView
+ * @see Controller
  */
 public class MainMenuController extends Controller<MainMenuView> {
 
     /**
-     * @param metaController
-     * @throws IOException
+     * Constructs a {@code MainMenuController}, initialises its {@link MainMenuView},
+     * and registers this controller as the view's event handler.
+     *
+     * <p>
+     * The view is instantiated here so that its FXML layout is loaded and its
+     * scene graph is ready before the controller is used for the first time.
+     * </p>
+     *
+     * @param metaController the application-level {@link MetaController} used for
+     *                       screen navigation; must not be {@code null}.
+     * @throws IOException if the {@link MainMenuView} fails to load its FXML
+     *                     resource.
      */
-    public MainMenuController(MetaController metaController) throws IOException {
+    public MainMenuController(MetaController metaController)
+        throws IOException {
         super(metaController, new MainMenuView());
         this.view.setController(this);
     }
 
     /**
-     * Callback invoked when the player wants to create a team.
+     * Callback invoked when the player requests to create or edit their team.
+     *
+     * <p>
+     * Delegates to {@link MetaController#switchTo(Window)} to navigate to the
+     * {@link Window#CREATE_TEAM} screen.
+     * </p>
      */
     public void createTeam() {
         this.metaController.switchTo(Window.CREATE_TEAM);

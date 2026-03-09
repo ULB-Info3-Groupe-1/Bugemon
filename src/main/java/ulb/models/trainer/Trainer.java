@@ -16,7 +16,25 @@ import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * This class represents a trainer, which has a team of bugemon.
+ * Represents a trainer who owns a {@link BugemonTeam} and participates in
+ * combat by fielding one active {@link Bugemon} at a time.
+ *
+ * <p>
+ * A {@code Trainer} holds a reference to its team and tracks the
+ * {@code currentBugemon} — the member currently on the field. It exposes
+ * methods to query combat state (HP, initiative, alive/defeated) and to
+ * delegate damage to the active Bugemon.
+ * </p>
+ *
+ * <p>
+ * {@link AutoTrainer} and {@link ManualTrainer} extend this class to add
+ * automatic and player-driven action-selection strategies respectively.
+ * </p>
+ *
+ * @see AutoTrainer
+ * @see ManualTrainer
+ * @see BugemonTeam
+ * @see Bugemon
  */
 public class Trainer {
 
@@ -60,6 +78,14 @@ public class Trainer {
         return this.currentBugemon.isAlive();
     }
 
+    /**
+     * Returns {@code true} if the current {@link Bugemon}'s attack list contains
+     * the specified {@link Attack}.
+     *
+     * @param attack the {@link Attack} to look for; must not be {@code null}.
+     * @return {@code true} if the current Bugemon knows the given attack,
+     *         {@code false} otherwise.
+     */
     public boolean currentBugemonContainsAttack(Attack attack) {
         List<Attack> attackList = this.currentBugemon.getAttackList();
         return attackList.contains(attack);
@@ -134,7 +160,7 @@ public class Trainer {
 
     /**
      * Returns the size of the team of the trainer.
-     * 
+     *
      * @return (int) the size of the team of the trainer.
      */
     public int getTeamSize() {

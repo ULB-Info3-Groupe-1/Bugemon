@@ -3,7 +3,6 @@ package ulb.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
@@ -116,7 +115,22 @@ public class MetaController {
         }
     }
 
-    /** Tell the CombatController to launch the AutoCombat
+    /**
+     * Instructs the {@link AutomaticCombatController} to start an automatic
+     * combat using the player's current team.
+     *
+     * <p>
+     * If the player's team is empty, an alert dialog is displayed and no combat
+     * is started. Otherwise, the adversary team is built by randomly sampling
+     * the pool of all available Bugemons (same size as the player's team), and
+     * the application navigates to the {@link Window#COMBAT} screen.
+     * </p>
+     *
+     * <p>
+     * In an automatic combat both sides choose their actions randomly each turn;
+     * see {@link AutomaticCombatController#runAutoCombat(AutoTrainer)} for
+     * details.
+     * </p>
      */
     public void launchAutoCombat() {
         if (this.playerTeam.isEmpty()) {
@@ -129,7 +143,21 @@ public class MetaController {
     }
 
     /**
-     * Tell the CombatController to launch the ManuelCombat
+     * Instructs the {@link ManualCombatController} to start a manual combat
+     * using the player's current team.
+     *
+     * <p>
+     * If the player's team is empty, an alert dialog is displayed and no combat
+     * is started. Otherwise, the adversary team is built by randomly sampling
+     * the pool of all available Bugemons (same size as the player's team), and
+     * the application navigates to the {@link Window#COMBAT} screen.
+     * </p>
+     *
+     * <p>
+     * In a manual combat the player selects their action each turn via the UI;
+     * see {@link ManualCombatController#runManuelCombat(ManualTrainer)} for
+     * details.
+     * </p>
      */
     public void launchManuelCombat() {
         if (this.playerTeam.isEmpty()) {
