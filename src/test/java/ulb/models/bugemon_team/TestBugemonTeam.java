@@ -18,6 +18,7 @@ import org.junit.Test;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
 
@@ -112,7 +113,7 @@ public class TestBugemonTeam {
         assertTrue(fullTeam.isFull());
 
         Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("7");
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(TeamAlreadyFullException.class, () -> {
             fullTeam.addBugemon(extraBugemon);
         });
     }

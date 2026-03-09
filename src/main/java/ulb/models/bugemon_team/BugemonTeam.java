@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 
 /**
  * This class represents a team of up to 6 Bugemons
@@ -68,7 +69,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      */
     public void addBugemon(Bugemon bugemon) {
         if (this.isFull()) {
-            throw new IllegalStateException("Team already full!");
+            throw new TeamAlreadyFullException("Team already full!");
         }
 
         if (this.contains(bugemon)) {
