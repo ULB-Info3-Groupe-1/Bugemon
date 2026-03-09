@@ -22,6 +22,7 @@
     -fx-font-weight: bold;
     -fx-font-size: 20px;
     -fx-cursor: hand;
+    -fx-alignment: center;
 }
 
 .action-button:hover {

@@ -8,6 +8,7 @@ import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
@@ -111,6 +112,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public void showMainActionMenu() {
         this.view.showMainActionMenu();
+    }
+
+    public BType getOpponentBugemonType(){
+        return this.opponent.getCurrentBugemonType();  
     }
 
 }
