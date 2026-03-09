@@ -11,6 +11,7 @@ import ulb.factory.TeamFactory;
 import ulb.models.combat.AutomaticCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.models.bugemon.Attack;
 import ulb.views.combat.AutomaticCombatView;
 
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
@@ -32,16 +33,20 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         AutomaticCombat combat = new AutomaticCombat(player, opponent);
 
-        updateCombatView(player, opponent);
+        updateCombatView(player, opponent, null);
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), event -> {
-            combat.turn();
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
+            this.view.hideDialog();
+            Attack allyAttack = combat.turn();
+            
+            
             Trainer winner = combat.getWinner();
             combat.incrementTurn();
-            updateCombatView(player, opponent);
+            updateCombatView(player, opponent, allyAttack);
+            
 
             if (winner != null) {
                 timeline.stop();

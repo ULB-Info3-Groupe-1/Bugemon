@@ -41,7 +41,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         this.combat = new ManualCombat(player, opponent);
         this.view.showScreenDebutCombat();
-        updateCombatView(player, opponent);
+        updateCombatView(player, opponent, null);
     }
 
     /**
@@ -92,7 +92,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Handle the end of the player's turn, update the view and check if there is a winner
      */
     private void handlePlayerTurn(Trainer winner) {
-        updateCombatView(this.player, this.opponent);
+        updateCombatView(this.player, this.opponent, null);
         if (winner != null) {
             handleCombatResult(winner, player);
         } if (!this.player.isCurrentBugemonAlive()) {

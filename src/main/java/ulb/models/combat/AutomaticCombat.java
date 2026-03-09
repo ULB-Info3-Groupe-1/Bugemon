@@ -41,8 +41,8 @@ public class AutomaticCombat extends Combat {
     /**
      * Simulates a turn of the combat.
      */
-    public void turn() {
-        applyDamage();
+    public Attack turn() {
+        return applyDamage();
     }
 
     /**
@@ -51,7 +51,7 @@ public class AutomaticCombat extends Combat {
      *
      * @return (AutoTrainer) the winner of the turn if there is one, null otherwise.
      */
-    private void applyDamage() {
+    private Attack applyDamage() {
         AutoTrainer allyTrainer = (AutoTrainer) getAllyTrainer();
         AutoTrainer adversaryTrainer = (AutoTrainer) getAdversaryTrainer();
         Attack allyAttack = allyTrainer.getRandomAttack();
@@ -62,6 +62,7 @@ public class AutomaticCombat extends Combat {
             allyTrainer,
             adversaryAttack.getPower()
         );
+        return allyAttack;
     }
 
     /**
