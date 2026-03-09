@@ -49,17 +49,21 @@ public class ManualCombat extends Combat {
      * the adversary trainer responds accordingly. The method returns the winning
      * trainer if the combat is over, or null if the combat is still ongoing.
      *
-     * @param action (Action) the action selected by the allied trainer for this
-     *               turn, which can be an attack, a switch, or a forfeit.
      * @return (Trainer) the winning trainer if the combat is over, or null if the
      *         combat is still ongoing.
      */
-    public Trainer turn(ManualTrainer.TAction action) {
-        switch (action) {
+    public Trainer turn() {
+        // TODO: Refactor this method
+        switch (this.allyTrainer.getSelectedAction()) {
             case ATTACK:
                 Attack allyAttack = this.allyTrainer.getSelectedAttack();
                 if (allyAttack != null) {
                     applyDamage();
+                }
+                if (this.allyTrainer.isDefeated()) {
+                    return this.adversaryTrainer;
+                } else if (this.adversaryTrainer.isDefeated()) {
+                    return this.allyTrainer;
                 }
                 break;
             case SWITCH:
@@ -71,7 +75,7 @@ public class ManualCombat extends Combat {
             case FORFEIT:
                 return this.adversaryTrainer;
             default:
-                throw new IllegalArgumentException("Illegal action: " + action);
+                throw new IllegalArgumentException("Illegal action: " + this.allyTrainer.getSelectedAction());
         }
         incrementTurn();
         return null;

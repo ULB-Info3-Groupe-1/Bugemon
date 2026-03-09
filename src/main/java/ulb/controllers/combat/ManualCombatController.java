@@ -44,10 +44,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @param attack the attack selected by the player
      */
     public void playerAttack(Attack attack) {
-        System.out.println("Player attacks!");
         this.player.selectAttack(attack);
         this.player.selectAction(TAction.ATTACK);
-        Trainer winner = this.combat.turn(this.player.getSelectedAction());
+        Trainer winner = this.combat.turn();
         handlePlayerTurn(winner);
     }
 
@@ -55,7 +54,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Handle the player's switch action
      */
     public void playerSwitch() {
-        Trainer winner = this.combat.turn(TAction.SWITCH);
+        // TODO: Implement the logic for switching Bugemon
+        Trainer winner = this.combat.turn();
         handlePlayerTurn(winner);
     }
 
@@ -64,7 +64,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public void surrender() {
         this.player.selectAction(TAction.FORFEIT);
-        Trainer winner = this.combat.turn(this.player.getSelectedAction());
+        Trainer winner = this.combat.turn();
         handlePlayerTurn(winner);
     }
 
@@ -72,7 +72,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Handle the end of the player's turn, update the view and check if there is a winner
      */
     private void handlePlayerTurn(Trainer winner) {
-        System.out.println("Player turn ended. Updating view...");
         updateCombatView(this.player, this.opponent);
         if (winner != null) {
             handleCombatResult(winner, player);
