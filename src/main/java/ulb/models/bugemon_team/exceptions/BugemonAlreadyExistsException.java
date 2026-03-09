@@ -39,7 +39,6 @@ package ulb.models.bugemon_team.exceptions;
  * @see ulb.models.bugemon_team.BugemonTeam#addBugemon(ulb.models.bugemon.Bugemon)
  */
 public class BugemonAlreadyExistsException extends RuntimeException {
-
     /**
      * Constructs a new {@code BugemonAlreadyExistsException} with the specified
      * detail message.

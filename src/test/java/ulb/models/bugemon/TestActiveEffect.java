@@ -15,15 +15,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class TestActiveEffect {
-
     @Test
     public void testGetEffect() {
-        Effect effect = new Effect(
-                EffectType.STAT_MODIFIER,
-                EffectTarget.ADVERSARY,
-                EffectStat.DEFENSE,
-                10,
-                "1_tour");
+        Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.ADVERSARY,
+                                   EffectStat.DEFENSE, 10, "1_tour");
         int duration = effect.extractDuration();
         ActiveEffect activeEffect = new ActiveEffect(effect, duration);
         assertEquals(activeEffect.getEffect(), effect);
@@ -31,12 +26,8 @@ public class TestActiveEffect {
 
     @Test
     public void testDecrement() {
-        Effect effect = new Effect(
-                EffectType.STAT_MODIFIER,
-                EffectTarget.ADVERSARY,
-                EffectStat.DEFENSE,
-                10,
-                "1_tour");
+        Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.ADVERSARY,
+                                   EffectStat.DEFENSE, 10, "1_tour");
         int duration = effect.extractDuration();
         ActiveEffect activeEffect = new ActiveEffect(effect, duration);
         assertEquals(activeEffect.getDuration(), duration);

@@ -13,6 +13,7 @@ package ulb.models.bugemon_team;
 import static org.junit.Assert.*;
 
 import java.io.InputStream;
+
 import org.junit.Test;
 
 import ulb.factory.TeamFactory;
@@ -25,7 +26,6 @@ import ulb.utils.Parser;
 import ulb.utils.TestUtilsBugemons;
 
 public class TestBugemonTeam {
-
     @Test
     public void testGetBugemon() {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
@@ -58,32 +58,27 @@ public class TestBugemonTeam {
         assertEquals(0, team.size());
 
         team.addBugemon(expectedBugemon1);
-        assertThrows(BugemonNotInTeamException.class, () -> {
-            team.removeBugemon(expectedBugemon2);
-        });
+        assertThrows(BugemonNotInTeamException.class,
+                     () -> { team.removeBugemon(expectedBugemon2); });
     }
 
     @Test
     public void testAddDuplicate() {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemonDuplicate =
-            TestUtilsBugemons.createDefaultBugemon("1");
+        Bugemon expectedBugemonDuplicate = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
 
         team.addBugemon(expectedBugemon);
 
-        assertThrows(BugemonAlreadyExistsException.class, () -> {
-            team.addBugemon(expectedBugemonDuplicate);
-        });
+        assertThrows(BugemonAlreadyExistsException.class,
+                     () -> { team.addBugemon(expectedBugemonDuplicate); });
     }
 
     @Test
     public void testTeamAlreadyEmpty() {
         BugemonTeam team = new BugemonTeam();
 
-        assertThrows(TeamAlreadyEmptyException.class, () -> {
-            team.removeBugemon("1");
-        });
+        assertThrows(TeamAlreadyEmptyException.class, () -> { team.removeBugemon("1"); });
     }
 
     @Test
@@ -95,40 +90,22 @@ public class TestBugemonTeam {
         assertTrue(fullTeam.isFull());
 
         Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("7");
-        assertThrows(TeamAlreadyFullException.class, () -> {
-            fullTeam.addBugemon(extraBugemon);
-        });
+        assertThrows(TeamAlreadyFullException.class, () -> { fullTeam.addBugemon(extraBugemon); });
     }
 
     @Test
     public void testRandomTeamNumber() {
-        InputStream attacksStream = getClass().getResourceAsStream(
-            "/json/attaques.json"
-        );
-        InputStream bugemonsStream = getClass().getResourceAsStream(
-            "/json/bugemons.json"
-        );
-        Parser.ParseResult parseResult = Parser.parse(
-            attacksStream,
-            bugemonsStream
-        );
-        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(
-            parseResult.getBugemonsList(),
-            6
-        );
+        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
+        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
+        Parser.ParseResult parseResult = Parser.parse(attacksStream, bugemonsStream);
+        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(parseResult.getBugemonsList(), 6);
         assertEquals(6, teamOfSix.size());
     }
 
-    @Test 
+    @Test
     public void testResetTeam() {
-        Bugemon expectedBugemon1 = new Bugemon.Builder()
-            .id("1")
-            .hp(100)
-            .build();
-        Bugemon expectedBugemon2 = new Bugemon.Builder()
-            .id("2")
-            .hp(100)
-            .build();
+        Bugemon expectedBugemon1 = new Bugemon.Builder().id("1").hp(100).build();
+        Bugemon expectedBugemon2 = new Bugemon.Builder().id("2").hp(100).build();
 
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon1);

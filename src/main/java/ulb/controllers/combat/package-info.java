@@ -9,8 +9,9 @@
  * {@link ulb.controllers.combat.CombatController} base class, which handles
  * common initialisation (pre-populating the view with placeholder
  * {@link ulb.models.bugemon.Bugemon}s) and provides the shared
- * {@link ulb.controllers.combat.CombatController#handleCombatResult(ulb.models.trainer.Trainer, ulb.models.trainer.Trainer)}
- * helper used to navigate to the appropriate outcome screen once a session ends.
+ * {@link ulb.controllers.combat.CombatController#handleCombatResult(ulb.models.trainer.Trainer,
+ * ulb.models.trainer.Trainer)} helper used to navigate to the appropriate outcome screen once a
+ * session ends.
  * </p>
  *
  * <h2>Class hierarchy</h2>
@@ -23,12 +24,14 @@
  *       concludes.</li>
  *   <li>{@link ulb.controllers.combat.AutomaticCombatController} — drives a
  *       fully automated combat session via
- *       {@link ulb.controllers.combat.AutomaticCombatController#runAutoCombat(ulb.models.trainer.AutoTrainer)}.
+ *       {@link
+ * ulb.controllers.combat.AutomaticCombatController#runAutoCombat(ulb.models.trainer.AutoTrainer)}.
  *       Both the player's and the opponent's teams act randomly each turn;
  *       the entire session runs to completion in a single blocking call.</li>
  *   <li>{@link ulb.controllers.combat.ManualCombatController} — drives a
  *       player-controlled combat session via
- *       {@link ulb.controllers.combat.ManualCombatController#runManuelCombat(ulb.models.trainer.ManualTrainer)}.
+ *       {@link
+ * ulb.controllers.combat.ManualCombatController#runManuelCombat(ulb.models.trainer.ManualTrainer)}.
  *       The player selects actions through the UI each turn while the opponent
  *       acts automatically. Full UI integration is currently a work in
  *       progress.</li>

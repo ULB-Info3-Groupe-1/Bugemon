@@ -3,7 +3,6 @@ package ulb.views.combat;
 import java.io.IOException;
 
 public class AutomaticCombatView extends CombatView {
-
     public AutomaticCombatView() throws IOException {
         super();
         this.initCombatMode();
@@ -18,6 +17,6 @@ public class AutomaticCombatView extends CombatView {
         this.actionMenuView.setVisible(false);
         this.actionMenuView.setManaged(false);
         this.bugemonTeamPane.setVisible(false);
-        this.bugemonTeamPane.setManaged(false);   
+        this.bugemonTeamPane.setManaged(false);
     }
 }

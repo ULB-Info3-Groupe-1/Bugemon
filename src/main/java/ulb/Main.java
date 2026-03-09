@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 
@@ -40,7 +41,6 @@ import ulb.controllers.MetaController.Window;
  * @see MetaController
  */
 public class Main extends Application {
-
     private static final String STAGE_TITLE = "Bugemon";
 
     /**

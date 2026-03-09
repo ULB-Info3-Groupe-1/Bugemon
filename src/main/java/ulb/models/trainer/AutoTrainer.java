@@ -11,6 +11,7 @@ package ulb.models.trainer;
 
 import java.util.List;
 import java.util.Random;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -41,7 +42,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see ulb.models.combat.ManualCombat
  */
 public class AutoTrainer extends Trainer {
-
     // Constructor
 
     /**
@@ -103,10 +103,7 @@ public class AutoTrainer extends Trainer {
             return;
         }
 
-        List<Bugemon> aliveBugemons = this.team
-                .stream()
-                .filter(Bugemon::isAlive)
-                .toList();
+        List<Bugemon> aliveBugemons = this.team.stream().filter(Bugemon::isAlive).toList();
 
         Random rand = new Random();
         int randomBugemonIndex = rand.nextInt(aliveBugemons.size());

@@ -9,11 +9,13 @@
 
 package ulb.models.bugemon;
 
-import com.google.gson.annotations.SerializedName;
 import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.google.gson.annotations.SerializedName;
+
 import ulb.common.BugemonDTO;
 
 /**
@@ -35,7 +37,6 @@ import ulb.common.BugemonDTO;
  * @see Attack
  */
 public class Bugemon implements BugemonDTO, Cloneable {
-
     /**
      * Represents the elemental type of a bugemon.
      * <p>
@@ -76,14 +77,11 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * </p>
      */
     private class State {
-
         /** Current hit points of the bugemon. Serialised as {@code "pv"}. */
-        @SerializedName("pv")
-        private int hp;
+        @SerializedName("pv") private int hp;
 
         /** Attack power of the bugemon. Serialised as {@code "attaque"}. */
-        @SerializedName("attaque")
-        private int attack;
+        @SerializedName("attaque") private int attack;
 
         /** Defensive rating of the bugemon. */
         private int defense;
@@ -130,8 +128,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
     private String id;
 
     /** Display name of this bugemon. Serialised as {@code "nom"}. */
-    @SerializedName("nom")
-    private String name;
+    @SerializedName("nom") private String name;
 
     /** Elemental type of this bugemon. */
     private BType type;
@@ -155,15 +152,13 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * Whether this bugemon is available as a starter choice. Serialised as
      * {@code "starter"}.
      */
-    @SerializedName("starter")
-    private boolean isStarter;
+    @SerializedName("starter") private boolean isStarter;
 
     /**
      * The list of attacks available to this bugemon. Serialised as
      * {@code "attaques"}.
      */
-    @SerializedName("attaques")
-    private List<Attack> attackList;
+    @SerializedName("attaques") private List<Attack> attackList;
 
     /**
      * Private no-arg constructor used exclusively by the {@link Builder}.
@@ -206,7 +201,6 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * }</pre>
      */
     public static class Builder {
-
         /** Default display name applied when none is provided. */
         private static final String DEFAULT_NAME = "default name";
 
@@ -417,20 +411,15 @@ public class Bugemon implements BugemonDTO, Cloneable {
             Bugemon bugemon = new Bugemon();
 
             // NOTE: ID has no default value
-            bugemon.id = this.id.orElseThrow(() ->
-                new IllegalStateException("Bugemon id must be provided")
-            );
+            bugemon.id = this.id.orElseThrow(
+                    () -> new IllegalStateException("Bugemon id must be provided"));
 
             bugemon.name = this.name;
             bugemon.type = this.type;
             bugemon.sprite = this.sprite;
 
-            bugemon.initialState = bugemon.new State(
-                this.hp,
-                this.attack,
-                this.defense,
-                this.initiative
-            );
+            bugemon.initialState =
+                    bugemon.new State(this.hp, this.attack, this.defense, this.initiative);
 
             bugemon.state = bugemon.new State(bugemon.initialState);
 
@@ -456,7 +445,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     @Override
     public Bugemon clone() throws CloneNotSupportedException {
-        Bugemon cloned = (Bugemon) super.clone();
+        Bugemon cloned = (Bugemon)super.clone();
         cloned.state = new State(this.state);
         cloned.initialState = new State(this.initialState);
 
@@ -495,9 +484,11 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Bugemon other = (Bugemon) obj;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Bugemon other = (Bugemon)obj;
         return this.id.equals(other.id);
     }
 
@@ -571,9 +562,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
                 this.state.initiative = this.state.initiative + value;
                 break;
             default:
-                throw new KeyException(
-                    "Invalid stat key when trying to edit stat value"
-                );
+                throw new KeyException("Invalid stat key when trying to edit stat value");
         }
     }
 

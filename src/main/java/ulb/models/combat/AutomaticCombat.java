@@ -34,7 +34,6 @@ import ulb.models.trainer.AutoTrainer;
  * @see ulb.models.combat.CombatHelper
  */
 public class AutomaticCombat extends Combat {
-
     // Constructor
 
     /**
@@ -46,10 +45,7 @@ public class AutomaticCombat extends Combat {
      * @param adversaryTrainer (AutoTrainer) the adversary trainer participating in
      *                         the combat.
      */
-    public AutomaticCombat(
-        AutoTrainer allyTrainer,
-        AutoTrainer adversaryTrainer
-    ) {
+    public AutomaticCombat(AutoTrainer allyTrainer, AutoTrainer adversaryTrainer) {
         super(allyTrainer, adversaryTrainer);
     }
 
@@ -86,16 +82,12 @@ public class AutomaticCombat extends Combat {
      * </p>
      */
     private void applyDamage() {
-        AutoTrainer allyTrainer = (AutoTrainer) getAllyTrainer();
-        AutoTrainer adversaryTrainer = (AutoTrainer) getAdversaryTrainer();
+        AutoTrainer allyTrainer = (AutoTrainer)getAllyTrainer();
+        AutoTrainer adversaryTrainer = (AutoTrainer)getAdversaryTrainer();
         Attack allyAttack = allyTrainer.getRandomAttack();
         Attack adversaryAttack = adversaryTrainer.getRandomAttack();
         applyDamageHelper(allyTrainer, adversaryTrainer, allyAttack.getPower());
-        applyDamageHelper(
-            adversaryTrainer,
-            allyTrainer,
-            adversaryAttack.getPower()
-        );
+        applyDamageHelper(adversaryTrainer, allyTrainer, adversaryAttack.getPower());
     }
 
     /**
@@ -114,11 +106,7 @@ public class AutomaticCombat extends Combat {
      *                    active Bugemon's HP.
      * @see AutoTrainer#selectRandomBugemon()
      */
-    private void applyDamageHelper(
-        AutoTrainer attacker,
-        AutoTrainer defender,
-        int attackPower
-    ) {
+    private void applyDamageHelper(AutoTrainer attacker, AutoTrainer defender, int attackPower) {
         defender.takeDamage(attackPower);
 
         if (defender.isDefeated()) {

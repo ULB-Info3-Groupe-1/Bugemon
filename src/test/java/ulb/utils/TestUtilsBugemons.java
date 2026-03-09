@@ -2,6 +2,7 @@ package ulb.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
@@ -11,47 +12,29 @@ import ulb.models.bugemon.EffectType;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public final class TestUtilsBugemons {
-
     private TestUtilsBugemons() {}
 
     public static Bugemon createDefaultBugemon(String id) {
-        Effect effect = new Effect(
-            EffectType.STAT_MODIFIER,
-            EffectTarget.ADVERSARY,
-            EffectStat.ATTACK,
-            10,
-            "1 turn"
-        );
+        Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.ADVERSARY,
+                                   EffectStat.ATTACK, 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack1 = new Attack(
-            "TestAttack1",
-            "TestAttack1",
-            Bugemon.BType.FLORA,
-            "",
-            30,
-            effects
-        );
-        Attack attack2 = new Attack(
-            "TestAttack2",
-            "TestAttack2",
-            Bugemon.BType.FLORA,
-            "",
-            20,
-            effects
-        );
+        Attack attack1 =
+                new Attack("TestAttack1", "TestAttack1", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack2 =
+                new Attack("TestAttack2", "TestAttack2", Bugemon.BType.FLORA, "", 20, effects);
         List<Attack> attackList = List.of(attack1, attack2);
 
         Bugemon bugemon = new Bugemon.Builder()
-            .id(id)
-            .name("TestBugemon_" + id)
-            .hp(100)
-            .attack(20)
-            .defense(10)
-            .initiative(5)
-            .attackList(attackList)
-            .isStarter(false)
-            .build();
+                                  .id(id)
+                                  .name("TestBugemon_" + id)
+                                  .hp(100)
+                                  .attack(20)
+                                  .defense(10)
+                                  .initiative(5)
+                                  .attackList(attackList)
+                                  .isStarter(false)
+                                  .build();
 
         return bugemon;
     }

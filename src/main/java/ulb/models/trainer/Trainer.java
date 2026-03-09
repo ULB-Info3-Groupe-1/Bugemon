@@ -10,6 +10,7 @@
 package ulb.models.trainer;
 
 import java.util.List;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Bugemon.BType;
@@ -37,7 +38,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see Bugemon
  */
 public class Trainer {
-
     // Attributes
 
     protected BugemonTeam team;

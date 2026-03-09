@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import java.io.IOException;
+
 import ulb.controllers.MetaController.Window;
 import ulb.views.CombatDefeatView;
 
@@ -31,7 +32,6 @@ import ulb.views.CombatDefeatView;
  * @see Controller
  */
 public class CombatDefeatController extends Controller<CombatDefeatView> {
-
     /**
      * Constructs a {@code CombatDefeatController}, initialises its
      * {@link CombatDefeatView}, and registers this controller as the view's
@@ -48,8 +48,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * @throws IOException if the {@link CombatDefeatView} fails to load its FXML
      *                     resource.
      */
-    public CombatDefeatController(MetaController metaController)
-        throws IOException {
+    public CombatDefeatController(MetaController metaController) throws IOException {
         super(metaController, new CombatDefeatView());
         this.view.setController(this);
     }

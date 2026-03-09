@@ -17,12 +17,10 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.TestUtilsBugemonTeam;
 
 public class TestTrainer {
-
     @Test
     public void testIsDefeated() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(true);
         Trainer trainer = new Trainer(team);
         assertTrue(trainer.isDefeated());
     }
-
 }

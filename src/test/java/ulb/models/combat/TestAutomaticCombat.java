@@ -14,11 +14,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.Test;
+
 import ulb.models.trainer.AutoTrainer;
 import ulb.utils.TestUtilsTrainer;
 
 public class TestAutomaticCombat {
-
     @Test
     public void testBasicTurn() {
         AutoTrainer trainer1 = TestUtilsTrainer.createDefaultAutoTrainer();
