@@ -72,6 +72,8 @@ public class ManualCombatView extends CombatView {
         this.bugemonTeamView.setOnClickCallback(bugemon -> {
             if (bugemon != null) {
                 this.controller.switchBugemon(bugemon.getId());
+                hideSwitchPanel();
+                showMainActionMenu();
             }
         });
         this.bugemonTeamView.showTeam(bugemonList);
@@ -83,6 +85,13 @@ public class ManualCombatView extends CombatView {
     public void hideSwitchPanel() {
         this.bugemonTeamPane.setVisible(false);
         this.bugemonTeamPane.setManaged(false);
+    }
+
+    /**
+     * hide all action menus (main action menu, attack menu, switch menu)
+     */
+    public void hideAllActionMenus() {
+        this.actionMenuView.getChildren().clear();
     }
 
     public void showItemPanel() {

@@ -7,6 +7,7 @@ import ulb.common.BugemonDTO;
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
@@ -70,6 +71,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void showSwitchMenu() {
         // TODO: change that
         List<BugemonDTO> bugemonList = this.player.getTeam().stream()
+            .filter(Bugemon::isAlive)
             .map(b -> (BugemonDTO) b)
             .toList();
         this.view.showSwitchMenu(bugemonList);
@@ -91,6 +93,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         updateCombatView(this.player, this.opponent);
         if (winner != null) {
             handleCombatResult(winner, player);
+        } if (!this.player.isCurrentBugemonAlive()) {
+            showSwitchMenu();
+            this.view.hideAllActionMenus();
         }
     }
 
