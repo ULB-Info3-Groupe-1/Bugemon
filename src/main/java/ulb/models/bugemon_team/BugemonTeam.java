@@ -11,7 +11,6 @@
 package ulb.models.bugemon_team;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 
@@ -112,15 +111,6 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
                     throw new IllegalArgumentException("Bugemon not in the team!");
                 }
             );
-    }
-
-    /**
-     * Returns the team array in a List
-     *
-     * @return (List<Bugemon>) the team array
-     */
-    public List<Bugemon> getTeam() {
-        return this.getTeam();
     }
 
     /**

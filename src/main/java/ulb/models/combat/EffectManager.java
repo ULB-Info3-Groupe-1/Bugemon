@@ -86,8 +86,7 @@ public class EffectManager {
                             e.getModifier());
                     break;
                 case EffectTarget.TEAM:
-                    BugemonTeam team = attacker.getTeam();
-                    for (Bugemon bugemon : team.getTeam()) {
+                    for (Bugemon bugemon : attacker.getTeam()) {
                         bugemons.add(bugemon);
                         handleEffect(bugemon, e.getStat(), e.getModifier());
                     }
