@@ -13,7 +13,6 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
-import ulb.models.trainer.Trainer;
 import ulb.utils.Parser;
 
 /**
@@ -49,7 +48,7 @@ public class MetaController {
     private final ManualCombatController manualCombatController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
-    private final Trainer trainer;
+    private final BugemonTeam playerTeam;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -61,10 +60,9 @@ public class MetaController {
         this.stage = primaryStage;
         this.parseResult = loadResources();
 
-        this.trainer = new Trainer(new BugemonTeam());
-
+        this.playerTeam = new BugemonTeam();
         this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(this, trainer.getTeam());
+        this.createTeamController = new CreateTeamController(this, playerTeam);
         this.manualCombatController = new ManualCombatController(this);
         this.automaticCombatController = new AutomaticCombatController(this);
         this.combatVictoryController = new CombatVictoryController(this);
@@ -118,11 +116,11 @@ public class MetaController {
     /** Tell the CombatController to launch the AutoCombat
      */
     public void launchAutoCombat() {
-        if (this.trainer.teamIsEmpty()) {
+        if (this.playerTeam.isEmpty()) {
             showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
         }
         else {
-            this.automaticCombatController.runAutoCombat(new AutoTrainer(this.trainer.getTeam()));
+            this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
             switchTo(Window.COMBAT);
         }
     }
@@ -131,11 +129,11 @@ public class MetaController {
      * Tell the CombatController to launch the ManuelCombat
      */
     public void launchManuelCombat() {
-        if (this.trainer.teamIsEmpty()) {
+        if (this.playerTeam.isEmpty()) {
             showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
         }
         else {
-            this.manualCombatController.runManuelCombat(new ManualTrainer(this.trainer.getTeam()));
+            this.manualCombatController.runManuelCombat(new ManualTrainer(this.playerTeam));
             switchTo(Window.COMBAT);
         }
     }
@@ -153,7 +151,7 @@ public class MetaController {
      * Resets the bugemon team of the trainer.
      */
     public void resetTeam() {
-        this.trainer.resetBugemonTeam();
+        this.playerTeam.reset();
     }
 
     /**
