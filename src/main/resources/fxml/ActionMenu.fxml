@@ -11,13 +11,13 @@
          spacing="50">
    <HBox styleClass="action-menu">
          <VBox styleClass="action-separator">
-            <Button fx:id="action1" styleClass="action-button" prefWidth="150.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
-            <Button fx:id="action2" styleClass="action-button" prefWidth="150.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
+            <Button fx:id="action1" styleClass="action-button" prefWidth="250.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
+            <Button fx:id="action2" styleClass="action-button" prefWidth="250.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
          </VBox>
 
          <VBox styleClass="action-separator">
-            <Button fx:id="action3" styleClass="action-button" prefWidth="150.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
-            <Button fx:id="action4" styleClass="action-button" prefWidth="150.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
+            <Button fx:id="action3" styleClass="action-button" prefWidth="250.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
+            <Button fx:id="action4" styleClass="action-button" prefWidth="250.0" prefHeight="50.0" mnemonicParsing="false" text="Button"/>
          </VBox>
    </HBox>
 
