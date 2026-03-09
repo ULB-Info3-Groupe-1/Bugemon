@@ -120,7 +120,7 @@ public class MetaController {
      */
     public void launchAutoCombat() {
         if (this.playerTeam.isEmpty()) {
-            showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
+            showAlert("Équipe incomplète", "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
         }
         else {
             switchTo(Window.AUTOMATIC_COMBAT);
@@ -133,7 +133,7 @@ public class MetaController {
      */
     public void launchManuelCombat() {
         if (this.playerTeam.isEmpty()) {
-            showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
+            showAlert("Équipe incomplète", "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
         }
         else {
             switchTo(Window.MANUAL_COMBAT);

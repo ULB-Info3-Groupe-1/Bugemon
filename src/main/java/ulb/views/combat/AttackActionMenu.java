@@ -10,7 +10,7 @@ public class AttackActionMenu extends ActionMenuView {
 
     public AttackActionMenu() {
         super();
-        this.action4.setText("Back");
+        this.action4.setText("Retour");
 
         this.action1.getStyleClass().add("attack");
         this.action2.getStyleClass().add("attack");
