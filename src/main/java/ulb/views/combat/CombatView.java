@@ -39,6 +39,7 @@ public abstract class CombatView extends View {
     protected BugemonTeamView bugemonTeamView;
     @FXML
     protected DialogZoneView dialogZoneView;
+ 
 
     /**
      * Constructor for CombatView.

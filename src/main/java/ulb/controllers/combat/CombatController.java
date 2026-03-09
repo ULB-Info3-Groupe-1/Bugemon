@@ -4,6 +4,7 @@ import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Bugemon.BType;
 import ulb.views.combat.CombatView;
 import ulb.models.trainer.Trainer;
 
@@ -14,6 +15,9 @@ public abstract class CombatController<View extends CombatView> extends Controll
 
         Bugemon bugemon1 = new Bugemon.Builder()
             .id("id1")
+            .type(BType.LITHO)
+            .sprite("png/bouldax.png")
+            .name("Bouldax")
             .build();
 
         Bugemon bugemon2 = new Bugemon.Builder()
