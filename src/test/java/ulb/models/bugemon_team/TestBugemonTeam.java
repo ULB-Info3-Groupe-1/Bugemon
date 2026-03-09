@@ -14,6 +14,8 @@ import static org.junit.Assert.*;
 
 import java.io.InputStream;
 import org.junit.Test;
+
+import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.utils.Parser;
@@ -127,7 +129,7 @@ public class TestBugemonTeam {
             attacksStream,
             bugemonsStream
         );
-        BugemonTeam teamOfSix = BugemonTeam.createRandomTeam(
+        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(
             parseResult.getBugemonsList(),
             6
         );

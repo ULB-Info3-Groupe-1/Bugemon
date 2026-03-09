@@ -13,7 +13,6 @@ package ulb.models.bugemon_team;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.AbstractCollection;
 
 import ulb.models.bugemon.Bugemon;
@@ -192,36 +191,6 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
             if (bugemon != null && id.equals(bugemon.getId())) return true;
         }
         return false;
-    }
-
-    /**
-     * Generates a random bugemon team of 6 bugemons
-     * @return the bugemon list created
-     */
-    public static BugemonTeam createRandomTeam(
-        final List<Bugemon> bugemonList,
-        final int teamSize
-    ) {
-        Random rand = new Random();
-        BugemonTeam randomTeam = new BugemonTeam();
-
-        while (randomTeam.size() != teamSize) {
-            int randomIndex = rand.nextInt(bugemonList.size());
-            Bugemon chosenBugemon = bugemonList.get(randomIndex);
-
-            if (!randomTeam.contains(chosenBugemon.getId())) {
-                try {
-                    randomTeam.addBugemon(chosenBugemon.clone());
-                } catch (CloneNotSupportedException e) {
-                    throw new RuntimeException(
-                        "Failed to clone Bugemon: " + chosenBugemon.getId(),
-                        e
-                    );
-                }
-            }
-        }
-
-        return randomTeam;
     }
 
     @Override

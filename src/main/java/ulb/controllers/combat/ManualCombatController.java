@@ -3,7 +3,7 @@ package ulb.controllers.combat;
 import java.io.IOException;
 
 import ulb.controllers.MetaController;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.factory.TeamFactory;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
@@ -30,7 +30,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @param playerTeam the team of the player
      */
     public void runManuelCombat(final ManualTrainer player) {
-        AutoTrainer opponent = new AutoTrainer(BugemonTeam.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+        AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         ManualCombat combat = new ManualCombat(player, opponent);
 
         Trainer winner = null;
