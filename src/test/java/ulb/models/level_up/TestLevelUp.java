@@ -1,8 +1,16 @@
+/**
+ * File name : TestLevelUp.java
+ * Description : Test class for the LevelUp class, which handles the level-up process of a Bugemon
+ * @author Gouverneur Martin
+ * @date 09 mar. 2026
+ * @version 1.0
+ */
+
 package ulb.models.level_up;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 

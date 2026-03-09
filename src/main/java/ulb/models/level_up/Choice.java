@@ -1,3 +1,11 @@
+/**
+ * File name : Choice.java
+ * Description : Data class representing a choice of stat bonuses that a player can select during the level-up process of a Bugemon.
+ * @author Gouverneur Martin
+ * @co-author Verbeiren Lucas
+ * @date 09 mar. 2026
+ * @version 1.0
+ */
 package ulb.models.level_up;
 
 public class Choice {
