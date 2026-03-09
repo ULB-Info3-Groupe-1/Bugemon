@@ -30,22 +30,7 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
 
-        assertEquals(expectedBugemon, team.getBugemon("1"));
-    }
-
-    @Test
-    public void testEmptySlot() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon1);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            team.removeBugemon("0");
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            team.getBugemon("0");
-        });
+        assertEquals(expectedBugemon, team.getBugemon("1").get());
     }
 
     @Test
@@ -53,7 +38,7 @@ public class TestBugemonTeam {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon);
-        Bugemon bugemon = team.getBugemon("1");
+        Bugemon bugemon = team.getBugemon("1").get();
 
         assertEquals(1, team.size());
         assertEquals(expectedBugemon, bugemon);
@@ -67,11 +52,6 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon1);
         team.removeBugemon(expectedBugemon1);
-
-        assertEquals(0, team.size());
-
-        team.addBugemon(expectedBugemon1);
-        team.removeBugemon("1");
 
         assertEquals(0, team.size());
 

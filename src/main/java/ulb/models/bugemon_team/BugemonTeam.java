@@ -11,6 +11,7 @@
 package ulb.models.bugemon_team;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 
@@ -120,12 +121,10 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      * @param id (String) the ID of the Bugemon to be returned
      * @return (Bugemon) the Bugemon with the given ID
      */
-    public Bugemon getBugemon(String id) {
+    public Optional<Bugemon> getBugemon(String id) {
         return this.team.stream()
                 .filter(b -> id.equals(b.getId()))
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalArgumentException("No Bugemon with the given ID found in the team!"));
+                .findFirst();
     }
 
     /**
@@ -147,7 +146,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *         false otherwise
      */
     public boolean contains(String id) {
-        return this.team.stream().filter(b -> id.equals(b.getId())).findFirst().isPresent();
+        return this.getBugemon(id).isPresent();
     }
 
     @Override

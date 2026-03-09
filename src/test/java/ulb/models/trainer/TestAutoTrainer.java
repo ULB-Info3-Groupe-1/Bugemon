@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.TestUtilsBugemonTeam;
+import ulb.utils.TestUtilsBugemons;
 
 public class TestAutoTrainer {
 
@@ -22,7 +23,7 @@ public class TestAutoTrainer {
     public void testSelectRandomBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         AutoTrainer trainer = new AutoTrainer(team);
-        TestTrainer.killBugemon(team, "1");
+        TestUtilsBugemons.killBugemon(team, "1");
         trainer.selectRandomBugemon();
         assertTrue(trainer.isCurrentBugemonAlive());
         assertNotEquals(team.getBugemon("1"), trainer.getCurrentBugemon());
