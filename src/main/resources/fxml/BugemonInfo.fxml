@@ -13,15 +13,15 @@
          stylesheets="@../css/bugemon-info.css">
    <HBox spacing="10" alignment="CENTER">
       <Text fx:id="bugemonName" styleClass="bugemon-name" text="Name">
-         <font>
+         <!-- <font>
             <Font name="System Bold" size="18.0"/>
-         </font>
+         </font> -->
       </Text>
 
       <Text fx:id="bugemonType" styleClass="bugemon-type" text="Type">
-         <font>
+         <!-- <font>
             <Font size="15.0"/>
-         </font>
+         </font> -->
       </Text>
 
    </HBox>

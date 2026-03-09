@@ -12,3 +12,24 @@
     -fx-font-style: italic;
     -fx-font-size: 14px;
 }
+
+.PYRO {
+    -fx-fill: #ff7300;
+    -fx-font-style: italic;
+    -fx-font-size: 18px;
+}
+.AQUA {
+    -fx-fill: #00afda;
+    -fx-font-style: italic;
+    -fx-font-size: 18px;
+}
+.LITHO {
+    -fx-fill: #8800c3;
+    -fx-font-style: italic;
+    -fx-font-size: 18px;
+}
+.FLORA {
+    -fx-fill: #22911c;
+    -fx-font-style: italic;
+    -fx-font-size: 18px;
+}
