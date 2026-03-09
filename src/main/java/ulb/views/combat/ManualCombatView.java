@@ -101,8 +101,4 @@ public class ManualCombatView extends CombatView {
         showMainActionMenu();
         hideSwitchPanel();
     }
-
-    public void showItemPanel() {
-        // TODO:
-    }
 }
