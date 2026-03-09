@@ -49,7 +49,7 @@ public class LevelUpView extends View {
 
         StringBuilder texte = new StringBuilder();
         texte.append(bugemon.getName());
-        texte.append(" has just reached level ");
+        texte.append(" vient juste de passer au niveau ");
         texte.append(bugemon.getLevel());
         texte.append(" !");
 

@@ -11,15 +11,15 @@
     <center>
         <VBox alignment="CENTER" spacing="20">
 
-            <Label fx:id="levelUpText" textFill="#FFD700" >
+            <Label fx:id="levelUpText" textFill="#FFD700" style="-fx-font-weight: bold;">
                 <font>
-                    <Font size="28"/>
+                    <Font size="42"/>
                 </font>
             </Label>
 
-            <Label text="Choose a stat to improve" textFill="#FFD700" >
+            <Label text="Choisis ton amélioration" textFill="#FFD700" style="-fx-font-weight: bold;">
                 <font>
-                    <Font size="20"/>
+                    <Font size="27"/>
                 </font>
             </Label>
 
@@ -35,9 +35,9 @@
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
 
-            <Button fx:id="choice1Button" prefHeight="65.0" prefWidth="230.0" style="-fx-background-color: #008000; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 0;"/>
-            <Button fx:id="choice2Button" prefHeight="65.0" prefWidth="230.0" style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 0;"/>
-            <Button fx:id="choice3Button" prefHeight="65.0" prefWidth="230.0" style="-fx-background-color: #4682B4; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 0;"/>
+            <Button fx:id="choice1Button" prefHeight="65.0" prefWidth="380.0" style="-fx-background-color: #008000; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 0;"/>
+            <Button fx:id="choice2Button" prefHeight="65.0" prefWidth="380.0" style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 0;"/>
+            <Button fx:id="choice3Button" prefHeight="65.0" prefWidth="380.0" style="-fx-background-color: #4682B4; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 0;"/>
         </HBox>
     </bottom>
 

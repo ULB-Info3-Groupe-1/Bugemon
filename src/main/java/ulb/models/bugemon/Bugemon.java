@@ -99,6 +99,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
         /** Level of the bugemon. */
         private int level;
 
+        private boolean participatedLastFight;
+
         /**
          * Constructs a new {@code State} with the given stat values.
          *
@@ -116,7 +118,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.initiative = initiative;
             this.maxHp = hp;
             this.xp = xp;
-            this.level = level; // Default level
+            this.level = level;
+            this.participatedLastFight = false;
         }
 
         /**
@@ -134,6 +137,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.maxHp = other.maxHp;
             this.xp = other.xp;
             this.level = other.level;
+            this.participatedLastFight = other.participatedLastFight;
 
         }
     }
@@ -763,5 +767,9 @@ public class Bugemon implements BugemonDTO, Cloneable {
         this.state.attack += choice.getBonusAttack();
         this.state.defense += choice.getBonusDefense();
         this.state.initiative += choice.getBonusInitiative();
+    }
+
+    public boolean participatedLastFight() {
+        return this.state.participatedLastFight;
     }
 }

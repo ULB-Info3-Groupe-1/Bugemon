@@ -1,6 +1,8 @@
 package ulb.controllers.combat;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
@@ -9,6 +11,7 @@ import ulb.views.combat.CombatView;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.trainer.AutoTrainer;
+import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
 
 public abstract class CombatController<View extends CombatView> extends Controller<View> {
@@ -58,7 +61,20 @@ public abstract class CombatController<View extends CombatView> extends Controll
      *               not be {@code null}.
      */
     protected void handleCombatResult(Trainer winner, Trainer player) {
+        List<LevelUp> levelUps = new ArrayList<>();
         if (winner == player) {
+            int combatType = 1; // TODO: get actual combat type
+            int floor = 1; // TODO: get actual floor
+            long nAdversaries = player.getTeam().stream().filter(b -> b.participatedLastFight()).count();
+            long numParticipatingBugemon = winner.getTeam().stream().filter(b -> b.participatedLastFight()).count();
+            long xpWon = 30 * floor * combatType * nAdversaries;
+            int xpPerBugemon = (int) (xpWon / numParticipatingBugemon);
+            winner.getTeam().stream()
+                .filter(b -> b.participatedLastFight())
+                .forEach(b -> {
+                    b.addXp(xpPerBugemon).ifPresent(lvlup -> levelUps.add(lvlup));
+                });
+            this.metaController.setLevelUp(levelUps);
             this.metaController.switchTo(Window.COMBAT_VICTORY);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);

@@ -36,6 +36,6 @@ public class Choice {
     }
 
     public String toString() {
-        return String.format("HP: +%d, Attack: +%d, Defense: +%d, Initiative: +%d", bonusHP, bonusAttack, bonusDefense, bonusInitiative);
+        return String.format("+%d HP +%d Attack +%d Defense +%d Initiative", bonusHP, bonusAttack, bonusDefense, bonusInitiative);
     }
 }

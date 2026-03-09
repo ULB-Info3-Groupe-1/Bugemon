@@ -11,6 +11,7 @@ import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.utils.Parser;
@@ -201,5 +202,9 @@ public class MetaController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public void setLevelUp(List<LevelUp> levelUps) {
+        this.levelUpController.setLevelUp(levelUps);
     }
 }

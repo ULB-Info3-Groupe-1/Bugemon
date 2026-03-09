@@ -74,8 +74,10 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      * </p>
      */
     public void cont() {
-        // if level up -> switch to level up screen
-        // otherwise -> back to main menu
+        // TODO: impl
+        // Optional<LevelUp> lvlup = bugemon.addxp(xpwonatfight)
+        // if lvlup.isPresent() -> switch to level up screen
+        // else -> back to main menu
         this.metaController.switchTo(Window.MAIN_MENU);
         this.metaController.resetTeam();
     }
