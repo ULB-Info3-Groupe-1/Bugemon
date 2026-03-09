@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
 import ulb.common.BugemonDTO;
 
 /**
@@ -21,9 +22,7 @@ import ulb.common.BugemonDTO;
  * grid.
  */
 public class AllBugemonsGridView extends VBox {
-
-    @FXML
-    private GridPane gridPane;
+    @FXML private GridPane gridPane;
 
     private static final int IMAGES_PER_ROW = 10;
     private static final double IMAGE_SIZE = 96;
@@ -32,7 +31,8 @@ public class AllBugemonsGridView extends VBox {
     private Consumer<BugemonDTO> onBugemonClicked;
 
     /**
-     * Constructor of the AllBugemonsGridView class. It loads the FXML layout and initializes the view.
+     * Constructor of the AllBugemonsGridView class. It loads the FXML layout and initializes the
+     * view.
      */
     public AllBugemonsGridView() {
         URL url = getClass().getResource("/fxml/AllBugemonsGridView.fxml");
@@ -43,10 +43,7 @@ public class AllBugemonsGridView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException(
-                "Failed to load AllBugemonsGridView.fxml",
-                e
-            );
+            throw new RuntimeException("Failed to load AllBugemonsGridView.fxml", e);
         }
     }
 
@@ -59,8 +56,10 @@ public class AllBugemonsGridView extends VBox {
     }
 
     /**
-     * Sets the callback used to handle clicks on bugemon cells. The callback receives the BugemonDTO of the clicked cell.
-     * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is clicked, receiving the BugemonDTO of the clicked cell
+     * Sets the callback used to handle clicks on bugemon cells. The callback receives the
+     * BugemonDTO of the clicked cell.
+     * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is
+     *         clicked, receiving the BugemonDTO of the clicked cell
      */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
         this.onBugemonClicked = callback;
@@ -86,7 +85,8 @@ public class AllBugemonsGridView extends VBox {
     }
 
     /**
-     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon. If the Bugemon is null, it displays an unknown image and an empty name.
+     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon.
+     * If the Bugemon is null, it displays an unknown image and an empty name.
      * @param bugemon the BugemonDTO representing the Bugemon to be displayed in the cell
      * @return a VBox containing the image and name of the Bugemon to be displayed in the grid view
      */
@@ -108,9 +108,8 @@ public class AllBugemonsGridView extends VBox {
         VBox cell = new VBox(2); // spacing exactly 2
         cell.setAlignment(Pos.CENTER);
         cell.getChildren().addAll(imagePane, nameLabel);
-        cell.setStyle(
-            "-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;"
-        );
+        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; "
+                      + "-fx-background-color: transparent;");
         cell.setUserData(bugemon);
 
         if (selectionChecker != null && selectionChecker.apply(bugemon)) {
@@ -121,7 +120,7 @@ public class AllBugemonsGridView extends VBox {
 
         if (this.onBugemonClicked != null) {
             cell.setOnMouseClicked(e -> {
-                BugemonDTO dto = (BugemonDTO) cell.getUserData();
+                BugemonDTO dto = (BugemonDTO)cell.getUserData();
                 if (dto != null) {
                     this.onBugemonClicked.accept(dto);
                 }
@@ -133,29 +132,28 @@ public class AllBugemonsGridView extends VBox {
 
     /**
      * Marks the given cell as selected by changing its style to indicate selection.
-     * @param cell the VBox cell to be marked as selected, containing the image and name of the Bugemon to be styled as selected
+     * @param cell the VBox cell to be marked as selected, containing the image and name of the
+     *         Bugemon to be styled as selected
      */
     private void select(VBox cell) {
-        StackPane imagePane = (StackPane) cell.getChildren().get(0); // TODO: Could break code with an exeption "IndexOutOfBoundsException"
-        ImageView iv = (ImageView) imagePane.getChildren().get(0);
-        iv.setStyle(
-            "-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);"
-        );
-        cell.setStyle(
-            "-fx-border-color: red; -fx-border-width: 3; -fx-padding: 2; -fx-background-color: lightcoral;"
-        );
+        StackPane imagePane = (StackPane)cell.getChildren().get(
+                0); // TODO: Could break code with an exeption "IndexOutOfBoundsException"
+        ImageView iv = (ImageView)imagePane.getChildren().get(0);
+        iv.setStyle("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
+        cell.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-padding: 2; "
+                      + "-fx-background-color: lightcoral;");
     }
 
     /**
      * Marks the given cell as unselected by changing its style to indicate it is not selected.
-     * @param cell the VBox cell to be marked as unselected, containing the image and name of the Bugemon to be styled as unselected
+     * @param cell the VBox cell to be marked as unselected, containing the image and name of the
+     *         Bugemon to be styled as unselected
      */
     private void unselect(VBox cell) {
-        StackPane imagePane = (StackPane) cell.getChildren().get(0);
-        ImageView iv = (ImageView) imagePane.getChildren().get(0);
+        StackPane imagePane = (StackPane)cell.getChildren().get(0);
+        ImageView iv = (ImageView)imagePane.getChildren().get(0);
         iv.setStyle("");
-        cell.setStyle(
-            "-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; -fx-background-color: transparent;"
-        );
+        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; "
+                      + "-fx-background-color: transparent;");
     }
 }

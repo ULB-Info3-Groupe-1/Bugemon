@@ -14,7 +14,6 @@ import javafx.stage.Stage;
  * Loads an FXML layout and manages its associated scene.
  */
 public abstract class View {
-
     protected final Pane root;
     protected final Scene scene;
 
@@ -27,7 +26,7 @@ public abstract class View {
     public View(String fxmlPath) throws IOException {
         URL url = View.class.getResource(fxmlPath);
         FXMLLoader loader = new FXMLLoader(url);
-        loader.setController((Object) this);
+        loader.setController((Object)this);
 
         this.root = loader.load();
         this.scene = new Scene(root);

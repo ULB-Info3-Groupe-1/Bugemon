@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import java.io.IOException;
+
 import ulb.controllers.MetaController.Window;
 import ulb.views.MainMenuView;
 
@@ -25,7 +26,6 @@ import ulb.views.MainMenuView;
  * @see Controller
  */
 public class MainMenuController extends Controller<MainMenuView> {
-
     /**
      * Constructs a {@code MainMenuController}, initialises its {@link MainMenuView},
      * and registers this controller as the view's event handler.
@@ -40,8 +40,7 @@ public class MainMenuController extends Controller<MainMenuView> {
      * @throws IOException if the {@link MainMenuView} fails to load its FXML
      *                     resource.
      */
-    public MainMenuController(MetaController metaController)
-        throws IOException {
+    public MainMenuController(MetaController metaController) throws IOException {
         super(metaController, new MainMenuView());
         this.view.setController(this);
     }
@@ -64,5 +63,4 @@ public class MainMenuController extends Controller<MainMenuView> {
     public void quit() {
         javafx.application.Platform.exit();
     }
-
 }

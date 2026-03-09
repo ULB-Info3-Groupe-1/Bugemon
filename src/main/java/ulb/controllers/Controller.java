@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import javafx.stage.Stage;
+
 import ulb.views.View;
 
 /**
@@ -32,7 +33,6 @@ import ulb.views.View;
  * @see View
  */
 public abstract class Controller<T extends View> {
-
     /**
      * The application-level meta-controller used to trigger screen transitions
      * and access shared application state (e.g., the list of available Bugemons).

@@ -16,6 +16,7 @@ package ulb.models.combat;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Bugemon.BType;
@@ -30,7 +31,6 @@ import ulb.models.trainer.Trainer;
  * <p>This class is not meant to be instantiated; all methods are static.</p>
  */
 public class CombatHelper {
-
     /**
      * Represents the effectiveness of an attack type against a defender's type.
      */
@@ -51,10 +51,7 @@ public class CombatHelper {
      * @param trainer2 the second trainer
      * @return the trainer whose Bugemon attacks first
      */
-    public static Trainer attackPriority(
-        final Trainer trainer1,
-        final Trainer trainer2
-    ) {
+    public static Trainer attackPriority(final Trainer trainer1, final Trainer trainer2) {
         final int initiative1 = trainer1.getCurrentBugemonInitiative();
         final int initiative2 = trainer2.getCurrentBugemonInitiative();
 
@@ -73,7 +70,8 @@ public class CombatHelper {
      * type effectiveness.
      *
      * <p>The damage formula is:
-     * {@code power * ((100 + offenderAttack) / 100) * (100 / (defenderDefense + 100)) * typeFactor * criticFactor}</p>
+     * {@code power * ((100 + offenderAttack) / 100) * (100 / (defenderDefense + 100)) * typeFactor
+     * * criticFactor}</p>
      *
      * @param attack          the attack being used
      * @param offenderBugemon the attacking Bugemon, used to access its attack stat
@@ -82,20 +80,15 @@ public class CombatHelper {
      *                        {@code 1.5} for a critical hit)
      * @return the computed damage as a double
      */
-    public static double calculateDamage(
-        final Attack attack,
-        final Bugemon offenderBugemon,
-        final Bugemon defenderBugemon,
-        final double criticFactor
-    ) {
+    public static double calculateDamage(final Attack attack, final Bugemon offenderBugemon,
+                                         final Bugemon defenderBugemon, final double criticFactor) {
         BType defType = defenderBugemon.getType();
 
         final int basePower = attack.getPower();
         final double atkFactor = (100.0 + offenderBugemon.getAttack()) / 100.0;
         final double defFactor = 100.0 / (defenderBugemon.getDefense() + 100.0);
         final double typeMultiplier = getEfficiencyFactor(attack, defType);
-        final double damage =
-            basePower * atkFactor * defFactor * typeMultiplier * criticFactor;
+        final double damage = basePower * atkFactor * defFactor * typeMultiplier * criticFactor;
 
         return damage;
     }
@@ -114,18 +107,10 @@ public class CombatHelper {
      * @param defenderBugemon the defending Bugemon, used to access its defense stat and type
      * @return the computed damage as a double
      */
-    public static double calculateDamage(
-        final Attack attack,
-        final Bugemon offenderBugemon,
-        final Bugemon defenderBugemon
-    ) {
+    public static double calculateDamage(final Attack attack, final Bugemon offenderBugemon,
+                                         final Bugemon defenderBugemon) {
         final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
-        return calculateDamage(
-            attack,
-            offenderBugemon,
-            defenderBugemon,
-            critMultiplier
-        );
+        return calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
     }
 
     /**
@@ -140,10 +125,7 @@ public class CombatHelper {
      * @return {@code 0.75} for {@link Efficiency#LOW}, {@code 1.50} for {@link Efficiency#HIGH},
      *         or {@code 1.00} for {@link Efficiency#NEUTRAL}
      */
-    public static double getEfficiencyFactor(
-        final Attack attack,
-        final BType defenderType
-    ) {
+    public static double getEfficiencyFactor(final Attack attack, final BType defenderType) {
         final Efficiency matchup = compareBType(attack.getType(), defenderType);
 
         if (matchup.equals(Efficiency.LOW)) {
@@ -168,8 +150,8 @@ public class CombatHelper {
      *   <li>A difference of {@code 1} means the offensive type is one step ahead of the
      *       defensive type in the cycle → {@link Efficiency#LOW} (offensive is weak).</li>
      *   <li>A difference of {@code cycleSize - 1} means the offensive type is one step
-     *       behind the defensive type in the cycle → {@link Efficiency#HIGH} (offensive is strong).</li>
-     *   <li>Any other difference → {@link Efficiency#NEUTRAL}.</li>
+     *       behind the defensive type in the cycle → {@link Efficiency#HIGH} (offensive is
+     * strong).</li> <li>Any other difference → {@link Efficiency#NEUTRAL}.</li>
      * </ul>
      *
      * @param offensiveType the type of the attacking Bugemon or attack
@@ -177,10 +159,7 @@ public class CombatHelper {
      * @return {@link Efficiency#HIGH} if the offensive type is strong against the defensive type,
      *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
      */
-    public static Efficiency compareBType(
-        final BType offensiveType,
-        final BType defensiveType
-    ) {
+    public static Efficiency compareBType(final BType offensiveType, final BType defensiveType) {
         // Use the BType enum declaration order as the type cycle
         final List<BType> cycle = new ArrayList<BType>(List.of(BType.values()));
 

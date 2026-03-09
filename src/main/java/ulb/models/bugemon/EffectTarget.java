@@ -32,8 +32,7 @@ public enum EffectTarget {
      *
      * <p>JSON value: {@code "adversaire"}</p>
      */
-    @SerializedName("adversaire")
-    ADVERSARY,
+    @SerializedName("adversaire") ADVERSARY,
 
     /**
      * The effect targets the {@link Bugemon} that launched the attack (i.e.,
@@ -46,8 +45,7 @@ public enum EffectTarget {
      *
      * <p>JSON value: {@code "lanceur"}</p>
      */
-    @SerializedName("lanceur")
-    THROWER,
+    @SerializedName("lanceur") THROWER,
 
     /**
      * The effect targets all {@link Bugemon}s in the attacker's team.
@@ -59,8 +57,7 @@ public enum EffectTarget {
      *
      * <p>JSON value: {@code "equipe"}</p>
      */
-    @SerializedName("equipe")
-    TEAM,
+    @SerializedName("equipe") TEAM,
 
     /**
      * The effect has no specific target.

@@ -4,30 +4,28 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
 import ulb.common.BugemonDTO;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable
  * grid.
  */
 public class BugemonTeamView extends VBox {
-
-    @FXML
-    private GridPane gridPane;
+    @FXML private GridPane gridPane;
 
     private static final int IMAGES_PER_ROW = 3;
     private static final double IMAGE_SIZE = 96;
-   
+
     private Consumer<BugemonDTO> onBugemonClicked;
 
     // Unknown image if no Bugemon available
@@ -54,7 +52,6 @@ public class BugemonTeamView extends VBox {
         this.gridPane.getChildren().clear();
 
         for (int i = 0; i < bugemonList.size(); i++) {
-
             BugemonDTO bugemon = bugemonList.get(i);
 
             int row = i / IMAGES_PER_ROW;
@@ -67,14 +64,13 @@ public class BugemonTeamView extends VBox {
     }
 
     /**
-     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon. If the Bugemon is null, it displays an unknown image and an empty name.
+     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon.
+     * If the Bugemon is null, it displays an unknown image and an empty name.
      * @param bugemon the BugemonDTO representing the Bugemon to be displayed in the cell
      * @return a VBox containing the image and name of the Bugemon to be displayed in the grid view
      */
     private VBox createBugemonCell(BugemonDTO bugemon) {
-        Image image = (bugemon != null)
-                ? new Image(bugemon.getSpriteURL())
-                : this.UNKNOWN_IMAGE;
+        Image image = (bugemon != null) ? new Image(bugemon.getSpriteURL()) : this.UNKNOWN_IMAGE;
 
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(IMAGE_SIZE);
@@ -92,13 +88,13 @@ public class BugemonTeamView extends VBox {
         VBox cell = new VBox(2);
         cell.setAlignment(Pos.CENTER);
         cell.getChildren().addAll(imagePane, nameLabel);
-        
+
         cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3;");
         cell.setUserData(bugemon);
 
         if (this.onBugemonClicked != null) {
             cell.setOnMouseClicked(e -> {
-                BugemonDTO dto = (BugemonDTO) cell.getUserData();
+                BugemonDTO dto = (BugemonDTO)cell.getUserData();
                 if (dto != null) {
                     this.onBugemonClicked.accept(dto);
                 }
@@ -109,11 +105,12 @@ public class BugemonTeamView extends VBox {
     }
 
     /**
-     * Sets the callback used to handle clicks on bugemon cells. The callback receives the BugemonDTO of the clicked cell.
-     * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is clicked, receiving the BugemonDTO of the clicked cell
+     * Sets the callback used to handle clicks on bugemon cells. The callback receives the
+     * BugemonDTO of the clicked cell.
+     * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is
+     *         clicked, receiving the BugemonDTO of the clicked cell
      */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
         this.onBugemonClicked = callback;
     }
 }
-

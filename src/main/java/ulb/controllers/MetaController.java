@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Bugemon;
@@ -22,7 +23,6 @@ import ulb.utils.Parser;
  * Instantiates all controllers and handles window transitions.
  */
 public class MetaController {
-
     /**
      * Window
      *

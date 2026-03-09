@@ -37,7 +37,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see TAction
  */
 public class ManualTrainer extends Trainer {
-
     // Enums
 
     /**
@@ -105,12 +104,13 @@ public class ManualTrainer extends Trainer {
             return;
         }
 
-        Bugemon found = this.team
-                .stream()
-                .filter(b -> b.equals(bugemon))
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalArgumentException("The selected bugemon is not in the team of the trainer."));
+        Bugemon found = this.team.stream()
+                                .filter(b -> b.equals(bugemon))
+                                .findFirst()
+                                .orElseThrow(()
+                                                     -> new IllegalArgumentException(
+                                                             "The selected bugemon is not in the "
+                                                             + "team of the trainer."));
 
         if (!found.isAlive()) {
             throw new IllegalArgumentException("The selected bugemon is not alive.");
@@ -130,9 +130,8 @@ public class ManualTrainer extends Trainer {
         if (this.currentBugemonContainsAttack(attack)) {
             this.selectedAttack = attack;
         } else {
-            throw new IllegalArgumentException(
-                "The selected attack is not in the list of attacks of the current bugemon of the trainer."
-            );
+            throw new IllegalArgumentException("The selected attack is not in the list of attacks "
+                                               + "of the current bugemon of the trainer.");
         }
     }
 

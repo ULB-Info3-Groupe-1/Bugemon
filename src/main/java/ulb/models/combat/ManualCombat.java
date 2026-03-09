@@ -46,7 +46,6 @@ import ulb.models.trainer.Trainer;
  * @see ulb.models.combat.CombatHelper
  */
 public class ManualCombat extends Combat {
-
     // Attributes
     private ManualTrainer allyTrainer;
     private AutoTrainer adversaryTrainer;
@@ -63,10 +62,7 @@ public class ManualCombat extends Combat {
      * @param adversaryTrainer (AutoTrainer) the adversary trainer participating in
      *                         the combat.
      */
-    public ManualCombat(
-        ManualTrainer allyTrainer,
-        AutoTrainer adversaryTrainer
-    ) {
+    public ManualCombat(ManualTrainer allyTrainer, AutoTrainer adversaryTrainer) {
         super(allyTrainer, adversaryTrainer);
         this.allyTrainer = allyTrainer;
         this.adversaryTrainer = adversaryTrainer;
@@ -105,7 +101,8 @@ public class ManualCombat extends Combat {
             case FORFEIT:
                 return this.adversaryTrainer;
             default:
-                throw new IllegalArgumentException("Illegal action: " + this.allyTrainer.getSelectedAction());
+                throw new IllegalArgumentException("Illegal action: "
+                                                   + this.allyTrainer.getSelectedAction());
         }
         incrementTurn();
         return null;

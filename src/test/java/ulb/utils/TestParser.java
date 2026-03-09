@@ -12,22 +12,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
-import ulb.models.bugemon.EffectType;
 import ulb.models.bugemon.EffectStat;
+import ulb.models.bugemon.EffectType;
 
 public class TestParser {
-
     @Test
     public void testAttackParsing() {
-        List<Attack> attackList = Parser.parseAttacks(
-            new InputStreamReader(
-                getClass().getResourceAsStream("/json/attaques.json"),
-                StandardCharsets.UTF_8
-            )
-        );
+        List<Attack> attackList = Parser.parseAttacks(new InputStreamReader(
+                getClass().getResourceAsStream("/json/attaques.json"), StandardCharsets.UTF_8));
 
         // check if a list has been returned
         assertNotNull(attackList);
@@ -45,23 +41,16 @@ public class TestParser {
 
     @Test
     public void testBugemonParsing() {
-        List<Attack> attackList = Parser.parseAttacks(
-            new InputStreamReader(
-                getClass().getResourceAsStream("/json/attaques.json"),
-                StandardCharsets.UTF_8
-            )
-        );
+        List<Attack> attackList = Parser.parseAttacks(new InputStreamReader(
+                getClass().getResourceAsStream("/json/attaques.json"), StandardCharsets.UTF_8));
 
-        Map<String, Attack> attacksMap = attackList.stream()
-                .collect(Collectors.toMap(Attack::getId, Function.identity()));
+        Map<String, Attack> attacksMap =
+                attackList.stream().collect(Collectors.toMap(Attack::getId, Function.identity()));
 
         List<Bugemon> bugemonsList = Parser.parseBugemons(
-            new InputStreamReader(
-                getClass().getResourceAsStream("/json/bugemons.json"),
-                StandardCharsets.UTF_8
-            ),
-            attacksMap
-        );
+                new InputStreamReader(getClass().getResourceAsStream("/json/bugemons.json"),
+                                      StandardCharsets.UTF_8),
+                attacksMap);
 
         // check if a list has been returned
         assertNotNull(bugemonsList);
@@ -92,12 +81,8 @@ public class TestParser {
 
     @Test
     public void testParseWithInputStreams() {
-        InputStream attacksStream = getClass().getResourceAsStream(
-            "/json/attaques.json"
-        );
-        InputStream bugemonsStream = getClass().getResourceAsStream(
-            "/json/bugemons.json"
-        );
+        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
+        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
 
         assertNotNull(attacksStream, "attaques.json not found in resources");
         assertNotNull(bugemonsStream, "bugemons.json not found in resources");
