@@ -6,10 +6,14 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       alignment="CENTER"
-      spacing="20">
+      spacing="30"
+      styleClass="main-menu"
+      stylesheets="@../css/main-menu.css">
 
-    <Label text="Main Menu" />
+    <Label text="BUGÉMON" styleClass="main-title" />
 
-    <Button fx:id="createTeamButton" text="Create a team and start a combat" />
+    <Button fx:id="createTeamButton" text="Créer une équipe et lancer un combat" styleClass="menu-button" />
+
+    <Button fx:id="quitButton" text="Quitter" styleClass="menu-button" />
 
 </VBox>
