@@ -61,7 +61,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      */
     private void updateBugemonsTeamView() {
         List<BugemonDTO> bugemonList = new ArrayList<>();
-        bugemonList.addAll(this.bugemonTeam.getTeam());
+        bugemonList.addAll(this.bugemonTeam);
         this.view.showTeam(bugemonList);
     }
 

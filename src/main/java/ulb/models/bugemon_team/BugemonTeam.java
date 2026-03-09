@@ -10,10 +10,10 @@
 
 package ulb.models.bugemon_team;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.AbstractCollection;
+import java.util.ArrayList;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
@@ -26,8 +26,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
     // Attributes
 
     private static final int MAX_SIZE = 6;
-    private final Bugemon[] team = new Bugemon[MAX_SIZE];
-    private int size = 0;
+    private final ArrayList<Bugemon> team =  new ArrayList<>();
 
     public BugemonTeam() {}
 
@@ -38,7 +37,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      */
     @Override
     public int size() {
-        return this.size;
+        return this.team.size();
     }
 
     /**
@@ -49,7 +48,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *         is empty, false otherwise
      */
     public boolean isFull() {
-        return this.size == MAX_SIZE;
+        return this.size() == MAX_SIZE;
     }
 
     /**
@@ -58,7 +57,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      * @return (boolean) true if the team is empty, false otherwise
      */
     public boolean isEmpty() {
-        return this.size == 0;
+        return this.team.isEmpty();
     }
 
     /**
@@ -79,14 +78,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
             );
         }
 
-        for (int i = 0; i < MAX_SIZE; i++) {
-            if (this.team[i] == null) {
-                this.team[i] = bugemon;
-                break;
-            }
-        }
-
-        this.size++;
+        this.team.add(bugemon);
     }
 
     /**
@@ -105,32 +97,30 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      * @param bugemon (Bugemon) the Bugemon to be removed from the team
      */
     public void removeBugemon(String id) {
-        if (this.size == 0) {
+        if (this.size() == 0) {
             throw new IllegalStateException("Team already empty!");
         }
 
-        int currentSize = this.size;
-
-        for (int i = 0; i < MAX_SIZE; i++) {
-            if (this.team[i] != null && id.equals(this.team[i].getId())) {
-                this.team[i] = null;
-                this.size--;
-                break;
-            }
-        }
-
-        if (currentSize == this.size) {
-            throw new IllegalArgumentException("Bugemon not in the team!");
-        }
+        this.team.stream()
+            .filter(b -> id.equals(b.getId()))
+            .findFirst()
+            .ifPresentOrElse(
+                (b) -> {
+                    this.team.remove(b);
+                },
+                () -> {
+                    throw new IllegalArgumentException("Bugemon not in the team!");
+                }
+            );
     }
 
     /**
-     * Returns a shallow copy of the team array in a List
+     * Returns the team array in a List
      *
-     * @return (List<Bugemon>) the List of the team array
+     * @return (List<Bugemon>) the team array
      */
     public List<Bugemon> getTeam() {
-        return Arrays.asList(this.team);
+        return this.getTeam();
     }
 
     /**
@@ -140,14 +130,11 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      * @return (Bugemon) the Bugemon with the given ID
      */
     public Bugemon getBugemon(String id) {
-        for (Bugemon bugemon : this.team) {
-            if (bugemon != null && id.equals(bugemon.getId())) {
-                return bugemon;
-            }
-        }
-        throw new IllegalArgumentException(
-            "No Bugemon with the given ID found in the team!"
-        );
+        return this.team.stream()
+                .filter(b -> id.equals(b.getId()))
+                .findFirst()
+                .orElseThrow(
+                        () -> new IllegalArgumentException("No Bugemon with the given ID found in the team!"));
     }
 
     /**
@@ -165,7 +152,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
                     MAX_SIZE
             );
         }
-        return this.team[index];
+        return this.team.get(index);
     }
 
     /**
@@ -187,25 +174,18 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *         false otherwise
      */
     public boolean contains(String id) {
-        for (Bugemon bugemon : this.team) {
-            if (bugemon != null && id.equals(bugemon.getId())) return true;
-        }
-        return false;
+        return this.team.stream().filter(b -> id.equals(b.getId())).findFirst().isPresent();
     }
 
     @Override
     public Iterator<Bugemon> iterator() {
-        return Arrays.stream(this.team)
-                    .filter(b -> b != null)
-                    .iterator();
+        return this.team.iterator();
     }
 
     /**
      * Reset the state of all Bugemons in the team to their initial state, restoring their original stats.
      */
     public void reset() {
-        this.getTeam().stream()
-            .filter(b -> b != null)
-            .forEach(Bugemon::reset);
+        this.team.forEach(Bugemon::reset);
     }
 }
