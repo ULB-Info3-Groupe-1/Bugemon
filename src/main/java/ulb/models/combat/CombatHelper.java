@@ -20,6 +20,7 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Bugemon.BType;
+import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
 
 /**
@@ -176,5 +177,18 @@ public class CombatHelper {
         } else {
             return Efficiency.NEUTRAL;
         }
+    }
+
+    public static int calculateXP(Trainer winner, Trainer loser) {
+        int combatType = 1; // TODO: get actual combat type
+        int floor = 1; // TODO: get actual floor
+        //long nAdversaries = loser.getTeam().stream().filter(b -> b.getParticipation()).count();
+        long nAdversaries = 1;
+        long numParticipatingBugemon = winner.getTeam().stream().filter(b -> b.getParticipation()).count();
+
+        long xpWon = 30 * floor * combatType * nAdversaries;
+        int xpPerBugemon = (int) (xpWon / numParticipatingBugemon);
+
+        return xpPerBugemon;
     }
 }

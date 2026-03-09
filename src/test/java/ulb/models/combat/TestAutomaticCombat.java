@@ -11,7 +11,7 @@ package ulb.models.combat;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ public class TestAutomaticCombat {
             combat.turn();
         }
         assertTrue(combat.isFinished());
-        assertNotNull(combat.getWinner(), "Must be a winner at the end of the combat");
+        assertNotNull(combat.getWinner());
     }
 
     @Test

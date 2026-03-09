@@ -10,7 +10,7 @@
 package ulb.models.combat;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertThrows;
 
 import java.security.KeyException;
 import java.util.List;

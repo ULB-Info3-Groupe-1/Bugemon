@@ -1,7 +1,7 @@
 package ulb.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -84,8 +84,8 @@ public class TestParser {
         InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
         InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
 
-        assertNotNull(attacksStream, "attaques.json not found in resources");
-        assertNotNull(bugemonsStream, "bugemons.json not found in resources");
+        assertNotNull(attacksStream);
+        assertNotNull(bugemonsStream);
 
         Parser.ParseResult result = Parser.parse(attacksStream, bugemonsStream);
 
