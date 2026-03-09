@@ -55,11 +55,35 @@
     -fx-background-color: #ffbc47;
 }
 
-.attack {
+.attack-FLORA {
     -fx-background-color: #278A27;
     -fx-border-color: #37b437;
 }
 
-.attack:hover {
+.attack-PYRO {
+    -fx-background-color: #cd0c0c;
+    -fx-border-color: #ff9500;
+}
+
+.attack-LITHO {
+    -fx-background-color: #7600b6;
+    -fx-border-color: #a200ff;
+}
+
+.attack-AQUA {
+    -fx-background-color: #00a8b1;
+    -fx-border-color: #00f3f8;
+}
+
+.attack-FLORA:hover {
     -fx-background-color: #37b437;
+}
+.attack-PYRO:hover {
+    -fx-background-color: #b25300;
+}
+.attack-AQUA:hover {
+    -fx-background-color: #11bcb3;
+}
+.attack-LITHO:hover {
+    -fx-background-color: #aa33c8;
 }

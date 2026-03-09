@@ -30,12 +30,15 @@ public class AttackActionMenu extends ActionMenuView {
      */
     public void setAttacks(Attack attack1, Attack attack2, Attack attack3) {
         this.action1.setText(attack1.getName());
+        this.action1.getStyleClass().add("attack-" + attack1.getType().toString());
         this.action1.setOnAction(e -> this.controller.playerAttack(attack1));
 
         this.action2.setText(attack2.getName());
+        this.action2.getStyleClass().add("attack-" + attack2.getType().toString());
         this.action2.setOnAction(e -> this.controller.playerAttack(attack2));
 
         this.action3.setText(attack3.getName());
+        this.action3.getStyleClass().add("attack-" + attack3.getType().toString());
         this.action3.setOnAction(e -> this.controller.playerAttack(attack3));
     }
 }
