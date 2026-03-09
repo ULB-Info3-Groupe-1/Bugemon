@@ -12,6 +12,8 @@ import ulb.models.combat.AutomaticCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.combat.AutomaticCombatView;
 
 /**
@@ -119,19 +121,30 @@ public class AutomaticCombatController
         timeline.setCycleCount(Animation.INDEFINITE);
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
-            this.view.hideDialog();
-            Attack allyAttack = combat.turn();
-            
-            
-            Trainer winner = combat.getWinner();
-            combat.incrementTurn();
-            updateCombatView(player, opponent, allyAttack);
-            
+            try {
+                Bugemon enemyBugemon = opponent.getCurrentBugemon().clone();
+                
+                this.view.hideDialog();
+                Attack allyAttack = combat.turn();
+                
+                
+                Trainer winner = combat.getWinner();
+                combat.incrementTurn();
+                updateCombatView(player, opponent, allyAttack);
+                if (enemyBugemon.getId() !=  opponent.getCurrentBugemon().getId()){
+                    this.view.hideDialog();
+                }
 
-            if (winner != null) {
-                timeline.stop();
-                handleCombatResult(winner, player);
+                if (winner != null) {
+                    timeline.stop();
+                    handleCombatResult(winner, player);
+                }
+
+            } catch (CloneNotSupportedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
+        
         });
 
         timeline.getKeyFrames().add(keyFrame);
