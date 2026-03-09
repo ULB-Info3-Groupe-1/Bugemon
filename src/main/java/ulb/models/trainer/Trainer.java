@@ -139,21 +139,4 @@ public class Trainer {
     public int getTeamSize() {
         return team.size();
     }
-
-    /**
-     * Resets the state of all bugemon in the team of the trainer to their initial state, restoring their original stats.
-     */
-    public void resetBugemonTeam() {
-        this.team.reset();
-    }
-
-    /**
-     * Returns true if the team of the trainer is empty, false otherwise.
-     *
-     * @return (boolean) true if the team of the trainer is empty, false otherwise.
-     */
-    public boolean teamIsEmpty() {
-        return this.team.isEmpty();
-    }
-
 }

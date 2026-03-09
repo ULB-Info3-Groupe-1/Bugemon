@@ -14,7 +14,7 @@ import ulb.controllers.MetaController.Window;
  */
 public class Main extends Application {
 
-    private String STAGE_TITLE = "Bugemon";
+    private static final String STAGE_TITLE = "Bugemon";
 
     /**
      * Main method of the application. It launches the JavaFX application.
