@@ -11,6 +11,7 @@ package ulb.models.bugemon;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -19,6 +20,13 @@ import org.junit.Test;
 import ulb.utils.TestUtilsBugemons;
 
 public class TestBugemon {
+
+    @Test
+    public void testBuilderNoIdThrows() {
+        assertThrows(IllegalStateException.class, () -> {
+            new Bugemon.Builder().build();
+        });
+    }
 
     @Test
     public void testIsAlive() {
