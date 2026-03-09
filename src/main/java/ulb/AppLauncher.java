@@ -25,7 +25,6 @@ package ulb;
  * @see Main
  */
 public class AppLauncher {
-
     /**
      * JVM entry point of the Bugemon application.
      *

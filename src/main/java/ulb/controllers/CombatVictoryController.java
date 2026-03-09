@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import java.io.IOException;
+
 import ulb.controllers.MetaController.Window;
 import ulb.views.CombatVictoryView;
 
@@ -31,7 +32,6 @@ import ulb.views.CombatVictoryView;
  * @see Controller
  */
 public class CombatVictoryController extends Controller<CombatVictoryView> {
-
     /**
      * Constructs a {@code CombatVictoryController}, initialises its
      * {@link CombatVictoryView}, and registers this controller as the view's
@@ -48,8 +48,7 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      * @throws IOException if the {@link CombatVictoryView} fails to load its FXML
      *                     resource.
      */
-    public CombatVictoryController(MetaController metaController)
-        throws IOException {
+    public CombatVictoryController(MetaController metaController) throws IOException {
         super(metaController, new CombatVictoryView());
         this.view.setController(this);
     }
@@ -75,8 +74,10 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      * </p>
      */
     public void cont() {
-        // if level up -> switch to level up screen
-        // otherwise -> back to main menu
+        // TODO: impl
+        // Optional<LevelUp> lvlup = bugemon.addxp(xpwonatfight)
+        // if lvlup.isPresent() -> switch to level up screen
+        // else -> back to main menu
         this.metaController.switchTo(Window.MAIN_MENU);
         this.metaController.resetTeam();
     }

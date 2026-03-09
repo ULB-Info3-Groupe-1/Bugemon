@@ -2,26 +2,21 @@ package ulb.views;
 
 import java.io.IOException;
 import java.net.URL;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.control.Button;
 
 /**
  * Reusable custom component displaying a dialog zone.
  */
 public class DialogZoneView extends VBox {
-
     private final static String FXML_PATH = "/fxml/DialogZone.fxml";
 
-    @FXML 
-    private Text dialogText;
-    @FXML 
-    private Button nextButton;
-    @FXML
-    private Text additionalInfo;
+    @FXML private Text dialogText;
+    @FXML private Button nextButton;
+    @FXML private Text additionalInfo;
 
     /**
      * Constructor for DialogZoneView.
@@ -31,7 +26,7 @@ public class DialogZoneView extends VBox {
     public DialogZoneView() {
         URL url = getClass().getResource(FXML_PATH);
         FXMLLoader loader = new FXMLLoader(url);
-        
+
         loader.setRoot(this);
         loader.setController(this);
 

@@ -9,9 +9,10 @@
 
 package ulb.models.bugemon;
 
-import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Objects;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents an attack that a {@link Bugemon} can perform during battle.
@@ -27,22 +28,18 @@ import java.util.Objects;
  * @see Bugemon.BType
  */
 public class Attack {
-
     // Attributes
 
     private String id;
 
-    @SerializedName("nom")
-    private String name;
+    @SerializedName("nom") private String name;
 
     private Bugemon.BType type;
     private String description;
 
-    @SerializedName("puissance")
-    private int power;
+    @SerializedName("puissance") private int power;
 
-    @SerializedName("effets")
-    private List<Effect> effects;
+    @SerializedName("effets") private List<Effect> effects;
 
     // Constructor
     /**
@@ -58,14 +55,8 @@ public class Attack {
      * @param effects      (Effect) the effects of the attack, which can apply
      *                    status changes or stat modifications to the target.
      */
-    public Attack(
-        String id,
-        String name,
-        Bugemon.BType type,
-        String description,
-        int power,
-        List<Effect> effects
-    ) {
+    public Attack(String id, String name, Bugemon.BType type, String description, int power,
+                  List<Effect> effects) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -198,9 +189,11 @@ public class Attack {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Attack)) return false;
-        Attack attack = (Attack) o;
+        if (this == o)
+            return true;
+        if (!(o instanceof Attack))
+            return false;
+        Attack attack = (Attack)o;
         return Objects.equals(id, attack.id);
     }
 

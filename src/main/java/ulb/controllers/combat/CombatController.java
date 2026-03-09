@@ -1,6 +1,8 @@
 package ulb.controllers.combat;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
@@ -9,29 +11,23 @@ import ulb.views.combat.CombatView;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.trainer.AutoTrainer;
+import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
-import ulb.views.combat.CombatView;
 
 public abstract class CombatController<View extends CombatView> extends Controller<View> {
-    
     /**
-     * Enum representing the efficiency of an attack based on the types of the attack and the defending bugemon.
+     * Enum representing the efficiency of an attack based on the types of the attack and the
+     * defending bugemon.
      */
-    public enum AttackEfficiency {
-        EFFICIENT,
-        INFERIOR,
-        NEUTRAL
-    }
+    public enum AttackEfficiency { EFFICIENT, INFERIOR, NEUTRAL }
 
     /**
-     * Map representing the type advantages in the combat system. Each key is a bugemon type and its corresponding value is the type it is strong against.
+     * Map representing the type advantages in the combat system. Each key is a bugemon type and its
+     * corresponding value is the type it is strong against.
      */
-    private static final Map<BType, BType> STRONG_AGAINST = Map.of(
-        BType.FLORA, BType.AQUA,
-        BType.AQUA,  BType.PYRO,
-        BType.PYRO,  BType.LITHO,
-        BType.LITHO, BType.FLORA
-    );
+    private static final Map<BType, BType> STRONG_AGAINST =
+            Map.of(BType.FLORA, BType.AQUA, BType.AQUA, BType.PYRO, BType.PYRO, BType.LITHO,
+                   BType.LITHO, BType.FLORA);
 
     public CombatController(MetaController metaController, View view) {
         super(metaController, view);
@@ -65,8 +61,20 @@ public abstract class CombatController<View extends CombatView> extends Controll
      *               not be {@code null}.
      */
     protected void handleCombatResult(Trainer winner, Trainer player) {
+        List<LevelUp> levelUps = new ArrayList<>();
         if (winner == player) {
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
+            int combatType = 1; // TODO: get actual combat type
+            int floor = 1; // TODO: get actual floor
+            long nAdversaries = 1; // TODO: get actual number of adversaries
+            long numParticipatingBugemon = winner.getTeam().stream().filter(b -> b.getParticipation()).count();
+            long xpWon = 30 * floor * combatType * nAdversaries;
+            int xpPerBugemon = (int) (xpWon / numParticipatingBugemon);
+            winner.getTeam().stream()
+                .filter(b -> b.getParticipation())
+                .forEach(b -> {
+                    b.addXp(xpPerBugemon).ifPresent(lvlup -> levelUps.add(lvlup));
+                });
+            this.metaController.setLevelUp(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
         }
@@ -94,7 +102,8 @@ public abstract class CombatController<View extends CombatView> extends Controll
     }
 
     /**
-     * Determine the efficiency of the trainer attack against the opponent's bugemon based on their types
+     * Determine the efficiency of the trainer attack against the opponent's bugemon based on their
+     * types
      * @param attackType the type of the attack selected by the player
      * @param defenseBugemonType the type of the opponent's bugemon
      */

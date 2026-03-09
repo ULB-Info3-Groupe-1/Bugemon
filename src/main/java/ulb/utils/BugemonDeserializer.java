@@ -1,13 +1,15 @@
 package ulb.utils;
 
+import java.lang.reflect.Type;
+import java.util.*;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import java.lang.reflect.Type;
-import java.util.*;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 
@@ -20,7 +22,6 @@ import ulb.models.bugemon.Bugemon;
  * </p>
  */
 public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
-
     /**
      * A map of attack IDs to their corresponding {@link Attack} objects,
      * used to resolve attack references during deserialization.
@@ -50,7 +51,8 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
      *   <li>{@code starter} - whether the Bugemon is a starter Bugemon</li>
      *   <li>{@code stats} - a JSON object containing stat key-value pairs (e.g., hp, attack,
      *       defense, initiative)</li>
-     *   <li>{@code attaques} - a JSON array of attack IDs referencing entries in the attacks map</li>
+     *   <li>{@code attaques} - a JSON array of attack IDs referencing entries in the attacks
+     * map</li>
      * </ul>
      * </p>
      *
@@ -61,19 +63,13 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
      * @throws JsonParseException if the JSON is not in the expected format
      */
     @Override
-    public Bugemon deserialize(
-        JsonElement json,
-        Type typeOfT,
-        JsonDeserializationContext context
-    ) throws JsonParseException {
+    public Bugemon deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
 
         String id = obj.get("id").getAsString();
         String name = obj.get("nom").getAsString();
-        Bugemon.BType type = context.deserialize(
-            obj.get("type"),
-            Bugemon.BType.class
-        );
+        Bugemon.BType type = context.deserialize(obj.get("type"), Bugemon.BType.class);
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 
@@ -100,17 +96,17 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
         }
 
         Bugemon bugemon = new Bugemon.Builder()
-            .id(id)
-            .name(name)
-            .type(type)
-            .sprite(sprite)
-            .hp(statsMap.get("pv"))
-            .attack(statsMap.get("attaque"))
-            .defense(statsMap.get("defense"))
-            .initiative(statsMap.get("initiative"))
-            .attackList(attackList)
-            .isStarter(starter)
-            .build();
+                                  .id(id)
+                                  .name(name)
+                                  .type(type)
+                                  .sprite(sprite)
+                                  .hp(statsMap.get("pv"))
+                                  .attack(statsMap.get("attaque"))
+                                  .defense(statsMap.get("defense"))
+                                  .initiative(statsMap.get("initiative"))
+                                  .attackList(attackList)
+                                  .isStarter(starter)
+                                  .build();
 
         return bugemon;
     }

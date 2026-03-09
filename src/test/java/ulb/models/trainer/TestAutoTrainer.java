@@ -13,12 +13,12 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.TestUtilsBugemonTeam;
 import ulb.utils.TestUtilsBugemons;
 
 public class TestAutoTrainer {
-
     @Test
     public void testSelectRandomBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);

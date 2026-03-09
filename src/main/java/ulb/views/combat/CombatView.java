@@ -1,18 +1,16 @@
 package ulb.views.combat;
 
 import java.io.IOException;
-
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 import ulb.common.BugemonDTO;
-
-import ulb.views.View;
 import ulb.views.ActionMenuView;
 import ulb.views.BugemonTeamView;
 import ulb.views.DialogZoneView;
+import ulb.views.View;
 
 /**
  * CombatView
@@ -22,28 +20,18 @@ import ulb.views.DialogZoneView;
  * and injected via FXML.
  */
 public abstract class CombatView extends View {
-
-    @FXML
-    protected BugemonInfoView bugemonTrainerInfo;
-    @FXML
-    protected BugemonInfoView bugemonOpponentInfo;
-    @FXML
-    protected ImageView bugemonTrainerImage;
-    @FXML
-    protected ImageView bugemonOpponentImage;
-    @FXML
-    protected ActionMenuView actionMenuView;
-    @FXML
-    protected StackPane bugemonTeamPane;
-    @FXML
-    protected BugemonTeamView bugemonTeamView;
-    @FXML
-    protected DialogZoneView dialogZoneView;
- 
+    @FXML protected BugemonInfoView bugemonTrainerInfo;
+    @FXML protected BugemonInfoView bugemonOpponentInfo;
+    @FXML protected ImageView bugemonTrainerImage;
+    @FXML protected ImageView bugemonOpponentImage;
+    @FXML protected ActionMenuView actionMenuView;
+    @FXML protected StackPane bugemonTeamPane;
+    @FXML protected BugemonTeamView bugemonTeamView;
+    @FXML protected DialogZoneView dialogZoneView;
 
     /**
      * Constructor for CombatView.
-     * @throws IOException 
+     * @throws IOException
      */
     public CombatView() throws IOException {
         super("/fxml/Combat.fxml");
@@ -73,7 +61,7 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
     }
-    
+
     /**
      * Update the trainer's bugemon info and image in the UI.
      * @param trainerBugemon
@@ -82,7 +70,7 @@ public abstract class CombatView extends View {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL()));
     }
-    
+
     /**
      * Update the opponent's bugemon info and image in the UI.
      * @param opponentBugemon

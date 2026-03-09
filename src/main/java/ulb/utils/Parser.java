@@ -9,15 +9,6 @@
 
 package ulb.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -28,6 +19,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -58,7 +59,6 @@ import ulb.models.bugemon.EffectType;
  * @see ulb.models.bugemon.Attack
  */
 public class Parser {
-
     /**
      * Immutable value object returned by {@link #parse(InputStream, InputStream)}
      * containing the fully constructed game data loaded from the JSON files.
@@ -76,7 +76,6 @@ public class Parser {
      * @see Parser#parse(InputStream, InputStream)
      */
     public static class ParseResult {
-
         private final Map<String, Attack> attacksMap;
         private final List<Bugemon> bugemonList;
 
@@ -90,10 +89,7 @@ public class Parser {
          *                    {@link ulb.models.bugemon.Bugemon} objects; must
          *                    not be {@code null}.
          */
-        public ParseResult(
-            Map<String, Attack> attacksMap,
-            List<Bugemon> bugemonList
-        ) {
+        public ParseResult(Map<String, Attack> attacksMap, List<Bugemon> bugemonList) {
             this.attacksMap = attacksMap;
             this.bugemonList = bugemonList;
         }
@@ -129,24 +125,15 @@ public class Parser {
      * @param bugemonsStream input stream for the bugemons JSON file
      * @return a ParseResult containing the attacks map and the list of bugemons
      */
-    public static ParseResult parse(
-        InputStream attacksStream,
-        InputStream bugemonsStream
-    ) {
-        Reader attacksReader = new InputStreamReader(
-            attacksStream,
-            StandardCharsets.UTF_8
-        );
-        Reader bugemonsReader = new InputStreamReader(
-            bugemonsStream,
-            StandardCharsets.UTF_8
-        );
+    public static ParseResult parse(InputStream attacksStream, InputStream bugemonsStream) {
+        Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
+        Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
 
         // load attacks
         List<Attack> attackList = parseAttacks(attacksReader);
 
-        Map<String, Attack> attacksMap = attackList.stream()
-                .collect(Collectors.toMap(Attack::getId, Function.identity()));
+        Map<String, Attack> attacksMap =
+                attackList.stream().collect(Collectors.toMap(Attack::getId, Function.identity()));
 
         // load bugemons
         List<Bugemon> bugemons = parseBugemons(bugemonsReader, attacksMap);
@@ -168,13 +155,9 @@ public class Parser {
      * @see Bugemon.BType
      */
     static class TypeDeserializer implements JsonDeserializer<Bugemon.BType> {
-
         @Override
-        public Bugemon.BType deserialize(
-            JsonElement json,
-            java.lang.reflect.Type typeOfT,
-            JsonDeserializationContext context
-        ) {
+        public Bugemon.BType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+                                         JsonDeserializationContext context) {
             String value = json.getAsString();
             return Bugemon.BType.valueOf(value.toUpperCase());
         }
@@ -193,16 +176,11 @@ public class Parser {
      *
      * @see ulb.models.bugemon.EffectType
      */
-    static class EffectTypeDeserializer
-        implements JsonDeserializer<ulb.models.bugemon.EffectType>
-    {
-
+    static class EffectTypeDeserializer implements JsonDeserializer<ulb.models.bugemon.EffectType> {
         @Override
-        public ulb.models.bugemon.EffectType deserialize(
-            JsonElement json,
-            java.lang.reflect.Type typeOfT,
-            JsonDeserializationContext context
-        ) {
+        public ulb.models.bugemon.EffectType deserialize(JsonElement json,
+                                                         java.lang.reflect.Type typeOfT,
+                                                         JsonDeserializationContext context) {
             String value = json.getAsString();
             return ulb.models.bugemon.EffectType.valueOf(value.toUpperCase());
         }
@@ -217,9 +195,9 @@ public class Parser {
      */
     static List<Attack> parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
-            .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
-            .create();
+                            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
+                            .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
+                            .create();
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
@@ -248,17 +226,11 @@ public class Parser {
      *                  with their ids. Used to build the bugemons.
      * @return (List<Bugemon>) The list of the newly build Bugemon objects.
      */
-    static List<Bugemon> parseBugemons(
-        Reader reader,
-        Map<String, Attack> attackMap
-    ) {
+    static List<Bugemon> parseBugemons(Reader reader, Map<String, Attack> attackMap) {
         Gson gson = new GsonBuilder()
-            .registerTypeAdapter(
-                Bugemon.class,
-                new BugemonDeserializer(attackMap)
-            )
-            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
-            .create();
+                            .registerTypeAdapter(Bugemon.class, new BugemonDeserializer(attackMap))
+                            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
+                            .create();
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();

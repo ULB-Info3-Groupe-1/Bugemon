@@ -20,7 +20,6 @@ import ulb.utils.TestUtilsBugemonTeam;
 import ulb.utils.TestUtilsBugemons;
 
 public class TestManualTrainer {
-
     @Test
     public void testSelectBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
@@ -35,8 +34,7 @@ public class TestManualTrainer {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         TestUtilsBugemons.killBugemon(team, "2");
         ManualTrainer trainer = new ManualTrainer(team);
-        assertThrows(IllegalArgumentException.class, () ->
-            trainer.selectBugemon(team.getBugemon("2").get())
-        );
+        assertThrows(IllegalArgumentException.class,
+                     () -> trainer.selectBugemon(team.getBugemon("2").get()));
     }
 }

@@ -97,4 +97,7 @@ public interface BugemonDTO {
      */
     int getMaxHp();
 
+    
+    int getLevel();
+
 }

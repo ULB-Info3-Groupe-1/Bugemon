@@ -6,10 +6,12 @@ import java.util.List;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.utils.Parser;
@@ -22,7 +24,6 @@ import ulb.utils.Parser;
  * Instantiates all controllers and handles window transitions.
  */
 public class MetaController {
-
     /**
      * Window
      *
@@ -35,6 +36,7 @@ public class MetaController {
         AUTOMATIC_COMBAT,
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
+        LEVEL_UP,
     }
 
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
@@ -49,6 +51,7 @@ public class MetaController {
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final BugemonTeam playerTeam;
+    private final LevelUpController levelUpController;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -67,6 +70,7 @@ public class MetaController {
         this.automaticCombatController = new AutomaticCombatController(this);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
+        this.levelUpController = new LevelUpController(this);
     }
 
     /**
@@ -89,6 +93,8 @@ public class MetaController {
                 this.combatVictoryController.show(this.stage);
             case COMBAT_DEFEAT ->
                 this.combatDefeatController.show(this.stage);
+            case LEVEL_UP ->
+                this.levelUpController.show(this.stage);
             default ->
                 throw new IllegalArgumentException("Invalid window");
         }
@@ -196,5 +202,9 @@ public class MetaController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public void setLevelUp(List<LevelUp> levelUps) {
+        this.levelUpController.setLevelUp(levelUps);
     }
 }

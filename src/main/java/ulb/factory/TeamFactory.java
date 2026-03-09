@@ -7,14 +7,14 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public class TeamFactory {
-    
     private static final Random RANDOM = new Random();
 
     /**
      * Generates a random bugemon team of 6 bugemons
      * @return the bugemon list created
      */
-    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
+    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList,
+                                               final int teamSize) {
         BugemonTeam randomTeam = new BugemonTeam();
 
         while (randomTeam.size() != teamSize) {
@@ -25,10 +25,8 @@ public class TeamFactory {
                 try {
                     randomTeam.addBugemon(chosenBugemon.clone());
                 } catch (CloneNotSupportedException e) {
-                    throw new RuntimeException(
-                        "Failed to clone Bugemon: " + chosenBugemon.getId(),
-                        e
-                    );
+                    throw new RuntimeException("Failed to clone Bugemon: " + chosenBugemon.getId(),
+                                               e);
                 }
             }
         }

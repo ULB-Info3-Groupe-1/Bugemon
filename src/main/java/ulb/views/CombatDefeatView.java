@@ -1,9 +1,9 @@
 package ulb.views;
 
 import java.io.IOException;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+
 import ulb.controllers.CombatDefeatController;
 
 /**
@@ -12,12 +12,9 @@ import ulb.controllers.CombatDefeatController;
  * View for the combat defeat screen.
  */
 public class CombatDefeatView extends View {
-
     private CombatDefeatController controller;
-    @FXML
-    private Button retryButton;
-    @FXML
-    private Button backToMainMenuButton;
+    @FXML private Button retryButton;
+    @FXML private Button backToMainMenuButton;
 
     /**
      * Loads the combat defeat FXML layout and initializes UI bindings.
@@ -40,5 +37,4 @@ public class CombatDefeatView extends View {
     public void setController(CombatDefeatController controller) {
         this.controller = controller;
     }
-
 }

@@ -34,7 +34,6 @@ import ulb.models.trainer.AutoTrainer;
  * @see ulb.models.combat.CombatHelper
  */
 public class AutomaticCombat extends Combat {
-
     // Constructor
 
     /**
@@ -46,10 +45,7 @@ public class AutomaticCombat extends Combat {
      * @param adversaryTrainer (AutoTrainer) the adversary trainer participating in
      *                         the combat.
      */
-    public AutomaticCombat(
-        AutoTrainer allyTrainer,
-        AutoTrainer adversaryTrainer
-    ) {
+    public AutomaticCombat(AutoTrainer allyTrainer, AutoTrainer adversaryTrainer) {
         super(allyTrainer, adversaryTrainer);
     }
 
@@ -70,6 +66,8 @@ public class AutomaticCombat extends Combat {
      * @see Combat#isFinished()
      */
     public Attack turn() {
+        this.allyTrainer.getCurrentBugemon().setParticipation(true);
+        this.adversaryTrainer.getCurrentBugemon().setParticipation(true);
         return applyDamage();
     }
 
@@ -115,11 +113,7 @@ public class AutomaticCombat extends Combat {
      *                    active Bugemon's HP.
      * @see AutoTrainer#selectRandomBugemon()
      */
-    private void applyDamageHelper(
-        AutoTrainer attacker,
-        AutoTrainer defender,
-        int attackPower
-    ) {
+    private void applyDamageHelper(AutoTrainer attacker, AutoTrainer defender, int attackPower) {
         defender.takeDamage(attackPower);
 
         if (defender.isDefeated()) {

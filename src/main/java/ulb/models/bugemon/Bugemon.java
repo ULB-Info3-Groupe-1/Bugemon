@@ -9,12 +9,16 @@
 
 package ulb.models.bugemon;
 
-import com.google.gson.annotations.SerializedName;
 import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.google.gson.annotations.SerializedName;
+
 import ulb.common.BugemonDTO;
+import ulb.models.level_up.Choice;
+import ulb.models.level_up.LevelUp;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
@@ -35,7 +39,6 @@ import ulb.common.BugemonDTO;
  * @see Attack
  */
 public class Bugemon implements BugemonDTO, Cloneable {
-
     /**
      * Represents the elemental type of a bugemon.
      * <p>
@@ -76,14 +79,11 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * </p>
      */
     private class State {
-
         /** Current hit points of the bugemon. Serialised as {@code "pv"}. */
-        @SerializedName("pv")
-        private int hp;
+        @SerializedName("pv") private int hp;
 
         /** Attack power of the bugemon. Serialised as {@code "attaque"}. */
-        @SerializedName("attaque")
-        private int attack;
+        @SerializedName("attaque") private int attack;
 
         /** Defensive rating of the bugemon. */
         private int defense;
@@ -93,6 +93,13 @@ public class Bugemon implements BugemonDTO, Cloneable {
 
         /** Maximum hit points of the bugemon. (At the start of a battle) */
         private int maxHp;
+        /** Experience points (XP) of the bugemon. */
+        private int xp;
+
+        /** Level of the bugemon. */
+        private int level;
+
+        private boolean participatedLastFight;
 
         /**
          * Constructs a new {@code State} with the given stat values.
@@ -101,13 +108,18 @@ public class Bugemon implements BugemonDTO, Cloneable {
          * @param attack     the attack power.
          * @param defense    the defense rating.
          * @param initiative the initiative (turn-order priority).
+         * @param xp         the experience points (XP) of the bugemon.
+         * @param level      the level of the bugemon.
          */
-        public State(int hp, int attack, int defense, int initiative) {
+        public State(int hp, int attack, int defense, int initiative, int xp, int level) {
             this.hp = hp;
             this.attack = attack;
             this.defense = defense;
             this.initiative = initiative;
             this.maxHp = hp;
+            this.xp = xp;
+            this.level = level;
+            this.participatedLastFight = false;
         }
 
         /**
@@ -123,6 +135,10 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.defense = other.defense;
             this.initiative = other.initiative;
             this.maxHp = other.maxHp;
+            this.xp = other.xp;
+            this.level = other.level;
+            this.participatedLastFight = other.participatedLastFight;
+
         }
     }
 
@@ -130,8 +146,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
     private String id;
 
     /** Display name of this bugemon. Serialised as {@code "nom"}. */
-    @SerializedName("nom")
-    private String name;
+    @SerializedName("nom") private String name;
 
     /** Elemental type of this bugemon. */
     private BType type;
@@ -155,15 +170,13 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * Whether this bugemon is available as a starter choice. Serialised as
      * {@code "starter"}.
      */
-    @SerializedName("starter")
-    private boolean isStarter;
+    @SerializedName("starter") private boolean isStarter;
 
     /**
      * The list of attacks available to this bugemon. Serialised as
      * {@code "attaques"}.
      */
-    @SerializedName("attaques")
-    private List<Attack> attackList;
+    @SerializedName("attaques") private List<Attack> attackList;
 
     /**
      * Private no-arg constructor used exclusively by the {@link Builder}.
@@ -191,6 +204,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *   <li>attack      – {@value #DEFAULT_ATTACK}</li>
      *   <li>defense     – {@value #DEFAULT_DEFENSE}</li>
      *   <li>initiative  – {@value #DEFAULT_INITIATIVE}</li>
+     *   <li>xp          – {@value #DEFAULT_XP}</li>
      *   <li>isStarter   – {@value #DEFAULT_IS_STARTER}</li>
      *   <li>attackList  – empty list</li>
      * </ul>
@@ -206,7 +220,6 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * }</pre>
      */
     public static class Builder {
-
         /** Default display name applied when none is provided. */
         private static final String DEFAULT_NAME = "default name";
 
@@ -231,6 +244,10 @@ public class Bugemon implements BugemonDTO, Cloneable {
         /** Default initiative stat applied when none is provided. */
         private static final int DEFAULT_INITIATIVE = 10;
 
+        private static final int DEFAULT_XP = 0;
+
+        private static final int DEFAULT_LEVEL = 1;
+
         /** The unique identifier to assign to the bugemon. */
         private Optional<String> id = Optional.empty();
 
@@ -254,6 +271,12 @@ public class Bugemon implements BugemonDTO, Cloneable {
 
         /** The initiative stat for the bugemon's initial state. */
         private int initiative = DEFAULT_INITIATIVE;
+
+        /** The experience points for the bugemon's initial state. */
+        private int xp = DEFAULT_XP;
+
+        /** The level for the bugemon's initial state. */
+        private int level = DEFAULT_LEVEL;
 
         /** Whether the bugemon should be flagged as a starter. */
         private boolean isStarter = DEFAULT_IS_STARTER;
@@ -352,6 +375,25 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.initiative = initiative;
             return this;
         }
+        /**
+         * Sets the experience points for the bugemon under construction.
+         * @param xp
+         * @return this {@code Builder} instance for method chaining.
+         */
+        public Builder xp(int xp) {
+            this.xp = xp;
+            return this;
+        }
+
+        /**
+         * Sets the level for the bugemon under construction.
+         * @param level
+         * @return
+         */
+        public Builder level(int level) {
+            this.level = level;
+            return this;
+        }
 
         /**
          * Appends an {@link Attack} to the bugemon's attack list.
@@ -417,9 +459,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
             Bugemon bugemon = new Bugemon();
 
             // NOTE: ID has no default value
-            bugemon.id = this.id.orElseThrow(() ->
-                new IllegalStateException("Bugemon id must be provided")
-            );
+            bugemon.id = this.id.orElseThrow(
+                    () -> new IllegalStateException("Bugemon id must be provided"));
 
             bugemon.name = this.name;
             bugemon.type = this.type;
@@ -429,7 +470,9 @@ public class Bugemon implements BugemonDTO, Cloneable {
                 this.hp,
                 this.attack,
                 this.defense,
-                this.initiative
+                this.initiative,
+                this.xp,
+                this.level
             );
 
             bugemon.state = bugemon.new State(bugemon.initialState);
@@ -456,7 +499,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     @Override
     public Bugemon clone() throws CloneNotSupportedException {
-        Bugemon cloned = (Bugemon) super.clone();
+        Bugemon cloned = (Bugemon)super.clone();
         cloned.state = new State(this.state);
         cloned.initialState = new State(this.initialState);
 
@@ -495,9 +538,11 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Bugemon other = (Bugemon) obj;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Bugemon other = (Bugemon)obj;
         return this.id.equals(other.id);
     }
 
@@ -519,6 +564,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *
      * @return (String) the unique identifier of the bugemon.
      */
+    @Override
     public String getId() {
         return this.id;
     }
@@ -528,6 +574,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *
      * @return (String) the name of the bugemon.
      */
+    @Override
     public String getName() {
         return this.name;
     }
@@ -571,9 +618,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
                 this.state.initiative = this.state.initiative + value;
                 break;
             default:
-                throw new KeyException(
-                    "Invalid stat key when trying to edit stat value"
-                );
+                throw new KeyException("Invalid stat key when trying to edit stat value");
         }
     }
 
@@ -645,5 +690,90 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     public void reset() {
         this.state = new State(this.initialState);
+    }
+
+    @Override
+    public int getLevel() {
+        return this.state.level;
+    }
+
+    /**
+     * Restore the bugemon's HP to its initial value, without affecting other stats.
+     */
+    public void restoreHp() {
+        this.state.hp = this.initialState.hp;
+    }
+
+    /**
+     * Get the experience points (XP) of the bugemon.
+     *
+     * @return (int) the current experience points of the bugemon.
+     */
+    public int getXp() {
+        return this.state.xp;
+    }
+
+    /**
+     * Add experience points (XP) to the bugemon and check if it should level up.
+     *
+     * @param xp the amount of XP to add to the bugemon's current XP total.
+     */
+    public Optional<LevelUp> addXp(int xp) {
+        this.state.xp += xp;
+        
+        switch (this.state.level) {
+            case 1 -> {
+                if (this.state.xp >= 50){
+                    return Optional.of(this.levelUp());
+                }
+            }
+            case 2 -> {
+                if (this.state.xp >= 150){
+                    return Optional.of(this.levelUp());
+                }
+            }
+            case 3 -> {
+                if (this.state.xp >= 250){
+                    return Optional.of(this.levelUp());
+                }
+            }
+            case 4 -> {
+                if (this.state.xp >= 350){
+                    return Optional.of(this.levelUp());
+                }
+            }
+            default -> {
+                int required_xp = 50 + 50 * (this.state.level-1);
+                if (this.state.xp >= required_xp){
+                    return Optional.of(this.levelUp());
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Level up the bugemon, increasing its level by 1.
+     */
+    public LevelUp levelUp() {
+        this.state.xp = 0;
+        this.state.level += 1;
+        this.restoreHp();
+        return new LevelUp(this);
+    }
+
+    public void applyChoice(Choice choice){
+        this.state.hp += choice.getBonusHP();
+        this.state.attack += choice.getBonusAttack();
+        this.state.defense += choice.getBonusDefense();
+        this.state.initiative += choice.getBonusInitiative();
+    }
+
+    public boolean getParticipation() {
+        return this.state.participatedLastFight;
+    }
+
+    public void setParticipation(boolean participated) {
+        this.state.participatedLastFight = participated;
     }
 }

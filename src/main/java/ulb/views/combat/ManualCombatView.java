@@ -15,15 +15,14 @@ import ulb.models.bugemon.Attack;
  * and injected via FXML.
  */
 public class ManualCombatView extends CombatView {
-
     private ManualCombatController controller;
 
-    private MainActionMenu         mainActionMenu;
-    private AttackActionMenu       attackActionMenu;
+    private MainActionMenu mainActionMenu;
+    private AttackActionMenu attackActionMenu;
 
     /**
      * Constructor for ManualCombatView.
-     * @throws IOException 
+     * @throws IOException
      */
     public ManualCombatView() throws IOException {
         super();
@@ -58,13 +57,16 @@ public class ManualCombatView extends CombatView {
      * show the attack menu.
      */
     public void showAttackMenu(List<Attack> attackNames) {
-        this.attackActionMenu.setAttacks(attackNames.get(0), attackNames.get(1), attackNames.get(2));
+        this.attackActionMenu.setAttacks(attackNames.get(0), attackNames.get(1),
+                                         attackNames.get(2));
         this.actionMenuView.getChildren().setAll(attackActionMenu);
     }
 
     /**
-     * show the switch menu, which is the bugemon team view. The player can click on a bugemon to switch to it.
-     * @param bugemonList the list of bugemons in the player's team to be displayed in the switch menu
+     * show the switch menu, which is the bugemon team view. The player can click on a bugemon to
+     * switch to it.
+     * @param bugemonList the list of bugemons in the player's team to be displayed in the switch
+     *         menu
      */
     public void showSwitchMenu(List<BugemonDTO> bugemonList) {
         this.bugemonTeamPane.setVisible(true);

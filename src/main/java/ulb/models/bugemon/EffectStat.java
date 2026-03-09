@@ -36,8 +36,7 @@ public enum EffectStat {
      *
      * <p>JSON value: {@code "pv"}</p>
      */
-    @SerializedName("pv")
-    HP,
+    @SerializedName("pv") HP,
 
     /**
      * Represents the attack stat of a {@link Bugemon}.
@@ -50,8 +49,7 @@ public enum EffectStat {
      *
      * <p>JSON value: {@code "attaque"}</p>
      */
-    @SerializedName("attaque")
-    ATTACK,
+    @SerializedName("attaque") ATTACK,
 
     /**
      * Represents the defense stat of a {@link Bugemon}.
@@ -64,8 +62,7 @@ public enum EffectStat {
      *
      * <p>JSON value: {@code "defense"}</p>
      */
-    @SerializedName("defense")
-    DEFENSE,
+    @SerializedName("defense") DEFENSE,
 
     /**
      * Represents the initiative stat of a {@link Bugemon}.
@@ -80,6 +77,5 @@ public enum EffectStat {
      *
      * <p>JSON value: {@code "initiative"}</p>
      */
-    @SerializedName("initiative")
-    INITIATIVE,
+    @SerializedName("initiative") INITIATIVE,
 }

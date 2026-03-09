@@ -12,8 +12,8 @@ import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
-import ulb.models.trainer.Trainer;
 import ulb.models.trainer.ManualTrainer.TAction;
+import ulb.models.trainer.Trainer;
 import ulb.views.combat.ManualCombatView;
 
 /**
@@ -52,7 +52,6 @@ import ulb.views.combat.ManualCombatView;
  * @see ManualCombatView
  */
 public class ManualCombatController extends CombatController<ManualCombatView> {
-
     private ManualCombat combat;
     private ManualTrainer player;
     private AutoTrainer opponent;
@@ -76,8 +75,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @throws IOException if the {@link ManualCombatView} fails to load its FXML
      *                     resource.
      */
-    public ManualCombatController(MetaController metaController)
-        throws IOException {
+    public ManualCombatController(MetaController metaController) throws IOException {
         super(metaController, new ManualCombatView());
         this.view.setController(this);
     }
@@ -122,7 +120,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public void runManuelCombat(final ManualTrainer player) {
         this.player = player;
-        this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+        this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(
+                metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         this.combat = new ManualCombat(player, opponent);
         this.view.showScreenDebutCombat();
         updateCombatView(player, opponent, null);
@@ -168,10 +167,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public void showSwitchMenu() {
         // TODO: change that
-        List<BugemonDTO> bugemonList = this.player.getTeam().stream()
-            .filter(Bugemon::isAlive)
-            .map(b -> (BugemonDTO) b)
-            .toList();
+        List<BugemonDTO> bugemonList = this.player.getTeam()
+                                               .stream()
+                                               .filter(Bugemon::isAlive)
+                                               .map(b -> (BugemonDTO)b)
+                                               .toList();
         this.view.showSwitchMenu(bugemonList);
         this.view.hideAllActionMenus();
     }
@@ -192,7 +192,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         updateCombatView(this.player, this.opponent, attack);
         if (winner != null) {
             handleCombatResult(winner, player);
-        } if (!this.player.isCurrentBugemonAlive()) {
+        }
+        if (!this.player.isCurrentBugemonAlive()) {
             showSwitchMenu();
         }
     }
@@ -213,8 +214,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.view.showMainActionMenu();
     }
 
-    public BType getOpponentBugemonType(){
-        return this.opponent.getCurrentBugemonType();  
+    public BType getOpponentBugemonType() {
+        return this.opponent.getCurrentBugemonType();
     }
-
 }
