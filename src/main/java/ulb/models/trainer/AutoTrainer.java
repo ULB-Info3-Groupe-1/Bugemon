@@ -9,7 +9,6 @@
 
 package ulb.models.trainer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import ulb.models.bugemon.Attack;

@@ -32,7 +32,8 @@ public class MetaController {
     public enum Window {
         MAIN_MENU,
         CREATE_TEAM,
-        COMBAT,
+        MANUAL_COMBAT,
+        AUTOMATIC_COMBAT,
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
     }
@@ -81,7 +82,9 @@ public class MetaController {
                 this.mainMenuController.show(this.stage);
             case CREATE_TEAM ->
                 this.createTeamController.show(this.stage);
-            case COMBAT ->
+            case AUTOMATIC_COMBAT ->
+                this.automaticCombatController.show(stage);
+            case MANUAL_COMBAT ->
                 this.manualCombatController.show(this.stage);
             case COMBAT_VICTORY ->
                 this.combatVictoryController.show(this.stage);
@@ -120,8 +123,8 @@ public class MetaController {
             showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
         }
         else {
+            switchTo(Window.AUTOMATIC_COMBAT);
             this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
-            switchTo(Window.COMBAT);
         }
     }
 
@@ -133,8 +136,8 @@ public class MetaController {
             showAlert("Team Incomplete", "Please select at least one Bugemon to start a combat.");
         }
         else {
+            switchTo(Window.MANUAL_COMBAT);
             this.manualCombatController.runManuelCombat(new ManualTrainer(this.playerTeam));
-            switchTo(Window.COMBAT);
         }
     }
 

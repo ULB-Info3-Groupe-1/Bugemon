@@ -27,6 +27,7 @@ public class ManualCombatView extends CombatView {
         super();
         this.mainActionMenu = new MainActionMenu();
         this.attackActionMenu = new AttackActionMenu();
+        this.initCombatMode();
     }
 
     @Override

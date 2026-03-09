@@ -66,9 +66,7 @@ public class TestBugemon {
     @Test
     public void testCorrectPathSprite() {
         Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
-
         String path = bugemon.getSpriteURL();
-        System.out.println("Testing sprite path: " + path);
         URL resource = getClass().getResource(path);
         assertNotNull(resource, "The sprite file has not been found");
     }

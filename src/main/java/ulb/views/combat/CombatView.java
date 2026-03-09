@@ -52,7 +52,7 @@ public abstract class CombatView extends View {
     /**
      * Initialize the combat mode for this view.
      */
-    public abstract void initCombatMode();
+    protected abstract void initCombatMode();
 
     /**
      * Show a dialog in the dialog zone with the given text and additional info.
