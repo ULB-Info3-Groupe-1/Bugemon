@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.utils.TestUtilsBugemons;
@@ -17,13 +16,10 @@ public class TestLevelUp {
 
     private Bugemon bugemon;
 
-    @BeforeEach
-    public void setUp() {
-        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
-    }
-
     @Test
     public void testLevelUpRestoresMaxHP() {
+        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+
         bugemon.takeDamage(40);
         assertEquals(60, bugemon.getHp());
 
@@ -35,6 +31,8 @@ public class TestLevelUp {
 
     @Test
     public void testLevelUpGeneratesThreeChoices() {
+        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+
         LevelUp levelUp = bugemon.levelUp();
         List<Choice> choices = levelUp.getChoices();
 
@@ -44,6 +42,8 @@ public class TestLevelUp {
 
     @Test
     public void testChoicesTotalTenPoints() {
+        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+
         LevelUp levelUp = new LevelUp(bugemon);
         List<Choice> choices = levelUp.getChoices();
 
@@ -66,15 +66,20 @@ public class TestLevelUp {
 
     @Test
     public void testBugemonExperienceAndLevelProperties() {
+        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+
         assertEquals(1, bugemon.getLevel());
         assertEquals(0, bugemon.getXp());
 
-        bugemon.addXp(50);
-        assertEquals(50, bugemon.getXp());
+        bugemon.addXp(49);
+        assertEquals(49, bugemon.getXp());
+
+        bugemon.addXp(1);
+        assertEquals(0, bugemon.getXp());
         assertEquals(2, bugemon.getLevel());
 
         bugemon.addXp(150);
-        assertEquals(150, bugemon.getXp());
+        assertEquals(0, bugemon.getXp());
         assertEquals(3, bugemon.getLevel());
     }
 }
