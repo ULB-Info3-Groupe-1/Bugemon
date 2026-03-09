@@ -134,19 +134,20 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void playerAttack(Attack attack) {
         try {
             Bugemon enemyBugemon = this.opponent.getCurrentBugemon().clone();
-        
+
             this.player.selectAttack(attack);
             this.player.selectAction(TAction.ATTACK);
             Trainer winner = this.combat.turn();
             // this.view.showDialog(attack.getName().toString(), null);
-            if (enemyBugemon.getId() !=  this.opponent.getCurrentBugemon().getId()){
+            if (enemyBugemon.getId() != this.opponent.getCurrentBugemon().getId()) {
                 this.view.hideDialog();
                 attack = null;
             }
             handlePlayerTurn(winner, attack);
 
         } catch (CloneNotSupportedException e) {
-            System.err.println("Error cloning opponent's Bugemon for attack display: " + e.getMessage());
+            System.err.println("Error cloning opponent's Bugemon for attack display: "
+                               + e.getMessage());
             e.printStackTrace();
         }
     }

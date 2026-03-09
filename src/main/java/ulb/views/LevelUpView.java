@@ -2,12 +2,12 @@ package ulb.views;
 
 import java.io.IOException;
 import java.util.List;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import ulb.common.BugemonDTO;
 import ulb.common.LevelUpDTO;
 import ulb.controllers.LevelUpController;
@@ -19,17 +19,11 @@ import ulb.models.level_up.Choice;
  * View for the level up screen.
  */
 public class LevelUpView extends View {
-
-    @FXML
-    private Label levelUpText;
-    @FXML
-    private Button choice1Button;
-    @FXML
-    private Button choice2Button;
-    @FXML
-    private Button choice3Button;
-    @FXML
-    private ImageView bugemonImage;
+    @FXML private Label levelUpText;
+    @FXML private Button choice1Button;
+    @FXML private Button choice2Button;
+    @FXML private Button choice3Button;
+    @FXML private ImageView bugemonImage;
 
     private LevelUpController controller;
 
@@ -70,5 +64,4 @@ public class LevelUpView extends View {
     public void setController(LevelUpController controller) {
         this.controller = controller;
     }
-
 }

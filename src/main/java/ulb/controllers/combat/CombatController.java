@@ -1,19 +1,19 @@
 package ulb.controllers.combat;
 
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.views.combat.CombatView;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.combat.CombatHelper;
-import ulb.models.trainer.AutoTrainer;
 import ulb.models.level_up.LevelUp;
+import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.views.combat.CombatView;
 
 public abstract class CombatController<View extends CombatView> extends Controller<View> {
     /**
@@ -65,11 +65,9 @@ public abstract class CombatController<View extends CombatView> extends Controll
         List<LevelUp> levelUps = new ArrayList<>();
         if (winner == player) {
             int xp = CombatHelper.calculateXP(winner, player);
-            winner.getTeam().stream()
-                .filter(b -> b.getParticipation())
-                .forEach(b -> {
-                    b.addXp(xp).ifPresent(lvlup -> levelUps.add(lvlup));
-                });
+            winner.getTeam().stream().filter(b -> b.getParticipation()).forEach(b -> {
+                b.addXp(xp).ifPresent(lvlup -> levelUps.add(lvlup));
+            });
             this.metaController.setLevelUp(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
@@ -87,9 +85,11 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
         if (attack != null) {
-            if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType()).equals(AttackEfficiency.EFFICIENT)) {
+            if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType())
+                        .equals(AttackEfficiency.EFFICIENT)) {
                 this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
-            } else if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType()).equals(AttackEfficiency.INFERIOR)){
+            } else if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType())
+                               .equals(AttackEfficiency.INFERIOR)) {
                 this.view.showDialog("Peu d'effet ...", null);
             } else {
                 this.view.showDialog("Dégats standards", null);

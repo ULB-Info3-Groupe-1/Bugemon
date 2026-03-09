@@ -19,9 +19,7 @@ import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
 import ulb.utils.TestUtilsBugemons;
 
-
 public class TestLevelUp {
-
     private Bugemon bugemon;
 
     @Test
@@ -56,19 +54,21 @@ public class TestLevelUp {
         List<Choice> choices = levelUp.getChoices();
 
         for (Choice choice : choices) {
-            // 1 point is worth 2 HP or 1 Initiative, while Attack and Defense are worth 1 point each
+            // 1 point is worth 2 HP or 1 Initiative, while Attack and Defense are worth 1 point
+            // each
             int pointsHp = choice.getBonusHP() / 2;
             int pointsAttack = choice.getBonusAttack();
             int pointsDefense = choice.getBonusDefense();
             int pointsInitiative = choice.getBonusInitiative() / 2;
-            
+
             int totalPoints = pointsHp + pointsAttack + pointsDefense + pointsInitiative;
-            
+
             assertEquals(10, totalPoints);
-            
+
             assertTrue(choice.getBonusHP() % 2 == 0);
             assertTrue(choice.getBonusInitiative() % 2 == 0);
-            assertTrue(choice.getBonusHP() >= 0 && choice.getBonusAttack() >= 0 && choice.getBonusDefense() >= 0 && choice.getBonusInitiative() >= 0);
+            assertTrue(choice.getBonusHP() >= 0 && choice.getBonusAttack() >= 0
+                       && choice.getBonusDefense() >= 0 && choice.getBonusInitiative() >= 0);
         }
     }
 
@@ -91,4 +91,3 @@ public class TestLevelUp {
         assertEquals(3, bugemon.getLevel());
     }
 }
-

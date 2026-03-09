@@ -9,7 +9,6 @@ import ulb.models.level_up.LevelUp;
 import ulb.views.LevelUpView;
 
 public class LevelUpController extends Controller<LevelUpView> {
-
     List<LevelUp> levelUps;
     int currentIdx;
 
@@ -40,14 +39,13 @@ public class LevelUpController extends Controller<LevelUpView> {
         }
     }
 
-    public void cont(){
+    public void cont() {
         this.currentIdx++;
         if (this.currentIdx < this.levelUps.size()) {
             this.view.setLevelUp(this.levelUps.get(this.currentIdx));
         } else {
             this.metaController.switchTo(Window.COMBAT_VICTORY);
-            //TODO: see with client, this.metaController.resetTeam();
+            // TODO: see with client, this.metaController.resetTeam();
         }
     }
-
 }
