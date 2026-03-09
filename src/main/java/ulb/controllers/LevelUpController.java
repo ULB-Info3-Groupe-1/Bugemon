@@ -3,9 +3,7 @@ package ulb.controllers;
 import java.io.IOException;
 import java.util.List;
 
-import ulb.common.LevelUpDTO;
 import ulb.controllers.MetaController.Window;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;
 import ulb.views.LevelUpView;
