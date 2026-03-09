@@ -94,6 +94,14 @@ public class ManualCombatView extends CombatView {
         this.actionMenuView.getChildren().clear();
     }
 
+    /**
+     * Show the screen of the combat debut, which is the main action menu and hide the switch panel
+     */
+    public void showScreenDebutCombat() {
+        showMainActionMenu();
+        hideSwitchPanel();
+    }
+
     public void showItemPanel() {
         // TODO:
     }

@@ -40,7 +40,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.player = player;
         this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(metaController.getAllBugemonsAvailable(), player.getTeamSize()));
         this.combat = new ManualCombat(player, opponent);
-        showMainActionMenu();
+        this.view.showScreenDebutCombat();
         updateCombatView(player, opponent);
     }
 
@@ -76,6 +76,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             .map(b -> (BugemonDTO) b)
             .toList();
         this.view.showSwitchMenu(bugemonList);
+        this.view.hideAllActionMenus();
     }
 
     /**
@@ -96,7 +97,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             handleCombatResult(winner, player);
         } if (!this.player.isCurrentBugemonAlive()) {
             showSwitchMenu();
-            this.view.hideAllActionMenus();
         }
     }
 
@@ -104,6 +104,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Show the attack menu to the player with the list of available attacks
      */
     public void showAttackMenu() {
+        this.view.hideSwitchPanel();
         this.view.showAttackMenu(this.player.getCurrentBugemonAttackList());
     }
 
@@ -111,6 +112,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Show the main action menu to the player (Attack, Switch, Surrender)
      */
     public void showMainActionMenu() {
+        this.view.hideSwitchPanel();
         this.view.showMainActionMenu();
     }
 
