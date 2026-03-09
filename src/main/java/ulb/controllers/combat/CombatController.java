@@ -6,6 +6,7 @@ import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.views.combat.CombatView;
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
@@ -76,9 +77,20 @@ public abstract class CombatController<View extends CombatView> extends Controll
      * @param player the player trainer whose bugemon is being updated in the view
      * @param opponent the opponent trainer whose bugemon is being updated in the view
      */
-    public void updateCombatView(Trainer player, AutoTrainer opponent) {
+    public void updateCombatView(Trainer player, AutoTrainer opponent, Attack attack) {
+        this.view.hideDialog();
         this.view.updateTrainerBugemon(player.getCurrentBugemon());
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
+
+        if (attack != null) {
+            if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType()).equals(AttackEfficiency.EFFICIENT)) {
+                this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
+            } else if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType()).equals(AttackEfficiency.INFERIOR)){
+                this.view.showDialog("Peu d'effet ...", null);
+            } else {
+                this.view.showDialog("Dégats standards", null);
+            }
+        }
     }
 
     /**
