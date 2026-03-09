@@ -21,7 +21,6 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Effect;
 import ulb.models.bugemon.EffectStat;
 import ulb.models.bugemon.EffectTarget;
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 
 /**

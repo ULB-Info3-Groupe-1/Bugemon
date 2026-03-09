@@ -29,7 +29,7 @@ public class AllBugemonsGridView extends VBox {
     private static final double IMAGE_SIZE = 96;
 
     private Function<BugemonDTO, Boolean> selectionChecker;
-    private Consumer<BugemonDTO> setOnBugemonClicked;
+    private Consumer<BugemonDTO> onBugemonClicked;
 
     /**
      * Constructor of the AllBugemonsGridView class. It loads the FXML layout and initializes the view.
@@ -63,7 +63,7 @@ public class AllBugemonsGridView extends VBox {
      * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is clicked, receiving the BugemonDTO of the clicked cell
      */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
-        this.setOnBugemonClicked = callback;
+        this.onBugemonClicked = callback;
     }
 
     /**
@@ -119,11 +119,11 @@ public class AllBugemonsGridView extends VBox {
             unselect(cell);
         }
 
-        if (this.setOnBugemonClicked != null) {
+        if (this.onBugemonClicked != null) {
             cell.setOnMouseClicked(e -> {
                 BugemonDTO dto = (BugemonDTO) cell.getUserData();
                 if (dto != null) {
-                    this.setOnBugemonClicked.accept(dto);
+                    this.onBugemonClicked.accept(dto);
                 }
             });
         }

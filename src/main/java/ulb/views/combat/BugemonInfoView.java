@@ -52,7 +52,6 @@ public class BugemonInfoView extends VBox {
         this.bugemonName.getStyleClass().add(bugemon.getType().toString());
         this.bugemonName.setText(bugemon.getName());
         this.bugemonType.setText("(" + bugemon.getType().toString() + ")");
-        
-        this.bugemonHPBar.setProgress((double) bugemon.getHp() / 100); // TODO: need the ratio of current HP to max HP...
+        this.bugemonHPBar.setProgress((double) bugemon.getHp() / bugemon.getMaxHp());
     }
 }

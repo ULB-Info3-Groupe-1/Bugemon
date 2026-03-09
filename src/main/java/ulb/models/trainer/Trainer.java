@@ -12,6 +12,7 @@ package ulb.models.trainer;
 import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
@@ -138,5 +139,21 @@ public class Trainer {
      */
     public int getTeamSize() {
         return team.size();
+    }
+
+    /**
+     * Returns the bugemon with the specified ID from the team of the trainer.
+     */
+    public Bugemon getBugemonById(String bugemonId) {
+        // TODO: is this correct usage of optional ?
+        return this.team.getBugemon(bugemonId).get();
+    }
+
+    /**
+     * Returns the type of the current bugemon in the team of the trainer.
+     * @return (BType) the type of the current bugemon in the team of the trainer.
+     */
+    public BType getCurrentBugemonType() {
+        return this.currentBugemon.getType();
     }
 }

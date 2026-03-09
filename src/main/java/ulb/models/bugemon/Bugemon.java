@@ -91,6 +91,9 @@ public class Bugemon implements BugemonDTO, Cloneable {
         /** Initiative value determining turn order in combat. */
         private int initiative;
 
+        /** Maximum hit points of the bugemon. (At the start of a battle) */
+        private int maxHp;
+
         /**
          * Constructs a new {@code State} with the given stat values.
          *
@@ -104,6 +107,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.attack = attack;
             this.defense = defense;
             this.initiative = initiative;
+            this.maxHp = hp;
         }
 
         /**
@@ -118,6 +122,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
             this.attack = other.attack;
             this.defense = other.defense;
             this.initiative = other.initiative;
+            this.maxHp = other.maxHp;
         }
     }
 
@@ -588,6 +593,14 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     public int getHp() {
         return this.state.hp;
+    }
+
+    /**
+     * Get the maximum hit points of the bugemon (at the start of a battle).
+     * @return (int) the maximum hit points of the bugemon.
+     */
+    public int getMaxHp() {
+        return this.state.maxHp;
     }
 
     /**

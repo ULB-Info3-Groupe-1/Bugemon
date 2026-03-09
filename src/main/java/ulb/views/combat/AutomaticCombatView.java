@@ -2,13 +2,11 @@ package ulb.views.combat;
 
 import java.io.IOException;
 
-import ulb.controllers.combat.AutomaticCombatController;
-
 public class AutomaticCombatView extends CombatView {
-    private AutomaticCombatController controller;
 
     public AutomaticCombatView() throws IOException {
         super();
+        this.initCombatMode();
     }
 
     /**
@@ -21,13 +19,5 @@ public class AutomaticCombatView extends CombatView {
         this.actionMenuView.setManaged(false);
         this.bugemonTeamPane.setVisible(false);
         this.bugemonTeamPane.setManaged(false);   
-    }
-
-    /**
-     * Set the controller for this view.
-     * @param controller
-     */
-    public void setController(AutomaticCombatController controller) {
-        this.controller = controller;
     }
 }
