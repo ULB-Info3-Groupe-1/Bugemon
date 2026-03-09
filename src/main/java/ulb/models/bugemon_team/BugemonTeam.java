@@ -128,24 +128,6 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
     }
 
     /**
-     * Returns the Bugemon at the specified index in the team array
-     *
-     * @param index (int) the index of the Bugemon to be returned
-     * @return (Bugemon) the Bugemon at the specified index
-     */
-    public Bugemon get(int index) {
-        if (index < 0 || index >= MAX_SIZE) {
-            throw new IndexOutOfBoundsException(
-                "Index " +
-                    index +
-                    " is out of bounds for team of size " +
-                    MAX_SIZE
-            );
-        }
-        return this.team.get(index);
-    }
-
-    /**
      * Checks if a Bugemon with the same ID is already in the team
      *
      * @param bugemon (Bugemon) the Bugemon to search for
@@ -177,5 +159,12 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      */
     public void reset() {
         this.team.forEach(Bugemon::reset);
+    }
+
+    /**
+     * Returns the first bugemon in the team.
+     */
+    public Bugemon getFirst() {
+        return this.team.getFirst();
     }
 }

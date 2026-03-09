@@ -34,7 +34,7 @@ public class Trainer {
      */
     public Trainer(BugemonTeam team) {
         this.team = team;
-        this.currentBugemon = team.get(0);
+        this.currentBugemon = team.getFirst();
     }
 
     // Methods
