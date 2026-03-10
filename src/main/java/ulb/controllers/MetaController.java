@@ -161,17 +161,17 @@ public class MetaController {
      *
      * <p>
      * In a manual combat the player selects their action each turn via the UI;
-     * see {@link ManualCombatController#runManuelCombat(ManualTrainer)} for
+     * see {@link ManualCombatController#runManualCombat(ManualTrainer)} for
      * details.
      * </p>
      */
-    public void launchManuelCombat() {
+    public void launchManualCombat() {
         if (this.playerTeam.isEmpty()) {
             showAlert("Équipe incomplète", "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
         }
         else {
             switchTo(Window.MANUAL_COMBAT);
-            this.manualCombatController.runManuelCombat(new ManualTrainer(this.playerTeam));
+            this.manualCombatController.runManualCombat(new ManualTrainer(this.playerTeam));
         }
     }
 

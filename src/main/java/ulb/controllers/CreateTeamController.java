@@ -28,7 +28,7 @@ import ulb.views.CreateTeamView;
  * <p>
  * Once satisfied with their team composition, the player can start either an
  * automatic combat (via {@link #startAutoCombat()}) or a manual combat (via
- * {@link #startManuelCombat()}), both of which delegate to the
+ * {@link #startManualCombat()}), both of which delegate to the
  * {@link MetaController}.
  * </p>
  *
@@ -149,13 +149,13 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * Callback invoked when the player requests to start a manual combat.
      *
      * <p>
-     * Delegates to {@link MetaController#launchManuelCombat()}, which validates
+     * Delegates to {@link MetaController#launchManualCombat()}, which validates
      * that the team is non-empty, builds the opponent team, and navigates to
      * the combat screen.
      * </p>
      */
-    public void startManuelCombat() {
-        this.metaController.launchManuelCombat();
+    public void startManualCombat() {
+        this.metaController.launchManualCombat();
     }
 
     /**

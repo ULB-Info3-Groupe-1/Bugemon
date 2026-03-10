@@ -118,7 +118,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @param player the {@link ManualTrainer} representing the player's side;
      *               must not be {@code null} and must have a non-empty team.
      */
-    public void runManuelCombat(final ManualTrainer player) {
+    public void runManualCombat(final ManualTrainer player) {
         this.player = player;
         this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(
                 metaController.getAllBugemonsAvailable(), player.getTeamSize()));
