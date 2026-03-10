@@ -1,4 +1,4 @@
-image: maven:4.0.0-rc-5-ibm-semeru-25-noble
+image: image: maven:3.9.9-eclipse-temurin-21
 
 stages:
   - test
@@ -17,6 +17,11 @@ test:
   stage: test
   script:
     - mvn clean test
+  artifacts:
+    paths:
+      - target/surefire-reports/
+    expire_in: 7 days
+    when: always
 
 # Create a jar package only on the main branch (useful to give a .jar to the client)
 package:

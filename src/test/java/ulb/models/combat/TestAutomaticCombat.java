@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import ulb.models.trainer.AutoTrainer;
-import ulb.utils.TestUtilsTrainer;
+import ulb.utils.test.TestUtilsTrainer;
 
 public class TestAutomaticCombat {
     @Test

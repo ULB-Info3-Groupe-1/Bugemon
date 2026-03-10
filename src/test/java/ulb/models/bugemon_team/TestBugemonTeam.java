@@ -23,7 +23,7 @@ import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 import ulb.utils.Parser;
-import ulb.utils.TestUtilsBugemons;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemonTeam {
     @Test

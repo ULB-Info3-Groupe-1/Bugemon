@@ -29,11 +29,16 @@ public class TestParser {
         assertNotNull(attackList);
 
         // check if the attacks were parsed correctly
-        assertEquals(attackList.get(0).getId(), "fouet_liane");
-        assertEquals(attackList.get(1).getType(), Bugemon.BType.FLORA);
+        Attack fouetLiane = attackList.stream()
+                .filter(a -> "fouet_liane".equals(a.getId()))
+                .findFirst().orElseThrow();
+        assertEquals("fouet_liane", fouetLiane.getId());
 
         // check effects
-        List<Effect> effects = attackList.get(2).getEffects();
+        Attack racinesVives = attackList.stream()
+                .filter(a -> "racines_vives".equals(a.getId()))
+                .findFirst().orElseThrow();
+        List<Effect> effects = racinesVives.getEffects();
         assertEquals(effects.get(0).getTypeEffect(), EffectType.STAT_MODIFIER);
         assertEquals(effects.get(0).getModifier(), 5);
         assertEquals(effects.get(0).getStat(), EffectStat.DEFENSE);
@@ -56,27 +61,38 @@ public class TestParser {
         assertNotNull(bugemonsList);
 
         // check attributes
-        assertEquals(bugemonsList.get(0).getName(), "Florachu");
-        assertEquals(bugemonsList.get(1).getType(), Bugemon.BType.FLORA);
+        Bugemon florachu = bugemonsList.stream()
+                .filter(b -> "Florachu".equals(b.getName()))
+                .findFirst().orElseThrow();
+        assertEquals(florachu.getName(), "Florachu");
+
+        Bugemon moussil = bugemonsList.stream()
+                .filter(b -> "Moussil".equals(b.getName()))
+                .findFirst().orElseThrow();
+        assertEquals(moussil.getType(), Bugemon.BType.FLORA);
 
         // check sprite URL begins with "png/"
-        assertEquals(bugemonsList.get(0).getSpriteURL(), "png/florachu.png");
+        assertEquals(florachu.getSpriteURL(), "png/florachu.png");
 
         // check attacks
-        Bugemon bugemon2 = bugemonsList.get(2);
-        List<Attack> bugemon2AttackList = bugemon2.getAttackList();
+        Bugemon verdurion = bugemonsList.stream()
+                .filter(b -> "Verdurion".equals(b.getName()))
+                .findFirst().orElseThrow();
+        List<Attack> verdurionAttackList = verdurion.getAttackList();
 
-        for (Attack a : bugemon2AttackList) {
-            assertEquals(a, attackList.get(attackList.indexOf(a)));
+        for (Attack a : verdurionAttackList) {
+            assertEquals(a, attacksMap.get(a.getId()));
         }
 
         // check stats
-        Bugemon bugemon3 = bugemonsList.get(3);
+        Bugemon loopine = bugemonsList.stream()
+                .filter(b -> "Loopine".equals(b.getName()))
+                .findFirst().orElseThrow();
 
-        assertEquals(bugemon3.getAttack(), 50);
-        assertEquals(bugemon3.getHp(), 85);
-        assertEquals(bugemon3.getDefense(), 50);
-        assertEquals(bugemon3.getInitiative(), 60);
+        assertEquals(loopine.getAttack(), 50);
+        assertEquals(loopine.getHp(), 85);
+        assertEquals(loopine.getDefense(), 50);
+        assertEquals(loopine.getInitiative(), 60);
     }
 
     @Test
@@ -101,7 +117,14 @@ public class TestParser {
 
         // check bugemons
         List<Bugemon> bugemons = result.getBugemonsList();
-        assertEquals("Florachu", bugemons.get(0).getName());
-        assertEquals(Bugemon.BType.FLORA, bugemons.get(1).getType());
+        Bugemon florachu = bugemons.stream()
+                .filter(b -> "Florachu".equals(b.getName()))
+                .findFirst().orElseThrow();
+        assertEquals("Florachu", florachu.getName());
+
+        Bugemon moussil = bugemons.stream()
+                .filter(b -> "Moussil".equals(b.getName()))
+                .findFirst().orElseThrow();
+        assertEquals(Bugemon.BType.FLORA, moussil.getType());
     }
 }

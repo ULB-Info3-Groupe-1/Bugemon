@@ -24,7 +24,7 @@ import ulb.models.bugemon.EffectStat;
 import ulb.models.bugemon.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
-import ulb.utils.TestUtilsBugemons;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestEffectManager {
     @Test

@@ -19,7 +19,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import ulb.utils.TestUtilsBugemons;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemon {
     @Test
