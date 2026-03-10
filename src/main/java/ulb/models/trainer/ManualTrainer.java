@@ -56,7 +56,7 @@ public class ManualTrainer extends Trainer {
      * </ul>
      * </p>
      */
-    public static enum TAction {
+    public enum TAction {
         /** Use the currently selected {@link Attack} against the opponent. */
         ATTACK,
 

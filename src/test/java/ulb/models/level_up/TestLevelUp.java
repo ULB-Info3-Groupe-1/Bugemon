@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.utils.TestUtilsBugemons;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestLevelUp {
     private Bugemon bugemon;

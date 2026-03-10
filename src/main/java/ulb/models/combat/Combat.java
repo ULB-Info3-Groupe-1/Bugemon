@@ -44,13 +44,13 @@ public class Combat {
     // Attributes
 
     /** The allied (player-side) trainer participating in this combat. */
-    protected Trainer allyTrainer;
+    private Trainer allyTrainer;
 
     /** The adversary (opponent-side) trainer participating in this combat. */
-    protected Trainer adversaryTrainer;
+    private Trainer adversaryTrainer;
 
     /** The current turn number, starting at {@code 0}. */
-    protected int turn;
+    private int turn;
 
     // Constructor
 

@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.TestUtilsBugemonTeam;
+import ulb.utils.test.TestUtilsBugemonTeam;
 
 public class TestTrainer {
     @Test
