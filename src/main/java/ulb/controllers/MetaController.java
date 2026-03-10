@@ -81,39 +81,26 @@ public class MetaController {
      */
     public final void switchTo(Window window) {
         switch (window) {
-            case MAIN_MENU ->
-                this.mainMenuController.show(this.stage);
-            case CREATE_TEAM ->
-                this.createTeamController.show(this.stage);
-            case AUTOMATIC_COMBAT ->
-                this.automaticCombatController.show(stage);
-            case MANUAL_COMBAT ->
-                this.manualCombatController.show(this.stage);
-            case COMBAT_VICTORY ->
-                this.combatVictoryController.show(this.stage);
-            case COMBAT_DEFEAT ->
-                this.combatDefeatController.show(this.stage);
-            case LEVEL_UP ->
-                this.levelUpController.show(this.stage);
-            default ->
-                throw new IllegalArgumentException("Invalid window");
+            case MAIN_MENU -> this.mainMenuController.show(this.stage);
+            case CREATE_TEAM -> this.createTeamController.show(this.stage);
+            case AUTOMATIC_COMBAT -> this.automaticCombatController.show(stage);
+            case MANUAL_COMBAT -> this.manualCombatController.show(this.stage);
+            case COMBAT_VICTORY -> this.combatVictoryController.show(this.stage);
+            case COMBAT_DEFEAT -> this.combatDefeatController.show(this.stage);
+            case LEVEL_UP -> this.levelUpController.show(this.stage);
+            default -> throw new IllegalArgumentException("Invalid window");
         }
     }
 
     /**
      * Loads and parses the game data from JSON resource files.
      * @return a Parser.ParseResult containing the maps of attacks and the list of Bugemons
-     * @throws IOException if the JSON directory is missing or if an error occurs during path conversion or file reading
+     * @throws IOException if the JSON directory is missing or if an error occurs during path
+     *         conversion or file reading
      */
     private Parser.ParseResult loadResources() throws IOException {
-        try (
-            InputStream attacksStream = getClass().getResourceAsStream(
-                JSON_ATTACK_PATH
-            );
-            InputStream bugemonsStream = getClass().getResourceAsStream(
-                JSON_BUGEMON_PATH
-            );
-        ) {
+        try (InputStream attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
+             InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);) {
             if (attacksStream == null || bugemonsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }
@@ -140,9 +127,9 @@ public class MetaController {
      */
     public void launchAutoCombat() {
         if (this.playerTeam.isEmpty()) {
-            showAlert("Équipe incomplète", "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        }
-        else {
+            showAlert("Équipe incomplète",
+                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+        } else {
             switchTo(Window.AUTOMATIC_COMBAT);
             this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
         }
@@ -167,9 +154,9 @@ public class MetaController {
      */
     public void launchManualCombat() {
         if (this.playerTeam.isEmpty()) {
-            showAlert("Équipe incomplète", "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        }
-        else {
+            showAlert("Équipe incomplète",
+                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+        } else {
             switchTo(Window.MANUAL_COMBAT);
             this.manualCombatController.runManualCombat(new ManualTrainer(this.playerTeam));
         }

@@ -716,28 +716,28 @@ public class Bugemon implements BugemonDTO, Cloneable {
 
         switch (this.state.level) {
             case 1 -> {
-                if (this.state.xp >= 50){
+                if (this.state.xp >= 50) {
                     return Optional.of(this.levelUp());
                 }
             }
             case 2 -> {
-                if (this.state.xp >= 150){
+                if (this.state.xp >= 150) {
                     return Optional.of(this.levelUp());
                 }
             }
             case 3 -> {
-                if (this.state.xp >= 250){
+                if (this.state.xp >= 250) {
                     return Optional.of(this.levelUp());
                 }
             }
             case 4 -> {
-                if (this.state.xp >= 350){
+                if (this.state.xp >= 350) {
                     return Optional.of(this.levelUp());
                 }
             }
             default -> {
-                int requiredXp = 50 + 50 * (this.state.level-1);
-                if (this.state.xp >= requiredXp){
+                int requiredXp = 50 + 50 * (this.state.level - 1);
+                if (this.state.xp >= requiredXp) {
                     return Optional.of(this.levelUp());
                 }
             }
@@ -755,7 +755,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
         return new LevelUp(this);
     }
 
-    public void applyChoice(Choice choice){
+    public void applyChoice(Choice choice) {
         this.state.hp += choice.getBonusHP();
         this.state.attack += choice.getBonusAttack();
         this.state.defense += choice.getBonusDefense();

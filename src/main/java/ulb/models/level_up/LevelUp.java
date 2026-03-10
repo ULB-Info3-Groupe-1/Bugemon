@@ -51,7 +51,7 @@ public class LevelUp implements LevelUpDTO {
                 case 3 -> initiative++;
             }
         }
-        return new Choice(hp*2, attack, defense, initiative*2);
+        return new Choice(hp * 2, attack, defense, initiative * 2);
     }
 
     /**
@@ -61,7 +61,7 @@ public class LevelUp implements LevelUpDTO {
     public List<Choice> getChoices() {
         return this.choices;
     }
-    
+
     /**
      * Gets the Bugemon that is leveling up.
      */
