@@ -736,8 +736,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
                 }
             }
             default -> {
-                int required_xp = 50 + 50 * (this.state.level-1);
-                if (this.state.xp >= required_xp){
+                int requiredXp = 50 + 50 * (this.state.level-1);
+                if (this.state.xp >= requiredXp){
                     return Optional.of(this.levelUp());
                 }
             }
