@@ -31,7 +31,7 @@
     />
 
         <Button
-            fx:id="launchManuelCombat"
+            fx:id="launchManualCombat"
             mnemonicParsing="false"
             styleClass="menu-button"
             text="Lancer combat manuel"

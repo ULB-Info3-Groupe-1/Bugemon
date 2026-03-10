@@ -31,7 +31,7 @@
  *   <li>{@link ulb.controllers.combat.ManualCombatController} — drives a
  *       player-controlled combat session via
  *       {@link
- * ulb.controllers.combat.ManualCombatController#runManuelCombat(ulb.models.trainer.ManualTrainer)}.
+ * ulb.controllers.combat.ManualCombatController#runManualCombat(ulb.models.trainer.ManualTrainer)}.
  *       The player selects actions through the UI each turn while the opponent
  *       acts automatically. Full UI integration is currently a work in
  *       progress.</li>
@@ -41,7 +41,7 @@
  * <ol>
  *   <li>The {@link ulb.controllers.MetaController} calls
  *       {@link ulb.controllers.MetaController#launchAutoCombat()} or
- *       {@link ulb.controllers.MetaController#launchManuelCombat()}, which
+ *       {@link ulb.controllers.MetaController#launchManualCombat()}, which
  *       creates a player {@link ulb.models.trainer.Trainer} and delegates to
  *       the appropriate controller.</li>
  *   <li>The controller builds the opponent's

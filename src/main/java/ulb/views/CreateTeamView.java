@@ -26,7 +26,7 @@ public class CreateTeamView extends View {
 
     @FXML private Button launchAutomaticCombat;
 
-    @FXML private Button launchManuelCombat;
+    @FXML private Button launchManualCombat;
 
     /**
      * Loads the create-team FXML layout and initializes button actions.
@@ -41,7 +41,7 @@ public class CreateTeamView extends View {
                 dto -> { this.controller.onBugemonClicked(dto.getId()); });
 
         this.launchAutomaticCombat.setOnAction(e -> this.controller.startAutoCombat());
-        this.launchManuelCombat.setOnAction(e -> this.controller.startManuelCombat());
+        this.launchManualCombat.setOnAction(e -> this.controller.startManualCombat());
     }
 
     /**
