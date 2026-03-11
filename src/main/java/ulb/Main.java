@@ -1,8 +1,10 @@
 package ulb;
 
 import java.io.IOException;
+import java.io.InputStream;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -83,6 +85,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
+            if (fontStream != null) {
+                Font.loadFont(fontStream, 16);
+            }
+
             primaryStage.setMaximized(true);
             Rectangle2D rectangle2d = Screen.getPrimary().getVisualBounds();
             primaryStage.setMinWidth(rectangle2d.getWidth() * 0.6);

@@ -45,6 +45,8 @@ public class AllBugemonsGridView extends VBox {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load AllBugemonsGridView.fxml", e);
         }
+
+        getStylesheets().add(getClass().getResource("/css/all-bugemons-grid.css").toExternalForm());
     }
 
     /**
@@ -103,13 +105,11 @@ public class AllBugemonsGridView extends VBox {
         imagePane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
 
         Label nameLabel = new Label(bugemon.getName());
-        nameLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+        nameLabel.getStyleClass().add("bugemon-cell-name");
 
         VBox cell = new VBox(2); // spacing exactly 2
         cell.setAlignment(Pos.CENTER);
         cell.getChildren().addAll(imagePane, nameLabel);
-        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; "
-                      + "-fx-background-color: transparent;");
         cell.setUserData(bugemon);
 
         if (selectionChecker != null && selectionChecker.apply(bugemon)) {
@@ -139,9 +139,9 @@ public class AllBugemonsGridView extends VBox {
         StackPane imagePane = (StackPane)cell.getChildren().get(
                 0); // TODO: Could break code with an exeption "IndexOutOfBoundsException"
         ImageView iv = (ImageView)imagePane.getChildren().get(0);
-        iv.setStyle("-fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);");
-        cell.setStyle("-fx-border-color: red; -fx-border-width: 3; -fx-padding: 2; "
-                      + "-fx-background-color: lightcoral;");
+        iv.getStyleClass().add("bugemon-image-selected");
+        cell.getStyleClass().remove("bugemon-cell");
+        cell.getStyleClass().add("bugemon-cell-selected");
     }
 
     /**
@@ -152,8 +152,8 @@ public class AllBugemonsGridView extends VBox {
     private void unselect(VBox cell) {
         StackPane imagePane = (StackPane)cell.getChildren().get(0);
         ImageView iv = (ImageView)imagePane.getChildren().get(0);
-        iv.setStyle("");
-        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3; "
-                      + "-fx-background-color: transparent;");
+        iv.getStyleClass().remove("bugemon-image-selected");
+        cell.getStyleClass().remove("bugemon-cell-selected");
+        cell.getStyleClass().add("bugemon-cell");
     }
 }

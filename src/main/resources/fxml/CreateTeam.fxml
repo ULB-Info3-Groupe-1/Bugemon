@@ -42,7 +42,7 @@
       <Text
             strokeType="OUTSIDE"
             strokeWidth="0.0"
-            style="-fx-font-size: 25; -fx-font-weight: BOLD;"
+            styleClass="create-team-title"
             text="Sélection de ton équipe"
             textAlignment="CENTER"
             wrappingWidth="300.0"
@@ -50,7 +50,7 @@
             AnchorPane.topAnchor="20.0"
         >
          <font>
-            <Font name="InconsolataGo Nerd Font" size="12.0" />
+            <Font name="Pixels" size="32.0" />
          </font>
       </Text>
 

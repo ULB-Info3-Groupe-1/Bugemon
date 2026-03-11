@@ -3,6 +3,7 @@
     -fx-padding: 40 40 60 40;
     -fx-alignment: center;
     -fx-spacing: 20;
+    -fx-font-family: 'Pixels';
 }
 
 .main-title {
@@ -14,7 +15,7 @@
 .menu-button {
     -fx-background-color: #4682B4;
     -fx-text-fill: white;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-padding: 12 30 12 30;
     -fx-border-color: transparent;

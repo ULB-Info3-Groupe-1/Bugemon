@@ -4,32 +4,38 @@
 }
 
 .bugemon-name {
+    -fx-font-family: 'Pixels';
     -fx-font-weight: bold;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 
 .bugemon-type {
+    -fx-font-family: 'Pixels';
     -fx-font-style: italic;
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
 }
 
 .PYRO {
     -fx-fill: #ff7300;
+    -fx-font-family: 'Pixels';
     -fx-font-style: italic;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 .AQUA {
     -fx-fill: #00afda;
+    -fx-font-family: 'Pixels';
     -fx-font-style: italic;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 .LITHO {
     -fx-fill: #8800c3;
+    -fx-font-family: 'Pixels';
     -fx-font-style: italic;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
 .FLORA {
     -fx-fill: #22911c;
+    -fx-font-family: 'Pixels';
     -fx-font-style: italic;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
 }
