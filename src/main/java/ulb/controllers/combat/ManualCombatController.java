@@ -15,6 +15,7 @@ import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.CombatService;
+import ulb.utils.Parser;
 import ulb.views.combat.ManualCombatView;
 
 /**
@@ -126,7 +127,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.player = player;
         this.opponent = new AutoTrainer(
             TeamFactory.createRandomTeam(
-                metaController.getAllBugemonsAvailable(),
+                Parser.getInstance().getBugemons(),
                 player.getTeamSize()
             )
         );

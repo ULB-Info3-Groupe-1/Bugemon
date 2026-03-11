@@ -19,7 +19,6 @@ import ulb.views.victory_view.CombatDefeatView;
  *   <li>{@link #backToMainMenu()} — resets the team and returns to the main
  *       menu.</li>
  * </ul>
- * </p>
  *
  * <p>
  * In both cases the trainer's team is reset via {@link MetaController#resetTeam()}

@@ -19,7 +19,6 @@ import ulb.controllers.combat.ManualCombatController;
  *   <li><strong>Abandonner</strong> — forfeits the match immediately via
  *       {@link ManualCombatController#surrender()}.</li>
  * </ol>
- * </p>
  *
  * <p>
  * Button actions are bound lazily: the menu is constructed without a controller
@@ -32,7 +31,6 @@ import ulb.controllers.combat.ManualCombatController;
  * @see ulb.views.ActionMenuView
  */
 public class MainActionMenu extends ActionMenuView {
-
     /**
      * Constructs a {@code MainActionMenu} and sets the display text and CSS
      * style classes for all four action buttons.

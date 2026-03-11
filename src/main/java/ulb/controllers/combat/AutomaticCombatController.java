@@ -11,6 +11,7 @@ import ulb.factory.TeamFactory;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
+import ulb.utils.Parser;
 import ulb.views.combat.AutomaticCombatView;
 
 /**
@@ -56,7 +57,6 @@ import ulb.views.combat.AutomaticCombatView;
  * @see AutomaticCombatView
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
-
     /**
      * Constructs an {@code AutomaticCombatController}, instantiates its
      * {@link AutomaticCombatView}, and wires the view into the controller
@@ -105,14 +105,13 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *     </ul>
      *   </li>
      * </ol>
-     * </p>
      *
      * @param player the {@link AutoTrainer} representing the player's side;
      *               must not be {@code null} and must have a non-empty team.
      */
     public void runAutoCombat(final AutoTrainer player) {
         AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(
-                metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+                Parser.getInstance().getBugemons(), player.getTeamSize()));
         Combat combat = new Combat(player, opponent);
 
         updateCombatView(player, opponent, null);

@@ -12,7 +12,6 @@ import ulb.utils.test.TestUtilsBugemonTeam;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestManualTrainer {
-
     @Test
     public void testQueueSwitch() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
@@ -32,7 +31,7 @@ public class TestManualTrainer {
         ManualTrainer trainer = new ManualTrainer(team);
 
         assertThrows(IllegalArgumentException.class,
-                () -> trainer.queueSwitch(team.getBugemon("2").get()));
+                     () -> trainer.queueSwitch(team.getBugemon("2").get()));
     }
 
     @Test
@@ -53,11 +52,10 @@ public class TestManualTrainer {
         ManualTrainer trainer = new ManualTrainer(team);
 
         // Build an attack with an ID that is guaranteed to not be in any Bugemon's move-set
-        Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", Bugemon.BType.FLORA,
-                "", 10, new java.util.ArrayList<>());
+        Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", Bugemon.BType.FLORA, "",
+                                          10, new java.util.ArrayList<>());
 
-        assertThrows(IllegalArgumentException.class,
-                () -> trainer.queueAttack(foreignAttack));
+        assertThrows(IllegalArgumentException.class, () -> trainer.queueAttack(foreignAttack));
     }
 
     @Test
@@ -116,6 +114,6 @@ public class TestManualTrainer {
         TestUtilsBugemons.killBugemon(team, "2");
 
         assertThrows(IllegalArgumentException.class,
-                () -> trainer.switchAfterKO(team.getBugemon("2").get()));
+                     () -> trainer.switchAfterKO(team.getBugemon("2").get()));
     }
 }

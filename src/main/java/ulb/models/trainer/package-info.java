@@ -24,38 +24,41 @@
  *       combats.</li>
  *   <li>{@link ulb.models.trainer.ManualTrainer} — extends {@code Trainer} with
  *       explicit action selection driven by the player (or the controller layer).
- *       Before each turn the caller sets a
- *       {@link ulb.models.trainer.ManualTrainer.TAction} (attack, switch, or
- *       forfeit) together with the chosen {@link ulb.models.bugemon.Attack} or
- *       replacement {@link ulb.models.bugemon.Bugemon}.</li>
+ *       Before each turn the caller enqueues a {@link ulb.models.trainer.TurnAction}
+ *       (attack, switch, or forfeit) via one of the convenience methods:
+ *       {@link ulb.models.trainer.ManualTrainer#queueAttack(ulb.models.bugemon.Attack)},
+ *       {@link ulb.models.trainer.ManualTrainer#queueSwitch(ulb.models.bugemon.Bugemon)},
+ *       or {@link ulb.models.trainer.ManualTrainer#queueForfeit()}.</li>
  * </ul>
  *
- * <h2>Action model ({@code ManualTrainer})</h2>
+ * <h2>Action model ({@link ulb.models.trainer.TurnAction})</h2>
  * <p>
- * The {@link ulb.models.trainer.ManualTrainer.TAction} enum encodes the three
- * possible turn choices:
+ * The {@link ulb.models.trainer.TurnAction} sealed interface encodes the three
+ * possible turn choices via its permitted record implementations:
  * </p>
  * <ul>
- *   <li>{@code ATTACK} — use the currently selected
+ *   <li>{@link ulb.models.trainer.TurnAction.AttackAction} — use a specific
  *       {@link ulb.models.bugemon.Attack}.</li>
- *   <li>{@code SWITCH} — swap the active Bugemon for the selected replacement.</li>
- *   <li>{@code FORFEIT} — immediately concede the match.</li>
+ *   <li>{@link ulb.models.trainer.TurnAction.SwitchAction} — swap the active
+ *       Bugemon for another alive member of the team.</li>
+ *   <li>{@link ulb.models.trainer.TurnAction.ForfeitAction} — immediately
+ *       concede the match.</li>
  * </ul>
  *
  * <h2>Design notes</h2>
  * <ul>
  *   <li>Trainer instances are created by the
- *       {@link ulb.controllers.MetaController} and passed to the appropriate
- *       {@link ulb.models.combat.Combat} subclass.</li>
- *   <li>{@link ulb.models.trainer.Trainer#resetBugemonTeam()} restores all
- *       Bugemon stats to their initial values after a combat session, delegating
+ *       {@link ulb.controllers.MetaController} and passed to a
+ *       {@link ulb.models.combat.Combat} instance.</li>
+ *   <li>Team stats are restored to their initial values after a combat session
+ *       via {@link ulb.controllers.MetaController#resetTeam()}, which delegates
  *       to {@link ulb.models.bugemon_team.BugemonTeam#reset()}.</li>
  *   <li>Only one {@code Bugemon} is active at a time per trainer; the active
  *       member is changed via
  *       {@link ulb.models.trainer.Trainer#setCurrentBugemon(ulb.models.bugemon.Bugemon)}
  *       or the higher-level
  *       {@link ulb.models.trainer.AutoTrainer#selectRandomBugemon()} /
- *       {@link ulb.models.trainer.ManualTrainer#selectBugemon(ulb.models.bugemon.Bugemon)}
+ *       {@link ulb.models.trainer.ManualTrainer#switchAfterKO(ulb.models.bugemon.Bugemon)}
  *       methods.</li>
  * </ul>
  *

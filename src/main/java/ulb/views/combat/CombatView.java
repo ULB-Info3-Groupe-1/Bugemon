@@ -37,7 +37,6 @@ import ulb.views.View;
  * @see ManualCombatView
  */
 public abstract class CombatView extends View {
-
     // ── FXML-injected components ──────────────────────────────────────────────
 
     /**

@@ -14,15 +14,10 @@
  * <ul>
  *   <li>{@link ulb.models.bugemon_team.BugemonTeam} — the main collection
  *       class. It exposes add/remove/query operations, implements
- *       {@link java.lang.Iterable} for convenient iteration over live members,
- *       and provides a static factory
- *       {@link ulb.models.bugemon_team.BugemonTeam#createRandomTeam(java.util.List, int)}
- *       used by the combat system to build opponent teams on the fly.</li>
+ *       {@link java.lang.Iterable} for convenient iteration over live members.</li>
  *   <li>{@link ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException} —
- *       unchecked exception thrown by
- *       {@link ulb.models.bugemon_team.BugemonTeam#addBugemon(ulb.models.bugemon.Bugemon)}
- *       when an attempt is made to add a Bugemon whose ID is already present
- *       in the team.</li>
+ *       unchecked exception thrown when an attempt is made to add a Bugemon
+ *       whose ID is already present in the team.</li>
  * </ul>
  *
  * <h2>Constraints enforced by {@code BugemonTeam}</h2>
@@ -33,8 +28,7 @@
  *       duplicates are rejected with
  *       {@link ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException}.</li>
  *   <li><strong>Removal guards:</strong> removing from an empty team or
- *       requesting a member by an unknown ID throws
- *       {@link java.lang.IllegalArgumentException}.</li>
+ *       requesting a member by an unknown ID throws an unchecked exception.</li>
  * </ul>
  *
  * <h2>Design notes</h2>
@@ -47,8 +41,7 @@
  *       members to their initial stat values by delegating to
  *       {@link ulb.models.bugemon.Bugemon#reset()}, making teams reusable
  *       across combat sessions.</li>
- *   <li>Random team creation via
- *       {@link ulb.models.bugemon_team.BugemonTeam#createRandomTeam(java.util.List, int)}
+ *   <li>Random team creation (via {@link ulb.factory.TeamFactory})
  *       deep-clones each selected Bugemon so the opponent's team holds
  *       independent instances that do not share state with the source pool.</li>
  * </ul>

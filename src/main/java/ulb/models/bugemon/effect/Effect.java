@@ -10,7 +10,6 @@
 package ulb.models.bugemon.effect;
 
 import com.google.gson.annotations.SerializedName;
-
 import ulb.models.bugemon.ActiveEffect;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -45,15 +44,18 @@ import ulb.models.bugemon.Bugemon;
  * @see ulb.models.combat.EffectManager
  */
 public class Effect {
+
     // Attributes
 
     private EffectType type;
 
-    @SerializedName("cible") private EffectTarget target;
+    @SerializedName("cible")
+    private EffectTarget target;
 
     private EffectStat stat;
 
-    @SerializedName("modificateur") private int modifier;
+    @SerializedName("modificateur")
+    private int modifier;
 
     private String duration;
 
@@ -73,8 +75,13 @@ public class Effect {
      *                 (e.g., {@code "2_turns"}); parsed by
      *                 {@link #extractDuration()}.
      */
-    public Effect(EffectType type, EffectTarget target, EffectStat stat, int modifier,
-                  String duration) {
+    public Effect(
+        EffectType type,
+        EffectTarget target,
+        EffectStat stat,
+        int modifier,
+        String duration
+    ) {
         this.type = type;
         this.target = target;
         this.stat = stat;

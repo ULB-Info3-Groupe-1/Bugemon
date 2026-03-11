@@ -2,8 +2,6 @@ package ulb.views.combat;
 
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
-import ulb.views.ActionMenuView;
-
 /**
  * Action menu component displaying the three attacks available to the player's
  * current {@link ulb.models.bugemon.Bugemon} during a manual combat turn.

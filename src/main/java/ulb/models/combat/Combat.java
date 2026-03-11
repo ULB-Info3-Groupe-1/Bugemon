@@ -11,9 +11,11 @@ package ulb.models.combat;
 
 import java.util.Optional;
 
+import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.trainer.Trainer;
 import ulb.models.trainer.TurnAction;
+import ulb.services.CombatService;
 
 /**
  * Orchestrates a turn-based combat between any two {@link Trainer}s.
@@ -47,14 +49,12 @@ import ulb.models.trainer.TurnAction;
  *   <li>A new branch in {@link #applyPassiveAction(Trainer, TurnAction)}.</li>
  * </ol>
  * No other method needs to change.
- * </p>
  *
  * @see TurnResult
  * @see Trainer
  * @see TurnAction
  */
 public class Combat {
-
     /** The allied (player-side) trainer participating in this combat. */
     private final Trainer allyTrainer;
 
@@ -109,7 +109,6 @@ public class Combat {
      *       {@link #resolveAttacks(Optional, Optional)}.</li>
      *   <li>The turn counter is incremented.</li>
      * </ol>
-     * </p>
      *
      * @return a {@link TurnResult} describing the first and optional second hit
      *         of the turn, and whether the ally was knocked out; never
@@ -150,18 +149,15 @@ public class Combat {
      *   <li>If neither trainer is defeated yet, an empty {@link Optional} is
      *       returned.</li>
      * </ul>
-     * </p>
      *
      * @return an {@link Optional} containing the winning {@link Trainer}, or
      *         an empty {@link Optional} if the combat has not yet ended.
      * @see #isFinished()
      */
     public Optional<Trainer> getWinner() {
-        return allyTrainer.isDefeated()
-            ? Optional.of(adversaryTrainer)
-            : adversaryTrainer.isDefeated()
-                ? Optional.of(allyTrainer)
-                : Optional.empty();
+        return allyTrainer.isDefeated() ? Optional.of(adversaryTrainer)
+        : adversaryTrainer.isDefeated() ? Optional.of(allyTrainer)
+                                        : Optional.empty();
     }
 
     /**
@@ -245,7 +241,6 @@ public class Combat {
      * </ul>
      * Future passive actions (e.g. item use) should add a new branch here
      * without modifying any other method.
-     * </p>
      *
      * @param trainer the trainer performing the action; must not be {@code null}.
      * @param action  the action to apply; no-op if it is an attack or forfeit.
@@ -288,7 +283,6 @@ public class Combat {
      *   <li><strong>Neither attacks</strong> (both switched, both used items,
      *       …) — an empty result is returned.</li>
      * </ul>
-     * </p>
      *
      * @param allyAttack      the ally's attack wrapped in an {@link Optional},
      *                        or empty if the ally did not attack this turn.
@@ -298,21 +292,21 @@ public class Combat {
      * @return a {@link TurnResult} describing what happened; never {@code null}.
      */
     private TurnResult resolveAttacks(Optional<Attack> allyAttack,
-            Optional<Attack> adversaryAttack) {
+                                      Optional<Attack> adversaryAttack) {
         if (allyAttack.isPresent() && adversaryAttack.isPresent()) {
-            Trainer first  = CombatHelper.attackPriority(allyTrainer, adversaryTrainer);
+            Trainer first = CombatService.attackPriority(allyTrainer, adversaryTrainer);
             Trainer second = first == allyTrainer ? adversaryTrainer : allyTrainer;
-            Attack firstAttack  = first  == allyTrainer ? allyAttack.get() : adversaryAttack.get();
+            Attack firstAttack = first == allyTrainer ? allyAttack.get() : adversaryAttack.get();
             Attack secondAttack = second == allyTrainer ? allyAttack.get() : adversaryAttack.get();
 
             TurnResult.AttackResult firstResult = applyAttack(first, second, firstAttack);
-            Optional<TurnResult.AttackResult> secondResult = isFinished()
-                    ? Optional.empty()
-                    : Optional.of(applyAttack(second, first, secondAttack));
+            Optional<TurnResult.AttackResult> secondResult =
+                    isFinished() ? Optional.empty()
+                                 : Optional.of(applyAttack(second, first, secondAttack));
 
             boolean allyKO = isAllyKnockedOut(firstResult, secondResult);
             return new TurnResult(firstResult, secondResult,
-                    allyKO ? Optional.of(true) : Optional.empty());
+                                  allyKO ? Optional.of(true) : Optional.empty());
         }
 
         if (allyAttack.isPresent()) {
@@ -326,7 +320,7 @@ public class Combat {
                     applyAttack(adversaryTrainer, allyTrainer, adversaryAttack.get());
             boolean allyKO = !allyTrainer.isCurrentBugemonAlive() && !allyTrainer.isDefeated();
             return new TurnResult(hit, Optional.empty(),
-                    allyKO ? Optional.of(true) : Optional.empty());
+                                  allyKO ? Optional.of(true) : Optional.empty());
         }
 
         return emptyResult();
@@ -348,12 +342,10 @@ public class Combat {
      *         after this turn, {@code false} otherwise.
      */
     private boolean isAllyKnockedOut(TurnResult.AttackResult first,
-            Optional<TurnResult.AttackResult> second) {
-        boolean koByFirst  = first.defender() == allyTrainer
-                && !allyTrainer.isCurrentBugemonAlive();
-        boolean koBySecond = second.isPresent()
-                && second.get().defender() == allyTrainer
-                && !allyTrainer.isCurrentBugemonAlive();
+                                     Optional<TurnResult.AttackResult> second) {
+        boolean koByFirst = first.defender() == allyTrainer && !allyTrainer.isCurrentBugemonAlive();
+        boolean koBySecond = second.isPresent() && second.get().defender() == allyTrainer
+                             && !allyTrainer.isCurrentBugemonAlive();
         return koByFirst || koBySecond;
     }
 
@@ -376,17 +368,13 @@ public class Combat {
      * @return an {@link TurnResult.AttackResult} capturing the participants, the
      *         attack used, and the computed {@link CombatHelper.Efficiency}.
      */
-    private TurnResult.AttackResult applyAttack(Trainer attacker, Trainer defender,
-            Attack attack) {
-        double damage = CombatHelper.calculateDamage(
-                attack,
-                attacker.getCurrentBugemon(),
-                defender.getCurrentBugemon());
+    private TurnResult.AttackResult applyAttack(Trainer attacker, Trainer defender, Attack attack) {
+        double damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(),
+                                                     defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
-        CombatHelper.Efficiency efficiency = CombatHelper.compareBType(
-                attack.getType(),
-                defender.getCurrentBugemonType());
+        Efficiency efficiency =
+                CombatService.compareBugemonType(attack.getType(), defender.getCurrentBugemonType());
 
         if (!defender.isCurrentBugemonAlive()) {
             if (!defender.isDefeated()) {
@@ -409,10 +397,9 @@ public class Combat {
      */
     private TurnResult emptyResult() {
         return new TurnResult(
-                new TurnResult.AttackResult(
-                        allyTrainer, adversaryTrainer, Optional.empty(), null),
-                Optional.of(new TurnResult.AttackResult(
-                        adversaryTrainer, allyTrainer, Optional.empty(), null)),
+                new TurnResult.AttackResult(allyTrainer, adversaryTrainer, Optional.empty(), null),
+                Optional.of(new TurnResult.AttackResult(adversaryTrainer, allyTrainer,
+                                                        Optional.empty(), null)),
                 Optional.empty());
     }
 }

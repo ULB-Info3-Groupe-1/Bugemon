@@ -16,7 +16,6 @@ import ulb.models.bugemon.Bugemon;
  *       alive member of the team.</li>
  *   <li>{@link ForfeitAction} — immediately concede the match.</li>
  * </ul>
- * </p>
  *
  * <p>
  * The {@link #isAttack()} method allows {@link ulb.models.combat.Combat} to
@@ -37,11 +36,8 @@ import ulb.models.bugemon.Bugemon;
  * @see Trainer#selectAction()
  * @see ulb.models.combat.Combat
  */
-public sealed interface TurnAction
-        permits TurnAction.AttackAction,
-                TurnAction.SwitchAction,
-                TurnAction.ForfeitAction {
-
+public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.SwitchAction,
+        TurnAction.ForfeitAction {
     /**
      * Returns {@code true} if this action generates a direct hit on the
      * opposing trainer's active {@link Bugemon}.
@@ -78,7 +74,6 @@ public sealed interface TurnAction
      *               move-set.
      */
     record AttackAction(Attack attack) implements TurnAction {
-
         /**
          * {@inheritDoc}
          *
@@ -104,7 +99,6 @@ public sealed interface TurnAction
      *               member of the trainer's team.
      */
     record SwitchAction(Bugemon target) implements TurnAction {
-
         /**
          * {@inheritDoc}
          *
@@ -128,7 +122,6 @@ public sealed interface TurnAction
      * </p>
      */
     record ForfeitAction() implements TurnAction {
-
         /**
          * {@inheritDoc}
          *

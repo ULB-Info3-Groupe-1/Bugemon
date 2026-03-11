@@ -10,7 +10,6 @@ import ulb.models.trainer.AutoTrainer;
 import ulb.utils.test.TestUtilsTrainer;
 
 public class TestAutomaticCombat {
-
     @Test
     public void testBasicTurn() {
         AutoTrainer trainer1 = TestUtilsTrainer.createDefaultAutoTrainer();

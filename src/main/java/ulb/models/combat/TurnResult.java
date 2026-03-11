@@ -23,7 +23,6 @@ import ulb.models.trainer.Trainer;
  *       during this turn, prompting the controller to open the forced-switch
  *       menu; {@link Optional#empty()} otherwise.</li>
  * </ul>
- * </p>
  *
  * <p>
  * Both {@code first} and {@code second} may represent a non-attack action

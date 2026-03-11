@@ -30,7 +30,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  * </ul>
  * The queued action is consumed exactly once by {@link #selectAction()} and
  * cleared afterwards; a new action must be queued every turn.
- * </p>
  *
  * <p>
  * A separate code path handles <em>forced</em> switches that occur when the
@@ -44,7 +43,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see TurnAction
  */
 public class ManualTrainer extends Trainer {
-
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
 

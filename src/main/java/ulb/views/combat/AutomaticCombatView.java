@@ -24,7 +24,6 @@ import java.io.IOException;
  * @see ulb.controllers.combat.AutomaticCombatController
  */
 public class AutomaticCombatView extends CombatView {
-
     /**
      * Constructs an {@code AutomaticCombatView}, loads the shared combat FXML
      * layout, and immediately calls {@link #initCombatMode()} to hide the

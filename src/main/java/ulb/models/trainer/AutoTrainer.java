@@ -30,7 +30,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  *   <li>{@link #reactToKO()} — switches the active {@link Bugemon} to a
  *       randomly chosen alive member of the team when the current one faints.</li>
  * </ul>
- * </p>
  *
  * <p>
  * This class is used both as the opponent side in a player-vs-AI combat and
@@ -42,7 +41,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see ulb.models.combat.Combat
  */
 public class AutoTrainer extends Trainer {
-
     private static final Random RAND = new Random();
 
     /**

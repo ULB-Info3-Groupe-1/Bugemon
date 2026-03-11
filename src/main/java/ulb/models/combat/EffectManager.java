@@ -116,7 +116,6 @@ public class EffectManager {
      *   <li>{@link EffectTarget#TEAM} — every {@link Bugemon} in the attacker's
      *       team.</li>
      * </ul>
-     * </p>
      *
      * <p>
      * The initial stat modification is applied immediately via

@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import ulb.common.dto.BugemonDTO;
 
 /**
@@ -36,9 +35,14 @@ public class BugemonInfoView extends VBox {
 
     private static final String FXML_PATH = "/fxml/BugemonInfo.fxml";
 
-    @FXML private Text bugemonName;
-    @FXML private Text bugemonType;
-    @FXML private javafx.scene.control.ProgressBar bugemonHPBar;
+    @FXML
+    private Text bugemonName;
+
+    @FXML
+    private Text bugemonType;
+
+    @FXML
+    private javafx.scene.control.ProgressBar bugemonHPBar;
 
     /**
      * Constructs a {@code BugemonInfoView} by loading the
@@ -95,6 +99,8 @@ public class BugemonInfoView extends VBox {
         this.bugemonName.getStyleClass().add(bugemon.getType().toString());
         this.bugemonName.setText(bugemon.getName());
         this.bugemonType.setText("(" + bugemon.getType().toString() + ")");
-        this.bugemonHPBar.setProgress((double) bugemon.getHp() / bugemon.getMaxHp());
+        this.bugemonHPBar.setProgress(
+            (double) bugemon.getHp() / bugemon.getMaxHp()
+        );
     }
 }
