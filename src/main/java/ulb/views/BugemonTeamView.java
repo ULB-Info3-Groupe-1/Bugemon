@@ -42,6 +42,8 @@ public class BugemonTeamView extends VBox {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load BugemonTeamView.fxml", e);
         }
+
+        getStylesheets().add(getClass().getResource("/css/bugemon-team.css").toExternalForm());
     }
 
     /**
@@ -83,13 +85,13 @@ public class BugemonTeamView extends VBox {
 
         String name = (bugemon != null) ? bugemon.getName() : "Vide";
         Label nameLabel = new Label(name);
-        nameLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
+        nameLabel.getStyleClass().add("bugemon-cell-name");
 
         VBox cell = new VBox(2);
         cell.setAlignment(Pos.CENTER);
         cell.getChildren().addAll(imagePane, nameLabel);
 
-        cell.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-padding: 3;");
+        cell.getStyleClass().add("bugemon-cell");
         cell.setUserData(bugemon);
 
         if (this.onBugemonClicked != null) {

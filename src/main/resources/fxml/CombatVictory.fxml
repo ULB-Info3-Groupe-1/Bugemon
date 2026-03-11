@@ -6,13 +6,11 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       alignment="CENTER"
-      spacing="20">
+      spacing="20"
+      stylesheets="@../css/combat-victory.css">
 
-    <Label text="VICTOIRE !"
-       style="-fx-font-size: 40px;
-              -fx-font-weight: bold;
-              -fx-text-fill: #FFD700;" />
+    <Label text="VICTOIRE !" styleClass="victory-title" />
 
-    <Button fx:id="continueButton" text="Continuer" prefHeight="65.0" prefWidth="230.0" style="-fx-background-color: #3CB371; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 0;" />
+    <Button fx:id="continueButton" text="Continuer" prefHeight="65.0" prefWidth="230.0" styleClass="victory-continue-button" />
 
 </VBox>

@@ -1,11 +1,12 @@
 .action-menu {
-    -fx-background-color: #EDEBE0; 
+    -fx-background-color: #EDEBE0;
     -fx-padding: 20;
     -fx-spacing: 20;
     -fx-border-color: #b4b4b4;
     -fx-border-radius: 10;
     -fx-border-width: 2;
     -fx-alignment: center;
+    -fx-font-family: 'Pixels';
 }
 
 .action-separator {
@@ -20,7 +21,7 @@
     -fx-border-color: #cbcbcb;
     -fx-fill: white;
     -fx-font-weight: bold;
-    -fx-font-size: 20px;
+    -fx-font-size: 16px;
     -fx-cursor: hand;
     -fx-alignment: center;
 }

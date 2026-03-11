@@ -50,7 +50,7 @@ public class ActionMenuView extends VBox {
     }
 
     protected void setAction2StyleClasse(String styleClass) {
-        this.action2.setStyle(styleClass);
+        this.action2.getStyleClass().add(styleClass);
     }
 
     protected void setAction3StyleClasse(String styleClass) {

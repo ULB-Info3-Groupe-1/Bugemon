@@ -1,0 +1,14 @@
+.bugemon-team-grid {
+    -fx-padding: 10;
+}
+
+.bugemon-cell-name {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.bugemon-cell {
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-padding: 3;
+}

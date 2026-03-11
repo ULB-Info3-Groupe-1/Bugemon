@@ -14,13 +14,13 @@
    <HBox spacing="10" alignment="CENTER">
       <Text fx:id="bugemonName" styleClass="bugemon-name" text="Name">
          <font>
-            <Font name="System Bold" size="18.0"/>
+            <Font name="Pixels" size="16.0"/>
          </font>
       </Text>
 
       <Text fx:id="bugemonType" styleClass="bugemon-type" text="Type">
          <font>
-            <Font size="15.0"/>
+            <Font name="Pixels" size="16.0"/>
          </font>
       </Text>
 

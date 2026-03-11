@@ -1,7 +1,8 @@
 .menu-button {
     -fx-background-color: #3CB371;
     -fx-text-fill: white;
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
+    -fx-font-family: 'Pixels';
     -fx-font-weight: bold;
     -fx-padding: 12 30 12 30;
     -fx-border-color: transparent;
@@ -17,4 +18,10 @@
 
 .menu-button:pressed {
     -fx-background-color: #8BB39E;
+}
+
+.create-team-title {
+    -fx-font-size: 32;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Pixels';
 }
