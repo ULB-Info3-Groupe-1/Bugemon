@@ -2,6 +2,7 @@ package ulb.views.combat;
 
 import java.io.IOException;
 import java.util.List;
+
 import ulb.common.dto.BugemonDTO;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
@@ -21,7 +22,6 @@ import ulb.models.bugemon.Attack;
  *   <li>The {@code bugemonTeamPane} — the team panel used both for voluntary
  *       switches and for forced post-KO switches.</li>
  * </ul>
- * </p>
  *
  * <p>
  * The view itself contains no game logic. Every user interaction (button click,
@@ -37,7 +37,6 @@ import ulb.models.bugemon.Attack;
  * @see AttackActionMenu
  */
 public class ManualCombatView extends CombatView {
-
     private ManualCombatController controller;
 
     private MainActionMenu mainActionMenu;
@@ -114,11 +113,7 @@ public class ManualCombatView extends CombatView {
      *                0, 1, and 2 are used).
      */
     public void showAttackMenu(List<Attack> attacks) {
-        this.attackActionMenu.setAttacks(
-            attacks.get(0),
-            attacks.get(1),
-            attacks.get(2)
-        );
+        this.attackActionMenu.setAttacks(attacks.get(0), attacks.get(1), attacks.get(2));
         this.actionMenuView.getChildren().setAll(attackActionMenu);
     }
 

@@ -99,8 +99,8 @@ public class Parser {
     }
 
     /**
-     * The main parsing method used to parse every file. Calls annex methods to
-     * achieve its task.
+     * Parses both JSON data files and returns a fully populated
+     * {@link ParseResult}.
      *
      * @param attacksStream  input stream for the attacks JSON file
      * @param bugemonsStream input stream for the bugemons JSON file

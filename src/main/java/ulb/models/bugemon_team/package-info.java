@@ -13,17 +13,27 @@
  * <h2>Key classes</h2>
  * <ul>
  *   <li>{@link ulb.models.bugemon_team.BugemonTeam} — the main collection
- *       class. It exposes add/remove/query operations, implements
+ *       class. It exposes add/remove/query operations and implements
  *       {@link java.lang.Iterable} for convenient iteration over live members.</li>
  *   <li>{@link ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException} —
  *       unchecked exception thrown when an attempt is made to add a Bugemon
  *       whose ID is already present in the team.</li>
+ *   <li>{@link ulb.models.bugemon_team.exceptions.TeamAlreadyFullException} —
+ *       unchecked exception thrown when an attempt is made to add a Bugemon to
+ *       a team that has already reached its maximum capacity of six members.</li>
+ *   <li>{@link ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException} —
+ *       unchecked exception thrown when an attempt is made to remove a Bugemon
+ *       from a team that contains no members.</li>
+ *   <li>{@link ulb.models.bugemon_team.exceptions.BugemonNotInTeamException} —
+ *       unchecked exception thrown when an attempt is made to remove or retrieve
+ *       a Bugemon that is not a member of the team.</li>
  * </ul>
  *
  * <h2>Constraints enforced by {@code BugemonTeam}</h2>
  * <ul>
  *   <li><strong>Capacity:</strong> a team holds at most 6 members; attempting
- *       to add a seventh throws {@link java.lang.IllegalStateException}.</li>
+ *       to add a seventh throws
+ *       {@link ulb.models.bugemon_team.exceptions.TeamAlreadyFullException}.</li>
  *   <li><strong>Uniqueness:</strong> each Bugemon ID may appear at most once;
  *       duplicates are rejected with
  *       {@link ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException}.</li>
@@ -33,10 +43,10 @@
  *
  * <h2>Design notes</h2>
  * <ul>
- *   <li>The backing store is a plain array of size 6; {@code null} slots
- *       represent empty positions. The {@link java.util.Iterator} returned by
- *       {@link ulb.models.bugemon_team.BugemonTeam#iterator()} skips
- *       {@code null} entries transparently.</li>
+ *   <li>The backing store is an {@link java.util.ArrayList}; the
+ *       {@link java.util.Iterator} returned by
+ *       {@link ulb.models.bugemon_team.BugemonTeam#iterator()} iterates over
+ *       live members only.</li>
  *   <li>{@link ulb.models.bugemon_team.BugemonTeam#reset()} restores all
  *       members to their initial stat values by delegating to
  *       {@link ulb.models.bugemon.Bugemon#reset()}, making teams reusable

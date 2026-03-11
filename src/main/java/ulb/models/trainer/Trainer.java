@@ -10,6 +10,7 @@
 package ulb.models.trainer;
 
 import java.util.List;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
@@ -39,7 +40,6 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see Bugemon
  */
 public abstract class Trainer {
-
     protected final BugemonTeam team;
     protected Bugemon currentBugemon;
 
@@ -139,8 +139,8 @@ public abstract class Trainer {
 
     /**
      * Returns the initiative stat of the currently active Bugemon, used by
-     * {@link ulb.models.combat.CombatHelper#attackPriority(Trainer, Trainer)}
-     * to determine which side strikes first.
+     * {@link ulb.services.CombatService#attackPriority(ulb.models.trainer.Trainer,
+     * ulb.models.trainer.Trainer)} to determine which side strikes first.
      *
      * @return the initiative value of the active Bugemon.
      */
@@ -244,8 +244,9 @@ public abstract class Trainer {
     /**
      * Marks the currently active Bugemon as having participated in the current
      * combat, which is used later by
-     * {@link ulb.models.combat.CombatHelper#calculateXP(Trainer, Trainer)} to
-     * distribute experience points only to Bugemons that actually fought.
+     * {@link ulb.services.LevelUpService#distributeXp(ulb.models.trainer.Trainer,
+     * ulb.models.trainer.Trainer)} to distribute experience points only to Bugemons that actually
+     * fought.
      */
     public void addBugemonParticipation() {
         currentBugemon.setParticipation(true);

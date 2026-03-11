@@ -1,6 +1,7 @@
 package ulb.models.combat;
 
 import java.util.Optional;
+
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.trainer.Trainer;
@@ -41,11 +42,8 @@ import ulb.models.trainer.Trainer;
  * @see Combat#turn()
  * @see AttackResult
  */
-public record TurnResult(
-    AttackResult first,
-    Optional<AttackResult> second,
-    Optional<Boolean> allyKnockedOut
-) {
+public record TurnResult(AttackResult first, Optional<AttackResult> second,
+                         Optional<Boolean> allyKnockedOut) {
     /**
      * Immutable snapshot of a single hit within a turn.
      *
@@ -72,15 +70,11 @@ public record TurnResult(
      *                   defender's active Bugemon type, or {@code null} if no
      *                   attack was made.
      *
-     * @see CombatHelper#compareBType(ulb.models.bugemon.Bugemon.BType,
-     *      ulb.models.bugemon.Bugemon.BType)
+     * @see ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+     *      ulb.models.bugemon.BugemonType)
      */
-    public record AttackResult(
-        Trainer attacker,
-        Trainer defender,
-        Optional<Attack> attack,
-        Efficiency efficiency
-    ) {
+    public record AttackResult(Trainer attacker, Trainer defender, Optional<Attack> attack,
+                               Efficiency efficiency) {
         /**
          * Returns {@code true} if this result represents an actual attack, i.e.
          * {@link #attack()} is present.

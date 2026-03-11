@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import java.io.IOException;
 import java.util.List;
+
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.controllers.MetaController;
@@ -44,6 +45,7 @@ import ulb.views.combat.ManualCombatView;
  *       additional combat turn is consumed. Controlled by
  *       {@link #koSwitchFlag}.</li>
  * </ul>
+ * <p>
  * Both flows converge on {@link #switchBugemon(String)}, which branches on
  * {@link #koSwitchFlag} to apply the correct behaviour.
  * </p>
@@ -63,7 +65,6 @@ import ulb.views.combat.ManualCombatView;
  * @see ManualCombatView
  */
 public class ManualCombatController extends CombatController<ManualCombatView> {
-
     /** The {@link Combat} instance managing the current session. */
     private Combat combat;
 
@@ -100,8 +101,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @throws IOException if the {@link ManualCombatView} fails to load its
      *                     FXML resource.
      */
-    public ManualCombatController(MetaController metaController)
-        throws IOException {
+    public ManualCombatController(MetaController metaController) throws IOException {
         super(metaController, new ManualCombatView());
         this.view.setController(this);
     }
@@ -225,12 +225,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * </p>
      */
     public void showSwitchMenu() {
-        List<BugemonDTO> bugemonList = player
-            .getTeam()
-            .stream()
-            .filter(Bugemon::isAlive)
-            .map(b -> (BugemonDTO) b)
-            .toList();
+        List<BugemonDTO> bugemonList =
+                player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO)b).toList();
         view.showSwitchMenu(bugemonList);
         view.hideAllActionMenus();
     }
@@ -263,8 +259,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * button with its type effectiveness against the current opponent.
      * </p>
      *
-     * @return the {@link BType} of the opponent's active Bugemon; never
-     *         {@code null}.
+     * @return the {@link ulb.models.bugemon.BugemonType} of the opponent's
+     *         active Bugemon; never {@code null}.
      */
     public BugemonType getOpponentBugemonType() {
         return opponent.getCurrentBugemonType();
@@ -282,6 +278,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      *   <li>A tactical switch has already been used this turn
      *       ({@link #switchActionUsed} is {@code true}).</li>
      * </ul>
+     * <p>
      * This method is called by {@link ulb.views.combat.MainActionMenu} to
      * conditionally enable the "Changer de Bugémon" button.
      * </p>
@@ -325,9 +322,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         displayAttackResult(result.first());
         result.second().ifPresent(this::displayAttackResult);
 
-        combat
-            .getWinner()
-            .ifPresent(winner -> handleCombatResult(winner, player));
+        combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
         if (!combat.isFinished() && result.allyKnockedOut().orElse(false)) {
             koSwitchFlag = true;
@@ -342,7 +337,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Does nothing if the result does not represent an actual attack (i.e.
      * {@link TurnResult.AttackResult#wasAttack()} returns {@code false}).
      * Otherwise, formats the type-matchup message via
-     * {@link CombatController#formatEfficiency(ulb.models.combat.CombatHelper.Efficiency)}
+     * {@link CombatController#formatEfficiency(ulb.common.Efficiency)}
      * and passes it to {@link ulb.views.combat.CombatView#showDialog(String, String)}.
      * </p>
      *
@@ -350,32 +345,32 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      *                     must not be {@code null}.
      */
     private void displayAttackResult(TurnResult.AttackResult attackResult) {
-        if (!attackResult.wasAttack()) return;
+        if (!attackResult.wasAttack())
+            return;
         String message = formatEfficiency(attackResult.efficiency());
         view.showDialog(message, null);
     }
 
     /**
-     * Determines the type-matchup {@link CombatHelper.Efficiency} of the given
+     * Determines the type-matchup {@link ulb.common.Efficiency} of the given
      * {@link Attack} against the opponent's currently active Bugemon.
      *
      * <p>
-     * Delegates to {@link CombatHelper#compareBType(BType, BType)}, passing the
-     * attack's elemental type and the opponent's active Bugemon type. The result
-     * can be used by the view to annotate attack buttons with effectiveness
-     * indicators before a turn is committed.
+     * Delegates to
+     * {@link ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+     * ulb.models.bugemon.BugemonType)}, passing the attack's elemental type and
+     * the opponent's active Bugemon type. The result can be used by the view to
+     * annotate attack buttons with effectiveness indicators before a turn is
+     * committed.
      * </p>
      *
      * @param attack the {@link Attack} whose type effectiveness is to be
      *               evaluated; must not be {@code null}.
-     * @return the {@link CombatHelper.Efficiency} representing how effective the
+     * @return the {@link ulb.common.Efficiency} representing how effective the
      *         attack's type is against the opponent's current Bugemon type;
      *         never {@code null}.
      */
     public Efficiency isAttackEfficient(Attack attack) {
-        return CombatService.compareBugemonType(
-            attack.getType(),
-            opponent.getCurrentBugemonType()
-        );
+        return CombatService.compareBugemonType(attack.getType(), opponent.getCurrentBugemonType());
     }
 }

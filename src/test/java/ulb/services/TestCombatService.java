@@ -27,6 +27,7 @@ import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 
 public class TestCombatService {
@@ -42,8 +43,8 @@ public class TestCombatService {
         BugemonTeam fastTeam = new BugemonTeam();
         fastTeam.addBugemon(fastBugemon);
 
-        Trainer fasterTrainer = new Trainer(fastTeam);
-        Trainer slowTrainer = new Trainer(slowTeam);
+        Trainer fasterTrainer = new AutoTrainer(fastTeam);
+        Trainer slowTrainer = new AutoTrainer(slowTeam);
 
         assertEquals(fasterTrainer, CombatService.attackPriority(fasterTrainer, slowTrainer));
     }

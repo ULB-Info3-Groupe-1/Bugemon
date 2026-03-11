@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
 import ulb.common.dto.BugemonDTO;
 
 /**
@@ -21,9 +22,7 @@ import ulb.common.dto.BugemonDTO;
  * grid.
  */
 public class AllBugemonsGridView extends VBox {
-
-    @FXML
-    private GridPane gridPane;
+    @FXML private GridPane gridPane;
 
     private static final int IMAGES_PER_ROW = 10;
     private static final double IMAGE_SIZE = 96;
@@ -44,17 +43,10 @@ public class AllBugemonsGridView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException(
-                "Failed to load AllBugemonsGridView.fxml",
-                e
-            );
+            throw new RuntimeException("Failed to load AllBugemonsGridView.fxml", e);
         }
 
-        getStylesheets().add(
-            getClass()
-                .getResource("/css/all-bugemons-grid.css")
-                .toExternalForm()
-        );
+        getStylesheets().add(getClass().getResource("/css/all-bugemons-grid.css").toExternalForm());
     }
 
     /**
@@ -66,10 +58,13 @@ public class AllBugemonsGridView extends VBox {
     }
 
     /**
-     * Sets the callback used to handle clicks on bugemon cells. The callback receives the
-     * BugemonDTO of the clicked cell.
-     * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is
-     *         clicked, receiving the BugemonDTO of the clicked cell
+     * Sets the callback used to handle clicks on bugemon cells. The callback
+     * receives the {@link ulb.common.dto.BugemonDTO} of the clicked cell.
+     *
+     * @param callback a {@code Consumer<BugemonDTO>} callback to be called when
+     *                 a bugemon cell is clicked, receiving the
+     *                 {@link ulb.common.dto.BugemonDTO} of the clicked cell;
+     *                 must not be {@code null}.
      */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
         this.onBugemonClicked = callback;
@@ -128,7 +123,7 @@ public class AllBugemonsGridView extends VBox {
 
         if (this.onBugemonClicked != null) {
             cell.setOnMouseClicked(e -> {
-                BugemonDTO dto = (BugemonDTO) cell.getUserData();
+                BugemonDTO dto = (BugemonDTO)cell.getUserData();
                 if (dto != null) {
                     this.onBugemonClicked.accept(dto);
                 }
@@ -144,8 +139,9 @@ public class AllBugemonsGridView extends VBox {
      *         Bugemon to be styled as selected
      */
     private void select(VBox cell) {
-        StackPane imagePane = (StackPane) cell.getChildren().get(0); // TODO: Could break code with an exeption "IndexOutOfBoundsException"
-        ImageView iv = (ImageView) imagePane.getChildren().get(0);
+        StackPane imagePane = (StackPane)cell.getChildren().get(
+                0); // TODO: Could break code with an exeption "IndexOutOfBoundsException"
+        ImageView iv = (ImageView)imagePane.getChildren().get(0);
         iv.getStyleClass().add("bugemon-image-selected");
         cell.getStyleClass().remove("bugemon-cell");
         cell.getStyleClass().add("bugemon-cell-selected");
@@ -157,8 +153,8 @@ public class AllBugemonsGridView extends VBox {
      *         Bugemon to be styled as unselected
      */
     private void unselect(VBox cell) {
-        StackPane imagePane = (StackPane) cell.getChildren().get(0);
-        ImageView iv = (ImageView) imagePane.getChildren().get(0);
+        StackPane imagePane = (StackPane)cell.getChildren().get(0);
+        ImageView iv = (ImageView)imagePane.getChildren().get(0);
         iv.getStyleClass().remove("bugemon-image-selected");
         cell.getStyleClass().remove("bugemon-cell-selected");
         cell.getStyleClass().add("bugemon-cell");

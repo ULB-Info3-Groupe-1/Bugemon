@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import ulb.models.bugemon.ActiveEffect;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -54,7 +55,6 @@ import ulb.models.trainer.Trainer;
  * @see Bugemon#editStat(EffectStat, int)
  */
 public class EffectManager {
-
     /**
      * Maps each {@link Bugemon} currently under the influence of an effect to
      * its corresponding {@link ActiveEffect}.
@@ -155,19 +155,11 @@ public class EffectManager {
             switch (target) {
                 case EffectTarget.ADVERSARY:
                     bugemons.add(defender.getCurrentBugemon());
-                    handleEffect(
-                        defender.getCurrentBugemon(),
-                        e.getStat(),
-                        e.getModifier()
-                    );
+                    handleEffect(defender.getCurrentBugemon(), e.getStat(), e.getModifier());
                     break;
                 case EffectTarget.THROWER:
                     bugemons.add(attacker.getCurrentBugemon());
-                    handleEffect(
-                        attacker.getCurrentBugemon(),
-                        e.getStat(),
-                        e.getModifier()
-                    );
+                    handleEffect(attacker.getCurrentBugemon(), e.getStat(), e.getModifier());
                     break;
                 case EffectTarget.TEAM:
                     for (Bugemon bugemon : attacker.getTeam()) {
@@ -176,14 +168,13 @@ public class EffectManager {
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException(
-                        "Illegal effect target: " + target
-                    );
+                    throw new IllegalArgumentException("Illegal effect target: " + target);
             }
 
             // saving the effects
             for (Bugemon bugemon : bugemons) {
-                int duration = 0; // default value; if duration couldn't be extracted, the effect expires
+                int duration =
+                        0; // default value; if duration couldn't be extracted, the effect expires
                 // immediately
                 try {
                     duration = e.extractDuration() - 1;

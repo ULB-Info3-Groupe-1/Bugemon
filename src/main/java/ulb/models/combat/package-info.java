@@ -19,20 +19,20 @@
  *       layer to observe combat state. Supports both automatic and manual
  *       combat depending on the {@link ulb.models.trainer.Trainer} subtypes
  *       passed at construction time.</li>
- *   <li>{@link ulb.models.combat.CombatHelper} — stateless utility class
+ *   <li>{@link ulb.services.CombatService} — stateless utility class
  *       providing the three core combat calculations:
  *     <ul>
- *       <li>{@link ulb.models.combat.CombatHelper#attackPriority(ulb.models.trainer.Trainer,
+ *       <li>{@link ulb.services.CombatService#attackPriority(ulb.models.trainer.Trainer,
  *           ulb.models.trainer.Trainer)} — resolves turn order from initiative
  *           stats.</li>
- *       <li>{@link ulb.models.combat.CombatHelper#calculateDamage(ulb.models.bugemon.Attack,
+ *       <li>{@link ulb.services.CombatService#calculateDamage(ulb.models.bugemon.Attack,
  *           ulb.models.bugemon.Bugemon, ulb.models.bugemon.Bugemon)} — computes
  *           damage from power, attack/defense stats, type effectiveness, and a
  *           random critical-hit factor.</li>
- *       <li>{@link ulb.models.combat.CombatHelper#compareBType(ulb.models.bugemon.Bugemon.BType,
- *           ulb.models.bugemon.Bugemon.BType)} — evaluates the elemental type
+ *       <li>{@link ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+ *           ulb.models.bugemon.BugemonType)} — evaluates the elemental type
  *           matchup between an attack type and the defender's type, returning a
- *           {@link ulb.models.combat.CombatHelper.Efficiency} value.</li>
+ *           {@link ulb.common.Efficiency} value.</li>
  *     </ul>
  *   </li>
  *   <li>{@link ulb.models.combat.EffectManager} — tracks and manages the
@@ -50,7 +50,7 @@
  * <h2>Type-effectiveness cycle</h2>
  * <p>
  * Elemental types follow a fixed cycle defined by the declaration order of
- * {@link ulb.models.bugemon.Bugemon.BType}:
+ * {@link ulb.models.bugemon.BugemonType}:
  * {@code FLORA → AQUA → PYRO → LITHO → (back to FLORA)}.
  * Each type is strong against the type that precedes it in the cycle and weak
  * against the type that follows it. Neutral matchups apply to all other
@@ -60,7 +60,7 @@
  * <h2>Design notes</h2>
  * <ul>
  *   <li>Damage calculation in
- *       {@link ulb.models.combat.CombatHelper#calculateDamage(ulb.models.bugemon.Attack,
+ *       {@link ulb.services.CombatService#calculateDamage(ulb.models.bugemon.Attack,
  *       ulb.models.bugemon.Bugemon, ulb.models.bugemon.Bugemon)}
  *       includes a 10% random critical-hit chance (x1.5 multiplier), making
  *       individual results non-deterministic. Tests that assert relative damage
@@ -75,5 +75,6 @@
  * @see ulb.models.bugemon
  * @see ulb.models.trainer
  * @see ulb.controllers.combat
+ * @see ulb.services.CombatService
  */
 package ulb.models.combat;

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.test.TestUtilsBugemonTeam;
 import ulb.utils.test.TestUtilsBugemons;
@@ -52,8 +53,8 @@ public class TestManualTrainer {
         ManualTrainer trainer = new ManualTrainer(team);
 
         // Build an attack with an ID that is guaranteed to not be in any Bugemon's move-set
-        Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", Bugemon.BType.FLORA, "",
-                                          10, new java.util.ArrayList<>());
+        Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", BugemonType.FLORA, "", 10,
+                                          new java.util.ArrayList<>());
 
         assertThrows(IllegalArgumentException.class, () -> trainer.queueAttack(foreignAttack));
     }

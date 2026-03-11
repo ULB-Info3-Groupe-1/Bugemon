@@ -16,6 +16,7 @@ package ulb.services;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -31,7 +32,6 @@ import ulb.models.trainer.Trainer;
  * <p>This class is not meant to be instantiated; all methods are static.</p>
  */
 public class CombatService {
-
     /**
      * Determines which trainer's Bugemon attacks first based on initiative.
      * In case of a tie, the winner is chosen randomly.
@@ -40,10 +40,7 @@ public class CombatService {
      * @param trainer2 the second trainer
      * @return the trainer whose Bugemon attacks first
      */
-    public static Trainer attackPriority(
-        final Trainer trainer1,
-        final Trainer trainer2
-    ) {
+    public static Trainer attackPriority(final Trainer trainer1, final Trainer trainer2) {
         final int initiative1 = trainer1.getCurrentBugemonInitiative();
         final int initiative2 = trainer2.getCurrentBugemonInitiative();
 
@@ -72,20 +69,15 @@ public class CombatService {
      *                        {@code 1.5} for a critical hit)
      * @return the computed damage as a double
      */
-    public static double calculateDamage(
-        final Attack attack,
-        final Bugemon offenderBugemon,
-        final Bugemon defenderBugemon,
-        final double criticFactor
-    ) {
+    public static double calculateDamage(final Attack attack, final Bugemon offenderBugemon,
+                                         final Bugemon defenderBugemon, final double criticFactor) {
         BugemonType defType = defenderBugemon.getType();
 
         final int basePower = attack.getPower();
         final double atkFactor = (100.0 + offenderBugemon.getAttack()) / 100.0;
         final double defFactor = 100.0 / (defenderBugemon.getDefense() + 100.0);
         final double typeMultiplier = getEfficiencyFactor(attack, defType);
-        final double damage =
-            basePower * atkFactor * defFactor * typeMultiplier * criticFactor;
+        final double damage = basePower * atkFactor * defFactor * typeMultiplier * criticFactor;
 
         return damage;
     }
@@ -104,18 +96,10 @@ public class CombatService {
      * @param defenderBugemon the defending Bugemon, used to access its defense stat and type
      * @return the computed damage as a double
      */
-    public static double calculateDamage(
-        final Attack attack,
-        final Bugemon offenderBugemon,
-        final Bugemon defenderBugemon
-    ) {
+    public static double calculateDamage(final Attack attack, final Bugemon offenderBugemon,
+                                         final Bugemon defenderBugemon) {
         final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
-        return calculateDamage(
-            attack,
-            offenderBugemon,
-            defenderBugemon,
-            critMultiplier
-        );
+        return calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
     }
 
     /**
@@ -130,14 +114,8 @@ public class CombatService {
      * @return {@code 0.75} for {@link Efficiency#LOW}, {@code 1.50} for {@link Efficiency#HIGH},
      *         or {@code 1.00} for {@link Efficiency#NEUTRAL}
      */
-    public static double getEfficiencyFactor(
-        final Attack attack,
-        final BugemonType defenderType
-    ) {
-        final Efficiency matchup = compareBugemonType(
-            attack.getType(),
-            defenderType
-        );
+    public static double getEfficiencyFactor(final Attack attack, final BugemonType defenderType) {
+        final Efficiency matchup = compareBugemonType(attack.getType(), defenderType);
 
         if (matchup.equals(Efficiency.LOW)) {
             return 0.75;
@@ -170,14 +148,10 @@ public class CombatService {
      * @return {@link Efficiency#HIGH} if the offensive type is strong against the defensive type,
      *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
      */
-    public static Efficiency compareBugemonType(
-        final BugemonType offensiveType,
-        final BugemonType defensiveType
-    ) {
+    public static Efficiency compareBugemonType(final BugemonType offensiveType,
+                                                final BugemonType defensiveType) {
         // Use the BugemonType enum declaration order as the type cycle
-        final List<BugemonType> cycle = new ArrayList<BugemonType>(
-            List.of(BugemonType.values())
-        );
+        final List<BugemonType> cycle = new ArrayList<BugemonType>(List.of(BugemonType.values()));
 
         final int atkIdx = cycle.indexOf(offensiveType);
         final int defIdx = cycle.indexOf(defensiveType);

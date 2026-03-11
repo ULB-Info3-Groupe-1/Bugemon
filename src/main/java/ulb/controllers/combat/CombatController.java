@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import ulb.common.Efficiency;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
@@ -32,11 +33,10 @@ import ulb.views.combat.CombatView;
  *       ({@link #formatEfficiency(Efficiency)},
  *       {@link #formatEfficiency(TurnResult.AttackResult)}).</li>
  *   <li>Determining the type-effectiveness of an attack against a defender's
- *       type ({@link #isAttackEfficient(BType, BType)}), delegating to
- *       {@link ulb.models.combat.CombatHelper#compareBType(ulb.models.bugemon.Bugemon.BType,
- *       ulb.models.bugemon.Bugemon.BType)}.</li>
+ *       type, delegating to
+ *       {@link ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+ *       ulb.models.bugemon.BugemonType)}.</li>
  * </ul>
- * </p>
  *
  * <p>
  * Concrete subclasses ({@link AutomaticCombatController},
@@ -53,10 +53,7 @@ import ulb.views.combat.CombatView;
  * @see CombatView
  * @see ulb.models.combat.Combat
  */
-public abstract class CombatController<
-    View extends CombatView
-> extends Controller<View> {
-
+public abstract class CombatController<View extends CombatView> extends Controller<View> {
     // ── constructor ───────────────────────────────────────────────────────────
 
     /**
@@ -82,9 +79,10 @@ public abstract class CombatController<
      * <p>
      * The navigation rules are:
      * <ul>
-     *   <li>If {@code winner == player}, the player won: XP is calculated via
-     *       {@link CombatHelper#calculateXP(Trainer, Trainer)} and distributed
-     *       to every Bugemon that participated. Any resulting level-ups are
+     *   <li>If {@code winner == player}, the player won: XP is distributed
+     *       to every Bugemon that participated via
+     *       {@link ulb.services.LevelUpService#distributeXp(Trainer, Trainer)}.
+     *       Any resulting level-ups are
      *       forwarded to the {@link MetaController} which then navigates to
      *       {@link Window#LEVEL_UP} (or {@link Window#COMBAT_VICTORY} if no
      *       level-up occurred, depending on
@@ -92,7 +90,6 @@ public abstract class CombatController<
      *   <li>If {@code winner != player}, the player lost: the application
      *       navigates directly to {@link Window#COMBAT_DEFEAT}.</li>
      * </ul>
-     * </p>
      *
      * <p>
      * This method should be called by a subclass as soon as
@@ -114,11 +111,8 @@ public abstract class CombatController<
             // TODO: Do not forget to set manually floor and multiplier based on NO combat.
             int xp = LevelUpService.distributeXp(winner, player);
 
-            List<Bugemon> participatingBugemons = winner
-                .getTeam()
-                .stream()
-                .filter(b -> b.getParticipation())
-                .toList();
+            List<Bugemon> participatingBugemons =
+                    winner.getTeam().stream().filter(b -> b.getParticipation()).toList();
 
             levelUps = LevelUpService.levelUp(participatingBugemons);
             this.metaController.setLevelUp(levelUps);
@@ -138,8 +132,8 @@ public abstract class CombatController<
      * sprite, name) are updated. If {@code attack} is non-{@code null}, the
      * type-effectiveness of the attack against the opponent's active Bugemon is
      * computed via
-     * {@link ulb.models.combat.CombatHelper#compareBType(ulb.models.bugemon.Bugemon.BType,
-     * ulb.models.bugemon.Bugemon.BType)} and a corresponding message is shown
+     * {@link ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+     * ulb.models.bugemon.BugemonType)} and a corresponding message is shown
      * via {@link CombatView#showDialog(String, String)}.
      * </p>
      *
@@ -147,32 +141,22 @@ public abstract class CombatController<
      *                 is rendered on the left panel; must not be {@code null}.
      * @param opponent the opponent-side {@link Trainer} whose active Bugemon info
      *                 is rendered on the right panel; must not be {@code null}.
-     * @param attack   the attack whose type-effectiveness should be displayed, or
-     *                 {@code null} to skip the dialogue entirely.
+     * @param attack   the {@link Attack} whose type-effectiveness should be
+     *                 displayed, or {@code null} to skip the dialogue entirely.
      */
-    public void updateCombatView(
-        Trainer player,
-        Trainer opponent,
-        Attack attack
-    ) {
+    public void updateCombatView(Trainer player, Trainer opponent, Attack attack) {
         this.view.hideDialog();
         this.view.updateTrainerBugemon(player.getCurrentBugemon());
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
         if (attack != null) {
-            if (
-                CombatService.compareBugemonType(
-                    attack.getType(),
-                    opponent.getCurrentBugemonType()
-                ).equals(Efficiency.HIGH)
-            ) {
+            if (CombatService.compareBugemonType(attack.getType(), opponent.getCurrentBugemonType())
+                        .equals(Efficiency.HIGH)) {
                 this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
-            } else if (
-                CombatService.compareBugemonType(
-                    attack.getType(),
-                    opponent.getCurrentBugemonType()
-                ).equals(Efficiency.LOW)
-            ) {
+            } else if (CombatService
+                               .compareBugemonType(attack.getType(),
+                                                   opponent.getCurrentBugemonType())
+                               .equals(Efficiency.LOW)) {
                 this.view.showDialog("Peu d'effet ...", null);
             } else {
                 this.view.showDialog("Dégats standards", null);

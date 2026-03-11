@@ -45,8 +45,9 @@ public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.S
      * <p>
      * {@link ulb.models.combat.Combat#turn()} uses this flag to decide whether
      * to call
-     * {@link ulb.models.combat.CombatHelper#calculateDamage} for this side of
-     * the turn. Passive actions (switch, forfeit, item use, …) must return
+     * {@link ulb.services.CombatService#calculateDamage(ulb.models.bugemon.Attack,
+     * ulb.models.bugemon.Bugemon, ulb.models.bugemon.Bugemon)} for this side of the turn. Passive
+     * actions (switch, forfeit, item use, …) must return
      * {@code false} so that the combat engine skips damage calculation for
      * them while still allowing the opponent to retaliate.
      * </p>
@@ -65,8 +66,9 @@ public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.S
      * <p>
      * The {@link ulb.models.combat.Combat} engine reads {@link #attack()} to
      * compute damage via
-     * {@link ulb.models.combat.CombatHelper#calculateDamage} and to apply any
-     * {@link ulb.models.bugemon.Effect}s carried by the attack.
+     * {@link ulb.services.CombatService#calculateDamage(ulb.models.bugemon.Attack,
+     * ulb.models.bugemon.Bugemon, ulb.models.bugemon.Bugemon)} and to apply any
+     * {@link ulb.models.bugemon.effect.Effect}s carried by the attack.
      * </p>
      *
      * @param attack the {@link Attack} to use; must not be {@code null} and

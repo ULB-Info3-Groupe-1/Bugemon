@@ -14,9 +14,9 @@
  * <h2>Key classes and enums</h2>
  * <ul>
  *   <li>{@link ulb.models.bugemon.Bugemon} — the main entity; instances are
- *       created exclusively through the nested
- *       {@link ulb.models.bugemon.Bugemon.Builder} fluent builder.</li>
- *   <li>{@link ulb.models.bugemon.Bugemon.BType} — elemental type enum
+ *       created exclusively through the
+ *       {@link ulb.models.bugemon.BugemonBuilder} fluent builder.</li>
+ *   <li>{@link ulb.models.bugemon.BugemonType} — elemental type enum
  *       ({@code FLORA}, {@code AQUA}, {@code PYRO}, {@code LITHO}) that drives
  *       type-effectiveness calculations in combat.</li>
  *   <li>{@link ulb.models.bugemon.Attack} — an attack move a Bugemon can use,

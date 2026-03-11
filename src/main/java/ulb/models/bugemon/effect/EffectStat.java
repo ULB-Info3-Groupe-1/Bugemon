@@ -74,7 +74,8 @@ public enum EffectStat {
      * initiative value is increased or decreased by the modifier. Initiative
      * determines turn order: the Bugemon with the higher initiative attacks first
      * in a given turn, as resolved by
-     * {@link ulb.models.combat.CombatHelper#attackPriority}.
+     * {@link ulb.services.CombatService#attackPriority(ulb.models.trainer.Trainer,
+     * ulb.models.trainer.Trainer)}.
      * </p>
      *
      * <p>JSON value: {@code "initiative"}</p>

@@ -32,7 +32,6 @@ import ulb.models.bugemon.Attack;
  * @see ActionMenuView
  */
 public class AttackActionMenu extends ActionMenuView {
-
     /** The controller used to forward player actions to the combat model. */
     private ManualCombatController controller;
 
@@ -133,16 +132,11 @@ public class AttackActionMenu extends ActionMenuView {
      * @param attack the {@link Attack} to bind to this button; must not be
      *               {@code null}.
      */
-    private void configureAttackButton(
-        javafx.scene.control.Button button,
-        Attack attack
-    ) {
+    private void configureAttackButton(javafx.scene.control.Button button, Attack attack) {
         button.getStyleClass().clear();
         button.getStyleClass().add("action-button");
 
-        String efficiency = this.controller.isAttackEfficient(
-            attack
-        ).toString();
+        String efficiency = this.controller.isAttackEfficient(attack).toString();
 
         button.setText(attack.getName() + "\n" + efficiency);
         button.getStyleClass().add("attack-" + attack.getType().toString());

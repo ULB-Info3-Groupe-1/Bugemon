@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+
 import ulb.common.dto.BugemonDTO;
 
 /**
@@ -20,7 +21,6 @@ import ulb.common.dto.BugemonDTO;
  *   <li>the Bugemon's type label in parentheses;</li>
  *   <li>an HP progress bar scaled to {@code currentHp / maxHp}.</li>
  * </ul>
- * </p>
  *
  * <p>
  * The component loads and owns its FXML at construction time, so it can be
@@ -32,17 +32,13 @@ import ulb.common.dto.BugemonDTO;
  * @see ulb.views.combat.CombatView
  */
 public class BugemonInfoView extends VBox {
-
     private static final String FXML_PATH = "/fxml/BugemonInfo.fxml";
 
-    @FXML
-    private Text bugemonName;
+    @FXML private Text bugemonName;
 
-    @FXML
-    private Text bugemonType;
+    @FXML private Text bugemonType;
 
-    @FXML
-    private javafx.scene.control.ProgressBar bugemonHPBar;
+    @FXML private javafx.scene.control.ProgressBar bugemonHPBar;
 
     /**
      * Constructs a {@code BugemonInfoView} by loading the
@@ -87,8 +83,8 @@ public class BugemonInfoView extends VBox {
      *       {@code currentHp / maxHp}, clamped to {@code [0.0, 1.0]} by the
      *       JavaFX {@link javafx.scene.control.ProgressBar} contract.</li>
      * </ul>
-     * </p>
      *
+     * @param bugemon
      * @param bugemon the {@link BugemonDTO} whose data should be displayed;
      *                must not be {@code null}, and
      *                {@link BugemonDTO#getMaxHp()} must be greater than zero
@@ -99,8 +95,6 @@ public class BugemonInfoView extends VBox {
         this.bugemonName.getStyleClass().add(bugemon.getType().toString());
         this.bugemonName.setText(bugemon.getName());
         this.bugemonType.setText("(" + bugemon.getType().toString() + ")");
-        this.bugemonHPBar.setProgress(
-            (double) bugemon.getHp() / bugemon.getMaxHp()
-        );
+        this.bugemonHPBar.setProgress((double)bugemon.getHp() / bugemon.getMaxHp());
     }
 }

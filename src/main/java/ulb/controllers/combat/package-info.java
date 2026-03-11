@@ -27,14 +27,14 @@
  *       {@link
  * ulb.controllers.combat.AutomaticCombatController#runAutoCombat(ulb.models.trainer.AutoTrainer)}.
  *       Both the player's and the opponent's teams act randomly each turn;
- *       the entire session runs to completion in a single blocking call.</li>
+ *       turns are resolved one by one on a non-blocking JavaFX
+ *       {@link javafx.animation.Timeline}.</li>
  *   <li>{@link ulb.controllers.combat.ManualCombatController} — drives a
  *       player-controlled combat session via
  *       {@link
  * ulb.controllers.combat.ManualCombatController#runManualCombat(ulb.models.trainer.ManualTrainer)}.
- *       The player selects actions through the UI each turn while the opponent
- *       acts automatically. Full UI integration is currently a work in
- *       progress.</li>
+ *       The player selects an attack, switches a Bugemon, or forfeits each
+ *       turn through the UI, while the opponent acts automatically.</li>
  * </ul>
  *
  * <h2>Combat lifecycle</h2>
@@ -56,23 +56,27 @@
  *
  * <h2>Design notes</h2>
  * <ul>
- *   <li>Both concrete controllers currently run their combat loops synchronously
- *       on the JavaFX Application Thread. Very long sessions may therefore cause
- *       the UI to become unresponsive. A future refactor should move the loop to
- *       a background thread and update the view incrementally between turns.</li>
- *   <li>Manual action selection from the UI is not yet fully wired up in
- *       {@link ulb.controllers.combat.ManualCombatController}; the current
- *       implementation passes {@code null} as the action, which will trigger an
- *       {@link java.lang.IllegalArgumentException} at runtime.</li>
+ *   <li>{@link ulb.controllers.combat.AutomaticCombatController} drives its
+ *       loop via a JavaFX {@link javafx.animation.Timeline} that fires one turn
+ *       every 3 seconds, keeping the UI responsive between turns.</li>
+ *   <li>{@link ulb.controllers.combat.ManualCombatController} processes one
+ *       turn per player action; the controller queues the chosen
+ *       {@link ulb.models.trainer.TurnAction} on the
+ *       {@link ulb.models.trainer.ManualTrainer} and then calls
+ *       {@link ulb.models.combat.Combat#turn()} to resolve the round.</li>
  *   <li>Each combat controller holds a typed reference to its
  *       {@link ulb.views.combat.CombatView} subclass (via the {@code View} type
  *       parameter inherited from {@link ulb.controllers.Controller}), eliminating
  *       the need for casts when accessing screen-specific view API.</li>
+ *   <li>Shared combat calculations (damage, attack priority, type effectiveness)
+ *       are provided by the stateless {@link ulb.services.CombatService} utility
+ *       class rather than living inside the controller or model.</li>
  * </ul>
  *
  * @see ulb.controllers
  * @see ulb.models.combat
  * @see ulb.views.combat
+ * @see ulb.services.CombatService
  * @see ulb.controllers.MetaController
  */
 package ulb.controllers.combat;

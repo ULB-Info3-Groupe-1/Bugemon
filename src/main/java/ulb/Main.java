@@ -25,7 +25,6 @@ import ulb.utils.Parser;
  *   <li>Navigating to the {@link Window#MAIN_MENU} as the first visible
  *       screen.</li>
  * </ol>
- * </p>
  *
  * <p>
  * The actual JVM entry point is {@link AppLauncher#main(String[])}, which
@@ -78,8 +77,8 @@ public class Main extends Application {
      *       swap scenes during navigation.</li>
      *   <li>Triggers the initial navigation to {@link Window#MAIN_MENU}.</li>
      * </ol>
-     * </p>
      *
+     * @param primaryStage
      * @param primaryStage the primary {@link Stage} provided by the JavaFX
      *                     runtime; must not be {@code null}.
      */
