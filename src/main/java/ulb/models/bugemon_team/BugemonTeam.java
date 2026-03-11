@@ -108,7 +108,16 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
     /**
      * Removes a Bugemon from the team if it is in the team. If the team is empty or
      * the Bugemon is not in the team, an exception is thrown.
+     *
+     * <p>
+     * This is a convenience overload of {@link #removeBugemon(String)} that
+     * extracts the ID from the given {@link Bugemon} and delegates to it.
+     * </p>
+     *
      * @param bugemon (Bugemon) the Bugemon to be removed from the team
+     * @throws TeamAlreadyEmptyException if the team contains no Bugemons.
+     * @throws BugemonNotInTeamException if no Bugemon with the same ID exists
+     *                                   in the team.
      */
     public void removeBugemon(Bugemon bugemon) {
         this.removeBugemon(bugemon.getId());
@@ -201,7 +210,18 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
     }
 
     /**
-     * Returns the first bugemon in the team.
+     * Returns the first {@link Bugemon} in the team, in insertion order.
+     *
+     * <p>
+     * This is a convenience method equivalent to retrieving the element at
+     * index {@code 0} of the backing list. It is typically used to initialise
+     * the active Bugemon when a {@link ulb.models.trainer.Trainer} is
+     * constructed.
+     * </p>
+     *
+     * @return the first {@link Bugemon} in the team; never {@code null} if the
+     *         team is non-empty.
+     * @throws java.util.NoSuchElementException if the team is empty.
      */
     public Bugemon getFirst() {
         return this.team.getFirst();

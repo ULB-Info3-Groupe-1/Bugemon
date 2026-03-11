@@ -1,12 +1,3 @@
-/**
- * File name : TestAutomaticCombat.java
- * Description : Test class for the AutomaticCombat class.
- *
- * @author Liefferinckx Romain
- * @date 01 march. 2026
- * @version 1.0
- */
-
 package ulb.models.combat;
 
 import static org.junit.Assert.assertFalse;
@@ -19,11 +10,12 @@ import ulb.models.trainer.AutoTrainer;
 import ulb.utils.test.TestUtilsTrainer;
 
 public class TestAutomaticCombat {
+
     @Test
     public void testBasicTurn() {
         AutoTrainer trainer1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer trainer2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        AutomaticCombat combat = new AutomaticCombat(trainer1, trainer2);
+        Combat combat = new Combat(trainer1, trainer2);
         combat.turn();
         assertFalse(combat.getAllyTrainer().isDefeated());
         assertFalse(combat.getAdversaryTrainer().isDefeated());
@@ -33,7 +25,7 @@ public class TestAutomaticCombat {
     public void testEndingTurn() {
         AutoTrainer trainer1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer trainer2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        AutomaticCombat combat = new AutomaticCombat(trainer1, trainer2);
+        Combat combat = new Combat(trainer1, trainer2);
         while (!combat.isFinished()) {
             combat.turn();
         }
@@ -45,7 +37,7 @@ public class TestAutomaticCombat {
     public void testApplyDamage() {
         AutoTrainer trainer1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer trainer2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        AutomaticCombat combat = new AutomaticCombat(trainer1, trainer2);
+        Combat combat = new Combat(trainer1, trainer2);
         int initialHp1 = trainer1.getCurrentBugemonHp();
         int initialHp2 = trainer2.getCurrentBugemonHp();
         combat.turn();
@@ -54,6 +46,4 @@ public class TestAutomaticCombat {
         assertTrue(finalHp1 < initialHp1);
         assertTrue(finalHp2 < initialHp2);
     }
-
-    // TODO: Need to implement a test on the persistency of the permanent effect
 }

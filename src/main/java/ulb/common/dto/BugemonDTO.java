@@ -97,5 +97,16 @@ public interface BugemonDTO {
      */
     int getMaxHp();
 
+    /**
+     * Returns the current level of this Bugemon.
+     *
+     * <p>
+     * The level starts at {@code 1} and increases each time the Bugemon
+     * accumulates enough XP via {@link ulb.models.bugemon.Bugemon#addXp(int)}.
+     * It is used to determine XP thresholds for future level-ups.
+     * </p>
+     *
+     * @return the current level as a positive {@code int} (minimum {@code 1}).
+     */
     int getLevel();
 }

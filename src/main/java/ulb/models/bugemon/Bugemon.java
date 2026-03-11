@@ -9,10 +9,8 @@
 
 package ulb.models.bugemon;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
-
+import java.util.List;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.level_up.Choice;
@@ -37,11 +35,13 @@ import ulb.models.level_up.LevelUp;
  * @see Attack
  */
 public class Bugemon implements BugemonDTO, Cloneable {
+
     /** Unique identifier of this bugemon. */
     String id;
 
     /** Display name of this bugemon. Serialised as {@code "nom"}. */
-    @SerializedName("nom") String name;
+    @SerializedName("nom")
+    String name;
 
     /** Elemental type of this bugemon. */
     BugemonType type;
@@ -65,13 +65,15 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * Whether this bugemon is available as a starter choice. Serialised as
      * {@code "starter"}.
      */
-    @SerializedName("starter") boolean isStarter;
+    @SerializedName("starter")
+    boolean isStarter;
 
     /**
      * The list of attacks available to this bugemon. Serialised as
      * {@code "attaques"}.
      */
-    @SerializedName("attaques") List<Attack> attackList;
+    @SerializedName("attaques")
+    List<Attack> attackList;
 
     /**
      * Private no-arg constructor used exclusively by the {@link BugemonBuilder}.
@@ -96,7 +98,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     @Override
     public Bugemon clone() throws CloneNotSupportedException {
-        Bugemon cloned = (Bugemon)super.clone();
+        Bugemon cloned = (Bugemon) super.clone();
         cloned.state = new BugemonState(this.state);
         cloned.initialState = new BugemonState(this.initialState);
 
@@ -108,10 +110,9 @@ public class Bugemon implements BugemonDTO, Cloneable {
     /**
      * Apply damage to the bugemon, reducing its HP by the specified amount.
      *
-     * @param damage (int) the amount of damage to apply to the bugemon, reducing
-     *               its HP.
+     * @param damage the amount of damage to apply.
      */
-    public void takeDamage(int damage) {
+    public void takeDamage(double damage) {
         this.state.hp -= damage;
     }
 
@@ -135,11 +136,9 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        Bugemon other = (Bugemon)obj;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Bugemon other = (Bugemon) obj;
         return this.id.equals(other.id);
     }
 
@@ -195,10 +194,23 @@ public class Bugemon implements BugemonDTO, Cloneable {
     }
 
     /**
-     * Add/Substract a given value to a given stat.
+     * Adds (or subtracts) {@code value} to the combat statistic identified by
+     * {@code stat}.
      *
-     * @param stat  (EffectStat) The stat id to edit.
-     * @param value (int) The value to add to the stat.
+     * <p>
+     * Positive values buff the stat; negative values debuff it. The change is
+     * applied to the <em>current</em> (mutable) state, not the initial state,
+     * so it will be undone when {@link #reset()} is called.
+     * </p>
+     *
+     * @param stat  the {@link EffectStat} identifying which statistic to modify
+     *              ({@code HP}, {@code ATTACK}, {@code DEFENSE}, or
+     *              {@code INITIATIVE}).
+     * @param value the signed integer delta to add to the stat; positive values
+     *              buff, negative values debuff.
+     * @throws KeyException if {@code stat} does not match any known
+     *                      {@link EffectStat} constant (should not occur with a
+     *                      well-formed enum value).
      */
     public void editStat(EffectStat stat, int value) {
         switch (stat) {
@@ -216,7 +228,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Invalid stat key when trying to edit stat value");
+                    "Invalid stat key when trying to edit stat value"
+                );
         }
     }
 
@@ -344,18 +357,29 @@ public class Bugemon implements BugemonDTO, Cloneable {
     }
 
     /**
-     * Gets whether this bugemon participated in the last fight.
+     * Returns whether this bugemon participated in the last combat.
      *
-     * @return {@code true} if the bugemon participated; {@code false} otherwise
+     * <p>
+     * This flag is set to {@code true} by
+     * {@link ulb.models.trainer.Trainer#addBugemonParticipation()} at the start
+     * of each turn the bugemon is active, and is used by
+     * {@link ulb.models.combat.CombatHelper#calculateXP} to distribute
+     * experience only to bugemons that actually fought.
+     * </p>
+     *
+     * @return {@code true} if this bugemon participated in the last combat,
+     *         {@code false} otherwise.
      */
     public boolean getParticipation() {
         return this.state.participatedLastFight;
     }
 
     /**
-     * Sets whether this bugemon participated in a fight.
+     * Sets whether this bugemon participated in the last combat.
      *
-     * @param participated {@code true} if the bugemon participated; {@code false} otherwise
+     * @param participated {@code true} to mark this bugemon as having
+     *                     participated; {@code false} to clear the flag.
+     * @see #getParticipation()
      */
     public void setParticipation(boolean participated) {
         this.state.participatedLastFight = participated;

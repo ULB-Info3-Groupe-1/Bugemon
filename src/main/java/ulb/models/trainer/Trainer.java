@@ -10,26 +10,27 @@
 package ulb.models.trainer;
 
 import java.util.List;
-
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * Represents a trainer who owns a {@link BugemonTeam} and participates in
- * combat by fielding one active {@link Bugemon} at a time.
+ * Abstract base for any participant in a combat session.
  *
  * <p>
- * A {@code Trainer} holds a reference to its team and tracks the
+ * A {@code Trainer} holds a reference to its {@link BugemonTeam} and tracks the
  * {@code currentBugemon} — the member currently on the field. It exposes
  * methods to query combat state (HP, initiative, alive/defeated) and to
  * delegate damage to the active Bugemon.
  * </p>
  *
  * <p>
- * {@link AutoTrainer} and {@link ManualTrainer} extend this class to add
- * automatic and player-driven action-selection strategies respectively.
+ * Subclasses must implement {@link #selectAction()} to supply the
+ * {@link TurnAction} this trainer wants to take on the current turn, and
+ * {@link #reactToKO()} to define how the trainer responds when its active
+ * Bugemon faints mid-turn. All resolution logic lives in
+ * {@link ulb.models.combat.Combat}; the trainer only <em>decides</em>.
  * </p>
  *
  * @see AutoTrainer
@@ -37,45 +38,90 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see BugemonTeam
  * @see Bugemon
  */
-public class Trainer {
-    // Attributes
+public abstract class Trainer {
 
-    protected BugemonTeam team;
+    protected final BugemonTeam team;
     protected Bugemon currentBugemon;
 
-    // Constructor
-
     /**
-     * Constructor for the Trainer class, initializing the team of the trainer.
+     * Constructs a {@code Trainer} with the given team, setting the first member
+     * as the initial active Bugemon.
      *
-     * @param team (BugemonTeam) the team of the trainer, which is a list of
-     *             bugemon.
+     * @param team the {@link BugemonTeam} owned by this trainer; must not be
+     *             {@code null} and must contain at least one Bugemon.
      */
     public Trainer(BugemonTeam team) {
         this.team = team;
-        this.currentBugemon = team.getFirst();
+        currentBugemon = team.getFirst();
     }
 
-    // Methods
+    // ── strategy contract ────────────────────────────────────────────────────
 
     /**
-     * Returns true if the trainer is defeated (all bugemon in the team are
-     * defeated), false otherwise.
+     * Returns the {@link TurnAction} this trainer has decided to take for the
+     * current turn.
      *
-     * @return (boolean) true if the trainer is defeated, false otherwise.
+     * <p>
+     * Called exactly once per turn by {@link ulb.models.combat.Combat#turn()}.
+     * {@link AutoTrainer} implements this by picking a random attack;
+     * {@link ManualTrainer} returns the action previously queued by the
+     * controller via one of the {@code queue*()} methods.
+     * </p>
+     *
+     * @return the chosen {@link TurnAction}; never {@code null}.
+     * @throws IllegalStateException if {@link ManualTrainer} has no pending
+     *                               action queued.
+     */
+    public abstract TurnAction selectAction();
+
+    /**
+     * Called by {@link ulb.models.combat.Combat} immediately after the active
+     * Bugemon faints and the trainer is not yet fully defeated, so that the
+     * trainer can bring in a replacement.
+     *
+     * <p>
+     * {@link AutoTrainer} switches to a randomly chosen alive Bugemon.
+     * {@link ManualTrainer} switches to the Bugemon previously set via
+     * {@link ManualTrainer#queueSwitchAfterKO(Bugemon)}, or does nothing if
+     * none has been set yet (the controller is then responsible for calling
+     * {@link ManualTrainer#switchAfterKO(Bugemon)} directly).
+     * </p>
+     */
+    public abstract void reactToKO();
+
+    /**
+     * Instantly defeats the entire team by reducing every Bugemon's HP to zero.
+     *
+     * <p>
+     * Used by {@link ulb.models.combat.Combat} to resolve a
+     * {@link TurnAction.ForfeitAction}: the forfeiting trainer's team is killed
+     * so that {@link #isDefeated()} returns {@code true} and
+     * {@link ulb.models.combat.Combat#getWinner()} can identify the winner.
+     * </p>
+     */
+    public void killTeam() {
+        team.forEach(b -> b.takeDamage(b.getHp()));
+    }
+
+    // ── shared state queries ─────────────────────────────────────────────────
+
+    /**
+     * Returns {@code true} if the trainer is defeated, i.e. every Bugemon in
+     * the team has fainted (HP &le; 0).
+     *
+     * @return {@code true} if all Bugemons are dead, {@code false} otherwise.
      */
     public boolean isDefeated() {
-        return this.team.stream().allMatch(b -> !b.isAlive());
+        return team.stream().allMatch(b -> !b.isAlive());
     }
 
     /**
-     * Returns true if the current bugemon in the team of the trainer is alive,
-     * false otherwise.
+     * Returns {@code true} if the currently active Bugemon is still alive.
      *
-     * @return (boolean) true if the current bugemon is alive, false otherwise.
+     * @return {@code true} if the active Bugemon's HP is above zero.
      */
     public boolean isCurrentBugemonAlive() {
-        return this.currentBugemon.isAlive();
+        return currentBugemon.isAlive();
     }
 
     /**
@@ -87,99 +133,121 @@ public class Trainer {
      *         {@code false} otherwise.
      */
     public boolean currentBugemonContainsAttack(Attack attack) {
-        List<Attack> attackList = this.currentBugemon.getAttackList();
+        List<Attack> attackList = currentBugemon.getAttackList();
         return attackList.contains(attack);
     }
 
     /**
-     * Return the initiative of the current bugemon.
+     * Returns the initiative stat of the currently active Bugemon, used by
+     * {@link ulb.models.combat.CombatHelper#attackPriority(Trainer, Trainer)}
+     * to determine which side strikes first.
      *
-     * @return (int) the initiative of the bugemon.
+     * @return the initiative value of the active Bugemon.
      */
     public int getCurrentBugemonInitiative() {
-        return this.currentBugemon.getInitiative();
+        return currentBugemon.getInitiative();
     }
 
     /**
-     * Return the current bugemon in the team of the trainer.
+     * Returns the currently active {@link Bugemon}.
      *
-     * @return (Bugemon) the current bugemon in the team of the trainer.
+     * @return the active {@link Bugemon}; never {@code null}.
      */
     public Bugemon getCurrentBugemon() {
-        return this.currentBugemon;
+        return currentBugemon;
     }
 
     /**
-     * Return the list of attacks of the current bugemon in the team of the trainer.
+     * Returns the list of attacks known by the currently active {@link Bugemon}.
      *
-     * @return (AttackList) the list of attacks of the current bugemon.
+     * @return a {@link List} of {@link Attack}s; never {@code null}.
      */
     public List<Attack> getCurrentBugemonAttackList() {
-        return this.currentBugemon.getAttackList();
+        return currentBugemon.getAttackList();
     }
 
     /**
-     * Get the HP of the current bugemon in the team of the trainer.
+     * Returns the current HP of the active Bugemon.
      *
-     * @return (int) the HP of the current bugemon in the team of the trainer.
+     * @return the HP value as an {@code int}.
      */
     public int getCurrentBugemonHp() {
-        return this.currentBugemon.getHp();
+        return currentBugemon.getHp();
     }
 
     /**
-     * Takes damage to the current bugemon in the team of the trainer, reducing its
-     * HP.
+     * Returns the elemental type of the currently active Bugemon.
      *
-     * @param damage (int) the amount of damage to be taken by the current bugemon
-     *               in the team of the trainer, reducing its HP.
+     * @return the {@link BugemonType} of the active Bugemon; never {@code null}.
      */
-    public void takeDamage(int damage) {
-        this.currentBugemon.takeDamage(damage);
-    }
-
-    // Getters and setters
-
-    /**
-     * Sets the current bugemon in the team of the trainer to the specified bugemon.
-     *
-     * @param bugemon (Bugemon) the new current bugemon in the team of the trainer.
-     */
-    public void setCurrentBugemon(Bugemon bugemon) {
-        this.currentBugemon = bugemon;
+    public BugemonType getCurrentBugemonType() {
+        return currentBugemon.getType();
     }
 
     /**
-     * Returns the team of the trainer.
+     * Returns the team owned by this trainer.
      *
-     * @return (BugemonTeam) the team of the trainer.
+     * @return the {@link BugemonTeam}; never {@code null}.
      */
     public BugemonTeam getTeam() {
-        return this.team;
+        return team;
     }
 
     /**
-     * Returns the size of the team of the trainer.
+     * Returns the number of Bugemons in this trainer's team.
      *
-     * @return (int) the size of the team of the trainer.
+     * @return the team size as an {@code int}.
      */
     public int getTeamSize() {
         return team.size();
     }
 
     /**
-     * Returns the bugemon with the specified ID from the team of the trainer.
+     * Returns the Bugemon with the specified ID from this trainer's team.
+     *
+     * @param bugemonId the unique identifier of the Bugemon to retrieve;
+     *                  must not be {@code null}.
+     * @return the matching {@link Bugemon}.
+     * @throws java.util.NoSuchElementException if no Bugemon with the given ID
+     *                                          exists in the team.
      */
     public Bugemon getBugemonById(String bugemonId) {
-        // TODO: is this correct usage of optional ?
-        return this.team.getBugemon(bugemonId).get();
+        return team.getBugemon(bugemonId).get();
+    }
+
+    // ── mutators ─────────────────────────────────────────────────────────────
+
+    /**
+     * Applies damage to the currently active Bugemon, reducing its HP.
+     *
+     * @param damage the amount of damage to apply; must be &ge; 0.
+     */
+    public void takeDamage(double damage) {
+        currentBugemon.takeDamage(damage);
     }
 
     /**
-     * Returns the type of the current bugemon in the team of the trainer.
-     * @return (BType) the type of the current bugemon in the team of the trainer.
+     * Replaces the currently active Bugemon with the specified one.
+     *
+     * <p>
+     * No validation is performed here; callers are responsible for ensuring the
+     * target Bugemon belongs to this trainer's team and is alive when required.
+     * </p>
+     *
+     * @param bugemon the {@link Bugemon} to set as the new active member;
+     *                must not be {@code null}.
      */
-    public BugemonType getCurrentBugemonType() {
-        return this.currentBugemon.getType();
+    public void setCurrentBugemon(Bugemon bugemon) {
+        currentBugemon = bugemon;
+    }
+
+    /**
+     * Marks the currently active Bugemon as having participated in the current
+     * combat, which is used later by
+     * {@link ulb.models.combat.CombatHelper#calculateXP(Trainer, Trainer)} to
+     * distribute experience points only to Bugemons that actually fought.
+     */
+    public void addBugemonParticipation() {
+        currentBugemon.setParticipation(true);
     }
 }
