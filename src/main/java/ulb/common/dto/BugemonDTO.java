@@ -1,6 +1,6 @@
-package ulb.common;
+package ulb.common.dto;
 
-import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.BugemonType;
 
 /**
  * Data Transfer Object (DTO) interface exposing a read-only view of a
@@ -76,7 +76,7 @@ public interface BugemonDTO {
      *
      * @return the {@link Bugemon.BType} of this Bugemon; never {@code null}.
      */
-    Bugemon.BType getType();
+    BugemonType getType();
 
     /**
      * Returns the current hit points (HP) of this Bugemon.

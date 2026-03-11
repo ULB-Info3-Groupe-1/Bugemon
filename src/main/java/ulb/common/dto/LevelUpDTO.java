@@ -6,7 +6,7 @@
  * @date 09 mar. 2026
  * @version 1.0
  */
-package ulb.common;
+package ulb.common.dto;
 import java.util.List;
 
 import ulb.models.level_up.Choice;

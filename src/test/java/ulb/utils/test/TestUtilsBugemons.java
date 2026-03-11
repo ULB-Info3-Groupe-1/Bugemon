@@ -5,10 +5,12 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Effect;
-import ulb.models.bugemon.EffectStat;
-import ulb.models.bugemon.EffectTarget;
-import ulb.models.bugemon.EffectType;
+import ulb.models.bugemon.BugemonBuilder;
+import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.effect.EffectType;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public final class TestUtilsBugemons {
@@ -20,12 +22,12 @@ public final class TestUtilsBugemons {
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         Attack attack1 =
-                new Attack("TestAttack1", "TestAttack1", Bugemon.BType.FLORA, "", 30, effects);
+                new Attack("TestAttack1", "TestAttack1", BugemonType.FLORA, "", 30, effects);
         Attack attack2 =
-                new Attack("TestAttack2", "TestAttack2", Bugemon.BType.FLORA, "", 20, effects);
+                new Attack("TestAttack2", "TestAttack2", BugemonType.FLORA, "", 20, effects);
         List<Attack> attackList = List.of(attack1, attack2);
 
-        Bugemon bugemon = new Bugemon.Builder()
+        Bugemon bugemon = new BugemonBuilder()
                                   .id(id)
                                   .name("TestBugemon_" + id)
                                   .hp(100)

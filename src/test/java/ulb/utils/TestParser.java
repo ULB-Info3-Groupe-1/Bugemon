@@ -15,9 +15,10 @@ import org.junit.Test;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Effect;
-import ulb.models.bugemon.EffectStat;
-import ulb.models.bugemon.EffectType;
+import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectType;
 
 public class TestParser {
     @Test
@@ -73,7 +74,7 @@ public class TestParser {
                                   .filter(b -> "Moussil".equals(b.getName()))
                                   .findFirst()
                                   .orElseThrow();
-        assertEquals(moussil.getType(), Bugemon.BType.FLORA);
+        assertEquals(moussil.getType(), BugemonType.FLORA);
 
         // check sprite URL begins with "png/"
         assertEquals(florachu.getSpriteURL(), "png/florachu.png");
@@ -133,6 +134,6 @@ public class TestParser {
                                   .filter(b -> "Moussil".equals(b.getName()))
                                   .findFirst()
                                   .orElseThrow();
-        assertEquals(Bugemon.BType.FLORA, moussil.getType());
+        assertEquals(BugemonType.FLORA, moussil.getType());
     }
 }

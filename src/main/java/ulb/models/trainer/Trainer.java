@@ -13,7 +13,7 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Bugemon.BType;
+import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
@@ -179,7 +179,7 @@ public class Trainer {
      * Returns the type of the current bugemon in the team of the trainer.
      * @return (BType) the type of the current bugemon in the team of the trainer.
      */
-    public BType getCurrentBugemonType() {
+    public BugemonType getCurrentBugemonType() {
         return this.currentBugemon.getType();
     }
 }

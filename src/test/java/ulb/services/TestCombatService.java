@@ -1,5 +1,5 @@
 /**
- * Unit tests for {@link CombatHelper}.
+ * Unit tests for {@link CombatService}.
  *
  * <p>Covers attack priority resolution, damage computation, and type
  * effectiveness calculations.</p>
@@ -11,7 +11,7 @@
  * @date    05 mar. 2026
  */
 
-package ulb.models.combat;
+package ulb.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,20 +20,21 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Bugemon.BType;
-import ulb.models.bugemon.Effect;
+import ulb.models.bugemon.BugemonBuilder;
+import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.combat.CombatHelper.Efficiency;
 import ulb.models.trainer.Trainer;
 
-public class TestCombatHelper {
+public class TestCombatService {
     @Test
     public void testPriority() {
-        Bugemon slowBugemon = new Bugemon.Builder().id("1").initiative(0).build();
+        Bugemon slowBugemon = new BugemonBuilder().id("1").initiative(0).build();
 
-        Bugemon fastBugemon = new Bugemon.Builder().id("2").initiative(1000).build();
+        Bugemon fastBugemon = new BugemonBuilder().id("2").initiative(1000).build();
 
         BugemonTeam slowTeam = new BugemonTeam();
         slowTeam.addBugemon(slowBugemon);
@@ -44,118 +45,118 @@ public class TestCombatHelper {
         Trainer fasterTrainer = new Trainer(fastTeam);
         Trainer slowTrainer = new Trainer(slowTeam);
 
-        assertEquals(fasterTrainer, CombatHelper.attackPriority(fasterTrainer, slowTrainer));
+        assertEquals(fasterTrainer, CombatService.attackPriority(fasterTrainer, slowTrainer));
     }
 
     @Test
     public void testDamageApplied() {
-        Attack attack = new Attack("1", "", Bugemon.BType.FLORA, "", 30, new ArrayList<Effect>());
+        Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
         Bugemon striker =
-                new Bugemon.Builder().id("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new Bugemon.Builder()
+                new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder()
                                    .id("2")
                                    .attack(20)
                                    .defense(20)
                                    .addAttack(attack)
-                                   .type(Bugemon.BType.PYRO)
+                                   .type(BugemonType.PYRO)
                                    .build();
 
         double expectedDamage = attack.getPower() * ((100.0 + striker.getAttack()) / 100.0)
                                 * (100.0 / (100.0 + defender.getDefense()))
-                                * CombatHelper.getEfficiencyFactor(attack, defender.getType());
+                                * CombatService.getEfficiencyFactor(attack, defender.getType());
 
-        double damage = CombatHelper.calculateDamage(attack, striker, defender, 1.0);
+        double damage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
         assertEquals(expectedDamage, damage, expectedDamage / 2.0);
     }
 
     @Test
     public void testDamageMultiplicatorHigh() {
-        Attack attack = new Attack("1", "", Bugemon.BType.FLORA, "", 30, new ArrayList<Effect>());
+        Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
         Bugemon striker =
-                new Bugemon.Builder().id("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new Bugemon.Builder()
+                new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder()
                                    .id("2")
                                    .attack(20)
                                    .defense(20)
                                    .addAttack(attack)
-                                   .type(Bugemon.BType.PYRO)
+                                   .type(BugemonType.PYRO)
                                    .build();
 
-        double neutralDamage = CombatHelper.calculateDamage(attack, striker, defender, 1.0);
+        double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new Bugemon.Builder()
+        defender = new BugemonBuilder()
                            .id("2")
                            .attack(20)
                            .defense(20)
                            .addAttack(attack)
-                           .type(Bugemon.BType.AQUA)
+                           .type(BugemonType.AQUA)
                            .build();
 
-        double highDamage = CombatHelper.calculateDamage(attack, striker, defender, 1.0);
+        double highDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
         assertTrue(neutralDamage < highDamage);
     }
 
     @Test
     public void testDamageMultiplicatorLow() {
-        Attack attack = new Attack("1", "", Bugemon.BType.FLORA, "", 30, new ArrayList<Effect>());
+        Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
         Bugemon striker =
-                new Bugemon.Builder().id("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new Bugemon.Builder()
+                new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder()
                                    .id("2")
                                    .attack(20)
                                    .defense(20)
                                    .addAttack(attack)
-                                   .type(Bugemon.BType.PYRO)
+                                   .type(BugemonType.PYRO)
                                    .build();
 
-        double neutralDamage = CombatHelper.calculateDamage(attack, striker, defender, 1.0);
+        double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new Bugemon.Builder()
+        defender = new BugemonBuilder()
                            .id("2")
                            .attack(20)
                            .defense(20)
                            .addAttack(attack)
-                           .type(Bugemon.BType.LITHO)
+                           .type(BugemonType.LITHO)
                            .build();
 
-        double lowDamage = CombatHelper.calculateDamage(attack, striker, defender, 1.0);
+        double lowDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
         assertTrue(lowDamage < neutralDamage);
     }
 
     @Test
     public void testEfficiencyNeutralSameType() {
-        BType aquaType1 = BType.AQUA;
-        BType aquaType2 = BType.AQUA;
-        assertEquals(Efficiency.NEUTRAL, CombatHelper.compareBType(aquaType1, aquaType2));
+        BugemonType aquaType1 = BugemonType.AQUA;
+        BugemonType aquaType2 = BugemonType.AQUA;
+        assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType1, aquaType2));
     }
 
     @Test
     public void testEfficiencyNeutralDifferentType() {
-        BType aquaType = BType.AQUA;
-        BType lithoType = BType.LITHO;
+        BugemonType aquaType = BugemonType.AQUA;
+        BugemonType lithoType = BugemonType.LITHO;
 
-        assertEquals(Efficiency.NEUTRAL, CombatHelper.compareBType(aquaType, lithoType));
+        assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType, lithoType));
     }
 
     @Test
     public void testEfficiencyLow() {
-        BType aquaType = BType.AQUA;
-        BType floraType = BType.FLORA;
+        BugemonType aquaType = BugemonType.AQUA;
+        BugemonType floraType = BugemonType.FLORA;
 
-        assertEquals(Efficiency.LOW, CombatHelper.compareBType(aquaType, floraType));
+        assertEquals(Efficiency.LOW, CombatService.compareBugemonType(aquaType, floraType));
     }
 
     @Test
     public void testEfficiencyHigh() {
-        BType aquaType = BType.AQUA;
-        BType pyroType = BType.PYRO;
+        BugemonType aquaType = BugemonType.AQUA;
+        BugemonType pyroType = BugemonType.PYRO;
 
-        assertEquals(Efficiency.HIGH, CombatHelper.compareBType(aquaType, pyroType));
+        assertEquals(Efficiency.HIGH, CombatService.compareBugemonType(aquaType, pyroType));
     }
 }

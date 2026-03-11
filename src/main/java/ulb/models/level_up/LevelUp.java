@@ -12,7 +12,7 @@ package ulb.models.level_up;
 import java.util.List;
 import java.util.Random;
 
-import ulb.common.LevelUpDTO;
+import ulb.common.dto.LevelUpDTO;
 import ulb.models.bugemon.Bugemon;
 
 public class LevelUp implements LevelUpDTO {

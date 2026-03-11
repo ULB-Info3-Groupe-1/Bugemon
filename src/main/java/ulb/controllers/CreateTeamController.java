@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulb.common.BugemonDTO;
+import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.CreateTeamView;
 

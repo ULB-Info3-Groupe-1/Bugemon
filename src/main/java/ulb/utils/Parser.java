@@ -32,7 +32,8 @@ import com.google.gson.reflect.TypeToken;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.EffectType;
+import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.effect.EffectType;
 
 /**
  * Provides static utility methods for parsing the JSON data files that
@@ -143,46 +144,45 @@ public class Parser {
 
     /**
      * Custom Gson type adapter that deserialises a JSON string into a
-     * {@link ulb.models.bugemon.Bugemon.BType} enum constant.
+     * {@link BugemonType} enum constant.
      *
      * <p>
      * The adapter converts the raw JSON string to upper-case before calling
-     * {@link Bugemon.BType#valueOf(String)}, making the matching
+     * {@link BugemonType#valueOf(String)}, making the matching
      * case-insensitive with respect to the data file (e.g., {@code "flora"}
-     * and {@code "FLORA"} both resolve to {@link Bugemon.BType#FLORA}).
+     * and {@code "FLORA"} both resolve to {@link BugemonType#FLORA}).
      * </p>
      *
-     * @see Bugemon.BType
+     * @see BugemonType
      */
-    static class TypeDeserializer implements JsonDeserializer<Bugemon.BType> {
+    static class TypeDeserializer implements JsonDeserializer<BugemonType> {
         @Override
-        public Bugemon.BType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
-                                         JsonDeserializationContext context) {
+        public BugemonType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+                                       JsonDeserializationContext context) {
             String value = json.getAsString();
-            return Bugemon.BType.valueOf(value.toUpperCase());
+            return BugemonType.valueOf(value.toUpperCase());
         }
     }
 
     /**
      * Custom Gson type adapter that deserialises a JSON string into an
-     * {@link ulb.models.bugemon.EffectType} enum constant.
+     * {@link EffectType} enum constant.
      *
      * <p>
      * The adapter converts the raw JSON string to upper-case before calling
-     * {@link ulb.models.bugemon.EffectType#valueOf(String)}, making the
+     * {@link EffectType#valueOf(String)}, making the
      * matching case-insensitive (e.g., {@code "stat_modifier"} resolves to
-     * {@link ulb.models.bugemon.EffectType#STAT_MODIFIER}).
+     * {@link EffectType#STAT_MODIFIER}).
      * </p>
      *
-     * @see ulb.models.bugemon.EffectType
+     * @see EffectType
      */
-    static class EffectTypeDeserializer implements JsonDeserializer<ulb.models.bugemon.EffectType> {
+    static class EffectTypeDeserializer implements JsonDeserializer<EffectType> {
         @Override
-        public ulb.models.bugemon.EffectType deserialize(JsonElement json,
-                                                         java.lang.reflect.Type typeOfT,
-                                                         JsonDeserializationContext context) {
+        public EffectType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+                                      JsonDeserializationContext context) {
             String value = json.getAsString();
-            return ulb.models.bugemon.EffectType.valueOf(value.toUpperCase());
+            return EffectType.valueOf(value.toUpperCase());
         }
     }
 
@@ -195,7 +195,7 @@ public class Parser {
      */
     static List<Attack> parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder()
-                            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
+                            .registerTypeAdapter(BugemonType.class, new TypeDeserializer())
                             .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
                             .create();
 
@@ -229,7 +229,7 @@ public class Parser {
     static List<Bugemon> parseBugemons(Reader reader, Map<String, Attack> attackMap) {
         Gson gson = new GsonBuilder()
                             .registerTypeAdapter(Bugemon.class, new BugemonDeserializer(attackMap))
-                            .registerTypeAdapter(Bugemon.BType.class, new TypeDeserializer())
+                            .registerTypeAdapter(BugemonType.class, new TypeDeserializer())
                             .create();
 
         try {

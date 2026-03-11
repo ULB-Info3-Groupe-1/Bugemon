@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
-import ulb.common.BugemonDTO;
+import ulb.common.dto.BugemonDTO;
 import ulb.views.ActionMenuView;
 import ulb.views.BugemonTeamView;
 import ulb.views.DialogZoneView;

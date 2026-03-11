@@ -14,6 +14,8 @@ import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
 
+import ulb.models.bugemon.effect.Effect;
+
 /**
  * Represents an attack that a {@link Bugemon} can perform during battle.
  *
@@ -34,7 +36,7 @@ public class Attack {
 
     @SerializedName("nom") private String name;
 
-    private Bugemon.BType type;
+    private BugemonType type;
     private String description;
 
     @SerializedName("puissance") private int power;
@@ -55,7 +57,7 @@ public class Attack {
      * @param effects      (Effect) the effects of the attack, which can apply
      *                    status changes or stat modifications to the target.
      */
-    public Attack(String id, String name, Bugemon.BType type, String description, int power,
+    public Attack(String id, String name, BugemonType type, String description, int power,
                   List<Effect> effects) {
         this.id = id;
         this.name = name;
@@ -108,7 +110,7 @@ public class Attack {
      *
      * @return (Type) the type of the attack.
      */
-    public Bugemon.BType getType() {
+    public BugemonType getType() {
         return type;
     }
 
@@ -117,7 +119,7 @@ public class Attack {
      *
      * @param type (Type) the new type to set for the attack.
      */
-    public void setType(Bugemon.BType type) {
+    public void setType(BugemonType type) {
         this.type = type;
     }
 

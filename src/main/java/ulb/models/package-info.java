@@ -12,13 +12,13 @@
  * <ul>
  *   <li>{@link ulb.models.bugemon} — core game entities: the
  *       {@link ulb.models.bugemon.Bugemon} class and its associated data types
- *       ({@link ulb.models.bugemon.Attack}, {@link ulb.models.bugemon.Effect},
+ *       ({@link ulb.models.bugemon.Attack}, {@link ulb.models.bugemon.effect.Effect},
  *       {@link ulb.models.bugemon.ActiveEffect}) together with the enumerations
  *       that describe elemental types
  *       ({@link ulb.models.bugemon.Bugemon.BType}), effect kinds
- *       ({@link ulb.models.bugemon.EffectType}), targets
- *       ({@link ulb.models.bugemon.EffectTarget}), and affected statistics
- *       ({@link ulb.models.bugemon.EffectStat}).</li>
+ *       ({@link ulb.models.bugemon.effect.EffectType}), targets
+ *       ({@link ulb.models.bugemon.effect.EffectTarget}), and affected statistics
+ *       ({@link ulb.models.bugemon.effect.EffectStat}).</li>
  *   <li>{@link ulb.models.bugemon_team} — the
  *       {@link ulb.models.bugemon_team.BugemonTeam} collection class that groups
  *       up to six {@link ulb.models.bugemon.Bugemon}s owned by a single trainer,
@@ -43,7 +43,7 @@
  * <p>
  * The model layer is deliberately decoupled from JavaFX and from the view layer.
  * Data that must be consumed by views is exposed through the
- * {@link ulb.common.BugemonDTO} interface, which is implemented by
+ * {@link ulb.common.dto.BugemonDTO} interface, which is implemented by
  * {@link ulb.models.bugemon.Bugemon} and limits the view's access to a safe,
  * read-only subset of the Bugemon's state. All mutation of model state is
  * coordinated through the controller layer ({@link ulb.controllers}).
@@ -62,7 +62,7 @@
  * @see ulb.models.bugemon_team
  * @see ulb.models.trainer
  * @see ulb.models.combat
- * @see ulb.common.BugemonDTO
+ * @see ulb.common.dto.BugemonDTO
  * @see ulb.utils.Parser
  */
 package ulb.models;

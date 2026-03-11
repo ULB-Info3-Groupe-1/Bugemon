@@ -7,7 +7,10 @@
  * @version 1.0
  */
 
-package ulb.models.bugemon;
+package ulb.models.bugemon.effect;
+
+import ulb.models.bugemon.ActiveEffect;
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Enumerates the categories of {@link Effect}s that can be applied to a
