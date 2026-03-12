@@ -308,7 +308,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
         combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
-        if (!combat.isFinished() && result.allyKo().orElse(false)) {
+        if (!combat.isFinished() && result.allyIsKo()) {
             koSwitchFlag = true;
             showSwitchMenu();
         }

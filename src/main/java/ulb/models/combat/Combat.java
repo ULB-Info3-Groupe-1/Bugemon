@@ -305,22 +305,20 @@ public class Combat {
                                  : Optional.of(applyAttack(second, first, secondAttack));
 
             boolean allyKO = isAllyKo(firstResult, secondResult);
-            return new TurnResult(firstResult, secondResult,
-                                  allyKO ? Optional.of(true) : Optional.empty());
+            return new TurnResult(firstResult, secondResult, allyKO);
         }
 
         if (allyAttack.isPresent()) {
             TurnResult.AttackResult hit =
                     applyAttack(allyTrainer, adversaryTrainer, allyAttack.get());
-            return new TurnResult(hit, Optional.empty(), Optional.empty());
+            return new TurnResult(hit, Optional.empty(), false);
         }
 
         if (adversaryAttack.isPresent()) {
             TurnResult.AttackResult hit =
                     applyAttack(adversaryTrainer, allyTrainer, adversaryAttack.get());
             boolean allyKO = !allyTrainer.isCurrentBugemonAlive() && !allyTrainer.isDefeated();
-            return new TurnResult(hit, Optional.empty(),
-                                  allyKO ? Optional.of(true) : Optional.empty());
+            return new TurnResult(hit, Optional.empty(), allyKO);
         }
 
         return emptyResult();
@@ -400,6 +398,6 @@ public class Combat {
                 new TurnResult.AttackResult(allyTrainer, adversaryTrainer, Optional.empty(), null),
                 Optional.of(new TurnResult.AttackResult(adversaryTrainer, allyTrainer,
                                                         Optional.empty(), null)),
-                Optional.empty());
+                false);
     }
 }
