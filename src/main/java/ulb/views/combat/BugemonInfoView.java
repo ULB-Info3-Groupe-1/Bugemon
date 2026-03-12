@@ -7,7 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import ulb.common.BugemonDTO;
+import ulb.common.dto.BugemonDTO;
 
 /**
  * Reusable custom component displaying Bugemon info.

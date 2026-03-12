@@ -13,6 +13,11 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.effect.EffectType;
+
 public class TestEffect {
     @Test
     public void testShouldGetTypeEffectAndSetEffectType() {

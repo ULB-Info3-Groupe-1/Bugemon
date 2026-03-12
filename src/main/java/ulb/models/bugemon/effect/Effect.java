@@ -7,9 +7,13 @@
  * @version 1.0
  */
 
-package ulb.models.bugemon;
+package ulb.models.bugemon.effect;
 
 import com.google.gson.annotations.SerializedName;
+
+import ulb.models.bugemon.ActiveEffect;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Represents a stat-altering or healing effect that can be applied to a

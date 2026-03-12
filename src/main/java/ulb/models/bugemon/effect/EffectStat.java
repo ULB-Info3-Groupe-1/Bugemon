@@ -1,6 +1,8 @@
-package ulb.models.bugemon;
+package ulb.models.bugemon.effect;
 
 import com.google.gson.annotations.SerializedName;
+
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Enumerates the {@link Bugemon} combat statistics that can be modified by an

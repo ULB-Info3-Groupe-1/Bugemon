@@ -15,7 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import ulb.common.BugemonDTO;
+import ulb.common.dto.BugemonDTO;
 
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable

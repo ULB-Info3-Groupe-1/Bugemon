@@ -2,34 +2,21 @@ package ulb.controllers.combat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import ulb.common.Efficiency;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon.BType;
-import ulb.models.combat.CombatHelper;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.CombatService;
+import ulb.services.LevelUpService;
 import ulb.views.combat.CombatView;
 
 public abstract class CombatController<View extends CombatView> extends Controller<View> {
-    /**
-     * Enum representing the efficiency of an attack based on the types of the attack and the
-     * defending bugemon.
-     */
-    public enum AttackEfficiency { EFFICIENT, INFERIOR, NEUTRAL }
-
-    /**
-     * Map representing the type advantages in the combat system. Each key is a bugemon type and its
-     * corresponding value is the type it is strong against.
-     */
-    private static final Map<BType, BType> STRONG_AGAINST =
-            Map.of(BType.FLORA, BType.AQUA, BType.AQUA, BType.PYRO, BType.PYRO, BType.LITHO,
-                   BType.LITHO, BType.FLORA);
-
     public CombatController(MetaController metaController, View view) {
         super(metaController, view);
     }
@@ -64,10 +51,14 @@ public abstract class CombatController<View extends CombatView> extends Controll
     protected void handleCombatResult(Trainer winner, Trainer player) {
         List<LevelUp> levelUps = new ArrayList<>();
         if (winner == player) {
-            int xp = CombatHelper.calculateXP(winner, player);
-            winner.getTeam().stream().filter(b -> b.getParticipation()).forEach(b -> {
-                b.addXp(xp).ifPresent(lvlup -> levelUps.add(lvlup));
-            });
+            // TODO: Make sure to show xp gained after combat.
+            // TODO: Do not forget to set manually floor and multiplier based on NO combat.
+            int xp = LevelUpService.distributeXp(winner, player);
+
+            List<Bugemon> participatingBugemons =
+                    winner.getTeam().stream().filter(b -> b.getParticipation()).toList();
+
+            levelUps = LevelUpService.levelUp(participatingBugemons);
             this.metaController.setLevelUp(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
@@ -85,30 +76,17 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
         if (attack != null) {
-            if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType())
-                        .equals(AttackEfficiency.EFFICIENT)) {
+            if (CombatService.compareBugemonType(attack.getType(), opponent.getCurrentBugemonType())
+                        .equals(Efficiency.HIGH)) {
                 this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
-            } else if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType())
-                               .equals(AttackEfficiency.INFERIOR)) {
+            } else if (CombatService
+                               .compareBugemonType(attack.getType(),
+                                                   opponent.getCurrentBugemonType())
+                               .equals(Efficiency.LOW)) {
                 this.view.showDialog("Peu d'effet ...", null);
             } else {
                 this.view.showDialog("Dégats standards", null);
             }
         }
-    }
-
-    /**
-     * Determine the efficiency of the trainer attack against the opponent's bugemon based on their
-     * types
-     * @param attackType the type of the attack selected by the player
-     * @param defenseBugemonType the type of the opponent's bugemon
-     */
-    public AttackEfficiency isAttackEfficient(BType attackType, BType defenseBugemonType) {
-        if (STRONG_AGAINST.get(attackType).equals(defenseBugemonType)) {
-            return AttackEfficiency.EFFICIENT;
-        } else if (STRONG_AGAINST.get(defenseBugemonType).equals(attackType)) {
-            return AttackEfficiency.INFERIOR;
-        }
-        return AttackEfficiency.NEUTRAL;
     }
 }

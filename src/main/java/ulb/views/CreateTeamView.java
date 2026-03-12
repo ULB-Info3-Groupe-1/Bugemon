@@ -5,7 +5,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.common.BugemonDTO;
+import ulb.common.dto.BugemonDTO;
 import ulb.controllers.CreateTeamController;
 
 /**

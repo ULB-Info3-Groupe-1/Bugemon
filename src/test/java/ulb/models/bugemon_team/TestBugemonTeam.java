@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
@@ -104,8 +105,8 @@ public class TestBugemonTeam {
 
     @Test
     public void testResetTeam() {
-        Bugemon expectedBugemon1 = new Bugemon.Builder().id("1").hp(100).build();
-        Bugemon expectedBugemon2 = new Bugemon.Builder().id("2").hp(100).build();
+        Bugemon expectedBugemon1 = new BugemonBuilder().id("1").hp(100).build();
+        Bugemon expectedBugemon2 = new BugemonBuilder().id("2").hp(100).build();
 
         BugemonTeam team = new BugemonTeam();
         team.addBugemon(expectedBugemon1);

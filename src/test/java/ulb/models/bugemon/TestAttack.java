@@ -17,6 +17,11 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.effect.EffectType;
+
 public class TestAttack {
     @Test
     public void testShouldGetIdAndSetId() {
@@ -24,8 +29,7 @@ public class TestAttack {
                                    EffectStat.DEFENSE, 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack =
-                new Attack("TestAttack", "TestAttack", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack = new Attack("TestAttack", "TestAttack", BugemonType.FLORA, "", 30, effects);
         attack.setId("NewTestAttack");
         assertEquals("NewTestAttack", attack.getId());
     }
@@ -37,8 +41,7 @@ public class TestAttack {
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
 
-        Attack attack =
-                new Attack("TestAttack", "TestAttack", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack = new Attack("TestAttack", "TestAttack", BugemonType.FLORA, "", 30, effects);
         attack.setName("NewTestAttack");
         assertEquals("NewTestAttack", attack.getName());
     }
@@ -50,10 +53,9 @@ public class TestAttack {
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
 
-        Attack attack =
-                new Attack("TestAttack", "TestAttack", Bugemon.BType.FLORA, "", 30, effects);
-        attack.setType(Bugemon.BType.AQUA);
-        assertEquals(Bugemon.BType.AQUA, attack.getType());
+        Attack attack = new Attack("TestAttack", "TestAttack", BugemonType.FLORA, "", 30, effects);
+        attack.setType(BugemonType.AQUA);
+        assertEquals(BugemonType.AQUA, attack.getType());
     }
 
     @Test
@@ -62,8 +64,7 @@ public class TestAttack {
                                    EffectStat.DEFENSE, 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack =
-                new Attack("TestAttack", "TestAttack", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack = new Attack("TestAttack", "TestAttack", BugemonType.FLORA, "", 30, effects);
         attack.setDescription("New description");
         assertEquals("New description", attack.getDescription());
     }
@@ -74,8 +75,7 @@ public class TestAttack {
                                    EffectStat.DEFENSE, 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack =
-                new Attack("TestAttack", "TestAttack", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack = new Attack("TestAttack", "TestAttack", BugemonType.FLORA, "", 30, effects);
         attack.setPower(40);
         assertEquals(40, attack.getPower());
     }
@@ -86,8 +86,7 @@ public class TestAttack {
                                    EffectStat.DEFENSE, 10, "1 turn");
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack =
-                new Attack("TestAttack", "TestAttack", Bugemon.BType.FLORA, "", 30, effects);
+        Attack attack = new Attack("TestAttack", "TestAttack", BugemonType.FLORA, "", 30, effects);
         Effect newEffect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.ADVERSARY,
                                       EffectStat.DEFENSE, 20, "2 turns");
         attack.addEffect(newEffect);

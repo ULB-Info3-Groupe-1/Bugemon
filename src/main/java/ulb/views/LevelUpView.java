@@ -8,8 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import ulb.common.BugemonDTO;
-import ulb.common.LevelUpDTO;
+import ulb.common.dto.BugemonDTO;
+import ulb.common.dto.LevelUpDTO;
 import ulb.controllers.LevelUpController;
 import ulb.models.level_up.Choice;
 

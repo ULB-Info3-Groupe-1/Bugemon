@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.services.LevelUpService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestLevelUp {
@@ -79,15 +80,11 @@ public class TestLevelUp {
         assertEquals(1, bugemon.getLevel());
         assertEquals(0, bugemon.getXp());
 
-        bugemon.addXp(49);
-        assertEquals(49, bugemon.getXp());
+        bugemon.addXp(50);
+        List<LevelUp> levelUps = LevelUpService.levelUp(List.of(bugemon));
+        assertEquals(1, levelUps.size());
 
-        bugemon.addXp(1);
-        assertEquals(0, bugemon.getXp());
+        assertEquals(50, bugemon.getXp());
         assertEquals(2, bugemon.getLevel());
-
-        bugemon.addXp(150);
-        assertEquals(0, bugemon.getXp());
-        assertEquals(3, bugemon.getLevel());
     }
 }

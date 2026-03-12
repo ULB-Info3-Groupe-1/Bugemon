@@ -1,6 +1,9 @@
-package ulb.models.bugemon;
+package ulb.models.bugemon.effect;
 
 import com.google.gson.annotations.SerializedName;
+
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Enumerates the possible targets of an {@link Effect} when it is applied

@@ -19,9 +19,9 @@ import java.util.Map;
 import ulb.models.bugemon.ActiveEffect;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Effect;
-import ulb.models.bugemon.EffectStat;
-import ulb.models.bugemon.EffectTarget;
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.trainer.Trainer;
 
 /**

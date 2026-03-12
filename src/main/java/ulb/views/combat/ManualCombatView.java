@@ -3,9 +3,10 @@ package ulb.views.combat;
 import java.io.IOException;
 import java.util.List;
 
-import ulb.common.BugemonDTO;
+import ulb.common.dto.BugemonDTO;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.BugemonType;
 
 /**
  * CombatView
@@ -55,10 +56,12 @@ public class ManualCombatView extends CombatView {
 
     /**
      * show the attack menu.
+     * @param attackNames the list of attacks available to the player's current Bugemon
+     * @param opponentType the type of the opponent's current Bugemon
      */
-    public void showAttackMenu(List<Attack> attackNames) {
-        this.attackActionMenu.setAttacks(attackNames.get(0), attackNames.get(1),
-                                         attackNames.get(2));
+    public void showAttackMenu(List<Attack> attackNames, BugemonType opponentType) {
+        this.attackActionMenu.setAttacks(attackNames.get(0), attackNames.get(1), attackNames.get(2),
+                                         opponentType);
         this.actionMenuView.getChildren().setAll(attackActionMenu);
     }
 
