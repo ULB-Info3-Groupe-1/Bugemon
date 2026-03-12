@@ -41,6 +41,7 @@ public class MetaController {
 
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
     private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
+    private static final String JSON_OBJECTS_PATH = "/json/objets.json";
 
     private final Stage stage;
     private final Parser.ParseResult parseResult;
@@ -100,11 +101,12 @@ public class MetaController {
      */
     private Parser.ParseResult loadResources() throws IOException {
         try (InputStream attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
-             InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);) {
-            if (attacksStream == null || bugemonsStream == null) {
+             InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
+             InputStream objectsStream = getClass().getResourceAsStream(JSON_OBJECTS_PATH)) {
+            if (attacksStream == null || bugemonsStream == null || objectsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }
-            return Parser.parse(attacksStream, bugemonsStream);
+            return Parser.parse(attacksStream, bugemonsStream, objectsStream);
         }
     }
 

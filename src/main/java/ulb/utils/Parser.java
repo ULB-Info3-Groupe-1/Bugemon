@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -33,6 +34,9 @@ import com.google.gson.reflect.TypeToken;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.EffectType;
+import ulb.models.bugemon.GameObject;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.ObjectWrapper;
 
 /**
  * Provides static utility methods for parsing the JSON data files that
@@ -78,6 +82,8 @@ public class Parser {
     public static class ParseResult {
         private final Map<String, Attack> attacksMap;
         private final List<Bugemon> bugemonList;
+        private final List<GameObject> objectsList;
+        private final Inventory inventory;
 
         /**
          * Constructs a {@code ParseResult} with the given attacks map and
@@ -89,9 +95,11 @@ public class Parser {
          *                    {@link ulb.models.bugemon.Bugemon} objects; must
          *                    not be {@code null}.
          */
-        public ParseResult(Map<String, Attack> attacksMap, List<Bugemon> bugemonList) {
+        public ParseResult(Map<String, Attack> attacksMap, List<Bugemon> bugemonList, List<GameObject> objectsList, Inventory inventory) {
             this.attacksMap = attacksMap;
             this.bugemonList = bugemonList;
+            this.objectsList = objectsList;
+            this.inventory = inventory;
         }
 
         /**
@@ -115,6 +123,14 @@ public class Parser {
         public List<Bugemon> getBugemonsList() {
             return bugemonList;
         }
+
+        public List<GameObject> getObjectsList() {
+            return objectsList;
+        }
+
+        public Inventory getInventory() {
+            return inventory;
+        }
     }
 
     /**
@@ -123,11 +139,13 @@ public class Parser {
      *
      * @param attacksStream  input stream for the attacks JSON file
      * @param bugemonsStream input stream for the bugemons JSON file
+     * @param objectsStream input stream for the objects JSON file
      * @return a ParseResult containing the attacks map and the list of bugemons
      */
-    public static ParseResult parse(InputStream attacksStream, InputStream bugemonsStream) {
+    public static ParseResult parse(InputStream attacksStream, InputStream bugemonsStream, InputStream objectsStream) {
         Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
         Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
+        Reader objectsReader = new InputStreamReader(objectsStream, StandardCharsets.UTF_8);
 
         // load attacks
         List<Attack> attackList = parseAttacks(attacksReader);
@@ -138,7 +156,9 @@ public class Parser {
         // load bugemons
         List<Bugemon> bugemons = parseBugemons(bugemonsReader, attacksMap);
 
-        return new ParseResult(attacksMap, bugemons);
+        ObjectWrapper parsedObjects = parseObjectsAndInventory(objectsReader);
+
+        return new ParseResult(attacksMap, bugemons, parsedObjects.getObjects(), parsedObjects.getInventory());
     }
 
     /**
@@ -255,7 +275,46 @@ public class Parser {
      *
      * @param fileName path to the objects JSON file (not yet used).
      */
-    static void parseObjects(Path fileName) {}
+    static ObjectWrapper parseObjectsAndInventory(Reader reader) {
+        Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
+                            .create();
+
+        try {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            
+            // Extract and parse objects
+            JsonArray objectsArray = root.getAsJsonArray("objets");
+            Type desType = new TypeToken<List<GameObject>>() {}.getType();
+            List<GameObject> objects = gson.fromJson(objectsArray, desType);
+
+            // Extract and parse inventory
+            JsonObject startInventory = root.getAsJsonObject("inventaire_depart");
+            Type invType = new TypeToken<Map<String, Integer>>() {}.getType();
+            Map<String, Integer> inventoryMap = gson.fromJson(startInventory, invType);
+
+            Inventory inventory = new Inventory(new ArrayList<>());
+            for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
+                String objectId = entry.getKey();
+                int quantity = entry.getValue();
+
+                GameObject obj = objects.stream()
+                                        .filter(o -> o.id().equals(objectId))
+                                        .findFirst()
+                                        .orElseThrow(() -> new RuntimeException("Object with ID " + objectId + " not found"));
+                inventory.addObject(obj, quantity);
+            }
+            
+            reader.close();
+            return new ObjectWrapper(objects, inventory);
+
+        } catch (Exception e) {
+            // TODO: Use of a Logger or external error management ?
+            System.out.println("Error when parsing objects and inventory");
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * Placeholder for future parsing of the skill tree data.

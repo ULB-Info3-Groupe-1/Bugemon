@@ -97,7 +97,8 @@ public class TestBugemonTeam {
     public void testRandomTeamNumber() {
         InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
         InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
-        Parser.ParseResult parseResult = Parser.parse(attacksStream, bugemonsStream);
+        InputStream objectsStream = getClass().getResourceAsStream("/json/objets.json");
+        Parser.ParseResult parseResult = Parser.parse(attacksStream, bugemonsStream, objectsStream);
         BugemonTeam teamOfSix = TeamFactory.createRandomTeam(parseResult.getBugemonsList(), 6);
         assertEquals(6, teamOfSix.size());
     }

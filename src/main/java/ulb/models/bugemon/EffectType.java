@@ -50,4 +50,5 @@ public enum EffectType {
      * </p>
      */
     SOIN,
+    RESET_MALUS,
 }
