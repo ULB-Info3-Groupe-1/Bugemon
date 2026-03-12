@@ -68,10 +68,13 @@ public class Parser {
     // Constants for the paths to the JSON data files within the resources directory
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
     private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
+    private static final String JSON_OBJECTS_PATH = "/json/objets.json";
 
     // Static fields to hold the parsed data, accessible via getter methods
     private static Map<String, Attack> attacks;
     private static List<Bugemon> bugemons;
+    private static List<GameObject> objects;
+    private static Inventory inventory;
 
     // Singleton instance of the Parser class
     private static Parser instance;
@@ -107,11 +110,12 @@ public class Parser {
     public void parse() {
         InputStream attacksStream;
         InputStream bugemonsStream;
-
+        InputStream objectsStream;
         try {
             attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
             bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
-            if (attacksStream == null || bugemonsStream == null) {
+            objectsStream = getClass().getResourceAsStream(JSON_OBJECTS_PATH);
+            if (attacksStream == null || bugemonsStream == null || objectsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }
         } catch (IOException e) {
@@ -121,8 +125,10 @@ public class Parser {
 
         Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
         Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
+        Reader objectsReader = new InputStreamReader(objectsStream, StandardCharsets.UTF_8);
         parseAttacks(attacksReader);
         parseBugemons(bugemonsReader);
+        parseObjectsAndInventory(objectsReader);
     }
 
     /**
@@ -132,6 +138,24 @@ public class Parser {
      */
     public final List<Bugemon> getBugemons() {
         return bugemons;
+    }
+
+    /**
+     * Returns the list of GameObject objects parsed from the JSON file, where each GameObject is
+     * fully constructed with its associated effects resolved from the attacks map.
+     * @return a list of GameObject objects representing the parsed GameObjects from the JSON file
+     */
+    public final List<GameObject> getObjects() {
+        return objects;
+    }
+
+    /**
+     * Returns the Inventory object parsed from the JSON file, which contains the initial inventory
+     * of the player at the start of the game, with each GameObject and its corresponding quantity.
+     * @return an Inventory object representing the parsed inventory from the JSON file
+     */
+    public final Inventory getInventory() {
+        return inventory;
     }
 
     /**
@@ -253,7 +277,7 @@ public class Parser {
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            
+
             // Extract and parse objects
             JsonArray objectsArray = root.getAsJsonArray("objets");
             Type desType = new TypeToken<List<GameObject>>() {}.getType();
@@ -270,12 +294,15 @@ public class Parser {
                 int quantity = entry.getValue();
 
                 GameObject obj = objects.stream()
-                                        .filter(o -> o.id().equals(objectId))
-                                        .findFirst()
-                                        .orElseThrow(() -> new RuntimeException("Object with ID " + objectId + " not found"));
+                                         .filter(o -> o.id().equals(objectId))
+                                         .findFirst()
+                                         .orElseThrow(()
+                                                              -> new RuntimeException(
+                                                                      "Object with ID " + objectId
+                                                                      + " not found"));
                 inventory.addObject(obj, quantity);
             }
-            
+
             reader.close();
             return new ObjectWrapper(objects, inventory);
 
