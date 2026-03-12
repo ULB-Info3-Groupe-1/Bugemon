@@ -19,7 +19,7 @@ import ulb.models.trainer.Trainer;
  *   <li>{@link #second()} — the {@link AttackResult} of the trainer who acted
  *       second, or {@link Optional#empty()} if the combat ended after the first
  *       hit or if the second trainer did not attack (e.g. switched).</li>
- *   <li>{@link #allyKnockedOut()} — {@code Optional.of(true)} when the ally
+ *   <li>{@link #allyKo()} — {@code Optional.of(true)} when the ally
  *       trainer's active {@link ulb.models.bugemon.Bugemon} was knocked out
  *       during this turn, prompting the controller to open the forced-switch
  *       menu; {@link Optional#empty()} otherwise.</li>
@@ -35,7 +35,7 @@ import ulb.models.trainer.Trainer;
  *                       {@code null}.
  * @param second         the result of the second action this turn, or
  *                       {@link Optional#empty()} if no second action occurred.
- * @param allyKnockedOut {@code Optional.of(true)} if the ally's active Bugemon
+ * @param allyKo {@code Optional.of(true)} if the ally's active Bugemon
  *                       fainted during this turn, {@link Optional#empty()}
  *                       otherwise.
  *
@@ -43,7 +43,7 @@ import ulb.models.trainer.Trainer;
  * @see AttackResult
  */
 public record TurnResult(AttackResult first, Optional<AttackResult> second,
-                         Optional<Boolean> allyKnockedOut) {
+                         Optional<Boolean> allyKo) {
     /**
      * Immutable snapshot of a single hit within a turn.
      *

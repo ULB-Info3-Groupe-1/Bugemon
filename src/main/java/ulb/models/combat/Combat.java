@@ -304,7 +304,7 @@ public class Combat {
                     isFinished() ? Optional.empty()
                                  : Optional.of(applyAttack(second, first, secondAttack));
 
-            boolean allyKO = isAllyKnockedOut(firstResult, secondResult);
+            boolean allyKO = isAllyKo(firstResult, secondResult);
             return new TurnResult(firstResult, secondResult,
                                   allyKO ? Optional.of(true) : Optional.empty());
         }
@@ -341,7 +341,7 @@ public class Combat {
      * @return {@code true} if the ally's current Bugemon is no longer alive
      *         after this turn, {@code false} otherwise.
      */
-    private boolean isAllyKnockedOut(TurnResult.AttackResult first,
+    private boolean isAllyKo(TurnResult.AttackResult first,
                                      Optional<TurnResult.AttackResult> second) {
         boolean koByFirst = first.defender() == allyTrainer && !allyTrainer.isCurrentBugemonAlive();
         boolean koBySecond = second.isPresent() && second.get().defender() == allyTrainer
