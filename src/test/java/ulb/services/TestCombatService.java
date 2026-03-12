@@ -67,7 +67,7 @@ public class TestCombatService {
                                 * (100.0 / (100.0 + defender.getDefense()))
                                 * CombatService.getEfficiencyFactor(attack, defender.getType());
 
-        double damage = CombatService.calculateDamage(attack, striker, defender, 1.0);
+        int damage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
         assertEquals(expectedDamage, damage, expectedDamage / 2.0);
     }

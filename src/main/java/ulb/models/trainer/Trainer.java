@@ -222,7 +222,10 @@ public abstract class Trainer {
      *
      * @param damage the amount of damage to apply; must be &ge; 0.
      */
-    public void takeDamage(double damage) {
+    public void takeDamage(int damage) {
+        if (damage < 0) {
+            throw new IllegalArgumentException("damage must be positive");
+        }
         currentBugemon.takeDamage(damage);
     }
 

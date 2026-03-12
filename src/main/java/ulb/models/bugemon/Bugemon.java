@@ -110,7 +110,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *
      * @param damage the amount of damage to apply.
      */
-    public void takeDamage(double damage) {
+    public void takeDamage(int damage) {
         this.state.hp -= damage;
     }
 

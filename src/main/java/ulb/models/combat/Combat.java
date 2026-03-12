@@ -369,8 +369,8 @@ public class Combat {
      *         attack used, and the computed {@link CombatHelper.Efficiency}.
      */
     private TurnResult.AttackResult applyAttack(Trainer attacker, Trainer defender, Attack attack) {
-        double damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(),
-                                                     defender.getCurrentBugemon());
+        int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(),
+                                                      defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
         Efficiency efficiency =
