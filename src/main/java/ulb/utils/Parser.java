@@ -61,7 +61,6 @@ import ulb.models.bugemon.effect.EffectType;
  * @see ulb.models.bugemon.Attack
  */
 public class Parser {
-   
     // Constants for the paths to the JSON data files within the resources directory
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
     private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
@@ -74,16 +73,19 @@ public class Parser {
     private static Parser instance;
 
     /**
-     * Private constructor to prevent instantiation of the Parser class, enforcing the singleton pattern.
+     * Private constructor to prevent instantiation of the Parser class, enforcing the singleton
+     * pattern.
      */
     private Parser() {}
 
     /**
-     * Returns the singleton instance of the Parser class, creating it if it does not already exist. This method is thread-safe to ensure that only one instance of the Parser is created even in a multi-threaded environment.
+     * Returns the singleton instance of the Parser class, creating it if it does not already exist.
+     * This method is thread-safe to ensure that only one instance of the Parser is created even in
+     * a multi-threaded environment.
      * @return the singleton instance of the Parser class
      */
     public static synchronized Parser getInstance() {
-        if (instance != null) {
+        if (instance == null) {
             instance = new Parser();
         }
         return instance;
@@ -119,8 +121,8 @@ public class Parser {
     }
 
     /**
-     * Returns the list of Bugemon objects parsed from the JSON file, where each Bugemon is fully constructed with its associated attacks resolved from the
-     * attacks map.
+     * Returns the list of Bugemon objects parsed from the JSON file, where each Bugemon is fully
+     * constructed with its associated attacks resolved from the attacks map.
      * @return a list of Bugemon objects representing the parsed Bugemons from the JSON file
      */
     public final List<Bugemon> getBugemons() {
@@ -192,7 +194,6 @@ public class Parser {
                             .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
                             .create();
 
-        
         JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
         try {
             reader.close();
@@ -206,7 +207,8 @@ public class Parser {
 
         List<Attack> attacksList = gson.fromJson(attacksArray, destType);
 
-        attacks = attacksList.stream().collect(Collectors.toMap(Attack::getId, Function.identity()));
+        attacks =
+                attacksList.stream().collect(Collectors.toMap(Attack::getId, Function.identity()));
     }
 
     /**

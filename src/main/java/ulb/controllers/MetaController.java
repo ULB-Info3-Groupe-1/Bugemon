@@ -2,8 +2,6 @@ package ulb.controllers;
 
 import java.io.IOException;
 import java.util.List;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 
@@ -130,13 +128,8 @@ public class MetaController {
      * </p>
      */
     public void launchAutoCombat() {
-        if (this.playerTeam.isEmpty()) {
-            showAlert("Équipe incomplète",
-                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        } else {
-            switchTo(Window.AUTOMATIC_COMBAT);
-            this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
-        }
+        switchTo(Window.AUTOMATIC_COMBAT);
+        this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
     }
 
     /**
@@ -157,33 +150,15 @@ public class MetaController {
      * </p>
      */
     public void launchManualCombat() {
-        if (this.playerTeam.isEmpty()) {
-            showAlert("Équipe incomplète",
-                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        } else {
-            switchTo(Window.MANUAL_COMBAT);
-            this.manualCombatController.runManualCombat(new ManualTrainer(this.playerTeam));
-        }
+        switchTo(Window.MANUAL_COMBAT);
+        this.manualCombatController.runManualCombat(new ManualTrainer(this.playerTeam));
     }
+
     /**
      * Resets the bugemon team of the trainer.
      */
     public void resetTeam() {
         this.playerTeam.reset();
-    }
-
-    /**
-     * Displays an alert dialog with the specified title and message.
-     *
-     * @param title   the title of the alert dialog
-     * @param message the content message of the alert dialog
-     */
-    public void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     public void setLevelUp(List<LevelUp> levelUps) {

@@ -14,8 +14,8 @@ import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.ManualTrainer.TAction;
-import ulb.utils.Parser;
 import ulb.models.trainer.Trainer;
+import ulb.utils.Parser;
 import ulb.views.combat.ManualCombatView;
 
 /**
