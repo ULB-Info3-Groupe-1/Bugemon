@@ -14,6 +14,7 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.AutomaticCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.utils.Parser;
 import ulb.views.combat.AutomaticCombatView;
 
 /**
@@ -109,7 +110,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      */
     public void runAutoCombat(final AutoTrainer player) {
         AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(
-                metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+            Parser.getInstance().getBugemons(), player.getTeamSize()));
         AutomaticCombat combat = new AutomaticCombat(player, opponent);
 
         updateCombatView(player, opponent, null);

@@ -7,7 +7,6 @@ import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 import ulb.services.CombatService;
-import ulb.views.ActionMenuView;
 
 public class AttackActionMenu extends ActionMenuView {
     private ManualCombatController controller;

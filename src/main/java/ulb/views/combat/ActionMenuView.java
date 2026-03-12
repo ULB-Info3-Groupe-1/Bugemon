@@ -1,4 +1,4 @@
-package ulb.views;
+package ulb.views.combat;
 
 import java.io.IOException;
 import java.net.URL;

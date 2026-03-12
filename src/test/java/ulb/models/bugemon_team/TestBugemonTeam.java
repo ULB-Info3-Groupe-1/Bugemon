@@ -11,9 +11,6 @@
 package ulb.models.bugemon_team;
 
 import static org.junit.Assert.*;
-
-import java.io.InputStream;
-
 import org.junit.Test;
 
 import ulb.factory.TeamFactory;
@@ -96,10 +93,8 @@ public class TestBugemonTeam {
 
     @Test
     public void testRandomTeamNumber() {
-        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
-        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
-        Parser.ParseResult parseResult = Parser.parse(attacksStream, bugemonsStream);
-        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(parseResult.getBugemonsList(), 6);
+        Parser.getInstance().parse();
+        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), 6);
         assertEquals(6, teamOfSix.size());
     }
 
