@@ -1,10 +1,11 @@
-package ulb.views;
+package ulb.views.victory_view;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 import ulb.controllers.CombatDefeatController;
+import ulb.views.View;
 
 /**
  * CombatDefeatView

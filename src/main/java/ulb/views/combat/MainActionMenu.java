@@ -1,7 +1,6 @@
 package ulb.views.combat;
 
 import ulb.controllers.combat.ManualCombatController;
-import ulb.views.ActionMenuView;
 
 public class MainActionMenu extends ActionMenuView {
     public MainActionMenu() {
