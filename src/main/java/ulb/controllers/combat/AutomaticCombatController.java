@@ -110,7 +110,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      */
     public void runAutoCombat(final AutoTrainer player) {
         AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(
-            Parser.getInstance().getBugemons(), player.getTeamSize()));
+                Parser.getInstance().getBugemons(), player.getTeamSize()));
         AutomaticCombat combat = new AutomaticCombat(player, opponent);
 
         updateCombatView(player, opponent, null);

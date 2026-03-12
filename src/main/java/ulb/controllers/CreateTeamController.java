@@ -98,11 +98,12 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         if (this.bugemonTeam.contains(id)) {
             this.bugemonTeam.removeBugemon(id);
         } else if (this.bugemonTeam.isFull()) {
-            metaController.showAlert("Équipe pleine",
-                                     "Votre équipe est déjà plaine. Veuillez en retirer un avant "
-                                             + "d'en ajouter un nouveau.");
+            this.view.showAlert("Équipe pleine",
+                                "Votre équipe est déjà plaine. Veuillez en retirer un avant "
+                                        + "d'en ajouter un nouveau.");
         } else {
-            Parser.getInstance().getBugemons()
+            Parser.getInstance()
+                    .getBugemons()
                     .stream()
                     .filter(b -> b.getId().equals(id))
                     .findFirst()
@@ -143,7 +144,9 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * </p>
      */
     public void startAutoCombat() {
-        this.metaController.launchAutoCombat();
+        if (!teamIsEmpty()) {
+            this.metaController.launchAutoCombat();
+        }
     }
 
     /**
@@ -156,7 +159,9 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * </p>
      */
     public void startManualCombat() {
-        this.metaController.launchManualCombat();
+        if (!teamIsEmpty()) {
+            this.metaController.launchManualCombat();
+        }
     }
 
     /**
@@ -174,5 +179,19 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      */
     public boolean checkBugemonInTeam(String bugemonId) {
         return (this.bugemonTeam.contains(bugemonId));
+    }
+
+    /**
+     * Checks whether the player's team is valid for starting a combat (i.e., non-empty).
+     * @return {@code true} if the team is valid, {@code false} otherwise.
+     */
+    private boolean teamIsEmpty() {
+        if (this.bugemonTeam.isEmpty()) {
+            this.view.showAlert(
+                    "Équipe incomplète",
+                    "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+            return true;
+        }
+        return false;
     }
 }

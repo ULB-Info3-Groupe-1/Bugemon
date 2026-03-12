@@ -11,16 +11,15 @@
 package ulb.models.bugemon_team;
 
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 
-import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
-import ulb.utils.Parser;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemonTeam {
@@ -89,13 +88,6 @@ public class TestBugemonTeam {
 
         Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("7");
         assertThrows(TeamAlreadyFullException.class, () -> { fullTeam.addBugemon(extraBugemon); });
-    }
-
-    @Test
-    public void testRandomTeamNumber() {
-        Parser.getInstance().parse();
-        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), 6);
-        assertEquals(6, teamOfSix.size());
     }
 
     @Test

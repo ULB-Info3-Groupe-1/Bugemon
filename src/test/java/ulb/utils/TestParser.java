@@ -2,9 +2,10 @@ package ulb.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Test;
 
 import java.util.List;
+
+import org.junit.Test;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -23,14 +24,18 @@ public class TestParser {
         assertNotNull(tempInstance.getAttacks());
 
         // check if the attacks were parsed correctly
-        Attack fouetLiane = tempInstance.getAttacks().values().stream()
+        Attack fouetLiane = tempInstance.getAttacks()
+                                    .values()
+                                    .stream()
                                     .filter(a -> "fouet_liane".equals(a.getId()))
                                     .findFirst()
                                     .orElseThrow();
         assertEquals("fouet_liane", fouetLiane.getId());
 
         // check effects
-        Attack racinesVives = tempInstance.getAttacks().values().stream()
+        Attack racinesVives = tempInstance.getAttacks()
+                                      .values()
+                                      .stream()
                                       .filter(a -> "racines_vives".equals(a.getId()))
                                       .findFirst()
                                       .orElseThrow();
@@ -49,13 +54,15 @@ public class TestParser {
         assertNotNull(tempInstance.getBugemons());
 
         // check attributes
-        Bugemon florachu = tempInstance.getBugemons().stream()
+        Bugemon florachu = tempInstance.getBugemons()
+                                   .stream()
                                    .filter(b -> "Florachu".equals(b.getName()))
                                    .findFirst()
                                    .orElseThrow();
         assertEquals(florachu.getName(), "Florachu");
 
-        Bugemon moussil = tempInstance.getBugemons().stream()
+        Bugemon moussil = tempInstance.getBugemons()
+                                  .stream()
                                   .filter(b -> "Moussil".equals(b.getName()))
                                   .findFirst()
                                   .orElseThrow();
@@ -65,7 +72,8 @@ public class TestParser {
         assertEquals(florachu.getSpriteURL(), "png/florachu.png");
 
         // check attacks
-        Bugemon verdurion = tempInstance.getBugemons().stream()
+        Bugemon verdurion = tempInstance.getBugemons()
+                                    .stream()
                                     .filter(b -> "Verdurion".equals(b.getName()))
                                     .findFirst()
                                     .orElseThrow();
@@ -76,7 +84,8 @@ public class TestParser {
         }
 
         // check stats
-        Bugemon loopine = tempInstance.getBugemons().stream()
+        Bugemon loopine = tempInstance.getBugemons()
+                                  .stream()
                                   .filter(b -> "Loopine".equals(b.getName()))
                                   .findFirst()
                                   .orElseThrow();
