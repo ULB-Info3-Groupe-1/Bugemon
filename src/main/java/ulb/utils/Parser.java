@@ -95,7 +95,8 @@ public class Parser {
          *                    {@link ulb.models.bugemon.Bugemon} objects; must
          *                    not be {@code null}.
          */
-        public ParseResult(Map<String, Attack> attacksMap, List<Bugemon> bugemonList, List<GameObject> objectsList, Inventory inventory) {
+        public ParseResult(Map<String, Attack> attacksMap, List<Bugemon> bugemonList,
+                           List<GameObject> objectsList, Inventory inventory) {
             this.attacksMap = attacksMap;
             this.bugemonList = bugemonList;
             this.objectsList = objectsList;
@@ -142,7 +143,8 @@ public class Parser {
      * @param objectsStream input stream for the objects JSON file
      * @return a ParseResult containing the attacks map and the list of bugemons
      */
-    public static ParseResult parse(InputStream attacksStream, InputStream bugemonsStream, InputStream objectsStream) {
+    public static ParseResult parse(InputStream attacksStream, InputStream bugemonsStream,
+                                    InputStream objectsStream) {
         Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
         Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
         Reader objectsReader = new InputStreamReader(objectsStream, StandardCharsets.UTF_8);
@@ -158,7 +160,8 @@ public class Parser {
 
         ObjectWrapper parsedObjects = parseObjectsAndInventory(objectsReader);
 
-        return new ParseResult(attacksMap, bugemons, parsedObjects.getObjects(), parsedObjects.getInventory());
+        return new ParseResult(attacksMap, bugemons, parsedObjects.getObjects(),
+                               parsedObjects.getInventory());
     }
 
     /**
@@ -282,7 +285,7 @@ public class Parser {
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            
+
             // Extract and parse objects
             JsonArray objectsArray = root.getAsJsonArray("objets");
             Type desType = new TypeToken<List<GameObject>>() {}.getType();
@@ -299,12 +302,15 @@ public class Parser {
                 int quantity = entry.getValue();
 
                 GameObject obj = objects.stream()
-                                        .filter(o -> o.id().equals(objectId))
-                                        .findFirst()
-                                        .orElseThrow(() -> new RuntimeException("Object with ID " + objectId + " not found"));
+                                         .filter(o -> o.id().equals(objectId))
+                                         .findFirst()
+                                         .orElseThrow(()
+                                                              -> new RuntimeException(
+                                                                      "Object with ID " + objectId
+                                                                      + " not found"));
                 inventory.addObject(obj, quantity);
             }
-            
+
             reader.close();
             return new ObjectWrapper(objects, inventory);
 

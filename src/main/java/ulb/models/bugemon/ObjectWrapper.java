@@ -27,5 +27,4 @@ public class ObjectWrapper {
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
     }
-
 }
