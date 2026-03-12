@@ -4,7 +4,6 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.controllers.CombatDefeatController;
 import ulb.views.View;
 
 /**
@@ -13,7 +12,7 @@ import ulb.views.View;
  * View for the combat defeat screen.
  */
 public class CombatDefeatView extends View {
-    private CombatDefeatController controller;
+
     @FXML private Button retryButton;
     @FXML private Button backToMainMenuButton;
 
@@ -24,18 +23,21 @@ public class CombatDefeatView extends View {
      */
     public CombatDefeatView() throws IOException {
         super("/fxml/CombatDefeat.fxml");
-        this.controller = null;
-
-        this.retryButton.setOnAction((e) -> this.controller.retry());
-        this.backToMainMenuButton.setOnAction((e) -> this.controller.backToMainMenu());
     }
 
     /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling combat defeat screen
+     * Sets the action to be performed when the retry button is pressed.
+     * @param action the action to execute on button press
      */
-    public void setController(CombatDefeatController controller) {
-        this.controller = controller;
+    public void setRetryButtonAction(Runnable action) {
+        retryButton.setOnAction(e -> action.run());
+    }
+
+    /**
+     * Sets the action to be performed when the back to main menu button is pressed.
+     * @param action the action to execute on button press
+     */
+    public void setBackToMainMenuButtonAction(Runnable action) {
+        backToMainMenuButton.setOnAction(e -> action.run());
     }
 }

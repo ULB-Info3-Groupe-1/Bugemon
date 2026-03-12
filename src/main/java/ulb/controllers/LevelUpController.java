@@ -14,7 +14,9 @@ public class LevelUpController extends Controller<LevelUpView> {
 
     public LevelUpController(MetaController metaController) throws IOException {
         super(metaController, new LevelUpView());
-        this.view.setController(this);
+        this.view.setActionOnChoice1Button(() -> this.chooseOption(0));
+        this.view.setActionOnChoice2Button(() -> this.chooseOption(1));
+        this.view.setActionOnChoice3Button(() -> this.chooseOption(2));
     }
 
     /**

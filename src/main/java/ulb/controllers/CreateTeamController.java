@@ -65,7 +65,11 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public CreateTeamController(MetaController metaController, BugemonTeam bugemonTeam)
             throws IOException {
         super(metaController, new CreateTeamView());
-        this.view.setController(this);
+        
+        this.view.setOnBugemonClicked((dto) -> this.onBugemonClicked(dto.getId()));
+        this.view.setCheckSelectionChecker((dto) -> this.checkBugemonInTeam(dto.getId()));
+        this.view.setActionLaunchManualCombat(() -> this.startManualCombat());
+        this.view.setActionLaunchAutomaticCombat(() -> this.startAutoCombat());
 
         this.bugemonTeam = bugemonTeam;
 

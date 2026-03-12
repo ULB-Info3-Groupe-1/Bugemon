@@ -17,6 +17,7 @@ import javafx.stage.Stage;
  */
 public abstract class View {
     protected final Pane root;
+    // The JavaFX scene associated with this view
     protected final Scene scene;
 
     /**

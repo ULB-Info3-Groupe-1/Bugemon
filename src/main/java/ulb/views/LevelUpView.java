@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 
 import ulb.common.dto.BugemonDTO;
 import ulb.common.dto.LevelUpDTO;
-import ulb.controllers.LevelUpController;
 import ulb.models.level_up.Choice;
 
 /**
@@ -25,15 +24,8 @@ public class LevelUpView extends View {
     @FXML private Button choice3Button;
     @FXML private ImageView bugemonImage;
 
-    private LevelUpController controller;
-
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
-        this.controller = null;
-
-        this.choice1Button.setOnAction((e) -> this.controller.chooseOption(0));
-        this.choice2Button.setOnAction((e) -> this.controller.chooseOption(1));
-        this.choice3Button.setOnAction((e) -> this.controller.chooseOption(2));
     }
 
     public void setLevelUp(LevelUpDTO levelUp) {
@@ -56,12 +48,28 @@ public class LevelUpView extends View {
         this.choice3Button.setText(choices.get(2).toString());
     }
 
+    
     /**
-     * Binds Level up view to its controller.
-     *
-     * @param controller controller handling level up
+     * Set the action to perform when the choice 1 button is clicked.
+     * @param action the action to perform
      */
-    public void setController(LevelUpController controller) {
-        this.controller = controller;
+    public void setActionOnChoice1Button(Runnable action) {
+        this.choice1Button.setOnAction(e -> action.run());
+    }
+
+    /**
+     * Set the action to perform when the choice 2 button is clicked.
+     * @param action the action to perform
+     */
+    public void setActionOnChoice2Button(Runnable action) {
+        this.choice2Button.setOnAction(e -> action.run());
+    }
+
+    /**
+     * Set the action to perform when the choice 3 button is clicked.
+     * @param action the action to perform
+     */
+    public void setActionOnChoice3Button(Runnable action) {
+        this.choice3Button.setOnAction(e -> action.run());
     }
 }

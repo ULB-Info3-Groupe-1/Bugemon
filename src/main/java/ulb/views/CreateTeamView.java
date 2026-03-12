@@ -2,11 +2,13 @@ package ulb.views;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 import ulb.common.dto.BugemonDTO;
-import ulb.controllers.CreateTeamController;
 
 /**
  * CreateTeamView
@@ -16,8 +18,6 @@ import ulb.controllers.CreateTeamController;
  */
 public class CreateTeamView extends View {
     private static final String FXML_PATH = "/fxml/CreateTeam.fxml";
-
-    private CreateTeamController controller;
 
     // FXML elements
     @FXML private AllBugemonsGridView allBugemonsGridView;
@@ -35,26 +35,39 @@ public class CreateTeamView extends View {
      */
     public CreateTeamView() throws IOException {
         super(FXML_PATH);
-        this.controller = null;
-
-        this.allBugemonsGridView.setOnClickCallback(
-                dto -> { this.controller.onBugemonClicked(dto.getId()); });
-
-        this.launchAutomaticCombat.setOnAction(e -> this.controller.startAutoCombat());
-        this.launchManualCombat.setOnAction(e -> this.controller.startManualCombat());
     }
 
     /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling team creation
+     * Sets the callback to be invoked when a Bugemon is clicked in the grid view.
+     * @param consumer the Consumer that will handle the clicked BugemonDTO
      */
-    public void setController(CreateTeamController controller) {
-        this.controller = controller;
+    public void setOnBugemonClicked(Consumer<BugemonDTO> consumer) {
+        this.allBugemonsGridView.setOnClickCallback(
+                dto -> { consumer.accept(dto); });
+    }
 
-        // set selection callback
-        this.allBugemonsGridView.setSelectionChecker(
-                b -> this.controller.checkBugemonInTeam(b.getId()));
+    /**
+     * Sets the callback used to check if a Bugemon should be marked as selected in the grid view.
+     * @param function the Function that takes a BugemonDTO and returns true if it should be marked as selected
+     */
+    public void setCheckSelectionChecker(Function<BugemonDTO, Boolean> function) {
+        this.allBugemonsGridView.setSelectionChecker(function);
+    }
+
+    /**
+     * Sets the action to be performed when the "Launch Manual Combat" button is clicked.
+     * @param action the Runnable action to execute when the button is clicked
+     */
+    public void setActionLaunchManualCombat(Runnable action) {
+        this.launchManualCombat.setOnAction(e -> action.run());
+    }
+
+    /**
+     * Sets the action to be performed when the "Launch Automatic Combat" button is clicked.
+     * @param action the Runnable action to execute when the button is clicked
+     */
+    public void setActionLaunchAutomaticCombat(Runnable action) {
+        this.launchAutomaticCombat.setOnAction(e -> action.run());
     }
 
     /**

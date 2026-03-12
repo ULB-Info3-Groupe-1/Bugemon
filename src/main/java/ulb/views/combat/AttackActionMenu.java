@@ -1,15 +1,16 @@
 package ulb.views.combat;
 
+import java.util.function.Consumer;
+
 import javafx.scene.control.Button;
 
 import ulb.common.Efficiency;
-import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 import ulb.services.CombatService;
 
 public class AttackActionMenu extends ActionMenuView {
-    private ManualCombatController controller;
+    private Consumer<Attack> onAttackSelected;
 
     public AttackActionMenu() {
         super();
@@ -21,12 +22,19 @@ public class AttackActionMenu extends ActionMenuView {
     }
 
     /**
-     * Set the controller for the AttackActionMenu and define the action for the "Back" button to
-     * show the main action menu
+     * Set the action to perform when the back button is clicked.
+     * @param action the action to perform
      */
-    public void setController(ManualCombatController controller) {
-        this.controller = controller;
-        this.action4.setOnAction(e -> controller.showMainActionMenu());
+    public void setOnBack(Runnable action) {
+        this.action4.setOnAction(e -> action.run());
+    }
+
+    /**
+     * Set the callback to be invoked when an attack is selected.
+     * @param onAttackSelected the Consumer that will handle the selected Attack
+     */
+    public void setOnAttackSelected(Consumer<Attack> onAttackSelected) {
+        this.onAttackSelected = onAttackSelected;
     }
 
     /**
@@ -60,6 +68,10 @@ public class AttackActionMenu extends ActionMenuView {
         Efficiency efficiency = CombatService.compareBugemonType(attack.getType(), opponentType);
         button.setText(attack.getName() + "\n" + efficiency.toString());
 
-        button.setOnAction(e -> this.controller.playerAttack(attack));
+        if (this.onAttackSelected == null) {
+            button.setOnAction(null);
+            return;
+        }
+        button.setOnAction(e -> this.onAttackSelected.accept(attack));
     }
 }

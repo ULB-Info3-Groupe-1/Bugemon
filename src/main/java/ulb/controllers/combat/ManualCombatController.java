@@ -79,7 +79,12 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public ManualCombatController(MetaController metaController) throws IOException {
         super(metaController, new ManualCombatView());
-        this.view.setController(this);
+        this.view.setOnShowAttackMenu(this::showAttackMenu);
+        this.view.setOnShowSwitchMenu(this::showSwitchMenu);
+        this.view.setOnSurrender(this::surrender);
+        this.view.setOnBackToMainActionMenu(this::showMainActionMenu);
+        this.view.setOnAttackSelected(this::playerAttack);
+        this.view.setOnSwitchBugemon(this::switchBugemon);
     }
 
     /**

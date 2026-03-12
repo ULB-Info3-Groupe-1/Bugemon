@@ -2,9 +2,9 @@ package ulb.views.combat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 import ulb.common.dto.BugemonDTO;
-import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 
@@ -16,7 +16,7 @@ import ulb.models.bugemon.BugemonType;
  * and injected via FXML.
  */
 public class ManualCombatView extends CombatView {
-    private ManualCombatController controller;
+    private Consumer<String> onSwitchBugemon;
 
     private MainActionMenu mainActionMenu;
     private AttackActionMenu attackActionMenu;
@@ -32,19 +32,60 @@ public class ManualCombatView extends CombatView {
         this.initCombatMode();
     }
 
+    /**
+     * Initialize the combat mode by showing the main action menu.
+     */
     @Override
     public void initCombatMode() {
         showMainActionMenu();
     }
 
     /**
-     * set the controller for this view.
-     * @param controller the controller to set for this view
+     * Set the action to perform when the attack button is clicked.
+     * @param action the action to perform
      */
-    public void setController(ManualCombatController controller) {
-        this.controller = controller;
-        this.mainActionMenu.setController(this.controller);
-        this.attackActionMenu.setController(this.controller);
+    public void setOnShowAttackMenu(Runnable action) {
+        this.mainActionMenu.setOnAttack(action);
+    }
+
+    /**
+     * Set the action to perform when the switch button is clicked.
+     * @param action the action to perform
+     */
+    public void setOnShowSwitchMenu(Runnable action) {
+        this.mainActionMenu.setOnSwitch(action);
+    }
+
+    /**
+     * Set the action to perform when the surrender button is clicked.
+     * @param action the action to perform
+     */
+    public void setOnSurrender(Runnable action) {
+        this.mainActionMenu.setOnSurrender(action);
+    }
+
+    /**
+     * Set the action to perform when the back button in the attack menu is clicked.
+     * @param action the action to perform
+     */
+    public void setOnBackToMainActionMenu(Runnable action) {
+        this.attackActionMenu.setOnBack(action);
+    }
+
+    /**
+     * Set the callback to be invoked when an attack is selected in the attack menu.
+     * @param onAttackSelected the Consumer that will handle the selected Attack
+     */
+    public void setOnAttackSelected(Consumer<Attack> onAttackSelected) {
+        this.attackActionMenu.setOnAttackSelected(onAttackSelected);
+    }
+
+    /**
+     * Set the callback to be invoked when a Bugemon is selected in the switch menu.
+     * @param onSwitchBugemon the Consumer that will handle the selected Bugemon's id for switching
+     */
+    public void setOnSwitchBugemon(Consumer<String> onSwitchBugemon) {
+        this.onSwitchBugemon = onSwitchBugemon;
     }
 
     /**
@@ -75,8 +116,8 @@ public class ManualCombatView extends CombatView {
         this.bugemonTeamPane.setVisible(true);
         this.bugemonTeamPane.setManaged(true);
         this.bugemonTeamView.setOnClickCallback(bugemon -> {
-            if (bugemon != null) {
-                this.controller.switchBugemon(bugemon.getId());
+            if (bugemon != null && this.onSwitchBugemon != null) {
+                this.onSwitchBugemon.accept(bugemon.getId());
                 hideSwitchPanel();
                 showMainActionMenu();
             }

@@ -4,15 +4,13 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.controllers.MainMenuController;
-
 /**
  * MainMenuView
  *
  * View for the main menu screen.
  */
 public class MainMenuView extends View {
-    private MainMenuController controller;
+
     @FXML private Button createTeamButton;
     @FXML private Button quitButton;
 
@@ -23,18 +21,22 @@ public class MainMenuView extends View {
      */
     public MainMenuView() throws IOException {
         super("/fxml/MainMenu.fxml");
-        this.controller = null;
+     }
 
-        this.createTeamButton.setOnAction((e) -> this.controller.createTeam());
-        this.quitButton.setOnAction((e) -> this.controller.quit());
-    }
+     /**
+      * Sets the action to be performed when the create team button is clicked.
+      * @param action the Runnable to execute on create team button click
+      */
+     public void setCreateTeamButtonAction(Runnable action) {
+        this.createTeamButton.setOnAction(e -> action.run());
+     }
 
-    /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling main menu events
-     */
-    public void setController(MainMenuController controller) {
-        this.controller = controller;
-    }
+     /**
+      * Sets the action to be performed when the quit button is clicked.
+      * @param action the Runnable to execute on quit button click
+      */
+     public void setQuitButtonAction(Runnable action) {
+        this.quitButton.setOnAction(e -> action.run());
+     }
+
 }

@@ -42,7 +42,8 @@ public class MainMenuController extends Controller<MainMenuView> {
      */
     public MainMenuController(MetaController metaController) throws IOException {
         super(metaController, new MainMenuView());
-        this.view.setController(this);
+        this.view.setCreateTeamButtonAction(this::createTeam);
+        this.view.setQuitButtonAction(this::quit);
     }
 
     /**

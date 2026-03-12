@@ -1,7 +1,5 @@
 package ulb.views.combat;
 
-import ulb.controllers.combat.ManualCombatController;
-
 public class MainActionMenu extends ActionMenuView {
     public MainActionMenu() {
         super();
@@ -15,13 +13,26 @@ public class MainActionMenu extends ActionMenuView {
     }
 
     /**
-     * Set the controller for the main action menu and connect the buttons to the corresponding
-     * actions in the controller
-     * @param controller The ManualCombatController to set for the main action menu
+     * Set the action to perform when the attack button is clicked.
+     * @param action the action to perform
      */
-    public void setController(ManualCombatController controller) {
-        this.action1.setOnAction(e -> controller.showAttackMenu());
-        this.action2.setOnAction(e -> controller.showSwitchMenu());
-        this.action4.setOnAction(e -> controller.surrender());
+    public void setOnAttack(Runnable action) {
+        this.action1.setOnAction(e -> action.run());
+    }
+
+    /**
+     * Set the action to perform when the switch button is clicked.
+     * @param action the action to perform
+     */
+    public void setOnSwitch(Runnable action) {
+        this.action2.setOnAction(e -> action.run());
+    }
+
+    /**
+     * Set the action to perform when the surrender button is clicked.
+     * @param action the action to perform
+     */
+    public void setOnSurrender(Runnable action) {
+        this.action4.setOnAction(e -> action.run());
     }
 }

@@ -4,7 +4,6 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.controllers.CombatVictoryController;
 import ulb.views.View;
 
 /**
@@ -13,7 +12,7 @@ import ulb.views.View;
  * View for the combat victory screen.
  */
 public class CombatVictoryView extends View {
-    private CombatVictoryController controller;
+
     @FXML private Button continueButton;
 
     /**
@@ -23,17 +22,14 @@ public class CombatVictoryView extends View {
      */
     public CombatVictoryView() throws IOException {
         super("/fxml/CombatVictory.fxml");
-        this.controller = null;
-
-        this.continueButton.setOnAction((e) -> this.controller.cont());
     }
 
     /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling combat victory screen
+     * Sets the action to be performed when the continue button is pressed.
+     * @param action the action to execute on button press
      */
-    public void setController(CombatVictoryController controller) {
-        this.controller = controller;
+    public void setContinueButtonAction(Runnable action) {
+        continueButton.setOnAction(e -> action.run());
     }
+    
 }
