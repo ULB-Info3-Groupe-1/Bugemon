@@ -9,7 +9,6 @@ import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
@@ -250,21 +249,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     }
 
     // ── view queries ──────────────────────────────────────────────────────────
-
-    /**
-     * Returns the elemental type of the opponent's currently active Bugemon.
-     *
-     * <p>
-     * Used by {@link ulb.views.combat.AttackActionMenu} to annotate each attack
-     * button with its type effectiveness against the current opponent.
-     * </p>
-     *
-     * @return the {@link ulb.models.bugemon.BugemonType} of the opponent's
-     *         active Bugemon; never {@code null}.
-     */
-    public BugemonType getOpponentBugemonType() {
-        return opponent.getCurrentBugemonType();
-    }
 
     /**
      * Returns {@code true} if the player is currently allowed to perform a
