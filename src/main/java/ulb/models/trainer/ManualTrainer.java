@@ -78,12 +78,10 @@ public class ManualTrainer extends Trainer {
      */
     @Override
     public TurnAction selectAction() {
-        if (pendingAction.isEmpty()) {
-            throw new IllegalStateException("No action has been selected for this turn.");
-        }
-        TurnAction actionToPerform = pendingAction.get();
-        pendingAction = Optional.empty();
-        return actionToPerform;
+        return pendingAction.map(a -> {
+            pendingAction = Optional.empty();
+            return a;
+        }).orElseThrow(() -> new IllegalStateException("No action has been selected for this turn."));
     }
 
     /**
