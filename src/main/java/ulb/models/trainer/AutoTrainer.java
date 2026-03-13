@@ -27,7 +27,7 @@ import ulb.models.bugemon_team.BugemonTeam;
  *   <li>{@link #getAction()} — always returns an {@link TurnAction.AttackAction}
  *       wrapping a randomly chosen {@link Attack} from the active
  *       {@link Bugemon}'s move-set.</li>
- *   <li>{@link #reactToKO()} — switches the active {@link Bugemon} to a
+ *   <li>{@link #reactToKo()} — switches the active {@link Bugemon} to a
  *       randomly chosen alive member of the team when the current one faints.</li>
  * </ul>
  *
@@ -85,7 +85,7 @@ public class AutoTrainer extends Trainer {
      * </p>
      */
     @Override
-    public void reactToKO() {
+    public void reactToKo() {
         selectRandomBugemon();
     }
 

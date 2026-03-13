@@ -376,7 +376,7 @@ public class Combat {
 
         if (!defender.isCurrentBugemonAlive()) {
             if (!defender.isDefeated()) {
-                defender.reactToKO();
+                defender.reactToKo();
             }
         } else {
             effectManager.applyEffect(attacker, defender, attack);

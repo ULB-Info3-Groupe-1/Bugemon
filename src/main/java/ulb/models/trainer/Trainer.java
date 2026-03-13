@@ -29,7 +29,7 @@ import ulb.models.bugemon_team.BugemonTeam;
  * <p>
  * Subclasses must implement {@link #getAction()} to supply the
  * {@link TurnAction} this trainer wants to take on the current turn, and
- * {@link #reactToKO()} to define how the trainer responds when its active
+ * {@link #reactToKo()} to define how the trainer responds when its active
  * Bugemon faints mid-turn. All resolution logic lives in
  * {@link ulb.models.combat.Combat}; the trainer only <em>decides</em>.
  * </p>
@@ -87,7 +87,7 @@ public abstract class Trainer {
      * {@link ManualTrainer#switchAfterKO(Bugemon)} directly).
      * </p>
      */
-    public abstract void reactToKO();
+    public abstract void reactToKo();
 
     /**
      * Instantly defeats the entire team by reducing every Bugemon's HP to zero.

@@ -96,7 +96,7 @@ public class ManualTrainer extends Trainer {
      * </p>
      */
     @Override
-    public void reactToKO() {
+    public void reactToKo() {
         if (bugemonTargetForSwitch.isPresent()) {
             currentBugemon = bugemonTargetForSwitch.get();
             bugemonTargetForSwitch = Optional.empty();
@@ -194,11 +194,11 @@ public class ManualTrainer extends Trainer {
     }
 
     /**
-     * Pre-registers a KO switch target to be applied by {@link #reactToKO()}.
+     * Pre-registers a KO switch target to be applied by {@link #reactToKo()}.
      *
      * <p>
      * This is an alternative to {@link #switchAfterKO(Bugemon)} for cases where
-     * the switch target is known before {@link #reactToKO()} is invoked by the
+     * the switch target is known before {@link #reactToKo()} is invoked by the
      * combat engine.
      * </p>
      *
