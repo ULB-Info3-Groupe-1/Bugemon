@@ -8,8 +8,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import ulb.controllers.music.exceptions.NoMusicMatchingAmbianceException;
-
 /**
  * MusicPlayer
  *
@@ -74,7 +72,7 @@ public class MusicPlayer {
                 player.play();
             });
         } catch (Exception e) {
-            System.out.println("Error playing music: " + e.getMessage());
+            System.err.println("Error playing music: " + e.getMessage());
         }
     }
 
@@ -88,8 +86,9 @@ public class MusicPlayer {
                 this.musics.stream().filter(music -> music.ambiance == ambiance).toList();
 
         if (matchingMusics.isEmpty()) {
-            throw new NoMusicMatchingAmbianceException("No music matching ambiance "
-                                                       + ambiance.toString());
+            System.err.println("Error playing music matching ambiance " + ambiance.toString()
+                               + ": no match");
+            return;
         }
 
         Music music =
