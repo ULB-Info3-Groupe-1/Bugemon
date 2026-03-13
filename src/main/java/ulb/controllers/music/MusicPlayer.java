@@ -8,6 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+import ulb.controllers.music.exceptions.NoMusicMatchingAmbianceException;
+
 /**
  * MusicPlayer
  *
@@ -76,15 +78,16 @@ public class MusicPlayer {
      * @param ambiance the ambiance of the music track to play.
      */
     public void playAmbiance(Music.Ambiance ambiance) {
-        List<Music> musics =
+        List<Music> matchingMusics =
                 this.musics.stream().filter(music -> music.ambiance == ambiance).toList();
 
-        if (musics.isEmpty()) {
-            // TODO: might wanna throw an exception here
-            return;
+        if (matchingMusics.isEmpty()) {
+            throw new NoMusicMatchingAmbianceException("No music matching ambiance "
+                                                       + ambiance.toString());
         }
 
-        Music music = musics.get(ThreadLocalRandom.current().nextInt(musics.size()));
+        Music music =
+                matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
 
         this.playMusic(music);
     }
