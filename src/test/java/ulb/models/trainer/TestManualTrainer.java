@@ -14,72 +14,72 @@ import ulb.utils.test.TestUtilsBugemons;
 
 public class TestManualTrainer {
     @Test
-    public void testQueueSwitch() {
+    public void testRegisterSwitch() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
         Bugemon target = team.getBugemon("2").get();
 
-        trainer.queueSwitch(target);
+        trainer.registerSwitch(target);
 
-        TurnAction action = trainer.selectAction();
+        TurnAction action = trainer.getAction();
         assertEquals(new TurnAction.SwitchAction(target), action);
     }
 
     @Test
-    public void testQueueSwitchDeadBugemon() {
+    public void testRegisterSwitchDeadBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         TestUtilsBugemons.killBugemon(team, "2");
         ManualTrainer trainer = new ManualTrainer(team);
 
         assertThrows(IllegalArgumentException.class,
-                     () -> trainer.queueSwitch(team.getBugemon("2").get()));
+                     () -> trainer.registerSwitch(team.getBugemon("2").get()));
     }
 
     @Test
-    public void testQueueAttack() {
+    public void testRegisterAttack() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
         var attack = trainer.getCurrentBugemonAttackList().get(0);
 
-        trainer.queueAttack(attack);
+        trainer.registerAttack(attack);
 
-        TurnAction action = trainer.selectAction();
+        TurnAction action = trainer.getAction();
         assertEquals(new TurnAction.AttackAction(attack), action);
     }
 
     @Test
-    public void testQueueAttackNotInMoveSet() {
+    public void testRegisterAttackNotInMoveSet() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
-        // Build an attack with an ID that is guaranteed to not be in any Bugemon's move-set
+        // Build an attack with an ID that is guaranteed to not be in any Bugemon's attacks
         Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", BugemonType.FLORA, "", 10,
                                           new java.util.ArrayList<>());
 
-        assertThrows(IllegalArgumentException.class, () -> trainer.queueAttack(foreignAttack));
+        assertThrows(IllegalArgumentException.class, () -> trainer.registerAttack(foreignAttack));
     }
 
     @Test
-    public void testQueueForfeit() {
+    public void testRegisterForfeit() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
-        trainer.queueForfeit();
+        trainer.registerForfeit();
 
-        TurnAction action = trainer.selectAction();
+        TurnAction action = trainer.getAction();
         assertEquals(new TurnAction.ForfeitAction(), action);
     }
 
     @Test
-    public void testSelectActionClearsQueue() {
+    public void testSelectActionClearsRegistered() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
-        trainer.queueForfeit();
-        trainer.selectAction(); // consume the pending action
+        trainer.registerForfeit();
+        trainer.getAction(); // consume the pending action
 
-        // queue is now empty — should throw
-        assertThrows(IllegalStateException.class, () -> trainer.selectAction());
+        // no action registered -> should throw
+        assertThrows(IllegalStateException.class, () -> trainer.getAction());
     }
 
     @Test
@@ -87,12 +87,12 @@ public class TestManualTrainer {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
-        assertThrows(IllegalStateException.class, () -> trainer.selectAction());
+        assertThrows(IllegalStateException.class, () -> trainer.getAction());
 
-        trainer.queueForfeit();
+        trainer.registerForfeit();
         assertEquals(true, trainer.hasPendingAction());
 
-        trainer.selectAction();
+        trainer.getAction();
         assertEquals(false, trainer.hasPendingAction());
     }
 

@@ -26,9 +26,9 @@
  *       explicit action selection driven by the player (or the controller layer).
  *       Before each turn the caller enqueues a {@link ulb.models.trainer.TurnAction}
  *       (attack, switch, or forfeit) via one of the convenience methods:
- *       {@link ulb.models.trainer.ManualTrainer#queueAttack(ulb.models.bugemon.Attack)},
- *       {@link ulb.models.trainer.ManualTrainer#queueSwitch(ulb.models.bugemon.Bugemon)},
- *       or {@link ulb.models.trainer.ManualTrainer#queueForfeit()}.</li>
+ *       {@link ulb.models.trainer.ManualTrainer#registerAttack(ulb.models.bugemon.Attack)},
+ *       {@link ulb.models.trainer.ManualTrainer#registerSwitch(ulb.models.bugemon.Bugemon)},
+ *       or {@link ulb.models.trainer.ManualTrainer#registerForfeit()}.</li>
  * </ul>
  *
  * <h2>Action model ({@link ulb.models.trainer.TurnAction})</h2>

@@ -27,7 +27,7 @@ import ulb.models.bugemon_team.BugemonTeam;
  * </p>
  *
  * <p>
- * Subclasses must implement {@link #selectAction()} to supply the
+ * Subclasses must implement {@link #getAction()} to supply the
  * {@link TurnAction} this trainer wants to take on the current turn, and
  * {@link #reactToKO()} to define how the trainer responds when its active
  * Bugemon faints mid-turn. All resolution logic lives in
@@ -72,7 +72,7 @@ public abstract class Trainer {
      * @throws IllegalStateException if {@link ManualTrainer} has no pending
      *                               action queued.
      */
-    public abstract TurnAction selectAction();
+    public abstract TurnAction getAction();
 
     /**
      * Called by {@link ulb.models.combat.Combat} immediately after the active
@@ -82,7 +82,7 @@ public abstract class Trainer {
      * <p>
      * {@link AutoTrainer} switches to a randomly chosen alive Bugemon.
      * {@link ManualTrainer} switches to the Bugemon previously set via
-     * {@link ManualTrainer#queueSwitchAfterKO(Bugemon)}, or does nothing if
+     * {@link ManualTrainer#registerSwitchAfterKO(Bugemon)}, or does nothing if
      * none has been set yet (the controller is then responsible for calling
      * {@link ManualTrainer#switchAfterKO(Bugemon)} directly).
      * </p>
@@ -132,7 +132,7 @@ public abstract class Trainer {
      * @return {@code true} if the current Bugemon knows the given attack,
      *         {@code false} otherwise.
      */
-    public boolean currentBugemonContainsAttack(Attack attack) {
+    public boolean checkCurrentBugemonHasAttack(Attack attack) {
         List<Attack> attackList = currentBugemon.getAttackList();
         return attackList.contains(attack);
     }

@@ -36,7 +36,7 @@ import ulb.services.CombatService;
  *
  * <p>
  * Each call to {@link #turn()} asks both trainers for their chosen
- * {@link TurnAction} via {@link Trainer#selectAction()}, applies passive
+ * {@link TurnAction} via {@link Trainer#getAction()}, applies passive
  * actions (switches, items, …) immediately, then resolves any attacks.
  * The turn result is returned as a {@link TurnResult} so that the controller
  * layer can drive the view without inspecting the model directly.
@@ -101,7 +101,7 @@ public class Combat {
      *   <li>Active status effects are ticked via
      *       {@link EffectManager#update()}.</li>
      *   <li>Both trainers select their action via
-     *       {@link Trainer#selectAction()}.</li>
+     *       {@link Trainer#getAction()}.</li>
      *   <li>If either trainer forfeits, their team is instantly defeated and
      *       an empty result is returned.</li>
      *   <li>Passive actions (switches, …) are applied for both trainers.</li>
@@ -120,8 +120,8 @@ public class Combat {
 
         effectManager.update();
 
-        TurnAction allyAction = allyTrainer.selectAction();
-        TurnAction adversaryAction = adversaryTrainer.selectAction();
+        TurnAction allyAction = allyTrainer.getAction();
+        TurnAction adversaryAction = adversaryTrainer.getAction();
 
         if (checkForForfeit(allyAction, adversaryAction)) {
             return emptyResult();

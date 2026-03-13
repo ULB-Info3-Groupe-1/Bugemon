@@ -24,7 +24,7 @@ import ulb.models.bugemon_team.BugemonTeam;
  * {@code AutoTrainer} extends {@link Trainer} by implementing the two abstract
  * strategy methods of the trainer contract:
  * <ul>
- *   <li>{@link #selectAction()} — always returns an {@link TurnAction.AttackAction}
+ *   <li>{@link #getAction()} — always returns an {@link TurnAction.AttackAction}
  *       wrapping a randomly chosen {@link Attack} from the active
  *       {@link Bugemon}'s move-set.</li>
  *   <li>{@link #reactToKO()} — switches the active {@link Bugemon} to a
@@ -70,7 +70,7 @@ public class AutoTrainer extends Trainer {
      * @throws IllegalArgumentException if the active Bugemon has no attacks.
      */
     @Override
-    public TurnAction selectAction() {
+    public TurnAction getAction() {
         return new TurnAction.AttackAction(getRandomAttack());
     }
 

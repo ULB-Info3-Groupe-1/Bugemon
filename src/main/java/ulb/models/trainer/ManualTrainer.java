@@ -23,12 +23,12 @@ import ulb.models.bugemon_team.BugemonTeam;
  * Before each call to {@link ulb.models.combat.Combat#turn()}, the controller
  * must enqueue exactly one action via one of the convenience methods:
  * <ul>
- *   <li>{@link #queueAttack(Attack)}  — attack with a specific move.</li>
- *   <li>{@link #queueSwitch(Bugemon)} — voluntarily swap the active Bugemon
+ *   <li>{@link #registerAttack(Attack)}  — attack with a specific move.</li>
+ *   <li>{@link #registerSwitch(Bugemon)} — voluntarily swap the active Bugemon
  *       (counts as the turn action; the opponent still attacks).</li>
- *   <li>{@link #queueForfeit()}       — immediately concede the match.</li>
+ *   <li>{@link #registerForfeit()}       — immediately concede the match.</li>
  * </ul>
- * The queued action is consumed exactly once by {@link #selectAction()} and
+ * The queued action is consumed exactly once by {@link #getAction()} and
  * cleared afterwards; a new action must be queued every turn.
  *
  * <p>
@@ -65,7 +65,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Returns and consumes the action that was previously queued by the
-     * controller via {@link #queueAction(TurnAction)}, {@link #queueAttack},
+     * controller via {@link #registerAction(TurnAction)}, {@link #queueAttack},
      * {@link #queueSwitch}, or {@link #queueForfeit}.
      *
      * <p>
@@ -77,7 +77,7 @@ public class ManualTrainer extends Trainer {
      * @throws IllegalStateException if no action has been queued yet.
      */
     @Override
-    public TurnAction selectAction() {
+    public TurnAction getAction() {
         return pendingAction.map(a -> {
             pendingAction = Optional.empty();
             return a;
@@ -86,7 +86,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Reacts to the active Bugemon fainting by switching to the target
-     * previously registered via {@link #queueSwitchAfterKO(Bugemon)}.
+     * previously registered via {@link #registerSwitchAfterKO(Bugemon)}.
      *
      * <p>
      * If no KO switch target has been registered (i.e. the controller has not
@@ -131,7 +131,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Enqueues an arbitrary {@link TurnAction} to be consumed on the next
-     * {@link #selectAction()} call.
+     * {@link #getAction()} call.
      *
      * <p>
      * Any previously queued action is silently overwritten. Prefer the typed
@@ -141,7 +141,7 @@ public class ManualTrainer extends Trainer {
      *
      * @param action the {@link TurnAction} to queue; must not be {@code null}.
      */
-    public void queueAction(TurnAction action) {
+    public void registerAction(TurnAction action) {
         pendingAction = Optional.of(action);
     }
 
@@ -158,12 +158,12 @@ public class ManualTrainer extends Trainer {
      * @throws IllegalArgumentException if {@code attack} is not in the active
      *                                  Bugemon's move-set.
      */
-    public void queueAttack(Attack attack) {
-        if (!currentBugemonContainsAttack(attack)) {
+    public void registerAttack(Attack attack) {
+        if (!checkCurrentBugemonHasAttack(attack)) {
             throw new IllegalArgumentException(
                     "The selected attack is not in the current bugemon's attack list.");
         }
-        queueAction(new TurnAction.AttackAction(attack));
+        registerAction(new TurnAction.AttackAction(attack));
     }
 
     /**
@@ -178,19 +178,19 @@ public class ManualTrainer extends Trainer {
      * @param target the {@link Bugemon} to switch in; must be alive.
      * @throws IllegalArgumentException if {@code target} is not alive.
      */
-    public void queueSwitch(Bugemon target) {
+    public void registerSwitch(Bugemon target) {
         if (!target.isAlive()) {
             throw new IllegalArgumentException("The target bugemon is not alive.");
         }
-        queueAction(new TurnAction.SwitchAction(target));
+        registerAction(new TurnAction.SwitchAction(target));
     }
 
     /**
      * Queues a {@link TurnAction.ForfeitAction}, causing the player to
      * immediately concede the match on the next {@link ulb.models.combat.Combat#turn()} call.
      */
-    public void queueForfeit() {
-        queueAction(new TurnAction.ForfeitAction());
+    public void registerForfeit() {
+        registerAction(new TurnAction.ForfeitAction());
     }
 
     /**
@@ -205,7 +205,7 @@ public class ManualTrainer extends Trainer {
      * @param target the {@link Bugemon} to switch in on KO; must not be
      *               {@code null}.
      */
-    public void queueSwitchAfterKO(Bugemon target) {
+    public void registerSwitchAfterKO(Bugemon target) {
         bugemonTargetForSwitch = Optional.of(target);
     }
 
@@ -214,7 +214,7 @@ public class ManualTrainer extends Trainer {
     /**
      * Returns {@code true} if an action has been queued and not yet consumed.
      *
-     * @return {@code true} if {@link #selectAction()} can be called without
+     * @return {@code true} if {@link #getAction()} can be called without
      *         throwing, {@code false} otherwise.
      */
     public boolean hasPendingAction() {

@@ -152,7 +152,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public void playerAttack(Attack attack) {
         switchActionUsed = false;
-        player.queueAttack(attack);
+        player.registerAttack(attack);
         TurnResult turnResult = combat.turn();
         handleAfterTurn(turnResult);
     }
@@ -169,7 +169,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * </p>
      */
     public void surrender() {
-        player.queueForfeit();
+        player.registerForfeit();
         TurnResult turnResult = combat.turn();
         handleAfterTurn(turnResult);
     }
@@ -207,7 +207,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             view.showMainActionMenu();
         } else {
             switchActionUsed = true;
-            player.queueSwitch(target);
+            player.registerSwitch(target);
             TurnResult turnResult = combat.turn();
             handleAfterTurn(turnResult);
         }

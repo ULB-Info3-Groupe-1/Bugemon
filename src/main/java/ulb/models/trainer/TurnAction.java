@@ -33,7 +33,7 @@ import ulb.models.bugemon.Bugemon;
  * {@link ulb.models.combat.Combat#turn()}.
  * </p>
  *
- * @see Trainer#selectAction()
+ * @see Trainer#getAction()
  * @see ulb.models.combat.Combat
  */
 public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.SwitchAction,
