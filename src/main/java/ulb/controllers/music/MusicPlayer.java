@@ -1,11 +1,10 @@
 package ulb.controllers.music;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -27,61 +26,58 @@ import javafx.scene.media.MediaPlayer;
  * @see MediaPlayer
  */
 public class MusicPlayer {
+    public record Music(URL url, Ambiance ambiance) {
+        public static enum Ambiance { COMBAT }
+    }
 
-    public record Music(String path, Ambiance ambiance) {
-
-        static enum Ambiance {
-            COMBAT
-        }
-
-        String getName() {
-            // TODO: impl
-            return "some name";
-        }
-
-        String getPath() {
-            // TODO: impl
-            return "some path";
-        }
-
-    };
-
-    private static MusicPlayer instance;
-
-    private MediaPlayer mediaPlayer;
+    private Optional<MediaPlayer> mediaPlayer;
     private List<Music> musics;
 
     /**
-     * Private constructor (Singleton)
+     * MusicPlayer constructor
      */
-    private MusicPlayer() {
-        musics = new ArrayList<>();
+    public MusicPlayer() {
+        this.musics = new ArrayList<>();
+        this.mediaPlayer = Optional.empty();
     }
 
     /**
-     * Returns the unique instance of MusicController
+     * Adds the given music to the available music tracks.
      */
-    public static MusicPlayer getInstance() {
-        if (instance == null) {
-            instance = new MusicPlayer();
-        }
-        return instance;
-    }
-
-    private void addMusic(Music music) {
+    public void addMusic(Music music) {
         this.musics.add(music);
     }
 
     /**
-     * Plays the music track with the specified name by searching through the
-     * music
-     * list.
+     * Plays the given music.
      *
-     * @param songName (String) the name of the music track to play.
+     * @param music the music
      */
-    private void playMusic(Music.Ambiance ambiance) {
-        List<Music> musics = this.musics.stream()
-                .filter(music -> music.ambiance == ambiance).toList();
+    private void playMusic(Music music) {
+        this.stopMusic();
+
+        try {
+            Media track = new Media(music.url().toExternalForm());
+
+            // instanciate mediaPlayer + play music
+            this.mediaPlayer = Optional.of(new MediaPlayer(track));
+            this.mediaPlayer.ifPresent(player -> {
+                player.setCycleCount(MediaPlayer.INDEFINITE);
+                player.play();
+            });
+        } catch (Exception e) {
+            System.out.println("Error playing music: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Plays a random music track according to the given ambiance.
+     *
+     * @param ambiance the ambiance of the music track to play.
+     */
+    public void playAmbiance(Music.Ambiance ambiance) {
+        List<Music> musics =
+                this.musics.stream().filter(music -> music.ambiance == ambiance).toList();
 
         if (musics.isEmpty()) {
             // TODO: might wanna throw an exception here
@@ -90,15 +86,7 @@ public class MusicPlayer {
 
         Music music = musics.get(ThreadLocalRandom.current().nextInt(musics.size()));
 
-        try {
-            System.out.println("Playing music: " + music.getName());
-            Media hit = new Media(music.getPath());
-            mediaPlayer = new MediaPlayer(hit);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.play();
-        } catch (Exception e) {
-            System.out.println("Error playing music: " + e.getMessage());
-        }
+        this.playMusic(music);
     }
 
     /**
@@ -106,22 +94,7 @@ public class MusicPlayer {
      * method on the MediaPlayer instance.
      */
     public void stopMusic() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-        }
-    }
-
-    /**
-     * Switches the currently playing music track to the one specified by songName
-     * by
-     * first stopping any currently playing track and then calling playMusic with
-     * the
-     * new song name.
-     *
-     * @param songName (String) the name of the music track to switch to.
-     */
-    public void switchMusic(String songName) {
-        stopMusic();
-        playMusic(songName);
+        this.mediaPlayer.ifPresent(player -> player.stop());
+        this.mediaPlayer = Optional.empty();
     }
 }

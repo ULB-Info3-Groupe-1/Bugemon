@@ -2,20 +2,25 @@ package ulb.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+
+import com.sun.media.jfxmedia.MediaPlayer;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
+import ulb.controllers.music.MusicPlayer;
+import ulb.controllers.music.MusicPlayer.Music.Ambiance;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.utils.Parser;
-import ulb.controllers.music.MusicController;
 
 /**
  * MetaController
@@ -53,7 +58,7 @@ public class MetaController {
     private final CombatDefeatController combatDefeatController;
     private final BugemonTeam playerTeam;
     private final LevelUpController levelUpController;
-    private final MusicController musicController;
+    private final MusicPlayer musicPlayer;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -73,7 +78,7 @@ public class MetaController {
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.levelUpController = new LevelUpController(this);
-        this.musicController = MusicController.getInstance();
+        this.musicPlayer = new MusicPlayer();
     }
 
     /**
@@ -85,32 +90,34 @@ public class MetaController {
     public final void switchTo(Window window) {
         switch (window) {
             case MAIN_MENU:
+                this.musicPlayer.stopMusic();
                 this.mainMenuController.show(this.stage);
-                this.musicController.stopMusic();
                 break;
             case CREATE_TEAM:
+                this.musicPlayer.stopMusic();
                 this.createTeamController.show(this.stage);
-                this.musicController.stopMusic();
                 break;
             case AUTOMATIC_COMBAT:
+                this.musicPlayer.stopMusic();
+                this.musicPlayer.playAmbiance(MusicPlayer.Music.Ambiance.COMBAT);
                 this.automaticCombatController.show(stage);
-                this.musicController.switchMusic("combatSong1");
                 break;
             case MANUAL_COMBAT:
+                this.musicPlayer.stopMusic();
+                this.musicPlayer.playAmbiance(MusicPlayer.Music.Ambiance.COMBAT);
                 this.manualCombatController.show(this.stage);
-                this.musicController.switchMusic("combatSong1");
                 break;
             case COMBAT_VICTORY:
+                this.musicPlayer.stopMusic();
                 this.combatVictoryController.show(this.stage);
-                this.musicController.stopMusic();
                 break;
             case COMBAT_DEFEAT:
+                this.musicPlayer.stopMusic();
                 this.combatDefeatController.show(this.stage);
-                this.musicController.stopMusic();
                 break;
             case LEVEL_UP:
+                this.musicPlayer.stopMusic();
                 this.levelUpController.show(this.stage);
-                this.musicController.stopMusic();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid window");
