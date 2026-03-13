@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-
-import com.sun.media.jfxmedia.MediaPlayer;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+
+import com.sun.media.jfxmedia.MediaPlayer;
 
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
@@ -126,7 +125,7 @@ public class MetaController {
 
     /**
      * Loads and parses the game data from JSON resource files.
-     * 
+     *
      * @return a Parser.ParseResult containing the maps of attacks and the list of
      *         Bugemons
      * @throws IOException if the JSON directory is missing or if an error occurs
@@ -135,7 +134,7 @@ public class MetaController {
      */
     private Parser.ParseResult loadResources() throws IOException {
         try (InputStream attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
-                InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);) {
+             InputStream bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);) {
             if (attacksStream == null || bugemonsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }
@@ -163,7 +162,7 @@ public class MetaController {
     public void launchAutoCombat() {
         if (this.playerTeam.isEmpty()) {
             showAlert("Équipe incomplète",
-                    "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
         } else {
             switchTo(Window.AUTOMATIC_COMBAT);
             this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
@@ -190,7 +189,7 @@ public class MetaController {
     public void launchManualCombat() {
         if (this.playerTeam.isEmpty()) {
             showAlert("Équipe incomplète",
-                    "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
         } else {
             switchTo(Window.MANUAL_COMBAT);
             this.manualCombatController.runManualCombat(new ManualTrainer(this.playerTeam));
@@ -215,7 +214,7 @@ public class MetaController {
 
     /**
      * Displays an alert dialog with the specified title and message.
-     * 
+     *
      * @param title   the title of the alert dialog
      * @param message the content message of the alert dialog
      */
