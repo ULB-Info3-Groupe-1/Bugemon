@@ -13,26 +13,32 @@ import ulb.controllers.music.exceptions.NoMusicMatchingAmbianceException;
 /**
  * MusicPlayer
  *
- * A singleton controller responsible for managing music playback within the
- * application.
+ * Controller responsible for managing music playback within the application.
  * Handles loading, playing, stopping, and switching between music tracks.
  *
  * <p>
  * The controller maintains a list of available music tracks, each represented
  * by the inner {@code Music} class which encapsulates the song's link and name.
- * Music files are loaded from the application's resources and can be played by
- * their name. The controller uses JavaFX's {@link MediaPlayer} for audio
- * playback.
+ * The controller uses JavaFX's {@link MediaPlayer} for audio playback.
  * </p>
  *
  * @see MediaPlayer
  */
 public class MusicPlayer {
+    /**
+     * Music
+     *
+     * @param url
+     * @param ambiance
+     */
     public record Music(URL url, Ambiance ambiance) {
         public static enum Ambiance { COMBAT }
     }
 
+    // NOTE: This is optional because a MediaPlayer's constructor needs a Media
+    // instance, but there is no media to play when constructing the MusicPlayer.
     private Optional<MediaPlayer> mediaPlayer;
+
     private List<Music> musics;
 
     /**
