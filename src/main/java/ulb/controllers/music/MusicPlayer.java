@@ -1,6 +1,5 @@
 package ulb.controllers.music;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,16 +22,6 @@ import javafx.scene.media.MediaPlayer;
  * @see MediaPlayer
  */
 public class MusicPlayer {
-    /**
-     * Music
-     *
-     * @param url
-     * @param ambiance
-     */
-    public record Music(URL url, Ambiance ambiance) {
-        public static enum Ambiance { COMBAT }
-    }
-
     // NOTE: This is optional because a MediaPlayer's constructor needs a Media
     // instance, but there is no media to play when constructing the MusicPlayer.
     private Optional<MediaPlayer> mediaPlayer;
@@ -83,7 +72,7 @@ public class MusicPlayer {
      */
     public void playAmbiance(Music.Ambiance ambiance) {
         List<Music> matchingMusics =
-                this.musics.stream().filter(music -> music.ambiance == ambiance).toList();
+                this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 
         if (matchingMusics.isEmpty()) {
             System.err.println("Error playing music matching ambiance " + ambiance.toString()

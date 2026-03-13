@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
+import ulb.controllers.music.Music;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.level_up.LevelUp;
@@ -84,12 +85,12 @@ public class MetaController {
                 break;
             case AUTOMATIC_COMBAT:
                 this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(MusicPlayer.Music.Ambiance.COMBAT);
+                this.musicPlayer.playAmbiance(Music.Ambiance.COMBAT);
                 this.automaticCombatController.show(stage);
                 break;
             case MANUAL_COMBAT:
                 this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(MusicPlayer.Music.Ambiance.COMBAT);
+                this.musicPlayer.playAmbiance(Music.Ambiance.COMBAT);
                 this.manualCombatController.show(this.stage);
                 break;
             case COMBAT_VICTORY:
