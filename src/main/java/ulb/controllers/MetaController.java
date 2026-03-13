@@ -2,13 +2,18 @@ package ulb.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
+import com.sun.media.jfxmedia.MediaPlayer;
+
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
+import ulb.controllers.music.MusicPlayer;
+import ulb.controllers.music.MusicPlayer.Music.Ambiance;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.level_up.LevelUp;
@@ -52,6 +57,7 @@ public class MetaController {
     private final CombatDefeatController combatDefeatController;
     private final BugemonTeam playerTeam;
     private final LevelUpController levelUpController;
+    private final MusicPlayer musicPlayer;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -71,6 +77,7 @@ public class MetaController {
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.levelUpController = new LevelUpController(this);
+        this.musicPlayer = new MusicPlayer();
     }
 
     /**
@@ -81,22 +88,49 @@ public class MetaController {
      */
     public final void switchTo(Window window) {
         switch (window) {
-            case MAIN_MENU -> this.mainMenuController.show(this.stage);
-            case CREATE_TEAM -> this.createTeamController.show(this.stage);
-            case AUTOMATIC_COMBAT -> this.automaticCombatController.show(stage);
-            case MANUAL_COMBAT -> this.manualCombatController.show(this.stage);
-            case COMBAT_VICTORY -> this.combatVictoryController.show(this.stage);
-            case COMBAT_DEFEAT -> this.combatDefeatController.show(this.stage);
-            case LEVEL_UP -> this.levelUpController.show(this.stage);
-            default -> throw new IllegalArgumentException("Invalid window");
+            case MAIN_MENU:
+                this.musicPlayer.stopMusic();
+                this.mainMenuController.show(this.stage);
+                break;
+            case CREATE_TEAM:
+                this.musicPlayer.stopMusic();
+                this.createTeamController.show(this.stage);
+                break;
+            case AUTOMATIC_COMBAT:
+                this.musicPlayer.stopMusic();
+                this.musicPlayer.playAmbiance(MusicPlayer.Music.Ambiance.COMBAT);
+                this.automaticCombatController.show(stage);
+                break;
+            case MANUAL_COMBAT:
+                this.musicPlayer.stopMusic();
+                this.musicPlayer.playAmbiance(MusicPlayer.Music.Ambiance.COMBAT);
+                this.manualCombatController.show(this.stage);
+                break;
+            case COMBAT_VICTORY:
+                this.musicPlayer.stopMusic();
+                this.combatVictoryController.show(this.stage);
+                break;
+            case COMBAT_DEFEAT:
+                this.musicPlayer.stopMusic();
+                this.combatDefeatController.show(this.stage);
+                break;
+            case LEVEL_UP:
+                this.musicPlayer.stopMusic();
+                this.levelUpController.show(this.stage);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid window");
         }
     }
 
     /**
      * Loads and parses the game data from JSON resource files.
-     * @return a Parser.ParseResult containing the maps of attacks and the list of Bugemons
-     * @throws IOException if the JSON directory is missing or if an error occurs during path
-     *         conversion or file reading
+     *
+     * @return a Parser.ParseResult containing the maps of attacks and the list of
+     *         Bugemons
+     * @throws IOException if the JSON directory is missing or if an error occurs
+     *                     during path
+     *                     conversion or file reading
      */
     private Parser.ParseResult loadResources() throws IOException {
         try (InputStream attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
@@ -180,7 +214,8 @@ public class MetaController {
 
     /**
      * Displays an alert dialog with the specified title and message.
-     * @param title the title of the alert dialog
+     *
+     * @param title   the title of the alert dialog
      * @param message the content message of the alert dialog
      */
     public void showAlert(String title, String message) {
