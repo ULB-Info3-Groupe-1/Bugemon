@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import javafx.stage.Stage;
 
-
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.MusicPlayer;
