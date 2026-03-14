@@ -70,7 +70,7 @@ public class CombatService {
      * @return the computed damage as a double
      */
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon,
-                                         final Bugemon defenderBugemon, final double criticFactor) {
+                                      final Bugemon defenderBugemon, final double criticFactor) {
         BugemonType defType = defenderBugemon.getType();
 
         final int basePower = attack.getPower();
@@ -79,7 +79,7 @@ public class CombatService {
         final double typeMultiplier = getEfficiencyFactor(attack, defType);
         final double damage = basePower * atkFactor * defFactor * typeMultiplier * criticFactor;
 
-        return (int) Math.ceil(damage);
+        return (int)Math.ceil(damage);
     }
 
     /**
@@ -97,9 +97,10 @@ public class CombatService {
      * @return the computed damage as a double
      */
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon,
-                                         final Bugemon defenderBugemon) {
+                                      final Bugemon defenderBugemon) {
         final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
-        return (int) Math.ceil(calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier));
+        return (int)Math.ceil(
+                calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier));
     }
 
     /**

@@ -340,7 +340,7 @@ public class Combat {
      *         after this turn, {@code false} otherwise.
      */
     private boolean isAllyKo(TurnResult.AttackResult first,
-                                     Optional<TurnResult.AttackResult> second) {
+                             Optional<TurnResult.AttackResult> second) {
         boolean koByFirst = first.defender() == allyTrainer && !allyTrainer.isCurrentBugemonAlive();
         boolean koBySecond = second.isPresent() && second.get().defender() == allyTrainer
                              && !allyTrainer.isCurrentBugemonAlive();
@@ -368,7 +368,7 @@ public class Combat {
      */
     private TurnResult.AttackResult applyAttack(Trainer attacker, Trainer defender, Attack attack) {
         int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(),
-                                                      defender.getCurrentBugemon());
+                                                   defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
         Efficiency efficiency =
