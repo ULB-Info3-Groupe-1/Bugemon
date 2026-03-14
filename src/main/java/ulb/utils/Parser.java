@@ -35,10 +35,10 @@ import com.google.gson.reflect.TypeToken;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.effect.EffectType;
 import ulb.models.bugemon.GameObject;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.ObjectWrapper;
+import ulb.models.bugemon.effect.EffectType;
 
 /**
  * Provides static utility methods for parsing the JSON data files that
