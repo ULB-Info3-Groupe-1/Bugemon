@@ -82,7 +82,7 @@ refactor/nom-court
 
 Titre de la MR:
 Même format que l’issue:
-[TYPE] Description courte 
+[TYPE] Description courte
 
 #### Changements effectués
 
@@ -104,6 +104,14 @@ Même format que l’issue:
 - [ ] Relecture effectuée
 
 ## Code
+
+### Formatage
+
+Toujours formater le code avant de commit :
+
+```sh
+find src -name "*.java" | xargs clang-format -i
+```
 
 ### Langue
 

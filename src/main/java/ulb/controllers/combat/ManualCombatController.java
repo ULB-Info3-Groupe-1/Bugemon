@@ -9,11 +9,13 @@ import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.ManualTrainer.TAction;
 import ulb.models.trainer.Trainer;
+import ulb.utils.Parser;
 import ulb.views.combat.ManualCombatView;
 
 /**
@@ -121,7 +123,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void runManualCombat(final ManualTrainer player) {
         this.player = player;
         this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(
-                metaController.getAllBugemonsAvailable(), player.getTeamSize()));
+                Parser.getInstance().getBugemons(), player.getTeamSize()));
         this.combat = new ManualCombat(player, opponent);
         this.view.showScreenDebutCombat();
         updateCombatView(player, opponent, null);

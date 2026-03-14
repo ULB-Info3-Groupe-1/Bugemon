@@ -3,7 +3,7 @@ package ulb.controllers;
 import java.io.IOException;
 
 import ulb.controllers.MetaController.Window;
-import ulb.views.CombatVictoryView;
+import ulb.views.victory_view.CombatVictoryView;
 
 /**
  * Controller responsible for the victory screen shown when the player wins a

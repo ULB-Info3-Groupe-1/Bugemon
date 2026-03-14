@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -49,5 +51,18 @@ public abstract class View {
     public void show(Stage stage) {
         stage.setScene(this.scene);
         stage.show();
+    }
+
+    /**
+     * Displays an alert dialog with the specified title and message.
+     * @param title the title of the alert dialog
+     * @param message the content message of the alert dialog
+     */
+    public void showAlert(String title, String message) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

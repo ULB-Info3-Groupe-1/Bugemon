@@ -9,6 +9,7 @@
 
 package ulb.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -60,62 +61,34 @@ import ulb.models.bugemon.effect.EffectType;
  * @see ulb.models.bugemon.Attack
  */
 public class Parser {
+    // Constants for the paths to the JSON data files within the resources directory
+    private static final String JSON_ATTACK_PATH = "/json/attaques.json";
+    private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
+
+    // Static fields to hold the parsed data, accessible via getter methods
+    private static Map<String, Attack> attacks;
+    private static List<Bugemon> bugemons;
+
+    // Singleton instance of the Parser class
+    private static Parser instance;
+
     /**
-     * Immutable value object returned by {@link #parse(InputStream, InputStream)}
-     * containing the fully constructed game data loaded from the JSON files.
-     *
-     * <p>
-     * A {@code ParseResult} bundles two collections:
-     * <ul>
-     *   <li>an {@link Attack} map keyed by attack ID, suitable for fast
-     *       look-ups when resolving references; and</li>
-     *   <li>a {@link List} of fully built {@link ulb.models.bugemon.Bugemon}
-     *       objects, each with its attack list already resolved.</li>
-     * </ul>
-     * </p>
-     *
-     * @see Parser#parse(InputStream, InputStream)
+     * Private constructor to prevent instantiation of the Parser class, enforcing the singleton
+     * pattern.
      */
-    public static class ParseResult {
-        private final Map<String, Attack> attacksMap;
-        private final List<Bugemon> bugemonList;
+    private Parser() {}
 
-        /**
-         * Constructs a {@code ParseResult} with the given attacks map and
-         * Bugemon list.
-         *
-         * @param attacksMap  a map of attack IDs to their corresponding
-         *                    {@link Attack} objects; must not be {@code null}.
-         * @param bugemonList the list of fully constructed
-         *                    {@link ulb.models.bugemon.Bugemon} objects; must
-         *                    not be {@code null}.
-         */
-        public ParseResult(Map<String, Attack> attacksMap, List<Bugemon> bugemonList) {
-            this.attacksMap = attacksMap;
-            this.bugemonList = bugemonList;
+    /**
+     * Returns the singleton instance of the Parser class, creating it if it does not already exist.
+     * This method is thread-safe to ensure that only one instance of the Parser is created even in
+     * a multi-threaded environment.
+     * @return the singleton instance of the Parser class
+     */
+    public static synchronized Parser getInstance() {
+        if (instance == null) {
+            instance = new Parser();
         }
-
-        /**
-         * Returns the map of all available attacks, keyed by their unique
-         * string identifier.
-         *
-         * @return an unmodifiable view (or the raw map) of attack ID to
-         *         {@link Attack}; never {@code null}.
-         */
-        public Map<String, Attack> getAttacksMap() {
-            return attacksMap;
-        }
-
-        /**
-         * Returns the list of all available {@link ulb.models.bugemon.Bugemon}s
-         * loaded from the game data files.
-         *
-         * @return the list of parsed {@link ulb.models.bugemon.Bugemon} objects;
-         *         never {@code null}.
-         */
-        public List<Bugemon> getBugemonsList() {
-            return bugemonList;
-        }
+        return instance;
     }
 
     /**
@@ -126,20 +99,44 @@ public class Parser {
      * @param bugemonsStream input stream for the bugemons JSON file
      * @return a ParseResult containing the attacks map and the list of bugemons
      */
-    public static ParseResult parse(InputStream attacksStream, InputStream bugemonsStream) {
+    public void parse() {
+        InputStream attacksStream;
+        InputStream bugemonsStream;
+
+        try {
+            attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
+            bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
+            if (attacksStream == null || bugemonsStream == null) {
+                throw new IOException("JSON files not found in resources: ");
+            }
+        } catch (IOException e) {
+            // TODO: handle callback
+            return;
+        }
+
         Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
         Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
+        parseAttacks(attacksReader);
+        parseBugemons(bugemonsReader);
+    }
 
-        // load attacks
-        List<Attack> attackList = parseAttacks(attacksReader);
+    /**
+     * Returns the list of Bugemon objects parsed from the JSON file, where each Bugemon is fully
+     * constructed with its associated attacks resolved from the attacks map.
+     * @return a list of Bugemon objects representing the parsed Bugemons from the JSON file
+     */
+    public final List<Bugemon> getBugemons() {
+        return bugemons;
+    }
 
-        Map<String, Attack> attacksMap =
-                attackList.stream().collect(Collectors.toMap(Attack::getId, Function.identity()));
-
-        // load bugemons
-        List<Bugemon> bugemons = parseBugemons(bugemonsReader, attacksMap);
-
-        return new ParseResult(attacksMap, bugemons);
+    /**
+     * Returns the map of attacks parsed from the JSON file, where each key is
+     * an attack ID and each value is the corresponding {@link Attack} object.
+     *
+     * @return a map of attack IDs to Attack objects
+     */
+    public final Map<String, Attack> getAttacks() {
+        return attacks;
     }
 
     /**
@@ -155,7 +152,7 @@ public class Parser {
      *
      * @see BugemonType
      */
-    static class TypeDeserializer implements JsonDeserializer<BugemonType> {
+    private static class TypeDeserializer implements JsonDeserializer<BugemonType> {
         @Override
         public BugemonType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
                                        JsonDeserializationContext context) {
@@ -177,7 +174,7 @@ public class Parser {
      *
      * @see EffectType
      */
-    static class EffectTypeDeserializer implements JsonDeserializer<EffectType> {
+    private static class EffectTypeDeserializer implements JsonDeserializer<EffectType> {
         @Override
         public EffectType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
                                       JsonDeserializationContext context) {
@@ -190,64 +187,53 @@ public class Parser {
      * Specific method for the parsing of the Attacks.
      *
      * @param reader reader providing the attacks JSON content
-     * @return (AttackList) AttackList containing a List of every Attack in the json
-     *         file.
      */
-    static List<Attack> parseAttacks(Reader reader) {
+    private static void parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder()
                             .registerTypeAdapter(BugemonType.class, new TypeDeserializer())
                             .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
                             .create();
 
+        JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
         try {
-            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            JsonArray attacksArray = root.getAsJsonArray("attaques");
-
-            Type destType = new TypeToken<List<Attack>>() {}.getType();
-
-            List<Attack> attacks = gson.fromJson(attacksArray, destType);
-
             reader.close();
-
-            return attacks;
-        } catch (Exception e) {
-            // TODO: Use of a Logger or external error management ?
-            System.out.println("Error when parsing attacks");
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Error when parsing attacks");
         }
-        return null;
+
+        JsonArray attacksArray = root.getAsJsonArray("attaques");
+
+        Type destType = new TypeToken<List<Attack>>() {}.getType();
+
+        List<Attack> attacksList = gson.fromJson(attacksArray, destType);
+
+        attacks =
+                attacksList.stream().collect(Collectors.toMap(Attack::getId, Function.identity()));
     }
 
     /**
      * Specific method for the parsing of the Bugemons
      *
      * @param reader reader providing the bugemons JSON content
-     * @param attackMap (Map<String, Attack>) A map containing every loaded attack
-     *                  with their ids. Used to build the bugemons.
-     * @return (List<Bugemon>) The list of the newly build Bugemon objects.
      */
-    static List<Bugemon> parseBugemons(Reader reader, Map<String, Attack> attackMap) {
+    private static void parseBugemons(Reader reader) {
         Gson gson = new GsonBuilder()
-                            .registerTypeAdapter(Bugemon.class, new BugemonDeserializer(attackMap))
+                            .registerTypeAdapter(Bugemon.class, new BugemonDeserializer(attacks))
                             .registerTypeAdapter(BugemonType.class, new TypeDeserializer())
                             .create();
 
+        JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
         try {
-            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
-
-            Type destType = new TypeToken<List<Bugemon>>() {}.getType();
-
-            List<Bugemon> bugemons = gson.fromJson(bugemonsArray, destType);
-
             reader.close();
-            return bugemons;
-        } catch (Exception e) {
-            // TODO: Use of a Logger or external error management ?
-            System.out.println("Error when parsing bugemons");
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Error when parsing bugemons");
         }
-        return null;
+
+        JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
+
+        Type destType = new TypeToken<List<Bugemon>>() {}.getType();
+
+        bugemons = gson.fromJson(bugemonsArray, destType);
     }
 
     /**
