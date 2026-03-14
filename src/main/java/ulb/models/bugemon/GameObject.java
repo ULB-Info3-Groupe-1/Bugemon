@@ -2,6 +2,8 @@ package ulb.models.bugemon;
 
 import com.google.gson.annotations.SerializedName;
 
+import ulb.models.bugemon.effect.Effect;
+
 public record GameObject(String id, @SerializedName("nom") String name, String description,
                          @SerializedName("categorie") OType type,
                          @SerializedName("effet") Effect effect, String sprite) {

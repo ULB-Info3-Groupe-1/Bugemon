@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -144,9 +143,8 @@ public class TestParser {
         InputStream objectsStream = getClass().getResourceAsStream("/json/objets.json");
 
         assertNotNull(objectsStream);
-
-        ObjectWrapper wrapper = Parser.parseObjectsAndInventory(
-                new InputStreamReader(objectsStream, StandardCharsets.UTF_8));
+        
+        ObjectWrapper wrapper = Parser.parseObjectsAndInventory(new InputStreamReader(objectsStream, StandardCharsets.UTF_8));
         List<GameObject> objects = wrapper.getObjects();
         Inventory inventory = wrapper.getInventory();
 
@@ -159,10 +157,7 @@ public class TestParser {
                                         .orElseThrow();
 
         Effect effect = new Effect(EffectType.SOIN, EffectTarget.THROWER, null, 20, null);
-        GameObject potion =
-                new GameObject("baie_revigorante", "Baie Revigorante",
-                               "Restaure 20 PV au Bugémon actif.", GameObject.OType.HEALING, effect,
-                               "baie_revigorante.png"); // TODO: sprite with png/ or not?
+        GameObject potion = new GameObject("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.", GameObject.OType.HEALING, effect, "baie_revigorante.png"); //TODO: sprite with png/ or not?
 
         assertEquals(potion.id(), testObject.id());
         assertEquals(potion.name(), testObject.name());
@@ -171,22 +166,15 @@ public class TestParser {
         assertEquals(potion.sprite(), testObject.sprite());
 
         assertEquals(7, inventory.getObjects().size());
-        long revigoranteCount = inventory.getObjects()
-                                        .stream()
-                                        .filter(o -> "baie_revigorante".equals(o.id()))
-                                        .count();
-        long toniqueCount =
-                inventory.getObjects().stream().filter(o -> "baie_tonique".equals(o.id())).count();
-        long gelCount =
-                inventory.getObjects().stream().filter(o -> "gel_defensif".equals(o.id())).count();
-        long serumCount = inventory.getObjects()
-                                  .stream()
-                                  .filter(o -> "serum_offensif".equals(o.id()))
-                                  .count();
+        long revigoranteCount = inventory.getObjects().stream().filter(o -> "baie_revigorante".equals(o.id())).count();
+        long toniqueCount = inventory.getObjects().stream().filter(o -> "baie_tonique".equals(o.id())).count();
+        long gelCount = inventory.getObjects().stream().filter(o -> "gel_defensif".equals(o.id())).count();
+        long serumCount = inventory.getObjects().stream().filter(o -> "serum_offensif".equals(o.id())).count();
 
         assertEquals(3, revigoranteCount);
         assertEquals(2, toniqueCount);
         assertEquals(1, gelCount);
         assertEquals(1, serumCount);
+
     }
 }
