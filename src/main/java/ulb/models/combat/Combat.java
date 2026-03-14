@@ -371,8 +371,8 @@ public class Combat {
                                                    defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
-        Efficiency efficiency =
-                CombatService.compareBugemonType(attack.getType(), defender.getCurrentBugemonType());
+        Efficiency efficiency = CombatService.compareBugemonType(attack.getType(),
+                                                                 defender.getCurrentBugemonType());
 
         if (!defender.isCurrentBugemonAlive()) {
             if (!defender.isDefeated()) {

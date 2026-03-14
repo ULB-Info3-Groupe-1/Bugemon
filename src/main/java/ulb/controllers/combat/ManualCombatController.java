@@ -124,12 +124,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     public void runManualCombat(final ManualTrainer player) {
         this.player = player;
-        this.opponent = new AutoTrainer(
-            TeamFactory.createRandomTeam(
-                Parser.getInstance().getBugemons(),
-                player.getTeamSize()
-            )
-        );
+        this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(
+                Parser.getInstance().getBugemons(), player.getTeamSize()));
         this.combat = new Combat(player, opponent);
         this.view.showScreenDebutCombat();
         updateCombatView(player, opponent, null);
