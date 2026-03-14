@@ -10,7 +10,6 @@
 
 package ulb.models.combat;
 
-import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,10 +130,11 @@ public class EffectManager {
      *                 must not be {@code null}.
      * @param attack   the {@link Attack} whose effects are to be applied;
      *                 must not be {@code null}.
-     * @throws KeyException if an {@link Effect} carries an unrecognised or
-     *                      unhandled {@link EffectTarget} value.
+     * @throws IllegalArgumentException if an {@link Effect} carries an unrecognised or
+     *                                  unhandled {@link EffectTarget} value.
      */
-    public void applyEffect(Trainer attacker, Trainer defender, Attack attack) throws KeyException {
+    public void applyEffect(Trainer attacker, Trainer defender, Attack attack)
+            throws IllegalArgumentException {
         List<Effect> effects = attack.getEffects();
 
         for (Effect e : effects) {
@@ -156,7 +156,7 @@ public class EffectManager {
                     }
                     break;
                 default:
-                    throw new KeyException("Invalid or unhandled effect target");
+                    throw new IllegalArgumentException("Invalid or unhandled effect target");
             }
 
             // saving the effects
@@ -167,8 +167,7 @@ public class EffectManager {
                 try {
                     duration = e.extractDuration() - 1;
                 } catch (Exception exception) {
-                    // TODO: handle exception
-                    System.err.println(exception.getStackTrace());
+                    exception.printStackTrace();
                 }
                 ActiveEffect activeEffect = new ActiveEffect(e, duration);
                 this.effects.put(bugemon, activeEffect);
@@ -196,8 +195,7 @@ public class EffectManager {
         try {
             bugemon.editStat(stat, value);
         } catch (Exception e) {
-            // TODO: handle exception -> Logger ?
-            System.err.println(e.getStackTrace());
+            e.printStackTrace();
         }
     }
 }

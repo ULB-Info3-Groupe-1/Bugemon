@@ -12,7 +12,6 @@ package ulb.models.combat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-import java.security.KeyException;
 import java.util.List;
 
 import org.junit.Test;
@@ -45,12 +44,12 @@ public class TestEffectManager {
         Trainer defender = new Trainer(team2);
 
         // @Test invalid target
-        // applying an effect with an invalid target; should throw a KeyException
+        // applying an effect with an invalid target; should throw an IllegalArgumentException
         Effect effect = new Effect(null, EffectTarget.NONE, EffectStat.DEFENSE, 5, "1_tour");
 
         Attack invalAttack = new Attack("null", null, null, null, 0, List.of(effect));
 
-        assertThrows(KeyException.class,
+        assertThrows(IllegalArgumentException.class,
                      () -> effectManager.applyEffect(attacker, defender, invalAttack));
     }
 
@@ -78,7 +77,7 @@ public class TestEffectManager {
         Attack attack = new Attack("null", null, null, null, 0, List.of(effect));
         try {
             effectManager.applyEffect(attacker, defender, attack);
-        } catch (KeyException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
@@ -107,7 +106,7 @@ public class TestEffectManager {
         Attack attack = new Attack("null", null, null, null, 0, List.of(effect));
         try {
             effectManager.applyEffect(attacker, defender, attack);
-        } catch (KeyException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
 
