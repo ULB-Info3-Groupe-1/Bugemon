@@ -133,7 +133,8 @@ public class EffectManager {
      * @throws IllegalArgumentException if an {@link Effect} carries an unrecognised or
      *                                  unhandled {@link EffectTarget} value.
      */
-    public void applyEffect(Trainer attacker, Trainer defender, Attack attack) throws IllegalArgumentException {
+    public void applyEffect(Trainer attacker, Trainer defender, Attack attack)
+            throws IllegalArgumentException {
         List<Effect> effects = attack.getEffects();
 
         for (Effect e : effects) {
