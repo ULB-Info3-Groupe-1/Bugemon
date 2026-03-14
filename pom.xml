@@ -16,19 +16,6 @@
     <maven.compiler.target>21</maven.compiler.target>
   </properties>
 
- <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>5.11.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -54,23 +41,10 @@
       <version>3.13.2</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-graphics</artifactId>
-      <version>21.0.6</version>
-      <classifier>win</classifier>
-    </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
       <version>21.0.6</version>
-      <classifier>linux</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-graphics</artifactId>
-      <version>21.0.6</version>
-      <classifier>mac</classifier>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
