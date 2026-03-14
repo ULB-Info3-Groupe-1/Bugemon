@@ -16,7 +16,7 @@ import java.util.Optional;
  * <p><b>Default values:</b></p>
  * <ul>
  *   <li>name        – {@value #DEFAULT_NAME}</li>
- *   <li>type        – {@link BugemonType#AQUA}</li>
+ *   <li>type        – {@link BugemonType#FLORA}</li>
  *   <li>sprite      – {@value #DEFAULT_SPRITE}</li>
  *   <li>hp          – {@value #DEFAULT_HP}</li>
  *   <li>attack      – {@value #DEFAULT_ATTACK}</li>
@@ -193,6 +193,7 @@ public final class BugemonBuilder {
         this.initiative = initiative;
         return this;
     }
+
     /**
      * Sets the experience points for the bugemon under construction.
      *

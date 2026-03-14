@@ -19,7 +19,6 @@ import ulb.views.victory_view.CombatVictoryView;
  *       (or, in a future version, to a level-up screen if a Bugemon levelled
  *       up during the fight).</li>
  * </ul>
- * </p>
  *
  * <p>
  * In all cases the trainer's team is reset via {@link MetaController#resetTeam()}

@@ -22,6 +22,7 @@ import ulb.views.CreateTeamView;
  *   <li>The player's current team, showing up to
  *       {@code BugemonTeam.MAX_SIZE} selected members.</li>
  * </ul>
+ * <p>
  * Clicking a Bugemon toggles its membership: if the Bugemon is already in the
  * team it is removed; otherwise it is added (provided the team is not full).
  * </p>
@@ -87,6 +88,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      *   <li>Otherwise the Bugemon is looked up in the list of all available
      *       Bugemons and added to the team.</li>
      * </ul>
+     * <p>
      * After any mutation both sub-views are refreshed to reflect the new
      * team state.
      * </p>

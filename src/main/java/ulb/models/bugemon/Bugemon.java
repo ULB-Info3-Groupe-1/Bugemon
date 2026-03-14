@@ -27,7 +27,7 @@ import ulb.models.level_up.LevelUp;
  * whether the bugemon is a starter.
  * </p>
  * <p>
- * Instances must be created via the nested {@link Builder} class. The class
+ * Instances must be created via the {@link BugemonBuilder} class. The class
  * implements {@link Cloneable} to support deep-copying of bugemon instances,
  * and {@link BugemonDTO} to expose a common data-transfer interface.
  * </p>
@@ -108,8 +108,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
     /**
      * Apply damage to the bugemon, reducing its HP by the specified amount.
      *
-     * @param damage (int) the amount of damage to apply to the bugemon, reducing
-     *               its HP.
+     * @param damage the amount of damage to apply.
      */
     public void takeDamage(int damage) {
         this.state.hp -= damage;
@@ -195,10 +194,23 @@ public class Bugemon implements BugemonDTO, Cloneable {
     }
 
     /**
-     * Add/Substract a given value to a given stat.
+     * Adds (or subtracts) {@code value} to the combat statistic identified by
+     * {@code stat}.
      *
-     * @param stat  (EffectStat) The stat id to edit.
-     * @param value (int) The value to add to the stat.
+     * <p>
+     * Positive values buff the stat; negative values debuff it. The change is
+     * applied to the <em>current</em> (mutable) state, not the initial state,
+     * so it will be undone when {@link #reset()} is called.
+     * </p>
+     *
+     * @param stat  the {@link EffectStat} identifying which statistic to modify
+     *              ({@code HP}, {@code ATTACK}, {@code DEFENSE}, or
+     *              {@code INITIATIVE}).
+     * @param value the signed integer delta to add to the stat; positive values
+     *              buff, negative values debuff.
+     * @throws IllegalArgumentException if {@code stat} does not match any known
+     *                      {@link EffectStat} constant (should not occur with a
+     *                      well-formed enum value).
      */
     public void editStat(EffectStat stat, int value) {
         switch (stat) {
@@ -344,18 +356,29 @@ public class Bugemon implements BugemonDTO, Cloneable {
     }
 
     /**
-     * Gets whether this bugemon participated in the last fight.
+     * Returns whether this bugemon participated in the last combat.
      *
-     * @return {@code true} if the bugemon participated; {@code false} otherwise
+     * <p>
+     * This flag is set to {@code true} by
+     * {@link ulb.models.trainer.Trainer#addBugemonParticipation()} at the start
+     * of each turn the bugemon is active, and is used by
+     * {@link ulb.services.LevelUpService#distributeXp(ulb.models.trainer.Trainer,
+     * ulb.models.trainer.Trainer)} to distribute experience only to bugemons that actually fought.
+     * </p>
+     *
+     * @return {@code true} if this bugemon participated in the last combat,
+     *         {@code false} otherwise.
      */
     public boolean getParticipation() {
         return this.state.participatedLastFight;
     }
 
     /**
-     * Sets whether this bugemon participated in a fight.
+     * Sets whether this bugemon participated in the last combat.
      *
-     * @param participated {@code true} if the bugemon participated; {@code false} otherwise
+     * @param participated {@code true} to mark this bugemon as having
+     *                     participated; {@code false} to clear the flag.
+     * @see #getParticipation()
      */
     public void setParticipation(boolean participated) {
         this.state.participatedLastFight = participated;

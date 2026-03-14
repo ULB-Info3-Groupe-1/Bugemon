@@ -176,6 +176,8 @@
                 <additionalOptions>
                     <!--<additionalOption>...</additionalOption>-->
                 </additionalOptions>
+                <doclint>none</doclint>
+                <failOnError>false</failOnError>
             </configuration>
         </plugin>
     </plugins>

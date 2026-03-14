@@ -99,8 +99,8 @@ public class Parser {
     }
 
     /**
-     * The main parsing method used to parse every file. Calls annex methods to
-     * achieve its task.
+     * Parses both JSON data files and returns a fully populated
+     * {@link ParseResult}.
      *
      * @param attacksStream  input stream for the attacks JSON file
      * @param bugemonsStream input stream for the bugemons JSON file
@@ -213,7 +213,7 @@ public class Parser {
     }
 
     /**
-     * Specific method for the parsing of the Attacks.
+     * Parses the attacks JSON file and returns a list of {@link Attack} objects.
      *
      * @param reader reader providing the attacks JSON content
      */
@@ -241,7 +241,8 @@ public class Parser {
     }
 
     /**
-     * Specific method for the parsing of the Bugemons
+     * Parses the bugemons JSON file and returns a list of fully constructed
+     * {@link ulb.models.bugemon.Bugemon} objects.
      *
      * @param reader reader providing the bugemons JSON content
      */

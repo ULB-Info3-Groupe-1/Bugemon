@@ -38,6 +38,11 @@ class BugemonState {
     /** Level of the bugemon. */
     int level;
 
+    /**
+     * Whether this bugemon participated in the last combat.
+     * Used by the XP distribution logic to award experience only to bugemons
+     * that actually fought.
+     */
     boolean participatedLastFight;
 
     /**

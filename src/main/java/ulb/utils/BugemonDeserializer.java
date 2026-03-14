@@ -56,7 +56,6 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
      *   <li>{@code attaques} - a JSON array of attack IDs referencing entries in the attacks
      * map</li>
      * </ul>
-     * </p>
      *
      * @param json    the JSON element to deserialize
      * @param typeOfT the type of the object to deserialize into

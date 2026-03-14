@@ -3,118 +3,120 @@ package ulb.controllers.combat;
 import java.io.IOException;
 import java.util.List;
 
+import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.combat.ManualCombat;
+import ulb.models.combat.Combat;
+import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
-import ulb.models.trainer.ManualTrainer.TAction;
 import ulb.models.trainer.Trainer;
+import ulb.services.CombatService;
 import ulb.utils.Parser;
 import ulb.views.combat.ManualCombatView;
 
 /**
  * Controller responsible for the manual combat screen, where the player
- * actively selects actions each turn while the opponent acts automatically.
+ * actively selects an action each turn while the opponent acts automatically.
  *
  * <p>
  * {@code ManualCombatController} extends {@link CombatController} and drives a
- * {@link ManualCombat} session. The combat loop runs until one side has no
- * remaining alive {@link ulb.models.bugemon.Bugemon}s, at which point the
- * inherited
- * {@link CombatController#handleCombatResult(Trainer, Trainer)}
- * method navigates to either the
- * {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY} or the
- * {@link ulb.controllers.MetaController.Window#COMBAT_DEFEAT} screen depending
- * on whether the player won.
+ * {@link Combat} session between a {@link ManualTrainer} (the player) and an
+ * {@link AutoTrainer} (the AI opponent). The controller translates every UI
+ * event into a queued {@link ulb.models.trainer.TurnAction} on the
+ * {@link ManualTrainer}, then triggers {@link Combat#turn()} to let the model
+ * resolve the round. The resulting {@link TurnResult} is used to update the
+ * view and check for end-of-combat conditions.
  * </p>
  *
  * <p>
- * The opponent team is constructed automatically by randomly sampling
- * {@link BugemonTeam#createRandomTeam(java.util.List, int)} from the full pool
- * of available Bugemons, using the same team size as the player's team.
+ * Two distinct switch flows are managed:
+ * <ul>
+ *   <li><strong>Tactical switch</strong> — the player voluntarily swaps their
+ *       active Bugemon as their turn action. The opponent still attacks this
+ *       turn. Controlled by {@link #switchActionUsed} to prevent switching
+ *       more than once per turn.</li>
+ *   <li><strong>Forced switch (post-KO)</strong> — the player's active Bugemon
+ *       fainted mid-turn and must be replaced before the next turn. No
+ *       additional combat turn is consumed. Controlled by
+ *       {@link #koSwitchFlag}.</li>
+ * </ul>
+ * <p>
+ * Both flows converge on {@link #switchBugemon(String)}, which branches on
+ * {@link #koSwitchFlag} to apply the correct behaviour.
  * </p>
  *
  * <p>
- * <strong>Note:</strong> action selection from the UI is not yet implemented.
- * {@link ManualCombat#turn(ManualTrainer.TAction)} is currently called with
- * {@code null}, which will cause an {@link IllegalArgumentException}. This is a
- * known stub awaiting integration with the view layer.
+ * Once the combat ends, the inherited
+ * {@link CombatController#handleCombatResult(Trainer, Trainer)} method
+ * navigates to either {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY}
+ * or {@link ulb.controllers.MetaController.Window#COMBAT_DEFEAT} depending on
+ * whether the player won.
  * </p>
  *
  * @see CombatController
- * @see ManualCombat
+ * @see Combat
  * @see ManualTrainer
  * @see AutoTrainer
  * @see ManualCombatView
  */
 public class ManualCombatController extends CombatController<ManualCombatView> {
-    private ManualCombat combat;
+    /** The {@link Combat} instance managing the current session. */
+    private Combat combat;
+
+    /** The human-controlled trainer representing the player's side. */
     private ManualTrainer player;
+
+    /** The AI-controlled trainer representing the opponent's side. */
     private AutoTrainer opponent;
 
     /**
+     * Set to {@code true} when the player's active Bugemon fainted mid-turn
+     * and a forced switch must be performed before the next turn can start.
+     * Reset to {@code false} once the switch has been applied.
+     */
+    private boolean koSwitchFlag = false;
+
+    /**
+     * Set to {@code true} once the player has performed a voluntary (tactical)
+     * switch this turn, preventing a second switch before the next attack.
+     * Reset to {@code false} at the start of every attack turn.
+     */
+    private boolean switchActionUsed = false;
+
+    // ── constructor ───────────────────────────────────────────────────────────
+
+    /**
      * Constructs a {@code ManualCombatController}, initialises its
-     * {@link ManualCombatView}, and registers this controller as the view's
-     * event handler.
+     * {@link ManualCombatView}, and wires this controller as the view's event
+     * handler.
      *
-     * <p>
-     * The view is instantiated here so that its FXML layout is loaded and its
-     * scene graph is ready before the controller is used for the first time.
-     * The parent constructor ({@link CombatController}) also pre-populates the
-     * view with placeholder {@link ulb.models.bugemon.Bugemon}s and calls
-     * {@link ulb.views.combat.CombatView#initCombatMode()}.
-     * </p>
-     *
-     * @param metaController the application-level {@link MetaController} used for
-     *                       screen navigation and shared state access; must not be
+     * @param metaController the application-level {@link MetaController} used
+     *                       for screen navigation and shared state; must not be
      *                       {@code null}.
-     * @throws IOException if the {@link ManualCombatView} fails to load its FXML
-     *                     resource.
+     * @throws IOException if the {@link ManualCombatView} fails to load its
+     *                     FXML resource.
      */
     public ManualCombatController(MetaController metaController) throws IOException {
         super(metaController, new ManualCombatView());
         this.view.setController(this);
     }
 
+    // ── session lifecycle ─────────────────────────────────────────────────────
+
     /**
-     * Runs a complete manual combat session from start to finish using the given
-     * player {@link ManualTrainer}.
+     * Initialises and starts a new manual combat session for the given player.
      *
      * <p>
-     * The method performs the following steps:
-     * <ol>
-     *   <li>Builds the opponent's {@link BugemonTeam} by randomly sampling from
-     *       the pool of all available Bugemons (same size as the player's team)
-     *       via {@link BugemonTeam#createRandomTeam(java.util.List, int)}.</li>
-     *   <li>Creates a {@link ManualCombat} between the player
-     *       ({@link ManualTrainer}) and the opponent ({@link AutoTrainer}).</li>
-     *   <li>Loops until {@link ManualCombat#turn(ManualTrainer.TAction)} returns
-     *       a non-{@code null} {@link Trainer} (the winner), passing the
-     *       player-selected action each iteration.</li>
-     *   <li>Delegates to {@link #handleCombatResult(Trainer, Trainer)} to
-     *       navigate to the appropriate outcome screen.</li>
-     * </ol>
-     * </p>
-     *
-     * <p>
-     * <strong>Note:</strong> action selection from the UI is not yet wired up.
-     * The action is currently passed as {@code null}, which will cause an
-     * {@link IllegalArgumentException} inside {@link ManualCombat#turn}. This
-     * method is therefore a stub pending full integration with the view layer.
-     * </p>
-     *
-     * <p>
-     * <strong>Note:</strong> this method runs the entire combat loop
-     * synchronously on the calling thread. Because it is currently invoked on
-     * the JavaFX Application Thread, long-running combats may cause the UI to
-     * become unresponsive. A future refactor should move the loop to a background
-     * thread and update the view incrementally.
+     * An opponent team is generated randomly (same size as the player's team)
+     * and a new {@link Combat} instance is created. Both flags
+     * ({@link #koSwitchFlag} and {@link #switchActionUsed}) are implicitly
+     * reset to {@code false} because a new controller state is established.
+     * The view is brought to its initial combat layout and updated with the
+     * starting state of both trainers.
      * </p>
      *
      * @param player the {@link ManualTrainer} representing the player's side;
@@ -124,101 +126,231 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.player = player;
         this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(
                 Parser.getInstance().getBugemons(), player.getTeamSize()));
-        this.combat = new ManualCombat(player, opponent);
+        this.combat = new Combat(player, opponent);
         this.view.showScreenDebutCombat();
         updateCombatView(player, opponent, null);
     }
 
+    // ── UI callbacks (called by the view) ─────────────────────────────────────
+
     /**
-     * Handle the player's attack action
-     * @param attack the attack selected by the player
+     * Handles the player choosing to attack with the given {@link Attack}.
+     *
+     * <p>
+     * Resets {@link #switchActionUsed} so the switch button becomes available
+     * again after this attack turn. Queues an
+     * {@link ulb.models.trainer.TurnAction.AttackAction} on the player, triggers
+     * {@link Combat#turn()}, then delegates to {@link #handleAfterTurn(TurnResult)}.
+     * </p>
+     *
+     * @param attack the {@link Attack} selected by the player; must belong to
+     *               the active Bugemon's move-set.
      */
     public void playerAttack(Attack attack) {
-        try {
-            Bugemon enemyBugemon = this.opponent.getCurrentBugemon().clone();
-
-            this.player.selectAttack(attack);
-            this.player.selectAction(TAction.ATTACK);
-            Trainer winner = this.combat.turn();
-            // this.view.showDialog(attack.getName().toString(), null);
-            if (enemyBugemon.getId() != this.opponent.getCurrentBugemon().getId()) {
-                this.view.hideDialog();
-                attack = null;
-            }
-            handlePlayerTurn(winner, attack);
-
-        } catch (CloneNotSupportedException e) {
-            System.err.println("Error cloning opponent's Bugemon for attack display: "
-                               + e.getMessage());
-            e.printStackTrace();
-        }
+        switchActionUsed = false;
+        player.registerAttack(attack);
+        TurnResult turnResult = combat.turn();
+        handleAfterTurn(turnResult);
     }
 
     /**
-     * Handle the player's switch action
-     * @param bugemonId the id of the Bugemon to switch to
-     */
-    public void switchBugemon(String bugemonId) {
-        this.player.setSelectedBugemon(this.player.getBugemonById(bugemonId));
-        this.player.selectAction(TAction.SWITCH);
-        Trainer winner = this.combat.turn();
-        handlePlayerTurn(winner, null);
-    }
-
-    /**
-     * Show the switch menu to the player to select a Bugemon to switch to
-     */
-    public void showSwitchMenu() {
-        // TODO: change that
-        List<BugemonDTO> bugemonList = this.player.getTeam()
-                                               .stream()
-                                               .filter(Bugemon::isAlive)
-                                               .map(b -> (BugemonDTO)b)
-                                               .toList();
-        this.view.showSwitchMenu(bugemonList);
-        this.view.hideAllActionMenus();
-    }
-
-    /**
-     * Handle the player's surrender action
+     * Handles the player choosing to forfeit the match.
+     *
+     * <p>
+     * Queues a {@link ulb.models.trainer.TurnAction.ForfeitAction} on the
+     * player, triggers {@link Combat#turn()}, then delegates to
+     * {@link #handleAfterTurn(TurnResult)}. The combat model will instantly
+     * defeat the player's entire team, causing
+     * {@link Combat#getWinner()} to return the opponent.
+     * </p>
      */
     public void surrender() {
-        this.player.selectAction(TAction.FORFEIT);
-        Trainer winner = this.combat.turn();
-        handlePlayerTurn(winner, null);
+        player.registerForfeit();
+        TurnResult turnResult = combat.turn();
+        handleAfterTurn(turnResult);
     }
 
     /**
-     * Handle the end of the player's turn, update the view and check if there is a winner
+     * Handles the player selecting a Bugemon to switch in, covering both the
+     * tactical-switch and the forced post-KO-switch flows.
+     *
+     * <p>
+     * <strong>Post-KO switch</strong> ({@link #koSwitchFlag} is {@code true}):
+     * calls {@link ManualTrainer#switchAfterKO(Bugemon)} directly — no turn is
+     * consumed and the opponent does not attack. Resets {@link #koSwitchFlag}
+     * and restores the main action menu.
+     * </p>
+     *
+     * <p>
+     * <strong>Tactical switch</strong> ({@link #koSwitchFlag} is {@code false}):
+     * sets {@link #switchActionUsed} to {@code true} to block a second switch
+     * this turn, queues a {@link ulb.models.trainer.TurnAction.SwitchAction},
+     * triggers {@link Combat#turn()} (the opponent still attacks), then
+     * delegates to {@link #handleAfterTurn(TurnResult)}.
+     * </p>
+     *
+     * @param bugemonId the unique identifier of the Bugemon to switch in;
+     *                  must belong to the player's team and be alive.
      */
-    private void handlePlayerTurn(Trainer winner, Attack attack) {
-        updateCombatView(this.player, this.opponent, attack);
-        if (winner != null) {
-            handleCombatResult(winner, player);
+    public void switchBugemon(String bugemonId) {
+        Bugemon target = player.getBugemonById(bugemonId);
+
+        if (koSwitchFlag) {
+            player.switchAfterKO(target);
+            koSwitchFlag = false;
+            view.updateTrainerBugemon(player.getCurrentBugemon());
+            view.hideSwitchPanel();
+            view.showMainActionMenu();
+        } else {
+            switchActionUsed = true;
+            player.registerSwitch(target);
+            TurnResult turnResult = combat.turn();
+            handleAfterTurn(turnResult);
         }
-        if (!this.player.isCurrentBugemonAlive()) {
+    }
+
+    /**
+     * Opens the Bugemon team panel so the player can choose a Bugemon to
+     * switch in, and hides all action menus.
+     *
+     * <p>
+     * Used both for voluntary switches (from the main action menu) and for
+     * forced post-KO switches. The actual switch is finalised when the player
+     * clicks a Bugemon, which calls {@link #switchBugemon(String)}.
+     * </p>
+     */
+    public void showSwitchMenu() {
+        List<BugemonDTO> bugemonList =
+                player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO)b).toList();
+        view.showSwitchMenu(bugemonList);
+        view.hideAllActionMenus();
+    }
+
+    /**
+     * Navigates the action menu to the attack selection screen, listing all
+     * attacks available for the player's currently active Bugemon.
+     */
+    public void showAttackMenu() {
+        view.hideSwitchPanel();
+        view.showAttackMenu(player.getCurrentBugemonAttackList());
+    }
+
+    /**
+     * Navigates the action menu back to the main action screen (Attack, Switch,
+     * Surrender) and hides the team switch panel if it was visible.
+     */
+    public void showMainActionMenu() {
+        view.hideSwitchPanel();
+        view.showMainActionMenu();
+    }
+
+    // ── view queries ──────────────────────────────────────────────────────────
+
+    /**
+     * Returns {@code true} if the player is currently allowed to perform a
+     * voluntary switch.
+     *
+     * <p>
+     * A voluntary switch is forbidden when:
+     * <ul>
+     *   <li>A forced post-KO switch is pending ({@link #koSwitchFlag} is
+     *       {@code true}).</li>
+     *   <li>A tactical switch has already been used this turn
+     *       ({@link #switchActionUsed} is {@code true}).</li>
+     * </ul>
+     * <p>
+     * This method is called by {@link ulb.views.combat.MainActionMenu} to
+     * conditionally enable the "Changer de Bugémon" button.
+     * </p>
+     *
+     * @return {@code true} if a voluntary switch may be performed right now,
+     *         {@code false} otherwise.
+     */
+    public boolean canSwitch() {
+        return !koSwitchFlag && !switchActionUsed;
+    }
+
+    // ── private helpers ───────────────────────────────────────────────────────
+
+    /**
+     * Processes the result of a completed turn: updates the view, displays
+     * attack effectiveness messages, checks for a winner, and opens the forced
+     * switch menu if the player's active Bugemon was knocked out.
+     *
+     * <p>The sequence of operations is:
+     * <ol>
+     *   <li>Refresh both Bugemon info panels in the view.</li>
+     *   <li>Hide the switch panel and show the main action menu.</li>
+     *   <li>Display effectiveness dialogs for the first and (if present) second
+     *       hit of the turn.</li>
+     *   <li>If {@link Combat#getWinner()} is non-empty, delegate to
+     *       {@link CombatController#handleCombatResult(Trainer, Trainer)}.</li>
+     *   <li>If the combat is not finished but the player's active Bugemon
+     *       fainted, set {@link #koSwitchFlag} and open the switch menu.</li>
+     * </ol>
+     * </p>
+     *
+     * @param result the {@link TurnResult} returned by {@link Combat#turn()};
+     *               must not be {@code null}.
+     */
+    private void handleAfterTurn(TurnResult result) {
+        view.updateTrainerBugemon(player.getCurrentBugemon());
+        view.updateOpponentBugemon(opponent.getCurrentBugemon());
+        view.hideSwitchPanel();
+        view.showMainActionMenu();
+
+        displayAttackResult(result.first());
+        result.second().ifPresent(this::displayAttackResult);
+
+        combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
+
+        if (!combat.isFinished() && result.allyIsKo()) {
+            koSwitchFlag = true;
             showSwitchMenu();
         }
     }
 
     /**
-     * Show the attack menu to the player with the list of available attacks
+     * Displays an effectiveness dialog for a single {@link TurnResult.AttackResult}.
+     *
+     * <p>
+     * Does nothing if the result does not represent an actual attack (i.e.
+     * {@link TurnResult.AttackResult#wasAttack()} returns {@code false}).
+     * Otherwise, formats the type-matchup message via
+     * {@link CombatController#formatEfficiency(ulb.common.Efficiency)}
+     * and passes it to {@link ulb.views.combat.CombatView#showDialog(String, String)}.
+     * </p>
+     *
+     * @param attackResult the {@link TurnResult.AttackResult} to display;
+     *                     must not be {@code null}.
      */
-    public void showAttackMenu() {
-        this.view.hideSwitchPanel();
-        this.view.showAttackMenu(this.player.getCurrentBugemonAttackList(),
-                                 this.opponent.getCurrentBugemonType());
+    private void displayAttackResult(TurnResult.AttackResult attackResult) {
+        if (!attackResult.wasAttack())
+            return;
+        String message = formatEfficiency(attackResult.efficiency());
+        view.showDialog(message, null);
     }
 
     /**
-     * Show the main action menu to the player (Attack, Switch, Surrender)
+     * Determines the type-matchup {@link ulb.common.Efficiency} of the given
+     * {@link Attack} against the opponent's currently active Bugemon.
+     *
+     * <p>
+     * Delegates to
+     * {@link ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+     * ulb.models.bugemon.BugemonType)}, passing the attack's elemental type and
+     * the opponent's active Bugemon type. The result can be used by the view to
+     * annotate attack buttons with effectiveness indicators before a turn is
+     * committed.
+     * </p>
+     *
+     * @param attack the {@link Attack} whose type effectiveness is to be
+     *               evaluated; must not be {@code null}.
+     * @return the {@link ulb.common.Efficiency} representing how effective the
+     *         attack's type is against the opponent's current Bugemon type;
+     *         never {@code null}.
      */
-    public void showMainActionMenu() {
-        this.view.hideSwitchPanel();
-        this.view.showMainActionMenu();
-    }
-
-    public BugemonType getOpponentBugemonType() {
-        return this.opponent.getCurrentBugemonType();
+    public Efficiency isAttackEfficient(Attack attack) {
+        return CombatService.compareBugemonType(attack.getType(), opponent.getCurrentBugemonType());
     }
 }

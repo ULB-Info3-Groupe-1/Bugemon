@@ -6,40 +6,33 @@
  * <p>
  * A combat session opposes two {@link ulb.models.trainer.Trainer}s, each
  * commanding a {@link ulb.models.bugemon_team.BugemonTeam}. Every session is
- * managed by a subclass of {@link ulb.models.combat.Combat}, which drives the
- * turn loop and determines the winner once one side is fully defeated.
+ * managed by {@link ulb.models.combat.Combat}, which drives the turn loop and
+ * determines the winner once one side is fully defeated.
  * </p>
  *
  * <h2>Key classes</h2>
  * <ul>
- *   <li>{@link ulb.models.combat.Combat} — abstract base class holding the two
+ *   <li>{@link ulb.models.combat.Combat} — the central class holding the two
  *       trainer references and a turn counter. Provides
  *       {@link ulb.models.combat.Combat#isFinished()} and
- *       {@link ulb.models.combat.Combat#getWinner()} used by all subclasses and
- *       the controller layer to observe combat state.</li>
- *   <li>{@link ulb.models.combat.AutomaticCombat} — a fully automated combat
- *       variant in which both {@link ulb.models.trainer.AutoTrainer}s choose
- *       their attacks at random each turn. Intended for simulated or
- *       demonstration combats.</li>
- *   <li>{@link ulb.models.combat.ManualCombat} — a player-driven combat variant
- *       where the ally {@link ulb.models.trainer.ManualTrainer} selects an
- *       action ({@link ulb.models.trainer.ManualTrainer.TAction#ATTACK},
- *       {@link ulb.models.trainer.ManualTrainer.TAction#SWITCH}, or
- *       {@link ulb.models.trainer.ManualTrainer.TAction#FORFEIT}) each turn
- *       while the opponent {@link ulb.models.trainer.AutoTrainer} acts
- *       automatically.</li>
- *   <li>{@link ulb.models.combat.CombatHelper} — stateless utility class
+ *       {@link ulb.models.combat.Combat#getWinner()} used by the controller
+ *       layer to observe combat state. Supports both automatic and manual
+ *       combat depending on the {@link ulb.models.trainer.Trainer} subtypes
+ *       passed at construction time.</li>
+ *   <li>{@link ulb.services.CombatService} — stateless utility class
  *       providing the three core combat calculations:
  *     <ul>
- *       <li>{@link ulb.models.combat.CombatHelper#attackPriority} — resolves
- *           turn order from initiative stats.</li>
- *       <li>{@link ulb.models.combat.CombatHelper#calculateDamage} — computes
+ *       <li>{@link ulb.services.CombatService#attackPriority(ulb.models.trainer.Trainer,
+ *           ulb.models.trainer.Trainer)} — resolves turn order from initiative
+ *           stats.</li>
+ *       <li>{@link ulb.services.CombatService#calculateDamage(ulb.models.bugemon.Attack,
+ *           ulb.models.bugemon.Bugemon, ulb.models.bugemon.Bugemon)} — computes
  *           damage from power, attack/defense stats, type effectiveness, and a
  *           random critical-hit factor.</li>
- *       <li>{@link ulb.models.combat.CombatHelper#compareBType} — evaluates the
- *           elemental type matchup between an attack type and the defender's
- *           type, returning a
- *           {@link ulb.models.combat.CombatHelper.Efficiency} value.</li>
+ *       <li>{@link ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+ *           ulb.models.bugemon.BugemonType)} — evaluates the elemental type
+ *           matchup between an attack type and the defender's type, returning a
+ *           {@link ulb.common.Efficiency} value.</li>
  *     </ul>
  *   </li>
  *   <li>{@link ulb.models.combat.EffectManager} — tracks and manages the
@@ -48,12 +41,16 @@
  *       once per turn via
  *       {@link ulb.models.combat.EffectManager#update()} to decrement
  *       durations and reverse expired stat modifications.</li>
+ *   <li>{@link ulb.models.combat.TurnResult} — immutable snapshot of the
+ *       outcome of a single combat turn, returned by
+ *       {@link ulb.models.combat.Combat#turn()} and consumed by the controller
+ *       layer to update the view.</li>
  * </ul>
  *
  * <h2>Type-effectiveness cycle</h2>
  * <p>
  * Elemental types follow a fixed cycle defined by the declaration order of
- * {@link ulb.models.bugemon.Bugemon.BType}:
+ * {@link ulb.models.bugemon.BugemonType}:
  * {@code FLORA → AQUA → PYRO → LITHO → (back to FLORA)}.
  * Each type is strong against the type that precedes it in the cycle and weak
  * against the type that follows it. Neutral matchups apply to all other
@@ -62,20 +59,22 @@
  *
  * <h2>Design notes</h2>
  * <ul>
- *   <li>Damage calculation in {@link ulb.models.combat.CombatHelper#calculateDamage}
- *       includes a 10 % random critical-hit chance (×1.5 multiplier), making
+ *   <li>Damage calculation in
+ *       {@link ulb.services.CombatService#calculateDamage(ulb.models.bugemon.Attack,
+ *       ulb.models.bugemon.Bugemon, ulb.models.bugemon.Bugemon)}
+ *       includes a 10% random critical-hit chance (x1.5 multiplier), making
  *       individual results non-deterministic. Tests that assert relative damage
  *       ordering should use the overload that accepts an explicit
  *       {@code criticFactor} parameter to ensure reproducibility.</li>
- *   <li>Both {@link ulb.models.combat.AutomaticCombat} and
- *       {@link ulb.models.combat.ManualCombat} currently run their turn loops
- *       synchronously on the calling thread. Long-running sessions may block
- *       the JavaFX Application Thread; a future refactor should move the loop
- *       to a background thread.</li>
+ *   <li>{@link ulb.models.combat.Combat} is designed to be driven either
+ *       synchronously (manual combat, one turn per user action) or via a
+ *       JavaFX {@link javafx.animation.Timeline} (automatic combat, one turn
+ *       per timer tick) without any changes to the model itself.</li>
  * </ul>
  *
  * @see ulb.models.bugemon
  * @see ulb.models.trainer
  * @see ulb.controllers.combat
+ * @see ulb.services.CombatService
  */
 package ulb.models.combat;

@@ -32,6 +32,9 @@
  *       screen displayed when the player wins a combat session.</li>
  *   <li>{@link ulb.controllers.CombatDefeatController} — manages the defeat
  *       screen displayed when the player loses a combat session.</li>
+ *   <li>{@link ulb.controllers.LevelUpController} — manages the level-up
+ *       screen displayed after a victory when one or more Bugemons have
+ *       gained enough XP to advance to the next level.</li>
  * </ul>
  *
  * <p>
@@ -49,9 +52,11 @@
  * <ul>
  *   <li>{@code MAIN_MENU}</li>
  *   <li>{@code CREATE_TEAM}</li>
- *   <li>{@code COMBAT}</li>
+ *   <li>{@code MANUAL_COMBAT}</li>
+ *   <li>{@code AUTOMATIC_COMBAT}</li>
  *   <li>{@code COMBAT_VICTORY}</li>
  *   <li>{@code COMBAT_DEFEAT}</li>
+ *   <li>{@code LEVEL_UP}</li>
  * </ul>
  *
  * <h2>Design notes</h2>

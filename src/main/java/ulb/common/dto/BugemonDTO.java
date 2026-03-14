@@ -4,22 +4,23 @@ import ulb.models.bugemon.BugemonType;
 
 /**
  * Data Transfer Object (DTO) interface exposing a read-only view of a
- * {@link Bugemon} for use outside the model layer (e.g., in views and
- * controllers).
+ * {@link ulb.models.bugemon.Bugemon} for use outside the model layer (e.g.,
+ * in views and controllers).
  *
  * <p>
  * {@code BugemonDTO} decouples the view and controller layers from the full
- * {@link Bugemon} implementation by providing only the subset of data required
- * to render a Bugemon on screen. Any class that implements this interface can
- * be safely passed to UI components without exposing mutable model internals.
+ * {@link ulb.models.bugemon.Bugemon} implementation by providing only the
+ * subset of data required to render a Bugemon on screen. Any class that
+ * implements this interface can be safely passed to UI components without
+ * exposing mutable model internals.
  * </p>
  *
  * <p>
- * The {@link Bugemon} class itself implements this interface. Other lightweight
- * or decorating wrappers may also implement it.
+ * The {@link ulb.models.bugemon.Bugemon} class itself implements this
+ * interface. Other lightweight or decorating wrappers may also implement it.
  * </p>
  *
- * @see Bugemon
+ * @see ulb.models.bugemon.Bugemon
  */
 public interface BugemonDTO {
     /**
@@ -64,17 +65,11 @@ public interface BugemonDTO {
      *
      * <p>
      * The type affects combat effectiveness calculations; see
-     * {@link ulb.models.combat.CombatHelper#compareBType} for the type
+     * {@link ulb.services.CombatService#compareBugemonType} for the type
      * matchup rules.
      * </p>
      *
-     * <p>
-     * <em>Note:</em> The {@link Bugemon.BType} enum is currently defined as a
-     * nested type inside {@link Bugemon} and may be moved to a more neutral
-     * location in a future refactor.
-     * </p>
-     *
-     * @return the {@link Bugemon.BType} of this Bugemon; never {@code null}.
+     * @return the {@link BugemonType} of this Bugemon; never {@code null}.
      */
     BugemonType getType();
 
@@ -84,7 +79,7 @@ public interface BugemonDTO {
      * <p>
      * HP represents the Bugemon's remaining health during a battle. When HP
      * reaches zero the Bugemon is considered defeated and
-     * {@link Bugemon#isAlive()} returns {@code false}.
+     * {@link ulb.models.bugemon.Bugemon#isAlive()} returns {@code false}.
      * </p>
      *
      * @return the current HP as a non-negative {@code int}.
@@ -97,5 +92,16 @@ public interface BugemonDTO {
      */
     int getMaxHp();
 
+    /**
+     * Returns the current level of this Bugemon.
+     *
+     * <p>
+     * The level starts at {@code 1} and increases each time the Bugemon
+     * accumulates enough XP via {@link ulb.models.bugemon.Bugemon#addXp(int)}.
+     * It is used to determine XP thresholds for future level-ups.
+     * </p>
+     *
+     * @return the current level as a positive {@code int} (minimum {@code 1}).
+     */
     int getLevel();
 }

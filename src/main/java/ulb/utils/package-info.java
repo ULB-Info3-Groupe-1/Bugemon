@@ -31,7 +31,7 @@
  *       ({@code id}, {@code nom}, {@code type}, {@code sprite}, {@code starter},
  *       {@code stats}, {@code attaques}), resolves attack references via the
  *       pre-built attacks map, and constructs each Bugemon through the
- *       {@link ulb.models.bugemon.Bugemon.Builder} fluent API.</li>
+ *       {@link ulb.models.bugemon.BugemonBuilder} fluent API.</li>
  * </ul>
  *
  * <h2>JSON format assumptions</h2>
@@ -41,7 +41,7 @@
  *       {@code @SerializedName} annotations and the custom deserializers in
  *       this package bridge those names to their Java counterparts.</li>
  *   <li>Bugemon type values are matched case-insensitively against the
- *       {@link ulb.models.bugemon.Bugemon.BType} enum constants.</li>
+ *       {@link ulb.models.bugemon.BugemonType} enum constants.</li>
  *   <li>Sprite paths that do not yet start with {@code "png/"} are
  *       automatically prefixed by {@link ulb.utils.BugemonDeserializer}.</li>
  * </ul>

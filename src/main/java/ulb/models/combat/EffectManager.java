@@ -81,22 +81,25 @@ public class EffectManager {
      * </p>
      *
      * <p>
-     * This method should be called once per turn, after all attacks and their
-     * immediate effects have been resolved.
+     * This method is called once per turn, <em>before</em> the trainers select
+     * their actions and attacks are resolved. Effects applied during the
+     * previous turn are therefore ticked at the start of the following turn.
      * </p>
      */
     public void update() {
+        List<Bugemon> toRemove = new ArrayList<>();
         for (Bugemon key : effects.keySet()) {
             ActiveEffect current = effects.get(key);
             if (current.isExpired()) {
                 // restore effect and pop from map
-                Effect currentEffect = current.getEffect();
-                handleEffect(key, currentEffect.getStat(), -currentEffect.getModifier());
-                effects.remove(key, current);
+                Effect effect = current.getEffect();
+                handleEffect(key, effect.getStat(), -effect.getModifier());
+                toRemove.add(key);
             } else {
                 current.decrementDuration();
             }
         }
+        toRemove.forEach(effects::remove);
     }
 
     /**
@@ -113,15 +116,27 @@ public class EffectManager {
      *   <li>{@link EffectTarget#TEAM} — every {@link Bugemon} in the attacker's
      *       team.</li>
      * </ul>
-     * </p>
      *
      * <p>
      * The initial stat modification is applied immediately via
      * {@link Bugemon#editStat(EffectStat, int)}, and the effect is stored with
-     * its parsed duration so that {@link #update()} can reverse it once the
-     * effect expires. If the duration string cannot be parsed, a duration of
-     * {@code 0} is used (the effect expires at the start of the next
-     * {@link #update()} call).
+     * its parsed duration (decremented by one to account for the current turn)
+     * so that {@link #update()} can reverse it once the effect expires.
+     * </p>
+     *
+     * <p>
+     * <strong>Duration fallback:</strong> if {@link Effect#extractDuration()}
+     * throws (malformed or {@code null} duration string), a duration of
+     * {@code 0} is used instead, meaning the effect will be reversed at the
+     * very start of the next {@link #update()} call.
+     * </p>
+     *
+     * <p>
+     * <strong>Overwrite behaviour:</strong> if the targeted {@link Bugemon}
+     * already has an active effect tracked in the internal map, the previous
+     * entry is silently overwritten by the new one. The old effect's stat
+     * modification is <em>not</em> reversed before the overwrite; callers
+     * should be aware that stacking effects is not supported.
      * </p>
      *
      * @param attacker the {@link Trainer} whose Bugemon launched the attack;
@@ -130,11 +145,8 @@ public class EffectManager {
      *                 must not be {@code null}.
      * @param attack   the {@link Attack} whose effects are to be applied;
      *                 must not be {@code null}.
-     * @throws IllegalArgumentException if an {@link Effect} carries an unrecognised or
-     *                                  unhandled {@link EffectTarget} value.
      */
-    public void applyEffect(Trainer attacker, Trainer defender, Attack attack)
-            throws IllegalArgumentException {
+    public void applyEffect(Trainer attacker, Trainer defender, Attack attack) {
         List<Effect> effects = attack.getEffects();
 
         for (Effect e : effects) {
@@ -156,7 +168,7 @@ public class EffectManager {
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException("Invalid or unhandled effect target");
+                    throw new IllegalArgumentException("Illegal effect target: " + target);
             }
 
             // saving the effects
@@ -167,7 +179,8 @@ public class EffectManager {
                 try {
                     duration = e.extractDuration() - 1;
                 } catch (Exception exception) {
-                    exception.printStackTrace();
+                    // TODO: handle exception
+                    System.err.println(exception.getStackTrace());
                 }
                 ActiveEffect activeEffect = new ActiveEffect(e, duration);
                 this.effects.put(bugemon, activeEffect);
@@ -195,7 +208,8 @@ public class EffectManager {
         try {
             bugemon.editStat(stat, value);
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO: handle exception -> Logger ?
+            System.err.println(e.getStackTrace());
         }
     }
 }

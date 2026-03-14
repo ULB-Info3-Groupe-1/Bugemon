@@ -14,17 +14,44 @@ import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 
 /**
- * MetaController
+ * Central controller responsible for managing all screen controllers and
+ * orchestrating application-level navigation.
  *
- * Central controller responsible for managing other controllers (corresponding
- * to other application screens).
- * Instantiates all controllers and handles window transitions.
+ * <p>
+ * {@code MetaController} is instantiated once at startup by {@link ulb.Main}
+ * and owns every concrete {@link Controller} in the application. It is the
+ * single authority for:
+ * <ul>
+ *   <li>Loading game resources from JSON files via {@link ulb.utils.Parser}.</li>
+ *   <li>Navigating between screens via
+ *       {@link #switchTo(Window)}.</li>
+ *   <li>Launching combat sessions ({@link #launchAutoCombat()},
+ *       {@link #launchManualCombat()}).</li>
+ *   <li>Resetting the player's team between sessions
+ *       ({@link #resetTeam()}).</li>
+ *   <li>Displaying application-wide alert dialogs
+ *       ({@link #showAlert(String, String)}).</li>
+ * </ul>
+ *
+ * <p>
+ * All lower-level controllers hold a reference to this class and call its
+ * methods to trigger navigation or access shared state (e.g. the list of all
+ * available Bugemons).
+ * </p>
+ *
+ * @see Controller
+ * @see Window
+ * @see ulb.utils.Parser
  */
 public class MetaController {
     /**
-     * Window
+     * Enumerates all navigable screens in the application.
      *
-     * Available application screens.
+     * <p>
+     * Each constant corresponds to a concrete {@link Controller} managed by
+     * the {@link MetaController}. Pass one of these values to
+     * {@link MetaController#switchTo(Window)} to trigger a screen transition.
+     * </p>
      */
     public enum Window {
         MAIN_MENU,
@@ -155,7 +182,16 @@ public class MetaController {
     }
 
     /**
-     * Resets the bugemon team of the trainer.
+     * Resets every {@link ulb.models.bugemon.Bugemon} in the player's team to
+     * its initial stats by delegating to
+     * {@link ulb.models.bugemon_team.BugemonTeam#reset()}.
+     *
+     * <p>
+     * This method is called by the outcome controllers
+     * ({@link CombatVictoryController}, {@link CombatDefeatController}) after a
+     * combat session ends so that the team is fully restored before the next
+     * session.
+     * </p>
      */
     public void resetTeam() {
         this.playerTeam.reset();

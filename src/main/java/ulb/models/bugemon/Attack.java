@@ -21,13 +21,13 @@ import ulb.models.bugemon.effect.Effect;
  *
  * <p>
  * Each {@code Attack} has a unique identifier, a display name, an elemental
- * {@link Bugemon.BType type}, a textual description, a base power value, and a
+ * {@link BugemonType type}, a textual description, a base power value, and a
  * list of {@link Effect}s that may be applied to one or more targets when the
  * attack is used.
  * </p>
  *
  * @see Effect
- * @see Bugemon.BType
+ * @see BugemonType
  */
 public class Attack {
     // Attributes

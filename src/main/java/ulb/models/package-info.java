@@ -15,7 +15,7 @@
  *       ({@link ulb.models.bugemon.Attack}, {@link ulb.models.bugemon.effect.Effect},
  *       {@link ulb.models.bugemon.ActiveEffect}) together with the enumerations
  *       that describe elemental types
- *       ({@link ulb.models.bugemon.Bugemon.BType}), effect kinds
+ *       ({@link ulb.models.bugemon.BugemonType}), effect kinds
  *       ({@link ulb.models.bugemon.effect.EffectType}), targets
  *       ({@link ulb.models.bugemon.effect.EffectTarget}), and affected statistics
  *       ({@link ulb.models.bugemon.effect.EffectStat}).</li>
@@ -30,12 +30,11 @@
  *       {@link ulb.models.trainer.AutoTrainer} (AI-driven, random action
  *       selection), and {@link ulb.models.trainer.ManualTrainer}
  *       (player-driven, explicit action selection).</li>
- *   <li>{@link ulb.models.combat} — the combat system: abstract base class
- *       {@link ulb.models.combat.Combat}, concrete variants
- *       {@link ulb.models.combat.AutomaticCombat} and
- *       {@link ulb.models.combat.ManualCombat}, the stateless damage/priority
- *       helper {@link ulb.models.combat.CombatHelper}, and the
- *       {@link ulb.models.combat.EffectManager} that tracks active effects and
+ *   <li>{@link ulb.models.combat} — the combat system:
+ *       {@link ulb.models.combat.Combat} drives the turn-based loop between
+ *       two {@link ulb.models.trainer.Trainer}s; the stateless damage/priority
+ *       calculations are provided by {@link ulb.services.CombatService}; and
+ *       the {@link ulb.models.combat.EffectManager} tracks active effects and
  *       reverses them on expiry.</li>
  * </ul>
  *

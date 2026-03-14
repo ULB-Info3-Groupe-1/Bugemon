@@ -29,7 +29,6 @@ import ulb.models.bugemon.Bugemon;
  *   <li>a {@code duration} — how long the effect lasts, encoded as a string
  *       in the format {@code "<n>_<unit>"} (e.g., {@code "2_turns"}).</li>
  * </ul>
- * </p>
  *
  * <p>
  * Effects are parsed from JSON and attached to {@link Attack} objects. At
