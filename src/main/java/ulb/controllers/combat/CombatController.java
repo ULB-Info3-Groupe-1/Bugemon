@@ -148,19 +148,15 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.hideDialog();
         this.view.updateTrainerBugemon(player.getCurrentBugemon());
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
+    }
 
-        if (attack != null) {
-            if (CombatService.compareBugemonType(attack.type(), opponent.getCurrentBugemonType())
-                        .equals(Efficiency.HIGH)) {
-                this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
-            } else if (CombatService
-                               .compareBugemonType(attack.type(), opponent.getCurrentBugemonType())
-                               .equals(Efficiency.LOW)) {
-                this.view.showDialog("Peu d'effet ...", null);
-            } else {
-                this.view.showDialog("Dégats standards", null);
-            }
-        }
+    protected void displayAttackResult(Trainer player, TurnResult.AttackResult attackResult) {
+        if (!attackResult.wasAttack())
+            return;
+        // TODO : Loi de Déméter
+        String message = player.getCurrentBugemon().getName() + " à utilisé l'attaque " + attackResult.attack().orElseThrow().getName();
+        String efficiency = formatEfficiency(attackResult.efficiency());
+        view.showDialog(message, efficiency);
     }
 
     // ── efficiency helpers ────────────────────────────────────────────────────

@@ -125,15 +125,12 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
             view.updateTrainerBugemon(player.getCurrentBugemon());
             view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
-            if (turnResult.first().wasAttack()) {
-                String message = formatEfficiency(turnResult.first());
-                view.showDialog(message, null);
-            }
 
             combat.getWinner().ifPresent(winner -> {
                 timeline.stop();
                 handleCombatResult(winner, player);
             });
+            displayAttackResult(player, turnResult.first());
         });
 
         timeline.getKeyFrames().add(keyFrame);

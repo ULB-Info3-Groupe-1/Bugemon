@@ -63,7 +63,7 @@ public class ManualCombatView extends CombatView {
      * <p>
      * Called once during construction and again by
      * {@link ManualCombatController#runManualCombat} via
-     * {@link #showScreenDebutCombat()} whenever a new combat session starts,
+     * {@link #showScreenCombatOpening()} whenever a new combat session starts,
      * so that leftover state from a previous session is cleared.
      * </p>
      */
@@ -180,7 +180,7 @@ public class ManualCombatView extends CombatView {
      * every new combat session.
      * </p>
      */
-    public void showScreenDebutCombat() {
+    public void showScreenCombatOpening() {
         showMainActionMenu();
         hideSwitchPanel();
     }
