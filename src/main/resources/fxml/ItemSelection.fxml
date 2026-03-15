@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root prefHeight="212.0"
+        prefWidth="385.0"
+        spacing="0"
+        type="javafx.scene.layout.VBox"
+        xmlns="http://javafx.com/javafx/25"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="ulb.fx_controller.ItemSelectionFXController">
+
+    <children>
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="239.0" prefWidth="322.0" VBox.vgrow="NEVER">
+
+            <content>
+                <TilePane fx:id="itemsList" hgap="10" orientation="HORIZONTAL" prefColumns="2" prefHeight="39.0" prefWidth="320.0" styleClass="all-items-list" vgap="10">
+                </TilePane>
+            </content>
+
+        </ScrollPane>
+
+    </children>
+
+</fx:root>

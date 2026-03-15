@@ -1,4 +1,4 @@
-package ulb.views;
+package ulb.fx_controllers;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 
 import ulb.common.dto.BugemonDTO;
 import ulb.controllers.CreateTeamController;
+import ulb.controllers.MetaController.Window;
+import ulb.fx_controllers.components.BugemonTeamComponent;
 
 /**
  * CreateTeamView
@@ -14,15 +16,14 @@ import ulb.controllers.CreateTeamController;
  * View for the team creation screen ("create team").
  * Delegates user actions to the associated controller.
  */
-public class CreateTeamView extends View {
-    private static final String FXML_PATH = "/fxml/CreateTeam.fxml";
+public class CreateTeamFXController extends FXController {
 
     private CreateTeamController controller;
 
     // FXML elements
     @FXML private AllBugemonsGridView allBugemonsGridView;
 
-    @FXML private BugemonTeamView bugemonsTeamView;
+    @FXML private BugemonTeamComponent bugemonsTeamView;
 
     @FXML private Button launchAutomaticCombat;
 
@@ -33,28 +34,24 @@ public class CreateTeamView extends View {
      *
      * @throws IOException if the FXML file cannot be loaded
      */
-    public CreateTeamView() throws IOException {
-        super(FXML_PATH);
-        this.controller = null;
-
-        this.allBugemonsGridView.setOnClickCallback(
-                dto -> { this.controller.onBugemonClicked(dto.getId()); });
-
-        this.launchAutomaticCombat.setOnAction(e -> this.controller.startAutoCombat());
-        this.launchManualCombat.setOnAction(e -> this.controller.startManualCombat());
+    public CreateTeamFXController(CreateTeamController controller) {
+        this.controller = controller;
     }
 
-    /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling team creation
-     */
-    public void setController(CreateTeamController controller) {
-        this.controller = controller;
+    @FXML
+    @Override
+    public void initialize() {
+        initializeComponents();
+    }
 
-        // set selection callback
-        this.allBugemonsGridView.setSelectionChecker(
-                b -> this.controller.checkBugemonInTeam(b.getId()));
+    private void initializeComponents() {
+        // Load and display all available Bugemons
+        List<BugemonDTO> allBugemons = this.controller.getBugemonsDTO();
+        showAll(allBugemons);
+
+        // Load and display the player's current team
+        List<BugemonDTO> playerTeam = this.controller.getPlayerTeamDTO();
+        showTeam(playerTeam);
     }
 
     /**
@@ -62,6 +59,7 @@ public class CreateTeamView extends View {
      * @param bugemonList the list of BugemonDTOs representing the player's current team to be
      *         displayed
      */
+    @FXML
     public void showTeam(List<BugemonDTO> bugemonList) {
         this.bugemonsTeamView.showTeam(bugemonList);
     }
@@ -70,7 +68,26 @@ public class CreateTeamView extends View {
      * Displays all available Bugemons in the grid view.
      * @param bugemonList the list of all available Bugemons to be displayed
      */
+     @FXML
     public void showAll(List<BugemonDTO> bugemonList) {
         this.allBugemonsGridView.showAll(bugemonList);
+    }
+
+    @FXML
+    public void onLaunchAutomaticCombat() {
+        launchCombat(Window.AUTOMATIC_COMBAT);
+    }
+
+    @FXML
+    public void onLaunchManualCombat() {
+        launchCombat(Window.MANUAL_COMBAT);
+    }
+
+    private void launchCombat(Window window) {
+        if (this.controller.canStartCombat()) {
+            this.metaController.switchTo(Window.MANUAL_COMBAT);
+        } else {
+            showAlert("Cannot start combat", this.controller.alert());
+        }
     }
 }

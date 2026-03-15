@@ -1,5 +1,6 @@
 package ulb.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
@@ -18,6 +19,12 @@ import ulb.models.trainer.Trainer;
  */
 public class LevelUpService {
     private static final int BASE_XP = 50;
+
+    private List<LevelUp> pendingLevelUp;
+
+    public LevelUpService() {
+        this.pendingLevelUp = new ArrayList<>();
+    }
 
     /**
      * Calculates the XP required to reach a given level.
@@ -109,6 +116,10 @@ public class LevelUpService {
         return xpPerBugemon;
     }
 
+    public boolean hasPendingLevelUp() {
+        return !this.pendingLevelUp.isEmpty();
+    }
+
     /**
      * Processes level-ups for all Bugemons that have gained sufficient XP.
      * <p>
@@ -119,8 +130,8 @@ public class LevelUpService {
      * @param bugemons the list of Bugemons to check for level-ups
      * @return a list of {@link LevelUp} objects for all Bugemons that leveled up
      */
-    public static List<LevelUp> levelUp(final List<Bugemon> bugemons) {
-        return bugemons.stream()
+    public void levelUp(final List<Bugemon> bugemons) {
+        this.pendingLevelUp = bugemons.stream()
                 .filter(b -> b.getXp() >= xpRequiredForLevel(b.getLevel()))
                 .map(b -> b.levelUp())
                 .toList();

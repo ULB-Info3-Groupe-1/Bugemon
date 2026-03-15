@@ -14,6 +14,6 @@
 
     <Button fx:id="createTeamButton" text="Créer une équipe et lancer un combat" styleClass="menu-button" />
 
-    <Button fx:id="quitButton" text="Quitter" styleClass="menu-button" />
+    <Button fx:id="quitButton" onAction="#onQuit" text="Quitter" styleClass="menu-button" />
 
 </VBox>

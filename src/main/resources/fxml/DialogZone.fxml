@@ -21,6 +21,7 @@
         </TextFlow>
         <HBox>
             <Text fx:id="additionalInfo" styleClass="additional-info" />
+            <Button fx:id="continueButton" onAction="#onContinue" text="Continuer" />
         </HBox>
     </VBox>
 

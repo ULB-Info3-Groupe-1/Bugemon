@@ -18,16 +18,18 @@
 
 <StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../css/combat.css">
    <AnchorPane prefHeight="400.0" prefWidth="600.0">
+
       <Text fx:id="combatTitle" text="En Combat" AnchorPane.topAnchor="80.0" AnchorPane.leftAnchor="80.0">
          <font>
             <Font name="Pixels" size="48.0"/>
          </font>
       </Text>
 
+      <!-- Dialog zone -->
       <DialogZoneView fx:id="dialogZoneView" visible="false" managed="false" alignment="CENTER"
-            AnchorPane.topAnchor="0.0" 
-            AnchorPane.bottomAnchor="0.0" 
-            AnchorPane.leftAnchor="0.0" 
+            AnchorPane.topAnchor="0.0"
+            AnchorPane.bottomAnchor="0.0"
+            AnchorPane.leftAnchor="0.0"
             AnchorPane.rightAnchor="0.0"/>
 
       <!-- Trainer Bugemon Info -->
@@ -46,11 +48,11 @@
 
       <!-- Bugemon Team View -->
       <StackPane fx:id="bugemonTeamPane" visible="false" alignment="CENTER_LEFT"  AnchorPane.bottomAnchor="400.0" AnchorPane.leftAnchor="80.0">
-         <VBox alignment="CENTER_LEFT" spacing="10.0">
-            <Label fx:id="windowTitle" text="Bugemon Team" styleClass="combat-team-title"/>
-            <BugemonTeamView fx:id="bugemonTeamView"/>
-         </VBox>
-      </StackPane>
+               <VBox alignment="CENTER_LEFT" spacing="10.0">
+                  <Label fx:id="windowTitle" text="Bugemon Team" styleClass="combat-team-title"/>
+                  <BugemonTeamView fx:id="bugemonTeamView" onBugemonClicked="#handleBugemonClick"/>
+               </VBox>
+            </StackPane>
 
       <!-- Action Menu -->
       <ActionMenuView fx:id="actionMenuView" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="80.0"/>

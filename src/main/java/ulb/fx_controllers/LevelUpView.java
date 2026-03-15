@@ -1,4 +1,4 @@
-package ulb.views;
+package ulb.fx_controllers;
 
 import java.io.IOException;
 import java.util.List;

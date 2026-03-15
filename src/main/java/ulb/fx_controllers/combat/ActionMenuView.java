@@ -1,4 +1,4 @@
-package ulb.views.combat;
+package ulb.fx_controllers.combat;
 
 import java.io.IOException;
 import java.net.URL;

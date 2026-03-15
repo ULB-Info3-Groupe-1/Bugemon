@@ -1,9 +1,12 @@
-package ulb.views;
+package ulb.fx_controllers.components;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
+
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -20,18 +23,19 @@ import ulb.common.dto.BugemonDTO;
  * Reusable custom component displaying all the bugemons inside of a scrollable
  * grid.
  */
-public class BugemonTeamView extends VBox {
+public class BugemonTeamComponent extends VBox {
     @FXML private GridPane gridPane;
 
     private static final int IMAGES_PER_ROW = 3;
     private static final double IMAGE_SIZE = 96;
 
-    private Consumer<BugemonDTO> onBugemonClicked;
+    public static final EventType<BugemonEvent> BUGEMON_CLICKED =
+        new EventType<>(Event.ANY, "BUGEMON_CLICKED");
 
     // Unknown image if no Bugemon available
-    private final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
+    private static final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
 
-    public BugemonTeamView() {
+    public BugemonTeamComponent() {
         URL url = getClass().getResource("/fxml/BugemonTeam.fxml");
         FXMLLoader loader = new FXMLLoader(url);
         loader.setRoot(this);
@@ -107,15 +111,25 @@ public class BugemonTeamView extends VBox {
     }
 
     /**
-     * Sets the callback used to handle clicks on bugemon cells. The callback
-     * receives the {@link ulb.common.dto.BugemonDTO} of the clicked cell.
-     *
-     * @param callback a {@code Consumer<BugemonDTO>} callback to be called when
-     *                 a bugemon cell is clicked, receiving the
-     *                 {@link ulb.common.dto.BugemonDTO} of the clicked cell;
-     *                 must not be {@code null}.
+     * Sets the callback used to handle clicks on bugemon cells. The callback receives the
+     * BugemonDTO of the clicked cell.
+     * @param callback the Consumer<BugemonDTO> callback to be called when a bugemon cell is
+     *         clicked, receiving the BugemonDTO of the clicked cell
      */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
         this.onBugemonClicked = callback;
+    }
+
+    public static class BugemonEvent extends Event {
+        private final BugemonDTO bugemon;
+
+        public BugemonEvent(EventType<? extends Event> eventType, BugemonDTO bugemon) {
+            super(eventType);
+            this.bugemon = bugemon;
+        }
+
+        public BugemonDTO getBugemon() {
+            return bugemon;
+        }
     }
 }

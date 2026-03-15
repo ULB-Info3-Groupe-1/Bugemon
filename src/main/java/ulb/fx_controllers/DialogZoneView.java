@@ -1,4 +1,4 @@
-package ulb.views;
+package ulb.fx_controllers;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,18 +12,16 @@ import javafx.scene.text.Text;
  * Reusable custom component displaying a dialog zone.
  */
 public class DialogZoneView extends VBox {
-    private static final String FXML_PATH = "/fxml/DialogZone.fxml";
+    private final static String FXML_PATH = "/fxml/DialogZone.fxml";
 
     @FXML private Text dialogText;
-
     @FXML private Button nextButton;
-
     @FXML private Text additionalInfo;
 
     /**
      * Constructor for DialogZoneView.
      * Loads the FXML layout and initializes the component.
-     * Throws a {@link RuntimeException} if the FXML file cannot be loaded.
+     * @throws IOException if the FXML file cannot be loaded
      */
     public DialogZoneView() {
         URL url = getClass().getResource(FXML_PATH);
