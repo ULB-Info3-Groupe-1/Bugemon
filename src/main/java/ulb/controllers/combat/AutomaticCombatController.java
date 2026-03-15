@@ -1,18 +1,21 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
+
 import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.util.Duration;
 
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
-import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
+import ulb.fx_controllers.combat.AutomaticCombatFXController;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.combat.AutomaticCombat;
 import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.Trainer;
+import ulb.services.LevelUpService;
+import ulb.services.PlayerService;
 import ulb.utils.Parser;
-import ulb.views.combat.AutomaticCombatView;
 
 /**
  * Controller responsible for the automatic combat screen, where both the
@@ -20,124 +23,132 @@ import ulb.views.combat.AutomaticCombatView;
  *
  * <p>
  * {@code AutomaticCombatController} extends {@link CombatController} and drives
- * a {@link Combat} session to completion via a JavaFX {@link Timeline}.
- * Each tick of the timeline resolves one full turn by calling
- * {@link Combat#turn()}, which causes both {@link AutoTrainer}s to select
- * random attacks and apply their damage simultaneously, until one side has no
- * remaining alive {@link ulb.models.bugemon.Bugemon}s.
+ * an {@link AutomaticCombat} session to completion in a single blocking call to
+ * {@link #runAutoCombat(AutoTrainer)}. Each turn is resolved by calling
+ * {@link AutomaticCombat#turn()}, which causes both {@link AutoTrainer}s to
+ * select random attacks and apply their damage simultaneously, until one side
+ * has no remaining alive {@link ulb.models.bugemon.Bugemon}s.
  * </p>
  *
  * <p>
- * The turn loop is non-blocking: a new {@link KeyFrame} fires every 3 seconds
- * on the JavaFX Application Thread, keeping the UI responsive between turns.
- * An initial delay of 1 second lets the player see the starting state before
- * the first turn fires.
- * </p>
- *
- * <p>
- * Once {@link Combat#getWinner()} returns a non-empty {@link java.util.Optional},
- * the timeline is stopped and the inherited
+ * Once the combat ends, the inherited
  * {@link CombatController#handleCombatResult(ulb.models.trainer.Trainer,
- * ulb.models.trainer.Trainer)} method navigates to either
- * {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY} or
- * {@link ulb.controllers.MetaController.Window#COMBAT_DEFEAT} depending on
- * whether the player won.
+ * ulb.models.trainer.Trainer)} method is called to navigate to either the
+ * {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY} or the
+ * {@link ulb.controllers.MetaController.Window#COMBAT_DEFEAT} screen depending
+ * on whether the player won.
  * </p>
  *
  * <p>
- * The opponent team is constructed automatically by randomly sampling from
- * the full pool of available Bugemons via
- * {@link ulb.factory.TeamFactory#createRandomTeam(java.util.List, int)},
- * using the same team size as the player.
+ * The opponent team is constructed automatically by randomly sampling
+ * {@link BugemonTeam#createRandomTeam(java.util.List, int)} from the full pool
+ * of available Bugemons, using the same team size as the player.
  * </p>
  *
  * @see CombatController
- * @see Combat
+ * @see AutomaticCombat
  * @see AutoTrainer
- * @see AutomaticCombatView
+ * @see AutomaticCombatFXController
  */
-public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
+public class AutomaticCombatController extends CombatController {
+
+    private AutomaticCombat combat;
+    private AutoTrainer opponent;
+
+    private final Timeline timeline;
     /**
-     * Constructs an {@code AutomaticCombatController}, instantiates its
-     * {@link AutomaticCombatView}, and wires the view into the controller
-     * hierarchy.
+     * Constructs an {@code AutomaticCombatController}, initialises its
+     * {@link AutomaticCombatFXController}, and registers this controller as the view's
+     * event handler.
      *
      * <p>
-     * The view's FXML layout is loaded at construction time so that the scene
-     * graph is ready before the controller is ever used.
+     * The view is instantiated here so that its FXML layout is loaded and its
+     * scene graph is ready before the controller is used for the first time.
+     * The parent constructor ({@link CombatController}) also pre-populates the
+     * view with placeholder {@link ulb.models.bugemon.Bugemon}s and calls
+     * {@link ulb.fx_controllers.combat.CombatFXController#initCombatMode()}.
      * </p>
      *
      * @param metaController the application-level {@link MetaController} used for
      *                       screen navigation and shared state access; must not be
      *                       {@code null}.
-     * @throws IOException if the {@link AutomaticCombatView} fails to load its
+     * @throws IOException if the {@link AutomaticCombatFXController} fails to load its
      *                     FXML resource.
      */
-    public AutomaticCombatController(MetaController metaController) throws IOException {
-        super(metaController, new AutomaticCombatView());
+    public AutomaticCombatController(MetaController metaController, PlayerService playerService, LevelUpService levelUpService) {
+        super(metaController, playerService, levelUpService);
+
+        this.timeline = new Timeline();
+        this.timeline.setCycleCount(Animation.INDEFINITE);
+    }
+
+    @Override
+    public void onContinue() {
+        AutoTrainer player = (AutoTrainer) this.playerService.getPlayer();
+        if (!turnFinished) {
+            turnFinished = true;
+            handleTurn(this.opponent);
+        } else {
+            turnFinished = false;
+            handleTurn(player);
+        }
+    }
+
+    private void handleTurn(Trainer attacker) {
+        if (attacker.isDefeated()) {
+            timeline.stop();
+            handleCombatResult(this.opponent, this.playerService.getPlayer());
+            return;
+        }
+        Attack attack = this.combat.turn();
+
+        updateCombatView(attacker, opponent, attack);
     }
 
     /**
-     * Starts a complete automatic combat session for the given player
-     * {@link AutoTrainer} and drives it to completion via a {@link Timeline}.
+     * Runs a complete automatic combat session from start to finish using the
+     * given player {@link AutoTrainer}.
      *
      * <p>
      * The method performs the following steps:
      * <ol>
-     *   <li>Builds the opponent's team by randomly sampling from the pool of all
-     *       available Bugemons (same size as the player's team) via
-     *       {@link ulb.factory.TeamFactory#createRandomTeam(java.util.List, int)}.</li>
-     *   <li>Creates a {@link Combat} between the player and the opponent.</li>
-     *   <li>Initialises the view with the starting state via
-     *       {@link #updateCombatView(ulb.models.trainer.Trainer,
-     *       ulb.models.trainer.AutoTrainer, ulb.models.bugemon.Attack)}.</li>
-     *   <li>Schedules a {@link KeyFrame} that fires every 3 seconds:
-     *     <ul>
-     *       <li>Calls {@link Combat#turn()} and retrieves the
-     *           {@link TurnResult}.</li>
-     *       <li>Refreshes both Bugemon panels in the view.</li>
-     *       <li>Displays the efficiency dialog for the first hit of the turn
-     *           if an attack occurred.</li>
-     *       <li>If {@link Combat#getWinner()} is now present, stops the
-     *           timeline and delegates to
-     *           {@link #handleCombatResult(ulb.models.trainer.Trainer,
-     *           ulb.models.trainer.Trainer)}.</li>
-     *     </ul>
-     *   </li>
+     *   <li>Calls {@link ulb.fx_controllers.combat.CombatFXController#initCombatMode()} on the
+     *       view to (re-)initialise the combat UI before the session starts.</li>
+     *   <li>Builds the opponent's {@link BugemonTeam} by randomly sampling from
+     *       the pool of all available Bugemons (same size as the player's team)
+     *       via {@link BugemonTeam#createRandomTeam(java.util.List, int)}.</li>
+     *   <li>Creates an {@link AutomaticCombat} between the player and the
+     *       opponent.</li>
+     *   <li>Loops until {@link AutomaticCombat#getWinner()} returns a non-{@code null}
+     *       value, calling {@link AutomaticCombat#turn()} and
+     *       {@link AutomaticCombat#incrementTurn()} each iteration.</li>
+     *   <li>Delegates to {@link #handleCombatResult(ulb.models.trainer.Trainer,
+     *       ulb.models.trainer.Trainer)} to navigate to the appropriate outcome
+     *       screen.</li>
      * </ol>
+     * </p>
+     *
+     * <p>
+     * <strong>Note:</strong> this method runs the entire combat synchronously on
+     * the calling thread. Because it is currently invoked on the JavaFX
+     * Application Thread, very long combats may cause the UI to become
+     * unresponsive. A future refactor should move the combat loop to a background
+     * thread.
+     * </p>
      *
      * @param player the {@link AutoTrainer} representing the player's side;
      *               must not be {@code null} and must have a non-empty team.
      */
-    public void runAutoCombat(final AutoTrainer player) {
-        AutoTrainer opponent = new AutoTrainer(TeamFactory.createRandomTeam(
-                Parser.getInstance().getBugemons(), player.getTeamSize()));
-        Combat combat = new Combat(player, opponent);
+    @Override
+    public void setupCombat() {
+        this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(
+                Parser.getInstance().getBugemons(), this.playerService.getPlayerTeamSize()));
 
-        updateCombatView(player, opponent, null);
+        this.combat = new AutomaticCombat((AutoTrainer) this.playerService.getPlayer(), opponent);
+    }
 
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(Animation.INDEFINITE);
-
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
-            TurnResult turnResult = combat.turn();
-
-            view.updateTrainerBugemon(player.getCurrentBugemon());
-            view.updateOpponentBugemon(opponent.getCurrentBugemon());
-
-            if (turnResult.first().wasAttack()) {
-                String message = formatEfficiency(turnResult.first());
-                view.showDialog(message, null);
-            }
-
-            combat.getWinner().ifPresent(winner -> {
-                timeline.stop();
-                handleCombatResult(winner, player);
-            });
-        });
-
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setDelay(Duration.seconds(1));
-        timeline.play();
+    @Override
+    public String alert() {
+        return "";
     }
 }

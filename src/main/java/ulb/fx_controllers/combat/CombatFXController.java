@@ -1,5 +1,7 @@
 package ulb.fx_controllers.combat;
 
+import java.util.concurrent.CountDownLatch;
+
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -7,9 +9,11 @@ import javafx.scene.layout.StackPane;
 
 import ulb.common.dto.BugemonDTO;
 import ulb.controllers.combat.CombatController;
-import ulb.fx_controllers.DialogZoneView;
 import ulb.fx_controllers.FXController;
+import ulb.fx_controllers.combat.components.BugemonInfoComponent;
+import ulb.fx_controllers.components.ActionMenuComponent;
 import ulb.fx_controllers.components.BugemonTeamComponent;
+import ulb.fx_controllers.components.DialogZoneComponent;
 
 /**
  * CombatView
@@ -19,20 +23,20 @@ import ulb.fx_controllers.components.BugemonTeamComponent;
  * and injected via FXML.
  */
 public abstract class CombatFXController extends FXController{
-    private final CombatController controller;
+    protected final CombatController controller;
 
-    @FXML protected DialogZoneView dialogZoneView;
+    @FXML protected DialogZoneComponent dialogZoneView;
 
     @FXML protected ImageView bugemonTrainerImage;
-    @FXML protected BugemonInfoView bugemonTrainerInfo;
+    @FXML protected BugemonInfoComponent bugemonTrainerInfo;
 
-    @FXML protected BugemonInfoView bugemonOpponentInfo;
+    @FXML protected BugemonInfoComponent bugemonOpponentInfo;
     @FXML protected ImageView bugemonOpponentImage;
 
     @FXML protected StackPane bugemonTeamPane;
     @FXML protected BugemonTeamComponent bugemonTeamView;
 
-    @FXML protected ActionMenuView actionMenuView;
+    @FXML protected ActionMenuComponent actionMenuComponent;
 
     public CombatFXController(CombatController controller) {
         this.controller = controller;
@@ -54,6 +58,20 @@ public abstract class CombatFXController extends FXController{
         this.dialogZoneView.setAdditionalInfo(additionalInfo);
         this.dialogZoneView.setVisible(true);
         this.dialogZoneView.setManaged(true);
+
+        this.dialogZoneView.setOnContinueCallback(this::onContinue);
+
+        // Create a CountDownLatch to block the thread
+        CountDownLatch continueLatch = new CountDownLatch(1);
+        this.dialogZoneView.setContinueLatch(continueLatch);
+
+        try {
+            // Wait for the player to click the "Continue" button
+            continueLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Thread interrupted while waiting for dialog continuation: " + e.getMessage());
+        }
     }
 
     /**
@@ -62,6 +80,11 @@ public abstract class CombatFXController extends FXController{
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
+    }
+
+    protected void hideBugemonTeamPane() {
+        this.bugemonTeamPane.setVisible(false);
+        this.bugemonTeamPane.setManaged(false);
     }
 
     @FXML

@@ -18,7 +18,7 @@ import ulb.models.level_up.Choice;
  *
  * View for the level up screen.
  */
-public class LevelUpView extends View {
+public class LevelUpFXController extends FXController {
     @FXML private Label levelUpText;
     @FXML private Button choice1Button;
     @FXML private Button choice2Button;
@@ -27,9 +27,8 @@ public class LevelUpView extends View {
 
     private LevelUpController controller;
 
-    public LevelUpView() throws IOException {
-        super("/fxml/LevelUp.fxml");
-        this.controller = null;
+    public LevelUpFXController(LevelUpController controller) {
+        this.controller = controller;
 
         this.choice1Button.setOnAction((e) -> this.controller.chooseOption(0));
         this.choice2Button.setOnAction((e) -> this.controller.chooseOption(1));
@@ -54,14 +53,5 @@ public class LevelUpView extends View {
         this.choice1Button.setText(choices.get(0).toString());
         this.choice2Button.setText(choices.get(1).toString());
         this.choice3Button.setText(choices.get(2).toString());
-    }
-
-    /**
-     * Binds Level up view to its controller.
-     *
-     * @param controller controller handling level up
-     */
-    public void setController(LevelUpController controller) {
-        this.controller = controller;
     }
 }

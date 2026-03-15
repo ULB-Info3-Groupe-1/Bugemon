@@ -1,39 +1,38 @@
 package ulb.controllers;
 
-import java.io.IOException;
-
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
-import ulb.fx_controllers.*;
+import ulb.fx_controllers.combat.AutomaticCombatFXController;
+import ulb.fx_controllers.combat.ManualCombatFXController;
+import ulb.fx_controllers.combat_result.CombatVictoryFXController;
+import ulb.fx_controllers.MainMenuFXController;
+import ulb.fx_controllers.CreateTeamFXController;
+import ulb.fx_controllers.LevelUpFXController;
 import ulb.services.LevelUpService;
-import ulb.services.TeamService;
+import ulb.services.PlayerService;
 
 public class ControllerFactory {
     private final MetaController metaController;
-    private final TeamService teamService;
+    private final PlayerService playerService;
     private final LevelUpService levelUpService;
 
-    public ControllerFactory(MetaController metaController, TeamService teamService, LevelUpService levelUpService) {
+    public ControllerFactory(MetaController metaController, PlayerService playerService, LevelUpService levelUpService) {
         this.metaController = metaController;
-        this.teamService = teamService;
+        this.playerService = playerService;
         this.levelUpService = levelUpService;
     }
 
     // Create real controllers
-    public MainMenuController createMainMenuController() {
-        return new MainMenuController(this.metaController);
-    }
-
     public CreateTeamController createCreateTeamController() {
-        return new CreateTeamController(this.metaController, this.teamService);
+        return new CreateTeamController(this.metaController, this.playerService);
     }
 
     public AutomaticCombatController createAutomaticCombatController() {
-        return new AutomaticCombatController(this.metaController, this.teamService, this.levelUpService);
+        return new AutomaticCombatController(this.metaController, this.playerService, this.levelUpService);
     }
 
     public ManualCombatController createManualCombatController() {
-        return new ManualCombatController(this.metaController, this.teamService, this.levelUpService);
+        return new ManualCombatController(this.metaController, this.playerService, this.levelUpService);
     }
 
     public CombatVictoryController createCombatVictoryController() {

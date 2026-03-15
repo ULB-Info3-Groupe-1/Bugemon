@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 import ulb.controllers.music.MusicPlayer;
 import ulb.services.LevelUpService;
-import ulb.services.TeamService;
+import ulb.services.PlayerService;
 
 /**
  * MetaController
@@ -48,7 +48,7 @@ public class MetaController {
     private final Stage stage;
     private final MusicPlayer musicPlayer;
     private final LevelUpService levelUpService;
-    private final TeamService teamService;
+    private final PlayerService playerService;
     private final ControllerFactory controllerFactory;
     private final Map<Window, Controller> controllers;
 
@@ -63,8 +63,8 @@ public class MetaController {
         this.musicPlayer = new MusicPlayer();
         this.controllers = new HashMap<>();
         this.levelUpService = new LevelUpService();
-        this.teamService = new TeamService();
-        this.controllerFactory = new ControllerFactory(this, teamService, levelUpService);
+        this.playerService = new PlayerService();
+        this.controllerFactory = new ControllerFactory(this, playerService, levelUpService);
         initializeControllers();
     }
 

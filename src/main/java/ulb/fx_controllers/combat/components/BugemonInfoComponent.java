@@ -1,4 +1,4 @@
-package ulb.fx_controllers.combat;
+package ulb.fx_controllers.combat.components;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,7 +12,7 @@ import ulb.common.dto.BugemonDTO;
 /**
  * Reusable custom component displaying Bugemon info.
  */
-public class BugemonInfoView extends VBox {
+public class BugemonInfoComponent extends VBox {
     private final static String FXML_PATH = "/fxml/BugemonInfo.fxml";
 
     @FXML private Text bugemonName;
@@ -24,7 +24,7 @@ public class BugemonInfoView extends VBox {
      * Loads the FXML layout and initializes the component.
      * @throws IOException if the FXML file cannot be loaded
      */
-    public BugemonInfoView() {
+    public BugemonInfoComponent() {
         URL url = getClass().getResource(FXML_PATH);
         FXMLLoader loader = new FXMLLoader(url);
 

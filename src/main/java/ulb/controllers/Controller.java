@@ -8,5 +8,7 @@ public abstract class Controller {
 	    this.metaController = metaController;
 	}
 
-	public abstract String alert();
+	public String alert() {
+        return "This is an alert message";
+	}
 }

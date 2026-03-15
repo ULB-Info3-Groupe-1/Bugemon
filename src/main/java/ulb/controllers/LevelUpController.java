@@ -3,7 +3,7 @@ package ulb.controllers;
 import java.util.List;
 
 import ulb.controllers.MetaController.Window;
-import ulb.fx_controllers.LevelUpView;
+import ulb.fx_controllers.LevelUpFXController;
 import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;
 import ulb.services.LevelUpService;

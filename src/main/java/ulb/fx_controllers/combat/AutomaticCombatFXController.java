@@ -1,7 +1,5 @@
 package ulb.fx_controllers.combat;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import ulb.controllers.combat.AutomaticCombatController;
 
 public class AutomaticCombatFXController extends CombatFXController {
@@ -17,9 +15,9 @@ public class AutomaticCombatFXController extends CombatFXController {
      */
     @Override
     public void initCombatMode() {
-        this.actionMenuView.setVisible(false);
-        this.actionMenuView.setManaged(false);
-        this.bugemonTeamPane.setVisible(false);
-        this.bugemonTeamPane.setManaged(false);
+        this.actionMenuComponent.setVisible(false);
+        this.actionMenuComponent.setManaged(false);
+        hideBugemonTeamPane();
+
     }
 }

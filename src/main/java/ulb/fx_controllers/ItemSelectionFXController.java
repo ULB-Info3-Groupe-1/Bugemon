@@ -46,8 +46,8 @@ public class ItemSelectionFXController extends VBox {
         Button clickedItem = (Button) event.getSource();
         ItemDTO selectedItem = (ItemDTO) clickedItem.getUserData();
 
-        if (controller != null) {
-            controller.onItemSelected(selectedItem.getId());
+        if (this.controller != null) {
+            this.controller.onItemSelected(selectedItem.getId());
         }
     }
 }
