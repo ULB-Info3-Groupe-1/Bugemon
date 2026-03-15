@@ -26,3 +26,5 @@ SpaceInEmptyParentheses: false
 ReflowComments: true
 MaxEmptyLinesToKeep: 1
 KeepEmptyLinesAtTheStartOfBlocks: false
+
+LineEnding: LF
