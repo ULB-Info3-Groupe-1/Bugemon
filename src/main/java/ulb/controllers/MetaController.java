@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Music;
+import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.level_up.LevelUp;
@@ -22,15 +23,15 @@ import ulb.models.trainer.ManualTrainer;
  * and owns every concrete {@link Controller} in the application. It is the
  * single authority for:
  * <ul>
- *   <li>Loading game resources from JSON files via {@link ulb.utils.Parser}.</li>
- *   <li>Navigating between screens via
- *       {@link #switchTo(Window)}.</li>
- *   <li>Launching combat sessions ({@link #launchAutoCombat()},
- *       {@link #launchManualCombat()}).</li>
- *   <li>Resetting the player's team between sessions
- *       ({@link #resetTeam()}).</li>
- *   <li>Displaying application-wide alert dialogs
- *       ({@link #showAlert(String, String)}).</li>
+ * <li>Loading game resources from JSON files via {@link ulb.utils.Parser}.</li>
+ * <li>Navigating between screens via
+ * {@link #switchTo(Window)}.</li>
+ * <li>Launching combat sessions ({@link #launchAutoCombat()},
+ * {@link #launchManualCombat()}).</li>
+ * <li>Resetting the player's team between sessions
+ * ({@link #resetTeam()}).</li>
+ * <li>Displaying application-wide alert dialogs
+ * ({@link #showAlert(String, String)}).</li>
  * </ul>
  *
  * <p>
@@ -73,6 +74,7 @@ public class MetaController {
     private final BugemonTeam playerTeam;
     private final LevelUpController levelUpController;
     private final MusicPlayer musicPlayer;
+    private final MusicLoader musicLoader;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -92,6 +94,9 @@ public class MetaController {
         this.combatDefeatController = new CombatDefeatController(this);
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
+        this.musicLoader = new MusicLoader();
+        musicLoader.loadFromDirectory("/musics/combat", Music.Ambiance.COMBAT)
+                .forEach(this.musicPlayer::addMusic);
     }
 
     /**
