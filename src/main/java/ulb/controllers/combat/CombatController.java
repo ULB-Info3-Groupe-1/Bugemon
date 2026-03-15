@@ -72,6 +72,65 @@ public abstract class CombatController<V extends CombatView> extends Controller<
                 onFinished.run();
             }
         });
+     * @param winner the {@link Trainer} that won the combat; must not be
+     *               {@code null}.
+     * @param player the {@link Trainer} representing the local player, used to
+     *               determine whether the outcome is a victory or a defeat; must
+     *               not be {@code null}.
+     */
+    protected void handleCombatResult(Trainer winner, Trainer player) {
+        List<LevelUp> levelUps = new ArrayList<>();
+        if (winner == player) {
+            // TODO: Make sure to show xp gained after combat.
+            // TODO: Do not forget to set manually floor and multiplier based on NO combat.
+            int xp = LevelUpService.distributeXp(winner, player);
+
+            List<Bugemon> participatingBugemons =
+                    winner.getTeam().stream().filter(b -> b.getParticipation()).toList();
+
+            levelUps = LevelUpService.levelUp(participatingBugemons);
+            this.metaController.setLevelUp(levelUps);
+        } else {
+            this.metaController.switchTo(Window.COMBAT_DEFEAT);
+        }
+    }
+
+    // ── view update helpers ───────────────────────────────────────────────────
+
+    /**
+     * Refreshes the combat view with the current state of both trainers and,
+     * optionally, displays a type-efficiency message for the given attack.
+     *
+     * <p>
+     * The dialog zone is first hidden, then both Bugemon info panels (HP bar,
+     * sprite, name) are updated. If {@code attack} is non-{@code null}, the
+     * type-effectiveness of the attack against the opponent's active Bugemon is
+     * computed via
+     * {@link ulb.services.CombatService#compareBugemonType(ulb.models.bugemon.BugemonType,
+     * ulb.models.bugemon.BugemonType)} and a corresponding message is shown
+     * via {@link CombatView#showDialog(String, String)}.
+     * </p>
+     *
+     * @param player   the player-side {@link Trainer} whose active Bugemon info
+     *                 is rendered on the left panel; must not be {@code null}.
+     * @param opponent the opponent-side {@link Trainer} whose active Bugemon info
+     *                 is rendered on the right panel; must not be {@code null}.
+     * @param attack   the {@link Attack} whose type-effectiveness should be
+     *                 displayed, or {@code null} to skip the dialogue entirely.
+     */
+    public void updateCombatView(Trainer player, Trainer opponent, Attack attack) {
+        this.view.hideDialog();
+        this.view.updateTrainerBugemon(player.getCurrentBugemon());
+        this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
+    }
+
+    protected void displayAttackResult(Trainer player, TurnResult.AttackResult attackResult) {
+        if (!attackResult.wasAttack())
+            return;
+        // TODO : Loi de Déméter
+        String message = player.getCurrentBugemon().getName() + " à utilisé l'attaque " + attackResult.attack().orElseThrow().getName();
+        String efficiency = formatEfficiency(attackResult.efficiency());
+        view.showDialog(message, efficiency);
     }
 
     /**
