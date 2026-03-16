@@ -152,39 +152,71 @@ public class EffectManager {
         for (Effect e : effects) {
             EffectTarget target = e.getTarget();
             List<Bugemon> bugemons = new ArrayList<>();
+
             switch (target) {
                 case EffectTarget.ADVERSARY:
                     bugemons.add(defender.getCurrentBugemon());
-                    handleEffect(defender.getCurrentBugemon(), e.getStat(), e.getModifier());
                     break;
                 case EffectTarget.THROWER:
                     bugemons.add(attacker.getCurrentBugemon());
-                    handleEffect(attacker.getCurrentBugemon(), e.getStat(), e.getModifier());
                     break;
                 case EffectTarget.TEAM:
-                    for (Bugemon bugemon : attacker.getTeam()) {
-                        bugemons.add(bugemon);
-                        handleEffect(bugemon, e.getStat(), e.getModifier());
-                    }
+                    bugemons.addAll(attacker.getTeam());
                     break;
                 default:
                     throw new IllegalArgumentException("Illegal effect target: " + target);
             }
 
-            // saving the effects
-            for (Bugemon bugemon : bugemons) {
-                int duration =
-                        0; // default value; if duration couldn't be extracted, the effect expires
-                // immediately
-                try {
-                    duration = e.extractDuration() - 1;
-                } catch (Exception exception) {
-                    // TODO: handle exception
-                    System.err.println(exception.getStackTrace());
-                }
-                ActiveEffect activeEffect = new ActiveEffect(e, duration);
-                this.effects.put(bugemon, activeEffect);
+            switch (e.getTypeEffect()) {
+                case STAT_MODIFIER:
+                    for (Bugemon bugemon : bugemons) {
+                        handleEffect(bugemon, e.getStat(), e.getModifier());
+
+                        int duration = 0;
+                        try {
+                            int extracted = e.extractDuration();
+                            duration = (extracted == -1) ? -1 : extracted - 1;
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
+                        }
+
+                        ActiveEffect activeEffect = new ActiveEffect(e, duration);
+                        this.effects.put(bugemon, activeEffect);
+                    }
+                    break;
+
+                case SOIN:
+                    for (Bugemon bugemon : bugemons) {
+                        handleHeal(bugemon, e.getValue());
+                    }
+                    break;
+
+                case RESET_MALUS:
+                    // TODO: implement reset malus logic
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Illegal effect type: " + e.getTypeEffect());
             }
+        }
+    }
+
+    /**
+     * Applies a healing effect to the specified {@link Bugemon} by calling
+     * {@link Bugemon#editStat(EffectStat, int)} with the provided value
+     * @param bugemon the {@link Bugemon} to heal; must not be {@code null}.
+     * @param value the amount of HP to restore; must be a positive integer. If {@code null} or
+     *         non-positive, the method does nothing. (Negative or zero values are not treated as
+     *         damage or debuffs; they are simply ignored for healing purposes.)
+     */
+    private void handleHeal(Bugemon bugemon, Integer value) {
+        if (value == null || value <= 0) {
+            return;
+        }
+        try {
+            bugemon.editStat(EffectStat.HP, value);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -205,11 +237,15 @@ public class EffectManager {
      *                buff, negative values debuff.
      */
     private void handleEffect(Bugemon bugemon, EffectStat stat, int value) {
+        if (stat == null) {
+            System.err.println("Effect stat is null, effect ignored.");
+            return;
+        }
+
         try {
             bugemon.editStat(stat, value);
         } catch (Exception e) {
-            // TODO: handle exception -> Logger ?
-            System.err.println(e.getStackTrace());
+            e.printStackTrace();
         }
     }
 }

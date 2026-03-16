@@ -12,7 +12,6 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.TurnResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
-import ulb.services.CombatService;
 import ulb.services.LevelUpService;
 import ulb.views.combat.CombatView;
 
@@ -154,7 +153,9 @@ public abstract class CombatController<View extends CombatView> extends Controll
         if (!attackResult.wasAttack())
             return;
         // TODO : Loi de Déméter
-        String message = attackResult.attacker().getCurrentBugemon().getName() + " à utilisé l'attaque " + attackResult.attack().orElseThrow().getName();
+        String message = attackResult.attacker().getCurrentBugemon().getName()
+                         + " à utilisé l'attaque "
+                         + attackResult.attack().orElseThrow().getName();
         String efficiency = formatEfficiency(attackResult.efficiency());
         view.showDialog(message, efficiency);
     }

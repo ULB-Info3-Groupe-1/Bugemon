@@ -3,8 +3,9 @@ package ulb.controllers.combat;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
-
 import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.controllers.MetaController;
@@ -19,7 +20,6 @@ import ulb.models.trainer.Trainer;
 import ulb.services.CombatService;
 import ulb.utils.Parser;
 import ulb.views.combat.ManualCombatView;
-import javafx.util.Duration;
 
 /**
  * Controller responsible for the manual combat screen, where the player
@@ -302,8 +302,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         view.hideSwitchPanel();
         view.showMainActionMenu();
 
-        displayAttackResult( result.first());
-        result.second().ifPresent(e -> displayAttackResult( result.second().orElseThrow()));
+        displayAttackResult(result.first());
+        result.second().ifPresent(e -> displayAttackResult(result.second().orElseThrow()));
 
         combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
@@ -327,7 +327,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @param attackResult the {@link TurnResult.AttackResult} to display;
      *                     must not be {@code null}.
      */
-    
 
     /**
      * Determines the type-matchup {@link ulb.common.Efficiency} of the given
