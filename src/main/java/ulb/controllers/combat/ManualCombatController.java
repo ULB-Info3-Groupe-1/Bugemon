@@ -2,9 +2,6 @@ package ulb.controllers.combat;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
