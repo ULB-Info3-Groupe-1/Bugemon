@@ -128,7 +128,9 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         if (!attackResult.wasAttack())
             return;
         // TODO : Loi de Déméter
-        String message = attackResult.attacker().getCurrentBugemon().getName() + " à utilisé l'attaque " + attackResult.attack().orElseThrow().getName();
+        String message = attackResult.attacker().getCurrentBugemon().getName()
+                         + " à utilisé l'attaque "
+                         + attackResult.attack().orElseThrow().getName();
         String efficiency = formatEfficiency(attackResult.efficiency());
         view.showDialog(message, efficiency);
     }
