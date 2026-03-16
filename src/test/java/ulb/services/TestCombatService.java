@@ -63,7 +63,7 @@ public class TestCombatService {
                                    .type(BugemonType.PYRO)
                                    .build();
 
-        double expectedDamage = attack.getPower() * ((100.0 + striker.getAttack()) / 100.0)
+        double expectedDamage = attack.power() * ((100.0 + striker.getAttack()) / 100.0)
                                 * (100.0 / (100.0 + defender.getDefense()))
                                 * CombatService.getEfficiencyFactor(attack, defender.getType());
 

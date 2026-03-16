@@ -150,12 +150,11 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
         if (attack != null) {
-            if (CombatService.compareBugemonType(attack.getType(), opponent.getCurrentBugemonType())
+            if (CombatService.compareBugemonType(attack.type(), opponent.getCurrentBugemonType())
                         .equals(Efficiency.HIGH)) {
                 this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
             } else if (CombatService
-                               .compareBugemonType(attack.getType(),
-                                                   opponent.getCurrentBugemonType())
+                               .compareBugemonType(attack.type(), opponent.getCurrentBugemonType())
                                .equals(Efficiency.LOW)) {
                 this.view.showDialog("Peu d'effet ...", null);
             } else {

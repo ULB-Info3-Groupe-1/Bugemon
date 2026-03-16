@@ -147,7 +147,7 @@ public class EffectManager {
      *                 must not be {@code null}.
      */
     public void applyEffect(Trainer attacker, Trainer defender, Attack attack) {
-        List<Effect> effects = attack.getEffects();
+        List<Effect> effects = attack.effects();
 
         for (Effect e : effects) {
             EffectTarget target = e.getTarget();

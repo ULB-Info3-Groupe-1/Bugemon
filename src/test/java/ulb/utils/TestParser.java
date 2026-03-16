@@ -35,19 +35,19 @@ public class TestParser {
         Attack fouetLiane = tempInstance.getAttacks()
                                     .values()
                                     .stream()
-                                    .filter(a -> "fouet_liane".equals(a.getId()))
+                                    .filter(a -> "fouet_liane".equals(a.id()))
                                     .findFirst()
                                     .orElseThrow();
-        assertEquals("fouet_liane", fouetLiane.getId());
+        assertEquals("fouet_liane", fouetLiane.id());
 
         // check effects
         Attack racinesVives = tempInstance.getAttacks()
                                       .values()
                                       .stream()
-                                      .filter(a -> "racines_vives".equals(a.getId()))
+                                      .filter(a -> "racines_vives".equals(a.id()))
                                       .findFirst()
                                       .orElseThrow();
-        List<Effect> effects = racinesVives.getEffects();
+        List<Effect> effects = racinesVives.effects();
         assertEquals(effects.get(0).getTypeEffect(), EffectType.STAT_MODIFIER);
         assertEquals(effects.get(0).getModifier(), 5);
         assertEquals(effects.get(0).getStat(), EffectStat.DEFENSE);
@@ -88,7 +88,7 @@ public class TestParser {
         List<Attack> verdurionAttackList = verdurion.getAttackList();
 
         for (Attack a : verdurionAttackList) {
-            assertEquals(a, tempInstance.getAttacks().get(a.getId()));
+            assertEquals(a, tempInstance.getAttacks().get(a.id()));
         }
 
         // check stats
@@ -121,7 +121,7 @@ public class TestParser {
         Map<String, Attack> attacksMap = parser.getAttacks();
         Attack fouetLiane = attacksMap.get("fouet_liane");
         assertNotNull(fouetLiane);
-        assertEquals("fouet_liane", fouetLiane.getId());
+        assertEquals("fouet_liane", fouetLiane.id());
 
         // check bugemons
         List<Bugemon> bugemons = parser.getBugemons();
