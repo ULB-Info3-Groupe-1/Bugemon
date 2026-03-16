@@ -150,11 +150,11 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
     }
 
-    protected void displayAttackResult(Trainer player, TurnResult.AttackResult attackResult) {
+    protected void displayAttackResult(TurnResult.AttackResult attackResult) {
         if (!attackResult.wasAttack())
             return;
         // TODO : Loi de Déméter
-        String message = player.getCurrentBugemon().getName() + " à utilisé l'attaque " + attackResult.attack().orElseThrow().getName();
+        String message = attackResult.attacker().getCurrentBugemon().getName() + " à utilisé l'attaque " + attackResult.attack().orElseThrow().getName();
         String efficiency = formatEfficiency(attackResult.efficiency());
         view.showDialog(message, efficiency);
     }
