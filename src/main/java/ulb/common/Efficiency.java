@@ -5,9 +5,20 @@ package ulb.common;
  */
 public enum Efficiency {
     /** Normal effectiveness — no bonus or penalty. */
-    NEUTRAL,
+    NEUTRAL("Neutre"),
     /** Reduced effectiveness — deals less damage. */
-    LOW,
+    LOW("Faible"),
     /** Super effectiveness — deals more damage. */
-    HIGH,
+    HIGH("Élevée");
+
+    private final String label;
+
+    Efficiency(String label) {
+        this.label = label;
+    }
+
+    @Override
+    public String toString() {
+        return this.label;
+    }
 }
