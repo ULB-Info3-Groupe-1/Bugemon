@@ -11,6 +11,7 @@ import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.views.combat.ManualCombatView;
+import javafx.util.Duration;
 
 /**
  * Controller for the manual combat screen.
