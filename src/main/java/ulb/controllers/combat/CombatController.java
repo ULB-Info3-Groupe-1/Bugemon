@@ -150,17 +150,21 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
     }
 
-    protected void displayAttackResult(TurnResult.AttackResult firstAttackResult, Optional<TurnResult.AttackResult> secondAttackResult) {
+    protected void displayAttackResult(TurnResult.AttackResult firstAttackResult,
+                                       Optional<TurnResult.AttackResult> secondAttackResult) {
         if (!firstAttackResult.wasAttack())
             return;
         // TODO : Loi de Déméter
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemon().getName() + " à utilisé l'attaque " + firstAttackResult.attack().orElseThrow().getName() + "\n";
-        String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency())+ "\n";
+        String message = "1- " + firstAttackResult.attacker().getCurrentBugemon().getName()
+                         + " à utilisé l'attaque "
+                         + firstAttackResult.attack().orElseThrow().getName() + "\n";
+        String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
 
         if (secondAttackResult.isPresent()) {
-            message += "2- " + secondAttackResult.get().attacker().getCurrentBugemon().getName() + " à utilisé l'attaque " + secondAttackResult.get().attack().orElseThrow().getName();
+            message += "2- " + secondAttackResult.get().attacker().getCurrentBugemon().getName()
+                       + " à utilisé l'attaque "
+                       + secondAttackResult.get().attack().orElseThrow().getName();
             efficiency += "2- " + formatEfficiency(secondAttackResult.get().efficiency());
-
         }
         view.showDialog(message, efficiency);
     }
