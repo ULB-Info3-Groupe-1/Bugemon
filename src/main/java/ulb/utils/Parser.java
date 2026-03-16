@@ -236,8 +236,7 @@ public class Parser {
 
         List<Attack> attacksList = gson.fromJson(attacksArray, destType);
 
-        attacks =
-                attacksList.stream().collect(Collectors.toMap(Attack::getId, Function.identity()));
+        attacks = attacksList.stream().collect(Collectors.toMap(Attack::id, Function.identity()));
     }
 
     /**

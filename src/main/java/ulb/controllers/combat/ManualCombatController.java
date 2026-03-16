@@ -351,6 +351,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      *         never {@code null}.
      */
     public Efficiency isAttackEfficient(Attack attack) {
-        return CombatService.compareBugemonType(attack.getType(), opponent.getCurrentBugemonType());
+        return CombatService.compareBugemonType(attack.type(), opponent.getCurrentBugemonType());
     }
 }

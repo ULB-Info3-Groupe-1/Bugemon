@@ -138,8 +138,8 @@ public class AttackActionMenu extends ActionMenuView {
 
         String efficiency = this.controller.isAttackEfficient(attack).toString();
 
-        button.setText(attack.getName() + "\n" + efficiency);
-        button.getStyleClass().add("attack-" + attack.getType().toString());
+        button.setText(attack.name() + "\n" + efficiency);
+        button.getStyleClass().add("attack-" + attack.type().toString());
         button.setOnAction(e -> this.controller.playerAttack(attack));
     }
 }

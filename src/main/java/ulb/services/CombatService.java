@@ -73,7 +73,7 @@ public class CombatService {
                                       final Bugemon defenderBugemon, final double criticFactor) {
         BugemonType defType = defenderBugemon.getType();
 
-        final int basePower = attack.getPower();
+        final int basePower = attack.power();
         final double atkFactor = (100.0 + offenderBugemon.getAttack()) / 100.0;
         final double defFactor = 100.0 / (defenderBugemon.getDefense() + 100.0);
         final double typeMultiplier = getEfficiencyFactor(attack, defType);
@@ -116,7 +116,7 @@ public class CombatService {
      *         or {@code 1.00} for {@link Efficiency#NEUTRAL}
      */
     public static double getEfficiencyFactor(final Attack attack, final BugemonType defenderType) {
-        final Efficiency matchup = compareBugemonType(attack.getType(), defenderType);
+        final Efficiency matchup = compareBugemonType(attack.type(), defenderType);
 
         if (matchup.equals(Efficiency.LOW)) {
             return 0.75;
