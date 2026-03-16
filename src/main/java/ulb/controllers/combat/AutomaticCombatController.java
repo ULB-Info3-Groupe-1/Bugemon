@@ -129,7 +129,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
                 timeline.stop();
                 handleCombatResult(winner, player);
             });
-            displayAttackResult(turnResult.first());
+            displayAttackResult(turnResult.first(), turnResult.second());
         });
 
         timeline.getKeyFrames().add(keyFrame);

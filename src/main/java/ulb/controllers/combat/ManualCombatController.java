@@ -299,8 +299,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         view.hideSwitchPanel();
         view.showMainActionMenu();
 
-        displayAttackResult(result.first());
-        result.second().ifPresent(e -> displayAttackResult(result.second().orElseThrow()));
+        displayAttackResult(result.first(), result.second());
 
         combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
