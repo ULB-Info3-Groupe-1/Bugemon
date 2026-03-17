@@ -89,5 +89,9 @@ public record TurnResult(AttackResult first, Optional<AttackResult> second, bool
         public boolean wasAttack() {
             return attack.isPresent();
         }
+
+        public String getAttackName() {
+            return attack.orElseThrow().getName();
+        }
     }
 }

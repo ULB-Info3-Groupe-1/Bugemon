@@ -11,6 +11,7 @@ import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.TurnResult;
+import ulb.models.combat.TurnResult.AttackResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
 import ulb.services.LevelUpService;
@@ -151,22 +152,22 @@ public abstract class CombatController<View extends CombatView> extends Controll
     }
 
     protected void displayAttackResult(TurnResult.AttackResult firstAttackResult,
-                                       Optional<TurnResult.AttackResult> secondAttackResult) {
+                                       Optional<TurnResult.AttackResult> secondAttackResult) { // TODO: bug du second attack result si le player meurt
         if (!firstAttackResult.wasAttack())
             return;
-        // TODO : Loi de Déméter
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemon().getName()
+        
+        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
                          + " à utilisé l'attaque "
-                         + firstAttackResult.attack().orElseThrow().getName() + "\n";
+                         + firstAttackResult.getAttackName() + "\n";
         String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
 
         if (secondAttackResult.isPresent()) {
-            message += "2- " + secondAttackResult.get().attacker().getCurrentBugemon().getName()
+            message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
                        + " à utilisé l'attaque "
-                       + secondAttackResult.get().attack().orElseThrow().getName();
-            efficiency += "2- " + formatEfficiency(secondAttackResult.get().efficiency());
+                       + secondAttackResult.orElseThrow().getAttackName();
+            efficiency += "2- " + formatEfficiency(secondAttackResult.orElseThrow().efficiency());
         }
-        view.showDialog(message, efficiency);
+        view.showDialog(message, efficiency); // TODO: Ajouter methode vue showMessageDIalogue qui appellera showDial
     }
 
     // ── efficiency helpers ────────────────────────────────────────────────────

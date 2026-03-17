@@ -121,7 +121,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
             TurnResult turnResult = combat.turn();
-
+            displayAttackResult(turnResult.first(), turnResult.second());
             view.updateTrainerBugemon(player.getCurrentBugemon());
             view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
@@ -129,7 +129,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
                 timeline.stop();
                 handleCombatResult(winner, player);
             });
-            displayAttackResult(turnResult.first(), turnResult.second());
+            
         });
 
         timeline.getKeyFrames().add(keyFrame);
