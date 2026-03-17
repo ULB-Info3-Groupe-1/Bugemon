@@ -18,9 +18,13 @@ import ulb.repository.dto.UserBugemonDTO;
 
 public class TestRepository {
     private static final String TEST_DB_URL =
-            "jdbc:postgresql://ep-odd-bar-alja82ho-pooler.c-3.eu-central-1.aws.neon.tech/"
-            + "bugemon?user=bugemon&password=npg_vbus4D2Yltdf&sslmode=require&channelBinding="
-            + "require";
+            "jdbc:postgresql://ep-odd-bar-alja82ho-pooler.c-3.eu-central-1.aws.neon.tech/bugemon"
+            + "?user=bugemon"
+            + "&password=npg_vbus4D2Yltdf"
+            + "&sslmode=require"
+            + "&channelBinding=require"
+            + "&loginTimeout=30"
+            + "&connectTimeout=30";
 
     private static DatabaseRepository repository;
 
@@ -59,7 +63,7 @@ public class TestRepository {
         String sqlBugemon =
                 "INSERT INTO bugemons (id, name, type, attack_1_id, attack_2_id, attack_3_id) "
                 + "VALUES (?, 'Template', 'NORMAL', 'test_atk', 'test_atk', 'test_atk') ON "
-                  + "CONFLICT DO NOTHING";
+                + "CONFLICT DO NOTHING";
 
         try (PreparedStatement ps = repository.getConnection().prepareStatement(sqlAttack)) {
             ps.executeUpdate();
