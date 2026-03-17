@@ -151,23 +151,11 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
     }
 
-    protected void displayAttackResult(TurnResult.AttackResult firstAttackResult,
-                                       Optional<TurnResult.AttackResult> secondAttackResult) { // TODO: bug du second attack result si le player meurt
+    protected void displayAttackResult(TurnResult.AttackResult firstAttackResult, Optional<TurnResult.AttackResult> secondAttackResult) { // TODO: bug du second attack result si le player meurt
         if (!firstAttackResult.wasAttack())
             return;
-        
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
-                         + " à utilisé l'attaque "
-                         + firstAttackResult.getAttackName() + "\n";
-        String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
+        view.showCombatDialog(firstAttackResult, secondAttackResult);
 
-        if (secondAttackResult.isPresent()) {
-            message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
-                       + " à utilisé l'attaque "
-                       + secondAttackResult.orElseThrow().getAttackName();
-            efficiency += "2- " + formatEfficiency(secondAttackResult.orElseThrow().efficiency());
-        }
-        view.showDialog(message, efficiency); // TODO: Ajouter methode vue showMessageDIalogue qui appellera showDial
     }
 
     // ── efficiency helpers ────────────────────────────────────────────────────

@@ -1,12 +1,15 @@
 package ulb.views.combat;
 
 import java.io.IOException;
+import java.util.Optional;
+
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-
+import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
+import ulb.models.combat.TurnResult;
 import ulb.views.BugemonTeamView;
 import ulb.views.DialogZoneView;
 import ulb.views.View;
@@ -141,6 +144,32 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
+    public void showCombatDialog(TurnResult.AttackResult firstAttackResult, Optional<TurnResult.AttackResult> secondAttackResult){
+        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
+                         + " à utilisé l'attaque "
+                         + firstAttackResult.getAttackName() + "\n";
+        String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
+
+        if (secondAttackResult.isPresent()) {
+            message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
+                       + " à utilisé l'attaque "
+                       + secondAttackResult.orElseThrow().getAttackName();
+            efficiency += "2- " + formatEfficiency(secondAttackResult.orElseThrow().efficiency());
+        }
+        showDialog(message, efficiency);
+    }
+
+    protected String formatEfficiency(Efficiency efficiency) {
+        switch (efficiency) {
+            case HIGH:
+                return "ATTAQUE EFFICACE: félicitation";
+            case LOW:
+                return "Peu d'effet ...";
+            case NEUTRAL:
+            default:
+                return "Dégats standards";
+        }
+    }
     /**
      * Hides the dialog zone, removing it from the layout flow so that it does
      * not occupy space when empty.
