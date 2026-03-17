@@ -2,38 +2,30 @@ package ulb.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-    private static DatabaseManager instance;
     private Connection connection;
 
     // TODO: Better configuration
-    private static String URL = "jdbc:postgresql://"
-                                + "ep-twilight-frog-alrfqjg7-pooler.c-3.eu-central-1.aws.neon.tech:"
-                                + "5432/bugemon?sslmode=require";
-    private static final String USER = "bugemon";
-    private static final String PASSWORD = "npg_vbus4D2Yltdf";
+    private static String URL =
+            "jdbc:postgresql://ep-twilight-frog-alrfqjg7-pooler.c-3.eu-central-1.aws.neon.tech/"
+            + "bugemon?user=bugemon&password=npg_vbus4D2Yltdf&sslmode=require&channelBinding="
+            + "require";
 
-    private DatabaseManager() {
+    public DatabaseManager() {
         try {
-            this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            this.connection = DriverManager.getConnection(URL);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to connect to database", e);
         }
     }
 
-    public static DatabaseManager getInstance() {
-        if (instance == null) {
-            instance = new DatabaseManager();
-        }
-        return instance;
-    }
-
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                connection = DriverManager.getConnection(URL);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to reconnect to database", e);
@@ -51,13 +43,21 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Helper method to prepare a SQL statement using the current database connection.
+     * @param sql The SQL query to prepare
+     * @return A PreparedStatement ready to be executed
+     * @throws SQLException if the preparation fails
+     */
+    public PreparedStatement prepareStatement(String sql) throws SQLException {
+        return getConnection().prepareStatement(sql);
+    }
+
     // --- METHOD NEEDED TO CONNECT TO THE TEST DATABASE BRANCH ---
 
-    public static void setTestMode(String testUrl) {
+    public void setTestMode(String testUrl) {
         URL = testUrl;
-        if (instance != null) {
-            instance.closeConnection();
-            instance = null; // Force reinitialization with the new URL
-        }
+        closeConnection();
+        getConnection();
     }
 }

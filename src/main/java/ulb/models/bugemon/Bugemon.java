@@ -37,6 +37,8 @@ import ulb.models.level_up.LevelUp;
  * @see Attack
  */
 public class Bugemon implements BugemonDTO, Cloneable {
+    public static final String BugemonType = null;
+
     /** Unique identifier of this bugemon. */
     String id;
 

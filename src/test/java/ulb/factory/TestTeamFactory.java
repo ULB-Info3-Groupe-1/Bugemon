@@ -5,13 +5,13 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.Parser;
+import ulb.repository.DatabaseRepository;
 
 public class TestTeamFactory {
     @Test
     public void testRandomTeamNumber() {
-        Parser.getInstance().parse();
-        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), 6);
+        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(
+                DatabaseRepository.getInstance().getAllDefaultBugemons(), 6);
         assertEquals(6, teamOfSix.size());
     }
 }
