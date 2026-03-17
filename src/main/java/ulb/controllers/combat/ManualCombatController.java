@@ -35,14 +35,14 @@ import ulb.views.combat.ManualCombatView;
  * <p>
  * Two distinct switch flows are managed:
  * <ul>
- *   <li><strong>Tactical switch</strong> — the player voluntarily swaps their
- *       active Bugemon as their turn action. The opponent still attacks this
- *       turn. Controlled by {@link #switchActionUsed} to prevent switching
- *       more than once per turn.</li>
- *   <li><strong>Forced switch (post-KO)</strong> — the player's active Bugemon
- *       fainted mid-turn and must be replaced before the next turn. No
- *       additional combat turn is consumed. Controlled by
- *       {@link #koSwitchFlag}.</li>
+ * <li><strong>Tactical switch</strong> — the player voluntarily swaps their
+ * active Bugemon as their turn action. The opponent still attacks this
+ * turn. Controlled by {@link #switchActionUsed} to prevent switching
+ * more than once per turn.</li>
+ * <li><strong>Forced switch (post-KO)</strong> — the player's active Bugemon
+ * fainted mid-turn and must be replaced before the next turn. No
+ * additional combat turn is consumed. Controlled by
+ * {@link #koSwitchFlag}.</li>
  * </ul>
  * <p>
  * Both flows converge on {@link #switchBugemon(String)}, which branches on
@@ -52,7 +52,8 @@ import ulb.views.combat.ManualCombatView;
  * <p>
  * Once the combat ends, the inherited
  * {@link CombatController#handleCombatResult(Trainer, Trainer)} method
- * navigates to either {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY}
+ * navigates to either
+ * {@link ulb.controllers.MetaController.Window#COMBAT_VICTORY}
  * or {@link ulb.controllers.MetaController.Window#COMBAT_DEFEAT} depending on
  * whether the player won.
  * </p>
@@ -140,7 +141,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Resets {@link #switchActionUsed} so the switch button becomes available
      * again after this attack turn. Queues an
      * {@link ulb.models.trainer.TurnAction.AttackAction} on the player, triggers
-     * {@link Combat#turn()}, then delegates to {@link #handleAfterTurn(TurnResult)}.
+     * {@link Combat#turn()}, then delegates to
+     * {@link #handleAfterTurn(TurnResult)}.
      * </p>
      *
      * @param attack the {@link Attack} selected by the player; must belong to
@@ -222,8 +224,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * </p>
      */
     public void showSwitchMenu() {
-        List<BugemonDTO> bugemonList =
-                player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO)b).toList();
+        List<BugemonDTO> bugemonList = player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO) b)
+                .toList();
         view.showSwitchMenu(bugemonList);
         view.hideAllActionMenus();
     }
@@ -255,10 +257,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * <p>
      * A voluntary switch is forbidden when:
      * <ul>
-     *   <li>A forced post-KO switch is pending ({@link #koSwitchFlag} is
-     *       {@code true}).</li>
-     *   <li>A tactical switch has already been used this turn
-     *       ({@link #switchActionUsed} is {@code true}).</li>
+     * <li>A forced post-KO switch is pending ({@link #koSwitchFlag} is
+     * {@code true}).</li>
+     * <li>A tactical switch has already been used this turn
+     * ({@link #switchActionUsed} is {@code true}).</li>
      * </ul>
      * <p>
      * This method is called by {@link ulb.views.combat.MainActionMenu} to
@@ -279,16 +281,17 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * attack effectiveness messages, checks for a winner, and opens the forced
      * switch menu if the player's active Bugemon was knocked out.
      *
-     * <p>The sequence of operations is:
+     * <p>
+     * The sequence of operations is:
      * <ol>
-     *   <li>Refresh both Bugemon info panels in the view.</li>
-     *   <li>Hide the switch panel and show the main action menu.</li>
-     *   <li>Display effectiveness dialogs for the first and (if present) second
-     *       hit of the turn.</li>
-     *   <li>If {@link Combat#getWinner()} is non-empty, delegate to
-     *       {@link CombatController#handleCombatResult(Trainer, Trainer)}.</li>
-     *   <li>If the combat is not finished but the player's active Bugemon
-     *       fainted, set {@link #koSwitchFlag} and open the switch menu.</li>
+     * <li>Refresh both Bugemon info panels in the view.</li>
+     * <li>Hide the switch panel and show the main action menu.</li>
+     * <li>Display effectiveness dialogs for the first and (if present) second
+     * hit of the turn.</li>
+     * <li>If {@link Combat#getWinner()} is non-empty, delegate to
+     * {@link CombatController#handleCombatResult(Trainer, Trainer)}.</li>
+     * <li>If the combat is not finished but the player's active Bugemon
+     * fainted, set {@link #koSwitchFlag} and open the switch menu.</li>
      * </ol>
      * </p>
      *
@@ -296,44 +299,73 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      *               must not be {@code null}.
      */
     private void handleAfterTurn(TurnResult result) {
-        boolean opponentAttacked =
-                (result.first().wasAttack() && result.first().attacker() == opponent)
-                || result.second()
-                         .map(r -> r.wasAttack() && r.attacker() == opponent)
-                         .orElse(false);
+        Runnable onAnimationFinished = () -> finalizeTurn(result);
+        if (didOpponentAttack(result)) {
+            view.playOpponentAttackAnimation(onAnimationFinished);
+            return;
+        }
+        onAnimationFinished.run();
+    }
 
-        Runnable finalize = () -> {
-            view.updateTrainerBugemon(player.getCurrentBugemon());
-            view.updateOpponentBugemon(opponent.getCurrentBugemon());
-            view.hideSwitchPanel();
-            view.showMainActionMenu();
+    /**
+     * Determines whether the opponent performed an attack in the given
+     * {@link TurnResult}.
+     * 
+     * @param result the {@link TurnResult} of the turn that just completed; must
+     *               not be {@code null}.
+     * @return {@code true} if the opponent performed at least one attack this turn,
+     *         {@code false} otherwise.
+     */
+    private boolean didOpponentAttack(TurnResult result) {
+        return (result.first().wasAttack() && result.first().attacker() == opponent)
+                || result.second().map(r -> r.wasAttack() && r.attacker() == opponent).orElse(false);
+    }
 
-            displayAttackResult(result.first(), result.second());
+    /**
+     * Finalises the turn by updating the view, displaying dialogs, checking for
+     * a winner, and opening the switch menu if needed.
+     * 
+     * @param result the {@link TurnResult} of the turn that just completed; must
+     *               not be {@code null}.
+     */
+    private void finalizeTurn(TurnResult result) {
+        view.updateTrainerBugemon(player.getCurrentBugemon());
+        view.updateOpponentBugemon(opponent.getCurrentBugemon());
+        view.hideSwitchPanel();
+        view.showMainActionMenu();
 
-            combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
+        displayTurnDialog(result);
 
-            if (!combat.isFinished() && result.allyIsKo()) {
-                koSwitchFlag = true;
-                showSwitchMenu();
-            }
-        };
+        combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
-        if (opponentAttacked) {
-            view.playOpponentAttackAnimation(finalize);
-        } else {
-            finalize.run();
+        if (!combat.isFinished() && result.allyIsKo()) {
+            koSwitchFlag = true;
+            showSwitchMenu();
         }
     }
 
     /**
-     * Displays an effectiveness dialog for a single {@link TurnResult.AttackResult}.
+     * Displays the combat dialog(s) for the given {@code result}.
+     * 
+     * @param result the {@link TurnResult} of the turn that just completed; must
+     *               not be {@code null}.
+     */
+    private void displayTurnDialog(TurnResult result) {
+        displayAttackResult(result.first());
+        result.second().ifPresent(this::displayAttackResult);
+    }
+
+    /**
+     * Displays an effectiveness dialog for a single
+     * {@link TurnResult.AttackResult}.
      *
      * <p>
      * Does nothing if the result does not represent an actual attack (i.e.
      * {@link TurnResult.AttackResult#wasAttack()} returns {@code false}).
      * Otherwise, formats the type-matchup message via
      * {@link CombatController#formatEfficiency(ulb.common.Efficiency)}
-     * and passes it to {@link ulb.views.combat.CombatView#showDialog(String, String)}.
+     * and passes it to
+     * {@link ulb.views.combat.CombatView#showDialog(String, String)}.
      * </p>
      *
      * @param attackResult the {@link TurnResult.AttackResult} to display;

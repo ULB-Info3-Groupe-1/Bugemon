@@ -43,6 +43,9 @@ import ulb.views.View;
  * @see ManualCombatView
  */
 public abstract class CombatView extends View {
+    private static final double ATTACK_LUNGE_DISTANCE = 100;
+    private static final Duration ATTACK_LUNGE_DURATION = Duration.millis(150);
+
     // ── FXML-injected components ──────────────────────────────────────────────
 
     /**
@@ -238,7 +241,7 @@ public abstract class CombatView extends View {
      *                   not be {@code null}.
      */
     public void playTrainerAttackAnimation(Runnable onFinished) {
-        playLungeAnimation(bugemonTrainerImage, 100, onFinished);
+        playLungeAnimation(bugemonTrainerImage, ATTACK_LUNGE_DISTANCE, onFinished);
     }
 
     /**
@@ -249,7 +252,22 @@ public abstract class CombatView extends View {
      *                   not be {@code null}.
      */
     public void playOpponentAttackAnimation(Runnable onFinished) {
-        playLungeAnimation(bugemonOpponentImage, -100, onFinished);
+        playLungeAnimation(bugemonOpponentImage, -ATTACK_LUNGE_DISTANCE, onFinished);
+    }
+
+    /**
+     * Plays the attack animation for one side.
+     *
+     * @param trainerAttacks {@code true} to animate the trainer sprite,
+     *                       {@code false} to animate the opponent sprite.
+     * @param onFinished callback executed once the animation completes.
+     */
+    public void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
+        if (trainerAttacks) {
+            playTrainerAttackAnimation(onFinished);
+        } else {
+            playOpponentAttackAnimation(onFinished);
+        }
     }
 
     /**
@@ -261,9 +279,9 @@ public abstract class CombatView extends View {
      * @param onFinished callback executed once the animation completes.
      */
     private void playLungeAnimation(ImageView sprite, double deltaX, Runnable onFinished) {
-        TranslateTransition lunge = new TranslateTransition(Duration.millis(150), sprite);
+        TranslateTransition lunge = new TranslateTransition(ATTACK_LUNGE_DURATION, sprite);
         lunge.setByX(deltaX);
-        TranslateTransition retreat = new TranslateTransition(Duration.millis(150), sprite);
+        TranslateTransition retreat = new TranslateTransition(ATTACK_LUNGE_DURATION, sprite);
         retreat.setByX(-deltaX);
         SequentialTransition seq = new SequentialTransition(lunge, retreat);
         seq.setOnFinished(e -> onFinished.run());

@@ -35,7 +35,8 @@ import ulb.views.combat.AutomaticCombatView;
  * </p>
  *
  * <p>
- * Once {@link Combat#getWinner()} returns a non-empty {@link java.util.Optional},
+ * Once {@link Combat#getWinner()} returns a non-empty
+ * {@link java.util.Optional},
  * the timeline is stopped and the inherited
  * {@link CombatController#handleCombatResult(ulb.models.trainer.Trainer,
  * ulb.models.trainer.Trainer)} method navigates to either
@@ -84,26 +85,26 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * <p>
      * The method performs the following steps:
      * <ol>
-     *   <li>Builds the opponent's team by randomly sampling from the pool of all
-     *       available Bugemons (same size as the player's team) via
-     *       {@link ulb.factory.TeamFactory#createRandomTeam(java.util.List, int)}.</li>
-     *   <li>Creates a {@link Combat} between the player and the opponent.</li>
-     *   <li>Initialises the view with the starting state via
-     *       {@link #updateCombatView(ulb.models.trainer.Trainer,
-     *       ulb.models.trainer.AutoTrainer, ulb.models.bugemon.Attack)}.</li>
-     *   <li>Schedules a {@link KeyFrame} that fires every 3 seconds:
-     *     <ul>
-     *       <li>Calls {@link Combat#turn()} and retrieves the
-     *           {@link TurnResult}.</li>
-     *       <li>Refreshes both Bugemon panels in the view.</li>
-     *       <li>Displays the efficiency dialog for the first hit of the turn
-     *           if an attack occurred.</li>
-     *       <li>If {@link Combat#getWinner()} is now present, stops the
-     *           timeline and delegates to
-     *           {@link #handleCombatResult(ulb.models.trainer.Trainer,
-     *           ulb.models.trainer.Trainer)}.</li>
-     *     </ul>
-     *   </li>
+     * <li>Builds the opponent's team by randomly sampling from the pool of all
+     * available Bugemons (same size as the player's team) via
+     * {@link ulb.factory.TeamFactory#createRandomTeam(java.util.List, int)}.</li>
+     * <li>Creates a {@link Combat} between the player and the opponent.</li>
+     * <li>Initialises the view with the starting state via
+     * {@link #updateCombatView(ulb.models.trainer.Trainer,
+     * ulb.models.trainer.AutoTrainer, ulb.models.bugemon.Attack)}.</li>
+     * <li>Schedules a {@link KeyFrame} that fires every 3 seconds:
+     * <ul>
+     * <li>Calls {@link Combat#turn()} and retrieves the
+     * {@link TurnResult}.</li>
+     * <li>Refreshes both Bugemon panels in the view.</li>
+     * <li>Displays the efficiency dialog for the first hit of the turn
+     * if an attack occurred.</li>
+     * <li>If {@link Combat#getWinner()} is now present, stops the
+     * timeline and delegates to
+     * {@link #handleCombatResult(ulb.models.trainer.Trainer,
+     * ulb.models.trainer.Trainer)}.</li>
+     * </ul>
+     * </li>
      * </ol>
      *
      * @param player the {@link AutoTrainer} representing the player's side;
@@ -121,17 +122,8 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
             TurnResult turnResult = combat.turn();
-
-            playTurnAnimations(turnResult, player, opponent, () -> {
-                view.updateTrainerBugemon(player.getCurrentBugemon());
-                view.updateOpponentBugemon(opponent.getCurrentBugemon());
-                displayAttackResult(turnResult.first(), turnResult.second());
-
-                combat.getWinner().ifPresent(winner -> {
-                    timeline.stop();
-                    handleCombatResult(winner, player);
-                });
-            });
+            animateTurn(turnResult, player, opponent,
+                    () -> finalizeTurn(combat, timeline, player, opponent));
         });
 
         timeline.getKeyFrames().add(keyFrame);
@@ -142,47 +134,100 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     /**
      * Plays attack animations in turn order, then updates the combat dialog and
      * invokes {@code onFinished}.
+     * 
+     * @param turnResult the {@link TurnResult} of the turn that just completed;
+     *                   must not be {@code null}.
+     * @param player     the player's {@link AutoTrainer}; must not be {@code null}.
+     * @param opponent   the opponent's {@link AutoTrainer}; must not be
+     *                   {@code null}.
+     * @param onFinished callback executed once all animations complete; must not
+     *                   be {@code null}.
      */
-    private void playTurnAnimations(TurnResult turnResult, AutoTrainer player, AutoTrainer opponent,
-                                    Runnable onFinished) {
-        Runnable finishTurn = () -> {
-            if (turnResult.second().isPresent() && turnResult.second().get().wasAttack()) {
-                view.showDialog(formatEfficiency(turnResult.second().get()), null);
-            } else if (turnResult.first().wasAttack()) {
-                view.showDialog(formatEfficiency(turnResult.first()), null);
-            } else {
-                view.hideDialog();
-            }
+    private void animateTurn(TurnResult turnResult, AutoTrainer player, AutoTrainer opponent,
+            Runnable onFinished) {
+        Runnable afterAnimations = () -> {
+            showTurnDialog(turnResult);
             onFinished.run();
         };
 
-        Runnable playSecond = () -> turnResult.second().ifPresentOrElse(second -> {
-            if (!second.wasAttack()) {
-                finishTurn.run();
-                return;
-            }
+        Runnable animateSecondAction = () -> turnResult.second().ifPresentOrElse(
+                second -> animateAttackResult(second, player, opponent, afterAnimations),
+                afterAnimations);
 
-            if (second.attacker() == player) {
-                view.playTrainerAttackAnimation(finishTurn);
-            } else if (second.attacker() == opponent) {
-                view.playOpponentAttackAnimation(finishTurn);
-            } else {
-                finishTurn.run();
-            }
-        }, finishTurn);
+        animateAttackResult(turnResult.first(), player, opponent, animateSecondAction);
+    }
 
-        TurnResult.AttackResult first = turnResult.first();
-        if (!first.wasAttack()) {
-            playSecond.run();
+    /**
+     * Animates the attack in {@code attackResult} if present, then invokes
+     * {@code onFinished}.
+     * 
+     * @param attackResult the {@link TurnResult.AttackResult} to animate; must not
+     *                     be {@code null}.
+     * @param player       the player's {@link AutoTrainer}; must not be
+     *                     {@code null}.
+     * @param opponent     the opponent's {@link AutoTrainer}; must not be
+     *                     {@code null}.
+     * @param onFinished   callback executed once the animation completes; must not
+     *                     be {@code null}.
+     */
+    private void animateAttackResult(TurnResult.AttackResult attackResult, AutoTrainer player,
+            AutoTrainer opponent, Runnable onFinished) {
+        if (!attackResult.wasAttack()) {
+            onFinished.run();
             return;
         }
 
-        if (first.attacker() == player) {
-            view.playTrainerAttackAnimation(playSecond);
-        } else if (first.attacker() == opponent) {
-            view.playOpponentAttackAnimation(playSecond);
-        } else {
-            playSecond.run();
+        if (attackResult.attacker() == player) {
+            view.playAttackAnimation(true, onFinished);
+            return;
         }
+
+        if (attackResult.attacker() == opponent) {
+            view.playAttackAnimation(false, onFinished);
+            return;
+        }
+
+        onFinished.run();
+    }
+
+    /**
+     * Displays the combat dialog for the given {@code turnResult}.
+     * 
+     * @param turnResult the {@link TurnResult} of the turn that just completed;
+     *                   must not be {@code null}.
+     */
+    private void showTurnDialog(TurnResult turnResult) {
+        if (turnResult.second().isPresent() && turnResult.second().get().wasAttack()) {
+            view.showDialog(formatEfficiency(turnResult.second().get()), null);
+            return;
+        }
+
+        if (turnResult.first().wasAttack()) {
+            view.showDialog(formatEfficiency(turnResult.first()), null);
+            return;
+        }
+
+        view.hideDialog();
+    }
+
+    /**
+     * Formats the efficiency message for an attack result.
+     * 
+     * @param combat   the {@link TurnResult.AttackResult} to format; must not be
+     *                 {@code null} and must represent an attack.
+     * @param timeline the {@link Timeline} driving the combat; must not be
+     *                 {@code null}.
+     * @param player   the player's {@link AutoTrainer}; must not be {@code null}.
+     * @param opponent the opponent's {@link AutoTrainer}; must not be {@code null}.
+     */
+    private void finalizeTurn(Combat combat, Timeline timeline, AutoTrainer player,
+            AutoTrainer opponent) {
+        view.updateTrainerBugemon(player.getCurrentBugemon());
+        view.updateOpponentBugemon(opponent.getCurrentBugemon());
+
+        combat.getWinner().ifPresent(winner -> {
+            timeline.stop();
+            handleCombatResult(winner, player);
+        });
     }
 }
