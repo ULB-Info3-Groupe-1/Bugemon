@@ -1,13 +1,6 @@
 package ulb.repository;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
 import static org.junit.Assert.*;
-
-import ulb.repository.dto.TeamDTO;
-import ulb.repository.dto.TeamMemberDTO;
-import ulb.repository.dto.UserBugemonDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,9 +9,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class TestRepository {
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Test;
 
-    private static final String TEST_DB_URL = "jdbc:postgresql://ep-odd-bar-alja82ho-pooler.c-3.eu-central-1.aws.neon.tech/bugemon?sslmode=require&channel_binding=require";
+import ulb.repository.dto.TeamDTO;
+import ulb.repository.dto.TeamMemberDTO;
+import ulb.repository.dto.UserBugemonDTO;
+
+public class TestRepository {
+    private static final String TEST_DB_URL =
+            "jdbc:postgresql://ep-odd-bar-alja82ho-pooler.c-3.eu-central-1.aws.neon.tech/"
+            + "bugemon?sslmode=require&channel_binding=require";
     private DatabaseRepository repository;
     private String uniqueId;
 
@@ -33,7 +35,9 @@ public class TestRepository {
                     Assume.assumeTrue("Database is not connected, tests skipped", false);
                 }
             } catch (Exception e) {
-                Assume.assumeNoException("Database is not connected or you have an issue with your configuration, tests skipped", e);
+                Assume.assumeNoException("Database is not connected or you have an issue with your "
+                                         + "configuration, tests skipped",
+                                         e);
             }
 
             repository = new DatabaseRepository();
@@ -41,11 +45,12 @@ public class TestRepository {
             try {
                 repository.createSchema();
             } catch (Exception e) {
-                // We ignore any exception here, as the schema might already exist or there might be an issue with the connection
+                // We ignore any exception here, as the schema might already exist or there might be
+                // an issue with the connection
             }
 
             repository.clearDatabase();
-            
+
         } catch (Exception e) {
             Assume.assumeNoException("Database setup failed", e);
         }
@@ -62,21 +67,22 @@ public class TestRepository {
         try (Connection conn = DatabaseManager.getInstance().getConnection()) {
             // Creation of a dummy attack linked to the bugemon (if not already exists)
             try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO attacks (id, name, type, power) VALUES (?, 'Tackle', 'NORMAL', 10) ON CONFLICT DO NOTHING"
-            )) {
+                         "INSERT INTO attacks (id, name, type, power) VALUES (?, 'Tackle', "
+                         + "'NORMAL', 10) ON CONFLICT DO NOTHING")) {
                 ps.setString(1, "atk_" + bugemonId);
                 ps.executeUpdate();
             }
             // Creation of a dummy bugemon (if not already exists)
             try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO bugemons (id, name, base_max_hp, attack_1_id) VALUES (?, 'Testmon', 100, ?) ON CONFLICT DO NOTHING"
-            )) {
+                         "INSERT INTO bugemons (id, name, base_max_hp, attack_1_id) VALUES (?, "
+                         + "'Testmon', 100, ?) ON CONFLICT DO NOTHING")) {
                 ps.setString(1, bugemonId);
                 ps.setString(2, "atk_" + bugemonId);
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
-            System.err.println("Avertissement: Impossible d'injecter la dépendance factice : " + e.getMessage());
+            System.err.println("Avertissement: Impossible d'injecter la dépendance factice : "
+                               + e.getMessage());
         }
     }
 
@@ -89,7 +95,8 @@ public class TestRepository {
 
         Optional<Integer> retrievedId = repository.getUserIdByUsername(username);
         assertTrue("L'utilisateur devrait être trouvé dans la BD", retrievedId.isPresent());
-        assertEquals("L'ID récupéré doit correspondre à celui créé", userId, retrievedId.get().intValue());
+        assertEquals("L'ID récupéré doit correspondre à celui créé", userId,
+                     retrievedId.get().intValue());
     }
 
     @Test
@@ -103,12 +110,10 @@ public class TestRepository {
         String username = "Trainer_" + uniqueId;
         int userId = repository.createUser(username);
         String bugemonId = "bug_" + uniqueId;
-        
+
         ensureDependenciesExist(bugemonId);
 
-        UserBugemonDTO dto = new UserBugemonDTO(
-            userId, bugemonId, 10, 20, 15, 100, 50, 5
-        );
+        UserBugemonDTO dto = new UserBugemonDTO(userId, bugemonId, 10, 20, 15, 100, 50, 5);
         repository.saveUserBugemon(dto);
 
         List<UserBugemonDTO> bugemons = repository.getUserBugemons(userId);
@@ -134,15 +139,11 @@ public class TestRepository {
         ensureDependenciesExist(bugemonId);
 
         // Initial save
-        UserBugemonDTO initial = new UserBugemonDTO(
-            userId, bugemonId, 10, 10, 10, 50, 0, 1
-        );
+        UserBugemonDTO initial = new UserBugemonDTO(userId, bugemonId, 10, 10, 10, 50, 0, 1);
         repository.saveUserBugemon(initial);
 
         // Modification
-        UserBugemonDTO updated = new UserBugemonDTO(
-            userId, bugemonId, 15, 25, 20, 80, 100, 3
-        );
+        UserBugemonDTO updated = new UserBugemonDTO(userId, bugemonId, 15, 25, 20, 80, 100, 3);
         repository.updateUserBugemon(updated);
 
         // Verification
@@ -170,10 +171,10 @@ public class TestRepository {
 
         List<TeamDTO> teams = repository.getUserTeams(userId);
         assertEquals("Il devrait y avoir deux équipes", 2, teams.size());
-        
+
         boolean foundTeam1 = teams.stream().anyMatch(t -> t.name().equals(team1));
         boolean foundTeam2 = teams.stream().anyMatch(t -> t.name().equals(team2));
-        
+
         assertTrue("L'équipe Alpha doit être trouvée", foundTeam1);
         assertTrue("L'équipe Beta doit être trouvée", foundTeam2);
     }
@@ -228,11 +229,8 @@ public class TestRepository {
         repository.addTeamMember(new TeamMemberDTO(userId, teamName, bugemonId, 1));
 
         repository.removeTeamMember(userId, teamName, bugemonId);
-        
+
         List<TeamMemberDTO> members = repository.getTeamMembers(userId, teamName);
         assertTrue("La liste des membres devrait être vide après suppression", members.isEmpty());
     }
 }
-
-
-
