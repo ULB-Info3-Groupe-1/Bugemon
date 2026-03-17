@@ -299,12 +299,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         view.hideSwitchPanel();
         view.showMainActionMenu();
 
-<<<<<<< HEAD
         displayAttackResult(result.first(), result.second());
-=======
-        displayAttackResult(this.player, result.first());
-        result.second().ifPresent(e -> displayAttackResult(this.opponent, result.second().orElseThrow()));
->>>>>>> 37a8b02 (feat(CombatMessages): Refactor of the combatMessage and fixed displaying names in messages)
 
         combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
@@ -328,10 +323,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @param attackResult the {@link TurnResult.AttackResult} to display;
      *                     must not be {@code null}.
      */
-<<<<<<< HEAD
-=======
-    
->>>>>>> 37a8b02 (feat(CombatMessages): Refactor of the combatMessage and fixed displaying names in messages)
 
     /**
      * Determines the type-matchup {@link ulb.common.Efficiency} of the given

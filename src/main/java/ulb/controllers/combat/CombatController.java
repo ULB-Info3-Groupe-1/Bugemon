@@ -151,7 +151,6 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
     }
 
-
     protected void displayAttackResult(
             TurnResult.AttackResult firstAttackResult,
             Optional<TurnResult.AttackResult>
