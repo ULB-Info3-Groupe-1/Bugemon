@@ -67,5 +67,5 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public void startManualCombat() {
         this.player.setActiveTeam(this.selectedTeam);
         this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
-    }
+        }
 }

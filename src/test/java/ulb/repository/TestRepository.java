@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,39 +19,30 @@ import ulb.repository.dto.UserBugemonDTO;
 public class TestRepository {
     private static final String TEST_DB_URL =
             "jdbc:postgresql://ep-odd-bar-alja82ho-pooler.c-3.eu-central-1.aws.neon.tech/"
-            + "bugemon?sslmode=require&channel_binding=require";
-    private DatabaseRepository repository;
+            + "bugemon?user=bugemon&password=npg_vbus4D2Yltdf&sslmode=require&channelBinding="
+            + "require";
+
+    private static DatabaseRepository repository;
+
     private String uniqueId;
 
     @Before
     public void setUp() {
-        // Test if the database is accessible if not ignore the tests
         try {
-            DatabaseManager.setTestMode(TEST_DB_URL);
-            try {
-                Connection conn = DatabaseManager.getInstance().getConnection();
-                if (conn == null || conn.isClosed()) {
-                    Assume.assumeTrue("Database is not connected, tests skipped", false);
-                }
-            } catch (Exception e) {
-                Assume.assumeNoException("Database is not connected or you have an issue with your "
-                                         + "configuration, tests skipped",
-                                         e);
+            repository = DatabaseRepository.getInstance();
+            repository.activateTestMode(TEST_DB_URL);
+
+            Connection conn = repository.getConnection();
+            if (conn == null || conn.isClosed()) {
+                fail("La connexion à la base de données de test a échoué.");
             }
 
-            repository = new DatabaseRepository();
-
-            try {
-                repository.createSchema();
-            } catch (Exception e) {
-                // We ignore any exception here, as the schema might already exist or there might be
-                // an issue with the connection
-            }
-
+            repository.createSchema();
             repository.clearDatabase();
 
         } catch (Exception e) {
-            Assume.assumeNoException("Database setup failed", e);
+            e.printStackTrace();
+            fail("Le setup de la base de données a échoué : " + e.getMessage());
         }
 
         // Unique ID to avoid collisions (UNIQUE constraint violation)
@@ -64,25 +54,24 @@ public class TestRepository {
      * in order to respect the Foreign Key "bugemon_id" in "user_bugemons".
      */
     private void ensureDependenciesExist(String bugemonId) {
-        try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-            // Creation of a dummy attack linked to the bugemon (if not already exists)
-            try (PreparedStatement ps = conn.prepareStatement(
-                         "INSERT INTO attacks (id, name, type, power) VALUES (?, 'Tackle', "
-                         + "'NORMAL', 10) ON CONFLICT DO NOTHING")) {
-                ps.setString(1, "atk_" + bugemonId);
-                ps.executeUpdate();
-            }
-            // Creation of a dummy bugemon (if not already exists)
-            try (PreparedStatement ps = conn.prepareStatement(
-                         "INSERT INTO bugemons (id, name, base_max_hp, attack_1_id) VALUES (?, "
-                         + "'Testmon', 100, ?) ON CONFLICT DO NOTHING")) {
-                ps.setString(1, bugemonId);
-                ps.setString(2, "atk_" + bugemonId);
-                ps.executeUpdate();
-            }
+        String sqlAttack = "INSERT INTO attacks (id, name, type, power) VALUES ('test_atk', "
+                           + "'Coup', 'NORMAL', 10) ON CONFLICT DO NOTHING";
+        String sqlBugemon =
+                "INSERT INTO bugemons (id, name, type, attack_1_id, attack_2_id, attack_3_id) "
+                + "VALUES (?, 'Template', 'NORMAL', 'test_atk', 'test_atk', 'test_atk') ON "
+                  + "CONFLICT DO NOTHING";
+
+        try (PreparedStatement ps = repository.getConnection().prepareStatement(sqlAttack)) {
+            ps.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Avertissement: Impossible d'injecter la dépendance factice : "
-                               + e.getMessage());
+            throw new RuntimeException("Setup failed", e);
+        }
+
+        try (PreparedStatement ps = repository.getConnection().prepareStatement(sqlBugemon)) {
+            ps.setString(1, bugemonId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Setup failed", e);
         }
     }
 

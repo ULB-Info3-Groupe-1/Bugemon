@@ -25,14 +25,14 @@ import ulb.models.bugemon.effect.EffectType;
 public class TestParser {
     @Test
     public void testAttackParsing() {
-        Parser tempInstance = Parser.getInstance();
-        tempInstance.parse();
+        Parser parser = new Parser();
+        parser.parse();
 
         // check if a list has been returned
-        assertNotNull(tempInstance.getAttacks());
+        assertNotNull(parser.getAttacks());
 
         // check if the attacks were parsed correctly
-        Attack fouetLiane = tempInstance.getAttacks()
+        Attack fouetLiane = parser.getAttacks()
                                     .values()
                                     .stream()
                                     .filter(a -> "fouet_liane".equals(a.id()))
@@ -41,7 +41,7 @@ public class TestParser {
         assertEquals("fouet_liane", fouetLiane.id());
 
         // check effects
-        Attack racinesVives = tempInstance.getAttacks()
+        Attack racinesVives = parser.getAttacks()
                                       .values()
                                       .stream()
                                       .filter(a -> "racines_vives".equals(a.id()))
@@ -55,21 +55,21 @@ public class TestParser {
 
     @Test
     public void testBugemonParsing() {
-        Parser tempInstance = Parser.getInstance();
-        tempInstance.parse();
+        Parser parser = new Parser();
+        parser.parse();
 
         // check if a list has been returned
-        assertNotNull(tempInstance.getBugemons());
+        assertNotNull(parser.getBugemons());
 
         // check attributes
-        Bugemon florachu = tempInstance.getBugemons()
+        Bugemon florachu = parser.getBugemons()
                                    .stream()
                                    .filter(b -> "Florachu".equals(b.getName()))
                                    .findFirst()
                                    .orElseThrow();
         assertEquals(florachu.getName(), "Florachu");
 
-        Bugemon moussil = tempInstance.getBugemons()
+        Bugemon moussil = parser.getBugemons()
                                   .stream()
                                   .filter(b -> "Moussil".equals(b.getName()))
                                   .findFirst()
@@ -80,7 +80,7 @@ public class TestParser {
         assertEquals(florachu.getSpriteURL(), "png/florachu.png");
 
         // check attacks
-        Bugemon verdurion = tempInstance.getBugemons()
+        Bugemon verdurion = parser.getBugemons()
                                     .stream()
                                     .filter(b -> "Verdurion".equals(b.getName()))
                                     .findFirst()
@@ -88,11 +88,11 @@ public class TestParser {
         List<Attack> verdurionAttackList = verdurion.getAttackList();
 
         for (Attack a : verdurionAttackList) {
-            assertEquals(a, tempInstance.getAttacks().get(a.id()));
+            assertEquals(a, parser.getAttacks().get(a.id()));
         }
 
         // check stats
-        Bugemon loopine = tempInstance.getBugemons()
+        Bugemon loopine = parser.getBugemons()
                                   .stream()
                                   .filter(b -> "Loopine".equals(b.getName()))
                                   .findFirst()
@@ -114,7 +114,7 @@ public class TestParser {
         assertNotNull(bugemonsStream);
         assertNotNull(objectsStream);
 
-        Parser parser = Parser.getInstance();
+        Parser parser = new Parser();
         parser.parse();
 
         // check attacks

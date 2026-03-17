@@ -75,28 +75,6 @@ public class Parser {
     private static List<GameObject> objects;
     private static Inventory inventory;
 
-    // Singleton instance of the Parser class
-    private static Parser instance;
-
-    /**
-     * Private constructor to prevent instantiation of the Parser class, enforcing the singleton
-     * pattern.
-     */
-    private Parser() {}
-
-    /**
-     * Returns the singleton instance of the Parser class, creating it if it does not already exist.
-     * This method is thread-safe to ensure that only one instance of the Parser is created even in
-     * a multi-threaded environment.
-     * @return the singleton instance of the Parser class
-     */
-    public static synchronized Parser getInstance() {
-        if (instance == null) {
-            instance = new Parser();
-        }
-        return instance;
-    }
-
     /**
      * Parses the three bundled JSON resource files (attacks, Bugemons,
      * objects/inventory) and populates the static data fields.
@@ -118,7 +96,7 @@ public class Parser {
                 throw new IOException("JSON files not found in resources: ");
             }
         } catch (IOException e) {
-            // TODO: handle callback
+            System.err.println("Error loading JSON files: " + e.getMessage());
             return;
         }
 
