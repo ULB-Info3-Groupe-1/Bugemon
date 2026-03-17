@@ -2,11 +2,11 @@ package ulb.views.combat;
 
 import java.io.IOException;
 import java.util.Optional;
-
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.combat.TurnResult;
@@ -144,10 +144,10 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
-    public void showCombatDialog(TurnResult.AttackResult firstAttackResult, Optional<TurnResult.AttackResult> secondAttackResult){
+    public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
+                                 Optional<TurnResult.AttackResult> secondAttackResult) {
         String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
-                         + " à utilisé l'attaque "
-                         + firstAttackResult.getAttackName() + "\n";
+                         + " à utilisé l'attaque " + firstAttackResult.getAttackName() + "\n";
         String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
 
         if (secondAttackResult.isPresent()) {

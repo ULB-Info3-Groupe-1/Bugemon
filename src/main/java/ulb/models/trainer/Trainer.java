@@ -166,7 +166,6 @@ public abstract class Trainer {
         return currentBugemon.getAttackList();
     }
 
-    
     public String getCurrentBugemonName() {
         return currentBugemon.getName();
     }

@@ -151,11 +151,13 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
     }
 
-    protected void displayAttackResult(TurnResult.AttackResult firstAttackResult, Optional<TurnResult.AttackResult> secondAttackResult) { // TODO: bug du second attack result si le player meurt
+    protected void displayAttackResult(
+            TurnResult.AttackResult firstAttackResult,
+            Optional<TurnResult.AttackResult>
+                    secondAttackResult) { // TODO: bug du second attack result si le player meurt
         if (!firstAttackResult.wasAttack())
             return;
         view.showCombatDialog(firstAttackResult, secondAttackResult);
-
     }
 
     // ── efficiency helpers ────────────────────────────────────────────────────
