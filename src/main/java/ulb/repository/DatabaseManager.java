@@ -5,13 +5,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-
     private static DatabaseManager instance;
     private Connection connection;
 
     // TODO: Better configuration
-    private static String URL      = "jdbc:postgresql://ep-twilight-frog-alrfqjg7-pooler.c-3.eu-central-1.aws.neon.tech:5432/bugemon?sslmode=require";
-    private static final String USER     = "bugemon";
+    private static String URL = "jdbc:postgresql://"
+                                + "ep-twilight-frog-alrfqjg7-pooler.c-3.eu-central-1.aws.neon.tech:"
+                                + "5432/bugemon?sslmode=require";
+    private static final String USER = "bugemon";
     private static final String PASSWORD = "npg_vbus4D2Yltdf";
 
     private DatabaseManager() {
@@ -50,7 +51,7 @@ public class DatabaseManager {
         }
     }
 
-// --- METHOD NEEDED TO CONNECT TO THE TEST DATABASE BRANCH ---
+    // --- METHOD NEEDED TO CONNECT TO THE TEST DATABASE BRANCH ---
 
     public static void setTestMode(String testUrl) {
         URL = testUrl;

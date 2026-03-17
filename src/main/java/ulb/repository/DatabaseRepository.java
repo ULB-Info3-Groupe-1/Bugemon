@@ -1,9 +1,5 @@
 package ulb.repository;
 
-import ulb.repository.dto.UserBugemonDTO;
-import ulb.repository.dto.TeamDTO;
-import ulb.repository.dto.TeamMemberDTO;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,20 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class DatabaseRepository {
+import ulb.repository.dto.TeamDTO;
+import ulb.repository.dto.TeamMemberDTO;
+import ulb.repository.dto.UserBugemonDTO;
 
+public class DatabaseRepository {
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
     public DatabaseRepository() {
         // Load all SQL queries from files
-        String[] sqlFiles = {
-            "/sql/00_delete_tables.sql",
-            "/sql/01_create_schema.sql",
-            "/sql/02_queries_users.sql",
-            "/sql/03_queries_user_bugemons.sql",
-            "/sql/04_queries_teams.sql"
-        };
+        String[] sqlFiles = {"/sql/00_delete_tables.sql", "/sql/01_create_schema.sql",
+                             "/sql/02_queries_users.sql", "/sql/03_queries_user_bugemons.sql",
+                             "/sql/04_queries_teams.sql"};
         for (String file : sqlFiles) {
             loadQueriesFromFile(file);
         }
@@ -39,7 +34,8 @@ public class DatabaseRepository {
             if (is == null) {
                 throw new RuntimeException("SQL file not found: " + filePath);
             }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String line;
             String currentQueryName = null;
             StringBuilder currentSql = new StringBuilder();
@@ -49,23 +45,21 @@ public class DatabaseRepository {
                 if (line.startsWith("-- Query")) {
                     if (currentQueryName != null && !currentSql.isEmpty()) {
                         queries.put(currentQueryName, currentSql.toString().trim());
-                        currentSql.setLength(0); // On vide le buffer
+                        currentSql.setLength(0); // We reset the StringBuilder for the next query
                     }
                     currentQueryName = null;
                 } else if (currentQueryName == null && line.startsWith("-- ")) {
                     currentQueryName = line.substring(3).trim();
                 } else if (currentQueryName != null) {
                     currentSql.append(line).append("\n");
-                } else {
-                    // Ignorer les lignes qui ne font pas partie d'une requête
                 }
             }
-            // Ne pas oublier d'enregistrer la toute dernière requête du fichier
+            // Don't forget to save the last query after the loop
             if (currentQueryName != null && !currentSql.isEmpty()) {
                 queries.put(currentQueryName, currentSql.toString().trim());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors du chargement des requêtes depuis " + filePath, e);
+            throw new RuntimeException("Error loading queries from " + filePath, e);
         }
     }
 
@@ -73,11 +67,11 @@ public class DatabaseRepository {
         return DatabaseManager.getInstance().getConnection();
     }
 
-    // 
+    //
     private String getSql(String queryName) {
         String sql = queries.get(queryName);
         if (sql == null) {
-            throw new IllegalArgumentException("Requête SQL introuvable dans la Map : " + queryName);
+            throw new IllegalArgumentException("SQL query not found in Map : " + queryName);
         }
         return sql;
     }
@@ -97,7 +91,8 @@ public class DatabaseRepository {
         try (PreparedStatement ps = getConn().prepareStatement(getSql("CreateUser"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt("id");
+            if (rs.next())
+                return rs.getInt("id");
         } catch (SQLException e) {
             throw new RuntimeException("createUser failed", e);
         }
@@ -108,7 +103,8 @@ public class DatabaseRepository {
         try (PreparedStatement ps = getConn().prepareStatement(getSql("GetUserByUsername"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return Optional.of(rs.getInt("id"));
+            if (rs.next())
+                return Optional.of(rs.getInt("id"));
         } catch (SQLException e) {
             throw new RuntimeException("getUserIdByUsername failed", e);
         }
@@ -156,15 +152,10 @@ public class DatabaseRepository {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(new UserBugemonDTO(
-                    rs.getInt("user_id"),
-                    rs.getString("bugemon_id"),
-                    rs.getInt("current_defense"),
-                    rs.getInt("current_attack_power"),
-                    rs.getInt("current_initiative"),
-                    rs.getInt("current_max_hp"),
-                    rs.getInt("current_xp"),
-                    rs.getInt("current_level")
-                ));
+                        rs.getInt("user_id"), rs.getString("bugemon_id"),
+                        rs.getInt("current_defense"), rs.getInt("current_attack_power"),
+                        rs.getInt("current_initiative"), rs.getInt("current_max_hp"),
+                        rs.getInt("current_xp"), rs.getInt("current_level")));
             }
         } catch (SQLException e) {
             throw new RuntimeException("getUserBugemons failed", e);
@@ -240,12 +231,9 @@ public class DatabaseRepository {
             ps.setString(2, teamName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                result.add(new TeamMemberDTO(
-                    rs.getInt("user_id"),
-                    rs.getString("team_name"),
-                    rs.getString("bugemon_id"),
-                    rs.getInt("slot_position")
-                ));
+                result.add(new TeamMemberDTO(rs.getInt("user_id"), rs.getString("team_name"),
+                                             rs.getString("bugemon_id"),
+                                             rs.getInt("slot_position")));
             }
         } catch (SQLException e) {
             throw new RuntimeException("getTeamMembers failed", e);
@@ -256,9 +244,10 @@ public class DatabaseRepository {
     // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
 
     /**
-     * Clear the database by deleting all entries from all tables. This is useful for ensuring a clean state before each test.
-     * Note: this method doesn't drop the tables, it just deletes the data. The SQL for this is located in 00_delete_tables.sql 
-     * and is executed at the beginning of the test suite.
+     * Clear the database by deleting all entries from all tables. This is useful for ensuring a
+     * clean state before each test. Note: this method doesn't drop the tables, it just deletes the
+     * data. The SQL for this is located in 00_delete_tables.sql and is executed at the beginning of
+     * the test suite.
      */
     public void clearDatabase() {
         try (PreparedStatement ps = getConn().prepareStatement(getSql("ClearDatabase"))) {
