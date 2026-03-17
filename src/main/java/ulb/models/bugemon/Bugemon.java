@@ -14,6 +14,7 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;
@@ -214,16 +215,16 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     public void editStat(EffectStat stat, int value) {
         switch (stat) {
-            case EffectStat.HP:
+            case HP:
                 this.state.hp = this.state.hp + value;
                 break;
-            case EffectStat.ATTACK:
+            case ATTACK:
                 this.state.attack = this.state.attack + value;
                 break;
-            case EffectStat.DEFENSE:
+            case DEFENSE:
                 this.state.defense = this.state.defense + value;
                 break;
-            case EffectStat.INITIATIVE:
+            case INITIATIVE:
                 this.state.initiative = this.state.initiative + value;
                 break;
             default:

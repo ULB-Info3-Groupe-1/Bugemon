@@ -1,11 +1,14 @@
 package ulb.views.combat;
 
 import java.io.IOException;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
@@ -215,5 +218,43 @@ public abstract class CombatView extends View {
     public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));
+    }
+
+    // ── Attack animations ─────────────────────────────────────────────────────
+
+    /**
+     * Plays a lunge animation on the player's sprite (slide toward the opponent
+     * then return), then invokes {@code onFinished} on the JavaFX thread.
+     *
+     * @param onFinished callback executed once the animation completes; must
+     *                   not be {@code null}.
+     */
+    public void playTrainerAttackAnimation(Runnable onFinished) {
+        playLungeAnimation(bugemonTrainerImage, 100, onFinished);
+    }
+
+    /**
+     * Plays a lunge animation on the opponent's sprite (slide toward the player
+     * then return), then invokes {@code onFinished} on the JavaFX thread.
+     *
+     * @param onFinished callback executed once the animation completes; must
+     *                   not be {@code null}.
+     */
+    public void playOpponentAttackAnimation(Runnable onFinished) {
+        playLungeAnimation(bugemonOpponentImage, -100, onFinished);
+    }
+
+    /**
+     * Slides {@code sprite} by {@code deltaX} pixels over 150 ms then returns
+     * it to its original position over another 150 ms.
+     */
+    private void playLungeAnimation(ImageView sprite, double deltaX, Runnable onFinished) {
+        TranslateTransition lunge = new TranslateTransition(Duration.millis(150), sprite);
+        lunge.setByX(deltaX);
+        TranslateTransition retreat = new TranslateTransition(Duration.millis(150), sprite);
+        retreat.setByX(-deltaX);
+        SequentialTransition seq = new SequentialTransition(lunge, retreat);
+        seq.setOnFinished(e -> onFinished.run());
+        seq.play();
     }
 }

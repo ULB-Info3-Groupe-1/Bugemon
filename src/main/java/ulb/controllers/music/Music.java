@@ -9,5 +9,4 @@ import java.net.URL;
  * @param ambiance
  */
 public record Music(URL url, Ambiance ambiance) {
-    public static enum Ambiance { COMBAT }
 }

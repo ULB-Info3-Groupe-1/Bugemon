@@ -12,8 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
   <dependencies>
@@ -70,6 +69,8 @@
   </dependencies>
 
   <build>
+    <outputDirectory>${project.build.directory}/maven-classes</outputDirectory>
+    <testOutputDirectory>${project.build.directory}/maven-test-classes</testOutputDirectory>
     <plugins>
       <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
       <plugin>

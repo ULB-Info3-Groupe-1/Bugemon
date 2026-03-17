@@ -149,8 +149,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void playerAttack(Attack attack) {
         switchActionUsed = false;
         player.registerAttack(attack);
-        TurnResult turnResult = combat.turn();
-        handleAfterTurn(turnResult);
+        view.playTrainerAttackAnimation(() -> {
+            TurnResult turnResult = combat.turn();
+            handleAfterTurn(turnResult);
+        });
     }
 
     /**
@@ -294,18 +296,32 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      *               must not be {@code null}.
      */
     private void handleAfterTurn(TurnResult result) {
-        view.updateTrainerBugemon(player.getCurrentBugemon());
-        view.updateOpponentBugemon(opponent.getCurrentBugemon());
-        view.hideSwitchPanel();
-        view.showMainActionMenu();
+        boolean opponentAttacked =
+                (result.first().wasAttack() && result.first().attacker() == opponent)
+                || result.second()
+                         .map(r -> r.wasAttack() && r.attacker() == opponent)
+                         .orElse(false);
 
-        displayAttackResult(result.first(), result.second());
+        Runnable finalize = () -> {
+            view.updateTrainerBugemon(player.getCurrentBugemon());
+            view.updateOpponentBugemon(opponent.getCurrentBugemon());
+            view.hideSwitchPanel();
+            view.showMainActionMenu();
 
-        combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
+            displayAttackResult(result.first(), result.second());
 
-        if (!combat.isFinished() && result.allyIsKo()) {
-            koSwitchFlag = true;
-            showSwitchMenu();
+            combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
+
+            if (!combat.isFinished() && result.allyIsKo()) {
+                koSwitchFlag = true;
+                showSwitchMenu();
+            }
+        };
+
+        if (opponentAttacked) {
+            view.playOpponentAttackAnimation(finalize);
+        } else {
+            finalize.run();
         }
     }
 

@@ -121,18 +121,68 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
             TurnResult turnResult = combat.turn();
-            displayAttackResult(turnResult.first(), turnResult.second());
-            view.updateTrainerBugemon(player.getCurrentBugemon());
-            view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
-            combat.getWinner().ifPresent(winner -> {
-                timeline.stop();
-                handleCombatResult(winner, player);
+            playTurnAnimations(turnResult, player, opponent, () -> {
+                view.updateTrainerBugemon(player.getCurrentBugemon());
+                view.updateOpponentBugemon(opponent.getCurrentBugemon());
+                displayAttackResult(turnResult.first(), turnResult.second());
+
+                combat.getWinner().ifPresent(winner -> {
+                    timeline.stop();
+                    handleCombatResult(winner, player);
+                });
             });
         });
 
         timeline.getKeyFrames().add(keyFrame);
         timeline.setDelay(Duration.seconds(1));
         timeline.play();
+    }
+
+    /**
+     * Plays attack animations in turn order, then updates the combat dialog and
+     * invokes {@code onFinished}.
+     */
+    private void playTurnAnimations(TurnResult turnResult, AutoTrainer player, AutoTrainer opponent,
+                                    Runnable onFinished) {
+        Runnable finishTurn = () -> {
+            if (turnResult.second().isPresent() && turnResult.second().get().wasAttack()) {
+                view.showDialog(formatEfficiency(turnResult.second().get()), null);
+            } else if (turnResult.first().wasAttack()) {
+                view.showDialog(formatEfficiency(turnResult.first()), null);
+            } else {
+                view.hideDialog();
+            }
+            onFinished.run();
+        };
+
+        Runnable playSecond = () -> turnResult.second().ifPresentOrElse(second -> {
+            if (!second.wasAttack()) {
+                finishTurn.run();
+                return;
+            }
+
+            if (second.attacker() == player) {
+                view.playTrainerAttackAnimation(finishTurn);
+            } else if (second.attacker() == opponent) {
+                view.playOpponentAttackAnimation(finishTurn);
+            } else {
+                finishTurn.run();
+            }
+        }, finishTurn);
+
+        TurnResult.AttackResult first = turnResult.first();
+        if (!first.wasAttack()) {
+            playSecond.run();
+            return;
+        }
+
+        if (first.attacker() == player) {
+            view.playTrainerAttackAnimation(playSecond);
+        } else if (first.attacker() == opponent) {
+            view.playOpponentAttackAnimation(playSecond);
+        } else {
+            playSecond.run();
+        }
     }
 }

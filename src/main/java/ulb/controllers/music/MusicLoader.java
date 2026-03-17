@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import ulb.controllers.music.Music.Ambiance;
+import ulb.controllers.music.Ambiance;
 
 /**
  * MusicLoarder
