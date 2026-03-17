@@ -91,7 +91,7 @@ public record TurnResult(AttackResult first, Optional<AttackResult> second, bool
         }
 
         public String getAttackName() {
-            return attack.orElseThrow().getName();
+            return attack.orElseThrow().name();
         }
     }
 }
