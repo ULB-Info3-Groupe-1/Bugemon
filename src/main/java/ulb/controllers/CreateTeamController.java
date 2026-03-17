@@ -101,7 +101,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.bugemonTeam.removeBugemon(id);
         } else if (this.bugemonTeam.isFull()) {
             this.view.showAlert("Équipe pleine",
-                                "Votre équipe est déjà plaine. Veuillez en retirer un avant "
+                                "Votre équipe est déjà pleine. Veuillez en retirer un avant "
                                         + "d'en ajouter un nouveau.");
         } else {
             Parser.getInstance()

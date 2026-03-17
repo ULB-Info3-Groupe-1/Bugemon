@@ -9,6 +9,8 @@
 
 package ulb.models.bugemon.effect;
 
+import java.util.Locale;
+
 import com.google.gson.annotations.SerializedName;
 
 import ulb.models.bugemon.ActiveEffect;
@@ -54,7 +56,9 @@ public class Effect {
 
     @SerializedName("modificateur") private int modifier;
 
-    private String duration;
+    @SerializedName("duree") private String duration;
+
+    @SerializedName("valeur") private Integer value;
 
     // Constructor
 
@@ -165,6 +169,24 @@ public class Effect {
     }
 
     /**
+     * Get the healing value of the effect (used by SOIN effects).
+     *
+     * @return (Integer) the healing value, or null if not applicable.
+     */
+    public Integer getValue() {
+        return value;
+    }
+
+    /**
+     * Set the healing value of the effect.
+     *
+     * @param value (Integer) the new healing value.
+     */
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    /**
      * Parses and returns the numeric part of the duration string.
      *
      * <p>
@@ -180,11 +202,21 @@ public class Effect {
      *         parsed as an integer.
      */
     public int extractDuration() {
-        if (this.duration == null || !this.duration.contains("_")) {
-            throw new IllegalArgumentException("Format invalide");
+        if (this.duration == null) {
+            throw new IllegalArgumentException("Duration is null");
         }
 
-        String numberPart = this.duration.split("_")[0];
+        String normalized = this.duration.trim().toLowerCase(Locale.ROOT);
+
+        if ("permanent".equals(normalized)) {
+            return -1; // infinite duration
+        }
+
+        if (!normalized.contains("_")) {
+            throw new IllegalArgumentException("Invalid duration format: " + this.duration);
+        }
+
+        String numberPart = normalized.split("_", 2)[0];
         return Integer.parseInt(numberPart);
     }
 

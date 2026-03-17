@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.common.Efficiency;
 import ulb.controllers.Controller;
@@ -10,9 +11,9 @@ import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.TurnResult;
+import ulb.models.combat.TurnResult.AttackResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
-import ulb.services.CombatService;
 import ulb.services.LevelUpService;
 import ulb.views.combat.CombatView;
 
@@ -148,19 +149,15 @@ public abstract class CombatController<View extends CombatView> extends Controll
         this.view.hideDialog();
         this.view.updateTrainerBugemon(player.getCurrentBugemon());
         this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
+    }
 
-        if (attack != null) {
-            if (CombatService.compareBugemonType(attack.type(), opponent.getCurrentBugemonType())
-                        .equals(Efficiency.HIGH)) {
-                this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
-            } else if (CombatService
-                               .compareBugemonType(attack.type(), opponent.getCurrentBugemonType())
-                               .equals(Efficiency.LOW)) {
-                this.view.showDialog("Peu d'effet ...", null);
-            } else {
-                this.view.showDialog("Dégats standards", null);
-            }
-        }
+    protected void displayAttackResult(
+            TurnResult.AttackResult firstAttackResult,
+            Optional<TurnResult.AttackResult>
+                    secondAttackResult) { // TODO: bug du second attack result si le player meurt
+        if (!firstAttackResult.wasAttack())
+            return;
+        view.showCombatDialog(firstAttackResult, secondAttackResult);
     }
 
     // ── efficiency helpers ────────────────────────────────────────────────────

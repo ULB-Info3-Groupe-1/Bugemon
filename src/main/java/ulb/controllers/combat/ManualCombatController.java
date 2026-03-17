@@ -127,7 +127,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.opponent = new AutoTrainer(TeamFactory.createRandomTeam(
                 Parser.getInstance().getBugemons(), player.getTeamSize()));
         this.combat = new Combat(player, opponent);
-        this.view.showScreenDebutCombat();
+        this.view.showScreenCombatOpening();
         updateCombatView(player, opponent, null);
     }
 
@@ -299,8 +299,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         view.hideSwitchPanel();
         view.showMainActionMenu();
 
-        displayAttackResult(result.first());
-        result.second().ifPresent(this::displayAttackResult);
+        displayAttackResult(result.first(), result.second());
 
         combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
@@ -324,12 +323,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @param attackResult the {@link TurnResult.AttackResult} to display;
      *                     must not be {@code null}.
      */
-    private void displayAttackResult(TurnResult.AttackResult attackResult) {
-        if (!attackResult.wasAttack())
-            return;
-        String message = formatEfficiency(attackResult.efficiency());
-        view.showDialog(message, null);
-    }
 
     /**
      * Determines the type-matchup {@link ulb.common.Efficiency} of the given
