@@ -10,9 +10,9 @@ public class DatabaseManager {
     private Connection connection;
 
     // TODO: Better configuration
-    private static final String URL      = "jdbc:postgresql://localhost:5432/bugemon";
-    private static final String USER     = "postgres";
-    private static final String PASSWORD = "password";
+    private static String URL      = "jdbc:postgresql://ep-twilight-frog-alrfqjg7-pooler.c-3.eu-central-1.aws.neon.tech:5432/bugemon?sslmode=require";
+    private static final String USER     = "bugemon";
+    private static final String PASSWORD = "npg_vbus4D2Yltdf";
 
     private DatabaseManager() {
         try {
@@ -47,6 +47,16 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to close connection", e);
+        }
+    }
+
+// --- METHOD NEEDED TO CONNECT TO THE TEST DATABASE BRANCH ---
+
+    public static void setTestMode(String testUrl) {
+        URL = testUrl;
+        if (instance != null) {
+            instance.closeConnection();
+            instance = null; // Force reinitialization with the new URL
         }
     }
 }
