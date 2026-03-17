@@ -67,6 +67,9 @@ public class Combat {
     /** The current turn number, starting at {@code 0}. */
     private int turn = 0;
 
+    /** The result of the most recently resolved turn, or {@code null} before the first turn. */
+    private TurnResult lastTurnResult;
+
     // ── constructor ───────────────────────────────────────────────────────────
 
     /**
@@ -124,7 +127,8 @@ public class Combat {
         TurnAction adversaryAction = adversaryTrainer.getAction();
 
         if (checkForForfeit(allyAction, adversaryAction)) {
-            return emptyResult();
+            this.lastTurnResult = emptyResult();
+            return this.lastTurnResult;
         }
 
         applyPassiveAction(allyTrainer, allyAction);
@@ -134,7 +138,8 @@ public class Combat {
         Optional<Attack> adversaryAttack = extractAttack(adversaryAction);
 
         turn++;
-        return resolveAttacks(allyAttack, adversaryAttack);
+        this.lastTurnResult = resolveAttacks(allyAttack, adversaryAttack);
+        return this.lastTurnResult;
     }
 
     /**
@@ -193,6 +198,15 @@ public class Combat {
      */
     public Trainer getAdversaryTrainer() {
         return adversaryTrainer;
+    }
+
+    /**
+     * Returns the result of the most recently resolved turn.
+     *
+     * @return the last {@link TurnResult}, or {@code null} if no turn has been played yet.
+     */
+    public TurnResult getLastTurnResult() {
+        return lastTurnResult;
     }
 
     /**

@@ -49,7 +49,7 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      */
     public CombatVictoryController(MetaController metaController) throws IOException {
         super(metaController, new CombatVictoryView());
-        this.view.setController(this);
+        this.view.setOnContinue(this::cont);
     }
 
     /**

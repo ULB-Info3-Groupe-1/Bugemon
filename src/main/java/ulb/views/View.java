@@ -16,6 +16,16 @@ import javafx.stage.Stage;
  * Loads an FXML layout and manages its associated scene.
  */
 public abstract class View {
+    /**
+     * Reads the current state from the model and updates every UI component.
+     *
+     * <p>
+     * Called by the controller after any model mutation. The view is responsible
+     * for pulling all data it needs directly from the model references it holds.
+     * The controller never pushes data into the view.
+     * </p>
+     */
+    public abstract void refresh();
     protected final Pane root;
     protected final Scene scene;
 

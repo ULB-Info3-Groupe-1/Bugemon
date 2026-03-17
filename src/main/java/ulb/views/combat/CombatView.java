@@ -200,25 +200,12 @@ public abstract class CombatView extends View {
      * @param trainerBugemon a {@link BugemonDTO} snapshot of the player's
      *                       currently active Bugemon; must not be {@code null}.
      */
-    public void updateTrainerBugemon(BugemonDTO trainerBugemon) {
+    protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL()));
     }
 
-    /**
-     * Updates the opponent-side info panel and sprite to reflect the given
-     * Bugemon's current state (name, type, HP).
-     *
-     * <p>
-     * Should be called by the controller at the start of a combat session and
-     * after every turn in which the opponent's active Bugemon may have changed
-     * or taken damage.
-     * </p>
-     *
-     * @param opponentBugemon a {@link BugemonDTO} snapshot of the opponent's
-     *                        currently active Bugemon; must not be {@code null}.
-     */
-    public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
+    protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));
     }

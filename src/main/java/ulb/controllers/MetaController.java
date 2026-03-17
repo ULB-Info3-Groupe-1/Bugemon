@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Ambiance;
-import ulb.controllers.music.Music;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.bugemon_team.BugemonTeam;

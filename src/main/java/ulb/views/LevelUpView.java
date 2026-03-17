@@ -2,6 +2,7 @@ package ulb.views;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,13 +11,18 @@ import javafx.scene.image.ImageView;
 
 import ulb.common.dto.BugemonDTO;
 import ulb.common.dto.LevelUpDTO;
-import ulb.controllers.LevelUpController;
 import ulb.models.level_up.Choice;
+import ulb.models.level_up.LevelUpSession;
 
 /**
- * LevelUpView
+ * View for the level-up screen.
  *
- * View for the level up screen.
+ * <p>
+ * Holds a reference to a {@link LevelUpSession} and reads the current level-up
+ * event directly from it in {@link #refresh()}. Dispatches the player's choice
+ * through the callback registered via {@link #setOnChooseOption(Consumer)}.
+ * Holds no reference to any concrete controller class.
+ * </p>
  */
 public class LevelUpView extends View {
     @FXML private Label levelUpText;
@@ -25,43 +31,39 @@ public class LevelUpView extends View {
     @FXML private Button choice3Button;
     @FXML private ImageView bugemonImage;
 
-    private LevelUpController controller;
+    private LevelUpSession session;
+    private Consumer<Integer> onChooseOption;
 
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
-        this.controller = null;
-
-        this.choice1Button.setOnAction((e) -> this.controller.chooseOption(0));
-        this.choice2Button.setOnAction((e) -> this.controller.chooseOption(1));
-        this.choice3Button.setOnAction((e) -> this.controller.chooseOption(2));
+        this.choice1Button.setOnAction(e -> { if (onChooseOption != null) onChooseOption.accept(0); });
+        this.choice2Button.setOnAction(e -> { if (onChooseOption != null) onChooseOption.accept(1); });
+        this.choice3Button.setOnAction(e -> { if (onChooseOption != null) onChooseOption.accept(2); });
     }
 
-    public void setLevelUp(LevelUpDTO levelUp) {
+    /** Gives the view a reference to the level-up session model it should read from. */
+    public void setSession(LevelUpSession session) {
+        this.session = session;
+    }
+
+    public void setOnChooseOption(Consumer<Integer> callback) {
+        this.onChooseOption = callback;
+    }
+
+    @Override
+    public void refresh() {
+        if (session == null || !session.isStarted()) return;
+
+        LevelUpDTO levelUp = session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
-        Image sprite = new Image(bugemon.getSpriteURL());
-
-        StringBuilder texte = new StringBuilder();
-        texte.append(bugemon.getName());
-        texte.append(" vient juste de passer au niveau ");
-        texte.append(bugemon.getLevel());
-        texte.append(" !");
-
-        levelUpText.setText(texte.toString());
-        bugemonImage.setImage(sprite);
+        bugemonImage.setImage(new Image(bugemon.getSpriteURL()));
+        levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
+                + bugemon.getLevel() + " !");
 
         List<Choice> choices = levelUp.getChoices();
-        this.choice1Button.setText(choices.get(0).toString());
-        this.choice2Button.setText(choices.get(1).toString());
-        this.choice3Button.setText(choices.get(2).toString());
-    }
-
-    /**
-     * Binds Level up view to its controller.
-     *
-     * @param controller controller handling level up
-     */
-    public void setController(LevelUpController controller) {
-        this.controller = controller;
+        choice1Button.setText(choices.get(0).toString());
+        choice2Button.setText(choices.get(1).toString());
+        choice3Button.setText(choices.get(2).toString());
     }
 }

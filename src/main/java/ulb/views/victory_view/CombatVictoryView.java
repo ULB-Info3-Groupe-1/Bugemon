@@ -4,36 +4,33 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.controllers.CombatVictoryController;
 import ulb.views.View;
 
 /**
- * CombatVictoryView
- *
  * View for the combat victory screen.
+ *
+ * <p>
+ * Dispatches user interactions through the callback registered via
+ * {@link #setOnContinue(Runnable)}. Holds no reference to any concrete
+ * controller class.
+ * </p>
  */
 public class CombatVictoryView extends View {
-    private CombatVictoryController controller;
     @FXML private Button continueButton;
 
-    /**
-     * Loads the combat victory FXML layout and initializes UI bindings.
-     *
-     * @throws IOException if the FXML file cannot be loaded
-     */
+    private Runnable onContinue;
+
     public CombatVictoryView() throws IOException {
         super("/fxml/CombatVictory.fxml");
-        this.controller = null;
-
-        this.continueButton.setOnAction((e) -> this.controller.cont());
+        this.continueButton.setOnAction(e -> { if (onContinue != null) onContinue.run(); });
     }
 
-    /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling combat victory screen
-     */
-    public void setController(CombatVictoryController controller) {
-        this.controller = controller;
+    public void setOnContinue(Runnable callback) {
+        this.onContinue = callback;
+    }
+
+    @Override
+    public void refresh() {
+        // No dynamic data to display on the victory screen.
     }
 }

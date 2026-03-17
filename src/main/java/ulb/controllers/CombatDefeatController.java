@@ -49,7 +49,8 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      */
     public CombatDefeatController(MetaController metaController) throws IOException {
         super(metaController, new CombatDefeatView());
-        this.view.setController(this);
+        this.view.setOnRetry(this::retry);
+        this.view.setOnBackToMainMenu(this::backToMainMenu);
     }
 
     /**

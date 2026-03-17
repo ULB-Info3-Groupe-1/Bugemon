@@ -4,37 +4,39 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.controllers.MainMenuController;
-
 /**
- * MainMenuView
- *
  * View for the main menu screen.
+ *
+ * <p>
+ * Dispatches user interactions to the controller exclusively through
+ * callbacks registered via {@link #setOnCreateTeam(Runnable)} and
+ * {@link #setOnQuit(Runnable)}. The view holds no reference to any
+ * concrete controller class.
+ * </p>
  */
 public class MainMenuView extends View {
-    private MainMenuController controller;
     @FXML private Button createTeamButton;
     @FXML private Button quitButton;
 
-    /**
-     * Loads the main menu FXML layout and initializes button actions.
-     *
-     * @throws IOException if the FXML file cannot be loaded
-     */
+    private Runnable onCreateTeam;
+    private Runnable onQuit;
+
     public MainMenuView() throws IOException {
         super("/fxml/MainMenu.fxml");
-        this.controller = null;
-
-        this.createTeamButton.setOnAction((e) -> this.controller.createTeam());
-        this.quitButton.setOnAction((e) -> this.controller.quit());
+        this.createTeamButton.setOnAction(e -> { if (onCreateTeam != null) onCreateTeam.run(); });
+        this.quitButton.setOnAction(e -> { if (onQuit != null) onQuit.run(); });
     }
 
-    /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling main menu events
-     */
-    public void setController(MainMenuController controller) {
-        this.controller = controller;
+    public void setOnCreateTeam(Runnable callback) {
+        this.onCreateTeam = callback;
+    }
+
+    public void setOnQuit(Runnable callback) {
+        this.onQuit = callback;
+    }
+
+    @Override
+    public void refresh() {
+        // No dynamic data to display on the main menu.
     }
 }

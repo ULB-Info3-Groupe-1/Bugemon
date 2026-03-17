@@ -10,7 +10,6 @@
 package ulb.models.trainer;
 
 import java.util.Optional;
-
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -43,8 +42,12 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see TurnAction
  */
 public class ManualTrainer extends Trainer {
+
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
+
+    private boolean forcedSwitch = false;
+    private boolean switchedThisTurn = false;
 
     /**
      * Constructs a {@code ManualTrainer} with the given team.
@@ -79,13 +82,15 @@ public class ManualTrainer extends Trainer {
     @Override
     public TurnAction getAction() {
         return pendingAction
-                .map(a -> {
-                    pendingAction = Optional.empty();
-                    return a;
-                })
-                .orElseThrow(()
-                                     -> new IllegalStateException(
-                                             "No action has been selected for this turn."));
+            .map(a -> {
+                pendingAction = Optional.empty();
+                return a;
+            })
+            .orElseThrow(() ->
+                new IllegalStateException(
+                    "No action has been selected for this turn."
+                )
+            );
     }
 
     /**
@@ -126,7 +131,9 @@ public class ManualTrainer extends Trainer {
      */
     public void switchAfterKO(Bugemon target) {
         if (!target.isAlive()) {
-            throw new IllegalArgumentException("The target bugemon is not alive.");
+            throw new IllegalArgumentException(
+                "The target bugemon is not alive."
+            );
         }
         currentBugemon = target;
     }
@@ -165,7 +172,8 @@ public class ManualTrainer extends Trainer {
     public void registerAttack(Attack attack) {
         if (!checkCurrentBugemonHasAttack(attack)) {
             throw new IllegalArgumentException(
-                    "The selected attack is not in the current bugemon's attack list.");
+                "The selected attack is not in the current bugemon's attack list."
+            );
         }
         registerAction(new TurnAction.AttackAction(attack));
     }
@@ -184,7 +192,9 @@ public class ManualTrainer extends Trainer {
      */
     public void registerSwitch(Bugemon target) {
         if (!target.isAlive()) {
-            throw new IllegalArgumentException("The target bugemon is not alive.");
+            throw new IllegalArgumentException(
+                "The target bugemon is not alive."
+            );
         }
         registerAction(new TurnAction.SwitchAction(target));
     }
@@ -223,5 +233,30 @@ public class ManualTrainer extends Trainer {
      */
     public boolean hasPendingAction() {
         return pendingAction.isPresent();
+    }
+
+    /** Returns {@code true} if a forced post-KO switch is pending. */
+    public boolean isForcedToSwitch() {
+        return forcedSwitch;
+    }
+
+    /** Sets whether a forced post-KO switch is pending. */
+    public void setForcedSwitch(boolean value) {
+        this.forcedSwitch = value;
+    }
+
+    /** Returns {@code true} if the player has already used a voluntary switch this turn. */
+    public boolean hasSwitchedThisTurn() {
+        return switchedThisTurn;
+    }
+
+    /** Sets whether a voluntary switch has been used this turn. */
+    public void setHasSwitchedThisTurn(boolean value) {
+        this.switchedThisTurn = value;
+    }
+
+    /** Returns {@code true} if the player may perform a voluntary switch right now. */
+    public boolean canVoluntarilySwitch() {
+        return !forcedSwitch && !switchedThisTurn;
     }
 }
