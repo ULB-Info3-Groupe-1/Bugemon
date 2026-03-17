@@ -28,15 +28,14 @@ import ulb.views.combat.CombatView;
  * @param <V> the concrete {@link CombatView} subtype managed by this controller.
  */
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
-
     public CombatController(MetaController metaController, V view) {
         super(metaController, view);
     }
 
     /** Creates a random opponent team sized to match the given player's team. */
     protected AutoTrainer createRandomOpponent(Trainer player) {
-        return new AutoTrainer(TeamFactory.createRandomTeam(
-                Parser.getInstance().getBugemons(), player.getTeamSize()));
+        return new AutoTrainer(TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(),
+                                                            player.getTeamSize()));
     }
 
     /**

@@ -40,7 +40,10 @@ public class AttackActionMenu extends ActionMenuView {
     }
 
     public void setOnBack(Runnable callback) {
-        this.action4.setOnAction(e -> { if (callback != null) callback.run(); });
+        this.action4.setOnAction(e -> {
+            if (callback != null)
+                callback.run();
+        });
     }
 
     /** Populates the three attack buttons with the given moves and their type efficiency. */
@@ -59,6 +62,9 @@ public class AttackActionMenu extends ActionMenuView {
 
         button.setText(attack.name() + "\n" + efficiency.toString());
         button.getStyleClass().add("attack-" + attack.type().toString());
-        button.setOnAction(e -> { if (onAttack != null) onAttack.accept(attack); });
+        button.setOnAction(e -> {
+            if (onAttack != null)
+                onAttack.accept(attack);
+        });
     }
 }

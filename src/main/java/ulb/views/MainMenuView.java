@@ -23,8 +23,14 @@ public class MainMenuView extends View {
 
     public MainMenuView() throws IOException {
         super("/fxml/MainMenu.fxml");
-        this.createTeamButton.setOnAction(e -> { if (onCreateTeam != null) onCreateTeam.run(); });
-        this.quitButton.setOnAction(e -> { if (onQuit != null) onQuit.run(); });
+        this.createTeamButton.setOnAction(e -> {
+            if (onCreateTeam != null)
+                onCreateTeam.run();
+        });
+        this.quitButton.setOnAction(e -> {
+            if (onQuit != null)
+                onQuit.run();
+        });
     }
 
     public void setOnCreateTeam(Runnable callback) {

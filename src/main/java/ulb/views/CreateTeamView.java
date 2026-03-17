@@ -37,11 +37,10 @@ public class CreateTeamView extends View {
         super(FXML_PATH);
 
         this.allBugemonsGridView.setOnClickCallback(dto -> {
-            if (bugemonTeam != null && !bugemonTeam.contains(dto.getId())
-                    && bugemonTeam.isFull()) {
+            if (bugemonTeam != null && !bugemonTeam.contains(dto.getId()) && bugemonTeam.isFull()) {
                 showAlert("Équipe pleine",
-                        "Votre équipe est déjà pleine. Veuillez en retirer un avant "
-                                + "d'en ajouter un nouveau.");
+                          "Votre équipe est déjà pleine. Veuillez en retirer un avant "
+                                  + "d'en ajouter un nouveau.");
             } else if (onBugemonClicked != null) {
                 onBugemonClicked.accept(dto.getId());
             }
@@ -72,7 +71,7 @@ public class CreateTeamView extends View {
     private void launchCombat(Runnable onStart) {
         if (bugemonTeam != null && bugemonTeam.isEmpty()) {
             showAlert("Équipe incomplète",
-                    "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
         } else if (onStart != null) {
             onStart.run();
         }

@@ -36,9 +36,18 @@ public class LevelUpView extends View {
 
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
-        this.choice1Button.setOnAction(e -> { if (onChooseOption != null) onChooseOption.accept(0); });
-        this.choice2Button.setOnAction(e -> { if (onChooseOption != null) onChooseOption.accept(1); });
-        this.choice3Button.setOnAction(e -> { if (onChooseOption != null) onChooseOption.accept(2); });
+        this.choice1Button.setOnAction(e -> {
+            if (onChooseOption != null)
+                onChooseOption.accept(0);
+        });
+        this.choice2Button.setOnAction(e -> {
+            if (onChooseOption != null)
+                onChooseOption.accept(1);
+        });
+        this.choice3Button.setOnAction(e -> {
+            if (onChooseOption != null)
+                onChooseOption.accept(2);
+        });
     }
 
     /** Gives the view a reference to the level-up session model it should read from. */
@@ -52,14 +61,15 @@ public class LevelUpView extends View {
 
     @Override
     public void refresh() {
-        if (session == null || !session.isStarted()) return;
+        if (session == null || !session.isStarted())
+            return;
 
         LevelUpDTO levelUp = session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
         bugemonImage.setImage(new Image(bugemon.getSpriteURL()));
         levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
-                + bugemon.getLevel() + " !");
+                            + bugemon.getLevel() + " !");
 
         List<Choice> choices = levelUp.getChoices();
         choice1Button.setText(choices.get(0).toString());

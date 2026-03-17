@@ -58,15 +58,21 @@ public class ManualCombatView extends CombatView {
 
         this.mainActionMenu.setOnAttack(this::showAttackMenuInternal);
         this.mainActionMenu.setOnSwitch(this::showSwitchPanelInternal);
-        this.mainActionMenu.setOnSurrender(() -> { if (onSurrender != null) onSurrender.run(); });
+        this.mainActionMenu.setOnSurrender(() -> {
+            if (onSurrender != null)
+                onSurrender.run();
+        });
 
         this.attackActionMenu.setOpponent(opponent);
-        this.attackActionMenu.setOnAttack(
-                attack -> { if (onAttack != null) onAttack.accept(attack); });
+        this.attackActionMenu.setOnAttack(attack -> {
+            if (onAttack != null)
+                onAttack.accept(attack);
+        });
         this.attackActionMenu.setOnBack(this::showMainActionMenuInternal);
 
         this.bugemonTeamView.setOnClickCallback(dto -> {
-            if (dto != null && onSwitch != null) onSwitch.accept(dto.getId());
+            if (dto != null && onSwitch != null)
+                onSwitch.accept(dto.getId());
         });
     }
 
@@ -90,7 +96,8 @@ public class ManualCombatView extends CombatView {
 
     @Override
     public void refresh() {
-        if (player == null) return;
+        if (player == null)
+            return;
 
         updateTrainerBugemon(player.getCurrentBugemon());
         updateOpponentBugemon(opponent.getCurrentBugemon());
@@ -125,10 +132,8 @@ public class ManualCombatView extends CombatView {
     }
 
     private void showSwitchPanelInternal() {
-        List<BugemonDTO> alive = player.getTeam().stream()
-                .filter(Bugemon::isAlive)
-                .map(b -> (BugemonDTO) b)
-                .toList();
+        List<BugemonDTO> alive =
+                player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO)b).toList();
         this.bugemonTeamPane.setVisible(true);
         this.bugemonTeamPane.setManaged(true);
         this.bugemonTeamView.showTeam(alive);

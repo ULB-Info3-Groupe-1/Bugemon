@@ -24,9 +24,14 @@ public class CombatDefeatView extends View {
 
     public CombatDefeatView() throws IOException {
         super("/fxml/CombatDefeat.fxml");
-        this.retryButton.setOnAction(e -> { if (onRetry != null) onRetry.run(); });
-        this.backToMainMenuButton.setOnAction(
-                e -> { if (onBackToMainMenu != null) onBackToMainMenu.run(); });
+        this.retryButton.setOnAction(e -> {
+            if (onRetry != null)
+                onRetry.run();
+        });
+        this.backToMainMenuButton.setOnAction(e -> {
+            if (onBackToMainMenu != null)
+                onBackToMainMenu.run();
+        });
     }
 
     public void setOnRetry(Runnable callback) {

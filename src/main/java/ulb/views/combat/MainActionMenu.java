@@ -15,7 +15,6 @@ package ulb.views.combat;
  * </p>
  */
 public class MainActionMenu extends ActionMenuView {
-
     public MainActionMenu() {
         super();
         this.action1.setText("Attaque");
@@ -33,14 +32,23 @@ public class MainActionMenu extends ActionMenuView {
     }
 
     public void setOnAttack(Runnable callback) {
-        this.action1.setOnAction(e -> { if (callback != null) callback.run(); });
+        this.action1.setOnAction(e -> {
+            if (callback != null)
+                callback.run();
+        });
     }
 
     public void setOnSwitch(Runnable callback) {
-        this.action2.setOnAction(e -> { if (callback != null) callback.run(); });
+        this.action2.setOnAction(e -> {
+            if (callback != null)
+                callback.run();
+        });
     }
 
     public void setOnSurrender(Runnable callback) {
-        this.action4.setOnAction(e -> { if (callback != null) callback.run(); });
+        this.action4.setOnAction(e -> {
+            if (callback != null)
+                callback.run();
+        });
     }
 }

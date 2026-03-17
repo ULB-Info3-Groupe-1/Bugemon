@@ -21,7 +21,6 @@ import ulb.views.combat.AutomaticCombatView;
  * </p>
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
-
     public AutomaticCombatController(MetaController metaController) throws IOException {
         super(metaController, new AutomaticCombatView());
     }

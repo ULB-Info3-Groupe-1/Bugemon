@@ -43,7 +43,8 @@ public class AutomaticCombatView extends CombatView {
 
     @Override
     public void refresh() {
-        if (player == null) return;
+        if (player == null)
+            return;
         updateTrainerBugemon(player.getCurrentBugemon());
         updateOpponentBugemon(opponent.getCurrentBugemon());
 

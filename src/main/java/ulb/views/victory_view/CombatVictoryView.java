@@ -22,7 +22,10 @@ public class CombatVictoryView extends View {
 
     public CombatVictoryView() throws IOException {
         super("/fxml/CombatVictory.fxml");
-        this.continueButton.setOnAction(e -> { if (onContinue != null) onContinue.run(); });
+        this.continueButton.setOnAction(e -> {
+            if (onContinue != null)
+                onContinue.run();
+        });
     }
 
     public void setOnContinue(Runnable callback) {
