@@ -300,25 +300,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     private void handleAfterTurn(TurnResult result) {
         Runnable onAnimationFinished = () -> finalizeTurn(result);
-        if (didOpponentAttack(result)) {
+        if (didTrainerAttack(result, opponent)) {
             view.playOpponentAttackAnimation(onAnimationFinished);
             return;
         }
         onAnimationFinished.run();
-    }
-
-    /**
-     * Determines whether the opponent performed an attack in the given
-     * {@link TurnResult}.
-     * 
-     * @param result the {@link TurnResult} of the turn that just completed; must
-     *               not be {@code null}.
-     * @return {@code true} if the opponent performed at least one attack this turn,
-     *         {@code false} otherwise.
-     */
-    private boolean didOpponentAttack(TurnResult result) {
-        return (result.first().wasAttack() && result.first().attacker() == opponent)
-                || result.second().map(r -> r.wasAttack() && r.attacker() == opponent).orElse(false);
     }
 
     /**
@@ -334,7 +320,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         view.hideSwitchPanel();
         view.showMainActionMenu();
 
-        displayTurnDialog(result);
+        showTurnDialog(result);
 
         combat.getWinner().ifPresent(winner -> handleCombatResult(winner, player));
 
@@ -351,8 +337,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      *               not be {@code null}.
      */
     private void displayTurnDialog(TurnResult result) {
-        displayAttackResult(result.first());
-        result.second().ifPresent(this::displayAttackResult);
+        displayAttackResult(result.first(), result.second());
     }
 
     /**
