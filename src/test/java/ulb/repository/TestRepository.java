@@ -18,6 +18,7 @@ import java.util.UUID;
 
 public class TestRepository {
 
+    private static final String TEST_DB_URL = "jdbc:postgresql://ep-odd-bar-alja82ho-pooler.c-3.eu-central-1.aws.neon.tech/bugemon?sslmode=require&channel_binding=require";
     private DatabaseRepository repository;
     private String uniqueId;
 
@@ -25,33 +26,48 @@ public class TestRepository {
     public void setUp() {
         // Test if the database is accessible if not ignore the tests
         try {
-            Connection conn = DatabaseManager.getInstance().getConnection();
-            if (conn == null || conn.isClosed()) {
-                Assume.assumeTrue("Database is not connected, tests skipped", false);
+            DatabaseManager.setTestMode(TEST_DB_URL);
+            try {
+                Connection conn = DatabaseManager.getInstance().getConnection();
+                if (conn == null || conn.isClosed()) {
+                    Assume.assumeTrue("Database is not connected, tests skipped", false);
+                }
+            } catch (Exception e) {
+                Assume.assumeNoException("Database is not connected or you have an issue with your configuration, tests skipped", e);
             }
+
+            repository = new DatabaseRepository();
+
+            try {
+                repository.createSchema();
+            } catch (Exception e) {
+                // We ignore any exception here, as the schema might already exist or there might be an issue with the connection
+            }
+
+            repository.clearDatabase();
+            
         } catch (Exception e) {
-            Assume.assumeNoException("Database is not connected or you have an issue with your configuration, tests skipped", e);
+            Assume.assumeNoException("Database setup failed", e);
         }
-        
-        repository = new DatabaseRepository();
-        // ID unique pour éviter les collisions (violation de contraintes UNIQUE)
+
+        // Unique ID to avoid collisions (UNIQUE constraint violation)
         uniqueId = UUID.randomUUID().toString().substring(0, 8);
     }
 
     /**
-     * Aide locale pour créer un Bugemon factice dans la DB de test, 
-     * afin de respecter la Foreign Key "bugemon_id" dans "user_bugemons".
+     * Local help to create a dummy Bugemon in the test database,
+     * in order to respect the Foreign Key "bugemon_id" in "user_bugemons".
      */
     private void ensureDependenciesExist(String bugemonId) {
         try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-            // Création d'une attaque factice
+            // Creation of a dummy attack linked to the bugemon (if not already exists)
             try (PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO attacks (id, name, type, power) VALUES (?, 'Tackle', 'NORMAL', 10) ON CONFLICT DO NOTHING"
             )) {
                 ps.setString(1, "atk_" + bugemonId);
                 ps.executeUpdate();
             }
-            // Création d'un bugemon factice lié
+            // Creation of a dummy bugemon (if not already exists)
             try (PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO bugemons (id, name, base_max_hp, attack_1_id) VALUES (?, 'Testmon', 100, ?) ON CONFLICT DO NOTHING"
             )) {
@@ -117,7 +133,7 @@ public class TestRepository {
 
         ensureDependenciesExist(bugemonId);
 
-        // Sauvegarde initiale
+        // Initial save
         UserBugemonDTO initial = new UserBugemonDTO(
             userId, bugemonId, 10, 10, 10, 50, 0, 1
         );
@@ -129,7 +145,7 @@ public class TestRepository {
         );
         repository.updateUserBugemon(updated);
 
-        // Vérification
+        // Verification
         List<UserBugemonDTO> bugemons = repository.getUserBugemons(userId);
         assertEquals(1, bugemons.size());
 
@@ -185,11 +201,11 @@ public class TestRepository {
 
         ensureDependenciesExist(bugemonId);
 
-        // Il faut d'abord posséder le bugémon et avoir l'équipe (si contraintes implémentées ainsi)
+        // First, we need to have the bugemon and the team (if constraints are implemented that way)
         repository.createTeam(userId, teamName);
         repository.saveUserBugemon(new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1));
 
-        // Ajout au Roster (slot 1)
+        // Add to Roster (slot 1)
         TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
         repository.addTeamMember(member);
 
