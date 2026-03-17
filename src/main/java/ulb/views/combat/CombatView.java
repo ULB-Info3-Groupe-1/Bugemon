@@ -49,46 +49,54 @@ public abstract class CombatView extends View {
      * Info panel (name, type, HP bar) for the player's active Bugemon,
      * displayed on the player's side of the combat screen.
      */
-    @FXML protected BugemonInfoView bugemonTrainerInfo;
+    @FXML
+    protected BugemonInfoView bugemonTrainerInfo;
 
     /**
      * Info panel (name, type, HP bar) for the opponent's active Bugemon,
      * displayed on the opponent's side of the combat screen.
      */
-    @FXML protected BugemonInfoView bugemonOpponentInfo;
+    @FXML
+    protected BugemonInfoView bugemonOpponentInfo;
 
     /** Sprite image of the player's currently active Bugemon. */
-    @FXML protected ImageView bugemonTrainerImage;
+    @FXML
+    protected ImageView bugemonTrainerImage;
 
     /** Sprite image of the opponent's currently active Bugemon. */
-    @FXML protected ImageView bugemonOpponentImage;
+    @FXML
+    protected ImageView bugemonOpponentImage;
 
     /**
      * Container for the action menu components (main menu, attack menu, …).
      * Subclasses populate this container via their own menu components.
      */
-    @FXML protected ActionMenuView actionMenuView;
+    @FXML
+    protected ActionMenuView actionMenuView;
 
     /**
      * Overlay pane that hosts the {@link BugemonTeamView} used to pick a
      * Bugemon during a switch. Hidden by default; shown when a switch is
      * requested.
      */
-    @FXML protected StackPane bugemonTeamPane;
+    @FXML
+    protected StackPane bugemonTeamPane;
 
     /**
      * Scrollable grid of the player's team members, embedded inside
      * {@link #bugemonTeamPane}. Each cell is clickable when a switch is in
      * progress.
      */
-    @FXML protected BugemonTeamView bugemonTeamView;
+    @FXML
+    protected BugemonTeamView bugemonTeamView;
 
     /**
      * Overlay banner used to display turn feedback messages such as attack
      * effectiveness or KO notifications. Toggled visible/invisible by
      * {@link #showDialog(String, String)} and {@link #hideDialog()}.
      */
-    @FXML protected DialogZoneView dialogZoneView;
+    @FXML
+    protected DialogZoneView dialogZoneView;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
@@ -247,6 +255,10 @@ public abstract class CombatView extends View {
     /**
      * Slides {@code sprite} by {@code deltaX} pixels over 150 ms then returns
      * it to its original position over another 150 ms.
+     * 
+     * @param sprite     the {@link ImageView} to animate.
+     * @param deltaX     the horizontal distance to slide the sprite in pixels.
+     * @param onFinished callback executed once the animation completes.
      */
     private void playLungeAnimation(ImageView sprite, double deltaX, Runnable onFinished) {
         TranslateTransition lunge = new TranslateTransition(Duration.millis(150), sprite);
