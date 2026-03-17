@@ -23,6 +23,7 @@ public class DatabaseRepository {
     public DatabaseRepository() {
         // Load all SQL queries from files
         String[] sqlFiles = {
+            "/sql/00_delete_tables.sql",
             "/sql/01_create_schema.sql",
             "/sql/02_queries_users.sql",
             "/sql/03_queries_user_bugemons.sql",
@@ -231,6 +232,7 @@ public class DatabaseRepository {
             throw new RuntimeException("removeTeamMember failed", e);
         }
     }
+
     public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
         List<TeamMemberDTO> result = new ArrayList<>();
         try (PreparedStatement ps = getConn().prepareStatement(getSql("GetTeamMembers"))) {
@@ -249,5 +251,20 @@ public class DatabaseRepository {
             throw new RuntimeException("getTeamMembers failed", e);
         }
         return result;
+    }
+
+    // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
+
+    /**
+     * Clear the database by deleting all entries from all tables. This is useful for ensuring a clean state before each test.
+     * Note: this method doesn't drop the tables, it just deletes the data. The SQL for this is located in 00_delete_tables.sql 
+     * and is executed at the beginning of the test suite.
+     */
+    public void clearDatabase() {
+        try (PreparedStatement ps = getConn().prepareStatement(getSql("ClearDatabase"))) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to clear database", e);
+        }
     }
 }
