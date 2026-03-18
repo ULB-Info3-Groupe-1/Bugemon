@@ -52,8 +52,7 @@ public abstract class Trainer {
      */
     public Trainer(BugemonTeam team) {
         this.team = team;
-        // TODO: a getFirst would be better
-        currentBugemon = team.getBugemon(0);
+        currentBugemon = team.getFirst();
     }
 
     // ── strategy contract ────────────────────────────────────────────────────

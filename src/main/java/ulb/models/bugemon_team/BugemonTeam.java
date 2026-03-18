@@ -144,10 +144,6 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
                         () -> { throw new BugemonNotInTeamException("Bugemon not in the team!"); });
     }
 
-    public Bugemon getBugemon(int idx) throws IndexOutOfBoundsException {
-        return this.team.get(idx);
-    }
-
     /**
      * Returns the select Bugemon with the given ID if it's in the team.
      *
