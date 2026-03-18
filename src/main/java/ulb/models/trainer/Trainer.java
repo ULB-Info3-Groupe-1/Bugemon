@@ -90,7 +90,7 @@ public abstract class Trainer {
     public abstract void reactToKo();
 
     /**
-     * Instantly defeats the entire team by reducing every Bugemon's HP to zero.
+     * Instantly defeats the entire team.
      *
      * <p>
      * Used by {@link ulb.models.combat.Combat} to resolve a
@@ -100,7 +100,7 @@ public abstract class Trainer {
      * </p>
      */
     public void killTeam() {
-        team.getAll().forEach(b -> b.takeDamage(b.getHp()));
+        team.killAll();
     }
 
     // ── shared state queries ─────────────────────────────────────────────────

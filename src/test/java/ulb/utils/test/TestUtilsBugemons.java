@@ -53,6 +53,6 @@ public final class TestUtilsBugemons {
 
     public static void killBugemon(BugemonTeam team, String id) {
         Bugemon bugemon = team.stream().filter(b -> b.getId().equals(id)).findFirst().get();
-        bugemon.takeDamage(bugemon.getHp());
+        bugemon.kill();
     }
 }

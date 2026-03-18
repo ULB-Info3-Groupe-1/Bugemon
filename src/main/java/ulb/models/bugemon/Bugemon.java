@@ -384,4 +384,8 @@ public class Bugemon implements BugemonDTO, Cloneable {
     public void setParticipation(boolean participated) {
         this.state.participatedLastFight = participated;
     }
+
+    public void kill() {
+        this.takeDamage(this.getHp());
+    }
 }

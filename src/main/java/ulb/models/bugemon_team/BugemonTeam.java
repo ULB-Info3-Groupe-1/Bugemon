@@ -187,4 +187,8 @@ public class BugemonTeam implements Iterable<Bugemon> {
     public List<Bugemon> getAll() {
         return this.team;
     }
+
+    public void killAll() {
+        this.team.forEach(Bugemon::kill);
+    }
 }

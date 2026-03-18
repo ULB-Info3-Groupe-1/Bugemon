@@ -11,8 +11,7 @@ public class TestUtilsBugemonTeam {
             bugemonTeam.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
         }
         if (isDefeated) {
-            // TODO: this should obv be moved to a kill method
-            bugemonTeam.forEach(bugemon -> bugemon.takeDamage(bugemon.getHp()));
+            bugemonTeam.killAll();
         }
         return bugemonTeam;
     }
