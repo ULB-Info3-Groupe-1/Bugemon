@@ -14,6 +14,7 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Abstract base for any participant in a combat session.
@@ -39,7 +40,7 @@ import ulb.models.bugemon.BugemonType;
  * @see Bugemon
  */
 public abstract class Trainer {
-    protected final List<Bugemon> team;
+    protected final BugemonTeam team;
     protected Bugemon currentBugemon;
 
     /**
@@ -49,9 +50,10 @@ public abstract class Trainer {
      * @param team the {@link BugemonTeam} owned by this trainer; must not be
      *             {@code null} and must contain at least one Bugemon.
      */
-    public Trainer(List<Bugemon> team) {
+    public Trainer(BugemonTeam team) {
         this.team = team;
-        currentBugemon = team.get(0);
+        // TODO: a getFirst would be better
+        currentBugemon = team.getBugemon(0);
     }
 
     // ── strategy contract ────────────────────────────────────────────────────
@@ -192,7 +194,7 @@ public abstract class Trainer {
      *
      * @return the {@link BugemonTeam}; never {@code null}.
      */
-    public List<Bugemon> getTeam() {
+    public BugemonTeam getTeam() {
         return team;
     }
 

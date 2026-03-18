@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.Parser;
 
 public class TeamFactory {
@@ -28,12 +29,12 @@ public class TeamFactory {
      *         chosen, cloned {@link Bugemon}s.
      * @throws RuntimeException if cloning a selected {@link Bugemon} fails.
      */
-    public static List<Bugemon> createRandomTeam(final List<Bugemon> bugemonList,
-                                                 final int teamSize) {
+    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList,
+                                               final int teamSize) {
         List<Bugemon> allBugemons = Parser.getInstance().getBugemons();
         List<Bugemon> pool = new ArrayList<>(allBugemons);
         Collections.shuffle(pool);
-        List<Bugemon> team = new ArrayList<>();
+        BugemonTeam team = new BugemonTeam();
         try {
             for (int i = 0; i < teamSize; i++) {
                 team.add(pool.get(i).clone());

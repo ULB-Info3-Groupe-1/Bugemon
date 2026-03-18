@@ -9,11 +9,11 @@
 
 package ulb.models.trainer;
 
-import java.util.List;
 import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Represents a human-controlled trainer whose actions are driven by the
@@ -60,7 +60,7 @@ public class ManualTrainer extends Trainer {
      * @param team the {@link BugemonTeam} this trainer owns; must not be
      *             {@code null} and must contain at least one Bugemon.
      */
-    public ManualTrainer(List<Bugemon> team) {
+    public ManualTrainer(BugemonTeam team) {
         super(team);
     }
 

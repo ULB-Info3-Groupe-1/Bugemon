@@ -2,6 +2,7 @@ package ulb.views;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,8 +54,12 @@ public class BugemonTeamView extends VBox {
      */
     public void showTeam(BugemonTeam bugemonTeam) {
         this.gridPane.getChildren().clear();
-        for (int i = 0; i < bugemonTeam.size(); i++) {
-            Bugemon bugemon = bugemonTeam.getBugemon(i);
+
+        // TODO: method to get an Iterator/List of alive Bugemons in BugemonTeam
+        List<Bugemon> aliveBugemons = bugemonTeam.stream().filter(b -> b.getHp() > 0).toList();
+
+        for (int i = 0; i < aliveBugemons.size(); i++) {
+            Bugemon bugemon = aliveBugemons.get(i);
             VBox cell = createBugemonCell(bugemon);
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
