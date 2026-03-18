@@ -224,8 +224,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * </p>
      */
     public void showSwitchMenu() {
-        List<BugemonDTO> bugemonList = player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO) b)
-                .toList();
+        List<BugemonDTO> bugemonList =
+                player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO)b).toList();
         view.showSwitchMenu(bugemonList);
         view.hideAllActionMenus();
     }
@@ -310,7 +310,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     /**
      * Finalises the turn by updating the view, displaying dialogs, checking for
      * a winner, and opening the switch menu if needed.
-     * 
+     *
      * @param result the {@link TurnResult} of the turn that just completed; must
      *               not be {@code null}.
      */

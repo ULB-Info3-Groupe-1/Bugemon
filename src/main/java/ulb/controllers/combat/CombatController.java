@@ -223,9 +223,11 @@ public abstract class CombatController<View extends CombatView> extends Controll
             onFinished.run();
         };
 
-        Runnable animateSecondAction = () -> turnResult.second().ifPresentOrElse(
-                second -> animateAttackResult(second, player, opponent, afterAnimations),
-                afterAnimations);
+        Runnable animateSecondAction = ()
+                -> turnResult.second().ifPresentOrElse(
+                        second
+                        -> animateAttackResult(second, player, opponent, afterAnimations),
+                        afterAnimations);
 
         animateAttackResult(turnResult.first(), player, opponent, animateSecondAction);
     }

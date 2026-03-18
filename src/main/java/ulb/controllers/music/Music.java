@@ -8,5 +8,4 @@ import java.net.URL;
  * @param url
  * @param ambiance
  */
-public record Music(URL url, Ambiance ambiance) {
-}
+public record Music(URL url, Ambiance ambiance) {}

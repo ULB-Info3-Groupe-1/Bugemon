@@ -123,7 +123,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
             TurnResult turnResult = combat.turn();
             animateTurn(turnResult, player, opponent,
-                    () -> finalizeTurn(combat, timeline, player, opponent));
+                        () -> finalizeTurn(combat, timeline, player, opponent));
         });
 
         timeline.getKeyFrames().add(keyFrame);
@@ -133,7 +133,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
     /**
      * Formats the efficiency message for an attack result.
-     * 
+     *
      * @param combat   the {@link TurnResult.AttackResult} to format; must not be
      *                 {@code null} and must represent an attack.
      * @param timeline the {@link Timeline} driving the combat; must not be
@@ -142,7 +142,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @param opponent the opponent's {@link AutoTrainer}; must not be {@code null}.
      */
     private void finalizeTurn(Combat combat, Timeline timeline, AutoTrainer player,
-            AutoTrainer opponent) {
+                              AutoTrainer opponent) {
         view.updateTrainerBugemon(player.getCurrentBugemon());
         view.updateOpponentBugemon(opponent.getCurrentBugemon());
 
