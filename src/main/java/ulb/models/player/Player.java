@@ -1,28 +1,27 @@
 package ulb.models.player;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon_team.BugemonTeam;
 
 public class Player {
     // ── Active team ───────────────────────────────────────────────────────
-    private List<Bugemon> activeTeam;
+    private BugemonTeam activeTeam;
 
     // ── Inventory ─────────────────────────────────────────────────────────
     private final Inventory inventory;
 
     // ── Constructor ───────────────────────────────────────────────────────
     public Player(Inventory inventory) {
-        this.activeTeam = new ArrayList<>();
+        this.activeTeam = new BugemonTeam();
         this.inventory = inventory;
     }
 
     // ── Active team ───────────────────────────────────────────────────────
-    public void setActiveTeam(List<Bugemon> team) {
+    public void setActiveTeam(BugemonTeam team) {
         if (team.isEmpty() || team.size() > 6)
             throw new IllegalArgumentException("L'équipe doit avoir entre 1 et 6 Bugémons.");
         Set<String> seen = new HashSet<>();
@@ -37,7 +36,7 @@ public class Player {
         this.activeTeam.clear();
     }
 
-    public List<Bugemon> getActiveTeam() {
+    public BugemonTeam getActiveTeam() {
         return this.activeTeam;
     }
 

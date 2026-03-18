@@ -2,7 +2,6 @@ package ulb.views;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +15,7 @@ import javafx.scene.layout.VBox;
 
 import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable
@@ -51,10 +51,10 @@ public class BugemonTeamView extends VBox {
      * Displays the player's current team in the team view.
      * @param bugemonList
      */
-    public void showTeam(List<Bugemon> bugemonTeam) {
+    public void showTeam(BugemonTeam bugemonTeam) {
         this.gridPane.getChildren().clear();
         for (int i = 0; i < bugemonTeam.size(); i++) {
-            Bugemon bugemon = bugemonTeam.get(i);
+            Bugemon bugemon = bugemonTeam.getBugemon(i);
             VBox cell = createBugemonCell(bugemon);
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;

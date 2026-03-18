@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.Parser;
 
 /**
@@ -27,7 +28,7 @@ public class CreateTeamView extends View {
     @FXML private Button launchAutomaticCombat;
     @FXML private Button launchManualCombat;
 
-    private List<Bugemon> bugemonTeam;
+    private BugemonTeam bugemonTeam;
     private Consumer<Bugemon> onGridBugemonClicked;
     private Runnable onStartAutoCombat;
     private Runnable onStartManualCombat;
@@ -51,7 +52,7 @@ public class CreateTeamView extends View {
     }
 
     /** Gives the view a reference to the team model it should read from. */
-    public void setModel(List<Bugemon> bugemonTeam) {
+    public void setModel(BugemonTeam bugemonTeam) {
         this.bugemonTeam = bugemonTeam;
         this.allBugemonsGridView.setSelectionChecker(
                 b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
@@ -81,7 +82,7 @@ public class CreateTeamView extends View {
         }
     }
 
-    public void refreshTeam(List<Bugemon> team) {
+    public void refreshTeam(BugemonTeam team) {
         this.bugemonTeam = team;
         refresh();
     }

@@ -1,10 +1,9 @@
 package ulb.controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.player.Player;
 import ulb.views.CreateTeamView;
 
@@ -19,8 +18,9 @@ import ulb.views.CreateTeamView;
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
     private final Player player;
-    private final List<Bugemon> selectedTeam;
+    private final BugemonTeam selectedTeam;
 
+    // TODO: this should be gone
     private static final int MAX_TEAM_SIZE = 6;
 
     /**
@@ -35,9 +35,9 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public CreateTeamController(MetaController metaController, Player player) throws IOException {
         super(metaController, new CreateTeamView());
         this.player = player;
-        this.selectedTeam = new ArrayList<Bugemon>();
+        this.selectedTeam = new BugemonTeam();
 
-        this.view.setModel(player.getActiveTeam());
+        this.view.setModel(this.selectedTeam);
         this.view.setOnGridBugemonClicked(this::onBugemonClicked);
         this.view.setOnStartAutoCombat(this::startAutoCombat);
         this.view.setOnStartManualCombat(this::startManualCombat);
@@ -46,6 +46,9 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     /** Toggles {@code bugemon} in the player's selected team. */
     public void onBugemonClicked(Bugemon bugemon) {
+        // TODO: handle exceptions thrown by BugemonTeam
+        // + change logic
+
         if (this.selectedTeam.contains(bugemon)) {
             this.selectedTeam.remove(bugemon);
         } else if (this.selectedTeam.size() < MAX_TEAM_SIZE) {
