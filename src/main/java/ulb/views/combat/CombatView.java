@@ -11,7 +11,9 @@ import javafx.util.Duration;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
+import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
+import ulb.models.trainer.Trainer;
 import ulb.views.DialogZoneView;
 import ulb.views.View;
 
@@ -43,6 +45,7 @@ import ulb.views.View;
 public abstract class CombatView extends View {
     private static final double ATTACK_LUNGE_DISTANCE = 100;
     private static final Duration ATTACK_LUNGE_DURATION = Duration.millis(150);
+    private int lastAnimatedTurn = -1;
 
     // ── FXML-injected components ──────────────────────────────────────────────
 
@@ -50,32 +53,38 @@ public abstract class CombatView extends View {
      * Info panel (name, type, HP bar) for the player's active Bugemon,
      * displayed on the player's side of the combat screen.
      */
-    @FXML protected BugemonInfoView bugemonTrainerInfo;
+    @FXML
+    protected BugemonInfoView bugemonTrainerInfo;
 
     /**
      * Info panel (name, type, HP bar) for the opponent's active Bugemon,
      * displayed on the opponent's side of the combat screen.
      */
-    @FXML protected BugemonInfoView bugemonOpponentInfo;
+    @FXML
+    protected BugemonInfoView bugemonOpponentInfo;
 
     /** Sprite image of the player's currently active Bugemon. */
-    @FXML protected ImageView bugemonTrainerImage;
+    @FXML
+    protected ImageView bugemonTrainerImage;
 
     /** Sprite image of the opponent's currently active Bugemon. */
-    @FXML protected ImageView bugemonOpponentImage;
+    @FXML
+    protected ImageView bugemonOpponentImage;
 
     /**
      * Container for the action menu components (main menu, attack menu, …).
      * Subclasses populate this container via their own menu components.
      */
-    @FXML protected ActionMenuView actionMenuView;
+    @FXML
+    protected ActionMenuView actionMenuView;
 
     /**
      * Overlay banner used to display turn feedback messages such as attack
      * effectiveness or KO notifications. Toggled visible/invisible by
      * {@link #showDialog(String, String)} and {@link #hideDialog()}.
      */
-    @FXML protected DialogZoneView dialogZoneView;
+    @FXML
+    protected DialogZoneView dialogZoneView;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
@@ -144,21 +153,27 @@ public abstract class CombatView extends View {
      *                           one attack was made this turn.
      */
     public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
-                                 Optional<TurnResult.AttackResult> secondAttackResult) {
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
-                         + " à utilisé l'attaque " + firstAttackResult.getAttackName() + "\n";
-        String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
+            Optional<TurnResult.AttackResult> secondAttackResult) {
+        StringBuilder message = new StringBuilder();
+        StringBuilder efficiency = new StringBuilder();
 
-        if (secondAttackResult.isPresent()) {
-            message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
-                       + " à utilisé l'attaque "
-                       + secondAttackResult.orElseThrow().getAttackName();
-            efficiency += "2- " + formatEfficiency(secondAttackResult.orElseThrow().efficiency());
+        appendAttackLine(message, efficiency, 1, firstAttackResult);
+        secondAttackResult.ifPresent(second -> appendAttackLine(message, efficiency, 2, second));
+
+        if (message.length() == 0) {
+            hideDialog();
+            return;
         }
-        showDialog(message, efficiency);
+
+        showDialog(message.toString(), efficiency.toString());
     }
 
-    /** Converts an {@link Efficiency} value to a human-readable French label. */
+    /**
+     * Converts an {@link Efficiency} value to a human-readable French label.
+     * 
+     * @param efficiency the efficiency value to format; must not be {@code null}.
+     * @return a user-friendly string describing the efficiency value, in French.
+     */
     protected String formatEfficiency(Efficiency efficiency) {
         switch (efficiency) {
             case HIGH:
@@ -170,6 +185,168 @@ public abstract class CombatView extends View {
                 return "Dégats standards";
         }
     }
+
+    /**
+     * Refreshes sprite/info panels and turn dialog, playing attack animations
+     * exactly once per resolved combat turn.
+     * 
+     * @param combat   the current {@link Combat} model; must not be {@code null}.
+     * @param trainer  the player's {@link Trainer} model; must not be {@code null}.
+     * @param opponent the opponent's {@link Trainer} model; must not be
+     *                 {@code null}.
+     */
+    protected void refreshCombatTurn(Combat combat, Trainer trainer, Trainer opponent) {
+        if (combat == null || trainer == null || opponent == null) {
+            return;
+        }
+
+        TurnResult lastTurn = combat.getLastTurnResult();
+        int turn = combat.getTurn();
+
+        if (shouldAnimateTurn(turn, lastTurn)) {
+            animateTurn(lastTurn, trainer, opponent,
+                    () -> {
+                        renderCombatState(trainer, opponent, lastTurn);
+                    });
+            lastAnimatedTurn = turn;
+            return;
+        }
+
+        renderCombatState(trainer, opponent, lastTurn);
+    }
+
+    /**
+     * Determines whether the turn dialog should be animated for the given turn.
+     * 
+     * @param turn     the current combat turn number.
+     * @param lastTurn the result of the last resolved turn, or {@code null} if no
+     *                 turn has been
+     * @return {@code true} if the turn dialog should be animated, {@code false} to
+     *         just refresh the display without animation.
+     */
+    private boolean shouldAnimateTurn(int turn, TurnResult lastTurn) {
+        return lastTurn != null && turn > 0 && turn != lastAnimatedTurn && hasAttack(lastTurn);
+    }
+
+    /**
+     * Updates the combat view to reflect the current state of the combat after a
+     * turn
+     * has been resolved, and shows the turn dialog if at least one attack occurred.
+     * 
+     * @param trainer  The player's {@link Trainer} model; must not be {@code null}.
+     * @param opponent The opponent's {@link Trainer} model; must not be
+     *                 {@code null}.
+     * @param lastTurn the result of the last resolved turn, or {@code null} if no
+     *                 turn has been resolved yet.
+     */
+    private void renderCombatState(Trainer trainer, Trainer opponent, TurnResult lastTurn) {
+        updateTrainerBugemon(trainer.getCurrentBugemon());
+        updateOpponentBugemon(opponent.getCurrentBugemon());
+
+        if (lastTurn != null && hasAttack(lastTurn)) {
+            showCombatDialog(lastTurn.first(), lastTurn.second());
+        } else {
+            hideDialog();
+        }
+    }
+
+    /**
+     * Determines whether at least one attack occurred during the given turn.
+     * 
+     * @param turnResult the result of the turn to check; must not be {@code null}.
+     * @return {@code true} if at least one attack occurred during the turn,
+     *         {@code false}
+     */
+    private boolean hasAttack(TurnResult turnResult) {
+        return turnResult.first().wasAttack()
+                || turnResult.second().map(TurnResult.AttackResult::wasAttack).orElse(false);
+    }
+
+    /**
+     * Plays the attack animations for the given turn result, then updates the
+     * combat view to reflect the current state of the combat.
+     * 
+     * @param turnResult the result of the turn to animate; must not be
+     *                   {@code null}.
+     * @param trainer    the player's {@link Trainer} model; must not be
+     *                   {@code null}.
+     * @param opponent   the opponent's {@link Trainer} model; must not be
+     *                   {@code null}.
+     * @param onFinished callback executed once the animations complete; must not be
+     *                   {@code null}.
+     */
+    private void animateTurn(TurnResult turnResult, Trainer trainer, Trainer opponent,
+            Runnable onFinished) {
+        Runnable playSecond = () -> turnResult.second().ifPresentOrElse(
+                second -> animateAttack(second, trainer, opponent, onFinished), onFinished);
+
+        animateAttack(turnResult.first(), trainer, opponent, playSecond);
+    }
+
+    /**
+     * Plays the attack animation for a single attack result, then invokes
+     * {@code onFinished}.
+     * 
+     * @param attackResult the attack result to animate; must not be {@code null}.
+     * @param trainer      the player's {@link Trainer} model; must not be
+     *                     {@code null}.
+     * @param opponent     the opponent's {@link Trainer} model; must not be
+     *                     {@code null}.
+     * @param onFinished   the callback to execute once the animation completes;
+     *                     must not be {@code null}.
+     */
+    private void animateAttack(TurnResult.AttackResult attackResult, Trainer trainer,
+            Trainer opponent, Runnable onFinished) {
+        if (!attackResult.wasAttack()) {
+            onFinished.run();
+            return;
+        }
+
+        if (attackResult.attacker() == trainer) {
+            playTrainerAttackAnimation(onFinished);
+            return;
+        }
+
+        if (attackResult.attacker() == opponent) {
+            playOpponentAttackAnimation(onFinished);
+            return;
+        }
+
+        onFinished.run();
+    }
+
+    /**
+     * Appends a line describing the given attack result to the turn dialog message
+     * and efficiency, prefixed by the given attack index (1 or 2).
+     * 
+     * @param message    the {@link StringBuilder} to append the attack description
+     *                   to; must not be {@code null}.
+     * @param efficiency the {@link StringBuilder} to append the attack efficiency
+     *                   to; must not be {@code null}.
+     * @param index      the index of the attack (1 for the first attack, 2 for the
+     *                   second attack).
+     * @param result     the attack result to describe; must not be {@code null}.
+     */
+    private void appendAttackLine(StringBuilder message, StringBuilder efficiency, int index,
+            TurnResult.AttackResult result) {
+        if (!result.wasAttack()) {
+            return;
+        }
+
+        if (message.length() > 0) {
+            message.append("\n");
+            efficiency.append("\n");
+        }
+
+        message.append(index)
+                .append("- ")
+                .append(result.attacker().getCurrentBugemonName())
+                .append(" à utilisé l'attaque ")
+                .append(result.getAttackName());
+
+        efficiency.append(index).append("- ").append(formatEfficiency(result.efficiency()));
+    }
+
     /**
      * Hides the dialog zone, removing it from the layout flow so that it does
      * not occupy space when empty.
@@ -211,8 +388,6 @@ public abstract class CombatView extends View {
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));
     }
 
-    // ── Attack animations ─────────────────────────────────────────────────────
-
     /**
      * Plays a lunge animation on the player's sprite (slide toward the opponent
      * then return), then invokes {@code onFinished} on the JavaFX thread.
@@ -240,7 +415,7 @@ public abstract class CombatView extends View {
      *
      * @param trainerAttacks {@code true} to animate the trainer sprite,
      *                       {@code false} to animate the opponent sprite.
-     * @param onFinished callback executed once the animation completes.
+     * @param onFinished     callback executed once the animation completes.
      */
     public void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
         if (trainerAttacks) {

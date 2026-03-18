@@ -3,7 +3,6 @@ package ulb.views.combat;
 import java.io.IOException;
 
 import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 
 /**
@@ -32,7 +31,13 @@ public class AutomaticCombatView extends CombatView {
         this.initCombatMode();
     }
 
-    /** Gives the view the model objects it needs to read from in {@link #refresh()}. */
+    /**
+     * Gives the view the model objects it needs to read from in {@link #refresh()}.
+     * 
+     * @param player   the player's trainer model; must not be {@code null}.
+     * @param opponent the opponent's trainer model; must not be {@code null}.
+     * @param combat   the combat model; must not be {@code null}.
+     */
     public void setModel(AutoTrainer player, AutoTrainer opponent, Combat combat) {
         this.player = player;
         this.opponent = opponent;
@@ -49,14 +54,7 @@ public class AutomaticCombatView extends CombatView {
     public void refresh() {
         if (player == null)
             return;
-        updateTrainerBugemon(player.getCurrentBugemon());
-        updateOpponentBugemon(opponent.getCurrentBugemon());
 
-        TurnResult last = combat.getLastTurnResult();
-        if (last != null && last.first().wasAttack()) {
-            showCombatDialog(last.first(), last.second());
-        } else {
-            hideDialog();
-        }
+        refreshCombatTurn(combat, player, opponent);
     }
 }

@@ -3,6 +3,7 @@ package ulb.views.combat;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -13,7 +14,6 @@ import javafx.scene.layout.VBox;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 
@@ -47,7 +47,21 @@ public class ManualCombatView extends CombatView {
         this.initCombatMode();
     }
 
-    /** Gives the view the model objects it reads from and wires the sub-menu callbacks. */
+    /**
+     * Gives the view the model objects it reads from and wires the sub-menu
+     * callbacks.
+     *
+     * @param player      the player's trainer model; must not be {@code null}.
+     * @param opponent    the opponent's trainer model; must not be {@code null}.
+     * @param combat      the combat model; must not be {@code null}.
+     * @param onAttack    callback to invoke when the user confirms an attack
+     *                    choice; must not be {@code null}.
+     * @param onSwitch    callback to invoke when the user confirms a switch choice;
+     *                    must not be {@code null}.
+     * @param onSurrender callback to invoke when the user confirms a surrender
+     *                    action; must not be {@code null}.
+     * 
+     */
     public void setModel(ManualTrainer player, AutoTrainer opponent, Combat combat) {
         this.player = player;
         this.opponent = opponent;
@@ -71,9 +85,11 @@ public class ManualCombatView extends CombatView {
     public void setOnAttack(Consumer<Attack> callback) {
         this.onAttack = callback;
     }
+
     public void setOnSwitch(Consumer<Bugemon> callback) {
         this.onSwitch = callback;
     }
+
     public void setOnSurrender(Runnable callback) {
         this.onSurrender = callback;
     }
@@ -88,15 +104,7 @@ public class ManualCombatView extends CombatView {
         if (player == null)
             return;
 
-        updateTrainerBugemon(player.getCurrentBugemon());
-        updateOpponentBugemon(opponent.getCurrentBugemon());
-
-        TurnResult last = combat.getLastTurnResult();
-        if (last != null && last.first().wasAttack()) {
-            showCombatDialog(last.first(), last.second());
-        } else {
-            hideDialog();
-        }
+        refreshCombatTurn(combat, player, opponent);
 
         if (player.isForcedToSwitch()) {
             showSwitchMenu(true);
@@ -106,7 +114,7 @@ public class ManualCombatView extends CombatView {
         }
     }
 
-    // ──  navigation ───────────────────────────────────────────────────
+    // ── navigation ───────────────────────────────────────────────────
 
     private void showMainActionMenu() {
         this.actionMenuView.getChildren().setAll(mainActionMenu);
@@ -126,11 +134,10 @@ public class ManualCombatView extends CombatView {
         VBox panel = new VBox(10);
         panel.setAlignment(Pos.CENTER_RIGHT);
 
-        List<Bugemon> available =
-                player.getTeam()
-                        .stream()
-                        .filter(b -> b != player.getCurrentBugemon() && b.isAlive())
-                        .toList();
+        List<Bugemon> available = player.getTeam()
+                .stream()
+                .filter(b -> b != player.getCurrentBugemon() && b.isAlive())
+                .collect(Collectors.toList());
 
         for (Bugemon b : available) {
             HBox row = new HBox(10);
@@ -142,7 +149,7 @@ public class ManualCombatView extends CombatView {
             sprite.setPreserveRatio(true);
 
             Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/"
-                                    + b.getMaxHp() + " PV");
+                    + b.getMaxHp() + " PV");
             btn.getStyleClass().add("switch-menu-button");
             btn.setMinWidth(200);
             btn.setOnAction(e -> {
