@@ -61,7 +61,8 @@ public class TeamFactory {
                 .findFirst();
         BugemonTeam bossTeam = new BugemonTeam();
 
-        bossTeam.add(bossBugemon.orElseThrow());
+        bossTeam.addBugemon(bossBugemon.orElseThrow(
+                () -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID + "' not found in the list.")));
 
         return bossTeam;
     }

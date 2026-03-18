@@ -70,7 +70,7 @@ public class Floor {
 
     private RewardRoom initRewardRoom() {
         // TODO: histoire 11
-        return null;
+        return new RewardRoom();
     }
 
     private CombatRoom initBossCombatRoom() {

@@ -15,4 +15,8 @@ public class CombatRoom extends Room {
     public Combat getCombat() {
         return this.combat;
     }
+
+    public boolean isBoss() {
+        return this.isBoss;
+    }
 }

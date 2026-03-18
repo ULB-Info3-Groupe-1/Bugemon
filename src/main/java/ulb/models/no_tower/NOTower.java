@@ -9,6 +9,7 @@
 
 package ulb.models.no_tower;
 
+import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class NOTower {
 
     private static final int MAX_FLOORS = 9;
     private int currentFloor = 0;
-    private List<Floor> floors;
+    private ArrayList<Floor> floors = new ArrayList<>();
 
     // TODO: change to Player class when it will be implemented
     public NOTower(BugemonTeam playerTeam) {
@@ -45,7 +46,7 @@ public class NOTower {
         try {
             getCurrentFloor().advance();
             return true;
-        } catch (EmptyStackException e) {
+        } catch (Exception e) {
             return false;
         }
     }
