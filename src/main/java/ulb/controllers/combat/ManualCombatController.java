@@ -51,7 +51,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void startCombat() {
         System.out.println("Starting manual combat with player team: " + player.getActiveTeam());
         this.playerTrainer = new ManualTrainer(player.getActiveTeam());
-        this.opponentTrainer = createRandomOpponent(this.playerTrainer);
+        this.opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(playerTrainer, opponentTrainer);
 
         this.view.setModel(playerTrainer, opponentTrainer, this.combat);

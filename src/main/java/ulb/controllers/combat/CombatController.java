@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
@@ -28,16 +29,22 @@ import ulb.views.combat.CombatView;
  * @param <V> the concrete {@link CombatView} subtype managed by this controller.
  */
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
+    private Consumer<List<LevelUp>> onVictory;
+
     public CombatController(MetaController metaController, V view) {
         super(metaController, view);
+    }
+
+    public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
+        this.onVictory = onVictory;
     }
 
     public abstract void startCombat();
 
     /** Creates a random opponent team sized to match the given player's team. */
-    protected AutoTrainer createRandomOpponent(Trainer playerTrainer) {
-        return new AutoTrainer(TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(),
-                                                            playerTrainer.getTeamSize()));
+    protected AutoTrainer createRandomOpponent(int playerTeamSize) {
+        return new AutoTrainer(
+                TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), playerTeamSize));
     }
 
     /**
@@ -51,7 +58,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             List<Bugemon> participatingBugemons =
                     winner.getTeam().stream().filter(b -> b.getParticipation()).toList();
             levelUps = LevelUpService.levelUp(participatingBugemons);
-            this.metaController.setLevelUp(levelUps);
+            this.onVictory.accept(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
         }

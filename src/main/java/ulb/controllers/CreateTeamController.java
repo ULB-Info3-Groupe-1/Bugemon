@@ -51,10 +51,6 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         } else if (this.selectedTeam.size() < MAX_TEAM_SIZE) {
             this.selectedTeam.add(bugemon);
             this.view.refreshTeam(this.selectedTeam);
-        } else {
-            this.view.showAlert("Équipe pleine",
-                                "Votre équipe est déjà pleine. Veuillez en retirer un avant "
-                                        + "d'en ajouter un nouveau.");
         }
         this.view.refresh();
     }
@@ -62,12 +58,12 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
         this.player.setActiveTeam(this.selectedTeam);
-        this.metaController.startAutoCombat();
+        this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
     }
 
     /** Launches a manual combat session. */
     public void startManualCombat() {
         this.player.setActiveTeam(this.selectedTeam);
-        this.metaController.startManualCombat();
+        this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
     }
 }

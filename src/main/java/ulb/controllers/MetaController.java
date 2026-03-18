@@ -1,7 +1,8 @@
 package ulb.controllers;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
 import javafx.stage.Stage;
 
 import ulb.controllers.combat.AutomaticCombatController;
@@ -10,7 +11,6 @@ import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.bugemon.Inventory;
-import ulb.models.level_up.LevelUp;
 import ulb.models.player.Player;
 
 /**
@@ -64,6 +64,7 @@ public class MetaController {
     }
 
     private final Stage stage;
+    private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final MainMenuController mainMenuController;
     private final CreateTeamController createTeamController;
     private final AutomaticCombatController automaticCombatController;
@@ -97,6 +98,34 @@ public class MetaController {
                 .forEach(this.musicPlayer::addMusic);
         musicLoader.loadFromDirectory("/musics/menu", Ambiance.MENU)
                 .forEach(this.musicPlayer::addMusic);
+
+        this.manualCombatController.setOnVictory(
+                levelUps -> levelUpController.setLevelUp(levelUps));
+        this.automaticCombatController.setOnVictory(
+                levelUps -> levelUpController.setLevelUp(levelUps));
+
+        initTransitions();
+    }
+
+    private void initTransitions() {
+        transitions.put(Window.MAIN_MENU, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.MENU);
+            mainMenuController.show(stage);
+        });
+        transitions.put(Window.CREATE_TEAM, () -> createTeamController.show(stage));
+        transitions.put(Window.MANUAL_COMBAT, () -> {
+            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            manualCombatController.startCombat();
+            manualCombatController.show(stage);
+        });
+        transitions.put(Window.AUTOMATIC_COMBAT, () -> {
+            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            automaticCombatController.startCombat();
+            automaticCombatController.show(stage);
+        });
+        transitions.put(Window.COMBAT_VICTORY, () -> combatVictoryController.show(stage));
+        transitions.put(Window.COMBAT_DEFEAT, () -> combatDefeatController.show(stage));
+        transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
     }
 
     /**
@@ -106,54 +135,10 @@ public class MetaController {
      * @throws IllegalArgumentException if the window is invalid
      */
     public final void switchTo(Window window) {
-        switch (window) {
-            case MAIN_MENU:
-                this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Ambiance.MENU);
-                this.mainMenuController.show(this.stage);
-                break;
-            case CREATE_TEAM:
-                this.musicPlayer.stopMusic();
-                this.createTeamController.show(this.stage);
-                break;
-            case AUTOMATIC_COMBAT:
-                this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Ambiance.COMBAT);
-                this.automaticCombatController.show(stage);
-                break;
-            case MANUAL_COMBAT:
-                this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Ambiance.COMBAT);
-                this.manualCombatController.show(this.stage);
-                break;
-            case COMBAT_VICTORY:
-                this.musicPlayer.stopMusic();
-                this.combatVictoryController.show(this.stage);
-                break;
-            case COMBAT_DEFEAT:
-                this.musicPlayer.stopMusic();
-                this.combatDefeatController.show(this.stage);
-                break;
-            case LEVEL_UP:
-                this.musicPlayer.stopMusic();
-                this.levelUpController.show(this.stage);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid window");
-        }
-    }
-
-    public void startAutoCombat() {
-        this.automaticCombatController.startCombat();
-        this.switchTo(Window.AUTOMATIC_COMBAT);
-    }
-
-    public void startManualCombat() {
-        this.manualCombatController.startCombat();
-        this.switchTo(Window.MANUAL_COMBAT);
-    }
-
-    public void setLevelUp(List<LevelUp> levelUps) {
-        this.levelUpController.setLevelUp(levelUps);
+        Runnable transition = transitions.get(window);
+        if (transition == null)
+            throw new IllegalArgumentException("Unknown window: " + window);
+        musicPlayer.stopMusic();
+        transition.run();
     }
 }

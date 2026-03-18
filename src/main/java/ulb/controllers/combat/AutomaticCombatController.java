@@ -46,7 +46,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     @Override
     public void startCombat() {
         this.playerTrainer = new AutoTrainer(player.getActiveTeam());
-        this.opponentTrainer = createRandomOpponent(this.playerTrainer);
+        this.opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(playerTrainer, opponentTrainer);
 
         this.view.setModel(this.playerTrainer, this.opponentTrainer, this.combat);
