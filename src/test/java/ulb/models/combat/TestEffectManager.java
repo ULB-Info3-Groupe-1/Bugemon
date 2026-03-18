@@ -12,16 +12,13 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon.effect.EffectType;
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestEffectManager {
     private Trainer createTrainer(String bugemonId) {
-        BugemonTeam team = new BugemonTeam();
-        team.addBugemon(TestUtilsBugemons.createDefaultBugemon(bugemonId));
-        return new AutoTrainer(team);
+        return new AutoTrainer(List.of(TestUtilsBugemons.createDefaultBugemon(bugemonId)));
     }
 
     @Test

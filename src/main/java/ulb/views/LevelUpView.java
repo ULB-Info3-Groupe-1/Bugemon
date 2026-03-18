@@ -34,6 +34,12 @@ public class LevelUpView extends View {
     private LevelUpSession session;
     private Consumer<Integer> onChooseOption;
 
+    /**
+     * Loads the level-up FXML layout and wires each choice button to fire the
+     * registered callback with its zero-based index (0, 1, or 2).
+     *
+     * @throws IOException if the FXML resource cannot be loaded.
+     */
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
         this.choice1Button.setOnAction(e -> {
@@ -55,6 +61,7 @@ public class LevelUpView extends View {
         this.session = session;
     }
 
+    /** Registers the callback invoked when the player selects a stat-upgrade option. */
     public void setOnChooseOption(Consumer<Integer> callback) {
         this.onChooseOption = callback;
     }

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
@@ -37,7 +36,7 @@ public class ManualCombatView extends CombatView {
     private final AttackActionMenu attackActionMenu;
 
     private Consumer<Attack> onAttack;
-    private Consumer<String> onSwitch;
+    private Consumer<Bugemon> onSwitch;
     private Runnable onSurrender;
 
     public ManualCombatView() throws IOException {
@@ -72,7 +71,7 @@ public class ManualCombatView extends CombatView {
 
         this.bugemonTeamView.setOnClickCallback(dto -> {
             if (dto != null && onSwitch != null)
-                onSwitch.accept(dto.getId());
+                onSwitch.accept((Bugemon)dto);
         });
     }
 
@@ -80,7 +79,7 @@ public class ManualCombatView extends CombatView {
         this.onAttack = callback;
     }
 
-    public void setOnSwitch(Consumer<String> callback) {
+    public void setOnSwitch(Consumer<Bugemon> callback) {
         this.onSwitch = callback;
     }
 
@@ -132,8 +131,7 @@ public class ManualCombatView extends CombatView {
     }
 
     private void showSwitchPanelInternal() {
-        List<BugemonDTO> alive =
-                player.getTeam().stream().filter(Bugemon::isAlive).map(b -> (BugemonDTO)b).toList();
+        List<Bugemon> alive = this.player.getTeam().stream().filter(b -> b.getHp() > 0).toList();
         this.bugemonTeamPane.setVisible(true);
         this.bugemonTeamPane.setManaged(true);
         this.bugemonTeamView.showTeam(alive);

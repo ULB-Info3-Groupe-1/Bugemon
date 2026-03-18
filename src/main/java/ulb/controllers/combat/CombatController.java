@@ -32,20 +32,22 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         super(metaController, view);
     }
 
+    public abstract void startCombat();
+
     /** Creates a random opponent team sized to match the given player's team. */
-    protected AutoTrainer createRandomOpponent(Trainer player) {
+    protected AutoTrainer createRandomOpponent(Trainer playerTrainer) {
         return new AutoTrainer(TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(),
-                                                            player.getTeamSize()));
+                                                            playerTrainer.getTeamSize()));
     }
 
     /**
      * Resolves the end of a combat session by distributing XP on victory and
      * navigating to the appropriate outcome screen.
      */
-    protected void handleCombatResult(Trainer winner, Trainer player) {
+    protected void handleCombatResult(Trainer winner, Trainer playerTrainer) {
         List<LevelUp> levelUps = new ArrayList<>();
-        if (winner == player) {
-            LevelUpService.distributeXp(winner, player);
+        if (winner == playerTrainer) {
+            LevelUpService.distributeXp(winner, playerTrainer);
             List<Bugemon> participatingBugemons =
                     winner.getTeam().stream().filter(b -> b.getParticipation()).toList();
             levelUps = LevelUpService.levelUp(participatingBugemons);

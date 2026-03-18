@@ -7,6 +7,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
+import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.views.combat.ManualCombatView;
@@ -22,63 +23,82 @@ import ulb.views.combat.ManualCombatView;
  * </p>
  */
 public class ManualCombatController extends CombatController<ManualCombatView> {
-    private Combat combat;
-    private ManualTrainer player;
-    private AutoTrainer opponent;
+    private final Player player;
 
-    public ManualCombatController(MetaController metaController) throws IOException {
+    private Combat combat;
+    private ManualTrainer playerTrainer;
+    private AutoTrainer opponentTrainer;
+
+    /**
+     * Constructs a {@code ManualCombatController}, initialises its {@link ManualCombatView},
+     * and registers the attack, switch, and surrender callbacks.
+     *
+     * @param metaController the application-level controller used for navigation.
+     * @throws IOException if the view fails to load its FXML resource.
+     */
+    public ManualCombatController(MetaController metaController, Player player) throws IOException {
         super(metaController, new ManualCombatView());
+
+        this.player = player;
+
         this.view.setOnAttack(this::onAttack);
         this.view.setOnSwitch(this::onSwitch);
         this.view.setOnSurrender(this::onSurrender);
     }
 
     /** Initialises and starts a new manual combat session for the given player. */
-    public void runManualCombat(ManualTrainer player) {
-        this.player = player;
-        this.opponent = createRandomOpponent(player);
-        this.combat = new Combat(player, opponent);
+    @Override
+    public void startCombat() {
+        this.playerTrainer = new ManualTrainer(player.getActiveTeam());
+        this.opponentTrainer = createRandomOpponent(this.playerTrainer);
+        this.combat = new Combat(playerTrainer, opponentTrainer);
 
-        this.view.setModel(player, opponent, combat);
+        this.view.setModel(playerTrainer, opponentTrainer, this.combat);
         this.view.refresh();
     }
 
     // ── Private callbacks (registered on the view) ───────────────────────────
 
+    /** Registers the chosen attack, advances the turn, then handles the result. */
     private void onAttack(Attack attack) {
-        player.setHasSwitchedThisTurn(false);
-        player.registerAttack(attack);
-        handlePostTurn(combat.turn());
+        this.playerTrainer.setHasSwitchedThisTurn(false);
+        this.playerTrainer.registerAttack(attack);
+        handlePostTurn(this.combat.turn());
     }
 
-    private void onSwitch(String bugemonId) {
-        Bugemon target = player.getBugemonById(bugemonId);
-
-        if (player.isForcedToSwitch()) {
-            player.switchAfterKO(target);
-            player.setForcedSwitch(false);
+    /**
+     * Handles a switch request. If a forced post-KO switch is pending the
+     * switch is applied immediately without consuming a turn; otherwise a
+     * normal switch action is registered and the turn is advanced.
+     */
+    private void onSwitch(Bugemon target) {
+        if (this.playerTrainer.isForcedToSwitch()) {
+            this.playerTrainer.switchAfterKO(target);
+            this.playerTrainer.setForcedSwitch(false);
             view.refresh();
         } else {
-            player.setHasSwitchedThisTurn(true);
-            player.registerSwitch(target);
-            handlePostTurn(combat.turn());
+            this.playerTrainer.setHasSwitchedThisTurn(true);
+            this.playerTrainer.registerSwitch(target);
+            handlePostTurn(this.combat.turn());
         }
     }
 
+    /** Navigates to the outcome screen if combat ended, or refreshes the view. */
     private void handlePostTurn(TurnResult result) {
-        if (combat.isFinished()) {
-            handleCombatResult(combat.getWinner().get(), player);
+        if (this.combat.isFinished()) {
+            handleCombatResult(this.combat.getWinner().get(), this.playerTrainer);
         } else {
             if (result.allyIsKo()) {
-                player.setForcedSwitch(true);
+                this.playerTrainer.setForcedSwitch(true);
             }
-            view.refresh();
+            this.view.refresh();
         }
     }
 
+    /** Registers a forfeit action, resolves the turn, and navigates to the defeat screen. */
     private void onSurrender() {
-        player.registerForfeit();
-        combat.turn();
-        handleCombatResult(combat.getWinner().get(), player);
+        this.playerTrainer.registerForfeit();
+        this.combat.turn();
+        handleCombatResult(this.combat.getWinner().get(), this.playerTrainer);
     }
 }

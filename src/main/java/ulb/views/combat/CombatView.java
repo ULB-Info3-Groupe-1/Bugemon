@@ -150,6 +150,15 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
+    /**
+     * Builds and displays the turn-summary dialog from the two attack results of
+     * the last resolved turn. Only the attacks that actually happened are shown;
+     * the second result is absent when one trainer did not attack.
+     *
+     * @param firstAttackResult  result of the first attack; never {@code null}.
+     * @param secondAttackResult result of the second attack, or empty if only
+     *                           one attack was made this turn.
+     */
     public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
                                  Optional<TurnResult.AttackResult> secondAttackResult) {
         String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
@@ -165,6 +174,7 @@ public abstract class CombatView extends View {
         showDialog(message, efficiency);
     }
 
+    /** Converts an {@link Efficiency} value to a human-readable French label. */
     protected String formatEfficiency(Efficiency efficiency) {
         switch (efficiency) {
             case HIGH:
@@ -205,6 +215,13 @@ public abstract class CombatView extends View {
         this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL()));
     }
 
+    /**
+     * Updates the opponent-side info panel and sprite to reflect the given
+     * Bugemon's current state (name, type, HP).
+     *
+     * @param opponentBugemon a {@link BugemonDTO} snapshot of the opponent's
+     *                        currently active Bugemon; must not be {@code null}.
+     */
     protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));

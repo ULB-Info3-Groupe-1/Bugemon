@@ -3,21 +3,26 @@ package ulb.models.trainer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.test.TestUtilsBugemonTeam;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestManualTrainer {
+    private static Bugemon findById(List<Bugemon> team, String id) {
+        return team.stream().filter(b -> b.getId().equals(id)).findFirst().get();
+    }
+
     @Test
     public void testRegisterSwitch() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
-        Bugemon target = team.getBugemon("2").get();
+        Bugemon target = findById(team, "2");
 
         trainer.registerSwitch(target);
 
@@ -27,17 +32,17 @@ public class TestManualTrainer {
 
     @Test
     public void testRegisterSwitchDeadBugemon() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         TestUtilsBugemons.killBugemon(team, "2");
         ManualTrainer trainer = new ManualTrainer(team);
 
         assertThrows(IllegalArgumentException.class,
-                     () -> trainer.registerSwitch(team.getBugemon("2").get()));
+                     () -> trainer.registerSwitch(findById(team, "2")));
     }
 
     @Test
     public void testRegisterAttack() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
         var attack = trainer.getCurrentBugemonAttackList().get(0);
 
@@ -49,7 +54,7 @@ public class TestManualTrainer {
 
     @Test
     public void testRegisterAttackNotInMoveSet() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
         // Build an attack with an ID that is guaranteed to not be in any Bugemon's attacks
@@ -61,7 +66,7 @@ public class TestManualTrainer {
 
     @Test
     public void testRegisterForfeit() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
         trainer.registerForfeit();
@@ -72,7 +77,7 @@ public class TestManualTrainer {
 
     @Test
     public void testSelectActionClearsRegistered() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
         trainer.registerForfeit();
@@ -84,7 +89,7 @@ public class TestManualTrainer {
 
     @Test
     public void testHasPendingAction() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
 
         assertThrows(IllegalStateException.class, () -> trainer.getAction());
@@ -98,9 +103,9 @@ public class TestManualTrainer {
 
     @Test
     public void testSwitchAfterKO() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
-        Bugemon replacement = team.getBugemon("2").get();
+        Bugemon replacement = findById(team, "2");
 
         TestUtilsBugemons.killBugemon(team, "1"); // kill current bugemon
         trainer.switchAfterKO(replacement);
@@ -110,11 +115,11 @@ public class TestManualTrainer {
 
     @Test
     public void testSwitchAfterKODeadTarget() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
         TestUtilsBugemons.killBugemon(team, "2");
 
         assertThrows(IllegalArgumentException.class,
-                     () -> trainer.switchAfterKO(team.getBugemon("2").get()));
+                     () -> trainer.switchAfterKO(findById(team, "2")));
     }
 }

@@ -16,7 +16,6 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -45,19 +44,19 @@ import ulb.models.bugemon.effect.EffectType;
  * describe the Bugemon game's content (attacks and Bugemons).
  *
  * <p>
- * The main entry point is {@link #parse(InputStream, InputStream)}, which
- * reads the attacks file first, builds an ID-to-{@link Attack} map, and then
- * parses the Bugemons file using that map to resolve attack references. Both
- * files are expected to be in the JSON format defined by the game's data
- * schema.
+ * The main entry point is {@link #parse()}, which reads the three bundled JSON
+ * resource files (attacks, Bugemons, objects/inventory) in order, building an
+ * ID-to-{@link Attack} map first so that Bugemon deserialization can resolve
+ * attack references. Parsed data is stored in static fields and exposed via
+ * {@link #getBugemons()}, {@link #getAttacks()}, {@link #getObjects()}, and
+ * {@link #getInventory()}.
  * </p>
  *
  * <p>
- * Internally, parsing is delegated to two private static helpers —
- * {@link #parseAttacks(java.io.Reader)} and
- * {@link #parseBugemons(java.io.Reader, Map)} — each of which uses a
- * customised {@link com.google.gson.Gson} instance equipped with the
- * appropriate type adapters.
+ * Internally, parsing is delegated to three private static helpers —
+ * {@link #parseAttacks(java.io.Reader)}, {@link #parseBugemons(java.io.Reader)},
+ * and {@link #parseObjectsAndInventory(java.io.Reader)} — each of which uses a
+ * customised {@link com.google.gson.Gson} instance with the appropriate type adapters.
  * </p>
  *
  * @see BugemonDeserializer
@@ -99,13 +98,13 @@ public class Parser {
     }
 
     /**
-     * Parses both JSON data files and returns a fully populated
-     * {@link ParseResult}.
+     * Parses the three bundled JSON resource files (attacks, Bugemons,
+     * objects/inventory) and populates the static data fields.
      *
-     * @param attacksStream  input stream for the attacks JSON file
-     * @param bugemonsStream input stream for the bugemons JSON file
-     * @param objectsStream input stream for the objects JSON file
-     * @return a ParseResult containing the attacks map and the list of bugemons
+     * <p>
+     * Must be called once before any {@code get*()} accessor. Silently returns
+     * without populating any data if a resource file cannot be opened.
+     * </p>
      */
     public void parse() {
         InputStream attacksStream;
@@ -141,9 +140,8 @@ public class Parser {
     }
 
     /**
-     * Returns the list of GameObject objects parsed from the JSON file, where each GameObject is
-     * fully constructed with its associated effects resolved from the attacks map.
-     * @return a list of GameObject objects representing the parsed GameObjects from the JSON file
+     * Returns the list of {@link GameObject} instances parsed from the objects JSON file.
+     * @return the parsed game objects, or {@code null} if {@link #parse()} has not been called.
      */
     public final List<GameObject> getObjects() {
         return objects;
@@ -266,9 +264,12 @@ public class Parser {
     }
 
     /**
-     * Placeholder for future parsing of in-game objects (items, etc.).
+     * Parses the objects JSON file and builds both the list of {@link GameObject}s
+     * and the starting {@link Inventory}.
      *
-     * @param fileName path to the objects JSON file (not yet used).
+     * @param reader reader providing the objects JSON content.
+     * @return an {@link ObjectWrapper} containing the parsed objects and inventory,
+     *         or {@code null} if parsing fails.
      */
     static ObjectWrapper parseObjectsAndInventory(Reader reader) {
         Gson gson = new GsonBuilder()
@@ -288,7 +289,7 @@ public class Parser {
             Type invType = new TypeToken<Map<String, Integer>>() {}.getType();
             Map<String, Integer> inventoryMap = gson.fromJson(startInventory, invType);
 
-            Inventory inventory = new Inventory(new ArrayList<>());
+            Inventory inventory = new Inventory();
             for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
                 String objectId = entry.getKey();
                 int quantity = entry.getValue();
@@ -314,10 +315,6 @@ public class Parser {
         return null;
     }
 
-    /**
-     * Placeholder for future parsing of the skill tree data.
-     *
-     * @param fileName path to the skill-tree JSON file (not yet used).
-     */
+    /** Placeholder for future skill-tree parsing. Currently a no-op. */
     static void parseSkillTree(Path fileName) {}
 }

@@ -14,7 +14,6 @@ import java.util.Random;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Represents an AI-controlled trainer that selects actions automatically
@@ -50,7 +49,7 @@ public class AutoTrainer extends Trainer {
      *             must not be {@code null} and must contain at least one
      *             {@link Bugemon}.
      */
-    public AutoTrainer(BugemonTeam team) {
+    public AutoTrainer(List<Bugemon> team) {
         super(team);
     }
 

@@ -21,6 +21,12 @@ public class AutomaticCombatView extends CombatView {
     private AutoTrainer opponent;
     private Combat combat;
 
+    /**
+     * Loads the shared combat FXML layout and configures it for automatic mode
+     * (hides the action menu and team pane).
+     *
+     * @throws IOException if the FXML resource cannot be loaded.
+     */
     public AutomaticCombatView() throws IOException {
         super();
         this.initCombatMode();

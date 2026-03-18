@@ -21,6 +21,13 @@ import ulb.views.LevelUpView;
 public class LevelUpController extends Controller<LevelUpView> {
     private final LevelUpSession session = new LevelUpSession();
 
+    /**
+     * Constructs a {@code LevelUpController}, initialises its {@link LevelUpView},
+     * and registers the choice callback.
+     *
+     * @param metaController the application-level controller used for navigation.
+     * @throws IOException if the view fails to load its FXML resource.
+     */
     public LevelUpController(MetaController metaController) throws IOException {
         super(metaController, new LevelUpView());
         this.view.setSession(session);

@@ -1,14 +1,13 @@
 package ulb.factory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.utils.Parser;
 
 public class TeamFactory {
-    private static final Random RANDOM = new Random();
-
     /**
      * Generates a random {@link BugemonTeam} of the specified size by sampling
      * without replacement from the given pool of available {@link Bugemon}s.
@@ -29,23 +28,19 @@ public class TeamFactory {
      *         chosen, cloned {@link Bugemon}s.
      * @throws RuntimeException if cloning a selected {@link Bugemon} fails.
      */
-    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList,
-                                               final int teamSize) {
-        BugemonTeam randomTeam = new BugemonTeam();
-
-        while (randomTeam.size() != teamSize) {
-            int randomIndex = RANDOM.nextInt(bugemonList.size());
-            Bugemon chosenBugemon = bugemonList.get(randomIndex);
-
-            if (!randomTeam.contains(chosenBugemon.getId())) {
-                try {
-                    randomTeam.addBugemon(chosenBugemon.clone());
-                } catch (CloneNotSupportedException e) {
-                    throw new RuntimeException("Failed to clone Bugemon: " + chosenBugemon.getId(),
-                                               e);
-                }
+    public static List<Bugemon> createRandomTeam(final List<Bugemon> bugemonList,
+                                                 final int teamSize) {
+        List<Bugemon> allBugemons = Parser.getInstance().getBugemons();
+        List<Bugemon> pool = new ArrayList<>(allBugemons);
+        Collections.shuffle(pool);
+        List<Bugemon> team = new ArrayList<>();
+        try {
+            for (int i = 0; i < teamSize; i++) {
+                team.add(pool.get(i).clone());
             }
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Failed to clone a Bugemon for the team", e);
         }
-        return randomTeam;
+        return team;
     }
 }

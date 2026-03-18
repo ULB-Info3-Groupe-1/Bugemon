@@ -21,6 +21,12 @@ public class MainMenuView extends View {
     private Runnable onCreateTeam;
     private Runnable onQuit;
 
+    /**
+     * Loads the main-menu FXML layout and wires the button actions to the
+     * registered callbacks.
+     *
+     * @throws IOException if the FXML resource cannot be loaded.
+     */
     public MainMenuView() throws IOException {
         super("/fxml/MainMenu.fxml");
         this.createTeamButton.setOnAction(e -> {
@@ -33,10 +39,12 @@ public class MainMenuView extends View {
         });
     }
 
+    /** Registers the callback invoked when the player clicks "Créer une équipe". */
     public void setOnCreateTeam(Runnable callback) {
         this.onCreateTeam = callback;
     }
 
+    /** Registers the callback invoked when the player clicks "Quitter". */
     public void setOnQuit(Runnable callback) {
         this.onQuit = callback;
     }

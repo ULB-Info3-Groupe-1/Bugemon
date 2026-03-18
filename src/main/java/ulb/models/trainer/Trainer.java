@@ -14,7 +14,6 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Abstract base for any participant in a combat session.
@@ -40,7 +39,7 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see Bugemon
  */
 public abstract class Trainer {
-    protected final BugemonTeam team;
+    protected final List<Bugemon> team;
     protected Bugemon currentBugemon;
 
     /**
@@ -50,9 +49,9 @@ public abstract class Trainer {
      * @param team the {@link BugemonTeam} owned by this trainer; must not be
      *             {@code null} and must contain at least one Bugemon.
      */
-    public Trainer(BugemonTeam team) {
+    public Trainer(List<Bugemon> team) {
         this.team = team;
-        currentBugemon = team.getFirst();
+        currentBugemon = team.get(0);
     }
 
     // ── strategy contract ────────────────────────────────────────────────────
@@ -193,7 +192,7 @@ public abstract class Trainer {
      *
      * @return the {@link BugemonTeam}; never {@code null}.
      */
-    public BugemonTeam getTeam() {
+    public List<Bugemon> getTeam() {
         return team;
     }
 
@@ -204,19 +203,6 @@ public abstract class Trainer {
      */
     public int getTeamSize() {
         return team.size();
-    }
-
-    /**
-     * Returns the Bugemon with the specified ID from this trainer's team.
-     *
-     * @param bugemonId the unique identifier of the Bugemon to retrieve;
-     *                  must not be {@code null}.
-     * @return the matching {@link Bugemon}.
-     * @throws java.util.NoSuchElementException if no Bugemon with the given ID
-     *                                          exists in the team.
-     */
-    public Bugemon getBugemonById(String bugemonId) {
-        return team.getBugemon(bugemonId).get();
     }
 
     // ── mutators ─────────────────────────────────────────────────────────────

@@ -15,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable
@@ -50,18 +51,14 @@ public class BugemonTeamView extends VBox {
      * Displays the player's current team in the team view.
      * @param bugemonList
      */
-    public void showTeam(List<BugemonDTO> bugemonList) {
+    public void showTeam(List<Bugemon> bugemonTeam) {
         this.gridPane.getChildren().clear();
-
-        for (int i = 0; i < bugemonList.size(); i++) {
-            BugemonDTO bugemon = bugemonList.get(i);
-
+        for (int i = 0; i < bugemonTeam.size(); i++) {
+            Bugemon bugemon = bugemonTeam.get(i);
+            VBox cell = createBugemonCell(bugemon);
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
-
-            VBox cell = createBugemonCell(bugemon);
-
-            gridPane.add(cell, col, row);
+            this.gridPane.add(cell, col, row);
         }
     }
 

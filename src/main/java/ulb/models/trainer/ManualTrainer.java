@@ -9,11 +9,11 @@
 
 package ulb.models.trainer;
 
+import java.util.List;
 import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Represents a human-controlled trainer whose actions are driven by the
@@ -60,7 +60,7 @@ public class ManualTrainer extends Trainer {
      * @param team the {@link BugemonTeam} this trainer owns; must not be
      *             {@code null} and must contain at least one Bugemon.
      */
-    public ManualTrainer(BugemonTeam team) {
+    public ManualTrainer(List<Bugemon> team) {
         super(team);
     }
 
@@ -68,8 +68,8 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Returns and consumes the action that was previously queued by the
-     * controller via {@link #registerAction(TurnAction)}, {@link #queueAttack},
-     * {@link #queueSwitch}, or {@link #queueForfeit}.
+     * controller via {@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
+     * {@link #registerForfeit()}, or the lower-level {@link #registerAction(TurnAction)}.
      *
      * <p>
      * The pending action is cleared after this call; the controller must queue
@@ -97,8 +97,8 @@ public class ManualTrainer extends Trainer {
      *
      * <p>
      * If no KO switch target has been registered (i.e. the controller has not
-     * yet called {@link #queueSwitchAfterKO}), this method does nothing; the
-     * controller is responsible for calling {@link #switchAfterKO(Bugemon)}
+     * yet called {@link #registerSwitchAfterKO(Bugemon)}), this method does nothing;
+     * the controller is responsible for calling {@link #switchAfterKO(Bugemon)}
      * when the player has made their choice.
      * </p>
      */
@@ -142,8 +142,8 @@ public class ManualTrainer extends Trainer {
      *
      * <p>
      * Any previously queued action is silently overwritten. Prefer the typed
-     * convenience methods ({@link #queueAttack}, {@link #queueSwitch},
-     * {@link #queueForfeit}) to benefit from built-in validation.
+     * convenience methods ({@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
+     * {@link #registerForfeit()}) to benefit from built-in validation.
      * </p>
      *
      * @param action the {@link TurnAction} to queue; must not be {@code null}.

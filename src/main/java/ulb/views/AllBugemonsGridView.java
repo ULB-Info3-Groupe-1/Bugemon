@@ -15,7 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable
@@ -27,8 +27,8 @@ public class AllBugemonsGridView extends VBox {
     private static final int IMAGES_PER_ROW = 10;
     private static final double IMAGE_SIZE = 96;
 
-    private Function<BugemonDTO, Boolean> selectionChecker;
-    private Consumer<BugemonDTO> onBugemonClicked;
+    private Function<Bugemon, Boolean> selectionChecker;
+    private Consumer<Bugemon> onBugemonClicked;
 
     /**
      * Constructor of the AllBugemonsGridView class. It loads the FXML layout and initializes the
@@ -53,7 +53,7 @@ public class AllBugemonsGridView extends VBox {
      * Sets the callback used to check if the bugemon given to the callback should
      * be marked as selected.
      */
-    public void setSelectionChecker(Function<BugemonDTO, Boolean> checker) {
+    public void setSelectionChecker(Function<Bugemon, Boolean> checker) {
         this.selectionChecker = checker;
     }
 
@@ -66,7 +66,7 @@ public class AllBugemonsGridView extends VBox {
      *                 {@link ulb.common.dto.BugemonDTO} of the clicked cell;
      *                 must not be {@code null}.
      */
-    public void setOnClickCallback(Consumer<BugemonDTO> callback) {
+    public void setOnClickCallback(Consumer<Bugemon> callback) {
         this.onBugemonClicked = callback;
     }
 
@@ -74,11 +74,11 @@ public class AllBugemonsGridView extends VBox {
      * Displays all available Bugemons in the grid view.
      * @param bugemonList the list of all available Bugemons to be displayed
      */
-    public void showAll(List<BugemonDTO> bugemonList) {
+    public void showAll(List<Bugemon> bugemonList) {
         this.gridPane.getChildren().clear();
 
         for (int i = 0; i < bugemonList.size(); i++) {
-            BugemonDTO bugemon = bugemonList.get(i);
+            Bugemon bugemon = bugemonList.get(i);
 
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
@@ -95,7 +95,7 @@ public class AllBugemonsGridView extends VBox {
      * @param bugemon the BugemonDTO representing the Bugemon to be displayed in the cell
      * @return a VBox containing the image and name of the Bugemon to be displayed in the grid view
      */
-    private VBox createBugemonCell(BugemonDTO bugemon) {
+    private VBox createBugemonCell(Bugemon bugemon) {
         Image image = new Image(bugemon.getSpriteURL());
 
         ImageView imageView = new ImageView(image);
@@ -123,9 +123,9 @@ public class AllBugemonsGridView extends VBox {
 
         if (this.onBugemonClicked != null) {
             cell.setOnMouseClicked(e -> {
-                BugemonDTO dto = (BugemonDTO)cell.getUserData();
-                if (dto != null) {
-                    this.onBugemonClicked.accept(dto);
+                Bugemon b = (Bugemon)cell.getUserData();
+                if (b != null) {
+                    this.onBugemonClicked.accept(b);
                 }
             });
         }

@@ -8,6 +8,7 @@ import javafx.util.Duration;
 
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
+import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.views.combat.AutomaticCombatView;
 
@@ -21,25 +22,50 @@ import ulb.views.combat.AutomaticCombatView;
  * </p>
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
-    public AutomaticCombatController(MetaController metaController) throws IOException {
+    private final Player player;
+
+    private Combat combat;
+    private AutoTrainer playerTrainer;
+    private AutoTrainer opponentTrainer;
+
+    /**
+     * Constructs an {@code AutomaticCombatController} and initialises its
+     * {@link AutomaticCombatView}.
+     *
+     * @param metaController the application-level controller used for navigation.
+     * @throws IOException if the view fails to load its FXML resource.
+     */
+    public AutomaticCombatController(MetaController metaController, Player player)
+            throws IOException {
         super(metaController, new AutomaticCombatView());
+
+        this.player = player;
     }
 
     /** Starts a complete automatic combat session and drives it to completion. */
-    public void runAutoCombat(final AutoTrainer player) {
-        AutoTrainer opponent = createRandomOpponent(player);
-        Combat combat = new Combat(player, opponent);
+    @Override
+    public void startCombat() {
+        this.playerTrainer = new AutoTrainer(player.getActiveTeam());
+        this.opponentTrainer = createRandomOpponent(this.playerTrainer);
+        this.combat = new Combat(playerTrainer, opponentTrainer);
 
-        view.setModel(player, opponent, combat);
-        view.refresh();
+        this.view.setModel(this.playerTrainer, this.opponentTrainer, this.combat);
+        this.view.refresh();
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
-            TurnResult turnResult = combat.turn();
-            animateTurn(turnResult, player, opponent,
-                        () -> finalizeTurn(combat, timeline, player, opponent));
+            combat.turn();
+
+            combat.getWinner().ifPresent(winner -> {
+                timeline.stop();
+                handleCombatResult(winner, this.playerTrainer);
+            });
+
+            if (!combat.isFinished()) {
+                view.refresh();
+            }
         });
 
         timeline.getKeyFrames().add(keyFrame);

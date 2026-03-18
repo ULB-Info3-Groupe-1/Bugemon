@@ -11,8 +11,6 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon.effect.EffectType;
-import ulb.models.bugemon_team.BugemonTeam;
-
 public final class TestUtilsBugemons {
     private TestUtilsBugemons() {}
 
@@ -49,16 +47,12 @@ public final class TestUtilsBugemons {
         return bugemons;
     }
 
-    public static BugemonTeam createDefaultTeam(int size) {
-        BugemonTeam team = new BugemonTeam();
-        for (Bugemon bugemon : createDefaultBugemons(size)) {
-            team.addBugemon(bugemon);
-        }
-        return team;
+    public static List<Bugemon> createDefaultTeam(int size) {
+        return createDefaultBugemons(size);
     }
 
-    public static void killBugemon(BugemonTeam team, String id) {
-        Bugemon bugemon = team.getBugemon(id).get();
+    public static void killBugemon(List<Bugemon> team, String id) {
+        Bugemon bugemon = team.stream().filter(b -> b.getId().equals(id)).findFirst().get();
         bugemon.takeDamage(bugemon.getHp());
     }
 }
