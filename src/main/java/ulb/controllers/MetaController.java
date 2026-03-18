@@ -98,6 +98,8 @@ public class MetaController {
         this.musicLoader = new MusicLoader();
         musicLoader.loadFromDirectory("/musics/combat", Ambiance.COMBAT)
                 .forEach(this.musicPlayer::addMusic);
+        musicLoader.loadFromDirectory("/musics/menu", Ambiance.MENU)
+                .forEach(this.musicPlayer::addMusic);
     }
 
     /**
@@ -110,6 +112,7 @@ public class MetaController {
         switch (window) {
             case MAIN_MENU:
                 this.musicPlayer.stopMusic();
+                this.musicPlayer.playAmbiance(Ambiance.MENU);
                 this.mainMenuController.show(this.stage);
                 break;
             case CREATE_TEAM:
