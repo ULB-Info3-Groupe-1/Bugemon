@@ -115,7 +115,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
      * @param id (String) the ID of the Bugemon to be returned
      * @return (Bugemon) the Bugemon with the given ID
      */
-    public Optional<Bugemon> getBugemon(String id) {
+    public Optional<Bugemon> get(String id) {
         return this.team.stream().filter(b -> id.equals(b.getId())).findFirst();
     }
 
@@ -129,6 +129,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
     public boolean contains(Bugemon bugemon) {
         return this.team.contains(bugemon);
     }
+
     /**
      * Returns an {@link Iterator} over the non-{@code null} {@link Bugemon}s
      * in this team, in the order they were added.

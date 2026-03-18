@@ -29,7 +29,7 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
         team.add(expectedBugemon);
 
-        assertEquals(expectedBugemon, team.getBugemon("1").get());
+        assertEquals(expectedBugemon, team.get("1").get());
     }
 
     @Test
@@ -37,7 +37,7 @@ public class TestBugemonTeam {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
         team.add(expectedBugemon);
-        Bugemon bugemon = team.getBugemon("1").get();
+        Bugemon bugemon = team.get("1").get();
 
         assertEquals(1, team.size());
         assertEquals(expectedBugemon, bugemon);
