@@ -1,9 +1,5 @@
 package ulb.models.player;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -22,15 +18,6 @@ public class Player {
 
     // ── Active team ───────────────────────────────────────────────────────
     public void setActiveTeam(BugemonTeam team) {
-        // TODO: catch exceptiosn from BugemonTeam instead of handling teamsize here
-
-        if (team.isEmpty() || team.size() > 6)
-            throw new IllegalArgumentException("L'équipe doit avoir entre 1 et 6 Bugémons.");
-        Set<String> seen = new HashSet<>();
-        for (Bugemon b : team) {
-            if (!seen.add(b.getId()))
-                throw new IllegalArgumentException("Doublons non autorisés : " + b.getName());
-        }
         this.activeTeam = team;
     }
 
