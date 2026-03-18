@@ -132,7 +132,7 @@ public class AutoTrainer extends Trainer {
             return;
         }
 
-        List<Bugemon> aliveBugemons = this.team.stream().filter(Bugemon::isAlive).toList();
+        List<Bugemon> aliveBugemons = this.team.aliveStream().toList();
         currentBugemon = aliveBugemons.get(RAND.nextInt(aliveBugemons.size()));
     }
 }

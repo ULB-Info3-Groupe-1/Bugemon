@@ -150,6 +150,14 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return this.team.stream();
     }
 
+    public Stream<Bugemon> aliveStream() {
+        return this.team.stream().filter(Bugemon::isAlive);
+    }
+
+    public Iterator<Bugemon> aliveIterator() {
+        return this.team.stream().filter(Bugemon::isAlive).iterator();
+    }
+
     /**
      * Resets every {@link Bugemon} in the team to its initial state, restoring
      * all stats to the values they had when the Bugemon was first constructed.
