@@ -62,7 +62,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
     /** Registers the chosen attack, advances the turn, then handles the result. */
     private void onAttack(Attack attack) {
-        this.playerTrainer.setHasSwitchedThisTurn(false);
         this.playerTrainer.registerAttack(attack);
         handlePostTurn(this.combat.turn());
     }
@@ -92,6 +91,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             if (result.allyIsKo()) {
                 this.playerTrainer.setForcedSwitch(true);
             }
+            this.playerTrainer.setHasSwitchedThisTurn(false);
             this.view.refresh();
         }
     }

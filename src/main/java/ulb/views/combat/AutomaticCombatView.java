@@ -43,8 +43,6 @@ public class AutomaticCombatView extends CombatView {
     protected void initCombatMode() {
         this.actionMenuView.setVisible(false);
         this.actionMenuView.setManaged(false);
-        this.bugemonTeamPane.setVisible(false);
-        this.bugemonTeamPane.setManaged(false);
     }
 
     @Override

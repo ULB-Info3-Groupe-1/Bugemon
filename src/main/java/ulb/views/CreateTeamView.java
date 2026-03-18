@@ -54,7 +54,7 @@ public class CreateTeamView extends View {
     public void setModel(List<Bugemon> bugemonTeam) {
         this.bugemonTeam = bugemonTeam;
         this.allBugemonsGridView.setSelectionChecker(
-                b -> bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
+                b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
     }
 
     /** Registers the callback invoked when the player clicks a Bugemon in the selection grid. */

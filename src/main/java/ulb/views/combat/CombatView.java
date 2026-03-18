@@ -13,7 +13,6 @@ import javafx.util.Duration;
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.combat.TurnResult;
-import ulb.views.BugemonTeamView;
 import ulb.views.DialogZoneView;
 import ulb.views.View;
 
@@ -71,20 +70,6 @@ public abstract class CombatView extends View {
      * Subclasses populate this container via their own menu components.
      */
     @FXML protected ActionMenuView actionMenuView;
-
-    /**
-     * Overlay pane that hosts the {@link BugemonTeamView} used to pick a
-     * Bugemon during a switch. Hidden by default; shown when a switch is
-     * requested.
-     */
-    @FXML protected StackPane bugemonTeamPane;
-
-    /**
-     * Scrollable grid of the player's team members, embedded inside
-     * {@link #bugemonTeamPane}. Each cell is clickable when a switch is in
-     * progress.
-     */
-    @FXML protected BugemonTeamView bugemonTeamView;
 
     /**
      * Overlay banner used to display turn feedback messages such as attack

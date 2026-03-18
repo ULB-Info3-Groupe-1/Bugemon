@@ -1,91 +1,63 @@
 .action-menu {
-    -fx-background-color: #EDEBE0;
-    -fx-padding: 20;
-    -fx-spacing: 20;
-    -fx-border-color: #b4b4b4;
-    -fx-border-radius: 10;
-    -fx-border-width: 2;
-    -fx-alignment: center;
-    -fx-font-family: 'Pixels';
-}
-
-.action-separator {
-    -fx-spacing: 20;
-    -fx-alignment: center;
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 16;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
 }
 
 .action-button {
-    -fx-background-color: #7F7F7F;
-    -fx-border-width: 2;
-    -fx-border-radius: 5;
-    -fx-border-color: #cbcbcb;
-    -fx-fill: white;
+    -fx-background-color: #7f8c8d;
+    -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 6;
     -fx-cursor: hand;
-    -fx-alignment: center;
+    -fx-padding: 10 16;
 }
 
 .action-button:hover {
-    -fx-background-color: #b8b8b8;
+    -fx-background-color: #626567;
 }
 
 .action-attack {
-    -fx-background-color: #DB1B3E;
-    -fx-border-color: #ff234b;
+    -fx-background-color: #c0392b;
 }
-
-.action-attack:hover {
-    -fx-background-color: #ff234b;
-}
+.action-attack:hover { -fx-background-color: #a93226; }
 
 .action-switch {
-    -fx-background-color: #4881B3;
-    -fx-border-color: #58a2e3;
+    -fx-background-color: #2980b9;
 }
-
-.action-switch:hover {
-    -fx-background-color: #58a2e3;
-}
+.action-switch:hover { -fx-background-color: #1f6691; }
 
 .action-item {
-    -fx-background-color: #FFA300;
-    -fx-border-color: #ffbc47;
+    -fx-background-color: #e67e22;
+}
+.action-item:hover { -fx-background-color: #ca6f1e; }
+
+.switch-menu-button {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 8 16;
 }
 
-.action-item:hover {
-    -fx-background-color: #ffbc47;
+.switch-menu-button:hover {
+    -fx-background-color: #1f6691;
 }
 
-.attack-FLORA {
-    -fx-background-color: #278A27;
-    -fx-border-color: #37b437;
-}
+.attack-FLORA { -fx-background-color: #27ae60; }
+.attack-FLORA:hover { -fx-background-color: #1e8449; }
 
-.attack-PYRO {
-    -fx-background-color: #cd0c0c;
-    -fx-border-color: #ff9500;
-}
+.attack-PYRO { -fx-background-color: #e74c3c; }
+.attack-PYRO:hover { -fx-background-color: #a93226; }
 
-.attack-LITHO {
-    -fx-background-color: #7600b6;
-    -fx-border-color: #a200ff;
-}
+.attack-AQUA { -fx-background-color: #2980b9; }
+.attack-AQUA:hover { -fx-background-color: #1f6691; }
 
-.attack-AQUA {
-    -fx-background-color: #00a8b1;
-    -fx-border-color: #00f3f8;
-}
-
-.attack-FLORA:hover {
-    -fx-background-color: #37b437;
-}
-.attack-PYRO:hover {
-    -fx-background-color: #b25300;
-}
-.attack-AQUA:hover {
-    -fx-background-color: #11bcb3;
-}
-.attack-LITHO:hover {
-    -fx-background-color: #aa33c8;
-}
+.attack-LITHO { -fx-background-color: #8e44ad; }
+.attack-LITHO:hover { -fx-background-color: #6c3483; }

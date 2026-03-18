@@ -6,10 +6,15 @@
 }
 
 .victory-continue-button {
-    -fx-background-color: #3CB371;
+    -fx-background-color: #3daa6e;
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-font-family: 'Pixels';
-    -fx-background-radius: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 12 30;
+}
+
+.victory-continue-button:hover {
+    -fx-background-color: #2e8a57;
 }

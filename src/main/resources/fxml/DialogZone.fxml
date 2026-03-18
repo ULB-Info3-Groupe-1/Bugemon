@@ -22,6 +22,7 @@
         <HBox>
             <Text fx:id="additionalInfo" styleClass="additional-info" />
         </HBox>
+        <Button fx:id="nextButton" />
     </VBox>
 
 </fx:root>

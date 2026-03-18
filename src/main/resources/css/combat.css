@@ -1,5 +1,6 @@
 .combat-team-title {
-    -fx-font-size: 32;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-font-family: 'Pixels';
+    -fx-text-fill: #1a1a1a;
 }

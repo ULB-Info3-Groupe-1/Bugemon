@@ -3,6 +3,12 @@ package ulb.views.combat;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -16,15 +22,10 @@ import ulb.models.trainer.ManualTrainer;
  *
  * <p>
  * Holds references to the {@link ManualTrainer}, {@link AutoTrainer}, and
- * {@link Combat} models and reads their state in {@link #refresh()}. All
- * sub-menu navigation (attack menu, switch panel, main menu) is managed
- * internally by this view; the controller never calls any show/hide method.
- * </p>
- *
- * <p>
- * User actions are dispatched through the callbacks registered via
+ * {@link Combat} models. All sub-menu navigation (attack menu, switch panel,
+ * main menu) is managed internally; the controller never calls any show/hide
+ * method. User actions are dispatched through the callbacks registered via
  * {@link #setOnAttack}, {@link #setOnSwitch}, and {@link #setOnSurrender}.
- * No concrete controller reference is held.
  * </p>
  */
 public class ManualCombatView extends CombatView {
@@ -46,17 +47,14 @@ public class ManualCombatView extends CombatView {
         this.initCombatMode();
     }
 
-    /**
-     * Gives the view the model objects it reads from, and wires the internal
-     * sub-menu navigation callbacks.
-     */
+    /** Gives the view the model objects it reads from and wires the sub-menu callbacks. */
     public void setModel(ManualTrainer player, AutoTrainer opponent, Combat combat) {
         this.player = player;
         this.opponent = opponent;
         this.combat = combat;
 
-        this.mainActionMenu.setOnAttack(this::showAttackMenuInternal);
-        this.mainActionMenu.setOnSwitch(this::showSwitchPanelInternal);
+        this.mainActionMenu.setOnAttack(this::showAttackMenu);
+        this.mainActionMenu.setOnSwitch(() -> showSwitchMenu(false));
         this.mainActionMenu.setOnSurrender(() -> {
             if (onSurrender != null)
                 onSurrender.run();
@@ -67,30 +65,22 @@ public class ManualCombatView extends CombatView {
             if (onAttack != null)
                 onAttack.accept(attack);
         });
-        this.attackActionMenu.setOnBack(this::showMainActionMenuInternal);
-
-        this.bugemonTeamView.setOnClickCallback(dto -> {
-            if (dto != null && onSwitch != null)
-                onSwitch.accept((Bugemon)dto);
-        });
+        this.attackActionMenu.setOnBack(this::showMainActionMenu);
     }
 
     public void setOnAttack(Consumer<Attack> callback) {
         this.onAttack = callback;
     }
-
     public void setOnSwitch(Consumer<Bugemon> callback) {
         this.onSwitch = callback;
     }
-
     public void setOnSurrender(Runnable callback) {
         this.onSurrender = callback;
     }
 
     @Override
     protected void initCombatMode() {
-        showMainActionMenuInternal();
-        hideSwitchPanelInternal();
+        showMainActionMenu();
     }
 
     @Override
@@ -109,40 +99,69 @@ public class ManualCombatView extends CombatView {
         }
 
         if (player.isForcedToSwitch()) {
-            hideAllActionMenusInternal();
-            showSwitchPanelInternal();
+            showSwitchMenu(true);
         } else {
-            hideSwitchPanelInternal();
             mainActionMenu.refresh(player.canVoluntarilySwitch());
-            showMainActionMenuInternal();
+            showMainActionMenu();
         }
     }
 
-    // ── Internal navigation (never called by the controller) ─────────────────
+    // ──  navigation ───────────────────────────────────────────────────
 
-    private void showMainActionMenuInternal() {
+    private void showMainActionMenu() {
         this.actionMenuView.getChildren().setAll(mainActionMenu);
     }
 
-    private void showAttackMenuInternal() {
+    private void showAttackMenu() {
         List<Attack> attacks = player.getCurrentBugemonAttackList();
         this.attackActionMenu.setAttacks(attacks.get(0), attacks.get(1), attacks.get(2));
         this.actionMenuView.getChildren().setAll(attackActionMenu);
     }
 
-    private void showSwitchPanelInternal() {
-        List<Bugemon> alive = this.player.getTeam().stream().filter(b -> b.getHp() > 0).toList();
-        this.bugemonTeamPane.setVisible(true);
-        this.bugemonTeamPane.setManaged(true);
-        this.bugemonTeamView.showTeam(alive);
+    private void showSwitchMenu(boolean forced) {
+        this.actionMenuView.getChildren().setAll(buildSwitchMenu(forced));
     }
 
-    private void hideSwitchPanelInternal() {
-        this.bugemonTeamPane.setVisible(false);
-        this.bugemonTeamPane.setManaged(false);
-    }
+    private VBox buildSwitchMenu(boolean forced) {
+        VBox panel = new VBox(10);
+        panel.setAlignment(Pos.CENTER_RIGHT);
 
-    private void hideAllActionMenusInternal() {
-        this.actionMenuView.getChildren().clear();
+        List<Bugemon> available =
+                player.getTeam()
+                        .stream()
+                        .filter(b -> b != player.getCurrentBugemon() && b.isAlive())
+                        .toList();
+
+        for (Bugemon b : available) {
+            HBox row = new HBox(10);
+            row.setAlignment(Pos.CENTER_LEFT);
+
+            ImageView sprite = new ImageView(new Image(b.getSpriteURL()));
+            sprite.setFitWidth(40);
+            sprite.setFitHeight(40);
+            sprite.setPreserveRatio(true);
+
+            Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/"
+                                    + b.getMaxHp() + " PV");
+            btn.getStyleClass().add("switch-menu-button");
+            btn.setMinWidth(200);
+            btn.setOnAction(e -> {
+                if (onSwitch != null)
+                    onSwitch.accept(b);
+            });
+
+            row.getChildren().addAll(sprite, btn);
+            panel.getChildren().add(row);
+        }
+
+        if (!forced) {
+            Button back = new Button("Retour");
+            back.getStyleClass().add("action-button");
+            back.setMinWidth(200);
+            back.setOnAction(e -> showMainActionMenu());
+            panel.getChildren().add(back);
+        }
+
+        return panel;
     }
 }

@@ -35,7 +35,7 @@ public class AllBugemonsGridView extends VBox {
      * view.
      */
     public AllBugemonsGridView() {
-        URL url = getClass().getResource("/fxml/AllBugemonsGridView.fxml");
+        URL url = getClass().getResource("/fxml/AllBugemonsGrid.fxml");
         FXMLLoader loader = new FXMLLoader(url);
         loader.setRoot(this);
         loader.setController(this);
