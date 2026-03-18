@@ -12,18 +12,17 @@ package ulb.models.trainer;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.test.TestUtilsBugemonTeam;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestAutoTrainer {
     @Test
     public void testSelectRandomBugemon() {
-        List<Bugemon> team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         AutoTrainer trainer = new AutoTrainer(team);
         TestUtilsBugemons.killBugemon(team, "1");
         trainer.selectRandomBugemon();

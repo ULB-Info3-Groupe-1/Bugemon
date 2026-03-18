@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -27,6 +26,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 
@@ -37,8 +37,11 @@ public class TestCombatService {
 
         Bugemon fastBugemon = new BugemonBuilder().id("2").initiative(1000).build();
 
-        List<Bugemon> slowTeam = List.of(slowBugemon);
-        List<Bugemon> fastTeam = List.of(fastBugemon);
+        BugemonTeam slowTeam = new BugemonTeam();
+        slowTeam.add(slowBugemon);
+
+        BugemonTeam fastTeam = new BugemonTeam();
+        fastTeam.add(fastBugemon);
 
         Trainer fasterTrainer = new AutoTrainer(fastTeam);
         Trainer slowTrainer = new AutoTrainer(slowTeam);

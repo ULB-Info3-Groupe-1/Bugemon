@@ -8,17 +8,23 @@ import java.util.List;
 import org.junit.Test;
 
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon.effect.EffectType;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestEffectManager {
     private Trainer createTrainer(String bugemonId) {
-        return new AutoTrainer(List.of(TestUtilsBugemons.createDefaultBugemon(bugemonId)));
+        BugemonTeam bugemonTeam = new BugemonTeam();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon(bugemonId);
+        bugemonTeam.add(bugemon);
+
+        return new AutoTrainer(bugemonTeam);
     }
 
     @Test
