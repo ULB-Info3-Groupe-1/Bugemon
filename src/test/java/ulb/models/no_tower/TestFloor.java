@@ -11,7 +11,6 @@ import ulb.models.no_tower.room.*;
 import ulb.models.trainer.*;
 
 public class TestFloor {
-
     @Test
     public void testFloorInitialization() {
         BugemonTeam playerTeam = TeamFactory.createRandomTeam(3);
@@ -44,7 +43,7 @@ public class TestFloor {
 
         Room sixthRoom = floor.getNextRoom();
         assertTrue(sixthRoom instanceof CombatRoom);
-        CombatRoom bossRoom = (CombatRoom) sixthRoom;
+        CombatRoom bossRoom = (CombatRoom)sixthRoom;
         assertTrue(bossRoom.isBoss());
 
         assertTrue(floor.isComplete());

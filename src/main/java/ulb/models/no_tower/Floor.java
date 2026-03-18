@@ -10,20 +10,18 @@
 package ulb.models.no_tower;
 
 import java.util.EmptyStackException;
+import java.util.Optional;
 import java.util.Stack;
 
-import java.util.Optional;
-
+import ulb.factory.TeamFactory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.no_tower.room.CombatRoom;
 import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
 import ulb.models.trainer.*;
-import ulb.factory.TeamFactory;
 
 public class Floor {
-
     private final Trainer playerTrainer;
     private Stack<Room> stages = new Stack<>();
 
@@ -37,7 +35,6 @@ public class Floor {
         // 4. Combat obligatoire
         // 5. Récompense (choix parmi 3 options)
         // 6. Boss d’étage
-
     }
 
     public boolean isComplete() {
@@ -62,7 +59,8 @@ public class Floor {
     }
 
     private CombatRoom initCombatRoom() {
-        Trainer opponentTrainer = new ManualTrainer(TeamFactory.createRandomTeam(playerTrainer.getTeamSize()));
+        Trainer opponentTrainer =
+                new ManualTrainer(TeamFactory.createRandomTeam(playerTrainer.getTeamSize()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);

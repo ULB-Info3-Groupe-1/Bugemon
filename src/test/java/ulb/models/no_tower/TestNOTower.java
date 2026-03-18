@@ -10,10 +10,8 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.*;
 
 public class TestNOTower {
-
     @Test
     public void testNOTowerInitialization() {
-
         BugemonTeam playerTeam = TeamFactory.createRandomTeam(3);
         NOTower noTower = new NOTower(playerTeam);
 

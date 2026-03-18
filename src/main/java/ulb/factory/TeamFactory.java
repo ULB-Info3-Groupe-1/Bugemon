@@ -3,8 +3,8 @@ package ulb.factory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.Optional;
+import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -48,7 +48,7 @@ public class TeamFactory {
                     randomTeam.addBugemon(chosenBugemon.clone());
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException("Failed to clone Bugemon: " + chosenBugemon.getId(),
-                            e);
+                                               e);
                 }
             }
         }
@@ -56,13 +56,14 @@ public class TeamFactory {
     }
 
     public static BugemonTeam createBossTeam() {
-
-        final Optional<Bugemon> bossBugemon = BUGEMON_LIST.stream().filter(obj -> obj.getId().equals(BOSS_ID))
-                .findFirst();
+        final Optional<Bugemon> bossBugemon =
+                BUGEMON_LIST.stream().filter(obj -> obj.getId().equals(BOSS_ID)).findFirst();
         BugemonTeam bossTeam = new BugemonTeam();
 
         bossTeam.addBugemon(bossBugemon.orElseThrow(
-                () -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID + "' not found in the list.")));
+                ()
+                        -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID
+                                                + "' not found in the list.")));
 
         return bossTeam;
     }

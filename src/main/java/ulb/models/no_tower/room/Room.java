@@ -1,6 +1,6 @@
 /**
  * File name : Room.java
- * Description : Class that represents 
+ * Description : Class that represents
  * a Room located in one of the Floors of the NO Tower.
  *
  * @author Rocca Manuel

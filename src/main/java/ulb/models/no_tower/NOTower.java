@@ -57,5 +57,4 @@ public class NOTower {
             floors.add(new Floor(playerTrainer));
         }
     }
-
 }
