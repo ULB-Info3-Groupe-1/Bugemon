@@ -332,7 +332,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
     /**
      * Displays the combat dialog(s) for the given {@code result}.
-     * 
+     *
      * @param result the {@link TurnResult} of the turn that just completed; must
      *               not be {@code null}.
      */

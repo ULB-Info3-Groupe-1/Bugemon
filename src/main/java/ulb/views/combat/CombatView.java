@@ -1,9 +1,9 @@
 package ulb.views.combat;
 
 import java.io.IOException;
+import java.util.Optional;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
-import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
