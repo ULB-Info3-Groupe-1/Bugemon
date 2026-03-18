@@ -22,6 +22,8 @@ public class Player {
 
     // ── Active team ───────────────────────────────────────────────────────
     public void setActiveTeam(BugemonTeam team) {
+        // TODO: catch exceptiosn from BugemonTeam instead of handling teamsize here
+
         if (team.isEmpty() || team.size() > 6)
             throw new IllegalArgumentException("L'équipe doit avoir entre 1 et 6 Bugémons.");
         Set<String> seen = new HashSet<>();
