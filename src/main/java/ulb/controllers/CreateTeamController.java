@@ -38,14 +38,14 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.selectedTeam = new BugemonTeam();
 
         this.view.setModel(this.selectedTeam);
-        this.view.setOnGridBugemonClicked(this::onBugemonClicked);
+        this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
         this.view.setOnStartAutoCombat(this::startAutoCombat);
         this.view.setOnStartManualCombat(this::startManualCombat);
         this.view.refresh();
     }
 
     /** Toggles {@code bugemon} in the player's selected team. */
-    public void onBugemonClicked(Bugemon bugemon) {
+    public void toggleBugemonSelection(Bugemon bugemon) {
         // TODO: handle exceptions thrown by BugemonTeam
         // + change logic
 
