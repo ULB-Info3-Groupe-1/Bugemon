@@ -1,7 +1,9 @@
-package ulb.controllers;
+package ulb.controllers.combat;
 
 import java.io.IOException;
 
+import ulb.controllers.Controller;
+import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.models.player.Player;
 import ulb.views.victory_view.CombatDefeatView;
@@ -74,8 +76,8 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void retry() {
-        this.metaController.switchTo(Window.CREATE_TEAM);
         this.player.clearActiveTeam();
+        this.metaController.switchTo(Window.CREATE_TEAM);
     }
 
     /**
@@ -88,7 +90,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void backToMainMenu() {
-        this.metaController.switchTo(Window.MAIN_MENU);
         this.player.clearActiveTeam();
+        this.metaController.switchTo(Window.MAIN_MENU);
     }
 }

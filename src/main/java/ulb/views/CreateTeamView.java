@@ -91,6 +91,6 @@ public class CreateTeamView extends View {
     public void refresh() {
         List<Bugemon> allBugemons = new ArrayList<>(Parser.getInstance().getBugemons());
         this.allBugemonsGridView.showAll(allBugemons);
-        this.bugemonsTeamView.showTeam(bugemonTeam);
+        this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 }

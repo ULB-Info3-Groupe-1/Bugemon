@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
@@ -7,13 +6,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-
 <?import ulb.views.combat.BugemonInfoView?>
 <?import ulb.views.combat.ActionMenuView?>
 <?import ulb.views.DialogZoneView?>
-
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-           stylesheets="@../css/combat.css">
+<StackPane
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    stylesheets="@../css/combat.css"
+>
 
     <!-- Main layout -->
     <BorderPane>
@@ -21,42 +21,51 @@
         <!-- Opponent (top-right) -->
         <top>
             <HBox alignment="CENTER_RIGHT" spacing="20">
-                <HBox.margin><Insets top="20" right="40"/></HBox.margin>
-                <BugemonInfoView fx:id="bugemonOpponentInfo"/>
-                <ImageView fx:id="bugemonOpponentImage"
-                           fitWidth="160" fitHeight="160"
-                           smooth="false" preserveRatio="true"/>
+                <HBox.margin><Insets top="20" right="40" /></HBox.margin>
+                <BugemonInfoView fx:id="bugemonOpponentInfo" />
+                <ImageView
+                    fx:id="bugemonOpponentImage"
+                    fitWidth="160"
+                    fitHeight="160"
+                    smooth="false"
+                    preserveRatio="true"
+                />
             </HBox>
         </top>
 
         <!-- Player (center-left) -->
         <center>
             <HBox alignment="BOTTOM_LEFT" spacing="20">
-                <HBox.margin><Insets left="40" bottom="20"/></HBox.margin>
-                <ImageView fx:id="bugemonTrainerImage"
-                           fitWidth="160" fitHeight="160"
-                           smooth="false" preserveRatio="true"/>
-                <BugemonInfoView fx:id="bugemonTrainerInfo"/>
+                <HBox.margin><Insets left="40" bottom="20" /></HBox.margin>
+                <ImageView
+                    fx:id="bugemonTrainerImage"
+                    fitWidth="160"
+                    fitHeight="160"
+                    smooth="false"
+                    preserveRatio="true"
+                />
+                <BugemonInfoView fx:id="bugemonTrainerInfo" />
             </HBox>
         </center>
 
         <!-- Action menu (bottom-right) -->
         <bottom>
             <HBox alignment="CENTER_RIGHT">
-                <HBox.margin><Insets right="40" bottom="20"/></HBox.margin>
-                <ActionMenuView fx:id="actionMenuView"/>
+                <HBox.margin><Insets right="40" bottom="20" /></HBox.margin>
+                <ActionMenuView fx:id="actionMenuView" />
             </HBox>
         </bottom>
 
     </BorderPane>
 
     <!-- Dialog overlay (shown after each turn) -->
-    <DialogZoneView fx:id="dialogZoneView"
-                    visible="false" managed="false"
-                    maxWidth="460"
-                    StackPane.alignment="BOTTOM_LEFT">
-        <StackPane.margin><Insets left="20" bottom="20"/></StackPane.margin>
-    </DialogZoneView>
+    <DialogZoneView
+        fx:id="dialogZoneView"
+        visible="false"
+        managed="false"
+        maxWidth="460"
+        StackPane.alignment="CENTER"
+    />
 
 
 </StackPane>

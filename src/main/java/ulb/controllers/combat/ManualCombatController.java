@@ -23,8 +23,6 @@ import ulb.views.combat.ManualCombatView;
  * </p>
  */
 public class ManualCombatController extends CombatController<ManualCombatView> {
-    private final Player player;
-
     private Combat combat;
     private ManualTrainer playerTrainer;
     private AutoTrainer opponentTrainer;
@@ -37,9 +35,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @throws IOException if the view fails to load its FXML resource.
      */
     public ManualCombatController(MetaController metaController, Player player) throws IOException {
-        super(metaController, new ManualCombatView());
-
-        this.player = player;
+        super(metaController, new ManualCombatView(), player);
 
         this.view.setOnAttack(this::onAttack);
         this.view.setOnSwitch(this::onSwitch);
@@ -49,7 +45,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat() {
-        System.out.println("Starting manual combat with player team: " + player.getActiveTeam());
         this.playerTrainer = new ManualTrainer(player.getActiveTeam());
         this.opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(playerTrainer, opponentTrainer);

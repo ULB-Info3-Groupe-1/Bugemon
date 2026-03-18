@@ -12,6 +12,7 @@
          xmlns:fx="http://javafx.com/fxml"
          xmlns="http://javafx.com/javafx"
          spacing="20"
+         alignment="CENTER"
          stylesheets="@../css/dialog-zone.css"
          >
 

@@ -1,7 +1,9 @@
-package ulb.controllers;
+package ulb.controllers.combat;
 
 import java.io.IOException;
 
+import ulb.controllers.Controller;
+import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.models.player.Player;
 import ulb.views.victory_view.CombatVictoryView;
@@ -84,7 +86,7 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
         // Optional<LevelUp> lvlup = bugemon.addxp(xpwonatfight)
         // if lvlup.isPresent() -> switch to level up screen
         // else -> back to main menu
-        this.metaController.switchTo(Window.MAIN_MENU);
         this.player.clearActiveTeam();
+        this.metaController.switchTo(Window.MAIN_MENU);
     }
 }

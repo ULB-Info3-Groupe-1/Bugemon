@@ -14,7 +14,6 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import ulb.common.dto.BugemonDTO;
-import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;

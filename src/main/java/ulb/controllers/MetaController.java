@@ -6,6 +6,8 @@ import java.util.Map;
 import javafx.stage.Stage;
 
 import ulb.controllers.combat.AutomaticCombatController;
+import ulb.controllers.combat.CombatDefeatController;
+import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;

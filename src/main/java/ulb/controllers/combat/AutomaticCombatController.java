@@ -22,8 +22,6 @@ import ulb.views.combat.AutomaticCombatView;
  * </p>
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
-    private final Player player;
-
     private Combat combat;
     private AutoTrainer playerTrainer;
     private AutoTrainer opponentTrainer;
@@ -37,9 +35,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      */
     public AutomaticCombatController(MetaController metaController, Player player)
             throws IOException {
-        super(metaController, new AutomaticCombatView());
-
-        this.player = player;
+        super(metaController, new AutomaticCombatView(), player);
     }
 
     /** Starts a complete automatic combat session and drives it to completion. */
@@ -71,26 +67,5 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         timeline.getKeyFrames().add(keyFrame);
         timeline.setDelay(Duration.seconds(1));
         timeline.play();
-    }
-
-    /**
-     * Formats the efficiency message for an attack result.
-     *
-     * @param combat   the {@link TurnResult.AttackResult} to format; must not be
-     *                 {@code null} and must represent an attack.
-     * @param timeline the {@link Timeline} driving the combat; must not be
-     *                 {@code null}.
-     * @param player   the player's {@link AutoTrainer}; must not be {@code null}.
-     * @param opponent the opponent's {@link AutoTrainer}; must not be {@code null}.
-     */
-    private void finalizeTurn(Combat combat, Timeline timeline, AutoTrainer player,
-                              AutoTrainer opponent) {
-        view.updateTrainerBugemon(player.getCurrentBugemon());
-        view.updateOpponentBugemon(opponent.getCurrentBugemon());
-
-        combat.getWinner().ifPresent(winner -> {
-            timeline.stop();
-            handleCombatResult(winner, player);
-        });
     }
 }

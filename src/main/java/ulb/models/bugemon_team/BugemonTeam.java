@@ -45,7 +45,7 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 public class BugemonTeam implements Iterable<Bugemon> {
     // Attributes
 
-    private static final int MAX_SIZE = 6;
+    public static final int MAX_SIZE = 6;
     private final ArrayList<Bugemon> team = new ArrayList<>();
 
     /**

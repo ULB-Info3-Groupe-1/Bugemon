@@ -10,6 +10,7 @@ import ulb.controllers.MetaController.Window;
 import ulb.factory.TeamFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.level_up.LevelUp;
+import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.LevelUpService;
@@ -30,9 +31,11 @@ import ulb.views.combat.CombatView;
  */
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
     private Consumer<List<LevelUp>> onVictory;
+    protected final Player player;
 
-    public CombatController(MetaController metaController, V view) {
+    public CombatController(MetaController metaController, V view, Player player) {
         super(metaController, view);
+        this.player = player;
     }
 
     public void setOnVictory(Consumer<List<LevelUp>> onVictory) {

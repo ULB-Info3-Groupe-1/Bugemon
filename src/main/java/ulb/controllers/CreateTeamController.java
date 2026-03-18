@@ -20,9 +20,6 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     private final Player player;
     private final BugemonTeam selectedTeam;
 
-    // TODO: this should be gone
-    private static final int MAX_TEAM_SIZE = 6;
-
     /**
      * Constructs a {@code CreateTeamController}, wires the view callbacks, and
      * performs an initial {@link ulb.views.CreateTeamView#refresh()} to populate
@@ -48,14 +45,16 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     public void toggleBugemonSelection(Bugemon bugemon) {
         // TODO: handle exceptions thrown by BugemonTeam
         // + change logic
-
         if (this.selectedTeam.contains(bugemon)) {
             this.selectedTeam.remove(bugemon);
-        } else if (this.selectedTeam.size() < MAX_TEAM_SIZE) {
-            this.selectedTeam.add(bugemon);
-            this.view.refreshTeam(this.selectedTeam);
+        } else if (!this.selectedTeam.isFull()) {
+            try {
+                this.selectedTeam.add(bugemon.clone());
+            } catch (CloneNotSupportedException e) {
+                // TODO: Clone method should not implement Cloneable (reconstruct bugemon)
+            }
         }
-        this.view.refresh();
+        this.view.refreshTeam(this.selectedTeam);
     }
 
     /** Launches an automatic combat session. */
