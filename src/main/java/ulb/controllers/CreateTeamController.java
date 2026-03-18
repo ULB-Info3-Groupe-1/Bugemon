@@ -62,12 +62,12 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
         this.player.setActiveTeam(this.selectedTeam);
-        this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
+        this.metaController.startAutoCombat();
     }
 
     /** Launches a manual combat session. */
     public void startManualCombat() {
         this.player.setActiveTeam(this.selectedTeam);
-        this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
+        this.metaController.startManualCombat();
     }
 }

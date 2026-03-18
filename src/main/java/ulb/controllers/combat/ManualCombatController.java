@@ -49,6 +49,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat() {
+        System.out.println("Starting manual combat with player team: " + player.getActiveTeam());
         this.playerTrainer = new ManualTrainer(player.getActiveTeam());
         this.opponentTrainer = createRandomOpponent(this.playerTrainer);
         this.combat = new Combat(playerTrainer, opponentTrainer);

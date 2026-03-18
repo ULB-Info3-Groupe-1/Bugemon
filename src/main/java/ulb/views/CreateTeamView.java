@@ -88,7 +88,6 @@ public class CreateTeamView extends View {
 
     @Override
     public void refresh() {
-        System.out.println("Refreshing CreateTeamView with team: " + bugemonTeam);
         List<Bugemon> allBugemons = new ArrayList<>(Parser.getInstance().getBugemons());
         this.allBugemonsGridView.showAll(allBugemons);
         this.bugemonsTeamView.showTeam(bugemonTeam);
