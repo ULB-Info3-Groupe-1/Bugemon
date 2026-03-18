@@ -1,58 +1,71 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
+<?import javafx.scene.layout.VBox?>
 <?import ulb.views.combat.BugemonInfoView?>
-<?import ulb.views.BugemonTeamView?>
 <?import ulb.views.combat.ActionMenuView?>
 <?import ulb.views.DialogZoneView?>
+<StackPane
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    stylesheets="@../css/combat.css"
+>
 
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../css/combat.css">
-   <AnchorPane prefHeight="400.0" prefWidth="600.0">
-      <Text fx:id="combatTitle" text="En Combat" AnchorPane.topAnchor="80.0" AnchorPane.leftAnchor="80.0">
-         <font>
-            <Font name="Pixels" size="48.0"/>
-         </font>
-      </Text>
+    <!-- Main layout -->
+    <BorderPane>
 
-      <DialogZoneView fx:id="dialogZoneView" visible="false" managed="false" alignment="CENTER"
-            AnchorPane.topAnchor="0.0" 
-            AnchorPane.bottomAnchor="0.0" 
-            AnchorPane.leftAnchor="0.0" 
-            AnchorPane.rightAnchor="0.0"/>
+        <!-- Opponent (top-right) -->
+        <top>
+            <HBox alignment="CENTER_RIGHT" spacing="20">
+                <HBox.margin><Insets top="20" right="40" /></HBox.margin>
+                <BugemonInfoView fx:id="bugemonOpponentInfo" />
+                <ImageView
+                    fx:id="bugemonOpponentImage"
+                    fitWidth="160"
+                    fitHeight="160"
+                    smooth="false"
+                    preserveRatio="true"
+                />
+            </HBox>
+        </top>
 
-      <!-- Trainer Bugemon Info -->
-      <HBox alignment="TOP_LEFT" spacing="50.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="80.0">
-         <ImageView fx:id="bugemonTrainerImage" smooth="false" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true"
-                  preserveRatio="true"/>
-         <BugemonInfoView fx:id="bugemonTrainerInfo"/>
-      </HBox>
+        <!-- Player (center-left) -->
+        <center>
+            <HBox alignment="BOTTOM_LEFT" spacing="20">
+                <HBox.margin><Insets left="40" bottom="20" /></HBox.margin>
+                <ImageView
+                    fx:id="bugemonTrainerImage"
+                    fitWidth="160"
+                    fitHeight="160"
+                    smooth="false"
+                    preserveRatio="true"
+                />
+                <BugemonInfoView fx:id="bugemonTrainerInfo" />
+            </HBox>
+        </center>
 
-      <!-- Opponent Bugemon Info -->
-      <HBox alignment="TOP_RIGHT" spacing="50.0" AnchorPane.topAnchor="80.0" AnchorPane.rightAnchor="80.0">
-         <BugemonInfoView fx:id="bugemonOpponentInfo"/>
-         <ImageView fx:id="bugemonOpponentImage" smooth="false" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true"
-                  preserveRatio="true"/>
-      </HBox>
+        <!-- Action menu (bottom-right) -->
+        <bottom>
+            <HBox alignment="CENTER_RIGHT">
+                <HBox.margin><Insets right="40" bottom="20" /></HBox.margin>
+                <ActionMenuView fx:id="actionMenuView" />
+            </HBox>
+        </bottom>
 
-      <!-- Bugemon Team View -->
-      <StackPane fx:id="bugemonTeamPane" visible="false" alignment="CENTER_LEFT"  AnchorPane.bottomAnchor="400.0" AnchorPane.leftAnchor="80.0">
-         <VBox alignment="CENTER_LEFT" spacing="10.0">
-            <Label fx:id="windowTitle" text="Bugemon Team" styleClass="combat-team-title"/>
-            <BugemonTeamView fx:id="bugemonTeamView"/>
-         </VBox>
-      </StackPane>
+    </BorderPane>
 
-      <!-- Action Menu -->
-      <ActionMenuView fx:id="actionMenuView" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="80.0"/>
-   </AnchorPane>
+    <!-- Dialog overlay (shown after each turn) -->
+    <DialogZoneView
+        fx:id="dialogZoneView"
+        visible="false"
+        managed="false"
+        maxWidth="460"
+        StackPane.alignment="CENTER"
+    />
+
+
 </StackPane>

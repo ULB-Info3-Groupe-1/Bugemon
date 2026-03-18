@@ -1,73 +1,59 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<?import javafx.scene.Group?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
 <?import ulb.views.AllBugemonsGridView?>
 <?import ulb.views.BugemonTeamView?>
-<AnchorPane
-    maxHeight="-Infinity"
-    maxWidth="-Infinity"
-    minHeight="-Infinity"
-    minWidth="-Infinity"
-    prefHeight="500.0"
-    prefWidth="800.0"
-    stylesheets="@../css/create-team-menu.css"
-    xmlns="http://javafx.com/javafx/21"
-    xmlns:fx="http://javafx.com/fxml/1"
->
-   <children>
-      <Button
-        fx:id="launchAutomaticCombat"
-        mnemonicParsing="false"
-        styleClass="menu-button"
-        text="Lancer combat automatique"
-        AnchorPane.rightAnchor="40.0"
-        AnchorPane.bottomAnchor="120.0"
-    />
 
-        <Button
-            fx:id="launchManualCombat"
-            mnemonicParsing="false"
-            styleClass="menu-button"
-            text="Lancer combat manuel"
-            AnchorPane.rightAnchor="40.0"
-            AnchorPane.bottomAnchor="45.0"
-        />
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="900" prefHeight="600"
+            stylesheets="@../css/create-team-menu.css">
 
-      <Text
-            strokeType="OUTSIDE"
-            strokeWidth="0.0"
-            styleClass="create-team-title"
-            text="Sélection de ton équipe"
-            textAlignment="CENTER"
-            wrappingWidth="300.0"
-            AnchorPane.rightAnchor="25.0"
-            AnchorPane.topAnchor="20.0"
-        >
-         <font>
-            <Font name="Pixels" size="32.0" />
-         </font>
-      </Text>
+    <!-- Title -->
+    <top>
+        <Label text="Sélection de ton équipe"
+               styleClass="create-team-title"
+               BorderPane.alignment="CENTER_RIGHT">
+            <BorderPane.margin><Insets top="20" right="30" bottom="10"/></BorderPane.margin>
+        </Label>
+    </top>
 
-      <AllBugemonsGridView
-            fx:id="allBugemonsGridView"
-            AnchorPane.bottomAnchor="14.0"
-            AnchorPane.leftAnchor="23.0"
-        />
+    <!-- Team slots (left) + launch buttons (right) -->
+    <center>
+        <HBox spacing="20" alignment="TOP_LEFT">
+            <HBox.margin><Insets left="20" top="10"/></HBox.margin>
 
-      <BugemonTeamView
-            fx:id="bugemonsTeamView"
-            AnchorPane.topAnchor="14.0"
-            AnchorPane.leftAnchor="30.0"
-            maxWidth="-2.0"
-            maxHeight="-2.0"
-        />
+            <VBox spacing="8">
+                <Label text="Ton équipe" styleClass="section-label"/>
+                <BugemonTeamView fx:id="bugemonsTeamView"/>
+            </VBox>
 
-   </children>
-   
-</AnchorPane>
+            <VBox spacing="10" alignment="BOTTOM_RIGHT" HBox.hgrow="ALWAYS">
+                <VBox.margin><Insets top="30" right="30"/></VBox.margin>
+                <Button fx:id="launchAutomaticCombat"
+                        text="Lancer combat automatique"
+                        styleClass="menu-button"
+                        maxWidth="260" minWidth="260"/>
+                <Button fx:id="launchManualCombat"
+                        text="Lancer combat manuel"
+                        styleClass="menu-button"
+                        maxWidth="260" minWidth="260"/>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- Available Bugemons (bottom) -->
+    <bottom>
+        <VBox spacing="6">
+            <VBox.margin><Insets left="20" bottom="16"/></VBox.margin>
+            <Label text="Bugémons disponibles" styleClass="section-label"/>
+            <AllBugemonsGridView fx:id="allBugemonsGridView"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>

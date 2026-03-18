@@ -161,7 +161,7 @@ public class EffectManager {
                     bugemons.add(attacker.getCurrentBugemon());
                     break;
                 case EffectTarget.TEAM:
-                    bugemons.addAll(attacker.getTeam());
+                    bugemons.addAll(attacker.getTeam().getAll());
                     break;
                 default:
                     throw new IllegalArgumentException("Illegal effect target: " + target);

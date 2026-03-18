@@ -46,6 +46,9 @@ public class ManualTrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
 
+    private boolean forcedSwitch = false;
+    private boolean switchedThisTurn = false;
+
     /**
      * Constructs a {@code ManualTrainer} with the given team.
      *
@@ -65,8 +68,8 @@ public class ManualTrainer extends Trainer {
 
     /**
      * Returns and consumes the action that was previously queued by the
-     * controller via {@link #registerAction(TurnAction)}, {@link #queueAttack},
-     * {@link #queueSwitch}, or {@link #queueForfeit}.
+     * controller via {@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
+     * {@link #registerForfeit()}, or the lower-level {@link #registerAction(TurnAction)}.
      *
      * <p>
      * The pending action is cleared after this call; the controller must queue
@@ -94,8 +97,8 @@ public class ManualTrainer extends Trainer {
      *
      * <p>
      * If no KO switch target has been registered (i.e. the controller has not
-     * yet called {@link #queueSwitchAfterKO}), this method does nothing; the
-     * controller is responsible for calling {@link #switchAfterKO(Bugemon)}
+     * yet called {@link #registerSwitchAfterKO(Bugemon)}), this method does nothing;
+     * the controller is responsible for calling {@link #switchAfterKO(Bugemon)}
      * when the player has made their choice.
      * </p>
      */
@@ -139,8 +142,8 @@ public class ManualTrainer extends Trainer {
      *
      * <p>
      * Any previously queued action is silently overwritten. Prefer the typed
-     * convenience methods ({@link #queueAttack}, {@link #queueSwitch},
-     * {@link #queueForfeit}) to benefit from built-in validation.
+     * convenience methods ({@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
+     * {@link #registerForfeit()}) to benefit from built-in validation.
      * </p>
      *
      * @param action the {@link TurnAction} to queue; must not be {@code null}.
@@ -223,5 +226,30 @@ public class ManualTrainer extends Trainer {
      */
     public boolean hasPendingAction() {
         return pendingAction.isPresent();
+    }
+
+    /** Returns {@code true} if a forced post-KO switch is pending. */
+    public boolean isForcedToSwitch() {
+        return forcedSwitch;
+    }
+
+    /** Sets whether a forced post-KO switch is pending. */
+    public void setForcedSwitch(boolean value) {
+        this.forcedSwitch = value;
+    }
+
+    /** Returns {@code true} if the player has already used a voluntary switch this turn. */
+    public boolean hasSwitchedThisTurn() {
+        return switchedThisTurn;
+    }
+
+    /** Sets whether a voluntary switch has been used this turn. */
+    public void setHasSwitchedThisTurn(boolean value) {
+        this.switchedThisTurn = value;
+    }
+
+    /** Returns {@code true} if the player may perform a voluntary switch right now. */
+    public boolean canVoluntarilySwitch() {
+        return !forcedSwitch && !switchedThisTurn;
     }
 }

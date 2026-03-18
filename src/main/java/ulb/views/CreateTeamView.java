@@ -1,76 +1,96 @@
 package ulb.views;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.common.dto.BugemonDTO;
-import ulb.controllers.CreateTeamController;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.utils.Parser;
 
 /**
- * CreateTeamView
+ * View for the team creation screen.
  *
- * View for the team creation screen ("create team").
- * Delegates user actions to the associated controller.
+ * <p>
+ * Holds a reference to the {@link BugemonTeam} model and reads from it directly
+ * in {@link #refresh()}. Dispatches user interactions through callbacks; holds
+ * no reference to any concrete controller class.
+ * </p>
  */
 public class CreateTeamView extends View {
     private static final String FXML_PATH = "/fxml/CreateTeam.fxml";
 
-    private CreateTeamController controller;
-
-    // FXML elements
     @FXML private AllBugemonsGridView allBugemonsGridView;
-
     @FXML private BugemonTeamView bugemonsTeamView;
-
     @FXML private Button launchAutomaticCombat;
-
     @FXML private Button launchManualCombat;
 
+    private BugemonTeam bugemonTeam;
+    private Consumer<Bugemon> onGridBugemonClicked;
+    private Runnable onStartAutoCombat;
+    private Runnable onStartManualCombat;
+
     /**
-     * Loads the create-team FXML layout and initializes button actions.
+     * Loads the team-creation FXML layout and wires click handlers on the
+     * Bugemon grid and the two launch buttons.
      *
-     * @throws IOException if the FXML file cannot be loaded
+     * @throws IOException if the FXML resource cannot be loaded.
      */
     public CreateTeamView() throws IOException {
         super(FXML_PATH);
-        this.controller = null;
 
-        this.allBugemonsGridView.setOnClickCallback(
-                dto -> { this.controller.onBugemonClicked(dto.getId()); });
+        this.allBugemonsGridView.setOnClickCallback(b -> {
+            if (onGridBugemonClicked != null)
+                onGridBugemonClicked.accept(b);
+        });
 
-        this.launchAutomaticCombat.setOnAction(e -> this.controller.startAutoCombat());
-        this.launchManualCombat.setOnAction(e -> this.controller.startManualCombat());
+        this.launchAutomaticCombat.setOnAction(e -> launchCombat(onStartAutoCombat));
+        this.launchManualCombat.setOnAction(e -> launchCombat(onStartManualCombat));
     }
 
-    /**
-     * Binds this view to its controller.
-     *
-     * @param controller controller handling team creation
-     */
-    public void setController(CreateTeamController controller) {
-        this.controller = controller;
-
-        // set selection callback
+    /** Gives the view a reference to the team model it should read from. */
+    public void setModel(BugemonTeam bugemonTeam) {
+        this.bugemonTeam = bugemonTeam;
         this.allBugemonsGridView.setSelectionChecker(
-                b -> this.controller.checkBugemonInTeam(b.getId()));
+                b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
     }
 
-    /**
-     * Displays the player's current team in the team view.
-     * @param bugemonList the list of BugemonDTOs representing the player's current team to be
-     *         displayed
-     */
-    public void showTeam(List<BugemonDTO> bugemonList) {
-        this.bugemonsTeamView.showTeam(bugemonList);
+    /** Registers the callback invoked when the player clicks a Bugemon in the selection grid. */
+    public void setOnGridBugemonClicked(Consumer<Bugemon> callback) {
+        this.onGridBugemonClicked = callback;
     }
 
-    /**
-     * Displays all available Bugemons in the grid view.
-     * @param bugemonList the list of all available Bugemons to be displayed
-     */
-    public void showAll(List<BugemonDTO> bugemonList) {
-        this.allBugemonsGridView.showAll(bugemonList);
+    /** Registers the callback invoked when the player launches an automatic combat. */
+    public void setOnStartAutoCombat(Runnable callback) {
+        this.onStartAutoCombat = callback;
+    }
+
+    /** Registers the callback invoked when the player launches a manual combat. */
+    public void setOnStartManualCombat(Runnable callback) {
+        this.onStartManualCombat = callback;
+    }
+
+    private void launchCombat(Runnable onStart) {
+        if (bugemonTeam != null && bugemonTeam.isEmpty()) {
+            showAlert("Équipe incomplète",
+                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+        } else if (onStart != null) {
+            onStart.run();
+        }
+    }
+
+    public void refreshTeam(BugemonTeam team) {
+        this.bugemonTeam = team;
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
+        List<Bugemon> allBugemons = new ArrayList<>(Parser.getInstance().getBugemons());
+        this.allBugemonsGridView.showAll(allBugemons);
+        this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 }

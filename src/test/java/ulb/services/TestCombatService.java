@@ -38,10 +38,10 @@ public class TestCombatService {
         Bugemon fastBugemon = new BugemonBuilder().id("2").initiative(1000).build();
 
         BugemonTeam slowTeam = new BugemonTeam();
-        slowTeam.addBugemon(slowBugemon);
+        slowTeam.add(slowBugemon);
 
         BugemonTeam fastTeam = new BugemonTeam();
-        fastTeam.addBugemon(fastBugemon);
+        fastTeam.add(fastBugemon);
 
         Trainer fasterTrainer = new AutoTrainer(fastTeam);
         Trainer slowTrainer = new AutoTrainer(slowTeam);

@@ -14,7 +14,6 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import ulb.common.dto.BugemonDTO;
-import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;
@@ -383,5 +382,9 @@ public class Bugemon implements BugemonDTO, Cloneable {
      */
     public void setParticipation(boolean participated) {
         this.state.participatedLastFight = participated;
+    }
+
+    public void kill() {
+        this.takeDamage(this.getHp());
     }
 }

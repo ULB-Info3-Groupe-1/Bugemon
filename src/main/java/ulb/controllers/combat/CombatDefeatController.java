@@ -1,8 +1,11 @@
-package ulb.controllers;
+package ulb.controllers.combat;
 
 import java.io.IOException;
 
+import ulb.controllers.Controller;
+import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
+import ulb.models.player.Player;
 import ulb.views.victory_view.CombatDefeatView;
 
 /**
@@ -31,6 +34,7 @@ import ulb.views.victory_view.CombatDefeatView;
  * @see Controller
  */
 public class CombatDefeatController extends Controller<CombatDefeatView> {
+    private final Player player;
     /**
      * Constructs a {@code CombatDefeatController}, initialises its
      * {@link CombatDefeatView}, and registers this controller as the view's
@@ -47,9 +51,13 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * @throws IOException if the {@link CombatDefeatView} fails to load its FXML
      *                     resource.
      */
-    public CombatDefeatController(MetaController metaController) throws IOException {
+    public CombatDefeatController(MetaController metaController, Player player) throws IOException {
         super(metaController, new CombatDefeatView());
-        this.view.setController(this);
+
+        this.player = player;
+
+        this.view.setOnRetry(this::retry);
+        this.view.setOnBackToMainMenu(this::backToMainMenu);
     }
 
     /**
@@ -68,8 +76,8 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void retry() {
+        this.player.clearActiveTeam();
         this.metaController.switchTo(Window.CREATE_TEAM);
-        this.metaController.resetTeam();
     }
 
     /**
@@ -82,7 +90,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void backToMainMenu() {
+        this.player.clearActiveTeam();
         this.metaController.switchTo(Window.MAIN_MENU);
-        this.metaController.resetTeam();
     }
 }

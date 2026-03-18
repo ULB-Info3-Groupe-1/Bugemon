@@ -146,13 +146,13 @@ public class TestParser {
 
         ObjectWrapper wrapper = Parser.parseObjectsAndInventory(
                 new InputStreamReader(objectsStream, StandardCharsets.UTF_8));
-        List<GameObject> objects = wrapper.getObjects();
+        List<GameObject> objectsList = wrapper.getObjects();
         Inventory inventory = wrapper.getInventory();
 
-        assertNotNull(objects);
+        assertNotNull(objectsList);
         assertNotNull(inventory);
 
-        GameObject testObject = objects.stream()
+        GameObject testObject = objectsList.stream()
                                         .filter(o -> "baie_revigorante".equals(o.id()))
                                         .findFirst()
                                         .orElseThrow();
@@ -169,19 +169,28 @@ public class TestParser {
         assertEquals(potion.type(), testObject.type());
         assertEquals(potion.sprite(), testObject.sprite());
 
-        assertEquals(7, inventory.getObjects().size());
-        long revigoranteCount = inventory.getObjects()
+        assertEquals(7, inventory.getObjects().values().stream().mapToInt(i -> i).sum());
+        Map<GameObject, Integer> objects = inventory.getObjects();
+        long revigoranteCount = objects.entrySet()
                                         .stream()
-                                        .filter(o -> "baie_revigorante".equals(o.id()))
-                                        .count();
-        long toniqueCount =
-                inventory.getObjects().stream().filter(o -> "baie_tonique".equals(o.id())).count();
-        long gelCount =
-                inventory.getObjects().stream().filter(o -> "gel_defensif".equals(o.id())).count();
-        long serumCount = inventory.getObjects()
+                                        .filter(e -> "baie_revigorante".equals(e.getKey().id()))
+                                        .mapToLong(Map.Entry::getValue)
+                                        .sum();
+        long toniqueCount = objects.entrySet()
+                                    .stream()
+                                    .filter(e -> "baie_tonique".equals(e.getKey().id()))
+                                    .mapToLong(Map.Entry::getValue)
+                                    .sum();
+        long gelCount = objects.entrySet()
+                                .stream()
+                                .filter(e -> "gel_defensif".equals(e.getKey().id()))
+                                .mapToLong(Map.Entry::getValue)
+                                .sum();
+        long serumCount = objects.entrySet()
                                   .stream()
-                                  .filter(o -> "serum_offensif".equals(o.id()))
-                                  .count();
+                                  .filter(e -> "serum_offensif".equals(e.getKey().id()))
+                                  .mapToLong(Map.Entry::getValue)
+                                  .sum();
 
         assertEquals(3, revigoranteCount);
         assertEquals(2, toniqueCount);

@@ -28,9 +28,9 @@
  *   <li>{@link ulb.controllers.CreateTeamController} — manages the team
  *       creation screen where the player assembles their
  *       {@link ulb.models.bugemon_team.BugemonTeam} before entering combat.</li>
- *   <li>{@link ulb.controllers.CombatVictoryController} — manages the victory
+ *   <li>{@link ulb.controllers.combat.CombatVictoryController} — manages the victory
  *       screen displayed when the player wins a combat session.</li>
- *   <li>{@link ulb.controllers.CombatDefeatController} — manages the defeat
+ *   <li>{@link ulb.controllers.combat.CombatDefeatController} — manages the defeat
  *       screen displayed when the player loses a combat session.</li>
  *   <li>{@link ulb.controllers.LevelUpController} — manages the level-up
  *       screen displayed after a victory when one or more Bugemons have

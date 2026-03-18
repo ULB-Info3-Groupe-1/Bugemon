@@ -41,24 +41,18 @@ public final class TestUtilsBugemons {
         return bugemon;
     }
 
-    public static List<Bugemon> createDefaultBugemons(int count) {
-        List<Bugemon> bugemons = new ArrayList<>();
+    public static BugemonTeam createDefaultTeam(int count) {
+        BugemonTeam bugemons = new BugemonTeam();
+
         for (int i = 1; i <= count; i++) {
             bugemons.add(createDefaultBugemon(String.valueOf(i)));
         }
+
         return bugemons;
     }
 
-    public static BugemonTeam createDefaultTeam(int size) {
-        BugemonTeam team = new BugemonTeam();
-        for (Bugemon bugemon : createDefaultBugemons(size)) {
-            team.addBugemon(bugemon);
-        }
-        return team;
-    }
-
     public static void killBugemon(BugemonTeam team, String id) {
-        Bugemon bugemon = team.getBugemon(id).get();
-        bugemon.takeDamage(bugemon.getHp());
+        Bugemon bugemon = team.stream().filter(b -> b.getId().equals(id)).findFirst().get();
+        bugemon.kill();
     }
 }

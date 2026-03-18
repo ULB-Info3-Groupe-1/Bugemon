@@ -1,34 +1,48 @@
 .level-up-title {
     -fx-font-weight: bold;
+    -fx-text-fill: #FFD700;
 }
 
 .level-up-subtitle {
     -fx-font-weight: bold;
+    -fx-text-fill: #FFD700;
 }
 
 .choice-button-1 {
-    -fx-background-color: #008000;
+    -fx-background-color: #27ae60;
     -fx-text-fill: white;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-font-family: 'Pixels';
-    -fx-background-radius: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 12 16;
 }
+
+.choice-button-1:hover { -fx-background-color: #1e8449; }
 
 .choice-button-2 {
-    -fx-background-color: #FFA500;
+    -fx-background-color: #e67e22;
     -fx-text-fill: white;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-font-family: 'Pixels';
-    -fx-background-radius: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 12 16;
 }
 
+.choice-button-2:hover { -fx-background-color: #ca6f1e; }
+
 .choice-button-3 {
-    -fx-background-color: #4682B4;
+    -fx-background-color: #2980b9;
     -fx-text-fill: white;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-font-family: 'Pixels';
-    -fx-background-radius: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 12 16;
 }
+
+.choice-button-3:hover { -fx-background-color: #1f6691; }

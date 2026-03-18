@@ -90,7 +90,7 @@ public abstract class Trainer {
     public abstract void reactToKo();
 
     /**
-     * Instantly defeats the entire team by reducing every Bugemon's HP to zero.
+     * Instantly defeats the entire team.
      *
      * <p>
      * Used by {@link ulb.models.combat.Combat} to resolve a
@@ -100,7 +100,7 @@ public abstract class Trainer {
      * </p>
      */
     public void killTeam() {
-        team.forEach(b -> b.takeDamage(b.getHp()));
+        team.killAll();
     }
 
     // ── shared state queries ─────────────────────────────────────────────────
@@ -204,19 +204,6 @@ public abstract class Trainer {
      */
     public int getTeamSize() {
         return team.size();
-    }
-
-    /**
-     * Returns the Bugemon with the specified ID from this trainer's team.
-     *
-     * @param bugemonId the unique identifier of the Bugemon to retrieve;
-     *                  must not be {@code null}.
-     * @return the matching {@link Bugemon}.
-     * @throws java.util.NoSuchElementException if no Bugemon with the given ID
-     *                                          exists in the team.
-     */
-    public Bugemon getBugemonById(String bugemonId) {
-        return team.getBugemon(bugemonId).get();
     }
 
     // ── mutators ─────────────────────────────────────────────────────────────

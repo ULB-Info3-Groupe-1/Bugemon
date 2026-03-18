@@ -1,27 +1,35 @@
-.menu-button {
-    -fx-background-color: #3CB371;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-font-family: 'Pixels';
+.create-team-title {
+    -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-padding: 12 30 12 30;
-    -fx-border-color: transparent;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+    -fx-font-family: 'Pixels';
+    -fx-text-fill: #1a1a1a;
+}
+
+.section-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+}
+
+.menu-button {
+    -fx-background-color: #3daa6e;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 16;
+    -fx-background-radius: 6;
     -fx-cursor: hand;
-    -fx-min-width: 380;
 }
 
 .menu-button:hover {
-    -fx-background-color: #8BB39E;
+    -fx-background-color: #2e8a57;
 }
 
 .menu-button:pressed {
-    -fx-background-color: #8BB39E;
+    -fx-background-color: #2e8a57;
 }
 
-.create-team-title {
-    -fx-font-size: 32;
-    -fx-font-weight: bold;
-    -fx-font-family: 'Pixels';
+.menu-button:disabled {
+    -fx-background-color: #a0c8b0;
+    -fx-text-fill: #e0e0e0;
 }

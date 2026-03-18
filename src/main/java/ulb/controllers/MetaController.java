@@ -1,19 +1,19 @@
 package ulb.controllers;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
 import javafx.stage.Stage;
 
 import ulb.controllers.combat.AutomaticCombatController;
+import ulb.controllers.combat.CombatDefeatController;
+import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Ambiance;
-import ulb.controllers.music.Music;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
-import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.level_up.LevelUp;
-import ulb.models.trainer.AutoTrainer;
-import ulb.models.trainer.ManualTrainer;
+import ulb.models.bugemon.Inventory;
+import ulb.models.player.Player;
 
 /**
  * Central controller responsible for managing all screen controllers and
@@ -66,16 +66,17 @@ public class MetaController {
     }
 
     private final Stage stage;
+    private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final MainMenuController mainMenuController;
     private final CreateTeamController createTeamController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
-    private final BugemonTeam playerTeam;
     private final LevelUpController levelUpController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
+    private final Player player = new Player(new Inventory());
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -86,13 +87,12 @@ public class MetaController {
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
 
-        this.playerTeam = new BugemonTeam();
         this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(this, playerTeam);
-        this.manualCombatController = new ManualCombatController(this);
-        this.automaticCombatController = new AutomaticCombatController(this);
-        this.combatVictoryController = new CombatVictoryController(this);
-        this.combatDefeatController = new CombatDefeatController(this);
+        this.createTeamController = new CreateTeamController(this, this.player);
+        this.manualCombatController = new ManualCombatController(this, this.player);
+        this.automaticCombatController = new AutomaticCombatController(this, this.player);
+        this.combatVictoryController = new CombatVictoryController(this, this.player);
+        this.combatDefeatController = new CombatDefeatController(this, this.player);
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
@@ -100,6 +100,34 @@ public class MetaController {
                 .forEach(this.musicPlayer::addMusic);
         musicLoader.loadFromDirectory("/musics/menu", Ambiance.MENU)
                 .forEach(this.musicPlayer::addMusic);
+
+        this.manualCombatController.setOnVictory(
+                levelUps -> levelUpController.setLevelUp(levelUps));
+        this.automaticCombatController.setOnVictory(
+                levelUps -> levelUpController.setLevelUp(levelUps));
+
+        initTransitions();
+    }
+
+    private void initTransitions() {
+        transitions.put(Window.MAIN_MENU, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.MENU);
+            mainMenuController.show(stage);
+        });
+        transitions.put(Window.CREATE_TEAM, () -> createTeamController.show(stage));
+        transitions.put(Window.MANUAL_COMBAT, () -> {
+            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            manualCombatController.startCombat();
+            manualCombatController.show(stage);
+        });
+        transitions.put(Window.AUTOMATIC_COMBAT, () -> {
+            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            automaticCombatController.startCombat();
+            automaticCombatController.show(stage);
+        });
+        transitions.put(Window.COMBAT_VICTORY, () -> combatVictoryController.show(stage));
+        transitions.put(Window.COMBAT_DEFEAT, () -> combatDefeatController.show(stage));
+        transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
     }
 
     /**
@@ -109,104 +137,10 @@ public class MetaController {
      * @throws IllegalArgumentException if the window is invalid
      */
     public final void switchTo(Window window) {
-        switch (window) {
-            case MAIN_MENU:
-                this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Ambiance.MENU);
-                this.mainMenuController.show(this.stage);
-                break;
-            case CREATE_TEAM:
-                this.musicPlayer.stopMusic();
-                this.createTeamController.show(this.stage);
-                break;
-            case AUTOMATIC_COMBAT:
-                this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Ambiance.COMBAT);
-                this.automaticCombatController.show(stage);
-                break;
-            case MANUAL_COMBAT:
-                this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Ambiance.COMBAT);
-                this.manualCombatController.show(this.stage);
-                break;
-            case COMBAT_VICTORY:
-                this.musicPlayer.stopMusic();
-                this.combatVictoryController.show(this.stage);
-                break;
-            case COMBAT_DEFEAT:
-                this.musicPlayer.stopMusic();
-                this.combatDefeatController.show(this.stage);
-                break;
-            case LEVEL_UP:
-                this.musicPlayer.stopMusic();
-                this.levelUpController.show(this.stage);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid window");
-        }
-    }
-
-    /**
-     * Instructs the {@link AutomaticCombatController} to start an automatic
-     * combat using the player's current team.
-     *
-     * <p>
-     * If the player's team is empty, an alert dialog is displayed and no combat
-     * is started. Otherwise, the adversary team is built by randomly sampling
-     * the pool of all available Bugemons (same size as the player's team), and
-     * the application navigates to the {@link Window#COMBAT} screen.
-     * </p>
-     *
-     * <p>
-     * In an automatic combat both sides choose their actions randomly each turn;
-     * see {@link AutomaticCombatController#runAutoCombat(AutoTrainer)} for
-     * details.
-     * </p>
-     */
-    public void launchAutoCombat() {
-        switchTo(Window.AUTOMATIC_COMBAT);
-        this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
-    }
-
-    /**
-     * Instructs the {@link ManualCombatController} to start a manual combat
-     * using the player's current team.
-     *
-     * <p>
-     * If the player's team is empty, an alert dialog is displayed and no combat
-     * is started. Otherwise, the adversary team is built by randomly sampling
-     * the pool of all available Bugemons (same size as the player's team), and
-     * the application navigates to the {@link Window#COMBAT} screen.
-     * </p>
-     *
-     * <p>
-     * In a manual combat the player selects their action each turn via the UI;
-     * see {@link ManualCombatController#runManualCombat(ManualTrainer)} for
-     * details.
-     * </p>
-     */
-    public void launchManualCombat() {
-        switchTo(Window.MANUAL_COMBAT);
-        this.manualCombatController.runManualCombat(new ManualTrainer(this.playerTeam));
-    }
-
-    /**
-     * Resets every {@link ulb.models.bugemon.Bugemon} in the player's team to
-     * its initial stats by delegating to
-     * {@link ulb.models.bugemon_team.BugemonTeam#reset()}.
-     *
-     * <p>
-     * This method is called by the outcome controllers
-     * ({@link CombatVictoryController}, {@link CombatDefeatController}) after a
-     * combat session ends so that the team is fully restored before the next
-     * session.
-     * </p>
-     */
-    public void resetTeam() {
-        this.playerTeam.reset();
-    }
-
-    public void setLevelUp(List<LevelUp> levelUps) {
-        this.levelUpController.setLevelUp(levelUps);
+        Runnable transition = transitions.get(window);
+        if (transition == null)
+            throw new IllegalArgumentException("Unknown window: " + window);
+        musicPlayer.stopMusic();
+        transition.run();
     }
 }

@@ -1,0 +1,43 @@
+package ulb.models.level_up;
+
+import java.util.List;
+
+/**
+ * Holds the state of an ongoing level-up sequence.
+ *
+ * <p>
+ * The controller populates this object via {@link #start(List)} and advances it
+ * via {@link #advance()}. The view reads {@link #getCurrent()} in its
+ * {@code refresh()} method — it never receives data pushed by the controller.
+ * </p>
+ */
+public class LevelUpSession {
+    private List<LevelUp> levelUps;
+    private int currentIdx;
+
+    /** Starts a new session with the given list of level-up events. */
+    public void start(List<LevelUp> levelUps) {
+        this.levelUps = List.copyOf(levelUps);
+        this.currentIdx = 0;
+    }
+
+    /** Returns the level-up event currently being displayed. */
+    public LevelUp getCurrent() {
+        return levelUps.get(currentIdx);
+    }
+
+    /** Advances to the next level-up event. */
+    public void advance() {
+        currentIdx++;
+    }
+
+    /** Returns {@code true} if there is at least one more event after the current one. */
+    public boolean hasNext() {
+        return currentIdx < levelUps.size() - 1;
+    }
+
+    /** Returns {@code true} if the session has been started with a non-empty list. */
+    public boolean isStarted() {
+        return levelUps != null && !levelUps.isEmpty();
+    }
+}

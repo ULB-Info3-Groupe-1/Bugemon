@@ -6,19 +6,29 @@
 }
 
 .defeat-retry-button {
-    -fx-background-color: #DC143C;
+    -fx-background-color: #c0392b;
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-font-family: 'Pixels';
-    -fx-background-radius: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 12 30;
+}
+
+.defeat-retry-button:hover {
+    -fx-background-color: #a93226;
 }
 
 .defeat-back-button {
-    -fx-background-color: #808080;
+    -fx-background-color: #7f8c8d;
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-font-family: 'Pixels';
-    -fx-background-radius: 0;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 12 30;
+}
+
+.defeat-back-button:hover {
+    -fx-background-color: #626567;
 }

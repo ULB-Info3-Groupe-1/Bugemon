@@ -79,6 +79,7 @@ public abstract class Controller<T extends View> {
      *              must not be {@code null}.
      */
     public void show(Stage stage) {
+        this.view.refresh();
         this.view.show(stage);
     }
 }

@@ -10,10 +10,11 @@
 
 package ulb.models.bugemon_team;
 
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
@@ -41,10 +42,10 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
  * @see Bugemon
  * @see ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException
  */
-public class BugemonTeam extends AbstractCollection<Bugemon> {
+public class BugemonTeam implements Iterable<Bugemon> {
     // Attributes
 
-    private static final int MAX_SIZE = 6;
+    public static final int MAX_SIZE = 6;
     private final ArrayList<Bugemon> team = new ArrayList<>();
 
     /**
@@ -62,7 +63,6 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *
      * @return (int) the number of Bugemons currently in the team
      */
-    @Override
     public int size() {
         return this.team.size();
     }
@@ -85,14 +85,7 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
         return this.team.isEmpty();
     }
 
-    /**
-     * Adds a Bugemon to the team if there is space and it is not already in the
-     * team. If the
-     * team is full or the Bugemon is already in the team, an exception is thrown.
-     *
-     * @param bugemon (Bugemon) the Bugemon to be added to the team
-     */
-    public void addBugemon(Bugemon bugemon)
+    public void add(Bugemon bugemon)
             throws TeamAlreadyFullException, BugemonAlreadyExistsException {
         if (this.isFull()) {
             throw new TeamAlreadyFullException("Team already full!");
@@ -105,43 +98,15 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
         this.team.add(bugemon);
     }
 
-    /**
-     * Removes a Bugemon from the team if it is in the team. If the team is empty or
-     * the Bugemon is not in the team, an exception is thrown.
-     *
-     * <p>
-     * This is a convenience overload of {@link #removeBugemon(String)} that
-     * extracts the ID from the given {@link Bugemon} and delegates to it.
-     * </p>
-     *
-     * @param bugemon (Bugemon) the Bugemon to be removed from the team
-     * @throws TeamAlreadyEmptyException if the team contains no Bugemons.
-     * @throws BugemonNotInTeamException if no Bugemon with the same ID exists
-     *                                   in the team.
-     */
-    public void removeBugemon(Bugemon bugemon) {
-        this.removeBugemon(bugemon.getId());
-    }
-
-    /**
-     * Removes a Bugemon from the team if it is in the team. If the team is empty or
-     * the Bugemon is not in the team, an exception is thrown.
-     *
-     * @param id (String) the ID of the Bugemon to be removed from the team
-     */
-    public void removeBugemon(String id)
+    public void remove(Bugemon bugemon)
             throws TeamAlreadyEmptyException, BugemonNotInTeamException {
         if (this.size() == 0) {
             throw new TeamAlreadyEmptyException("Team already empty!");
         }
-
-        this.team.stream()
-                .filter(b -> id.equals(b.getId()))
-                .findFirst()
-                .ifPresentOrElse(
-                        (b)
-                                -> { this.team.remove(b); },
-                        () -> { throw new BugemonNotInTeamException("Bugemon not in the team!"); });
+        if (!this.contains(bugemon)) {
+            throw new BugemonNotInTeamException("This Bugemon is not in the team!");
+        }
+        this.team.remove(bugemon);
     }
 
     /**
@@ -162,20 +127,8 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *         false otherwise
      */
     public boolean contains(Bugemon bugemon) {
-        return this.contains(bugemon.getId());
+        return this.team.contains(bugemon);
     }
-
-    /**
-     * Checks if a Bugemon with the same ID is already in the team
-     *
-     * @param id (String) the ID of Bugemon to search for
-     * @return (boolean) true if a Bugemon with the given ID is already in the team,
-     *         false otherwise
-     */
-    public boolean contains(String id) {
-        return this.getBugemon(id).isPresent();
-    }
-
     /**
      * Returns an {@link Iterator} over the non-{@code null} {@link Bugemon}s
      * in this team, in the order they were added.
@@ -193,6 +146,10 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
         return this.team.iterator();
     }
 
+    public Stream<Bugemon> stream() {
+        return this.team.stream();
+    }
+
     /**
      * Resets every {@link Bugemon} in the team to its initial state, restoring
      * all stats to the values they had when the Bugemon was first constructed.
@@ -205,8 +162,8 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      *
      * @see Bugemon#reset()
      */
-    public void reset() {
-        this.team.forEach(Bugemon::reset);
+    public void clear() {
+        this.team.clear();
     }
 
     /**
@@ -225,5 +182,13 @@ public class BugemonTeam extends AbstractCollection<Bugemon> {
      */
     public Bugemon getFirst() {
         return this.team.getFirst();
+    }
+
+    public List<Bugemon> getAll() {
+        return this.team;
+    }
+
+    public void killAll() {
+        this.team.forEach(Bugemon::kill);
     }
 }

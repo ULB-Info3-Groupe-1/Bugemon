@@ -1,8 +1,11 @@
-package ulb.controllers;
+package ulb.controllers.combat;
 
 import java.io.IOException;
 
+import ulb.controllers.Controller;
+import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
+import ulb.models.player.Player;
 import ulb.views.victory_view.CombatVictoryView;
 
 /**
@@ -31,6 +34,8 @@ import ulb.views.victory_view.CombatVictoryView;
  * @see Controller
  */
 public class CombatVictoryController extends Controller<CombatVictoryView> {
+    private final Player player;
+
     /**
      * Constructs a {@code CombatVictoryController}, initialises its
      * {@link CombatVictoryView}, and registers this controller as the view's
@@ -47,9 +52,13 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      * @throws IOException if the {@link CombatVictoryView} fails to load its FXML
      *                     resource.
      */
-    public CombatVictoryController(MetaController metaController) throws IOException {
+    public CombatVictoryController(MetaController metaController, Player player)
+            throws IOException {
         super(metaController, new CombatVictoryView());
-        this.view.setController(this);
+
+        this.player = player;
+
+        this.view.setOnContinue(this::continueToMainMenu);
     }
 
     /**
@@ -72,12 +81,12 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      * is a reserved keyword in Java.
      * </p>
      */
-    public void cont() {
+    public void continueToMainMenu() {
         // TODO: impl
         // Optional<LevelUp> lvlup = bugemon.addxp(xpwonatfight)
         // if lvlup.isPresent() -> switch to level up screen
         // else -> back to main menu
+        this.player.clearActiveTeam();
         this.metaController.switchTo(Window.MAIN_MENU);
-        this.metaController.resetTeam();
     }
 }

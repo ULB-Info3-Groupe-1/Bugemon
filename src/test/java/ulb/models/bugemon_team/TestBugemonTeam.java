@@ -27,7 +27,7 @@ public class TestBugemonTeam {
     public void testGetBugemon() {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon);
+        team.add(expectedBugemon);
 
         assertEquals(expectedBugemon, team.getBugemon("1").get());
     }
@@ -36,7 +36,7 @@ public class TestBugemonTeam {
     public void testAddBugemon() {
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon);
+        team.add(expectedBugemon);
         Bugemon bugemon = team.getBugemon("1").get();
 
         assertEquals(1, team.size());
@@ -49,14 +49,13 @@ public class TestBugemonTeam {
         Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
 
         BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon1);
-        team.removeBugemon(expectedBugemon1);
+        team.add(expectedBugemon1);
+        team.remove(expectedBugemon1);
 
         assertEquals(0, team.size());
 
-        team.addBugemon(expectedBugemon1);
-        assertThrows(BugemonNotInTeamException.class,
-                     () -> { team.removeBugemon(expectedBugemon2); });
+        team.add(expectedBugemon1);
+        assertThrows(BugemonNotInTeamException.class, () -> { team.remove(expectedBugemon2); });
     }
 
     @Test
@@ -65,17 +64,18 @@ public class TestBugemonTeam {
         Bugemon expectedBugemonDuplicate = TestUtilsBugemons.createDefaultBugemon("1");
         BugemonTeam team = new BugemonTeam();
 
-        team.addBugemon(expectedBugemon);
+        team.add(expectedBugemon);
 
         assertThrows(BugemonAlreadyExistsException.class,
-                     () -> { team.addBugemon(expectedBugemonDuplicate); });
+                     () -> { team.add(expectedBugemonDuplicate); });
     }
 
     @Test
     public void testTeamAlreadyEmpty() {
         BugemonTeam team = new BugemonTeam();
+        Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
 
-        assertThrows(TeamAlreadyEmptyException.class, () -> { team.removeBugemon("1"); });
+        assertThrows(TeamAlreadyEmptyException.class, () -> { team.remove(expectedBugemon); });
     }
 
     @Test
@@ -87,27 +87,20 @@ public class TestBugemonTeam {
         assertTrue(fullTeam.isFull());
 
         Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("7");
-        assertThrows(TeamAlreadyFullException.class, () -> { fullTeam.addBugemon(extraBugemon); });
+        assertThrows(TeamAlreadyFullException.class, () -> { fullTeam.add(extraBugemon); });
     }
 
     @Test
-    public void testResetTeam() {
+    public void testClearTeam() {
         Bugemon expectedBugemon1 = new BugemonBuilder().id("1").hp(100).build();
         Bugemon expectedBugemon2 = new BugemonBuilder().id("2").hp(100).build();
 
         BugemonTeam team = new BugemonTeam();
-        team.addBugemon(expectedBugemon1);
-        team.addBugemon(expectedBugemon2);
+        team.add(expectedBugemon1);
+        team.add(expectedBugemon2);
 
-        expectedBugemon1.takeDamage(50);
-        expectedBugemon2.takeDamage(30);
+        team.clear();
 
-        assertEquals(50, expectedBugemon1.getHp());
-        assertEquals(70, expectedBugemon2.getHp());
-
-        team.reset();
-
-        assertEquals(100, expectedBugemon1.getHp());
-        assertEquals(100, expectedBugemon2.getHp());
+        assertTrue(team.isEmpty());
     }
 }

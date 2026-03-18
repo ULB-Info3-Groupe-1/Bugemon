@@ -7,13 +7,11 @@ import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.combat.TurnResult;
-import ulb.views.BugemonTeamView;
 import ulb.views.DialogZoneView;
 import ulb.views.View;
 
@@ -71,20 +69,6 @@ public abstract class CombatView extends View {
      * Subclasses populate this container via their own menu components.
      */
     @FXML protected ActionMenuView actionMenuView;
-
-    /**
-     * Overlay pane that hosts the {@link BugemonTeamView} used to pick a
-     * Bugemon during a switch. Hidden by default; shown when a switch is
-     * requested.
-     */
-    @FXML protected StackPane bugemonTeamPane;
-
-    /**
-     * Scrollable grid of the player's team members, embedded inside
-     * {@link #bugemonTeamPane}. Each cell is clickable when a switch is in
-     * progress.
-     */
-    @FXML protected BugemonTeamView bugemonTeamView;
 
     /**
      * Overlay banner used to display turn feedback messages such as attack
@@ -150,6 +134,15 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
+    /**
+     * Builds and displays the turn-summary dialog from the two attack results of
+     * the last resolved turn. Only the attacks that actually happened are shown;
+     * the second result is absent when one trainer did not attack.
+     *
+     * @param firstAttackResult  result of the first attack; never {@code null}.
+     * @param secondAttackResult result of the second attack, or empty if only
+     *                           one attack was made this turn.
+     */
     public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
                                  Optional<TurnResult.AttackResult> secondAttackResult) {
         String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
@@ -165,6 +158,7 @@ public abstract class CombatView extends View {
         showDialog(message, efficiency);
     }
 
+    /** Converts an {@link Efficiency} value to a human-readable French label. */
     protected String formatEfficiency(Efficiency efficiency) {
         switch (efficiency) {
             case HIGH:
@@ -200,7 +194,7 @@ public abstract class CombatView extends View {
      * @param trainerBugemon a {@link BugemonDTO} snapshot of the player's
      *                       currently active Bugemon; must not be {@code null}.
      */
-    public void updateTrainerBugemon(BugemonDTO trainerBugemon) {
+    protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL()));
     }
@@ -209,16 +203,10 @@ public abstract class CombatView extends View {
      * Updates the opponent-side info panel and sprite to reflect the given
      * Bugemon's current state (name, type, HP).
      *
-     * <p>
-     * Should be called by the controller at the start of a combat session and
-     * after every turn in which the opponent's active Bugemon may have changed
-     * or taken damage.
-     * </p>
-     *
      * @param opponentBugemon a {@link BugemonDTO} snapshot of the opponent's
      *                        currently active Bugemon; must not be {@code null}.
      */
-    public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
+    protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));
     }

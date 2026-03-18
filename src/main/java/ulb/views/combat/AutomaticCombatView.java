@@ -2,56 +2,61 @@ package ulb.views.combat;
 
 import java.io.IOException;
 
+import ulb.models.combat.Combat;
+import ulb.models.combat.TurnResult;
+import ulb.models.trainer.AutoTrainer;
+
 /**
- * View for the automatic combat screen, where both sides act without any
- * human input.
+ * View for the automatic combat screen.
  *
  * <p>
- * {@code AutomaticCombatView} extends {@link CombatView} and configures the
- * shared combat layout for a fully automated session: the action menu and the
- * Bugemon team panel are hidden, since the player never needs to select an
- * action or switch manually during an automatic combat.
+ * Holds references to the player {@link AutoTrainer}, the opponent
+ * {@link AutoTrainer}, and the {@link Combat} model. In {@link #refresh()} it
+ * reads their current state and updates the Bugemon panels and dialog zone.
+ * No controller reference is held.
  * </p>
- *
- * <p>
- * The view is driven exclusively by
- * {@link ulb.controllers.combat.AutomaticCombatController}, which updates the
- * Bugemon info widgets and the dialog zone after each turn via the methods
- * inherited from {@link CombatView}.
- * </p>
- *
- * @see CombatView
- * @see ulb.controllers.combat.AutomaticCombatController
  */
 public class AutomaticCombatView extends CombatView {
+    private AutoTrainer player;
+    private AutoTrainer opponent;
+    private Combat combat;
+
     /**
-     * Constructs an {@code AutomaticCombatView}, loads the shared combat FXML
-     * layout, and immediately calls {@link #initCombatMode()} to hide the
-     * widgets that are not relevant to automatic combat.
+     * Loads the shared combat FXML layout and configures it for automatic mode
+     * (hides the action menu and team pane).
      *
-     * @throws IOException if the underlying {@link CombatView} fails to load
-     *                     its FXML resource.
+     * @throws IOException if the FXML resource cannot be loaded.
      */
     public AutomaticCombatView() throws IOException {
         super();
         this.initCombatMode();
     }
 
-    /**
-     * Configures the view for automatic combat by hiding the action menu and
-     * the Bugemon team panel.
-     *
-     * <p>
-     * Both nodes are removed from the layout (via {@code setManaged(false)}) as
-     * well as made invisible, so they do not consume space in the scene graph
-     * during the automated session.
-     * </p>
-     */
+    /** Gives the view the model objects it needs to read from in {@link #refresh()}. */
+    public void setModel(AutoTrainer player, AutoTrainer opponent, Combat combat) {
+        this.player = player;
+        this.opponent = opponent;
+        this.combat = combat;
+    }
+
     @Override
-    public void initCombatMode() {
+    protected void initCombatMode() {
         this.actionMenuView.setVisible(false);
         this.actionMenuView.setManaged(false);
-        this.bugemonTeamPane.setVisible(false);
-        this.bugemonTeamPane.setManaged(false);
+    }
+
+    @Override
+    public void refresh() {
+        if (player == null)
+            return;
+        updateTrainerBugemon(player.getCurrentBugemon());
+        updateOpponentBugemon(opponent.getCurrentBugemon());
+
+        TurnResult last = combat.getLastTurnResult();
+        if (last != null && last.first().wasAttack()) {
+            showCombatDialog(last.first(), last.second());
+        } else {
+            hideDialog();
+        }
     }
 }
