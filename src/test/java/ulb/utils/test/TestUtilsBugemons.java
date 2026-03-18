@@ -8,6 +8,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon.effect.EffectType;
@@ -18,7 +19,7 @@ public final class TestUtilsBugemons {
 
     public static Bugemon createDefaultBugemon(String id) {
         Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.ADVERSARY,
-                                   EffectStat.ATTACK, 10, "1_turn");
+                                   EffectStat.ATTACK, 10, EffectDuration.ONE_TURN);
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         Attack attack1 =

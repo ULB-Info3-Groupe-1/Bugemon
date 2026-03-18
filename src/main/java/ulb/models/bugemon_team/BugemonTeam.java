@@ -169,7 +169,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
      * in-combat stat modifications.
      * </p>
      *
-     * @see Bugemon#reset()
+     * @see Bugemon#resetModifiers()
      */
     public void clear() {
         this.team.clear();

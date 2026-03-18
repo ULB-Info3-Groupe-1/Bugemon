@@ -31,7 +31,7 @@
  *       {@link ulb.models.bugemon.effect.Effect} that tracks the number of turns
  *       remaining before the effect expires and must be reversed.</li>
  *   <li>{@link ulb.models.bugemon.effect.EffectType} — whether an effect modifies a
- *       stat ({@code STAT_MODIFIER}) or restores HP ({@code SOIN}).</li>
+ *       stat ({@code STAT_MODIFIER}) or restores HP ({@code HEAL}).</li>
  *   <li>{@link ulb.models.bugemon.effect.EffectTarget} — which Bugemon(s) an effect
  *       applies to: the attacker ({@code THROWER}), the defender
  *       ({@code ADVERSARY}), the attacker's whole team ({@code TEAM}), or

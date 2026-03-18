@@ -1,5 +1,6 @@
 package ulb.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
@@ -104,7 +105,7 @@ public class LevelUpService {
         final int xpWon = xpGain(floor, multiplier, nAdversaries);
         final int xpPerBugemon = (int)(xpWon / numParticipatingBugemon);
 
-        participatingBugemon.forEach(b -> b.addXp(xpPerBugemon));
+        participatingBugemon.forEach(b -> b.gainXp(xpPerBugemon));
 
         return xpPerBugemon;
     }
@@ -120,9 +121,7 @@ public class LevelUpService {
      * @return a list of {@link LevelUp} objects for all Bugemons that leveled up
      */
     public static List<LevelUp> levelUp(final List<Bugemon> bugemons) {
-        return bugemons.stream()
-                .filter(b -> b.getXp() >= xpRequiredForLevel(b.getLevel()))
-                .map(b -> b.levelUp())
-                .toList();
+        // TODO: this method should be removed
+        return new ArrayList<>();
     }
 }

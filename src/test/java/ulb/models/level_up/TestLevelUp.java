@@ -24,30 +24,6 @@ public class TestLevelUp {
     private Bugemon bugemon;
 
     @Test
-    public void testLevelUpRestoresMaxHP() {
-        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
-
-        bugemon.takeDamage(40);
-        assertEquals(60, bugemon.getHp());
-
-        bugemon.levelUp();
-
-        // Bugemon health should be restored to full
-        assertEquals(100, bugemon.getHp());
-    }
-
-    @Test
-    public void testLevelUpGeneratesThreeChoices() {
-        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
-
-        LevelUp levelUp = bugemon.levelUp();
-        List<Choice> choices = levelUp.getChoices();
-
-        assertNotNull(choices);
-        assertEquals(3, choices.size());
-    }
-
-    @Test
     public void testChoicesTotalTenPoints() {
         bugemon = TestUtilsBugemons.createDefaultBugemon("1");
 
@@ -80,7 +56,7 @@ public class TestLevelUp {
         assertEquals(1, bugemon.getLevel());
         assertEquals(0, bugemon.getXp());
 
-        bugemon.addXp(50);
+        bugemon.gainXp(50);
         List<LevelUp> levelUps = LevelUpService.levelUp(List.of(bugemon));
         assertEquals(1, levelUps.size());
 

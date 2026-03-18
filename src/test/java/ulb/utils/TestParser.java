@@ -48,9 +48,9 @@ public class TestParser {
                                       .findFirst()
                                       .orElseThrow();
         List<Effect> effects = racinesVives.effects();
-        assertEquals(effects.get(0).getTypeEffect(), EffectType.STAT_MODIFIER);
-        assertEquals(effects.get(0).getModifier(), 5);
-        assertEquals(effects.get(0).getStat(), EffectStat.DEFENSE);
+        assertEquals(effects.get(0).type(), EffectType.STAT_MODIFIER);
+        assertEquals(effects.get(0).modifier(), 5);
+        assertEquals(effects.get(0).stat(), EffectStat.DEFENSE);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class TestParser {
                                         .findFirst()
                                         .orElseThrow();
 
-        Effect effect = new Effect(EffectType.SOIN, EffectTarget.THROWER, null, 20, null);
+        Effect effect = new Effect(EffectType.HEAL, EffectTarget.THROWER, null, 20, null);
         GameObject potion =
                 new GameObject("baie_revigorante", "Baie Revigorante",
                                "Restaure 20 PV au Bugémon actif.", GameObject.OType.HEALING, effect,
