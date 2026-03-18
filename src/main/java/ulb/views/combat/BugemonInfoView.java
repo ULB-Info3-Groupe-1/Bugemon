@@ -46,7 +46,7 @@ public class BugemonInfoView extends VBox {
         this.bugemonName.getStyleClass().add(bugemon.getType().toString());
         this.bugemonName.setText(bugemon.getName());
         this.bugemonType.setText("(" + bugemon.getType().toString() + ")");
-        this.bugemonHPBar.setProgress((double) bugemon.getHp() / bugemon.getMaxHp());
+        this.bugemonHPBar.setProgress((double)bugemon.getHp() / bugemon.getMaxHp());
         this.bugemonHpLabel.setText(bugemon.getHp() + " / " + bugemon.getMaxHp());
     }
 }

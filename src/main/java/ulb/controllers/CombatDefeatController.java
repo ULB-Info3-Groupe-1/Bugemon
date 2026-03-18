@@ -75,7 +75,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      */
     public void retry() {
         this.metaController.switchTo(Window.CREATE_TEAM);
-        this.player.resetActiveTeam();
+        this.player.clearActiveTeam();
     }
 
     /**
@@ -89,6 +89,6 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      */
     public void backToMainMenu() {
         this.metaController.switchTo(Window.MAIN_MENU);
-        this.player.resetActiveTeam();
+        this.player.clearActiveTeam();
     }
 }

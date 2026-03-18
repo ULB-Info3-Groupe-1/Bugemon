@@ -85,6 +85,6 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
         // if lvlup.isPresent() -> switch to level up screen
         // else -> back to main menu
         this.metaController.switchTo(Window.MAIN_MENU);
-        this.player.resetActiveTeam();
+        this.player.clearActiveTeam();
     }
 }

@@ -100,7 +100,7 @@ public abstract class Trainer {
      * </p>
      */
     public void killTeam() {
-        team.forEach(b -> b.takeDamage(b.getHp()));
+        team.getAll().forEach(b -> b.takeDamage(b.getHp()));
     }
 
     // ── shared state queries ─────────────────────────────────────────────────

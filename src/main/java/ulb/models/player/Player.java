@@ -34,7 +34,7 @@ public class Player {
         this.activeTeam = team;
     }
 
-    public void resetActiveTeam() {
+    public void clearActiveTeam() {
         this.activeTeam.clear();
     }
 
