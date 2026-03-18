@@ -204,4 +204,92 @@ public abstract class CombatController<View extends CombatView> extends Controll
     protected String formatEfficiency(TurnResult.AttackResult result) {
         return formatEfficiency(result.efficiency());
     }
+
+    /**
+     * Plays attack animations in turn order, then shows the turn dialog and
+     * invokes {@code onFinished}.
+     *
+     * @param turnResult the {@link TurnResult} to animate; must not be
+     *                   {@code null}.
+     * @param player     the player-side trainer; must not be {@code null}.
+     * @param opponent   the opponent-side trainer; must not be {@code null}.
+     * @param onFinished callback executed once all animations are finished; must
+     *                   not be {@code null}.
+     */
+    protected void animateTurn(TurnResult turnResult, Trainer player, Trainer opponent,
+                               Runnable onFinished) {
+        Runnable afterAnimations = () -> {
+            showTurnDialog(turnResult);
+            onFinished.run();
+        };
+
+        Runnable animateSecondAction = ()
+                -> turnResult.second().ifPresentOrElse(
+                        second
+                        -> animateAttackResult(second, player, opponent, afterAnimations),
+                        afterAnimations);
+
+        animateAttackResult(turnResult.first(), player, opponent, animateSecondAction);
+    }
+
+    /**
+     * Plays the animation for one attack result, then invokes
+     * {@code onFinished}.
+     *
+     * @param attackResult the attack result to animate; must not be {@code null}.
+     * @param player       the player-side trainer; must not be {@code null}.
+     * @param opponent     the opponent-side trainer; must not be {@code null}.
+     * @param onFinished   callback executed after animation completion.
+     */
+    protected void animateAttackResult(TurnResult.AttackResult attackResult, Trainer player,
+                                       Trainer opponent, Runnable onFinished) {
+        if (!attackResult.wasAttack()) {
+            onFinished.run();
+            return;
+        }
+
+        if (attackResult.attacker() == player) {
+            view.playAttackAnimation(true, onFinished);
+            return;
+        }
+
+        if (attackResult.attacker() == opponent) {
+            view.playAttackAnimation(false, onFinished);
+            return;
+        }
+
+        onFinished.run();
+    }
+
+    /**
+     * Displays the dialog message for a turn, prioritizing the second action
+     * when it is an attack.
+     *
+     * @param turnResult the {@link TurnResult} to display; must not be
+     *                   {@code null}.
+     */
+    protected void showTurnDialog(TurnResult turnResult) {
+        if (turnResult.second().isPresent() && turnResult.second().get().wasAttack()) {
+            view.showDialog(formatEfficiency(turnResult.second().get()), null);
+            return;
+        }
+
+        if (turnResult.first().wasAttack()) {
+            view.showDialog(formatEfficiency(turnResult.first()), null);
+            return;
+        }
+
+        view.hideDialog();
+    }
+
+    /**
+     * Returns {@code true} if {@code trainer} performed at least one attack in
+     * {@code turnResult}.
+     */
+    protected boolean didTrainerAttack(TurnResult turnResult, Trainer trainer) {
+        return (turnResult.first().wasAttack() && turnResult.first().attacker() == trainer)
+                || turnResult.second()
+                           .map(result -> result.wasAttack() && result.attacker() == trainer)
+                           .orElse(false);
+    }
 }

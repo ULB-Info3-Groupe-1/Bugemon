@@ -70,7 +70,7 @@ public class MusicPlayer {
      *
      * @param ambiance the ambiance of the music track to play.
      */
-    public void playAmbiance(Music.Ambiance ambiance) {
+    public void playAmbiance(Ambiance ambiance) {
         List<Music> matchingMusics =
                 this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 

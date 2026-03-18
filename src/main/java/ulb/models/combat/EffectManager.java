@@ -154,10 +154,10 @@ public class EffectManager {
             List<Bugemon> bugemons = new ArrayList<>();
 
             switch (target) {
-                case EffectTarget.ADVERSARY:
+                case ADVERSARY:
                     bugemons.add(defender.getCurrentBugemon());
                     break;
-                case EffectTarget.THROWER:
+                case THROWER:
                     bugemons.add(attacker.getCurrentBugemon());
                     break;
                 case EffectTarget.TEAM:

@@ -2,10 +2,13 @@ package ulb.views.combat;
 
 import java.io.IOException;
 import java.util.Optional;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
@@ -40,6 +43,9 @@ import ulb.views.View;
  * @see ManualCombatView
  */
 public abstract class CombatView extends View {
+    private static final double ATTACK_LUNGE_DISTANCE = 100;
+    private static final Duration ATTACK_LUNGE_DURATION = Duration.millis(150);
+
     // ── FXML-injected components ──────────────────────────────────────────────
 
     /**
@@ -215,5 +221,62 @@ public abstract class CombatView extends View {
     public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));
+    }
+
+    // ── Attack animations ─────────────────────────────────────────────────────
+
+    /**
+     * Plays a lunge animation on the player's sprite (slide toward the opponent
+     * then return), then invokes {@code onFinished} on the JavaFX thread.
+     *
+     * @param onFinished callback executed once the animation completes; must
+     *                   not be {@code null}.
+     */
+    public void playTrainerAttackAnimation(Runnable onFinished) {
+        playLungeAnimation(bugemonTrainerImage, ATTACK_LUNGE_DISTANCE, onFinished);
+    }
+
+    /**
+     * Plays a lunge animation on the opponent's sprite (slide toward the player
+     * then return), then invokes {@code onFinished} on the JavaFX thread.
+     *
+     * @param onFinished callback executed once the animation completes; must
+     *                   not be {@code null}.
+     */
+    public void playOpponentAttackAnimation(Runnable onFinished) {
+        playLungeAnimation(bugemonOpponentImage, -ATTACK_LUNGE_DISTANCE, onFinished);
+    }
+
+    /**
+     * Plays the attack animation for one side.
+     *
+     * @param trainerAttacks {@code true} to animate the trainer sprite,
+     *                       {@code false} to animate the opponent sprite.
+     * @param onFinished callback executed once the animation completes.
+     */
+    public void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
+        if (trainerAttacks) {
+            playTrainerAttackAnimation(onFinished);
+        } else {
+            playOpponentAttackAnimation(onFinished);
+        }
+    }
+
+    /**
+     * Slides {@code sprite} by {@code deltaX} pixels over 150 ms then returns
+     * it to its original position over another 150 ms.
+     *
+     * @param sprite     the {@link ImageView} to animate.
+     * @param deltaX     the horizontal distance to slide the sprite in pixels.
+     * @param onFinished callback executed once the animation completes.
+     */
+    private void playLungeAnimation(ImageView sprite, double deltaX, Runnable onFinished) {
+        TranslateTransition lunge = new TranslateTransition(ATTACK_LUNGE_DURATION, sprite);
+        lunge.setByX(deltaX);
+        TranslateTransition retreat = new TranslateTransition(ATTACK_LUNGE_DURATION, sprite);
+        retreat.setByX(-deltaX);
+        SequentialTransition seq = new SequentialTransition(lunge, retreat);
+        seq.setOnFinished(e -> onFinished.run());
+        seq.play();
     }
 }

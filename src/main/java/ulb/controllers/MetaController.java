@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
+import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.Music;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
@@ -95,7 +96,7 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        musicLoader.loadFromDirectory("/musics/combat", Music.Ambiance.COMBAT)
+        musicLoader.loadFromDirectory("/musics/combat", Ambiance.COMBAT)
                 .forEach(this.musicPlayer::addMusic);
     }
 
@@ -117,12 +118,12 @@ public class MetaController {
                 break;
             case AUTOMATIC_COMBAT:
                 this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Music.Ambiance.COMBAT);
+                this.musicPlayer.playAmbiance(Ambiance.COMBAT);
                 this.automaticCombatController.show(stage);
                 break;
             case MANUAL_COMBAT:
                 this.musicPlayer.stopMusic();
-                this.musicPlayer.playAmbiance(Music.Ambiance.COMBAT);
+                this.musicPlayer.playAmbiance(Ambiance.COMBAT);
                 this.manualCombatController.show(this.stage);
                 break;
             case COMBAT_VICTORY:
