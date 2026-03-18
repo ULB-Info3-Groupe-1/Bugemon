@@ -11,7 +11,7 @@ public class TestTeamFactory {
     @Test
     public void testRandomTeamNumber() {
         Parser.getInstance().parse();
-        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), 6);
+        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(6);
         assertEquals(6, teamOfSix.size());
     }
 }
