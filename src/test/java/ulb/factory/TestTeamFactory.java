@@ -9,7 +9,6 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repository.DatabaseRepository;
 
 public class TestTeamFactory {
-
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private static final String TEST_DB_URL = dotenv.get("TEST_DB_URL");
