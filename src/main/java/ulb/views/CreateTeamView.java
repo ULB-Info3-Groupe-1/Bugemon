@@ -23,14 +23,16 @@ public class CreateTeamView extends View {
 
     @FXML private AllBugemonsGridView allBugemonsGridView;
     @FXML private BugemonTeamView bugemonsTeamView;
-    @FXML private Button launchAutomaticCombat;
-    @FXML private Button launchManualCombat;
+    @FXML private Button validateTeamBtn;
+    @FXML private Button loadTeamBtn;
+    @FXML private Button saveTeamBtn;
 
     private BugemonTeam bugemonTeam;
     private List<Bugemon> allBugemonsAvailable;
     private Consumer<Bugemon> onGridBugemonClicked;
-    private Runnable onStartAutoCombat;
-    private Runnable onStartManualCombat;
+    private Runnable validate;
+    private Runnable load;
+    private Runnable save;
 
     /**
      * Loads the team-creation FXML layout and wires click handlers on the
@@ -46,8 +48,11 @@ public class CreateTeamView extends View {
                 onGridBugemonClicked.accept(b);
         });
 
-        this.launchAutomaticCombat.setOnAction(e -> launchCombat(onStartAutoCombat));
-        this.launchManualCombat.setOnAction(e -> launchCombat(onStartManualCombat));
+        this.validateTeamBtn.setOnAction(e->returnToMainMenu(validate));
+        this.loadTeamBtn.setOnAction(e->loadTeam(load));
+        this.saveTeamBtn.setOnAction(e->saveTeam(save));
+
+
     }
 
     /** Gives the view a reference to the team model it should read from. */
@@ -73,25 +78,6 @@ public class CreateTeamView extends View {
         this.onGridBugemonClicked = callback;
     }
 
-    /** Registers the callback invoked when the player launches an automatic combat. */
-    public void setOnStartAutoCombat(Runnable callback) {
-        this.onStartAutoCombat = callback;
-    }
-
-    /** Registers the callback invoked when the player launches a manual combat. */
-    public void setOnStartManualCombat(Runnable callback) {
-        this.onStartManualCombat = callback;
-    }
-
-    private void launchCombat(Runnable onStart) {
-        if (bugemonTeam != null && bugemonTeam.isEmpty()) {
-            showAlert("Équipe incomplète",
-                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        } else if (onStart != null) {
-            onStart.run();
-        }
-    }
-
     public void refreshTeam(BugemonTeam team) {
         this.bugemonTeam = team;
         refresh();
@@ -102,4 +88,36 @@ public class CreateTeamView extends View {
         this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
+
+
+    public void setValidate(Runnable validate){
+        this.validate = validate;
+    }
+
+    public void returnToMainMenu(Runnable validate){
+        if (validate != null){
+            validate.run();
+        }
+    }
+
+    public void setLoad(Runnable load){
+        this.load = load;
+    }
+
+    public void setSave(Runnable save){
+        this.save = save;
+    }
+
+    public void saveTeam(Runnable save){
+        if (save != null){
+            save.run();
+        }
+    }
+
+    public void loadTeam(Runnable load){
+        if (load != null){
+            load.run();
+        }
+    }
+
 }

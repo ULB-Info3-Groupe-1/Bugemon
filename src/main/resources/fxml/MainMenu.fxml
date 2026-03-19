@@ -12,8 +12,18 @@
 
     <Label text="BUGÉMON" styleClass="main-title" />
 
-    <Button fx:id="createTeamButton" text="Créer une équipe et lancer un combat" styleClass="menu-button" />
+    <Button fx:id="createTeamButton" text="Gérer mes équipes" styleClass="menu-button" />
+
+    <Button fx:id="launchAutomaticCombat"
+            text="Lancer combat automatique"
+            styleClass="menu-button"
+            maxWidth="260" minWidth="260"/>
+    <Button fx:id="launchManualCombat"
+            text="Lancer combat manuel"
+            styleClass="menu-button"
+            maxWidth="260" minWidth="260"/>
 
     <Button fx:id="quitButton" text="Quitter" styleClass="menu-button" />
 
 </VBox>
+
