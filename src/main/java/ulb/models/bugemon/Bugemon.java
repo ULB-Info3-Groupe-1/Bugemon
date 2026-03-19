@@ -23,7 +23,6 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.bugemon.effect.EffectType;
 import ulb.models.level_up.Upgrade;
 
 /**

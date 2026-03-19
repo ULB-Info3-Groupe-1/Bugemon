@@ -1,7 +1,5 @@
 package ulb.models.bugemon;
 
-import javafx.scene.effect.Effect;
-
 import ulb.models.bugemon.Item.ItemType;
 
 /*
