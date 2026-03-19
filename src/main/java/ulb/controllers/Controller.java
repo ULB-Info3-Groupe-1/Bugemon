@@ -61,7 +61,7 @@ public abstract class Controller<T extends View> {
      * @param view           the {@link View} instance that this controller manages;
      *                       must not be {@code null}.
      */
-    public Controller(MetaController metaController, T view) {
+    protected Controller(MetaController metaController, T view) {
         this.metaController = metaController;
         this.view = view;
     }
@@ -78,7 +78,7 @@ public abstract class Controller<T extends View> {
      * @param stage the {@link Stage} on which the view should be rendered;
      *              must not be {@code null}.
      */
-    public void show(Stage stage) {
+    protected void show(Stage stage) {
         this.view.refresh();
         this.view.show(stage);
     }

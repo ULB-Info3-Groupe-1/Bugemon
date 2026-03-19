@@ -34,6 +34,10 @@ import ulb.models.trainer.Trainer;
  * <p>This class is not meant to be instantiated; all methods are static.</p>
  */
 public class CombatService {
+    private CombatService() {
+        // Private constructor to prevent instantiation
+    }
+
     /**
      * Determines which trainer's Bugemon attacks first based on initiative.
      * In case of a tie, the winner is chosen randomly.
@@ -101,8 +105,7 @@ public class CombatService {
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon,
                                       final Bugemon defenderBugemon) {
         final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
-        return (int)Math.ceil(
-                calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier));
+        return calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
     }
 
     /**
@@ -154,7 +157,7 @@ public class CombatService {
     public static Efficiency compareBugemonType(final BugemonType offensiveType,
                                                 final BugemonType defensiveType) {
         // Use the BugemonType enum declaration order as the type cycle
-        final List<BugemonType> cycle = new ArrayList<BugemonType>(List.of(BugemonType.values()));
+        final List<BugemonType> cycle = new ArrayList<>(List.of(BugemonType.values()));
 
         final int atkIdx = cycle.indexOf(offensiveType);
         final int defIdx = cycle.indexOf(defensiveType);

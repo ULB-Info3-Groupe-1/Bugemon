@@ -20,7 +20,7 @@ public class DatabaseManager {
         try {
             this.connection = DriverManager.getConnection(this.currentUrl);
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to connect to local SQLite database", e);
+            throw new IllegalStateException("Failed to connect to local SQLite database", e);
         }
     }
 

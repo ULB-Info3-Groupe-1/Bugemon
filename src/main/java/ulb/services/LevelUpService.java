@@ -73,7 +73,7 @@ public class LevelUpService {
         final int numParticipatingBugemon = participatingBugemon.size();
 
         final int xpWon = xpGain(floor, multiplier, nAdversaries);
-        final int xpPerBugemon = (int)(xpWon / numParticipatingBugemon);
+        final int xpPerBugemon = (xpWon / numParticipatingBugemon);
 
         // My functional bros will love this one :-D
         //
