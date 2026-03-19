@@ -61,9 +61,6 @@ public class Combat {
     /** The adversary (opponent-side) trainer participating in this combat. */
     private final Trainer adversaryTrainer;
 
-    /** Manages the application and expiry of status effects during combat. */
-    private final EffectManager effectManager = new EffectManager();
-
     /** The current turn number, starting at {@code 0}. */
     private int turn = 0;
 
@@ -120,8 +117,6 @@ public class Combat {
     public TurnResult turn() {
         allyTrainer.addBugemonParticipation();
         adversaryTrainer.addBugemonParticipation();
-
-        effectManager.update();
 
         TurnAction allyAction = allyTrainer.getAction();
         TurnAction adversaryAction = adversaryTrainer.getAction();
@@ -392,10 +387,7 @@ public class Combat {
             if (!defender.isDefeated()) {
                 defender.reactToKo();
             }
-        } else {
-            effectManager.applyEffect(attacker, defender, attack);
         }
-
         return new TurnResult.AttackResult(attacker, defender, Optional.of(attack), efficiency);
     }
 

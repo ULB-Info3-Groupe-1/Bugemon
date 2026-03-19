@@ -14,9 +14,14 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import ulb.common.dto.BugemonDTO;
-import ulb.models.bugemon.effect.EffectStat;
-import ulb.models.level_up.Choice;
-import ulb.models.level_up.LevelUp;
+import ulb.models.bugemon.components.AttackComponent;
+import ulb.models.bugemon.components.DefenseComponent;
+import ulb.models.bugemon.components.HealthComponent;
+import ulb.models.bugemon.components.InitiativeComponent;
+import ulb.models.bugemon.components.LevelComponent;
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectType;
+import ulb.models.level_up.Upgrade;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
@@ -36,7 +41,7 @@ import ulb.models.level_up.LevelUp;
  * @see BugemonType
  * @see Attack
  */
-public class Bugemon implements BugemonDTO, Cloneable {
+public class Bugemon implements BugemonDTO {
     /** Unique identifier of this bugemon. */
     String id;
 
@@ -49,17 +54,17 @@ public class Bugemon implements BugemonDTO, Cloneable {
     /** Path or URL to the sprite image of this bugemon. */
     String sprite;
 
-    /**
-     * The baseline stats of this bugemon, set once at construction and used to
-     * reset the bugemon to its original condition.
-     */
-    BugemonState initialState;
+    HealthComponent healthComponent;
 
-    /**
-     * The current (mutable) combat stats of this bugemon. These values change
-     * during battles (e.g. when damage is taken).
-     */
-    BugemonState state;
+    AttackComponent attackComponent;
+
+    DefenseComponent defenseComponent;
+
+    InitiativeComponent initiativeComponent;
+
+    LevelComponent levelComponent;
+
+    boolean participatedLastFight;
 
     /**
      * Whether this bugemon is available as a starter choice. Serialised as
@@ -95,12 +100,21 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *                                    the {@link Cloneable} interface.
      */
     @Override
-    public Bugemon clone() throws CloneNotSupportedException {
-        Bugemon cloned = (Bugemon)super.clone();
-        cloned.state = new BugemonState(this.state);
-        cloned.initialState = new BugemonState(this.initialState);
-
-        return cloned;
+    public Bugemon clone() {
+        return new BugemonBuilder()
+                .id(this.id)
+                .name(this.name)
+                .type(this.type)
+                .sprite(this.sprite)
+                .hp(this.healthComponent.getMaxHp())
+                .attack(this.attackComponent.getAttack())
+                .defense(this.defenseComponent.getDefense())
+                .initiative(this.initiativeComponent.getInitiative())
+                .xp(this.levelComponent.getXp())
+                .level(this.levelComponent.getLevel())
+                .attackList(List.copyOf(this.attackList)) // TODO: is this safe ?
+                .isStarter(this.isStarter)
+                .build();
     }
 
     // Methods
@@ -111,7 +125,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @param damage the amount of damage to apply.
      */
     public void takeDamage(int damage) {
-        this.state.hp -= damage;
+        this.healthComponent.decreaseHp(damage);
     }
 
     /**
@@ -122,7 +136,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *         {@code false} otherwise.
      */
     public boolean isAlive() {
-        return this.state.hp > 0;
+        return this.healthComponent.getHp() > 0;
     }
 
     /**
@@ -212,23 +226,30 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *                      {@link EffectStat} constant (should not occur with a
      *                      well-formed enum value).
      */
-    public void editStat(EffectStat stat, int value) {
-        switch (stat) {
-            case HP:
-                this.state.hp = this.state.hp + value;
-                break;
-            case ATTACK:
-                this.state.attack = this.state.attack + value;
-                break;
-            case DEFENSE:
-                this.state.defense = this.state.defense + value;
-                break;
-            case INITIATIVE:
-                this.state.initiative = this.state.initiative + value;
-                break;
+    public void editStat(Effect effect) {
+        int value = effect.modifier();
+
+        switch (effect.type()) {
+            case EffectType.STAT_MODIFIER: {
+                switch (effect.stat()) {
+                    case ATTACK:
+                        this.attackComponent.increaseAttack(value);
+                        break;
+                    case DEFENSE:
+                        this.defenseComponent.increaseDefense(value);
+                        break;
+                    case INITIATIVE:
+                        this.initiativeComponent.increaseInitiative(value);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("unknown effect type");
+                }
+            }
+
+            case EffectType.HEAL:
+                this.healthComponent.increaseHp(value);
             default:
-                throw new IllegalArgumentException(
-                        "Invalid stat key when trying to edit stat value");
+                throw new IllegalArgumentException("unknown effect type");
         }
     }
 
@@ -247,7 +268,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @return (int) the current hit points of the bugemon.
      */
     public int getHp() {
-        return this.state.hp;
+        return this.healthComponent.getHp();
     }
 
     /**
@@ -255,7 +276,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @return (int) the maximum hit points of the bugemon.
      */
     public int getMaxHp() {
-        return this.state.maxHp;
+        return this.healthComponent.getMaxHp();
     }
 
     /**
@@ -264,7 +285,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @return (int) the current attack power of the bugemon.
      */
     public int getAttack() {
-        return this.state.attack;
+        return this.attackComponent.getAttack();
     }
 
     /**
@@ -273,7 +294,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @return (int) the current defense rating of the bugemon.
      */
     public int getDefense() {
-        return this.state.defense;
+        return this.defenseComponent.getDefense();
     }
 
     /**
@@ -283,7 +304,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @return (int) the initiative value of the bugemon.
      */
     public int getInitiative() {
-        return this.state.initiative;
+        return this.initiativeComponent.getInitiative();
     }
 
     /**
@@ -298,20 +319,23 @@ public class Bugemon implements BugemonDTO, Cloneable {
     /**
      * Reset the bugemon's current state to its initial state, restoring its original stats.
      */
-    public void reset() {
-        this.state = new BugemonState(this.initialState);
+    public void resetModifiers() {
+        this.healthComponent.cleanModifiers();
+        this.attackComponent.cleanModifiers();
+        this.defenseComponent.cleanModifiers();
+        this.initiativeComponent.cleanModifiers();
     }
 
     @Override
     public int getLevel() {
-        return this.state.level;
+        return this.levelComponent.getLevel();
     }
 
     /**
      * Restore the bugemon's HP to its initial value, without affecting other stats.
      */
     public void restoreHp() {
-        this.state.hp = this.initialState.hp;
+        this.healthComponent.restoreHp();
     }
 
     /**
@@ -320,39 +344,31 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @return (int) the current experience points of the bugemon.
      */
     public int getXp() {
-        return this.state.xp;
+        return this.levelComponent.getXp();
     }
 
     /**
-     * Adds experience points to the bugemon.
+     * Adds xp, and returns the number of levels that have just been crossed
      *
      * @param xp the amount of experience points to add
+     * @return the number of levels that have just been crossed
      */
-    public void addXp(int xp) {
-        this.state.xp += xp;
-    }
-
-    /**
-     * Level up the bugemon, increasing its level by 1 and restoring HP.
-     *
-     * @return a {@link LevelUp} object representing the level-up event
-     */
-    public LevelUp levelUp() {
-        this.state.level += 1;
-        this.restoreHp();
-        return new LevelUp(this);
+    public int gainXp(int xp) {
+        return this.levelComponent.addXp(xp);
     }
 
     /**
      * Applies a level-up choice to the bugemon, adding the choice's stat bonuses.
      *
-     * @param choice the {@link Choice} to apply, containing stat bonuses
+     * @param choice the {@link Upgrade} to apply, containing stat bonuses
      */
-    public void applyChoice(Choice choice) {
-        this.state.hp += choice.getBonusHP();
-        this.state.attack += choice.getBonusAttack();
-        this.state.defense += choice.getBonusDefense();
-        this.state.initiative += choice.getBonusInitiative();
+    // TODO: this should be removed, a choice should know how to apply itself on a
+    // bugemon instead.
+    public void applyChoice(Upgrade choice) {
+        this.healthComponent.increaseHp(choice.hp());
+        this.attackComponent.increaseAttack(choice.attack());
+        this.defenseComponent.increaseDefense(choice.defense());
+        this.initiativeComponent.increaseInitiative(choice.initiative());
     }
 
     /**
@@ -362,7 +378,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * This flag is set to {@code true} by
      * {@link ulb.models.trainer.Trainer#addBugemonParticipation()} at the start
      * of each turn the bugemon is active, and is used by
-     * {@link ulb.services.LevelUpService#distributeXp(ulb.models.trainer.Trainer,
+     * {@link ulb.services.LevelUpService#distributeXpAndGetLevelUps(ulb.models.trainer.Trainer,
      * ulb.models.trainer.Trainer)} to distribute experience only to bugemons that actually fought.
      * </p>
      *
@@ -370,7 +386,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      *         {@code false} otherwise.
      */
     public boolean getParticipation() {
-        return this.state.participatedLastFight;
+        return this.participatedLastFight;
     }
 
     /**
@@ -381,7 +397,7 @@ public class Bugemon implements BugemonDTO, Cloneable {
      * @see #getParticipation()
      */
     public void setParticipation(boolean participated) {
-        this.state.participatedLastFight = participated;
+        this.participatedLastFight = participated;
     }
 
     public void kill() {

@@ -189,28 +189,6 @@ public class Parser {
     }
 
     /**
-     * Custom Gson type adapter that deserialises a JSON string into an
-     * {@link EffectType} enum constant.
-     *
-     * <p>
-     * The adapter converts the raw JSON string to upper-case before calling
-     * {@link EffectType#valueOf(String)}, making the
-     * matching case-insensitive (e.g., {@code "stat_modifier"} resolves to
-     * {@link EffectType#STAT_MODIFIER}).
-     * </p>
-     *
-     * @see EffectType
-     */
-    private static class EffectTypeDeserializer implements JsonDeserializer<EffectType> {
-        @Override
-        public EffectType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
-                                      JsonDeserializationContext context) {
-            String value = json.getAsString();
-            return EffectType.valueOf(value.toUpperCase());
-        }
-    }
-
-    /**
      * Parses the attacks JSON file and returns a list of {@link Attack} objects.
      *
      * @param reader reader providing the attacks JSON content
@@ -218,7 +196,6 @@ public class Parser {
     private static void parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder()
                             .registerTypeAdapter(BugemonType.class, new TypeDeserializer())
-                            .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
                             .create();
 
         JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
@@ -272,9 +249,7 @@ public class Parser {
      *         or {@code null} if parsing fails.
      */
     static ObjectWrapper parseObjectsAndInventory(Reader reader) {
-        Gson gson = new GsonBuilder()
-                            .registerTypeAdapter(EffectType.class, new EffectTypeDeserializer())
-                            .create();
+        Gson gson = new GsonBuilder().create();
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();

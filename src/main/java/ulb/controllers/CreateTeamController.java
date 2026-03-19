@@ -48,11 +48,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         if (this.selectedTeam.contains(bugemon)) {
             this.selectedTeam.remove(bugemon);
         } else if (!this.selectedTeam.isFull()) {
-            try {
-                this.selectedTeam.add(bugemon.clone());
-            } catch (CloneNotSupportedException e) {
-                // TODO: Clone method should not implement Cloneable (reconstruct bugemon)
-            }
+            this.selectedTeam.add(bugemon.clone());
         }
         this.view.refreshTeam(this.selectedTeam);
     }

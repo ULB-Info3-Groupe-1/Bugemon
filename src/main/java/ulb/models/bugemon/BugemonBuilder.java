@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.models.bugemon.components.AttackComponent;
+import ulb.models.bugemon.components.DefenseComponent;
+import ulb.models.bugemon.components.HealthComponent;
+import ulb.models.bugemon.components.InitiativeComponent;
+import ulb.models.bugemon.components.LevelComponent;
+
 /**
  * Fluent Bugemonbuilder for constructing {@link Bugemon} instances.
  * <p>
@@ -287,10 +293,11 @@ public final class BugemonBuilder {
         bugemon.type = this.type;
         bugemon.sprite = this.sprite;
 
-        bugemon.initialState = new BugemonState(this.hp, this.attack, this.defense, this.initiative,
-                                                this.xp, this.level);
-
-        bugemon.state = new BugemonState(bugemon.initialState);
+        bugemon.healthComponent = new HealthComponent(this.hp, this.hp);
+        bugemon.attackComponent = new AttackComponent(this.attack);
+        bugemon.defenseComponent = new DefenseComponent(this.defense);
+        bugemon.initiativeComponent = new InitiativeComponent(this.initiative);
+        bugemon.levelComponent = new LevelComponent(this.xp, this.level);
 
         bugemon.attackList = this.attackList;
         bugemon.isStarter = this.isStarter;

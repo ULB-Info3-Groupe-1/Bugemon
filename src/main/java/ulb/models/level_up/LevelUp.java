@@ -18,13 +18,13 @@ import ulb.models.bugemon.Bugemon;
 public class LevelUp implements LevelUpDTO {
     // Attributes
     private Bugemon bugemon;
-    private List<Choice> choices;
+    private List<Upgrade> choices;
 
     // Constructor
 
     /**
      * Constructs a {@code LevelUp} for the given {@link Bugemon}, automatically
-     * generating three random stat-bonus {@link Choice}s for the player to
+     * generating three random stat-bonus {@link Upgrade}s for the player to
      * select from.
      *
      * @param bugemon the {@link Bugemon} that is levelling up; must not be
@@ -37,7 +37,7 @@ public class LevelUp implements LevelUpDTO {
     }
 
     /**
-     * Generates a single random {@link Choice} of stat bonuses for the level-up
+     * Generates a single random {@link Upgrade} of stat bonuses for the level-up
      * process.
      *
      * <p>
@@ -45,7 +45,7 @@ public class LevelUp implements LevelUpDTO {
      * ({@code HP}, {@code Attack}, {@code Defense}, {@code Initiative}). Each
      * point is independently assigned to one of the four stats with equal
      * probability. The raw point counts are then scaled before being passed to
-     * the {@link Choice} constructor:
+     * the {@link Upgrade} constructor:
      * </p>
      * <ul>
      *   <li><strong>HP</strong> and <strong>Initiative</strong> are multiplied
@@ -56,10 +56,10 @@ public class LevelUp implements LevelUpDTO {
      *       bonus points.</li>
      * </ul>
      *
-     * @return a new {@link Choice} whose four bonus values sum to at most
+     * @return a new {@link Upgrade} whose four bonus values sum to at most
      *         {@code 60} (all 10 points on HP or Initiative at 2× weight).
      */
-    private Choice generateRandomChoice() {
+    private Upgrade generateRandomChoice() {
         Random rand = new Random();
         int hp = 0, attack = 0, defense = 0, initiative = 0;
         for (int i = 0; i < 10; i++) {
@@ -72,18 +72,18 @@ public class LevelUp implements LevelUpDTO {
                 case 3 -> initiative++;
             }
         }
-        return new Choice(hp * 2, attack, defense, initiative * 2);
+        return new Upgrade(hp * 2, attack, defense, initiative * 2);
     }
 
     /**
      * Returns the list of stat-bonus choices available to the player during the
      * level-up process.
      *
-     * @return an unmodifiable {@link List} of exactly three {@link Choice}
+     * @return an unmodifiable {@link List} of exactly three {@link Upgrade}
      *         instances generated at construction time; never {@code null}.
      */
     @Override
-    public List<Choice> getChoices() {
+    public List<Upgrade> getChoices() {
         return this.choices;
     }
 

@@ -75,7 +75,7 @@ public class TestBugemon {
         Bugemon bugemon = new BugemonBuilder().id("1").hp(100).build();
         bugemon.takeDamage(50);
         assertEquals(50, bugemon.getHp());
-        bugemon.reset();
+        bugemon.restoreHp();
         assertEquals(100, bugemon.getHp());
     }
 }

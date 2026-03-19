@@ -52,7 +52,7 @@
  *       {@link ulb.models.combat.Combat} instance.</li>
  *   <li>Team stats are restored to their initial values after a combat session
  *       via {@link ulb.controllers.MetaController#resetTeam()}, which delegates
- *       to {@link ulb.models.bugemon_team.BugemonTeam#reset()}.</li>
+ *       to {@link ulb.models.bugemon_team.BugemonTeam#resetModifiers()}.</li>
  *   <li>Only one {@code Bugemon} is active at a time per trainer; the active
  *       member is changed via
  *       {@link ulb.models.trainer.Trainer#setCurrentBugemon(ulb.models.bugemon.Bugemon)}

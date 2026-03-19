@@ -11,8 +11,8 @@ import javafx.scene.image.ImageView;
 
 import ulb.common.dto.BugemonDTO;
 import ulb.common.dto.LevelUpDTO;
-import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUpSession;
+import ulb.models.level_up.Upgrade;
 
 /**
  * View for the level-up screen.
@@ -78,7 +78,7 @@ public class LevelUpView extends View {
         levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
                             + bugemon.getLevel() + " !");
 
-        List<Choice> choices = levelUp.getChoices();
+        List<Upgrade> choices = levelUp.getChoices();
         choice1Button.setText(choices.get(0).toString());
         choice2Button.setText(choices.get(1).toString());
         choice3Button.setText(choices.get(2).toString());

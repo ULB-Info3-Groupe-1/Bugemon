@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import ulb.controllers.MetaController.Window;
-import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;
 import ulb.models.level_up.LevelUpSession;
+import ulb.models.level_up.Upgrade;
 import ulb.views.LevelUpView;
 
 /**
@@ -37,7 +37,7 @@ public class LevelUpController extends Controller<LevelUpView> {
     /** Applies the chosen stat bonus and advances to the next level-up event. */
     public void chooseOption(int optionIdx) {
         LevelUp levelUp = session.getCurrent();
-        Choice choice = levelUp.getChoices().get(optionIdx);
+        Upgrade choice = levelUp.getChoices().get(optionIdx);
         levelUp.getBugemon().applyChoice(choice);
         cont();
     }
