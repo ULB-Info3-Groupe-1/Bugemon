@@ -29,7 +29,7 @@ public class TestRepository {
     @Before
     public void setUp() {
         Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
-                              TEST_DB_URL != null && !TEST_DB_URL.isBlank());
+                          TEST_DB_URL != null && !TEST_DB_URL.isBlank());
         try {
             this.repository = new DatabaseRepository(TEST_DB_URL);
 

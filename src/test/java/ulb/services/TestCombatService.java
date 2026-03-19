@@ -18,8 +18,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
+import org.junit.Assume;
 import org.junit.Test;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -29,6 +31,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.repository.DatabaseRepository;
 
 public class TestCombatService {
     @Test
@@ -159,5 +162,18 @@ public class TestCombatService {
         BugemonType pyroType = BugemonType.PYRO;
 
         assertEquals(Efficiency.HIGH, CombatService.compareBugemonType(aquaType, pyroType));
+    }
+
+    @Test
+    public void testRandomTeamNumber() {
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        String testDbUrl = dotenv.get("TEST_DB_URL");
+        Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
+                          testDbUrl != null && !testDbUrl.isBlank());
+
+        DatabaseRepository repository = new DatabaseRepository(testDbUrl);
+        BugemonTeam teamOfSix =
+                CombatService.createRandomTeam(repository.getAllDefaultBugemons(), 6);
+        assertEquals(6, teamOfSix.size());
     }
 }

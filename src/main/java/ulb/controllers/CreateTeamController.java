@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.player.Player;
+import ulb.services.PlayerService;
 import ulb.views.CreateTeamView;
 
 /**
@@ -17,7 +17,7 @@ import ulb.views.CreateTeamView;
  * </p>
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
-    private final Player player;
+    private final PlayerService playerService;
     private final BugemonTeam selectedTeam;
 
     /**
@@ -26,15 +26,17 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * the Bugemon grid.
      *
      * @param metaController the application-level controller used for navigation.
-     * @param bugemonTeam    the player's team model to mutate in response to selections.
+     * @param playerService the service used to access and mutate player data.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public CreateTeamController(MetaController metaController, Player player) throws IOException {
+    public CreateTeamController(MetaController metaController, PlayerService playerService)
+            throws IOException {
         super(metaController, new CreateTeamView());
-        this.player = player;
+        this.playerService = playerService;
         this.selectedTeam = new BugemonTeam();
 
         this.view.setModel(this.selectedTeam);
+        this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
         this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
         this.view.setOnStartAutoCombat(this::startAutoCombat);
         this.view.setOnStartManualCombat(this::startManualCombat);
@@ -59,13 +61,13 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
-        this.player.setActiveTeam(this.selectedTeam);
+        this.playerService.setActiveTeam(this.selectedTeam);
         this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
     }
 
     /** Launches a manual combat session. */
     public void startManualCombat() {
-        this.player.setActiveTeam(this.selectedTeam);
+        this.playerService.setActiveTeam(this.selectedTeam);
         this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
     }
 }

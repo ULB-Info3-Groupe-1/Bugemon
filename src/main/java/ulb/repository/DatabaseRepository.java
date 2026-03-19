@@ -57,23 +57,10 @@ public class DatabaseRepository {
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
-    private static DatabaseRepository instance;
-
-    // Cache for all default Bugemons to avoid multiple database calls
-    private List<Bugemon> allDefaultBugemonsCache;
-
-    // TODO: remove singleton that when connecting to service
-    private DatabaseRepository() {
+    public DatabaseRepository() {
         this.dbManager = new DatabaseManager();
         loadSQLQueries();
         prepareDatabase();
-    }
-
-    public static DatabaseRepository getInstance() {
-        if (instance == null) {
-            instance = new DatabaseRepository();
-        }
-        return instance;
     }
 
     public DatabaseRepository(String testUrl) {
@@ -475,11 +462,7 @@ public class DatabaseRepository {
      *         database.
      */
     public List<Bugemon> getAllDefaultBugemons() {
-        if (this.allDefaultBugemonsCache != null) {
-            return this.allDefaultBugemonsCache;
-        }
-
-        this.allDefaultBugemonsCache = new ArrayList<>();
+        List<Bugemon> bugemons = new ArrayList<>();
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetAllDefaultBugemons"))) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -501,12 +484,12 @@ public class DatabaseRepository {
                         .addAttack(attack3)
                         .isStarter(rs.getBoolean("is_starter"));
 
-                this.allDefaultBugemonsCache.add(builder.build());
+                bugemons.add(builder.build());
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getAllDefaultBugemons failed", e);
         }
-        return this.allDefaultBugemonsCache;
+        return bugemons;
     }
 
     public Attack getAttackById(String attackId) {
@@ -554,7 +537,6 @@ public class DatabaseRepository {
      */
     public boolean isConnected() {
         return this.dbManager.isConnected();
-
     }
 
     public void clearDatabase() {

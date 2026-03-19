@@ -5,7 +5,7 @@ import java.io.IOException;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.models.player.Player;
+import ulb.services.PlayerService;
 import ulb.views.victory_view.CombatDefeatView;
 
 /**
@@ -34,7 +34,7 @@ import ulb.views.victory_view.CombatDefeatView;
  * @see Controller
  */
 public class CombatDefeatController extends Controller<CombatDefeatView> {
-    private final Player player;
+    private final PlayerService playerService;
     /**
      * Constructs a {@code CombatDefeatController}, initialises its
      * {@link CombatDefeatView}, and registers this controller as the view's
@@ -48,13 +48,16 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * @param metaController the application-level {@link MetaController} used for
      *                       screen navigation and team state management; must not
      *                       be {@code null}.
+     * @param playerService  the {@link PlayerService} used to manage the player's
+     *                       team and inventory; must not be {@code null}.
      * @throws IOException if the {@link CombatDefeatView} fails to load its FXML
      *                     resource.
      */
-    public CombatDefeatController(MetaController metaController, Player player) throws IOException {
+    public CombatDefeatController(MetaController metaController, PlayerService playerService)
+            throws IOException {
         super(metaController, new CombatDefeatView());
 
-        this.player = player;
+        this.playerService = playerService;
 
         this.view.setOnRetry(this::retry);
         this.view.setOnBackToMainMenu(this::backToMainMenu);
@@ -76,7 +79,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void retry() {
-        this.player.clearActiveTeam();
+        this.playerService.clearActiveTeam();
         this.metaController.switchTo(Window.CREATE_TEAM);
     }
 
@@ -90,7 +93,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void backToMainMenu() {
-        this.player.clearActiveTeam();
+        this.playerService.clearActiveTeam();
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 }
