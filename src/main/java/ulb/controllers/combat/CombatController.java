@@ -13,8 +13,8 @@ import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.LevelUpService;
-import ulb.utils.Parser;
 import ulb.views.combat.CombatView;
+import ulb.repository.DatabaseRepository;
 
 /**
  * Abstract base controller for all combat screens.
@@ -71,7 +71,10 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * @return an {@link AutoTrainer} with a randomly generated team.
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
-        return new AutoTrainer(TeamFactory.createRandomTeam(playerTeamSize));
+        // TODO: remove repo here to use a service instead
+        DatabaseRepository repo = new DatabaseRepository();
+        return new AutoTrainer(
+                TeamFactory.createRandomTeam(repo.getAllDefaultBugemons(), playerTeamSize));
     }
 
     /**

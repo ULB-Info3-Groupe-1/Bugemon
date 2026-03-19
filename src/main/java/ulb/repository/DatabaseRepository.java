@@ -22,15 +22,41 @@ import ulb.repository.dto.UserBugemonDTO;
 import ulb.utils.Parser;
 
 public class DatabaseRepository {
-    private static DatabaseRepository instance;
 
-    private final DatabaseManager dbManager = new DatabaseManager();
+    // Number of tables of the critical schema
+    private static final int CRITICAL_TABLES_COUNT = 7; 
+
+    private static final String COL_USER_ID = "user_id";
+    private static final String COL_BUGEMON_ID = "bugemon_id";
+    private static final String COL_CURRENT_DEFENSE = "current_defense";
+    private static final String COL_CURRENT_ATTACK_POWER = "current_attack_power";
+    private static final String COL_CURRENT_INITIATIVE = "current_initiative";
+    private static final String COL_CURRENT_MAX_HP = "current_max_hp";
+    private static final String COL_CURRENT_XP = "current_xp";
+    private static final String COL_CURRENT_LEVEL = "current_level";
+    private static final String COL_TEAM_NAME = "team_name";
+    private static final String COL_SLOT_POSITION = "slot_position";
+    private static final String COL_NAME = "name";
+
+    private final DatabaseManager dbManager;
 
     // Utility method to get a connection from the manager
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
-    private DatabaseRepository() {
+    public DatabaseRepository() {
+        this.dbManager = new DatabaseManager();
+        loadSQLQueries();
+        prepareDatabase();
+    }
+
+    public DatabaseRepository(String testUrl) {
+        this.dbManager = new DatabaseManager(testUrl);
+        loadSQLQueries();
+        prepareDatabase();
+    }
+
+    private void loadSQLQueries() {
         // Load all SQL queries from files
         String[] sqlFiles = {"/sql/delete_tables.sql",
                              "/sql/create_schema.sql",
@@ -43,20 +69,12 @@ public class DatabaseRepository {
         for (String file : sqlFiles) {
             loadQueriesFromFile(file);
         }
-        prepareDatabase();
-    }
-
-    public static DatabaseRepository getInstance() {
-        if (instance == null) {
-            instance = new DatabaseRepository();
-        }
-        return instance;
     }
 
     private void loadQueriesFromFile(String filePath) {
         try (InputStream is = getClass().getResourceAsStream(filePath)) {
             if (is == null) {
-                throw new RuntimeException("SQL file not found: " + filePath);
+                throw new IllegalArgumentException("SQL file not found: " + filePath);
             }
             BufferedReader reader =
                     new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
@@ -83,7 +101,7 @@ public class DatabaseRepository {
                 queries.put(currentQueryName, currentSql.toString().trim());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error loading queries from " + filePath, e);
+            throw new IllegalStateException("Error loading queries from " + filePath, e);
         }
     }
 
@@ -97,11 +115,11 @@ public class DatabaseRepository {
     }
     // ─── CREATION ─────────────────────────────────────────────────────────────
 
-    public void createSchema() {
+    private void createSchema() {
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("CreateSchema"))) {
             ps.execute();
         } catch (SQLException e) {
-            throw new RuntimeException("createSchema failed", e);
+            throw new IllegalStateException("createSchema failed", e);
         }
     }
 
@@ -114,9 +132,9 @@ public class DatabaseRepository {
             if (rs.next())
                 return rs.getInt("id");
         } catch (SQLException e) {
-            throw new RuntimeException("createUser failed", e);
+            throw new IllegalStateException("createUser failed", e);
         }
-        throw new RuntimeException("createUser returned no id");
+        throw new IllegalStateException("createUser returned no id");
     }
 
     public Optional<Integer> getUserIdByUsername(String username) {
@@ -126,7 +144,7 @@ public class DatabaseRepository {
             if (rs.next())
                 return Optional.of(rs.getInt("id"));
         } catch (SQLException e) {
-            throw new RuntimeException("getUserIdByUsername failed", e);
+            throw new IllegalStateException("getUserIdByUsername failed", e);
         }
         return Optional.empty();
     }
@@ -145,7 +163,7 @@ public class DatabaseRepository {
             ps.setInt(8, dto.currentLevel());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("saveUserBugemon failed", e);
+            throw new IllegalStateException("saveUserBugemon failed", e);
         }
     }
 
@@ -161,7 +179,7 @@ public class DatabaseRepository {
             ps.setString(8, dto.bugemonId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("updateUserBugemon failed", e);
+            throw new IllegalStateException("updateUserBugemon failed", e);
         }
     }
 
@@ -172,13 +190,13 @@ public class DatabaseRepository {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(new UserBugemonDTO(
-                        rs.getInt("user_id"), rs.getString("bugemon_id"),
-                        rs.getInt("current_defense"), rs.getInt("current_attack_power"),
-                        rs.getInt("current_initiative"), rs.getInt("current_max_hp"),
-                        rs.getInt("current_xp"), rs.getInt("current_level")));
+                        rs.getInt(COL_USER_ID), rs.getString(COL_BUGEMON_ID),
+                        rs.getInt(COL_CURRENT_DEFENSE), rs.getInt(COL_CURRENT_ATTACK_POWER),
+                        rs.getInt(COL_CURRENT_INITIATIVE), rs.getInt(COL_CURRENT_MAX_HP),
+                        rs.getInt(COL_CURRENT_XP), rs.getInt(COL_CURRENT_LEVEL)));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("getUserBugemons failed", e);
+            throw new IllegalStateException("getUserBugemons failed", e);
         }
         return result;
     }
@@ -191,7 +209,7 @@ public class DatabaseRepository {
             ps.setString(2, teamName);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("createTeam failed", e);
+            throw new IllegalStateException("createTeam failed", e);
         }
     }
 
@@ -201,7 +219,7 @@ public class DatabaseRepository {
             ps.setString(2, teamName);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("deleteTeam failed", e);
+            throw new IllegalStateException("deleteTeam failed", e);
         }
     }
 
@@ -211,10 +229,10 @@ public class DatabaseRepository {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                result.add(new TeamDTO(rs.getInt("user_id"), rs.getString("name")));
+                result.add(new TeamDTO(rs.getInt(COL_USER_ID), rs.getString(COL_NAME)));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("getUserTeams failed", e);
+            throw new IllegalStateException("getUserTeams failed", e);
         }
         return result;
     }
@@ -229,7 +247,7 @@ public class DatabaseRepository {
             ps.setInt(4, dto.slotPosition());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("addTeamMember failed", e);
+            throw new IllegalStateException("addTeamMember failed", e);
         }
     }
 
@@ -240,7 +258,7 @@ public class DatabaseRepository {
             ps.setString(3, bugemonId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("removeTeamMember failed", e);
+            throw new IllegalStateException("removeTeamMember failed", e);
         }
     }
 
@@ -251,12 +269,12 @@ public class DatabaseRepository {
             ps.setString(2, teamName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                result.add(new TeamMemberDTO(rs.getInt("user_id"), rs.getString("team_name"),
-                                             rs.getString("bugemon_id"),
-                                             rs.getInt("slot_position")));
+                result.add(new TeamMemberDTO(rs.getInt(COL_USER_ID), rs.getString(COL_TEAM_NAME),
+                                             rs.getString(COL_BUGEMON_ID),
+                                             rs.getInt(COL_SLOT_POSITION)));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("getTeamMembers failed", e);
+            throw new IllegalStateException("getTeamMembers failed", e);
         }
         return result;
     }
@@ -274,32 +292,26 @@ public class DatabaseRepository {
      * data.
      */
     private void prepareDatabase() {
+        // Verify if the critical tables exist in the database. If not, we create the schema and add the default game data
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("isTablesPresent"))) {
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                // If at least one table is missing, we consider that the schema is not created and
-                // we create it and add the default game data
-                // TODO: remove magic number
-                if (rs.getInt("existing_critical_tables") < 7) {
-                    createSchema();
-                    addDefaultGameData();
-                }
+            if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
+                createSchema();
+                addDefaultGameData();
+                return;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("isTablesPresent failed", e);
+            throw new IllegalStateException("isTablesPresent failed", e);
         }
 
+        // If the tables exist, we check if they contain the static game data. If not, we add the static game data
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("IsDataEmpty"))) {
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                // Check if the static game data is present by looking if there are data in the main
-                // tables (bugemons, attacks, effects)
-                if (rs.getInt("total_rows") == 0) {
-                    addDefaultGameData();
-                }
+            if (rs.next() && rs.getInt("total_rows") == 0) {
+                addDefaultGameData();
             }
         } catch (SQLException e) {
-            throw new RuntimeException("IsDataEmpty failed", e);
+            throw new IllegalStateException("IsDataEmpty failed", e);
         }
     }
 
@@ -309,7 +321,7 @@ public class DatabaseRepository {
      * source (e.g., JSON files) and then saves this data to the database using helper methods for
      * attacks and Bugemons.
      */
-    public void addDefaultGameData() {
+    private void addDefaultGameData() {
         Parser parser = new Parser();
         parser.parse();
         saveGameDataAttacks(parser.getAttacks());
@@ -333,11 +345,7 @@ public class DatabaseRepository {
                              dbManager.prepareStatement(getSql("SaveAttack"))) {
                     psAttack.setString(1, attack.id());
                     psAttack.setString(2, attack.name());
-                    if (attack.type() != null) {
-                        psAttack.setString(3, attack.type().name());
-                    } else {
-                        psAttack.setNull(3, Types.VARCHAR);
-                    }
+                    psAttack.setObject(3, attack.type() != null ? attack.type().name() : null, Types.VARCHAR);
                     psAttack.setString(4, attack.description());
                     psAttack.setInt(5, attack.power());
                     psAttack.executeUpdate();
@@ -351,11 +359,7 @@ public class DatabaseRepository {
                             psEffect.setString(1, attack.id()); // Foreign key to the attack
                             psEffect.setString(2, effect.getTypeEffect().name());
                             psEffect.setString(3, effect.getTarget().name());
-                            if (effect.getStat() != null) {
-                                psEffect.setString(4, effect.getStat().name());
-                            } else {
-                                psEffect.setNull(4, Types.VARCHAR);
-                            }
+                            psEffect.setObject(4, effect.getStat() != null ? effect.getStat().name() : null, Types.VARCHAR);
                             psEffect.setInt(5, effect.getModifier());
                             psEffect.setString(6, effect.getDuration());
                             psEffect.addBatch();
@@ -364,7 +368,7 @@ public class DatabaseRepository {
                     }
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(
+                throw new IllegalStateException(
                         "Error occurred while saving the default game data for attack: "
                                 + attack.id(),
                         e);
@@ -402,7 +406,7 @@ public class DatabaseRepository {
             }
             ps.executeBatch();
         } catch (SQLException e) {
-            throw new RuntimeException("saveGameDataBugemon failed", e);
+            throw new IllegalStateException("saveGameDataBugemon failed", e);
         }
     }
 
@@ -433,38 +437,26 @@ public class DatabaseRepository {
                 result.add(builder.build());
             }
         } catch (SQLException e) {
-            throw new RuntimeException("getAllDefaultBugemons failed", e);
+            throw new IllegalStateException("getAllDefaultBugemons failed", e);
         }
         return result;
     }
 
     // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
-
+    
     /**
-     * Clear the database by deleting all entries from all tables. This is useful for ensuring a
-     * clean state before each test. Note: this method doesn't drop the tables, it just deletes the
-     * data. The SQL for this is located in 00_delete_tables.sql and is executed at the beginning of
-     * the test suite.
+     * Check if the database connection is currently active.
+     * @return true if the connection is active, false otherwise.
      */
-    public void clearDatabase() {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("ClearDatabase"))) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to clear database", e);
-        }
+    public boolean isConnected() {
+        return this.dbManager.isConnected();
     }
 
     /**
-     * Activate the test mode of the DatabaseManager by providing a specific test database URL.
-     * This allows the tests to run on a separate database instance, ensuring that the production
-     * data remains unaffected.
-     * @param testUrl the JDBC URL of the test database to connect to.
+     * Provides direct access to the underlying Connection object for advanced operations.
+     * @return The active Connection object from the DatabaseManager, allowing for direct SQL operations if needed.
      */
-    public void activateTestMode(String testUrl) {
-        dbManager.setTestMode(testUrl);
-    }
-
     public Connection getConnection() {
-        return dbManager.getConnection();
+        return this.dbManager.getConnectionObject();
     }
 }

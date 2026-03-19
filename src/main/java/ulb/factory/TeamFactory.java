@@ -8,12 +8,10 @@ import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.Parser;
 
 public class TeamFactory {
-    private static final Random RANDOM = new Random();
-    private static final List<Bugemon> BUGEMON_LIST = Parser.getInstance().getBugemons();
-    private static final String BOSS_ID = "finalboss";
+
+    private TeamFactory() {}
 
     /**
      * Generates a random {@link BugemonTeam} of the specified size by sampling
@@ -35,8 +33,14 @@ public class TeamFactory {
      *         chosen, cloned {@link Bugemon}s.
      * @throws RuntimeException if cloning a selected {@link Bugemon} fails.
      */
-    public static BugemonTeam createRandomTeam(final int teamSize) {
-        BugemonTeam randomTeam = new BugemonTeam();
+    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList,
+                                               final int teamSize) {
+        List<Bugemon> pool = new ArrayList<>(bugemonList);
+        Collections.shuffle(pool);
+        BugemonTeam team = new BugemonTeam();
+        for (int i = 0; i < teamSize; i++) {
+            team.add(pool.get(i).clone());
+        }
 
         while (randomTeam.size() != teamSize) {
             int randomIndex = RANDOM.nextInt(BUGEMON_LIST.size());

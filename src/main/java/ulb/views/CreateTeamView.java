@@ -9,7 +9,7 @@ import javafx.scene.control.Button;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.Parser;
+import ulb.repository.DatabaseRepository;
 
 /**
  * View for the team creation screen.
@@ -89,7 +89,9 @@ public class CreateTeamView extends View {
 
     @Override
     public void refresh() {
-        List<Bugemon> allBugemons = new ArrayList<>(Parser.getInstance().getBugemons());
+        // TODO: change that
+        DatabaseRepository repo = new DatabaseRepository();
+        List<Bugemon> allBugemons = new ArrayList<>(repo.getAllDefaultBugemons());
         this.allBugemonsGridView.showAll(allBugemons);
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
