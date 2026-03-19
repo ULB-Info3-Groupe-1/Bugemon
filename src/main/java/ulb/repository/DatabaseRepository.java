@@ -22,9 +22,8 @@ import ulb.repository.dto.UserBugemonDTO;
 import ulb.utils.Parser;
 
 public class DatabaseRepository {
-
     // Number of tables of the critical schema
-    private static final int CRITICAL_TABLES_COUNT = 7; 
+    private static final int CRITICAL_TABLES_COUNT = 7;
 
     private static final String COL_USER_ID = "user_id";
     private static final String COL_BUGEMON_ID = "bugemon_id";
@@ -292,7 +291,8 @@ public class DatabaseRepository {
      * data.
      */
     private void prepareDatabase() {
-        // Verify if the critical tables exist in the database. If not, we create the schema and add the default game data
+        // Verify if the critical tables exist in the database. If not, we create the schema and add
+        // the default game data
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("isTablesPresent"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
@@ -304,7 +304,8 @@ public class DatabaseRepository {
             throw new IllegalStateException("isTablesPresent failed", e);
         }
 
-        // If the tables exist, we check if they contain the static game data. If not, we add the static game data
+        // If the tables exist, we check if they contain the static game data. If not, we add the
+        // static game data
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("IsDataEmpty"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("total_rows") == 0) {
@@ -345,7 +346,8 @@ public class DatabaseRepository {
                              dbManager.prepareStatement(getSql("SaveAttack"))) {
                     psAttack.setString(1, attack.id());
                     psAttack.setString(2, attack.name());
-                    psAttack.setObject(3, attack.type() != null ? attack.type().name() : null, Types.VARCHAR);
+                    psAttack.setObject(3, attack.type() != null ? attack.type().name() : null,
+                                       Types.VARCHAR);
                     psAttack.setString(4, attack.description());
                     psAttack.setInt(5, attack.power());
                     psAttack.executeUpdate();
@@ -359,7 +361,9 @@ public class DatabaseRepository {
                             psEffect.setString(1, attack.id()); // Foreign key to the attack
                             psEffect.setString(2, effect.getTypeEffect().name());
                             psEffect.setString(3, effect.getTarget().name());
-                            psEffect.setObject(4, effect.getStat() != null ? effect.getStat().name() : null, Types.VARCHAR);
+                            psEffect.setObject(
+                                    4, effect.getStat() != null ? effect.getStat().name() : null,
+                                    Types.VARCHAR);
                             psEffect.setInt(5, effect.getModifier());
                             psEffect.setString(6, effect.getDuration());
                             psEffect.addBatch();
@@ -443,7 +447,7 @@ public class DatabaseRepository {
     }
 
     // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
-    
+
     /**
      * Check if the database connection is currently active.
      * @return true if the connection is active, false otherwise.
@@ -454,7 +458,8 @@ public class DatabaseRepository {
 
     /**
      * Provides direct access to the underlying Connection object for advanced operations.
-     * @return The active Connection object from the DatabaseManager, allowing for direct SQL operations if needed.
+     * @return The active Connection object from the DatabaseManager, allowing for direct SQL
+     *         operations if needed.
      */
     public Connection getConnection() {
         return this.dbManager.getConnectionObject();

@@ -12,9 +12,9 @@ import ulb.models.level_up.LevelUp;
 import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.repository.DatabaseRepository;
 import ulb.services.LevelUpService;
 import ulb.views.combat.CombatView;
-import ulb.repository.DatabaseRepository;
 
 /**
  * Abstract base controller for all combat screens.

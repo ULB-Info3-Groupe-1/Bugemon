@@ -10,7 +10,6 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public class TeamFactory {
-
     private TeamFactory() {}
 
     /**

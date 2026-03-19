@@ -8,11 +8,10 @@ import java.sql.SQLException;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseManager {
-
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private static final String PRODUCTION_URL = dotenv.get("PRODUCTION_DB_URL");
-    
+
     private String currentUrl = PRODUCTION_URL;
 
     private Connection connection;
@@ -32,7 +31,7 @@ public class DatabaseManager {
                 this.connection = DriverManager.getConnection(currentUrl);
             }
         } catch (SQLException e) {
-            throw new IllegalStateException ("Failed to reconnect to database", e);
+            throw new IllegalStateException("Failed to reconnect to database", e);
         }
     }
 
@@ -42,7 +41,7 @@ public class DatabaseManager {
                 connection.close();
             }
         } catch (SQLException e) {
-            throw new IllegalStateException ("Failed to close connection", e);
+            throw new IllegalStateException("Failed to close connection", e);
         }
     }
 

@@ -17,7 +17,6 @@ import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
 
 public class TestRepository {
-
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private static final String TEST_DB_URL = dotenv.get("TEST_DB_URL");
@@ -85,7 +84,8 @@ public class TestRepository {
 
     @Test
     public void shouldReturnEmpty_whenUserDoesNotExist() {
-        Optional<Integer> retrievedId = this.repository.getUserIdByUsername("Unknown_" + this.uniqueId);
+        Optional<Integer> retrievedId =
+                this.repository.getUserIdByUsername("Unknown_" + this.uniqueId);
         assertFalse("L'utilisateur ne devrait pas exister", retrievedId.isPresent());
     }
 
