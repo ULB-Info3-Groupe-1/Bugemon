@@ -35,15 +35,21 @@
 
             <VBox spacing="10" alignment="BOTTOM_RIGHT" HBox.hgrow="ALWAYS">
                 <VBox.margin><Insets top="30" right="30"/></VBox.margin>
-                <Button fx:id="launchAutomaticCombat"
-                        text="Lancer combat automatique"
+                <Button fx:id="validateTeamBtn"
+                        text="Valider"
                         styleClass="menu-button"
                         maxWidth="260" minWidth="260"/>
-                <Button fx:id="launchManualCombat"
-                        text="Lancer combat manuel"
+                <Button fx:id="loadTeamBtn"
+                        text="Charger"
                         styleClass="menu-button"
                         maxWidth="260" minWidth="260"/>
+                <Button fx:id="saveTeamBtn"
+                        text="Sauvegarder"
+                        styleClass="menu-button"
+                        maxWidth="260" minWidth="260"/>
+
             </VBox>
+
         </HBox>
     </center>
 

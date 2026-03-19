@@ -36,11 +36,13 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.selectedTeam = new BugemonTeam();
 
         this.view.setModel(this.selectedTeam);
+        this.view.setValidate(this::returnToMainMenu);
+        this.view.setLoad(this::loadTeam);
+        this.view.setSave(this::saveTeam);
         this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
         this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
-        this.view.setOnStartAutoCombat(this::startAutoCombat);
-        this.view.setOnStartManualCombat(this::startManualCombat);
         this.view.refresh();
+
     }
 
     /** Toggles {@code bugemon} in the player's selected team. */
@@ -55,15 +57,17 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.refreshTeam(this.selectedTeam);
     }
 
-    /** Launches an automatic combat session. */
-    public void startAutoCombat() {
-        this.playerService.setActiveTeam(this.selectedTeam);
-        this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
+    public void returnToMainMenu(){
+        this.metaController.switchTo(MetaController.Window.MAIN_MENU);
     }
 
-    /** Launches a manual combat session. */
-    public void startManualCombat() {
-        this.playerService.setActiveTeam(this.selectedTeam);
-        this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
+    public void saveTeam(){
+
     }
+
+    public void loadTeam(){
+
+    }
+
+
 }

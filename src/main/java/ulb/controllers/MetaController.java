@@ -86,7 +86,7 @@ public class MetaController {
     public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
         this.stage = primaryStage;
 
-        this.mainMenuController = new MainMenuController(this);
+        this.mainMenuController = new MainMenuController(this, playerService);
         this.createTeamController = new CreateTeamController(this, playerService);
         this.manualCombatController = new ManualCombatController(this, playerService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService);
