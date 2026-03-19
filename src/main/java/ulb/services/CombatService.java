@@ -199,12 +199,8 @@ public class CombatService {
         List<Bugemon> pool = new ArrayList<>(bugemonList);
         Collections.shuffle(pool);
         BugemonTeam team = new BugemonTeam();
-        try {
-            for (int i = 0; i < teamSize; i++) {
-                team.add(pool.get(i).clone());
-            }
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone a Bugemon for the team", e);
+        for (int i = 0; i < teamSize; i++) {
+            team.add(pool.get(i).clone());
         }
         return team;
     }

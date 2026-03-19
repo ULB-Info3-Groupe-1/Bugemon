@@ -27,9 +27,11 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
-import ulb.models.bugemon.effect.EffectType;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
@@ -422,13 +424,40 @@ public class DatabaseRepository {
                                  dbManager.prepareStatement(getSql("SaveEffect"))) {
                         for (Effect effect : attack.effects()) {
                             psEffect.setString(1, attack.id()); // Foreign key to the attack
-                            psEffect.setString(2, effect.getTypeEffect().name());
-                            psEffect.setString(3, effect.getTarget().name());
-                            psEffect.setObject(
-                                    4, effect.getStat() != null ? effect.getStat().name() : null,
+
+                            switch (effect) {
+                                case EffectStatModifier modifier:
+                                    psEffect.setString(2, modifier.getClass().getSimpleName());
+                                    psEffect.setString(3, effect.target().name());
+                                    psEffect.setObject(
+                                    4, modifier.stat() != null ? modifier.stat().name() : null,
                                     Types.VARCHAR);
-                            psEffect.setInt(5, effect.getModifier());
-                            psEffect.setString(6, effect.getDuration());
+                                    psEffect.setInt(5, modifier.modifier());
+                                    psEffect.setString(6, modifier.duration());
+                                    psEffect.setNull(7, Types.INTEGER);
+                                    break;
+                                
+                                case EffectHeal heal:
+                                    psEffect.setString(2, heal.getClass().getSimpleName());
+                                    psEffect.setString(3, heal.target().name());
+                                    psEffect.setNull(4, Types.VARCHAR);
+                                    psEffect.setNull(5, Types.INTEGER);
+                                    psEffect.setNull(6, Types.VARCHAR);
+                                    psEffect.setInt(7, heal.amount());
+                                    break;
+
+                                case EffectResetMalus malus:
+                                    psEffect.setString(2, malus.getClass().getSimpleName());
+                                    psEffect.setString(3, effect.target().name());
+                                    psEffect.setNull(4, Types.VARCHAR);
+                                    psEffect.setNull(5, Types.INTEGER);
+                                    psEffect.setNull(6, Types.VARCHAR);
+                                    psEffect.setNull(7, Types.INTEGER);
+                                    break;
+
+                                default:
+                                    break;
+                            }
                             psEffect.addBatch();
                         }
                         psEffect.executeBatch();
@@ -538,14 +567,32 @@ public class DatabaseRepository {
             ps.setString(1, attackId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                EffectType type = DatabaseHelper.getEnumOrNull(rs, "type", EffectType.class);
-                EffectTarget target =
-                        DatabaseHelper.getEnumOrNull(rs, "target", EffectTarget.class);
-                EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "stat", EffectStat.class);
-                String duration =
-                        (rs.getString("duration") != null) ? rs.getString("duration") : "0_tour";
 
-                effects.add(new Effect(type, target, stat, rs.getInt("modifier"), duration));
+                switch (rs.getString("type")) {
+                    case "EffectStatModifier":
+                        EffectTarget target = DatabaseHelper.getEnumOrNull(rs, "target",
+                                                                           EffectTarget.class);
+                        EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "stat", EffectStat.class);
+                        String duration =
+                                (rs.getString("duration") != null) ? rs.getString("duration") : "0_tour";
+                        effects.add(new EffectStatModifier(target, stat, rs.getInt("modifier"),
+                                                            duration));
+                        break;
+
+                    case "EffectHeal":
+                        target = DatabaseHelper.getEnumOrNull(rs, "target", EffectTarget.class);
+                        effects.add(new EffectHeal(target, rs.getInt("amount")));
+                        break;
+
+                    case "EffectResetMalus":
+                        target = DatabaseHelper.getEnumOrNull(rs, "target", EffectTarget.class);
+                        effects.add(new EffectResetMalus(target));
+                        break;
+
+                    default:
+                        throw new IllegalStateException(
+                                "Unknown effect type for attack id: " + attackId);
+                }
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getEffectByAttackId failed for attack id: " + attackId,

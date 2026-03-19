@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS "effects" (
   "target" varchar,
   "stat" varchar,
   "modifier" integer,
-  "duration" varchar
+  "duration" varchar,
+  "amount" integer
 );
 
 CREATE TABLE IF NOT EXISTS "bugemons" (

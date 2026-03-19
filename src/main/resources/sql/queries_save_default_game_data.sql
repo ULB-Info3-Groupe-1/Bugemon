@@ -12,6 +12,6 @@ ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, power = EXCLUDED.power;
 
 -- Query
 -- SaveEffect
-INSERT INTO effects (attack_id, type, target, stat, modifier, duration)
-VALUES (?, ?, ?, ?, ?, ?)
+INSERT INTO effects (attack_id, type, target, stat, modifier, duration, amount)
+VALUES (?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT DO NOTHING;
