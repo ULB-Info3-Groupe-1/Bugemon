@@ -1,6 +1,5 @@
 package ulb.controllers.combat;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -54,12 +53,11 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * navigating to the appropriate outcome screen.
      */
     protected void handleCombatResult(Trainer winner, Trainer playerTrainer) {
-        List<LevelUp> levelUps = new ArrayList<>();
         if (winner == playerTrainer) {
             LevelUpService.distributeXp(winner, playerTrainer);
             List<Bugemon> participatingBugemons =
-                    winner.getTeam().stream().filter(b -> b.getParticipation()).toList();
-            levelUps = LevelUpService.levelUp(participatingBugemons);
+                    winner.getTeam().stream().filter(Bugemon::getParticipation).toList();
+            List<LevelUp> levelUps = LevelUpService.levelUp(participatingBugemons);
             this.onVictory.accept(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);

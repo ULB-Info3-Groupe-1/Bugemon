@@ -1,6 +1,7 @@
 package ulb.repository;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -116,33 +117,56 @@ public class DatabaseRepository {
         try {
             URL url = getClass().getResource("/sql/");
             if (url == null) {
-                throw new RuntimeException("SQL directory not found");
+                throw new IllegalStateException("SQL directory not found");
             }
             URI uri = url.toURI();
-            Path path;
-
-            if (uri.getScheme().equals("jar")) {
-                FileSystem fileSystem;
-                try {
-                    fileSystem = FileSystems.getFileSystem(uri);
-                } catch (FileSystemNotFoundException e) {
-                    fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            if ("jar".equals(uri.getScheme())) {
+                try (FileSystem fs = getOrCreateFileSystem(uri)) {
+                    walkAndAddFiles(fs.getPath("/sql"), result);
                 }
-                path = fileSystem.getPath("/sql");
             } else {
-                path = Paths.get(uri);
+                walkAndAddFiles(Paths.get(uri), result);
             }
-            try (Stream<Path> walk = Files.walk(path, 1)) {
-                walk.filter(p -> p.toString().endsWith(".sql"))
-                        .forEach(p -> result.add("/sql/" + p.getFileName().toString()));
-            }
+
         } catch (Exception e) {
-            throw new RuntimeException("Error loading SQL files", e);
+            throw new IllegalStateException("Error loading SQL files", e);
         }
         return result;
     }
 
-    //
+    /**
+     * Helper method to get or create a FileSystem for a given URI. This is necessary to read files
+     * from a JAR file, as the default FileSystem does not support the "jar" scheme.
+     * @param uri the URI of the resource for which to get or create a FileSystem
+     * @return FileSystem that can be used to access the resource
+     * @throws IOException if an I/O error occurs while creating the FileSystem
+     */
+    private FileSystem getOrCreateFileSystem(URI uri) throws IOException {
+        try {
+            return FileSystems.getFileSystem(uri);
+        } catch (FileSystemNotFoundException e) {
+            return FileSystems.newFileSystem(uri, Collections.emptyMap());
+        }
+    }
+
+    /**
+     * Helper method to walk through a directory and add all SQL files to the result list.
+     * @param path the starting path to walk through
+     * @param result the list to which the paths of found SQL files will be added
+     * @throws IOException if an I/O error occurs while walking the file tree
+     */
+    private void walkAndAddFiles(Path path, List<String> result) throws IOException {
+        try (Stream<Path> walk = Files.walk(path, 1)) {
+            walk.filter(p -> p.toString().endsWith(".sql"))
+                    .forEach(p -> result.add("/sql/" + p.getFileName().toString()));
+        }
+    }
+
+    /**
+     * Helper method to retrieve the SQL query string associated with a given query name.
+     * @param queryName the name of the query to retrieve, as defined in the SQL files
+     * @return the SQL query string associated with the given query name
+     */
     private String getSql(String queryName) {
         String sql = queries.get(queryName);
         if (sql == null) {
@@ -503,9 +527,9 @@ public class DatabaseRepository {
                                   rs.getString("description"), rs.getInt("power"), effects);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("getAttackById failed for id: " + attackId, e);
+            throw new IllegalStateException("getAttackById failed for id: " + attackId, e);
         }
-        throw new RuntimeException("Attack not found for id: " + attackId);
+        throw new IllegalStateException("Attack not found for id: " + attackId);
     }
 
     public List<Effect> getEffectByAttackId(String attackId) {
@@ -524,7 +548,8 @@ public class DatabaseRepository {
                 effects.add(new Effect(type, target, stat, rs.getInt("modifier"), duration));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("getEffectByAttackId failed for attack id: " + attackId, e);
+            throw new IllegalStateException("getEffectByAttackId failed for attack id: " + attackId,
+                                            e);
         }
         return effects;
     }
@@ -543,7 +568,7 @@ public class DatabaseRepository {
         try (Statement st = dbManager.getConnectionObject().createStatement()) {
             st.executeUpdate(getSql("ClearDatabase"));
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to clear database", e);
+            throw new IllegalStateException("Failed to clear database", e);
         }
     }
 

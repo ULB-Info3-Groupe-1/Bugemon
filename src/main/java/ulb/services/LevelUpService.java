@@ -19,6 +19,10 @@ import ulb.models.trainer.Trainer;
 public class LevelUpService {
     private static final int BASE_XP = 50;
 
+    private LevelUpService() {
+        // Private constructor to prevent instantiation
+    }
+
     /**
      * Calculates the XP required to reach a given level.
      * <p>
@@ -102,7 +106,7 @@ public class LevelUpService {
         final int numParticipatingBugemon = participatingBugemon.size();
 
         final int xpWon = xpGain(floor, multiplier, nAdversaries);
-        final int xpPerBugemon = (int)(xpWon / numParticipatingBugemon);
+        final int xpPerBugemon = (xpWon / numParticipatingBugemon);
 
         participatingBugemon.forEach(b -> b.addXp(xpPerBugemon));
 
@@ -122,7 +126,7 @@ public class LevelUpService {
     public static List<LevelUp> levelUp(final List<Bugemon> bugemons) {
         return bugemons.stream()
                 .filter(b -> b.getXp() >= xpRequiredForLevel(b.getLevel()))
-                .map(b -> b.levelUp())
+                .map(Bugemon::levelUp)
                 .toList();
     }
 }
