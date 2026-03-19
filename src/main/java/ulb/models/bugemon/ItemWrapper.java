@@ -3,25 +3,25 @@ package ulb.models.bugemon;
 import java.util.List;
 
 // TODO: surely a better way to do this, but it works for now
-public class ObjectWrapper {
-    private List<GameObject> objects;
+public class ItemWrapper {
+    private List<Item> items;
     private Inventory inventory;
 
-    public ObjectWrapper(List<GameObject> objects, Inventory inventory) {
-        this.objects = objects;
+    public ItemWrapper(List<Item> items, Inventory inventory) {
+        this.items = items;
         this.inventory = inventory;
     }
 
-    public List<GameObject> getObjects() {
-        return objects;
+    public List<Item> getItems() {
+        return items;
     }
 
     public Inventory getInventory() {
         return inventory;
     }
 
-    public void setObjects(List<GameObject> objects) {
-        this.objects = objects;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 
     public void setInventory(Inventory inventory) {

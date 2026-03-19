@@ -28,16 +28,22 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.GameObject;
+import ulb.models.bugemon.Item;
 import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon.ObjectWrapper;
-import ulb.models.bugemon.effect.EffectType;
+import ulb.models.bugemon.ItemWrapper;
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectResetMalus;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectStatModifier;
+import ulb.models.bugemon.effect.EffectTarget;
 
 /**
  * Provides static utility methods for parsing the JSON data files that
@@ -45,17 +51,17 @@ import ulb.models.bugemon.effect.EffectType;
  *
  * <p>
  * The main entry point is {@link #parse()}, which reads the three bundled JSON
- * resource files (attacks, Bugemons, objects/inventory) in order, building an
+ * resource files (attacks, Bugemons, Items/inventory) in order, building an
  * ID-to-{@link Attack} map first so that Bugemon deserialization can resolve
  * attack references. Parsed data is stored in static fields and exposed via
- * {@link #getBugemons()}, {@link #getAttacks()}, {@link #getObjects()}, and
+ * {@link #getBugemons()}, {@link #getAttacks()}, {@link #getItems()}, and
  * {@link #getInventory()}.
  * </p>
  *
  * <p>
  * Internally, parsing is delegated to three private static helpers —
  * {@link #parseAttacks(java.io.Reader)}, {@link #parseBugemons(java.io.Reader)},
- * and {@link #parseObjectsAndInventory(java.io.Reader)} — each of which uses a
+ * and {@link #parseItemsAndInventory(java.io.Reader)} — each of which uses a
  * customised {@link com.google.gson.Gson} instance with the appropriate type adapters.
  * </p>
  *
@@ -67,12 +73,12 @@ public class Parser {
     // Constants for the paths to the JSON data files within the resources directory
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
     private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
-    private static final String JSON_OBJECTS_PATH = "/json/objets.json";
+    private static final String JSON_Items_PATH = "/json/objets.json";
 
     // Static fields to hold the parsed data, accessible via getter methods
     private static Map<String, Attack> attacks;
     private static List<Bugemon> bugemons;
-    private static List<GameObject> objects;
+    private static List<Item> items;
     private static Inventory inventory;
 
     // Singleton instance of the Parser class
@@ -99,7 +105,7 @@ public class Parser {
 
     /**
      * Parses the three bundled JSON resource files (attacks, Bugemons,
-     * objects/inventory) and populates the static data fields.
+     * Items/inventory) and populates the static data fields.
      *
      * <p>
      * Must be called once before any {@code get*()} accessor. Silently returns
@@ -109,12 +115,12 @@ public class Parser {
     public void parse() {
         InputStream attacksStream;
         InputStream bugemonsStream;
-        InputStream objectsStream;
+        InputStream ItemsStream;
         try {
             attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
             bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
-            objectsStream = getClass().getResourceAsStream(JSON_OBJECTS_PATH);
-            if (attacksStream == null || bugemonsStream == null || objectsStream == null) {
+            ItemsStream = getClass().getResourceAsStream(JSON_Items_PATH);
+            if (attacksStream == null || bugemonsStream == null || ItemsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }
         } catch (IOException e) {
@@ -124,32 +130,32 @@ public class Parser {
 
         Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
         Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
-        Reader objectsReader = new InputStreamReader(objectsStream, StandardCharsets.UTF_8);
+        Reader ItemsReader = new InputStreamReader(ItemsStream, StandardCharsets.UTF_8);
         parseAttacks(attacksReader);
         parseBugemons(bugemonsReader);
-        parseObjectsAndInventory(objectsReader);
+        parseItemsAndInventory(ItemsReader);
     }
 
     /**
-     * Returns the list of Bugemon objects parsed from the JSON file, where each Bugemon is fully
+     * Returns the list of Bugemon Items parsed from the JSON file, where each Bugemon is fully
      * constructed with its associated attacks resolved from the attacks map.
-     * @return a list of Bugemon objects representing the parsed Bugemons from the JSON file
+     * @return a list of Bugemon Items representing the parsed Bugemons from the JSON file
      */
     public final List<Bugemon> getBugemons() {
         return bugemons;
     }
 
     /**
-     * Returns the list of {@link GameObject} instances parsed from the objects JSON file.
-     * @return the parsed game objects, or {@code null} if {@link #parse()} has not been called.
+     * Returns the list of {@link Item} instances parsed from the Items JSON file.
+     * @return the parsed game Items, or {@code null} if {@link #parse()} has not been called.
      */
-    public final List<GameObject> getObjects() {
-        return objects;
+    public final List<Item> getItems() {
+        return items;
     }
 
     /**
      * Returns the Inventory object parsed from the JSON file, which contains the initial inventory
-     * of the player at the start of the game, with each GameObject and its corresponding quantity.
+     * of the player at the start of the game, with each Item and its corresponding quantity.
      * @return an Inventory object representing the parsed inventory from the JSON file
      */
     public final Inventory getInventory() {
@@ -160,7 +166,7 @@ public class Parser {
      * Returns the map of attacks parsed from the JSON file, where each key is
      * an attack ID and each value is the corresponding {@link Attack} object.
      *
-     * @return a map of attack IDs to Attack objects
+     * @return a map of attack IDs to Attack Items
      */
     public final Map<String, Attack> getAttacks() {
         return attacks;
@@ -188,14 +194,40 @@ public class Parser {
         }
     }
 
+    public static class EffectDeserializer implements JsonDeserializer<Effect> {
+        @Override
+        public Effect deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            JsonObject effectObject = json.getAsJsonObject();
+            String effectType = effectObject.get("type").getAsString().toLowerCase();
+
+            EffectTarget target = context.deserialize(effectObject.get("cible"), EffectTarget.class);
+
+            return switch (effectType) {
+                case "stat_modifier" -> new EffectStatModifier(
+                    target,
+                    context.deserialize(effectObject.get("stat"), EffectStat.class),
+                    effectObject.get("modificateur").getAsInt(),
+                    effectObject.get("duree").getAsString()
+                );
+                case "soin" -> new EffectHeal(
+                    target,
+                    effectObject.get("valeur").getAsInt()
+                );
+                case "reset_malus"   -> new EffectResetMalus(target);
+                default -> throw new JsonParseException("Unknown effect type: " + effectType);
+            };
+        }
+    }
+
     /**
-     * Parses the attacks JSON file and returns a list of {@link Attack} objects.
+     * Parses the attacks JSON file and returns a list of {@link Attack} Items.
      *
      * @param reader reader providing the attacks JSON content
      */
     private static void parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder()
                             .registerTypeAdapter(BugemonType.class, new TypeDeserializer())
+                            .registerTypeAdapter(Effect.class, new EffectDeserializer())
                             .create();
 
         JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
@@ -216,7 +248,7 @@ public class Parser {
 
     /**
      * Parses the bugemons JSON file and returns a list of fully constructed
-     * {@link ulb.models.bugemon.Bugemon} objects.
+     * {@link ulb.models.bugemon.Bugemon} Items.
      *
      * @param reader reader providing the bugemons JSON content
      */
@@ -241,23 +273,25 @@ public class Parser {
     }
 
     /**
-     * Parses the objects JSON file and builds both the list of {@link GameObject}s
+     * Parses the Items JSON file and builds both the list of {@link Item}s
      * and the starting {@link Inventory}.
      *
-     * @param reader reader providing the objects JSON content.
-     * @return an {@link ObjectWrapper} containing the parsed objects and inventory,
+     * @param reader reader providing the Items JSON content.
+     * @return an {@link ItemWrapper} containing the parsed Items and inventory,
      *         or {@code null} if parsing fails.
      */
-    static ObjectWrapper parseObjectsAndInventory(Reader reader) {
-        Gson gson = new GsonBuilder().create();
+    static ItemWrapper parseItemsAndInventory(Reader reader) {
+        Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(Effect.class, new EffectDeserializer())
+                            .create();
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
 
-            // Extract and parse objects
-            JsonArray objectsArray = root.getAsJsonArray("objets");
-            Type desType = new TypeToken<List<GameObject>>() {}.getType();
-            List<GameObject> objects = gson.fromJson(objectsArray, desType);
+            // Extract and parse Items
+            JsonArray ItemsArray = root.getAsJsonArray("objets");
+            Type desType = new TypeToken<List<Item>>() {}.getType();
+            List<Item> Items = gson.fromJson(ItemsArray, desType);
 
             // Extract and parse inventory
             JsonObject startInventory = root.getAsJsonObject("inventaire_depart");
@@ -269,22 +303,22 @@ public class Parser {
                 String objectId = entry.getKey();
                 int quantity = entry.getValue();
 
-                GameObject obj = objects.stream()
+                Item obj = Items.stream()
                                          .filter(o -> o.id().equals(objectId))
                                          .findFirst()
                                          .orElseThrow(()
                                                               -> new RuntimeException(
                                                                       "Object with ID " + objectId
                                                                       + " not found"));
-                inventory.addObject(obj, quantity);
+                inventory.addItem(obj, quantity);
             }
 
             reader.close();
-            return new ObjectWrapper(objects, inventory);
+            return new ItemWrapper(Items, inventory);
 
         } catch (Exception e) {
             // TODO: Use of a Logger or external error management ?
-            System.out.println("Error when parsing objects and inventory");
+            System.out.println("Error when parsing Items and inventory");
             e.printStackTrace();
         }
         return null;

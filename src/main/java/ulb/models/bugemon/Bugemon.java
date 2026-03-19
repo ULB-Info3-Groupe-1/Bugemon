@@ -20,6 +20,9 @@ import ulb.models.bugemon.components.HealthComponent;
 import ulb.models.bugemon.components.InitiativeComponent;
 import ulb.models.bugemon.components.LevelComponent;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectType;
 import ulb.models.level_up.Upgrade;
 
@@ -227,11 +230,12 @@ public class Bugemon implements BugemonDTO {
      *                      well-formed enum value).
      */
     public void editStat(Effect effect) {
-        int value = effect.modifier();
+        
+        switch (effect) {
+            case EffectStatModifier e: {
+                int value = e.modifier();
 
-        switch (effect.type()) {
-            case EffectType.STAT_MODIFIER: {
-                switch (effect.stat()) {
+                switch (e.stat()) {
                     case ATTACK:
                         this.attackComponent.increaseAttack(value);
                         break;
@@ -245,9 +249,11 @@ public class Bugemon implements BugemonDTO {
                         throw new IllegalArgumentException("unknown effect type");
                 }
             }
-
-            case EffectType.HEAL:
-                this.healthComponent.increaseHp(value);
+                break;
+            case EffectHeal e: {
+                this.healthComponent.increaseHp(e.amount());
+                break;
+            }
             default:
                 throw new IllegalArgumentException("unknown effect type");
         }

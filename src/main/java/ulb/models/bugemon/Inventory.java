@@ -4,17 +4,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Inventory {
-    private final Map<GameObject, Integer> objects;
+    private final Map<Item, Integer> items;
 
     public Inventory() {
-        this.objects = new HashMap<>();
+        this.items = new HashMap<>();
     }
 
-    public Map<GameObject, Integer> getObjects() {
-        return objects;
+    public boolean hasItem(Item item) {
+        return this.items.containsKey(item) && items.get(item) > 0;
     }
 
-    public void addObject(GameObject object, int quantity) {
-        objects.put(object, objects.getOrDefault(object, 0) + quantity);
+    public void useItem(Item item) {
+        if (!hasItem(item)) {
+            throw new IllegalStateException("Objet not in inventory or item quantity is 0");
+        }
+        Integer quantity = items.get(item) - 1;
+        if (quantity <= 0) {
+            items.remove(item);
+        } else {
+            items.replace(item, quantity);
+        }
+    }
+
+    public Map<Item, Integer> getItems() {
+        return new HashMap<>(items);
+    }
+
+    public void addItem(Item item, int quantity) {
+        items.put(item, items.getOrDefault(item, 0) + quantity);
     }
 }
