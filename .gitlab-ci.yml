@@ -33,6 +33,8 @@ test:
   stage: test
   script:
     - mvn clean test
+  variables:
+    TEST_DB_URL: $TEST_DB_URL
   artifacts:
     paths:
       - target/surefire-reports/

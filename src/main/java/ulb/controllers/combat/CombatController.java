@@ -14,8 +14,8 @@ import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.LevelUpService;
-import ulb.utils.Parser;
 import ulb.views.combat.CombatView;
+import ulb.repository.DatabaseRepository;
 
 /**
  * Abstract base controller for all combat screens.
@@ -46,8 +46,10 @@ public abstract class CombatController<V extends CombatView> extends Controller<
 
     /** Creates a random opponent team sized to match the given player's team. */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
+        // TODO: remove repo here to use a service instead
+        DatabaseRepository repo = new DatabaseRepository();
         return new AutoTrainer(
-                TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), playerTeamSize));
+                TeamFactory.createRandomTeam(repo.getAllDefaultBugemons(), playerTeamSize));
     }
 
     /**

@@ -6,9 +6,11 @@ import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.Parser;
 
 public class TeamFactory {
+
+    private TeamFactory() {}
+
     /**
      * Generates a random {@link BugemonTeam} of the specified size by sampling
      * without replacement from the given pool of available {@link Bugemon}s.
@@ -31,8 +33,7 @@ public class TeamFactory {
      */
     public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList,
                                                final int teamSize) {
-        List<Bugemon> allBugemons = Parser.getInstance().getBugemons();
-        List<Bugemon> pool = new ArrayList<>(allBugemons);
+        List<Bugemon> pool = new ArrayList<>(bugemonList);
         Collections.shuffle(pool);
         BugemonTeam team = new BugemonTeam();
         try {
@@ -40,7 +41,7 @@ public class TeamFactory {
                 team.add(pool.get(i).clone());
             }
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException("Failed to clone a Bugemon for the team", e);
+            throw new IllegalStateException("Failed to clone a Bugemon for the team", e);
         }
         return team;
     }

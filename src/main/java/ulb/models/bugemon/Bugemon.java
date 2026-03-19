@@ -37,8 +37,6 @@ import ulb.models.level_up.LevelUp;
  * @see Attack
  */
 public class Bugemon implements BugemonDTO, Cloneable {
-    public static final String BugemonType = null;
-
     /** Unique identifier of this bugemon. */
     String id;
 
@@ -388,5 +386,13 @@ public class Bugemon implements BugemonDTO, Cloneable {
 
     public void kill() {
         this.takeDamage(this.getHp());
+    }
+
+    /**
+     * Get the list of attack IDs that the bugemon can have.
+     * @return (List<String>) the list of attack IDs that the bugemon can have.
+     */
+    public List<String> getListAttacksId() {
+        return this.attackList.stream().map(Attack::id).toList();
     }
 }
