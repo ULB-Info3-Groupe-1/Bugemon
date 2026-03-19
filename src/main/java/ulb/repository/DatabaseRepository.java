@@ -59,6 +59,9 @@ public class DatabaseRepository {
 
     private static DatabaseRepository instance;
 
+    // Cache for all default Bugemons to avoid multiple database calls
+    private List<Bugemon> allDefaultBugemonsCache;
+
     // TODO: remove singleton that when connecting to service
     private DatabaseRepository() {
         this.dbManager = new DatabaseManager();
@@ -472,7 +475,11 @@ public class DatabaseRepository {
      *         database.
      */
     public List<Bugemon> getAllDefaultBugemons() {
-        List<Bugemon> result = new ArrayList<>();
+        if (this.allDefaultBugemonsCache != null) {
+            return this.allDefaultBugemonsCache;
+        }
+
+        this.allDefaultBugemonsCache = new ArrayList<>();
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetAllDefaultBugemons"))) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -494,12 +501,12 @@ public class DatabaseRepository {
                         .addAttack(attack3)
                         .isStarter(rs.getBoolean("is_starter"));
 
-                result.add(builder.build());
+                this.allDefaultBugemonsCache.add(builder.build());
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getAllDefaultBugemons failed", e);
         }
-        return result;
+        return this.allDefaultBugemonsCache;
     }
 
     public Attack getAttackById(String attackId) {
