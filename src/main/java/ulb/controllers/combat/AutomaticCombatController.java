@@ -9,8 +9,8 @@ import javafx.util.Duration;
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
-import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
+import ulb.services.PlayerService;
 import ulb.views.combat.AutomaticCombatView;
 
 /**
@@ -23,10 +23,6 @@ import ulb.views.combat.AutomaticCombatView;
  * </p>
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
-    private Combat combat;
-    private AutoTrainer playerTrainer;
-    private AutoTrainer opponentTrainer;
-
     /**
      * Constructs an {@code AutomaticCombatController} and initialises its
      * {@link AutomaticCombatView}.
@@ -34,19 +30,19 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @param metaController the application-level controller used for navigation.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public AutomaticCombatController(MetaController metaController, Player player)
+    public AutomaticCombatController(MetaController metaController, PlayerService playerService)
             throws IOException {
-        super(metaController, new AutomaticCombatView(), player);
+        super(metaController, new AutomaticCombatView(), playerService);
     }
 
     /** Starts a complete automatic combat session and drives it to completion. */
     @Override
     public void startCombat() {
-        this.playerTrainer = new AutoTrainer(player.getActiveTeam());
-        this.opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
-        this.combat = new Combat(playerTrainer, opponentTrainer);
+        AutoTrainer playerTrainer = new AutoTrainer(playerService.getActiveTeam());
+        AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
+        Combat combat = new Combat(playerTrainer, opponentTrainer);
 
-        this.view.setModel(this.playerTrainer, this.opponentTrainer, this.combat);
+        this.view.setModel(playerTrainer, opponentTrainer, combat);
         this.view.refresh();
 
         Timeline timeline = new Timeline();
@@ -56,16 +52,9 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
             TurnResult turnResult = combat.turn();
             timeline.pause();
 
-            playTurnAnimations(turnResult, this.playerTrainer, () -> {
-                combat.getWinner().ifPresent(winner -> {
-                    timeline.stop();
-                    handleCombatResult(winner, this.playerTrainer);
-                });
-
-                if (!combat.isFinished()) {
-                    view.refresh();
-                    timeline.play();
-                }
+            combat.getWinner().ifPresent(winner -> {
+                timeline.stop();
+                handleCombatResult(winner, playerTrainer);
             });
         });
 

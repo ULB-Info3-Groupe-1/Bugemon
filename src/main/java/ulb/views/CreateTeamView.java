@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.repository.DatabaseRepository;
 
 /**
  * View for the team creation screen.
@@ -28,8 +27,7 @@ public class CreateTeamView extends View {
     @FXML private Button launchManualCombat;
 
     private BugemonTeam bugemonTeam;
-    private List<Bugemon> allBugemonsCache;
-    private boolean isGridInitialized;
+    private List<Bugemon> allBugemonsAvailable;
     private Consumer<Bugemon> onGridBugemonClicked;
     private Runnable onStartAutoCombat;
     private Runnable onStartManualCombat;
@@ -59,6 +57,17 @@ public class CreateTeamView extends View {
                 b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
     }
 
+    /**
+     * Gives the view a reference to the list of all available Bugemons, so it can
+     * display them in the selection grid and mark the ones already in the team as
+     * selected.
+     * @param allBugemons
+     */
+    public void setAllBugemonsAvailable(List<Bugemon> allBugemons) {
+        this.allBugemonsAvailable = allBugemons;
+        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
+    }
+
     /** Registers the callback invoked when the player clicks a Bugemon in the selection grid. */
     public void setOnGridBugemonClicked(Consumer<Bugemon> callback) {
         this.onGridBugemonClicked = callback;
@@ -85,20 +94,12 @@ public class CreateTeamView extends View {
 
     public void refreshTeam(BugemonTeam team) {
         this.bugemonTeam = team;
-        this.allBugemonsGridView.refreshSelection();
-        this.bugemonsTeamView.showTeam(this.bugemonTeam);
+        refresh();
     }
 
     @Override
     public void refresh() {
-        // TODO: remove call to repo to use services instead
-        if (!isGridInitialized) {
-            this.allBugemonsCache = DatabaseRepository.getInstance().getAllDefaultBugemons();
-            this.allBugemonsGridView.showAll(this.allBugemonsCache);
-            this.isGridInitialized = true;
-        } else {
-            this.allBugemonsGridView.refreshSelection();
-        }
+        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 }

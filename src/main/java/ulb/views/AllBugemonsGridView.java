@@ -3,7 +3,6 @@ package ulb.views;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import javafx.scene.Node;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.fxml.FXML;
@@ -91,28 +90,6 @@ public class AllBugemonsGridView extends VBox {
     }
 
     /**
-     * Refreshes the selected/unselected style for existing grid cells.
-     */
-    public void refreshSelection() {
-        for (Node node : this.gridPane.getChildren()) {
-            if (!(node instanceof VBox cell)) {
-                continue;
-            }
-
-            Object data = cell.getUserData();
-            if (!(data instanceof Bugemon bugemon)) {
-                continue;
-            }
-
-            if (selectionChecker != null && selectionChecker.apply(bugemon)) {
-                select(cell);
-            } else {
-                unselect(cell);
-            }
-        }
-    }
-
-    /**
      * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon.
      * If the Bugemon is null, it displays an unknown image and an empty name.
      * @param bugemon the BugemonDTO representing the Bugemon to be displayed in the cell
@@ -165,10 +142,8 @@ public class AllBugemonsGridView extends VBox {
         StackPane imagePane = (StackPane)cell.getChildren().get(
                 0); // TODO: Could break code with an exeption "IndexOutOfBoundsException"
         ImageView iv = (ImageView)imagePane.getChildren().get(0);
-        iv.getStyleClass().removeAll("bugemon-image-selected");
         iv.getStyleClass().add("bugemon-image-selected");
         cell.getStyleClass().remove("bugemon-cell");
-        cell.getStyleClass().removeAll("bugemon-cell-selected");
         cell.getStyleClass().add("bugemon-cell-selected");
     }
 
@@ -180,9 +155,8 @@ public class AllBugemonsGridView extends VBox {
     private void unselect(VBox cell) {
         StackPane imagePane = (StackPane)cell.getChildren().get(0);
         ImageView iv = (ImageView)imagePane.getChildren().get(0);
-        iv.getStyleClass().removeAll("bugemon-image-selected");
-        cell.getStyleClass().removeAll("bugemon-cell-selected");
-        cell.getStyleClass().removeAll("bugemon-cell");
+        iv.getStyleClass().remove("bugemon-image-selected");
+        cell.getStyleClass().remove("bugemon-cell-selected");
         cell.getStyleClass().add("bugemon-cell");
     }
 }

@@ -16,7 +16,6 @@ public class DatabaseManager {
 
     private Connection connection;
 
-
     public DatabaseManager() {
         try {
             this.connection = DriverManager.getConnection(this.currentUrl);

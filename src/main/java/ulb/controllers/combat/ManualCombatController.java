@@ -7,9 +7,9 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
-import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
+import ulb.services.PlayerService;
 import ulb.views.combat.ManualCombatView;
 
 /**
@@ -25,7 +25,6 @@ import ulb.views.combat.ManualCombatView;
 public class ManualCombatController extends CombatController<ManualCombatView> {
     private Combat combat;
     private ManualTrainer playerTrainer;
-    private AutoTrainer opponentTrainer;
 
     /**
      * Constructs a {@code ManualCombatController}, initialises its
@@ -33,10 +32,12 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * and registers the attack, switch, and surrender callbacks.
      *
      * @param metaController the application-level controller used for navigation.
+     * @param playerService  the service providing access to player data and teams.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public ManualCombatController(MetaController metaController, Player player) throws IOException {
-        super(metaController, new ManualCombatView(), player);
+    public ManualCombatController(MetaController metaController, PlayerService playerService)
+            throws IOException {
+        super(metaController, new ManualCombatView(), playerService);
 
         this.view.setOnAttack(this::onAttack);
         this.view.setOnSwitch(this::onSwitch);
@@ -46,8 +47,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat() {
-        this.playerTrainer = new ManualTrainer(player.getActiveTeam());
-        this.opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
+        this.playerTrainer = new ManualTrainer(this.playerService.getActiveTeam());
+        AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(playerTrainer, opponentTrainer);
 
         this.view.setModel(playerTrainer, opponentTrainer, this.combat);
@@ -97,7 +98,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     private void handlePostTurn(TurnResult result) {
         if (this.combat.isFinished()) {
-            handleCombatResult(this.combat.getWinner().get(), this.playerTrainer);
+            this.combat.getWinner().ifPresent(
+                    winner -> handleCombatResult(winner, this.playerTrainer));
         } else {
             if (result.allyIsKo()) {
                 this.playerTrainer.setForcedSwitch(true);
@@ -114,6 +116,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     private void onSurrender() {
         this.playerTrainer.registerForfeit();
         this.combat.turn();
-        handleCombatResult(this.combat.getWinner().get(), this.playerTrainer);
+        this.combat.getWinner().ifPresent(winner -> handleCombatResult(winner, this.playerTrainer));
     }
 }
