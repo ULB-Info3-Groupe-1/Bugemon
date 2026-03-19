@@ -193,3 +193,6 @@ Todo.md
 # Personal settings file
 .settings/*
 .zed
+
+# Environment variables file
+.env
