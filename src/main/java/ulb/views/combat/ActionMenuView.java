@@ -28,36 +28,4 @@ public class ActionMenuView extends VBox {
             throw new RuntimeException("Failed to load ActionMenu.fxml", e);
         }
     }
-
-    public void setAction1Handler(Runnable handler) {
-        this.action1.setOnAction(e -> handler.run());
-    }
-
-    public void setAction2Handler(Runnable handler) {
-        this.action2.setOnAction(e -> handler.run());
-    }
-
-    public void setAction3Handler(Runnable handler) {
-        this.action3.setOnAction(e -> handler.run());
-    }
-
-    public void setAction4Handler(Runnable handler) {
-        this.action4.setOnAction(e -> handler.run());
-    }
-
-    protected void setAction1StyleClasse(String styleClass) {
-        this.action1.getStyleClass().add(styleClass);
-    }
-
-    protected void setAction2StyleClasse(String styleClass) {
-        this.action2.getStyleClass().add(styleClass);
-    }
-
-    protected void setAction3StyleClasse(String styleClass) {
-        this.action3.getStyleClass().add(styleClass);
-    }
-
-    protected void setAction4StyleClasse(String styleClass) {
-        this.action4.getStyleClass().add(styleClass);
-    }
 }
