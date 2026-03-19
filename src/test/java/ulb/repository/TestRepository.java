@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +30,9 @@ public class TestRepository {
     public void setUp() {
         try {
             this.repository = new DatabaseRepository(TEST_DB_URL);
+
+            Assume.assumeNotNull("TEST_DB_URL non définie, test ignoré", TEST_DB_URL);
+            Assume.assumeFalse("TEST_DB_URL non définie, test ignoré", TEST_DB_URL.isBlank());
 
             if (!this.repository.isConnected()) {
                 fail("La connexion à la base de données de test a échoué.");
