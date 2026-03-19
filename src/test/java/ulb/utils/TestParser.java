@@ -15,17 +15,15 @@ import org.junit.Test;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.Item;
 import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
 import ulb.models.bugemon.ItemWrapper;
 import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
-
-
 
 public class TestParser {
     @Test
@@ -158,13 +156,12 @@ public class TestParser {
         assertNotNull(inventory);
 
         Item testObject = objectsList.stream()
-                                        .filter(o -> "baie_revigorante".equals(o.id()))
-                                        .findFirst()
-                                        .orElseThrow();
+                                  .filter(o -> "baie_revigorante".equals(o.id()))
+                                  .findFirst()
+                                  .orElseThrow();
 
         Effect effect = new EffectStatModifier(EffectTarget.THROWER, EffectStat.HP, 20, null);
-        Item potion =
-                new Item("baie_revigorante", "Baie Revigorante",
+        Item potion = new Item("baie_revigorante", "Baie Revigorante",
                                "Restaure 20 PV au Bugémon actif.", Item.ItemType.HEALING, effect);
 
         assertEquals(potion.id(), testObject.id());

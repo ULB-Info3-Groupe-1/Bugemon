@@ -230,7 +230,6 @@ public class Bugemon implements BugemonDTO {
      *                      well-formed enum value).
      */
     public void editStat(Effect effect) {
-        
         switch (effect) {
             case EffectStatModifier e: {
                 int value = e.modifier();
@@ -248,8 +247,7 @@ public class Bugemon implements BugemonDTO {
                     default:
                         throw new IllegalArgumentException("unknown effect type");
                 }
-            }
-                break;
+            } break;
             case EffectHeal e: {
                 this.healthComponent.increaseHp(e.amount());
                 break;

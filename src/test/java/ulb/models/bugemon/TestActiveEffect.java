@@ -14,17 +14,15 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 
 public class TestActiveEffect {
     @Test
     public void testGetEffect() {
-        EffectStatModifier effect = new EffectStatModifier(EffectTarget.ADVERSARY, 
-                                                           EffectStat.DEFENSE, 
-                                                           10, 
-                                                           "1_tour");
+        EffectStatModifier effect =
+                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, "1_tour");
         int duration = effect.extractDuration();
         ActiveEffect activeEffect = new ActiveEffect(effect, duration);
         assertEquals(activeEffect.getEffect(), effect);
@@ -32,10 +30,8 @@ public class TestActiveEffect {
 
     @Test
     public void testDecrement() {
-        EffectStatModifier effect = new EffectStatModifier(EffectTarget.ADVERSARY, 
-                                                           EffectStat.DEFENSE, 
-                                                           10, 
-                                                           "1_tour");
+        EffectStatModifier effect =
+                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, "1_tour");
         int duration = effect.extractDuration();
         ActiveEffect activeEffect = new ActiveEffect(effect, duration);
         assertEquals(activeEffect.getDuration(), duration);

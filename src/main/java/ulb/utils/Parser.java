@@ -35,8 +35,8 @@ import com.google.gson.reflect.TypeToken;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.Item;
 import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
 import ulb.models.bugemon.ItemWrapper;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectHeal;
@@ -196,24 +196,22 @@ public class Parser {
 
     public static class EffectDeserializer implements JsonDeserializer<Effect> {
         @Override
-        public Effect deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        public Effect deserialize(JsonElement json, Type typeOfT,
+                                  JsonDeserializationContext context) {
             JsonObject effectObject = json.getAsJsonObject();
             String effectType = effectObject.get("type").getAsString().toLowerCase();
 
-            EffectTarget target = context.deserialize(effectObject.get("cible"), EffectTarget.class);
+            EffectTarget target =
+                    context.deserialize(effectObject.get("cible"), EffectTarget.class);
 
             return switch (effectType) {
-                case "stat_modifier" -> new EffectStatModifier(
-                    target,
-                    context.deserialize(effectObject.get("stat"), EffectStat.class),
-                    effectObject.get("modificateur").getAsInt(),
-                    effectObject.get("duree").getAsString()
-                );
-                case "soin" -> new EffectHeal(
-                    target,
-                    effectObject.get("valeur").getAsInt()
-                );
-                case "reset_malus"   -> new EffectResetMalus(target);
+                case "stat_modifier" ->
+                    new EffectStatModifier(
+                            target, context.deserialize(effectObject.get("stat"), EffectStat.class),
+                            effectObject.get("modificateur").getAsInt(),
+                            effectObject.get("duree").getAsString());
+                case "soin" -> new EffectHeal(target, effectObject.get("valeur").getAsInt());
+                case "reset_malus" -> new EffectResetMalus(target);
                 default -> throw new JsonParseException("Unknown effect type: " + effectType);
             };
         }
@@ -304,12 +302,12 @@ public class Parser {
                 int quantity = entry.getValue();
 
                 Item obj = Items.stream()
-                                         .filter(o -> o.id().equals(objectId))
-                                         .findFirst()
-                                         .orElseThrow(()
-                                                              -> new RuntimeException(
-                                                                      "Object with ID " + objectId
-                                                                      + " not found"));
+                                   .filter(o -> o.id().equals(objectId))
+                                   .findFirst()
+                                   .orElseThrow(()
+                                                        -> new RuntimeException("Object with ID "
+                                                                                + objectId
+                                                                                + " not found"));
                 inventory.addItem(obj, quantity);
             }
 

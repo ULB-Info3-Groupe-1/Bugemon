@@ -2,13 +2,8 @@ package ulb.models.bugemon.effect;
 
 import java.util.Locale;
 
-public record EffectStatModifier(
-    EffectTarget target,
-    EffectStat stat,
-    int modifier,
-    String duration
-) implements Effect {
-
+public record EffectStatModifier(EffectTarget target, EffectStat stat, int modifier,
+                                 String duration) implements Effect {
     /**
      * Parses and returns the numeric part of the duration string.
      *
