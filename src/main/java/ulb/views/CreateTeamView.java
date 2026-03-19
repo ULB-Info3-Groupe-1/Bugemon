@@ -1,7 +1,6 @@
 package ulb.views;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
@@ -29,6 +28,8 @@ public class CreateTeamView extends View {
     @FXML private Button launchManualCombat;
 
     private BugemonTeam bugemonTeam;
+    private List<Bugemon> allBugemonsCache;
+    private boolean isGridInitialized;
     private Consumer<Bugemon> onGridBugemonClicked;
     private Runnable onStartAutoCombat;
     private Runnable onStartManualCombat;
@@ -84,15 +85,20 @@ public class CreateTeamView extends View {
 
     public void refreshTeam(BugemonTeam team) {
         this.bugemonTeam = team;
-        refresh();
+        this.allBugemonsGridView.refreshSelection();
+        this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
     @Override
     public void refresh() {
-        // TODO: change that
-        DatabaseRepository repo = new DatabaseRepository();
-        List<Bugemon> allBugemons = new ArrayList<>(repo.getAllDefaultBugemons());
-        this.allBugemonsGridView.showAll(allBugemons);
+        // TODO: remove call to repo to use services instead
+        if (!isGridInitialized) {
+            this.allBugemonsCache = DatabaseRepository.getInstance().getAllDefaultBugemons();
+            this.allBugemonsGridView.showAll(this.allBugemonsCache);
+            this.isGridInitialized = true;
+        } else {
+            this.allBugemonsGridView.refreshSelection();
+        }
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 }

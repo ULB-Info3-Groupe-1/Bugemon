@@ -32,6 +32,8 @@ public abstract class View {
 
         this.root = loader.load();
         this.scene = new Scene(root);
+        // Ensure Modena label lookup can always resolve on this scene tree.
+        this.root.setStyle("-fx-text-background-color: -fx-text-inner-color;");
         this.root.prefWidthProperty().bind(this.scene.widthProperty());
         this.root.prefHeightProperty().bind(this.scene.heightProperty());
     }

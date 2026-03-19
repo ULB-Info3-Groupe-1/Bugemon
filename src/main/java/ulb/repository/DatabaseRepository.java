@@ -57,10 +57,20 @@ public class DatabaseRepository {
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
-    public DatabaseRepository() {
+    private static DatabaseRepository instance;
+
+    // TODO: remove singleton that when connecting to service
+    private DatabaseRepository() {
         this.dbManager = new DatabaseManager();
         loadSQLQueries();
         prepareDatabase();
+    }
+
+    public static DatabaseRepository getInstance() {
+        if (instance == null) {
+            instance = new DatabaseRepository();
+        }
+        return instance;
     }
 
     public DatabaseRepository(String testUrl) {

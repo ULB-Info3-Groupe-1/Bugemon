@@ -3,7 +3,6 @@ package ulb;
 import java.io.IOException;
 import java.io.InputStream;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
@@ -102,11 +101,5 @@ public class Main extends Application {
             e.printStackTrace();
             System.exit(1);
         }
-    }
-
-    @Override
-    public void stop() {
-        Platform.exit();
-        System.exit(0);
     }
 }
