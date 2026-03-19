@@ -47,9 +47,8 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     /** Creates a random opponent team sized to match the given player's team. */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
         // TODO: remove repo here to use a service instead
-        DatabaseRepository repo = new DatabaseRepository();
         return new AutoTrainer(
-                TeamFactory.createRandomTeam(repo.getAllDefaultBugemons(), playerTeamSize));
+                TeamFactory.createRandomTeam(DatabaseRepository.getInstance().getAllDefaultBugemons(), playerTeamSize));
     }
 
     /**
