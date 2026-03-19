@@ -12,7 +12,8 @@ import ulb.repository.DatabaseRepository;
 public class TestTeamFactory {
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
-    private static final String TEST_DB_URL = dotenv.get("TEST_DB_URL");
+    // private static final String TEST_DB_URL = dotenv.get("TEST_DB_URL");
+    private static final String TEST_DB_URL = "jdbc:sqlite:file:memdb1?mode=memory&cache=shared";
 
     @Test
     public void testRandomTeamNumber() {

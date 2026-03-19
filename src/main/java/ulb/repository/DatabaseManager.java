@@ -16,8 +16,20 @@ public class DatabaseManager {
 
     private Connection connection;
 
+    private static String URL = "jdbc:sqlite:db.sqlite";
+
     public DatabaseManager() {
-        getConnection();
+        try {
+            this.connection = DriverManager.getConnection(URL);
+
+            // Activate foreign keys for SQLite connection (necessary because they are disabled by
+            // default)
+            try (java.sql.Statement stmt = connection.createStatement()) {
+                stmt.execute("PRAGMA foreign_keys = ON;");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to connect to local SQLite database", e);
+        }
     }
 
     public DatabaseManager(String testUrl) {
@@ -28,7 +40,12 @@ public class DatabaseManager {
     public void getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                this.connection = DriverManager.getConnection(currentUrl);
+                connection = DriverManager.getConnection(URL);
+
+                // Reactivates foreign keys on new connection
+                try (java.sql.Statement stmt = connection.createStatement()) {
+                    stmt.execute("PRAGMA foreign_keys = ON;");
+                }
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to reconnect to database", e);
