@@ -17,7 +17,7 @@ public class TestManualTrainer {
     public void testRegisterSwitch() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
-        Bugemon target = team.getBugemon("2").get();
+        Bugemon target = team.get("2").get();
 
         trainer.registerSwitch(target);
 
@@ -32,7 +32,7 @@ public class TestManualTrainer {
         ManualTrainer trainer = new ManualTrainer(team);
 
         assertThrows(IllegalArgumentException.class,
-                     () -> trainer.registerSwitch(team.getBugemon("2").get()));
+                     () -> trainer.registerSwitch(team.get("2").get()));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class TestManualTrainer {
     public void testSwitchAfterKO() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team);
-        Bugemon replacement = team.getBugemon("2").get();
+        Bugemon replacement = team.get("2").get();
 
         TestUtilsBugemons.killBugemon(team, "1"); // kill current bugemon
         trainer.switchAfterKO(replacement);
@@ -115,6 +115,6 @@ public class TestManualTrainer {
         TestUtilsBugemons.killBugemon(team, "2");
 
         assertThrows(IllegalArgumentException.class,
-                     () -> trainer.switchAfterKO(team.getBugemon("2").get()));
+                     () -> trainer.switchAfterKO(team.get("2").get()));
     }
 }
