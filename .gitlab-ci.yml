@@ -31,6 +31,13 @@ check-style:
 # Job test
 test:
   stage: test
+  services:
+    - postgres:16
+  variables:
+    POSTGRES_DB: bugemon_test
+    POSTGRES_USER: bugemon
+    POSTGRES_PASSWORD: npg_vbus4D2Yltdf
+    TEST_DB_URL: "jdbc:postgresql://postgres/bugemon_test?user=bugemon&password=npg_vbus4D2Yltdf"
   script:
     - mvn clean test -DTEST_DB_URL="$TEST_DB_URL"
   artifacts:
