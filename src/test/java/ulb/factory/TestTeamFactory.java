@@ -2,6 +2,7 @@ package ulb.factory;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -15,6 +16,8 @@ public class TestTeamFactory {
 
     @Test
     public void testRandomTeamNumber() {
+        Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
+                          TEST_DB_URL != null && !TEST_DB_URL.isBlank());
         DatabaseRepository repository = new DatabaseRepository(TEST_DB_URL);
         BugemonTeam teamOfSix = TeamFactory.createRandomTeam(repository.getAllDefaultBugemons(), 6);
         assertEquals(6, teamOfSix.size());

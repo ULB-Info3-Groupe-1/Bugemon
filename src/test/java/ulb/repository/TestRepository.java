@@ -29,10 +29,10 @@ public class TestRepository {
     @Before
     public void setUp() {
         try {
-            this.repository = new DatabaseRepository(TEST_DB_URL);
+            Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
+                              TEST_DB_URL != null && !TEST_DB_URL.isBlank());
 
-            Assume.assumeNotNull("TEST_DB_URL non définie, test ignoré", TEST_DB_URL);
-            Assume.assumeFalse("TEST_DB_URL non définie, test ignoré", TEST_DB_URL.isBlank());
+            this.repository = new DatabaseRepository(TEST_DB_URL);
 
             if (!this.repository.isConnected()) {
                 fail("La connexion à la base de données de test a échoué.");
