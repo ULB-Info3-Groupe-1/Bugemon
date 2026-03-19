@@ -21,7 +21,7 @@ import ulb.models.bugemon.components.InitiativeComponent;
 import ulb.models.bugemon.components.LevelComponent;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectType;
-import ulb.models.level_up.Choice;
+import ulb.models.level_up.Upgrade;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
@@ -348,26 +348,27 @@ public class Bugemon implements BugemonDTO {
     }
 
     /**
-     * Adds experience points to the bugemon.
+     * Adds xp, and returns the number of levels that have just been crossed
      *
      * @param xp the amount of experience points to add
+     * @return the number of levels that have just been crossed
      */
-    public boolean gainXp(int xp) {
+    public int gainXp(int xp) {
         return this.levelComponent.addXp(xp);
     }
 
     /**
      * Applies a level-up choice to the bugemon, adding the choice's stat bonuses.
      *
-     * @param choice the {@link Choice} to apply, containing stat bonuses
+     * @param choice the {@link Upgrade} to apply, containing stat bonuses
      */
     // TODO: this should be removed, a choice should know how to apply itself on a
     // bugemon instead.
-    public void applyChoice(Choice choice) {
-        this.healthComponent.increaseHp(choice.getBonusHP());
-        this.attackComponent.increaseAttack(choice.getBonusAttack());
-        this.defenseComponent.increaseDefense(choice.getBonusDefense());
-        this.initiativeComponent.increaseInitiative(choice.getBonusInitiative());
+    public void applyChoice(Upgrade choice) {
+        this.healthComponent.increaseHp(choice.hp());
+        this.attackComponent.increaseAttack(choice.attack());
+        this.defenseComponent.increaseDefense(choice.defense());
+        this.initiativeComponent.increaseInitiative(choice.initiative());
     }
 
     /**
@@ -377,7 +378,7 @@ public class Bugemon implements BugemonDTO {
      * This flag is set to {@code true} by
      * {@link ulb.models.trainer.Trainer#addBugemonParticipation()} at the start
      * of each turn the bugemon is active, and is used by
-     * {@link ulb.services.LevelUpService#distributeXp(ulb.models.trainer.Trainer,
+     * {@link ulb.services.LevelUpService#distributeXpAndGetLevelUps(ulb.models.trainer.Trainer,
      * ulb.models.trainer.Trainer)} to distribute experience only to bugemons that actually fought.
      * </p>
      *

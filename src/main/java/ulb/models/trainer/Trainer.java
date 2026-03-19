@@ -238,7 +238,7 @@ public abstract class Trainer {
     /**
      * Marks the currently active Bugemon as having participated in the current
      * combat, which is used later by
-     * {@link ulb.services.LevelUpService#distributeXp(ulb.models.trainer.Trainer,
+     * {@link ulb.services.LevelUpService#distributeXpAndGetLevelUps(ulb.models.trainer.Trainer,
      * ulb.models.trainer.Trainer)} to distribute experience points only to Bugemons that actually
      * fought.
      */

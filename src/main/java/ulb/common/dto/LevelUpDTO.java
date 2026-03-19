@@ -2,7 +2,7 @@ package ulb.common.dto;
 
 import java.util.List;
 
-import ulb.models.level_up.Choice;
+import ulb.models.level_up.Upgrade;
 
 /**
  * Data Transfer Object (DTO) interface exposing the data needed to render a
@@ -14,7 +14,7 @@ import ulb.models.level_up.Choice;
  * {@link ulb.models.level_up.LevelUp} implementation by exposing only the
  * subset of information required to display the level-up prompt: the Bugemon
  * that levelled up (via {@link BugemonDTO}) and the list of stat-bonus
- * {@link Choice}s offered to the player.
+ * {@link Upgrade}s offered to the player.
  * </p>
  *
  * <p>
@@ -23,7 +23,7 @@ import ulb.models.level_up.Choice;
  *
  * @see ulb.models.level_up.LevelUp
  * @see BugemonDTO
- * @see Choice
+ * @see Upgrade
  */
 public interface LevelUpDTO {
     /**
@@ -36,7 +36,7 @@ public interface LevelUpDTO {
     BugemonDTO getBugemon();
 
     /**
-     * Returns the list of stat-bonus {@link Choice}s offered to the player
+     * Returns the list of stat-bonus {@link Upgrade}s offered to the player
      * during this level-up event.
      *
      * <p>
@@ -44,8 +44,8 @@ public interface LevelUpDTO {
      * bonuses across HP, attack, defense, and initiative.
      * </p>
      *
-     * @return an unmodifiable {@link List} of {@link Choice} instances; never
+     * @return an unmodifiable {@link List} of {@link Upgrade} instances; never
      *         {@code null}.
      */
-    List<Choice> getChoices();
+    List<Upgrade> getChoices();
 }
