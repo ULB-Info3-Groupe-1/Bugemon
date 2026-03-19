@@ -196,3 +196,5 @@ Todo.md
 
 # Environment variables file
 .env
+# Database file
+db.sqlite

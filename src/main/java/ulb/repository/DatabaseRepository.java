@@ -3,22 +3,36 @@ package ulb.repository;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.effect.EffectType;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
+import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
 public class DatabaseRepository {
@@ -57,14 +71,7 @@ public class DatabaseRepository {
 
     private void loadSQLQueries() {
         // Load all SQL queries from files
-        String[] sqlFiles = {"/sql/delete_tables.sql",
-                             "/sql/create_schema.sql",
-                             "/sql/queries_users.sql",
-                             "/sql/queries_user_bugemons.sql",
-                             "/sql/queries_teams.sql",
-                             "/sql/check_db_status.sql",
-                             "/sql/queries_save_default_game_data.sql",
-                             "/sql/queries_default_bugemons.sql"};
+        List<String> sqlFiles = getSqlFiles();
         for (String file : sqlFiles) {
             loadQueriesFromFile(file);
         }
@@ -104,6 +111,37 @@ public class DatabaseRepository {
         }
     }
 
+    private List<String> getSqlFiles() {
+        List<String> result = new ArrayList<>();
+        try {
+            URL url = getClass().getResource("/sql/");
+            if (url == null) {
+                throw new RuntimeException("SQL directory not found");
+            }
+            URI uri = url.toURI();
+            Path path;
+
+            if (uri.getScheme().equals("jar")) {
+                FileSystem fileSystem;
+                try {
+                    fileSystem = FileSystems.getFileSystem(uri);
+                } catch (FileSystemNotFoundException e) {
+                    fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                }
+                path = fileSystem.getPath("/sql");
+            } else {
+                path = Paths.get(uri);
+            }
+            try (Stream<Path> walk = Files.walk(path, 1)) {
+                walk.filter(p -> p.toString().endsWith(".sql"))
+                        .forEach(p -> result.add("/sql/" + p.getFileName().toString()));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading SQL files", e);
+        }
+        return result;
+    }
+
     //
     private String getSql(String queryName) {
         String sql = queries.get(queryName);
@@ -112,11 +150,12 @@ public class DatabaseRepository {
         }
         return sql;
     }
+
     // ─── CREATION ─────────────────────────────────────────────────────────────
 
-    private void createSchema() {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("CreateSchema"))) {
-            ps.execute();
+    public void createSchema() {
+        try (Statement st = dbManager.getConnectionObject().createStatement()) {
+            st.executeUpdate(getSql("CreateSchema"));
         } catch (SQLException e) {
             throw new IllegalStateException("createSchema failed", e);
         }
@@ -427,15 +466,22 @@ public class DatabaseRepository {
         try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetAllDefaultBugemons"))) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                BugemonType type = DatabaseHelper.getEnumOrNull(rs, "type", BugemonType.class);
+                Attack attack1 = getAttackById(rs.getString("attack_1_id"));
+                Attack attack2 = getAttackById(rs.getString("attack_2_id"));
+                Attack attack3 = getAttackById(rs.getString("attack_3_id"));
                 BugemonBuilder builder = new BugemonBuilder();
                 builder.id(rs.getString("id"))
                         .name(rs.getString("name"))
-                        .type(BugemonType.valueOf(rs.getString("type")))
+                        .type(type)
                         .sprite(rs.getString("sprite"))
                         .defense(rs.getInt("base_defense"))
                         .attack(rs.getInt("base_attack_power"))
                         .initiative(rs.getInt("base_initiative"))
                         .hp(rs.getInt("base_max_hp"))
+                        .addAttack(attack1)
+                        .addAttack(attack2)
+                        .addAttack(attack3)
                         .isStarter(rs.getBoolean("is_starter"));
 
                 result.add(builder.build());
@@ -446,6 +492,43 @@ public class DatabaseRepository {
         return result;
     }
 
+    public Attack getAttackById(String attackId) {
+        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetAttackById"))) {
+            ps.setString(1, attackId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                List<Effect> effects = getEffectByAttackId(attackId);
+                BugemonType type = DatabaseHelper.getEnumOrNull(rs, "type", BugemonType.class);
+                return new Attack(rs.getString("id"), rs.getString("name"), type,
+                                  rs.getString("description"), rs.getInt("power"), effects);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("getAttackById failed for id: " + attackId, e);
+        }
+        throw new RuntimeException("Attack not found for id: " + attackId);
+    }
+
+    public List<Effect> getEffectByAttackId(String attackId) {
+        List<Effect> effects = new ArrayList<>();
+        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetEffectByAttackId"))) {
+            ps.setString(1, attackId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                EffectType type = DatabaseHelper.getEnumOrNull(rs, "type", EffectType.class);
+                EffectTarget target =
+                        DatabaseHelper.getEnumOrNull(rs, "target", EffectTarget.class);
+                EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "stat", EffectStat.class);
+                String duration =
+                        (rs.getString("duration") != null) ? rs.getString("duration") : "0_tour";
+
+                effects.add(new Effect(type, target, stat, rs.getInt("modifier"), duration));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("getEffectByAttackId failed for attack id: " + attackId, e);
+        }
+        return effects;
+    }
+
     // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
 
     /**
@@ -454,6 +537,15 @@ public class DatabaseRepository {
      */
     public boolean isConnected() {
         return this.dbManager.isConnected();
+
+    }
+
+    public void clearDatabase() {
+        try (Statement st = dbManager.getConnectionObject().createStatement()) {
+            st.executeUpdate(getSql("ClearDatabase"));
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to clear database", e);
+        }
     }
 
     /**

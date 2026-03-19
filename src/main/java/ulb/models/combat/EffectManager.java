@@ -21,6 +21,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.effect.EffectType;
 import ulb.models.trainer.Trainer;
 
 /**
@@ -152,7 +153,9 @@ public class EffectManager {
         for (Effect e : effects) {
             EffectTarget target = e.getTarget();
             List<Bugemon> bugemons = new ArrayList<>();
-
+            if (e.getTypeEffect() == EffectType.SOIN) {
+                e.setStat(EffectStat.HP);
+            }
             switch (target) {
                 case ADVERSARY:
                     bugemons.add(defender.getCurrentBugemon());
@@ -245,6 +248,7 @@ public class EffectManager {
         try {
             bugemon.editStat(stat, value);
         } catch (Exception e) {
+            // TODO: handle exception -> Logger ?
             e.printStackTrace();
         }
     }
