@@ -39,6 +39,7 @@ import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.ItemWrapper;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
@@ -194,6 +195,18 @@ public class Parser {
         }
     }
 
+    private static class DurationDeserializer implements JsonDeserializer<EffectDuration> {
+        @Override
+        public EffectDuration deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+                                          JsonDeserializationContext context) {
+            String value = json.getAsString().toLowerCase().trim();
+            if ("permanent".equals(value)) {
+                return EffectDuration.PERMANENT;
+            }
+            return EffectDuration.ONE_TURN;
+        }
+    }
+
     public static class EffectDeserializer implements JsonDeserializer<Effect> {
         @Override
         public Effect deserialize(JsonElement json, Type typeOfT,
@@ -209,7 +222,7 @@ public class Parser {
                     new EffectStatModifier(
                             target, context.deserialize(effectObject.get("stat"), EffectStat.class),
                             effectObject.get("modificateur").getAsInt(),
-                            effectObject.get("duree").getAsString());
+                            context.deserialize(effectObject.get("duree"), EffectDuration.class));
                 case "soin" -> new EffectHeal(target, effectObject.get("valeur").getAsInt());
                 case "reset_malus" -> new EffectResetMalus(target);
                 default -> throw new JsonParseException("Unknown effect type: " + effectType);
@@ -225,6 +238,7 @@ public class Parser {
     private static void parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder()
                             .registerTypeAdapter(BugemonType.class, new TypeDeserializer())
+                            .registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
                             .registerTypeAdapter(Effect.class, new EffectDeserializer())
                             .create();
 
@@ -280,6 +294,7 @@ public class Parser {
      */
     static ItemWrapper parseItemsAndInventory(Reader reader) {
         Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
                             .registerTypeAdapter(Effect.class, new EffectDeserializer())
                             .create();
 
