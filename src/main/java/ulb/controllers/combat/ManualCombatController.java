@@ -28,7 +28,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     private AutoTrainer opponentTrainer;
 
     /**
-     * Constructs a {@code ManualCombatController}, initialises its {@link ManualCombatView},
+     * Constructs a {@code ManualCombatController}, initialises its
+     * {@link ManualCombatView},
      * and registers the attack, switch, and surrender callbacks.
      *
      * @param metaController the application-level controller used for navigation.
@@ -55,10 +56,15 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
     // ── Private callbacks (registered on the view) ───────────────────────────
 
-    /** Registers the chosen attack, advances the turn, then handles the result. */
+    /**
+     * Registers the chosen attack, advances the turn, then handles the result.
+     *
+     * @param attack the attack chosen by the user, registered on the player trainer
+     *               to be executed in the next turn.
+     */
     private void onAttack(Attack attack) {
         this.playerTrainer.registerAttack(attack);
-        handlePostTurn(this.combat.turn());
+        handleAnimatedPostTurn(this.combat.turn());
     }
 
     /**
@@ -74,11 +80,21 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         } else {
             this.playerTrainer.setHasSwitchedThisTurn(true);
             this.playerTrainer.registerSwitch(target);
-            handlePostTurn(this.combat.turn());
+            handleAnimatedPostTurn(this.combat.turn());
         }
     }
 
-    /** Navigates to the outcome screen if combat ended, or refreshes the view. */
+    private void handleAnimatedPostTurn(TurnResult result) {
+        playTurnAnimations(result, this.playerTrainer, () -> handlePostTurn(result));
+    }
+
+    /**
+     * Navigates to the outcome screen if combat ended, or refreshes the view.
+     *
+     * @param result the turn result to check for KO switches and to determine if
+     *               the combat has ended.
+     *
+     */
     private void handlePostTurn(TurnResult result) {
         if (this.combat.isFinished()) {
             handleCombatResult(this.combat.getWinner().get(), this.playerTrainer);
@@ -91,7 +107,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         }
     }
 
-    /** Registers a forfeit action, resolves the turn, and navigates to the defeat screen. */
+    /**
+     * Registers a forfeit action, resolves the turn, and navigates to the defeat
+     * screen.
+     */
     private void onSurrender() {
         this.playerTrainer.registerForfeit();
         this.combat.turn();

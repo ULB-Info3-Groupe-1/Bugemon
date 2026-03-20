@@ -7,6 +7,7 @@ import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.factory.TeamFactory;
+import ulb.models.combat.TurnResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
@@ -25,7 +26,8 @@ import ulb.views.combat.CombatView;
  * model mutation; they never push data into the view directly.
  * </p>
  *
- * @param <V> the concrete {@link CombatView} subtype managed by this controller.
+ * @param <V> the concrete {@link CombatView} subtype managed by this
+ *            controller.
  */
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
     private Consumer<List<LevelUp>> onVictory;
@@ -42,7 +44,44 @@ public abstract class CombatController<V extends CombatView> extends Controller<
 
     public abstract void startCombat();
 
-    /** Creates a random opponent team sized to match the given player's team. */
+    /**
+     * Plays the attack animations contained in a turn result, then invokes
+     * {@code onFinished}. If the turn has no attacks, the callback is executed
+     * immediately.
+     *
+     * @param result        the turn result containing the attacks to animate.
+     * @param playerTrainer the player's trainer, used to determine animation
+     *                      direction.
+     * @param onFinished    the callback to execute after all animations have
+     *                      played.
+     */
+    protected void playTurnAnimations(TurnResult result, Trainer playerTrainer,
+                                      Runnable onFinished) {
+        if (result == null || !result.first().wasAttack()) {
+            onFinished.run();
+            return;
+        }
+
+        boolean firstFromPlayer = result.first().attacker() == playerTrainer;
+        this.view.playAttackAnimation(firstFromPlayer, () -> {
+            if (result.second().isPresent() && result.second().orElseThrow().wasAttack()) {
+                boolean secondFromPlayer =
+                        result.second().orElseThrow().attacker() == playerTrainer;
+                this.view.playAttackAnimation(secondFromPlayer, onFinished);
+            } else {
+                onFinished.run();
+            }
+        });
+    }
+
+    /**
+     * Creates a random opponent team sized to match the given player's team.
+     *
+     * @param playerTeamSize the size of the player's team, used to size the
+     *                       opponent's team.
+     *
+     * @return an {@link AutoTrainer} with a randomly generated team.
+     */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
         return new AutoTrainer(
                 TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), playerTeamSize));
@@ -51,6 +90,12 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     /**
      * Resolves the end of a combat session by distributing XP on victory and
      * navigating to the appropriate outcome screen.
+     *
+     * @param winner        the winning trainer, used to determine if the player won
+     *                      or lost.
+     * @param playerTrainer the player's trainer, used to determine if the player
+     *                      won
+     *                      or lost and to distribute XP on victory.
      */
     protected void handleCombatResult(Trainer winner, Trainer playerTrainer) {
         if (winner == playerTrainer) {
