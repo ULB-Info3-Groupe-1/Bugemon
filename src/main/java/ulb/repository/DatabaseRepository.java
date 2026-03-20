@@ -53,21 +53,33 @@ public class DatabaseRepository {
     private static final String COL_TEAM_NAME = "team_name";
     private static final String COL_SLOT_POSITION = "slot_position";
     private static final String COL_NAME = "name";
+    private static final String COL_TARGET = "target";
+    private static final String COL_STAT = "stat";
+    private static final String COL_DURATION = "duration";
+    private static final String COL_AMOUNT = "amount";
+    private static final String COL_TYPE = "type";
+    private static final String COL_ID = "id";
+    private static final String COL_DESCRIPTION = "description";
+    private static final String COL_POWER = "power";
+    private static final String COL_SPRITE = "sprite";
+    private static final String COL_MODIFIER = "modifier";
+    private static final String COL_BASE_DEFENSE = "base_defense";
+    private static final String COL_BASE_ATTACK_POWER = "base_attack_power";
+    private static final String COL_BASE_INITIATIVE = "base_initiative";
+    private static final String COL_BASE_MAX_HP = "base_max_hp";
+    private static final String COL_IS_STARTER = "is_starter";
+    private static final String COL_ATTACK_ID_1 = "attack_1_id";
+    private static final String COL_ATTACK_ID_2 = "attack_2_id";
+    private static final String COL_ATTACK_ID_3 = "attack_3_id";
 
-    private final DatabaseManager dbManager;
+    private final DatabaseConnection dbConnection;
 
     // Utility method to get a connection from the manager
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
-    public DatabaseRepository() {
-        this.dbManager = new DatabaseManager();
-        loadSQLQueries();
-        prepareDatabase();
-    }
-
-    public DatabaseRepository(String testUrl) {
-        this.dbManager = new DatabaseManager(testUrl);
+    public DatabaseRepository(DatabaseConnection dbConnection) {
+        this.dbConnection = dbConnection;
         loadSQLQueries();
         prepareDatabase();
     }
@@ -180,7 +192,7 @@ public class DatabaseRepository {
     // ─── CREATION ─────────────────────────────────────────────────────────────
 
     public void createSchema() {
-        try (Statement st = dbManager.getConnectionObject().createStatement()) {
+        try (Statement st = dbConnection.getConnectionObject().createStatement()) {
             st.executeUpdate(getSql("CreateSchema"));
         } catch (SQLException e) {
             throw new IllegalStateException("createSchema failed", e);
@@ -190,11 +202,11 @@ public class DatabaseRepository {
     // ─── USERS ────────────────────────────────────────────────────────────────
 
     public int createUser(String username) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("CreateUser"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("CreateUser"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next())
-                return rs.getInt("id");
+                return rs.getInt(COL_ID);
         } catch (SQLException e) {
             throw new IllegalStateException("createUser failed", e);
         }
@@ -202,11 +214,11 @@ public class DatabaseRepository {
     }
 
     public Optional<Integer> getUserIdByUsername(String username) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetUserByUsername"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetUserByUsername"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next())
-                return Optional.of(rs.getInt("id"));
+                return Optional.of(rs.getInt(COL_ID));
         } catch (SQLException e) {
             throw new IllegalStateException("getUserIdByUsername failed", e);
         }
@@ -216,7 +228,7 @@ public class DatabaseRepository {
     // ─── USER BUGEMONS ────────────────────────────────────────────────────────
 
     public void saveUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("SaveUserBugemon"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("SaveUserBugemon"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.bugemonId());
             ps.setInt(3, dto.currentDefense());
@@ -232,7 +244,7 @@ public class DatabaseRepository {
     }
 
     public void updateUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("UpdateUserBugemon"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("UpdateUserBugemon"))) {
             ps.setInt(1, dto.currentDefense());
             ps.setInt(2, dto.currentAttackPower());
             ps.setInt(3, dto.currentInitiative());
@@ -249,7 +261,7 @@ public class DatabaseRepository {
 
     public List<UserBugemonDTO> getUserBugemons(int userId) {
         List<UserBugemonDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetUserBugemons"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetUserBugemons"))) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -268,7 +280,7 @@ public class DatabaseRepository {
     // ─── TEAMS ────────────────────────────────────────────────────────────────
 
     public void createTeam(int userId, String teamName) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("CreateTeam"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("CreateTeam"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.executeUpdate();
@@ -278,7 +290,7 @@ public class DatabaseRepository {
     }
 
     public void deleteTeam(int userId, String teamName) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("DeleteTeam"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("DeleteTeam"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.executeUpdate();
@@ -289,7 +301,7 @@ public class DatabaseRepository {
 
     public List<TeamDTO> getUserTeams(int userId) {
         List<TeamDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetUserTeams"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetUserTeams"))) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -304,7 +316,7 @@ public class DatabaseRepository {
     // ─── TEAM MEMBERS ─────────────────────────────────────────────────────────
 
     public void addTeamMember(TeamMemberDTO dto) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("AddTeamMember"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("AddTeamMember"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.teamName());
             ps.setString(3, dto.bugemonId());
@@ -316,7 +328,7 @@ public class DatabaseRepository {
     }
 
     public void removeTeamMember(int userId, String teamName, String bugemonId) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("RemoveTeamMember"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("RemoveTeamMember"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.setString(3, bugemonId);
@@ -328,7 +340,7 @@ public class DatabaseRepository {
 
     public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
         List<TeamMemberDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetTeamMembers"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetTeamMembers"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ResultSet rs = ps.executeQuery();
@@ -358,7 +370,7 @@ public class DatabaseRepository {
     private void prepareDatabase() {
         // Verify if the critical tables exist in the database. If not, we create the schema and add
         // the default game data
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("isTablesPresent"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("isTablesPresent"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
                 createSchema();
@@ -371,7 +383,7 @@ public class DatabaseRepository {
 
         // If the tables exist, we check if they contain the static game data. If not, we add the
         // static game data
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("IsDataEmpty"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("IsDataEmpty"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("total_rows") == 0) {
                 addDefaultGameData();
@@ -408,7 +420,7 @@ public class DatabaseRepository {
             try {
                 // Begin by inserting the attack itself
                 try (PreparedStatement psAttack =
-                             dbManager.prepareStatement(getSql("SaveAttack"))) {
+                             dbConnection.prepareStatement(getSql("SaveAttack"))) {
                     psAttack.setString(1, attack.id());
                     psAttack.setString(2, attack.name());
                     psAttack.setObject(3, attack.type() != null ? attack.type().name() : null,
@@ -421,7 +433,7 @@ public class DatabaseRepository {
                 // Then insert its effects if it has any
                 if (attack.effects() != null && !attack.effects().isEmpty()) {
                     try (PreparedStatement psEffect =
-                                 dbManager.prepareStatement(getSql("SaveEffect"))) {
+                                 dbConnection.prepareStatement(getSql("SaveEffect"))) {
                         for (Effect effect : attack.effects()) {
                             psEffect.setString(1, attack.id()); // Foreign key to the attack
 
@@ -430,13 +442,14 @@ public class DatabaseRepository {
                                     psEffect.setString(2, modifier.getClass().getSimpleName());
                                     psEffect.setString(3, effect.target().name());
                                     psEffect.setObject(
-                                    4, modifier.stat() != null ? modifier.stat().name() : null,
-                                    Types.VARCHAR);
+                                            4,
+                                            modifier.stat() != null ? modifier.stat().name() : null,
+                                            Types.VARCHAR);
                                     psEffect.setInt(5, modifier.modifier());
                                     psEffect.setString(6, modifier.duration());
                                     psEffect.setNull(7, Types.INTEGER);
                                     break;
-                                
+
                                 case EffectHeal heal:
                                     psEffect.setString(2, heal.getClass().getSimpleName());
                                     psEffect.setString(3, heal.target().name());
@@ -482,7 +495,7 @@ public class DatabaseRepository {
      *         their IDs, as this method assumes that the attacks have been saved beforehand.
      */
     private void saveGameDataBugemon(List<Bugemon> bugemons) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("SaveBugemon"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("SaveBugemon"))) {
             for (Bugemon bugemon : bugemons) {
                 ps.setString(1, bugemon.getId());
                 ps.setString(2, bugemon.getName());
@@ -516,26 +529,27 @@ public class DatabaseRepository {
      */
     public List<Bugemon> getAllDefaultBugemons() {
         List<Bugemon> bugemons = new ArrayList<>();
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetAllDefaultBugemons"))) {
+        try (PreparedStatement ps =
+                     dbConnection.prepareStatement(getSql("GetAllDefaultBugemons"))) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                BugemonType type = DatabaseHelper.getEnumOrNull(rs, "type", BugemonType.class);
-                Attack attack1 = getAttackById(rs.getString("attack_1_id"));
-                Attack attack2 = getAttackById(rs.getString("attack_2_id"));
-                Attack attack3 = getAttackById(rs.getString("attack_3_id"));
+                BugemonType type = DatabaseHelper.getEnumOrNull(rs, COL_TYPE, BugemonType.class);
+                Attack attack1 = getAttackById(rs.getString(COL_ATTACK_ID_1));
+                Attack attack2 = getAttackById(rs.getString(COL_ATTACK_ID_2));
+                Attack attack3 = getAttackById(rs.getString(COL_ATTACK_ID_3));
                 BugemonBuilder builder = new BugemonBuilder();
-                builder.id(rs.getString("id"))
-                        .name(rs.getString("name"))
+                builder.id(rs.getString(COL_ID))
+                        .name(rs.getString(COL_NAME))
                         .type(type)
-                        .sprite(rs.getString("sprite"))
-                        .defense(rs.getInt("base_defense"))
-                        .attack(rs.getInt("base_attack_power"))
-                        .initiative(rs.getInt("base_initiative"))
-                        .hp(rs.getInt("base_max_hp"))
+                        .sprite(rs.getString(COL_SPRITE))
+                        .defense(rs.getInt(COL_BASE_DEFENSE))
+                        .attack(rs.getInt(COL_BASE_ATTACK_POWER))
+                        .initiative(rs.getInt(COL_BASE_INITIATIVE))
+                        .hp(rs.getInt(COL_BASE_MAX_HP))
                         .addAttack(attack1)
                         .addAttack(attack2)
                         .addAttack(attack3)
-                        .isStarter(rs.getBoolean("is_starter"));
+                        .isStarter(rs.getBoolean(COL_IS_STARTER));
 
                 bugemons.add(builder.build());
             }
@@ -546,14 +560,14 @@ public class DatabaseRepository {
     }
 
     public Attack getAttackById(String attackId) {
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetAttackById"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetAttackById"))) {
             ps.setString(1, attackId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 List<Effect> effects = getEffectByAttackId(attackId);
-                BugemonType type = DatabaseHelper.getEnumOrNull(rs, "type", BugemonType.class);
-                return new Attack(rs.getString("id"), rs.getString("name"), type,
-                                  rs.getString("description"), rs.getInt("power"), effects);
+                BugemonType type = DatabaseHelper.getEnumOrNull(rs, COL_TYPE, BugemonType.class);
+                return new Attack(rs.getString(COL_ID), rs.getString(COL_NAME), type,
+                                  rs.getString(COL_DESCRIPTION), rs.getInt(COL_POWER), effects);
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getAttackById failed for id: " + attackId, e);
@@ -563,35 +577,36 @@ public class DatabaseRepository {
 
     public List<Effect> getEffectByAttackId(String attackId) {
         List<Effect> effects = new ArrayList<>();
-        try (PreparedStatement ps = dbManager.prepareStatement(getSql("GetEffectByAttackId"))) {
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetEffectByAttackId"))) {
             ps.setString(1, attackId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-
-                switch (rs.getString("type")) {
+                switch (rs.getString(COL_TYPE)) {
                     case "EffectStatModifier":
-                        EffectTarget target = DatabaseHelper.getEnumOrNull(rs, "target",
-                                                                           EffectTarget.class);
-                        EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "stat", EffectStat.class);
-                        String duration =
-                                (rs.getString("duration") != null) ? rs.getString("duration") : "0_tour";
-                        effects.add(new EffectStatModifier(target, stat, rs.getInt("modifier"),
-                                                            duration));
+                        EffectTarget target =
+                                DatabaseHelper.getEnumOrNull(rs, COL_TARGET, EffectTarget.class);
+                        EffectStat stat =
+                                DatabaseHelper.getEnumOrNull(rs, COL_STAT, EffectStat.class);
+                        String duration = (rs.getString(COL_DURATION) != null)
+                                                  ? rs.getString(COL_DURATION)
+                                                  : "0_tour";
+                        effects.add(new EffectStatModifier(target, stat, rs.getInt(COL_MODIFIER),
+                                                           duration));
                         break;
 
                     case "EffectHeal":
-                        target = DatabaseHelper.getEnumOrNull(rs, "target", EffectTarget.class);
-                        effects.add(new EffectHeal(target, rs.getInt("amount")));
+                        target = DatabaseHelper.getEnumOrNull(rs, COL_TARGET, EffectTarget.class);
+                        effects.add(new EffectHeal(target, rs.getInt(COL_AMOUNT)));
                         break;
 
                     case "EffectResetMalus":
-                        target = DatabaseHelper.getEnumOrNull(rs, "target", EffectTarget.class);
+                        target = DatabaseHelper.getEnumOrNull(rs, COL_TARGET, EffectTarget.class);
                         effects.add(new EffectResetMalus(target));
                         break;
 
                     default:
-                        throw new IllegalStateException(
-                                "Unknown effect type for attack id: " + attackId);
+                        throw new IllegalStateException("Unknown effect type for attack id: "
+                                                        + attackId);
                 }
             }
         } catch (SQLException e) {
@@ -603,28 +618,11 @@ public class DatabaseRepository {
 
     // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
 
-    /**
-     * Check if the database connection is currently active.
-     * @return true if the connection is active, false otherwise.
-     */
-    public boolean isConnected() {
-        return this.dbManager.isConnected();
-    }
-
     public void clearDatabase() {
-        try (Statement st = dbManager.getConnectionObject().createStatement()) {
+        try (Statement st = dbConnection.getConnectionObject().createStatement()) {
             st.executeUpdate(getSql("ClearDatabase"));
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to clear database", e);
         }
-    }
-
-    /**
-     * Provides direct access to the underlying Connection object for advanced operations.
-     * @return The active Connection object from the DatabaseManager, allowing for direct SQL
-     *         operations if needed.
-     */
-    public Connection getConnection() {
-        return this.dbManager.getConnectionObject();
     }
 }

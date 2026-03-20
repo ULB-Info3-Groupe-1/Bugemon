@@ -22,6 +22,8 @@ public class TestRepository {
 
     private static final String TEST_DB_URL = dotenv.get("TEST_DB_URL");
 
+    private DatabaseConnection dbConnection;
+
     private DatabaseRepository repository;
 
     private String uniqueId;
@@ -31,9 +33,10 @@ public class TestRepository {
         Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
                           TEST_DB_URL != null && !TEST_DB_URL.isBlank());
         try {
-            this.repository = new DatabaseRepository(TEST_DB_URL);
+            this.dbConnection = new DatabaseConnection(TEST_DB_URL);
+            this.repository = new DatabaseRepository(this.dbConnection);
 
-            if (!this.repository.isConnected()) {
+            if (!this.dbConnection.isConnected()) {
                 fail("La connexion à la base de données de test a échoué.");
             }
 
@@ -58,13 +61,15 @@ public class TestRepository {
                 + "VALUES (?, 'Template', 'AQUA', 'test_atk', 'test_atk', 'test_atk') ON "
                 + "CONFLICT DO NOTHING";
 
-        try (PreparedStatement ps = this.repository.getConnection().prepareStatement(sqlAttack)) {
+        try (PreparedStatement ps =
+                     this.dbConnection.getConnectionObject().prepareStatement(sqlAttack)) {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Setup failed", e);
         }
 
-        try (PreparedStatement ps = this.repository.getConnection().prepareStatement(sqlBugemon)) {
+        try (PreparedStatement ps =
+                     this.dbConnection.getConnectionObject().prepareStatement(sqlBugemon)) {
             ps.setString(1, bugemonId);
             ps.executeUpdate();
         } catch (SQLException e) {

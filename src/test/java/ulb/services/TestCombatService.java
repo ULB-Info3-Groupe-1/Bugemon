@@ -31,6 +31,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.repository.DatabaseConnection;
 import ulb.repository.DatabaseRepository;
 
 public class TestCombatService {
@@ -171,7 +172,7 @@ public class TestCombatService {
         Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
                           testDbUrl != null && !testDbUrl.isBlank());
 
-        DatabaseRepository repository = new DatabaseRepository(testDbUrl);
+        DatabaseRepository repository = new DatabaseRepository(new DatabaseConnection(testDbUrl));
         BugemonTeam teamOfSix =
                 CombatService.createRandomTeam(repository.getAllDefaultBugemons(), 6);
         assertEquals(6, teamOfSix.size());

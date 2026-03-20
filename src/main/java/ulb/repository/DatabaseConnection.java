@@ -5,28 +5,18 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
-public class DatabaseManager {
-    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-
-    private static final String PRODUCTION_URL = dotenv.get("PRODUCTION_DB_URL");
-
-    private String currentUrl = PRODUCTION_URL;
+public class DatabaseConnection {
+    private String currentUrl;
 
     private Connection connection;
 
-    public DatabaseManager() {
+    public DatabaseConnection(String dbUrl) {
+        this.currentUrl = dbUrl;
         try {
             this.connection = DriverManager.getConnection(this.currentUrl);
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to connect to local SQLite database", e);
         }
-    }
-
-    public DatabaseManager(String testUrl) {
-        this.currentUrl = testUrl;
-        getConnection();
     }
 
     public void getConnection() {
