@@ -22,57 +22,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonBuilder;
-import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon.effect.EffectHeal;
-import ulb.models.bugemon.effect.EffectResetMalus;
-import ulb.models.bugemon.effect.EffectStat;
-import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.bugemon.effect.EffectTarget;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
-import ulb.utils.DatabaseHelper;
-import ulb.utils.Parser;
 
 public class DatabaseRepository {
     // Number of tables of the critical schema
     private static final int CRITICAL_TABLES_COUNT = 7;
 
-    private static final String COL_USER_ID = "user_id";
-    private static final String COL_BUGEMON_ID = "bugemon_id";
-    private static final String COL_CURRENT_DEFENSE = "current_defense";
-    private static final String COL_CURRENT_ATTACK_POWER = "current_attack_power";
-    private static final String COL_CURRENT_INITIATIVE = "current_initiative";
-    private static final String COL_CURRENT_MAX_HP = "current_max_hp";
-    private static final String COL_CURRENT_XP = "current_xp";
-    private static final String COL_CURRENT_LEVEL = "current_level";
-    private static final String COL_TEAM_NAME = "team_name";
-    private static final String COL_SLOT_POSITION = "slot_position";
-    private static final String COL_NAME = "name";
-    private static final String COL_TARGET = "target";
-    private static final String COL_STAT = "stat";
-    private static final String COL_DURATION = "duration";
-    private static final String COL_AMOUNT = "amount";
-    private static final String COL_TYPE = "type";
-    private static final String COL_ID = "id";
-    private static final String COL_DESCRIPTION = "description";
-    private static final String COL_POWER = "power";
-    private static final String COL_SPRITE = "sprite";
-    private static final String COL_MODIFIER = "modifier";
-    private static final String COL_BASE_DEFENSE = "base_defense";
-    private static final String COL_BASE_ATTACK_POWER = "base_attack_power";
-    private static final String COL_BASE_INITIATIVE = "base_initiative";
-    private static final String COL_BASE_MAX_HP = "base_max_hp";
-    private static final String COL_IS_STARTER = "is_starter";
-    private static final String COL_ATTACK_ID_1 = "attack_1_id";
-    private static final String COL_ATTACK_ID_2 = "attack_2_id";
-    private static final String COL_ATTACK_ID_3 = "attack_3_id";
-
     private final DatabaseConnection dbConnection;
+
+    private final UserRepository userRepository;
+    private final StaticDataRepository staticDataRepository;
 
     // Utility method to get a connection from the manager
     // Queries Map (Request Name -> SQL Code)
@@ -80,18 +42,28 @@ public class DatabaseRepository {
 
     public DatabaseRepository(DatabaseConnection dbConnection) {
         this.dbConnection = dbConnection;
+        this.userRepository = new UserRepository(this, dbConnection);
+        this.staticDataRepository = new StaticDataRepository(this, dbConnection);
+
         loadSQLQueries();
         prepareDatabase();
     }
 
+    /**
+     * Load all SQL queries from files
+     */
     private void loadSQLQueries() {
-        // Load all SQL queries from files
         List<String> sqlFiles = getSqlFiles();
         for (String file : sqlFiles) {
             loadQueriesFromFile(file);
         }
     }
 
+    /**
+     * Load SQL queries from a given file path and store them in the queries Map.
+     * @param filePath the path to the SQL file from which to load the queries, relative to the
+     *         classpath (e.g., "/sql/queries.sql")
+     */
     private void loadQueriesFromFile(String filePath) {
         try (InputStream is = getClass().getResourceAsStream(filePath)) {
             if (is == null) {
@@ -126,6 +98,11 @@ public class DatabaseRepository {
         }
     }
 
+    /**
+     * Helper method to retrieve the list of SQL file paths from the resources.
+     * @return a List of Strings representing the paths to the SQL files, relative to the classpath
+     *         (e.g., "/sql/queries.sql")
+     */
     private List<String> getSqlFiles() {
         List<String> result = new ArrayList<>();
         try {
@@ -181,7 +158,7 @@ public class DatabaseRepository {
      * @param queryName the name of the query to retrieve, as defined in the SQL files
      * @return the SQL query string associated with the given query name
      */
-    private String getSql(String queryName) {
+    public String getSql(String queryName) {
         String sql = queries.get(queryName);
         if (sql == null) {
             throw new IllegalArgumentException("SQL query not found in Map : " + queryName);
@@ -191,168 +168,15 @@ public class DatabaseRepository {
 
     // ─── CREATION ─────────────────────────────────────────────────────────────
 
-    public void createSchema() {
+    /**
+     * Create the database schema by executing the SQL query associated with the "CreateSchema" key.
+     */
+    private void createSchema() {
         try (Statement st = dbConnection.getConnectionObject().createStatement()) {
             st.executeUpdate(getSql("CreateSchema"));
         } catch (SQLException e) {
             throw new IllegalStateException("createSchema failed", e);
         }
-    }
-
-    // ─── USERS ────────────────────────────────────────────────────────────────
-
-    public int createUser(String username) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("CreateUser"))) {
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next())
-                return rs.getInt(COL_ID);
-        } catch (SQLException e) {
-            throw new IllegalStateException("createUser failed", e);
-        }
-        throw new IllegalStateException("createUser returned no id");
-    }
-
-    public Optional<Integer> getUserIdByUsername(String username) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetUserByUsername"))) {
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next())
-                return Optional.of(rs.getInt(COL_ID));
-        } catch (SQLException e) {
-            throw new IllegalStateException("getUserIdByUsername failed", e);
-        }
-        return Optional.empty();
-    }
-
-    // ─── USER BUGEMONS ────────────────────────────────────────────────────────
-
-    public void saveUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("SaveUserBugemon"))) {
-            ps.setInt(1, dto.userId());
-            ps.setString(2, dto.bugemonId());
-            ps.setInt(3, dto.currentDefense());
-            ps.setInt(4, dto.currentAttackPower());
-            ps.setInt(5, dto.currentInitiative());
-            ps.setInt(6, dto.currentMaxHp());
-            ps.setInt(7, dto.currentXp());
-            ps.setInt(8, dto.currentLevel());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("saveUserBugemon failed", e);
-        }
-    }
-
-    public void updateUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("UpdateUserBugemon"))) {
-            ps.setInt(1, dto.currentDefense());
-            ps.setInt(2, dto.currentAttackPower());
-            ps.setInt(3, dto.currentInitiative());
-            ps.setInt(4, dto.currentMaxHp());
-            ps.setInt(5, dto.currentXp());
-            ps.setInt(6, dto.currentLevel());
-            ps.setInt(7, dto.userId());
-            ps.setString(8, dto.bugemonId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("updateUserBugemon failed", e);
-        }
-    }
-
-    public List<UserBugemonDTO> getUserBugemons(int userId) {
-        List<UserBugemonDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetUserBugemons"))) {
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(new UserBugemonDTO(
-                        rs.getInt(COL_USER_ID), rs.getString(COL_BUGEMON_ID),
-                        rs.getInt(COL_CURRENT_DEFENSE), rs.getInt(COL_CURRENT_ATTACK_POWER),
-                        rs.getInt(COL_CURRENT_INITIATIVE), rs.getInt(COL_CURRENT_MAX_HP),
-                        rs.getInt(COL_CURRENT_XP), rs.getInt(COL_CURRENT_LEVEL)));
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getUserBugemons failed", e);
-        }
-        return result;
-    }
-
-    // ─── TEAMS ────────────────────────────────────────────────────────────────
-
-    public void createTeam(int userId, String teamName) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("CreateTeam"))) {
-            ps.setInt(1, userId);
-            ps.setString(2, teamName);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("createTeam failed", e);
-        }
-    }
-
-    public void deleteTeam(int userId, String teamName) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("DeleteTeam"))) {
-            ps.setInt(1, userId);
-            ps.setString(2, teamName);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("deleteTeam failed", e);
-        }
-    }
-
-    public List<TeamDTO> getUserTeams(int userId) {
-        List<TeamDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetUserTeams"))) {
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(new TeamDTO(rs.getInt(COL_USER_ID), rs.getString(COL_NAME)));
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getUserTeams failed", e);
-        }
-        return result;
-    }
-
-    // ─── TEAM MEMBERS ─────────────────────────────────────────────────────────
-
-    public void addTeamMember(TeamMemberDTO dto) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("AddTeamMember"))) {
-            ps.setInt(1, dto.userId());
-            ps.setString(2, dto.teamName());
-            ps.setString(3, dto.bugemonId());
-            ps.setInt(4, dto.slotPosition());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("addTeamMember failed", e);
-        }
-    }
-
-    public void removeTeamMember(int userId, String teamName, String bugemonId) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("RemoveTeamMember"))) {
-            ps.setInt(1, userId);
-            ps.setString(2, teamName);
-            ps.setString(3, bugemonId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("removeTeamMember failed", e);
-        }
-    }
-
-    public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
-        List<TeamMemberDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetTeamMembers"))) {
-            ps.setInt(1, userId);
-            ps.setString(2, teamName);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(new TeamMemberDTO(rs.getInt(COL_USER_ID), rs.getString(COL_TEAM_NAME),
-                                             rs.getString(COL_BUGEMON_ID),
-                                             rs.getInt(COL_SLOT_POSITION)));
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getTeamMembers failed", e);
-        }
-        return result;
     }
 
     // ──────── CHECK DATABASE TO SET GAME DATA IF NEEDED ─────────
@@ -374,7 +198,7 @@ public class DatabaseRepository {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
                 createSchema();
-                addDefaultGameData();
+                this.staticDataRepository.addDefaultGameData();
                 return;
             }
         } catch (SQLException e) {
@@ -386,238 +210,153 @@ public class DatabaseRepository {
         try (PreparedStatement ps = dbConnection.prepareStatement(getSql("IsDataEmpty"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("total_rows") == 0) {
-                addDefaultGameData();
+                this.staticDataRepository.addDefaultGameData();
             }
         } catch (SQLException e) {
             throw new IllegalStateException("IsDataEmpty failed", e);
         }
     }
 
-    /**
-     * Add the default game data to the database. This method is used during the game initialization
-     * to load the static data of the game. It uses a Parser to read the default game data from a
-     * source (e.g., JSON files) and then saves this data to the database using helper methods for
-     * attacks and Bugemons.
-     */
-    private void addDefaultGameData() {
-        Parser parser = new Parser();
-        parser.parse();
-        saveGameDataAttacks(parser.getAttacks());
-        saveGameDataBugemon(parser.getBugemons());
-    }
+    // ─── GETTERS ───
 
     /**
-     * Save the default attacks to the database. This method is used during the game initialization
-     * to load the static data of the game. It takes a map of Attack objects and saves them to the
-     * database. Each attack's effects are also saved as part of this process, ensuring that all
-     * necessary data is present in the database.
-     * @param attacks a map of Attack objects representing the default attacks to be saved in the
-     *         database. The key of the map is the attack's ID, which is used as a reference when
-     *         saving the Bugemons that use these attacks.
-     */
-    private void saveGameDataAttacks(Map<String, Attack> attacks) {
-        for (Attack attack : attacks.values()) {
-            try {
-                // Begin by inserting the attack itself
-                try (PreparedStatement psAttack =
-                             dbConnection.prepareStatement(getSql("SaveAttack"))) {
-                    psAttack.setString(1, attack.id());
-                    psAttack.setString(2, attack.name());
-                    psAttack.setObject(3, attack.type() != null ? attack.type().name() : null,
-                                       Types.VARCHAR);
-                    psAttack.setString(4, attack.description());
-                    psAttack.setInt(5, attack.power());
-                    psAttack.executeUpdate();
-                }
-
-                // Then insert its effects if it has any
-                if (attack.effects() != null && !attack.effects().isEmpty()) {
-                    try (PreparedStatement psEffect =
-                                 dbConnection.prepareStatement(getSql("SaveEffect"))) {
-                        for (Effect effect : attack.effects()) {
-                            psEffect.setString(1, attack.id()); // Foreign key to the attack
-
-                            switch (effect) {
-                                case EffectStatModifier modifier:
-                                    psEffect.setString(2, modifier.getClass().getSimpleName());
-                                    psEffect.setString(3, effect.target().name());
-                                    psEffect.setObject(
-                                            4,
-                                            modifier.stat() != null ? modifier.stat().name() : null,
-                                            Types.VARCHAR);
-                                    psEffect.setInt(5, modifier.modifier());
-                                    psEffect.setString(6, modifier.duration());
-                                    psEffect.setNull(7, Types.INTEGER);
-                                    break;
-
-                                case EffectHeal heal:
-                                    psEffect.setString(2, heal.getClass().getSimpleName());
-                                    psEffect.setString(3, heal.target().name());
-                                    psEffect.setNull(4, Types.VARCHAR);
-                                    psEffect.setNull(5, Types.INTEGER);
-                                    psEffect.setNull(6, Types.VARCHAR);
-                                    psEffect.setInt(7, heal.amount());
-                                    break;
-
-                                case EffectResetMalus malus:
-                                    psEffect.setString(2, malus.getClass().getSimpleName());
-                                    psEffect.setString(3, effect.target().name());
-                                    psEffect.setNull(4, Types.VARCHAR);
-                                    psEffect.setNull(5, Types.INTEGER);
-                                    psEffect.setNull(6, Types.VARCHAR);
-                                    psEffect.setNull(7, Types.INTEGER);
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                            psEffect.addBatch();
-                        }
-                        psEffect.executeBatch();
-                    }
-                }
-            } catch (SQLException e) {
-                throw new IllegalStateException(
-                        "Error occurred while saving the default game data for attack: "
-                                + attack.id(),
-                        e);
-            }
-        }
-    }
-
-    /**
-     * Save the default Bugemons to the database. This method is used during the game initialization
-     * to load the static data of the game. It takes a list of Bugemon objects and saves them to the
-     * database using a batch insert for efficiency. Each Bugemon's attacks are also saved as part
-     * of this process, ensuring that all necessary data is present in the database.
-     * @param bugemons a list of Bugemon objects representing the default Bugemons to be saved in
-     *         the database. Each Bugemon should have its attacks already defined and linked by
-     *         their IDs, as this method assumes that the attacks have been saved beforehand.
-     */
-    private void saveGameDataBugemon(List<Bugemon> bugemons) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("SaveBugemon"))) {
-            for (Bugemon bugemon : bugemons) {
-                ps.setString(1, bugemon.getId());
-                ps.setString(2, bugemon.getName());
-                ps.setString(3, bugemon.getType().name());
-                ps.setString(4, bugemon.getSpriteURL());
-                ps.setInt(5, bugemon.getDefense());
-                ps.setInt(6, bugemon.getAttack());
-                ps.setInt(7, bugemon.getInitiative());
-                ps.setInt(8, bugemon.getMaxHp());
-                ps.setBoolean(9, bugemon.isStarter());
-                // Assuming each Bugemon has exactly 3 attacks, we insert them in the order they
-                // appear in the list
-                ps.setString(10, bugemon.getListAttacksId().get(0));
-                ps.setString(11, bugemon.getListAttacksId().get(1));
-                ps.setString(12, bugemon.getListAttacksId().get(2));
-                ps.addBatch();
-            }
-            ps.executeBatch();
-        } catch (SQLException e) {
-            throw new IllegalStateException("saveGameDataBugemon failed", e);
-        }
-    }
-
-    // ─── UTILS FOR CLASS USING THIS REPO ──
-
-    /**
-     * Retrieve all default Bugemons from the database. This is useful for the game initialization
-     * to load the static data of the game.
-     * @return a list of Bugemon objects representing all the default Bugemons stored in the
-     *         database.
+     * Get all default bugemons from the database. This method retrieves the list of all default
+     * bugemons that are available in the game, which are stored in the database.
+     * @return a List of Bugemon objects representing all the default bugemons available in the game
      */
     public List<Bugemon> getAllDefaultBugemons() {
-        List<Bugemon> bugemons = new ArrayList<>();
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(getSql("GetAllDefaultBugemons"))) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                BugemonType type = DatabaseHelper.getEnumOrNull(rs, COL_TYPE, BugemonType.class);
-                Attack attack1 = getAttackById(rs.getString(COL_ATTACK_ID_1));
-                Attack attack2 = getAttackById(rs.getString(COL_ATTACK_ID_2));
-                Attack attack3 = getAttackById(rs.getString(COL_ATTACK_ID_3));
-                BugemonBuilder builder = new BugemonBuilder();
-                builder.id(rs.getString(COL_ID))
-                        .name(rs.getString(COL_NAME))
-                        .type(type)
-                        .sprite(rs.getString(COL_SPRITE))
-                        .defense(rs.getInt(COL_BASE_DEFENSE))
-                        .attack(rs.getInt(COL_BASE_ATTACK_POWER))
-                        .initiative(rs.getInt(COL_BASE_INITIATIVE))
-                        .hp(rs.getInt(COL_BASE_MAX_HP))
-                        .addAttack(attack1)
-                        .addAttack(attack2)
-                        .addAttack(attack3)
-                        .isStarter(rs.getBoolean(COL_IS_STARTER));
-
-                bugemons.add(builder.build());
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getAllDefaultBugemons failed", e);
-        }
-        return bugemons;
+        return staticDataRepository.getAllDefaultBugemons();
     }
 
-    public Attack getAttackById(String attackId) {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetAttackById"))) {
-            ps.setString(1, attackId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                List<Effect> effects = getEffectByAttackId(attackId);
-                BugemonType type = DatabaseHelper.getEnumOrNull(rs, COL_TYPE, BugemonType.class);
-                return new Attack(rs.getString(COL_ID), rs.getString(COL_NAME), type,
-                                  rs.getString(COL_DESCRIPTION), rs.getInt(COL_POWER), effects);
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getAttackById failed for id: " + attackId, e);
-        }
-        throw new IllegalStateException("Attack not found for id: " + attackId);
+    /**
+     * Get the list of UserBugemonDTO objects representing the bugemons owned by a specific user,
+     * identified by their userId.
+     * @param userId the ID of the user for whom to retrieve the owned bugemons
+     * @return a List of UserBugemonDTO objects representing the bugemons owned by the specified
+     *         user
+     */
+    public List<UserBugemonDTO> getUserBugemons(int userId) {
+        return userRepository.getUserBugemons(userId);
     }
 
-    public List<Effect> getEffectByAttackId(String attackId) {
-        List<Effect> effects = new ArrayList<>();
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("GetEffectByAttackId"))) {
-            ps.setString(1, attackId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                switch (rs.getString(COL_TYPE)) {
-                    case "EffectStatModifier":
-                        EffectTarget target =
-                                DatabaseHelper.getEnumOrNull(rs, COL_TARGET, EffectTarget.class);
-                        EffectStat stat =
-                                DatabaseHelper.getEnumOrNull(rs, COL_STAT, EffectStat.class);
-                        String duration = (rs.getString(COL_DURATION) != null)
-                                                  ? rs.getString(COL_DURATION)
-                                                  : "0_tour";
-                        effects.add(new EffectStatModifier(target, stat, rs.getInt(COL_MODIFIER),
-                                                           duration));
-                        break;
+    /**
+     * Get the user ID associated with a given username.
+     * @param username the username for which to retrieve the user ID
+     * @return an Optional containing the user ID if a user with the specified username exists, or
+     *         an empty Optional if no such user exists
+     */
+    public Optional<Integer> getUserIdByUsername(String username) {
+        return userRepository.getUserIdByUsername(username);
+    }
 
-                    case "EffectHeal":
-                        target = DatabaseHelper.getEnumOrNull(rs, COL_TARGET, EffectTarget.class);
-                        effects.add(new EffectHeal(target, rs.getInt(COL_AMOUNT)));
-                        break;
+    /**
+     * Get the list of TeamDTO objects representing the teams owned by a specific user, identified
+     * by their userId.
+     * @param userId the ID of the user for whom to retrieve the owned teams
+     * @return a List of TeamDTO objects representing the teams owned by the specified user
+     */
+    public List<TeamDTO> getUserTeams(int userId) {
+        return userRepository.getUserTeams(userId);
+    }
 
-                    case "EffectResetMalus":
-                        target = DatabaseHelper.getEnumOrNull(rs, COL_TARGET, EffectTarget.class);
-                        effects.add(new EffectResetMalus(target));
-                        break;
+    /**
+     * Get the list of TeamMemberDTO objects representing the members of a specific team, identified
+     * by the teamId and teamName.
+     * @param teamId the ID of the team for which to retrieve the members
+     * @param teamName the name of the team for which to retrieve the members
+     * @return
+     */
+    public List<TeamMemberDTO> getTeamMembers(int teamId, String teamName) {
+        return userRepository.getTeamMembers(teamId, teamName);
+    }
 
-                    default:
-                        throw new IllegalStateException("Unknown effect type for attack id: "
-                                                        + attackId);
-                }
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getEffectByAttackId failed for attack id: " + attackId,
-                                            e);
-        }
-        return effects;
+    // -── ACTIONS TO PERFORM ON THE DATABASE ───
+
+    /**
+     * Create a new user in the database with the specified username and return the generated user
+     * ID.
+     * @param username the username of the new user to be created in the database
+     * @return the ID of the newly created user in the database
+     */
+    public int createUser(String username) {
+        return userRepository.createUser(username);
+    }
+
+    /**
+     * Create a new team in the database for a specific user, identified by their userId, with the
+     * specified team name.
+     * @param userId the ID of the user for whom to create the new team
+     * @param teamName the name of the new team to be created in the database for the specified user
+     */
+    public void createTeam(int userId, String teamName) {
+        userRepository.createTeam(userId, teamName);
+    }
+
+    /**
+     * Save the state of a user's bugemon in the database. This method takes a UserBugemonDTO object
+     * containing the details of the user's bugemon, such as its current stats and level, and
+     * updates the corresponding entry in the database to reflect these details.
+     * @param dto the UserBugemonDTO object containing the details of the user's bugemon to be saved
+     */
+    public void saveUserBugemon(UserBugemonDTO dto) {
+        userRepository.saveUserBugemon(dto);
+    }
+
+    /**
+     * Update the state of a user's bugemon in the database. This method takes a UserBugemonDTO
+     * object containing the updated details of the user's bugemon, such as its current stats and
+     * level, and updates the corresponding entry in the database to reflect these new details.
+     * @param dto the UserBugemonDTO object containing the updated details of the user's bugemon to
+     *         be updated
+     */
+    public void updateUserBugemon(UserBugemonDTO dto) {
+        userRepository.updateUserBugemon(dto);
+    }
+
+    /**
+     * Add a new member to a team in the database. This method takes a TeamMemberDTO object
+     * containing the details of the team member to be added, such as the user ID, team name,
+     * bugemon ID, and slot position, and inserts a new entry in the database to represent this team
+     * member.
+     * @param dto the TeamMemberDTO object containing the details of the team member to be added to
+     *         the database
+     */
+    public void addTeamMember(TeamMemberDTO dto) {
+        userRepository.addTeamMember(dto);
+    }
+
+    /**
+     * Remove a member from a team in the database. This method takes the user ID, team name, and
+     * bugemon ID of the team member to be removed, and deletes the corresponding entry from the
+     * database to reflect that this team member is no longer part of the specified team.
+     * @param userId the ID of the user who is a member of the team from which to remove the member
+     * @param teamName the name of the team from which to remove the member
+     * @param bugemonId the ID of the bugemon that represents the team member to be removed from the
+     *         specified team in the database
+     */
+    public void removeTeamMember(int userId, String teamName, String bugemonId) {
+        userRepository.removeTeamMember(userId, teamName, bugemonId);
+    }
+
+    /**
+     * Delete a team from the database. This method takes the user ID and team name of the team to
+     * be deleted, and removes the corresponding entry from the database to reflect that this team
+     * no longer exists for the specified user.
+     * @param userId the ID of the user who owns the team to be deleted
+     * @param teamName the name of the team to be deleted from the database for the specified user
+     */
+    public void deleteTeam(int userId, String teamName) {
+        userRepository.deleteTeam(userId, teamName);
     }
 
     // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
 
+    /**
+     * Clear the database by executing the SQL query associated with the "ClearDatabase" key. This
+     * method is intended to be used in testing scenarios to reset the state of the database before
+     * each test, ensuring that tests are run in a consistent and isolated environment. It removes
+     * all data from the relevant tables, allowing tests to start with a clean slate.
+     */
     public void clearDatabase() {
         try (Statement st = dbConnection.getConnectionObject().createStatement()) {
             st.executeUpdate(getSql("ClearDatabase"));
