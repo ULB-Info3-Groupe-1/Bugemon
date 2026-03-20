@@ -19,7 +19,7 @@ public final class TestUtilsBugemons {
 
     public static Bugemon createDefaultBugemon(String id) {
         Effect effect =
-                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.ATTACK, 10, "1_turn");
+                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.ATTACK, 10, EffectDuration.ONE_TURN);
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
         Attack attack1 =

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
@@ -21,27 +22,27 @@ public class TestEffect {
     @Test
     public void testShouldGetTargetAndSetTarget() {
         EffectStatModifier effect =
-                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, "1 turn");
+                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, EffectDuration.ONE_TURN);
         assertEquals(EffectTarget.ADVERSARY, effect.target());
     }
     @Test
     public void testShouldGetStatAndSetStat() {
         EffectStatModifier effect =
-                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, "1 turn");
+                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, EffectDuration.ONE_TURN);
         assertEquals(EffectStat.DEFENSE, effect.stat());
     }
 
     @Test
     public void testShouldGetDurationAndSetDuration() {
         EffectStatModifier effect =
-                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, "1 turn");
-        assertEquals("1 turn", effect.duration());
+                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, EffectDuration.ONE_TURN);
+        assertEquals(EffectDuration.ONE_TURN, effect.duration());
     }
 
     @Test
     public void testShouldGetModifierAndSetModifier() {
         EffectStatModifier effect =
-                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, "1 turn");
+                new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.DEFENSE, 10, EffectDuration.ONE_TURN);
         assertEquals(10, effect.modifier());
     }
 }
