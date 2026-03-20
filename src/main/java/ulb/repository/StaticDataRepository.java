@@ -46,74 +46,17 @@ public class StaticDataRepository {
 
     /**
      * Save the default attacks to the database. This method is used during the game initialization
-     * to load the static data of the game. It takes a map of Attack objects and saves them to the
-     * database. Each attack's effects are also saved as part of this process, ensuring that all
-     * necessary data is present in the database.
-     * @param attacks a map of Attack objects representing the default attacks to be saved in the
-     *         database. The key of the map is the attack's ID, which is used as a reference when
-     *         saving the Bugemons that use these attacks.
+     * to load the static data of the game. It takes a map of attack IDs to Attack objects and saves
+     * each attack to the database. For each attack, it also saves the associated effects, ensuring
+     * that all necessary data is present in the database.
+     * @param attacks a map of attack IDs to Attack objects representing the default attacks to be
+     *         saved in the database.
      */
     private void saveGameDataAttacks(Map<String, Attack> attacks) {
         for (Attack attack : attacks.values()) {
             try {
-                // Begin by inserting the attack itself
-                try (PreparedStatement psAttack = dbConnection.prepareStatement(
-                             this.dbRepository.getSql("SaveAttack"))) {
-                    psAttack.setString(1, attack.id());
-                    psAttack.setString(2, attack.name());
-                    psAttack.setObject(3, attack.type() != null ? attack.type().name() : null,
-                                       Types.VARCHAR);
-                    psAttack.setString(4, attack.description());
-                    psAttack.setInt(5, attack.power());
-                    psAttack.executeUpdate();
-                }
-
-                // Then insert its effects if it has any
-                if (attack.effects() != null && !attack.effects().isEmpty()) {
-                    try (PreparedStatement psEffect = dbConnection.prepareStatement(
-                                 this.dbRepository.getSql("SaveEffect"))) {
-                        for (Effect effect : attack.effects()) {
-                            psEffect.setString(1, attack.id()); // Foreign key to the attack
-
-                            switch (effect) {
-                                case EffectStatModifier modifier:
-                                    psEffect.setString(2, modifier.getClass().getSimpleName());
-                                    psEffect.setString(3, effect.target().name());
-                                    psEffect.setObject(
-                                            4,
-                                            modifier.stat() != null ? modifier.stat().name() : null,
-                                            Types.VARCHAR);
-                                    psEffect.setInt(5, modifier.modifier());
-                                    psEffect.setString(6, modifier.duration());
-                                    psEffect.setNull(7, Types.INTEGER);
-                                    break;
-
-                                case EffectHeal heal:
-                                    psEffect.setString(2, heal.getClass().getSimpleName());
-                                    psEffect.setString(3, heal.target().name());
-                                    psEffect.setNull(4, Types.VARCHAR);
-                                    psEffect.setNull(5, Types.INTEGER);
-                                    psEffect.setNull(6, Types.VARCHAR);
-                                    psEffect.setInt(7, heal.amount());
-                                    break;
-
-                                case EffectResetMalus malus:
-                                    psEffect.setString(2, malus.getClass().getSimpleName());
-                                    psEffect.setString(3, effect.target().name());
-                                    psEffect.setNull(4, Types.VARCHAR);
-                                    psEffect.setNull(5, Types.INTEGER);
-                                    psEffect.setNull(6, Types.VARCHAR);
-                                    psEffect.setNull(7, Types.INTEGER);
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                            psEffect.addBatch();
-                        }
-                        psEffect.executeBatch();
-                    }
-                }
+                saveAttack(attack);
+                saveAttackEffects(attack);
             } catch (SQLException e) {
                 throw new IllegalStateException(
                         "Error occurred while saving the default game data for attack: "
@@ -121,6 +64,140 @@ public class StaticDataRepository {
                         e);
             }
         }
+    }
+
+    /**
+     * Save an attack to the database. This method is used as part of the process to load the static
+     * data of the game during initialization. It takes an Attack object and saves its details to
+     * the database using a prepared statement.
+     * @param attack the Attack object to be saved to the database
+     * @throws SQLException if an error occurs while saving the attack to the database
+     */
+    private void saveAttack(Attack attack) throws SQLException {
+        try (PreparedStatement psAttack =
+                     dbConnection.prepareStatement(this.dbRepository.getSql("SaveAttack"))) {
+            psAttack.setString(1, attack.id());
+            psAttack.setString(2, attack.name());
+            psAttack.setObject(3, attack.type() != null ? attack.type().name() : null,
+                               Types.VARCHAR);
+            psAttack.setString(4, attack.description());
+            psAttack.setInt(5, attack.power());
+            psAttack.executeUpdate();
+        }
+    }
+
+    /**
+     * Save the effects of an attack to the database. This method is used as part of the process to
+     * load the static data of the game during initialization. It takes an Attack object and saves
+     * its associated effects to the database using a prepared statement.
+     * @param attack the Attack object for which to save effects
+     * @throws SQLException if an error occurs while saving the attack effects to the database
+     */
+    private void saveAttackEffects(Attack attack) throws SQLException {
+        if (attack.effects() == null || attack.effects().isEmpty()) {
+            return;
+        }
+
+        try (PreparedStatement psEffect =
+                     dbConnection.prepareStatement(this.dbRepository.getSql("SaveEffect"))) {
+            for (Effect effect : attack.effects()) {
+                psEffect.setString(1, attack.id()); // Foreign key to the attack
+                setEffectParameters(psEffect, effect);
+                psEffect.addBatch();
+            }
+            psEffect.executeBatch();
+        }
+    }
+
+    /**
+     * Set the parameters of a prepared statement for an effect based on the type of the effect.
+     * This method is used as part of the process to save the effects of an attack to the database
+     * during game initialization. It takes a PreparedStatement and an Effect object, and sets the
+     * parameters of the PreparedStatement according to the specific type of the Effect (e.g.,
+     * EffectStatModifier, EffectHeal, EffectResetMalus).
+     * @param psEffect the PreparedStatement for which to set parameters
+     * @param effect the Effect object for which to set parameters
+     * @throws SQLException if an error occurs while setting the effect parameters
+     */
+    private void setEffectParameters(PreparedStatement psEffect, Effect effect)
+            throws SQLException {
+        switch (effect) {
+            case EffectStatModifier modifier:
+                setStatModifierParameters(psEffect, modifier);
+                break;
+
+            case EffectHeal heal:
+                setHealParameters(psEffect, heal);
+                break;
+
+            case EffectResetMalus malus:
+                setResetMalusParameters(psEffect, malus);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Set the parameters of a prepared statement for an EffectStatModifier effect. This method is
+     * used as part of the process to save the effects of an attack to the database during game
+     * initialization. It takes a PreparedStatement and an EffectStatModifier object, and sets the
+     * parameters of the PreparedStatement according to the properties of the EffectStatModifier
+     * (e.g., target, stat, modifier, duration).
+     * @param psEffect the PreparedStatement for which to set parameters
+     * @param modifier the EffectStatModifier object for which to set parameters
+     * @throws SQLException if an error occurs while setting the effect parameters
+     */
+    private void setStatModifierParameters(PreparedStatement psEffect, EffectStatModifier modifier)
+            throws SQLException {
+        psEffect.setString(2, modifier.getClass().getSimpleName());
+        psEffect.setString(3, modifier.target().name());
+        psEffect.setObject(4, modifier.stat() != null ? modifier.stat().name() : null,
+                           Types.VARCHAR);
+        psEffect.setInt(5, modifier.modifier());
+        psEffect.setString(6, modifier.duration());
+        psEffect.setNull(7, Types.INTEGER);
+    }
+
+    /**
+     * Set the parameters of a prepared statement for an EffectHeal effect. This method is used as
+     * part of the process to save the effects of an attack to the database during game
+     * initialization. It takes a PreparedStatement and an EffectHeal object, and sets the
+     * parameters of the PreparedStatement according to the properties of the EffectHeal (e.g.,
+     * target, amount).
+     * @param psEffect the PreparedStatement for which to set parameters
+     * @param heal the EffectHeal object for which to set parameters
+     * @throws SQLException if an error occurs while setting the effect parameters
+     */
+    private void setHealParameters(PreparedStatement psEffect, EffectHeal heal)
+            throws SQLException {
+        psEffect.setString(2, heal.getClass().getSimpleName());
+        psEffect.setString(3, heal.target().name());
+        psEffect.setNull(4, Types.VARCHAR);
+        psEffect.setNull(5, Types.INTEGER);
+        psEffect.setNull(6, Types.VARCHAR);
+        psEffect.setInt(7, heal.amount());
+    }
+
+    /**
+     * Set the parameters of a prepared statement for an EffectResetMalus effect. This method is
+     * used as part of the process to save the effects of an attack to the database during game
+     * initialization. It takes a PreparedStatement and an EffectResetMalus object, and sets the
+     * parameters of the PreparedStatement according to the properties of the EffectResetMalus
+     * (e.g., target).
+     * @param psEffect the PreparedStatement for which to set parameters
+     * @param malus the EffectResetMalus object for which to set parameters
+     * @throws SQLException if an error occurs while setting the effect parameters
+     */
+    private void setResetMalusParameters(PreparedStatement psEffect, EffectResetMalus malus)
+            throws SQLException {
+        psEffect.setString(2, malus.getClass().getSimpleName());
+        psEffect.setString(3, malus.target().name());
+        psEffect.setNull(4, Types.VARCHAR);
+        psEffect.setNull(5, Types.INTEGER);
+        psEffect.setNull(6, Types.VARCHAR);
+        psEffect.setNull(7, Types.INTEGER);
     }
 
     /**
