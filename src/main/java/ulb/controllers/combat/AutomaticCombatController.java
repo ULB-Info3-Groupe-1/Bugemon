@@ -8,6 +8,7 @@ import javafx.util.Duration;
 
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
+import ulb.models.combat.TurnResult;
 import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.views.combat.AutomaticCombatView;
@@ -52,16 +53,20 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         timeline.setCycleCount(Animation.INDEFINITE);
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
-            combat.turn();
+            TurnResult turnResult = combat.turn();
+            timeline.pause();
 
-            combat.getWinner().ifPresent(winner -> {
-                timeline.stop();
-                handleCombatResult(winner, this.playerTrainer);
+            playTurnAnimations(turnResult, this.playerTrainer, () -> {
+                combat.getWinner().ifPresent(winner -> {
+                    timeline.stop();
+                    handleCombatResult(winner, this.playerTrainer);
+                });
+
+                if (!combat.isFinished()) {
+                    view.refresh();
+                    timeline.play();
+                }
             });
-
-            if (!combat.isFinished()) {
-                view.refresh();
-            }
         });
 
         timeline.getKeyFrames().add(keyFrame);
