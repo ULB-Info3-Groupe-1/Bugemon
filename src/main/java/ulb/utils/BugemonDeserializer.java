@@ -96,19 +96,17 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
             }
         }
 
-        Bugemon bugemon = new BugemonBuilder()
-                                  .id(id)
-                                  .name(name)
-                                  .type(type)
-                                  .sprite(sprite)
-                                  .hp(statsMap.get("pv"))
-                                  .attack(statsMap.get("attaque"))
-                                  .defense(statsMap.get("defense"))
-                                  .initiative(statsMap.get("initiative"))
-                                  .attackList(attackList)
-                                  .isStarter(starter)
-                                  .build();
-
-        return bugemon;
+        return new BugemonBuilder()
+                .id(id)
+                .name(name)
+                .type(type)
+                .sprite(sprite)
+                .hp(statsMap.get("pv"))
+                .attack(statsMap.get("attaque"))
+                .defense(statsMap.get("defense"))
+                .initiative(statsMap.get("initiative"))
+                .attackList(attackList)
+                .isStarter(starter)
+                .build();
     }
 }

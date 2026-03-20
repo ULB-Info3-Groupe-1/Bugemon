@@ -18,6 +18,10 @@ import ulb.models.trainer.Trainer;
  * </p>
  */
 public class LevelUpService {
+    private LevelUpService() {
+        // Private constructor to prevent instantiation
+    }
+
     /**
      * Calculates the XP gained from defeating opponents in combat.
      *
