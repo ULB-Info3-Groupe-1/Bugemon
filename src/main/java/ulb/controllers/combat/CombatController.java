@@ -56,7 +56,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      *                      played.
      */
     protected void playTurnAnimations(TurnResult result, Trainer playerTrainer,
-            Runnable onFinished) {
+                                      Runnable onFinished) {
         if (result == null || !result.first().wasAttack()) {
             onFinished.run();
             return;
@@ -65,7 +65,8 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         boolean firstFromPlayer = result.first().attacker() == playerTrainer;
         this.view.playAttackAnimation(firstFromPlayer, () -> {
             if (result.second().isPresent() && result.second().orElseThrow().wasAttack()) {
-                boolean secondFromPlayer = result.second().orElseThrow().attacker() == playerTrainer;
+                boolean secondFromPlayer =
+                        result.second().orElseThrow().attacker() == playerTrainer;
                 this.view.playAttackAnimation(secondFromPlayer, onFinished);
             } else {
                 onFinished.run();
@@ -82,8 +83,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * @return an {@link AutoTrainer} with a randomly generated team.
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
-        return new AutoTrainer(
-                TeamFactory.createRandomTeam(playerTeamSize));
+        return new AutoTrainer(TeamFactory.createRandomTeam(playerTeamSize));
     }
 
     /**
@@ -98,7 +98,8 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected void handleCombatResult(Trainer winner, Trainer playerTrainer) {
         if (winner == playerTrainer) {
-            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner, playerTrainer);
+            List<LevelUp> levelUps =
+                    LevelUpService.distributeXpAndGetLevelUps(winner, playerTrainer);
 
             this.onVictory.accept(levelUps);
         } else {

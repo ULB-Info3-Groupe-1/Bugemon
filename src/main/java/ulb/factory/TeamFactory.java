@@ -9,7 +9,6 @@ import java.util.Random;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.Parser;
-import ulb.utils.Parser;
 
 public class TeamFactory {
     private static final Random RANDOM = new Random();
@@ -43,13 +42,8 @@ public class TeamFactory {
             int randomIndex = RANDOM.nextInt(BUGEMON_LIST.size());
             Bugemon chosenBugemon = BUGEMON_LIST.get(randomIndex);
 
-            if (!randomTeam.contains(chosenBugemon.getId())) {
-                try {
-                    randomTeam.addBugemon(chosenBugemon.clone());
-                } catch (CloneNotSupportedException e) {
-                    throw new RuntimeException("Failed to clone Bugemon: " + chosenBugemon.getId(),
-                                               e);
-                }
+            if (!randomTeam.contains(chosenBugemon)) {
+                randomTeam.add(chosenBugemon.clone());
             }
         }
         return randomTeam;
@@ -60,7 +54,7 @@ public class TeamFactory {
                 BUGEMON_LIST.stream().filter(obj -> obj.getId().equals(BOSS_ID)).findFirst();
         BugemonTeam bossTeam = new BugemonTeam();
 
-        bossTeam.addBugemon(bossBugemon.orElseThrow(
+        bossTeam.add(bossBugemon.orElseThrow(
                 ()
                         -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID
                                                 + "' not found in the list.")));
