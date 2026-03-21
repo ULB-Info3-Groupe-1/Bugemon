@@ -3,12 +3,18 @@ package ulb.factory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.utils.Parser;
 
 public class TeamFactory {
+    private static final Random RANDOM = new Random();
+    private static final List<Bugemon> BUGEMON_LIST = Parser.getInstance().getBugemons();
+    private static final String BOSS_ID = "finalboss";
+
     /**
      * Generates a random {@link BugemonTeam} of the specified size by sampling
      * without replacement from the given pool of available {@link Bugemon}s.
@@ -29,16 +35,30 @@ public class TeamFactory {
      *         chosen, cloned {@link Bugemon}s.
      * @throws RuntimeException if cloning a selected {@link Bugemon} fails.
      */
-    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList,
-                                               final int teamSize) {
-        List<Bugemon> allBugemons = Parser.getInstance().getBugemons();
-        List<Bugemon> pool = new ArrayList<>(allBugemons);
-        Collections.shuffle(pool);
-        BugemonTeam team = new BugemonTeam();
-        for (int i = 0; i < teamSize; i++) {
-            team.add(pool.get(i).clone());
-        }
+    public static BugemonTeam createRandomTeam(final int teamSize) {
+        BugemonTeam randomTeam = new BugemonTeam();
 
-        return team;
+        while (randomTeam.size() != teamSize) {
+            int randomIndex = RANDOM.nextInt(BUGEMON_LIST.size());
+            Bugemon chosenBugemon = BUGEMON_LIST.get(randomIndex);
+
+            if (!randomTeam.contains(chosenBugemon)) {
+                randomTeam.add(chosenBugemon.clone());
+            }
+        }
+        return randomTeam;
+    }
+
+    public static BugemonTeam createBossTeam() {
+        final Optional<Bugemon> bossBugemon =
+                BUGEMON_LIST.stream().filter(obj -> obj.getId().equals(BOSS_ID)).findFirst();
+        BugemonTeam bossTeam = new BugemonTeam();
+
+        bossTeam.add(bossBugemon.orElseThrow(
+                ()
+                        -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID
+                                                + "' not found in the list.")));
+
+        return bossTeam;
     }
 }

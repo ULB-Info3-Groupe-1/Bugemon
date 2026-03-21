@@ -83,8 +83,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * @return an {@link AutoTrainer} with a randomly generated team.
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
-        return new AutoTrainer(
-                TeamFactory.createRandomTeam(Parser.getInstance().getBugemons(), playerTeamSize));
+        return new AutoTrainer(TeamFactory.createRandomTeam(playerTeamSize));
     }
 
     /**
