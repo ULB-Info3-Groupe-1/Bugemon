@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -42,7 +43,6 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
         this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
         this.view.refresh();
-
     }
 
     /** Toggles {@code bugemon} in the player's selected team. */
@@ -57,17 +57,18 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.refreshTeam(this.selectedTeam);
     }
 
-    public void returnToMainMenu(){
+    public void returnToMainMenu() {
         this.metaController.switchTo(MetaController.Window.MAIN_MENU);
     }
 
-    public void saveTeam(){
-
+    public void saveTeam() {
+        this.playerService.saveTeam("test_1", this.selectedTeam);
     }
 
-    public void loadTeam(){
-
+    public void loadTeam() {
+        List<Bugemon> team = this.playerService.loadTeam("test_1");
+        this.selectedTeam.clear();
+        team.forEach(this.selectedTeam::add);
+        this.view.refreshTeam(this.selectedTeam);
     }
-
-
 }

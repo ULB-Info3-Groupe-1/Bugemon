@@ -28,7 +28,6 @@ import ulb.views.MainMenuView;
  * @see Controller
  */
 public class MainMenuController extends Controller<MainMenuView> {
-
     private final PlayerService player;
     private final BugemonTeam selectedTeam;
 
@@ -46,7 +45,8 @@ public class MainMenuController extends Controller<MainMenuView> {
      * @throws IOException if the {@link MainMenuView} fails to load its FXML
      *                     resource.
      */
-    public MainMenuController(MetaController metaController, PlayerService player) throws IOException {
+    public MainMenuController(MetaController metaController, PlayerService player)
+            throws IOException {
         super(metaController, new MainMenuView());
         this.player = player;
         this.selectedTeam = player.getActiveTeam();
@@ -55,9 +55,6 @@ public class MainMenuController extends Controller<MainMenuView> {
         this.view.setOnQuit(this::quit);
         this.view.setOnStartAutoCombat(this::startAutoCombat);
         this.view.setOnStartManualCombat(this::startManualCombat);
-
-
-
     }
 
     /**

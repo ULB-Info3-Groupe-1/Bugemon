@@ -3,6 +3,7 @@ package ulb.views;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
@@ -20,7 +21,6 @@ public class MainMenuView extends View {
     @FXML private Button quitButton;
     @FXML private Button launchAutomaticCombat;
     @FXML private Button launchManualCombat;
-
 
     private Runnable onCreateTeam;
     private Runnable onQuit;
@@ -77,7 +77,7 @@ public class MainMenuView extends View {
     private void launchCombat(Runnable onStart) {
         if (bugemonTeam != null && bugemonTeam.isEmpty()) {
             showAlert("Équipe incomplète",
-                    "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
+                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
         } else if (onStart != null) {
             onStart.run();
         }
@@ -87,5 +87,4 @@ public class MainMenuView extends View {
     public void setModel(BugemonTeam bugemonTeam) {
         this.bugemonTeam = bugemonTeam;
     }
-
 }

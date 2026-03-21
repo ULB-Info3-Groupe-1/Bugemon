@@ -48,11 +48,9 @@ public class CreateTeamView extends View {
                 onGridBugemonClicked.accept(b);
         });
 
-        this.validateTeamBtn.setOnAction(e->returnToMainMenu(validate));
-        this.loadTeamBtn.setOnAction(e->loadTeam(load));
-        this.saveTeamBtn.setOnAction(e->saveTeam(save));
-
-
+        this.validateTeamBtn.setOnAction(e -> returnToMainMenu(validate));
+        this.loadTeamBtn.setOnAction(e -> loadTeam(load));
+        this.saveTeamBtn.setOnAction(e -> saveTeam(save));
     }
 
     /** Gives the view a reference to the team model it should read from. */
@@ -89,35 +87,33 @@ public class CreateTeamView extends View {
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
-
-    public void setValidate(Runnable validate){
+    public void setValidate(Runnable validate) {
         this.validate = validate;
     }
 
-    public void returnToMainMenu(Runnable validate){
-        if (validate != null){
+    public void returnToMainMenu(Runnable validate) {
+        if (validate != null) {
             validate.run();
         }
     }
 
-    public void setLoad(Runnable load){
+    public void setLoad(Runnable load) {
         this.load = load;
     }
 
-    public void setSave(Runnable save){
+    public void setSave(Runnable save) {
         this.save = save;
     }
 
-    public void saveTeam(Runnable save){
-        if (save != null){
+    public void saveTeam(Runnable save) {
+        if (save != null) {
             save.run();
         }
     }
 
-    public void loadTeam(Runnable load){
-        if (load != null){
+    public void loadTeam(Runnable load) {
+        if (load != null) {
             load.run();
         }
     }
-
 }
