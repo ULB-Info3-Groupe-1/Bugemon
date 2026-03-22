@@ -26,8 +26,20 @@ public class BugemonCell extends VBox {
     private static final String FXML_PATH = "/fxml/BugemonCell.fxml";
     private static final double IMAGE_SIZE = 96;
 
-    private Optional<Bugemon> bugemonData;
+    private static final String EMPTY_NAME = "?";
+    private static final Image EMPTY_IMAGE = new Image("/png/unknown.png");
+
+    private final Optional<Bugemon> bugemonData;
     private boolean selected = false;
+
+    public BugemonCell() {
+        this.loadFXML();
+        this.initializeComponents();
+
+        this.bugemonData = Optional.empty();
+
+        this.update();
+    }
 
     /**
      * Constructor for BugemonCell with a Bugemon.
@@ -39,10 +51,23 @@ public class BugemonCell extends VBox {
         this.loadFXML();
         this.initializeComponents();
 
-        this.setImage(bugemon.getSpriteURL());
-        this.setName(bugemon.getName());
+        this.bugemonData = Optional.of(bugemon);
 
-        this.setBugemonData(bugemon);
+        this.update();
+    }
+
+    private void update() {
+        this.updateName();
+        this.updateImage();
+    }
+
+    private void updateName() {
+        this.nameLabel.setText(this.bugemonData.map(Bugemon::getName).orElse(EMPTY_NAME));
+    }
+
+    private void updateImage() {
+        this.imageView.setImage(
+                this.bugemonData.map(d -> new Image(d.getSpriteURL())).orElse(EMPTY_IMAGE));
     }
 
     /**
@@ -78,31 +103,6 @@ public class BugemonCell extends VBox {
         this.imagePane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
 
         this.nameLabel.getStyleClass().add("bugemon-cell-name");
-    }
-
-    /**
-     * Sets the image to display in this cell using a URL.
-     * @param imageUrl the URL of the image to display
-     */
-    private void setImage(String imageUrl) {
-        this.imageView.setImage(new Image(imageUrl));
-    }
-
-    /**
-     * Sets the name to display below the image.
-     * @param name the name to display
-     */
-    private void setName(String name) {
-        this.nameLabel.setText(name);
-    }
-
-    /**
-     * Sets the bugemon data associated with this cell.
-     * This data can be retrieved later via getUserData().
-     * @param bugemonData the bugemon data to associate with this cell
-     */
-    private void setBugemonData(Bugemon bugemonData) {
-        this.bugemonData = Optional.of(bugemonData);
     }
 
     /**
