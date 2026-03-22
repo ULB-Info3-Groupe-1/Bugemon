@@ -108,7 +108,7 @@ public class MetaController {
     /**
      * Call the method from the musicLoader to load all music and sound effects
      * resources and register them with the musicPlayer.
-     * 
+     *
      * @throws IOException if any resource directory cannot be accessed
      */
     private void initializeMusicResources() throws IOException {

@@ -19,8 +19,7 @@ public class MusicLoader {
     private final String MUSIC_DIR = "/musics/";
     private final String SOUND_EFFECTS_DIR = "/sound_effects/";
 
-    public MusicLoader() {
-    }
+    public MusicLoader() {}
 
     /**
      * Loads all music files from the given resource directory and assigns them the
@@ -106,7 +105,8 @@ public class MusicLoader {
                 .forEach(musicPlayer::addMusic);
         loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
                 .forEach(musicPlayer::addMusic);
-        loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT).forEach(musicPlayer::addMusic);
+        loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT)
+                .forEach(musicPlayer::addMusic);
     }
 
     /**
