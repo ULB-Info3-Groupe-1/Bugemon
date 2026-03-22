@@ -2,6 +2,7 @@ package ulb.views;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -25,7 +26,7 @@ public class BugemonCell extends VBox {
     private static final String FXML_PATH = "/fxml/BugemonCell.fxml";
     private static final double IMAGE_SIZE = 96;
 
-    private Bugemon bugemonData;
+    private Optional<Bugemon> bugemonData;
     private boolean selected = false;
 
     /**
@@ -48,7 +49,7 @@ public class BugemonCell extends VBox {
      * Private helper to load the FXML layout.
      */
     private void loadFXML() {
-		URL url = getClass().getResource(FXML_PATH);
+        URL url = getClass().getResource(FXML_PATH);
         FXMLLoader loader = new FXMLLoader(url);
 
         loader.setRoot(this);
@@ -101,7 +102,7 @@ public class BugemonCell extends VBox {
      * @param bugemonData the bugemon data to associate with this cell
      */
     private void setBugemonData(Bugemon bugemonData) {
-        this.bugemonData = bugemonData;
+        this.bugemonData = Optional.of(bugemonData);
     }
 
     /**
@@ -109,7 +110,10 @@ public class BugemonCell extends VBox {
      * @return the bugemon data
      */
     public Bugemon getBugemonData() {
-        return this.bugemonData;
+        return this.bugemonData.orElseThrow(
+                ()
+                        -> new IllegalStateException(
+                                "attempted to get bugemon-data of an empty BugemonCell"));
     }
 
     /**
