@@ -98,10 +98,10 @@ public class BugemonCell extends VBox {
     /**
      * Sets the bugemon data associated with this cell.
      * This data can be retrieved later via getUserData().
-     * @param data the bugemon data to associate with this cell
+     * @param bugemonData the bugemon data to associate with this cell
      */
-    private void setBugemonData(Bugemon data) {
-        this.bugemonData = data;
+    private void setBugemonData(Bugemon bugemonData) {
+        this.bugemonData = bugemonData;
     }
 
     /**
