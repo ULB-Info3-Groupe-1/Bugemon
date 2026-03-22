@@ -66,6 +66,11 @@ public class MusicPlayer {
         }
     }
 
+    /**
+     * Plays the given music as a sound effect.
+     * 
+     * @param music the music to play as a sound effect
+     */
     public void playSoundEffect(Music music) {
         try {
             Media track = new Media(music.url().toExternalForm());
@@ -85,17 +90,15 @@ public class MusicPlayer {
      * @param ambiance the ambiance of the music track to play.
      */
     public void playAmbiance(Ambiance ambiance, Boolean isSoundEffect) {
-        List<Music> matchingMusics =
-                this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
+        List<Music> matchingMusics = this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 
         if (matchingMusics.isEmpty()) {
             System.err.println("Error playing music matching ambiance " + ambiance.toString()
-                               + ": no match");
+                    + ": no match");
             return;
         }
 
-        Music music =
-                matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
+        Music music = matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
 
         if (isSoundEffect != null && isSoundEffect) {
             this.playSoundEffect(music);
