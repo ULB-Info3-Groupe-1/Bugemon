@@ -106,6 +106,8 @@ public class MetaController {
                 .forEach(this.musicPlayer::addMusic);
         musicLoader.loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
                 .forEach(this.musicPlayer::addMusic);
+        musicLoader.loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT)
+                .forEach(this.musicPlayer::addMusic);
         this.manualCombatController.setOnVictory(
                 levelUps -> levelUpController.setLevelUp(levelUps));
         this.automaticCombatController.setOnVictory(
@@ -137,7 +139,10 @@ public class MetaController {
             combatVictoryController.show(stage);
             this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
         });
-        transitions.put(Window.COMBAT_DEFEAT, () -> combatDefeatController.show(stage));
+        transitions.put(Window.COMBAT_DEFEAT, () -> {
+            combatDefeatController.show(stage);
+            this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
+        });
         transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
     }
 
