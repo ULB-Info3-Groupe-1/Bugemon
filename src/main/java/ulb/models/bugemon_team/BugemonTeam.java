@@ -119,6 +119,14 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return this.team.stream().filter(b -> id.equals(b.getId())).findFirst();
     }
 
+    public Optional<Bugemon> get(int idx) {
+        return checkInBounds(idx) ? Optional.of(this.team.get(idx)) : Optional.empty();
+    }
+
+    private boolean checkInBounds(int idx) {
+        return idx >= 0 && idx < this.team.size();
+    }
+
     /**
      * Checks if a Bugemon with the same ID is already in the team
      *
