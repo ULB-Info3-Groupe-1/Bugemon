@@ -100,7 +100,8 @@ public class MetaController {
                 .forEach(this.musicPlayer::addMusic);
         musicLoader.loadFromDirectory("/musics/menu", Ambiance.MENU)
                 .forEach(this.musicPlayer::addMusic);
-
+        musicLoader.loadFromDirectory("/musics/create_team", Ambiance.CREATE_TEAM)
+                .forEach(this.musicPlayer::addMusic);
         this.manualCombatController.setOnVictory(
                 levelUps -> levelUpController.setLevelUp(levelUps));
         this.automaticCombatController.setOnVictory(
@@ -114,14 +115,17 @@ public class MetaController {
             this.musicPlayer.playAmbiance(Ambiance.MENU);
             mainMenuController.show(stage);
         });
-        transitions.put(Window.CREATE_TEAM, () -> createTeamController.show(stage));
+        transitions.put(Window.CREATE_TEAM, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM);
+            createTeamController.show(stage);
+        });
         transitions.put(Window.MANUAL_COMBAT, () -> {
-            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT);
             manualCombatController.startCombat();
             manualCombatController.show(stage);
         });
         transitions.put(Window.AUTOMATIC_COMBAT, () -> {
-            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT);
             automaticCombatController.startCombat();
             automaticCombatController.show(stage);
         });
