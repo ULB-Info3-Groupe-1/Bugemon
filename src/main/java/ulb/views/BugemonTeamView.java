@@ -63,7 +63,7 @@ public class BugemonTeamView extends VBox {
      * @return a BugemonCell containing the image and name of the Bugemon to be displayed in the
      *         grid view
      */
-    private BugemonCell createBugemonCell(BugemonDTO bugemon) {
+    private BugemonCell createBugemonCell(Bugemon bugemon) {
         BugemonCell cell = new BugemonCell(bugemon);
 
         // Set click handler

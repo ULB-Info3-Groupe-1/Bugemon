@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Reusable custom component representing a single Bugemon cell
@@ -22,29 +22,24 @@ public class BugemonCell extends VBox {
     @FXML private ImageView imageView;
     @FXML private Label nameLabel;
 
+    private static final String FXML_PATH = "/fxml/BugemonCell.fxml";
     private static final double IMAGE_SIZE = 96;
-    private static final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
 
-    private Object bugemonData;
+    private Bugemon bugemonData;
     private boolean selected = false;
 
     /**
      * Constructor for BugemonCell with a Bugemon.
      * Loads the FXML layout and initializes the view with the bugemon's data.
      *
-     * @param bugemon the BugemonDTO to display (can be null for empty cells)
+     * @param bugemon the Bugemon to display (can be null for empty cells)
      */
-    public BugemonCell(BugemonDTO bugemon) {
-        loadFXML();
+    public BugemonCell(Bugemon bugemon) {
+        this.loadFXML();
         initializeComponents();
 
-        if (bugemon != null) {
-            setImage(bugemon.getSpriteURL());
-            setName(bugemon.getName());
-        } else {
-            setImage(UNKNOWN_IMAGE);
-            setName("Vide");
-        }
+        setImage(bugemon.getSpriteURL());
+        setName(bugemon.getName());
 
         setBugemonData(bugemon);
     }
@@ -53,8 +48,9 @@ public class BugemonCell extends VBox {
      * Private helper to load the FXML layout.
      */
     private void loadFXML() {
-        URL url = getClass().getResource("/fxml/BugemonCell.fxml");
+		URL url = getClass().getResource(FXML_PATH);
         FXMLLoader loader = new FXMLLoader(url);
+
         loader.setRoot(this);
         loader.setController(this);
 
@@ -116,16 +112,15 @@ public class BugemonCell extends VBox {
      * This data can be retrieved later via getUserData().
      * @param data the bugemon data to associate with this cell
      */
-    public void setBugemonData(Object data) {
+    public void setBugemonData(Bugemon data) {
         this.bugemonData = data;
-        this.setUserData(data);
     }
 
     /**
      * Gets the bugemon data associated with this cell.
      * @return the bugemon data
      */
-    public Object getBugemonData() {
+    public Bugemon getBugemonData() {
         return bugemonData;
     }
 
