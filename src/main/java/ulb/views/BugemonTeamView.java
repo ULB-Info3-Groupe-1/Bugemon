@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -22,7 +21,7 @@ public class BugemonTeamView extends VBox {
 
     private static final int IMAGES_PER_ROW = 3;
 
-    private Consumer<BugemonDTO> onBugemonClicked;
+    private Consumer<Bugemon> onBugemonClicked;
 
     public BugemonTeamView() {
         URL url = getClass().getResource("/fxml/BugemonTeam.fxml");
@@ -59,7 +58,7 @@ public class BugemonTeamView extends VBox {
     /**
      * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon.
      * If the Bugemon is null, it displays an unknown image and an empty name.
-     * @param bugemon the BugemonDTO representing the Bugemon to be displayed in the cell
+     * @param bugemon the Bugemon representing the Bugemon to be displayed in the cell
      * @return a BugemonCell containing the image and name of the Bugemon to be displayed in the
      *         grid view
      */
@@ -69,9 +68,9 @@ public class BugemonTeamView extends VBox {
         // Set click handler
         if (this.onBugemonClicked != null) {
             cell.setOnMouseClicked(e -> {
-                BugemonDTO dto = (BugemonDTO)cell.getBugemonData();
-                if (dto != null) {
-                    this.onBugemonClicked.accept(dto);
+                Bugemon b = cell.getBugemonData();
+                if (bugemon != null) {
+                    this.onBugemonClicked.accept(b);
                 }
             });
         }
@@ -81,14 +80,14 @@ public class BugemonTeamView extends VBox {
 
     /**
      * Sets the callback used to handle clicks on bugemon cells. The callback
-     * receives the {@link ulb.common.dto.BugemonDTO} of the clicked cell.
+     * receives the {@link ulb.models.bugemon.Bugemon} of the clicked cell.
      *
-     * @param callback a {@code Consumer<BugemonDTO>} callback to be called when
+     * @param callback a {@code Consumer<Bugemon>} callback to be called when
      *                 a bugemon cell is clicked, receiving the
-     *                 {@link ulb.common.dto.BugemonDTO} of the clicked cell;
+     *                 {@link ulb.models.bugemon.Bugemon} of the clicked cell;
      *                 must not be {@code null}.
      */
-    public void setOnClickCallback(Consumer<BugemonDTO> callback) {
+    public void setOnClickCallback(Consumer<Bugemon> callback) {
         this.onBugemonClicked = callback;
     }
 }

@@ -53,11 +53,11 @@ public class AllBugemonsGridView extends VBox {
 
     /**
      * Sets the callback used to handle clicks on bugemon cells. The callback
-     * receives the {@link ulb.common.dto.BugemonDTO} of the clicked cell.
+     * receives the {@link ulb.models.bugemon.Bugemon} of the clicked cell.
      *
-     * @param callback a {@code Consumer<BugemonDTO>} callback to be called when
+     * @param callback a {@code Consumer<Bugemon>} callback to be called when
      *                 a bugemon cell is clicked, receiving the
-     *                 {@link ulb.common.dto.BugemonDTO} of the clicked cell;
+     *                 {@link ulb.models.bugemon.Bugemon} of the clicked cell;
      *                 must not be {@code null}.
      */
     public void setOnClickCallback(Consumer<Bugemon> callback) {
@@ -99,7 +99,7 @@ public class AllBugemonsGridView extends VBox {
         // Set click handler
         if (this.onBugemonClicked != null) {
             cell.setOnMouseClicked(e -> {
-                Bugemon b = (Bugemon)cell.getBugemonData();
+                Bugemon b = cell.getBugemonData();
                 if (b != null) {
                     this.onBugemonClicked.accept(b);
                 }
