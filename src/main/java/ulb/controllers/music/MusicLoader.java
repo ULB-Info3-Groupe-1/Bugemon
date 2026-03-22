@@ -16,10 +16,15 @@ import java.util.stream.Stream;
  * MusicLoarder
  */
 public class MusicLoader {
-    public MusicLoader() {}
+    private final String MUSIC_DIR = "/musics/";
+    private final String SOUND_EFFECTS_DIR = "/sound_effects/";
+
+    public MusicLoader() {
+    }
 
     /**
-     * Loads all music files from the given resource directory and assigns them the given ambiance.
+     * Loads all music files from the given resource directory and assigns them the
+     * given ambiance.
      *
      * @param resourceDir path to the resource directory (inside JAR or filesystem)
      * @param ambiance    ambiance to assign to each loaded music
@@ -85,6 +90,23 @@ public class MusicLoader {
         try (Stream<Path> stream = Files.list(dir)) {
             return stream.filter(Files::isRegularFile).toList();
         }
+    }
+
+    /**
+     * Loads all game music and sound effects and registers them with the provided
+     * player.
+     *
+     * @param musicPlayer the music player to register music with
+     * @throws IOException if any resource directory cannot be accessed
+     */
+    public void loadAllResources(MusicPlayer musicPlayer) throws IOException {
+        loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT).forEach(musicPlayer::addMusic);
+        loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU).forEach(musicPlayer::addMusic);
+        loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
+                .forEach(musicPlayer::addMusic);
+        loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
+                .forEach(musicPlayer::addMusic);
+        loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT).forEach(musicPlayer::addMusic);
     }
 
     /**

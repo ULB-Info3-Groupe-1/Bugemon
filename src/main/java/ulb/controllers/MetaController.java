@@ -77,8 +77,6 @@ public class MetaController {
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
     private final Player player = new Player(new Inventory());
-    private final String MUSIC_DIR = "/musics/";
-    private final String SOUND_EFFECTS_DIR = "/sound_effects/";
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -98,16 +96,7 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        musicLoader.loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT)
-                .forEach(this.musicPlayer::addMusic);
-        musicLoader.loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU)
-                .forEach(this.musicPlayer::addMusic);
-        musicLoader.loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
-                .forEach(this.musicPlayer::addMusic);
-        musicLoader.loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
-                .forEach(this.musicPlayer::addMusic);
-        musicLoader.loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT)
-                .forEach(this.musicPlayer::addMusic);
+        initializeMusicResources();
         this.manualCombatController.setOnVictory(
                 levelUps -> levelUpController.setLevelUp(levelUps));
         this.automaticCombatController.setOnVictory(
@@ -116,6 +105,20 @@ public class MetaController {
         initTransitions();
     }
 
+    /**
+     * Call the method from the musicLoader to load all music and sound effects
+     * resources and register them with the musicPlayer.
+     * 
+     * @throws IOException if any resource directory cannot be accessed
+     */
+    private void initializeMusicResources() throws IOException {
+        musicLoader.loadAllResources(musicPlayer);
+    }
+
+    /**
+     * Initializes the screen transition map, associating each {@link Window} with
+     * a lambda that performs the necessary actions to display that screen.
+     */
     private void initTransitions() {
         transitions.put(Window.MAIN_MENU, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
