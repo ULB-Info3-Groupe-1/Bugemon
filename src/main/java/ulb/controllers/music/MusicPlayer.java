@@ -89,7 +89,7 @@ public class MusicPlayer {
      *
      * @param ambiance the ambiance of the music track to play.
      */
-    public void playAmbiance(Ambiance ambiance, Boolean isSoundEffect) {
+    public void playAmbiance(Ambiance ambiance, boolean isSoundEffect) {
         List<Music> matchingMusics = this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 
         if (matchingMusics.isEmpty()) {
@@ -100,7 +100,7 @@ public class MusicPlayer {
 
         Music music = matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
 
-        if (isSoundEffect != null && isSoundEffect) {
+        if (isSoundEffect) {
             this.playSoundEffect(music);
         } else {
             this.playMusic(music);
