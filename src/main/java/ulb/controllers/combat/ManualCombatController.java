@@ -38,7 +38,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             throws IOException {
         super(metaController, playerService, new ManualCombatView());
 
-        this.view.setOnAttack(this::onAttack);
+        this.view.setOnAttack(this::onAttack); 
         this.view.setOnSwitch(this::onSwitch);
         this.view.setOnSurrender(this::onSurrender);
     }
