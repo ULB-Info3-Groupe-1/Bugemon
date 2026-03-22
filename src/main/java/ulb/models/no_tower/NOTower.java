@@ -40,14 +40,18 @@ public class NOTower {
         return floors.get(currentFloor);
     }
 
-    public boolean goToNextFloor() throws IllegalStateException {
-        currentFloor++;
-        try {
-            getCurrentFloor().advance();
-            return true;
-        } catch (Exception e) {
-            return false;
+    public void goToNextFloor() {
+        if (!getCurrentFloor().isComplete()) {
+            throw new IllegalStateException("Current floor is not complete");
         }
+        if (!hasNextFloor()) {
+            throw new IllegalStateException("No more floors");
+        }
+        currentFloor++;
+    }
+
+    private boolean hasNextFloor() {
+        return currentFloor < MAX_FLOORS - 1;
     }
 
     private void generateFloors(BugemonTeam playerTeam, PlayerService playerService) {
