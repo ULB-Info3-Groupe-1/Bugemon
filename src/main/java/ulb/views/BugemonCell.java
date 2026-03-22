@@ -32,27 +32,33 @@ public class BugemonCell extends VBox {
     private final Optional<Bugemon> bugemonData;
     private boolean selected = false;
 
+    /**
+     * Constructor for an empty BugemonCell.
+     * Loads the FXML layout and initializes the view with placeholder data.
+     */
     public BugemonCell() {
-        this.loadFXML();
-        this.initializeComponents();
-
-        this.bugemonData = Optional.empty();
-
-        this.update();
+        this(Optional.empty());
     }
 
     /**
      * Constructor for BugemonCell with a Bugemon.
      * Loads the FXML layout and initializes the view with the bugemon's data.
      *
-     * @param bugemon the Bugemon to display (can be null for empty cells)
+     * @param bugemon the Bugemon to display
      */
     public BugemonCell(Bugemon bugemon) {
+        this(Optional.of(bugemon));
+    }
+
+    /**
+     * Private constructor that handles the actual initialization.
+     *
+     * @param bugemonData the Optional containing the Bugemon data (empty for empty cells)
+     */
+    private BugemonCell(Optional<Bugemon> bugemonData) {
+        this.bugemonData = bugemonData;
         this.loadFXML();
         this.initializeComponents();
-
-        this.bugemonData = Optional.of(bugemon);
-
         this.update();
     }
 
