@@ -11,6 +11,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import ulb.common.dto.BugemonDTO;
+
 /**
  * Reusable custom component representing a single Bugemon cell
  * with an image and name label.
@@ -21,14 +23,36 @@ public class BugemonCell extends VBox {
     @FXML private Label nameLabel;
 
     private static final double IMAGE_SIZE = 96;
+    private static final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
 
     private Object bugemonData;
     private boolean selected = false;
 
     /**
-     * Constructor for BugemonCell. Loads the FXML layout and initializes the view.
+     * Constructor for BugemonCell with a Bugemon.
+     * Loads the FXML layout and initializes the view with the bugemon's data.
+     *
+     * @param bugemon the BugemonDTO to display (can be null for empty cells)
      */
-    public BugemonCell() {
+    public BugemonCell(BugemonDTO bugemon) {
+        loadFXML();
+        initializeComponents();
+
+        if (bugemon != null) {
+            setImage(bugemon.getSpriteURL());
+            setName(bugemon.getName());
+        } else {
+            setImage(UNKNOWN_IMAGE);
+            setName("Vide");
+        }
+
+        setBugemonData(bugemon);
+    }
+
+    /**
+     * Private helper to load the FXML layout.
+     */
+    private void loadFXML() {
         URL url = getClass().getResource("/fxml/BugemonCell.fxml");
         FXMLLoader loader = new FXMLLoader(url);
         loader.setRoot(this);
@@ -39,7 +63,12 @@ public class BugemonCell extends VBox {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load BugemonCell.fxml", e);
         }
+    }
 
+    /**
+     * Private helper to initialize component styling and properties.
+     */
+    private void initializeComponents() {
         // Apply default styling
         this.setAlignment(Pos.CENTER);
         this.setSpacing(2);

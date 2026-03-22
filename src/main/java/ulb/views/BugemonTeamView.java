@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -24,9 +23,6 @@ public class BugemonTeamView extends VBox {
     private static final int IMAGES_PER_ROW = 3;
 
     private Consumer<BugemonDTO> onBugemonClicked;
-
-    // Unknown image if no Bugemon available
-    private final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
 
     public BugemonTeamView() {
         URL url = getClass().getResource("/fxml/BugemonTeam.fxml");
@@ -68,21 +64,7 @@ public class BugemonTeamView extends VBox {
      *         grid view
      */
     private BugemonCell createBugemonCell(BugemonDTO bugemon) {
-        BugemonCell cell = new BugemonCell();
-
-        // Set image (use unknown image if bugemon is null)
-        if (bugemon != null) {
-            cell.setImage(bugemon.getSpriteURL());
-        } else {
-            cell.setImage(this.UNKNOWN_IMAGE);
-        }
-
-        // Set name (use "Vide" if bugemon is null)
-        String name = (bugemon != null) ? bugemon.getName() : "Vide";
-        cell.setName(name);
-
-        // Set bugemon data
-        cell.setBugemonData(bugemon);
+        BugemonCell cell = new BugemonCell(bugemon);
 
         // Set click handler
         if (this.onBugemonClicked != null) {

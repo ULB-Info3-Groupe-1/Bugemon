@@ -90,10 +90,7 @@ public class AllBugemonsGridView extends VBox {
      *         grid view
      */
     private BugemonCell createBugemonCell(Bugemon bugemon) {
-        BugemonCell cell = new BugemonCell();
-        cell.setImage(bugemon.getSpriteURL());
-        cell.setName(bugemon.getName());
-        cell.setBugemonData(bugemon);
+        BugemonCell cell = new BugemonCell(bugemon);
 
         // Apply selection state
         boolean isSelected = selectionChecker != null && selectionChecker.apply(bugemon);
