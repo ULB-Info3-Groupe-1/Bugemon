@@ -36,12 +36,12 @@ public class BugemonCell extends VBox {
      */
     public BugemonCell(Bugemon bugemon) {
         this.loadFXML();
-        initializeComponents();
+        this.initializeComponents();
 
-        setImage(bugemon.getSpriteURL());
-        setName(bugemon.getName());
+        this.setImage(bugemon.getSpriteURL());
+        this.setName(bugemon.getName());
 
-        setBugemonData(bugemon);
+        this.setBugemonData(bugemon);
     }
 
     /**
@@ -65,46 +65,34 @@ public class BugemonCell extends VBox {
      * Private helper to initialize component styling and properties.
      */
     private void initializeComponents() {
-        // Apply default styling
         this.setAlignment(Pos.CENTER);
         this.setSpacing(2);
         this.getStyleClass().add("bugemon-cell");
 
-        // Configure image view
-        imageView.setFitWidth(IMAGE_SIZE);
-        imageView.setFitHeight(IMAGE_SIZE);
-        imageView.setPreserveRatio(true);
+        this.imageView.setFitWidth(IMAGE_SIZE);
+        this.imageView.setFitHeight(IMAGE_SIZE);
+        this.imageView.setPreserveRatio(true);
 
-        // Configure image pane
-        imagePane.setMinSize(IMAGE_SIZE, IMAGE_SIZE);
-        imagePane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
+        this.imagePane.setMinSize(IMAGE_SIZE, IMAGE_SIZE);
+        this.imagePane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
 
-        // Configure name label
-        nameLabel.getStyleClass().add("bugemon-cell-name");
-    }
-
-    /**
-     * Sets the image to display in this cell.
-     * @param image the Image to display
-     */
-    public void setImage(Image image) {
-        imageView.setImage(image);
+        this.nameLabel.getStyleClass().add("bugemon-cell-name");
     }
 
     /**
      * Sets the image to display in this cell using a URL.
      * @param imageUrl the URL of the image to display
      */
-    public void setImage(String imageUrl) {
-        imageView.setImage(new Image(imageUrl));
+    private void setImage(String imageUrl) {
+        this.imageView.setImage(new Image(imageUrl));
     }
 
     /**
      * Sets the name to display below the image.
      * @param name the name to display
      */
-    public void setName(String name) {
-        nameLabel.setText(name);
+    private void setName(String name) {
+        this.nameLabel.setText(name);
     }
 
     /**
@@ -112,7 +100,7 @@ public class BugemonCell extends VBox {
      * This data can be retrieved later via getUserData().
      * @param data the bugemon data to associate with this cell
      */
-    public void setBugemonData(Bugemon data) {
+    private void setBugemonData(Bugemon data) {
         this.bugemonData = data;
     }
 
@@ -121,16 +109,16 @@ public class BugemonCell extends VBox {
      * @return the bugemon data
      */
     public Bugemon getBugemonData() {
-        return bugemonData;
+        return this.bugemonData;
     }
 
     /**
      * Marks this cell as selected, applying the selected styling.
      */
-    public void select() {
-        if (!selected) {
-            selected = true;
-            imageView.getStyleClass().add("bugemon-image-selected");
+    private void select() {
+        if (!this.selected) {
+            this.selected = true;
+            this.imageView.getStyleClass().add("bugemon-image-selected");
             this.getStyleClass().remove("bugemon-cell");
             this.getStyleClass().add("bugemon-cell-selected");
         }
@@ -139,10 +127,10 @@ public class BugemonCell extends VBox {
     /**
      * Marks this cell as unselected, removing the selected styling.
      */
-    public void unselect() {
-        if (selected) {
-            selected = false;
-            imageView.getStyleClass().remove("bugemon-image-selected");
+    private void unselect() {
+        if (this.selected) {
+            this.selected = false;
+            this.imageView.getStyleClass().remove("bugemon-image-selected");
             this.getStyleClass().remove("bugemon-cell-selected");
             this.getStyleClass().add("bugemon-cell");
         }
@@ -154,17 +142,9 @@ public class BugemonCell extends VBox {
      */
     public void setSelected(boolean selected) {
         if (selected) {
-            select();
+            this.select();
         } else {
-            unselect();
+            this.unselect();
         }
-    }
-
-    /**
-     * Returns whether this cell is currently selected.
-     * @return true if selected, false otherwise
-     */
-    public boolean isSelected() {
-        return selected;
     }
 }
