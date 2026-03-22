@@ -25,6 +25,7 @@ public class MusicPlayer {
     // NOTE: This is optional because a MediaPlayer's constructor needs a Media
     // instance, but there is no media to play when constructing the MusicPlayer.
     private Optional<MediaPlayer> mediaPlayer;
+    private Optional<MediaPlayer> soundEffectPlayer;
 
     private List<Music> musics;
 
@@ -65,12 +66,25 @@ public class MusicPlayer {
         }
     }
 
+    public void playSoundEffect(Music music) {
+        try {
+            Media track = new Media(music.url().toExternalForm());
+            this.soundEffectPlayer = Optional.of(new MediaPlayer(track));
+            this.soundEffectPlayer.ifPresent(player -> {
+                player.setCycleCount(1);
+                player.play();
+            });
+        } catch (Exception e) {
+            System.err.println("Error playing sound effect: " + e.getMessage());
+        }
+    }
+
     /**
      * Plays a random music track according to the given ambiance.
      *
      * @param ambiance the ambiance of the music track to play.
      */
-    public void playAmbiance(Ambiance ambiance) {
+    public void playAmbiance(Ambiance ambiance, Boolean isSoundEffect) {
         List<Music> matchingMusics =
                 this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 
@@ -83,7 +97,11 @@ public class MusicPlayer {
         Music music =
                 matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
 
-        this.playMusic(music);
+        if (isSoundEffect != null && isSoundEffect) {
+            this.playSoundEffect(music);
+        } else {
+            this.playMusic(music);
+        }
     }
 
     /**

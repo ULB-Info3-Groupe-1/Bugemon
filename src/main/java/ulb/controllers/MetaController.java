@@ -78,6 +78,7 @@ public class MetaController {
     private final MusicLoader musicLoader;
     private final Player player = new Player(new Inventory());
     private final String MUSIC_DIR = "/musics/";
+    private final String SOUND_EFFECTS_DIR = "/sound_effects/";
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -103,6 +104,8 @@ public class MetaController {
                 .forEach(this.musicPlayer::addMusic);
         musicLoader.loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
                 .forEach(this.musicPlayer::addMusic);
+        musicLoader.loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
+                .forEach(this.musicPlayer::addMusic);
         this.manualCombatController.setOnVictory(
                 levelUps -> levelUpController.setLevelUp(levelUps));
         this.automaticCombatController.setOnVictory(
@@ -113,24 +116,27 @@ public class MetaController {
 
     private void initTransitions() {
         transitions.put(Window.MAIN_MENU, () -> {
-            this.musicPlayer.playAmbiance(Ambiance.MENU);
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
             mainMenuController.show(stage);
         });
         transitions.put(Window.CREATE_TEAM, () -> {
-            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM);
+            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
             createTeamController.show(stage);
         });
         transitions.put(Window.MANUAL_COMBAT, () -> {
-            this.musicPlayer.playAmbiance(Ambiance.COMBAT);
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             manualCombatController.startCombat();
             manualCombatController.show(stage);
         });
         transitions.put(Window.AUTOMATIC_COMBAT, () -> {
-            this.musicPlayer.playAmbiance(Ambiance.COMBAT);
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             automaticCombatController.startCombat();
             automaticCombatController.show(stage);
         });
-        transitions.put(Window.COMBAT_VICTORY, () -> combatVictoryController.show(stage));
+        transitions.put(Window.COMBAT_VICTORY, () -> {
+            combatVictoryController.show(stage);
+            this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
+        });
         transitions.put(Window.COMBAT_DEFEAT, () -> combatDefeatController.show(stage));
         transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
     }
