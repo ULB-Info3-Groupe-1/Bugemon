@@ -77,6 +77,7 @@ public class MetaController {
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
     private final Player player = new Player(new Inventory());
+    private final String MUSIC_DIR = "/musics/";
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -96,11 +97,11 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        musicLoader.loadFromDirectory("/musics/combat", Ambiance.COMBAT)
+        musicLoader.loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT)
                 .forEach(this.musicPlayer::addMusic);
-        musicLoader.loadFromDirectory("/musics/menu", Ambiance.MENU)
+        musicLoader.loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU)
                 .forEach(this.musicPlayer::addMusic);
-        musicLoader.loadFromDirectory("/musics/create_team", Ambiance.CREATE_TEAM)
+        musicLoader.loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
                 .forEach(this.musicPlayer::addMusic);
         this.manualCombatController.setOnVictory(
                 levelUps -> levelUpController.setLevelUp(levelUps));
