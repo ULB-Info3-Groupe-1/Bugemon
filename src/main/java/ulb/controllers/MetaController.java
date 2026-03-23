@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
@@ -196,4 +197,7 @@ public class MetaController {
     public void setLevelUp(List<LevelUp> levelUps) {
         this.levelUpController.setLevelUp(levelUps);
     }
+
+    public Inventory getInventory() { return this.parseResult.getInventory(); };
 }
+

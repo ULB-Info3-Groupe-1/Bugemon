@@ -18,4 +18,16 @@ public class Inventory {
             objects.add(object);
         }
     }
+
+    public boolean isInInventory(String id) {
+        return this.objects.stream()
+                .anyMatch(objet -> objet.id().equals(id));
+    }
+
+    public GameObject getGameObject(String id) {
+        return this.objects.stream()
+                .filter(objet -> objet.id().equals(id)) // On garde uniquement l'objet avec le bon ID
+                .findFirst()                            // On prend le premier trouvé
+                .orElse(null);                          // Sécurité : si on ne le trouve pas, on renvoie "null" (rien)
+    }
 }

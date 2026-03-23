@@ -6,8 +6,7 @@ import java.util.List;
 import ulb.common.BugemonDTO;
 import ulb.controllers.MetaController;
 import ulb.factory.TeamFactory;
-import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.*;
 import ulb.models.bugemon.Bugemon.BType;
 import ulb.models.combat.ManualCombat;
 import ulb.models.trainer.AutoTrainer;
@@ -15,6 +14,7 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.ManualTrainer.TAction;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.ManualCombatView;
+
 
 /**
  * Controller responsible for the manual combat screen, where the player
@@ -55,6 +55,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     private ManualCombat combat;
     private ManualTrainer player;
     private AutoTrainer opponent;
+    private Inventory inventory;
 
     /**
      * Constructs a {@code ManualCombatController}, initialises its
@@ -217,5 +218,17 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
     public BType getOpponentBugemonType() {
         return this.opponent.getCurrentBugemonType();
+    }
+
+
+    public void onItemSelected(String id) {
+        this.inventory = metaController.getInventory();
+        if (inventory.isInInventory(id)) {
+            GameObject objectUsed = this.inventory.getGameObject(id);
+            Effect objectEffect = objectUsed.effect();
+
+        }
+
+
     }
 }
