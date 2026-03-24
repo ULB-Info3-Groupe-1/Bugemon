@@ -3,8 +3,6 @@ package ulb.controllers;
 import java.io.IOException;
 
 import ulb.controllers.MetaController.Window;
-import ulb.models.bugemon_team.BugemonTeam;
-import ulb.services.PlayerService;
 import ulb.views.MainMenuView;
 
 /**

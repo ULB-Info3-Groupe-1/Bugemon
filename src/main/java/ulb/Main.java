@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.services.PlayerService;
 
 /**
  * JavaFX {@link Application} subclass that bootstraps the Bugemon game.

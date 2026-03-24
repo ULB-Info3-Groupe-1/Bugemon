@@ -10,8 +10,6 @@
 package ulb.models.no_tower;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.List;
 
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.*;

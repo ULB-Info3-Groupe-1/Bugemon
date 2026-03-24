@@ -81,7 +81,7 @@ public class PlayerService {
             return databaseRepository.getUserIdByUsername(username).orElse(-1);
         });
         if (userId == -1) {
-            throw new RuntimeException("Failed to create or retrieve user ID for username: "
+            throw new IllegalStateException("Failed to create or retrieve user ID for username: "
                                        + username + ". Cannot save team.");
         }
         databaseRepository.createTeam(userId, teamName);
@@ -103,7 +103,7 @@ public class PlayerService {
     public static List<Bugemon> loadTeam(String teamName) {
         int userId = databaseRepository.getUserIdByUsername(username).orElse(-1);
         if (userId == -1) {
-            throw new RuntimeException("User not found for username: " + username
+            throw new IllegalStateException("User not found for username: " + username
                                        + ". Cannot load team.");
         }
         List<TeamMemberDTO> teamMembers = databaseRepository.getTeamMembers(userId, teamName);
@@ -122,7 +122,7 @@ public class PlayerService {
             try {
                 loadedTeam.add(bugemon);
             } catch (Exception e) {
-                throw new RuntimeException(
+                throw new IllegalStateException(
                         "Failed to add Bugemon to loaded team: " + e.getMessage(), e);
             }
         }
