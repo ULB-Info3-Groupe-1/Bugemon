@@ -96,11 +96,7 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        musicLoader.loadFromDirectory("/musics/combat", Ambiance.COMBAT)
-                .forEach(this.musicPlayer::addMusic);
-        musicLoader.loadFromDirectory("/musics/menu", Ambiance.MENU)
-                .forEach(this.musicPlayer::addMusic);
-
+        initializeMusicResources();
         this.manualCombatController.setOnVictory(
                 levelUps -> levelUpController.setLevelUp(levelUps));
         this.automaticCombatController.setOnVictory(
@@ -109,24 +105,47 @@ public class MetaController {
         initTransitions();
     }
 
+    /**
+     * Call the method from the musicLoader to load all music and sound effects
+     * resources and register them with the musicPlayer.
+     *
+     * @throws IOException if any resource directory cannot be accessed
+     */
+    private void initializeMusicResources() throws IOException {
+        musicLoader.loadAllResources(musicPlayer);
+    }
+
+    /**
+     * Initializes the screen transition map, associating each {@link Window} with
+     * a lambda that performs the necessary actions to display that screen.
+     */
     private void initTransitions() {
         transitions.put(Window.MAIN_MENU, () -> {
-            this.musicPlayer.playAmbiance(Ambiance.MENU);
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
             mainMenuController.show(stage);
         });
-        transitions.put(Window.CREATE_TEAM, () -> createTeamController.show(stage));
+        transitions.put(Window.CREATE_TEAM, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
+            createTeamController.show(stage);
+        });
         transitions.put(Window.MANUAL_COMBAT, () -> {
-            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             manualCombatController.startCombat();
             manualCombatController.show(stage);
         });
         transitions.put(Window.AUTOMATIC_COMBAT, () -> {
-            musicPlayer.playAmbiance(Ambiance.COMBAT);
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             automaticCombatController.startCombat();
             automaticCombatController.show(stage);
         });
-        transitions.put(Window.COMBAT_VICTORY, () -> combatVictoryController.show(stage));
-        transitions.put(Window.COMBAT_DEFEAT, () -> combatDefeatController.show(stage));
+        transitions.put(Window.COMBAT_VICTORY, () -> {
+            combatVictoryController.show(stage);
+            this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
+        });
+        transitions.put(Window.COMBAT_DEFEAT, () -> {
+            combatDefeatController.show(stage);
+            this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
+        });
         transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
     }
 
