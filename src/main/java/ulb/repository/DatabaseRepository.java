@@ -40,8 +40,8 @@ public class DatabaseRepository {
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
-    public DatabaseRepository(DatabaseConnection dbConnection) {
-        this.dbConnection = dbConnection;
+    public DatabaseRepository() {
+        this.dbConnection = new DatabaseConnection();
         this.userRepository = new UserRepository(this, dbConnection);
         this.staticDataRepository = new StaticDataRepository(this, dbConnection);
 
@@ -172,8 +172,8 @@ public class DatabaseRepository {
      * Create the database schema by executing the SQL query associated with the "CreateSchema" key.
      */
     private void createSchema() {
-        try (Statement st = dbConnection.getConnectionObject().createStatement()) {
-            st.executeUpdate(getSql("CreateSchema"));
+        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("CreateSchema"))) {
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("createSchema failed", e);
         }
@@ -347,21 +347,5 @@ public class DatabaseRepository {
      */
     public void deleteTeam(int userId, String teamName) {
         userRepository.deleteTeam(userId, teamName);
-    }
-
-    // ─── CLEAR DATABASE METHOD NEEDED FOR THE TESTS ────
-
-    /**
-     * Clear the database by executing the SQL query associated with the "ClearDatabase" key. This
-     * method is intended to be used in testing scenarios to reset the state of the database before
-     * each test, ensuring that tests are run in a consistent and isolated environment. It removes
-     * all data from the relevant tables, allowing tests to start with a clean slate.
-     */
-    public void clearDatabase() {
-        try (Statement st = dbConnection.getConnectionObject().createStatement()) {
-            st.executeUpdate(getSql("ClearDatabase"));
-        } catch (SQLException e) {
-            throw new IllegalStateException("Failed to clear database", e);
-        }
     }
 }

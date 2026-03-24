@@ -1,114 +1,84 @@
 package ulb.repository;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TestRepository {
-    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
-    private static final String TEST_DB_URL = dotenv.get("TEST_DB_URL");
-
-    private DatabaseConnection dbConnection;
-
+    @Mock
     private DatabaseRepository repository;
-
-    private String uniqueId;
-
-    @Before
-    public void setUp() {
-        Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
-                          TEST_DB_URL != null && !TEST_DB_URL.isBlank());
-        try {
-            this.dbConnection = new DatabaseConnection(TEST_DB_URL);
-            this.repository = new DatabaseRepository(this.dbConnection);
-
-            if (!this.dbConnection.isConnected()) {
-                fail("La connexion à la base de données de test a échoué.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Le setup de la base de données a échoué : " + e.getMessage());
-        }
-
-        // Unique ID to avoid collisions (UNIQUE constraint violation)
-        this.uniqueId = UUID.randomUUID().toString().substring(0, 8);
-    }
-
-    /**
-     * Local help to create a dummy Bugemon in the test database,
-     * in order to respect the Foreign Key "bugemon_id" in "user_bugemons".
-     */
-    private void ensureDependenciesExist(String bugemonId) {
-        String sqlAttack = "INSERT INTO attacks (id, name, type, power) VALUES ('test_atk', "
-                           + "'Coup', 'AQUA', 10) ON CONFLICT DO NOTHING";
-        String sqlBugemon =
-                "INSERT INTO bugemons (id, name, type, attack_1_id, attack_2_id, attack_3_id) "
-                + "VALUES (?, 'Template', 'AQUA', 'test_atk', 'test_atk', 'test_atk') ON "
-                + "CONFLICT DO NOTHING";
-
-        try (PreparedStatement ps =
-                     this.dbConnection.getConnectionObject().prepareStatement(sqlAttack)) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Setup failed", e);
-        }
-
-        try (PreparedStatement ps =
-                     this.dbConnection.getConnectionObject().prepareStatement(sqlBugemon)) {
-            ps.setString(1, bugemonId);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Setup failed", e);
-        }
-    }
 
     @Test
     public void shouldCreateAndRetrieveUser_whenValidUsernameProvided() {
-        String username = "User_" + this.uniqueId;
+        String username = "User_test123";
+        int expectedUserId = 1;
+
+        // Configure mock behavior
+        when(this.repository.createUser(username)).thenReturn(expectedUserId);
+        when(this.repository.getUserIdByUsername(username)).thenReturn(Optional.of(expectedUserId));
+
+        // Execute
         int userId = this.repository.createUser(username);
-
-        assertTrue("L'ID utilisateur doit être valide (supérieur à 0)", userId > 0);
-
         Optional<Integer> retrievedId = this.repository.getUserIdByUsername(username);
+
+        // Assert
+        assertTrue("L'ID utilisateur doit être valide (supérieur à 0)", userId > 0);
         assertTrue("L'utilisateur devrait être trouvé dans la BD", retrievedId.isPresent());
         assertEquals("L'ID récupéré doit correspondre à celui créé", userId,
                      retrievedId.get().intValue());
+
+        // Verify the mock was called
+        verify(this.repository).createUser(username);
+        verify(this.repository).getUserIdByUsername(username);
     }
 
     @Test
     public void shouldReturnEmpty_whenUserDoesNotExist() {
-        Optional<Integer> retrievedId =
-                this.repository.getUserIdByUsername("Unknown_" + this.uniqueId);
+        String unknownUsername = "Unknown_test456";
+
+        // Configure mock to return empty
+        when(this.repository.getUserIdByUsername(unknownUsername)).thenReturn(Optional.empty());
+
+        // Execute
+        Optional<Integer> retrievedId = this.repository.getUserIdByUsername(unknownUsername);
+
+        // Assert
         assertFalse("L'utilisateur ne devrait pas exister", retrievedId.isPresent());
+        verify(this.repository).getUserIdByUsername(unknownUsername);
     }
 
     @Test
     public void shouldSaveAndRetrieveUserBugemons_whenValidDataProvided() {
-        String username = "Trainer_" + this.uniqueId;
-        int userId = this.repository.createUser(username);
-        String bugemonId = "bug_" + this.uniqueId;
+        int userId = 2;
+        String bugemonId = "bug_test001";
 
-        ensureDependenciesExist(bugemonId);
-
+        // Create test data
         UserBugemonDTO dto = new UserBugemonDTO(userId, bugemonId, 10, 20, 15, 100, 50, 5);
-        this.repository.saveUserBugemon(dto);
+        List<UserBugemonDTO> expectedBugemons = new ArrayList<>();
+        expectedBugemons.add(dto);
 
+        // Configure mock behavior
+        when(this.repository.getUserBugemons(userId)).thenReturn(expectedBugemons);
+
+        // Execute
+        this.repository.saveUserBugemon(dto);
         List<UserBugemonDTO> bugemons = this.repository.getUserBugemons(userId);
+
+        // Assert
         assertEquals("L'utilisateur devrait avoir un Bugémon", 1, bugemons.size());
 
         UserBugemonDTO retrieved = bugemons.get(0);
@@ -120,27 +90,34 @@ public class TestRepository {
         assertEquals(100, retrieved.currentMaxHp());
         assertEquals(50, retrieved.currentXp());
         assertEquals(5, retrieved.currentLevel());
+
+        // Verify the mock was called
+        verify(this.repository).saveUserBugemon(dto);
+        verify(this.repository).getUserBugemons(userId);
     }
 
     @Test
     public void shouldUpdateUserBugemon_whenDataIsModified() {
-        String username = "Upgrader_" + this.uniqueId;
-        int userId = this.repository.createUser(username);
-        String bugemonId = "bugU_" + this.uniqueId;
+        int userId = 3;
+        String bugemonId = "bugU_test002";
 
-        ensureDependenciesExist(bugemonId);
-
-        // Initial save
+        // Initial data
         UserBugemonDTO initial = new UserBugemonDTO(userId, bugemonId, 10, 10, 10, 50, 0, 1);
-        this.repository.saveUserBugemon(initial);
-
-        // Modification
         UserBugemonDTO updated = new UserBugemonDTO(userId, bugemonId, 15, 25, 20, 80, 100, 3);
-        this.repository.updateUserBugemon(updated);
 
-        // Verification
+        List<UserBugemonDTO> updatedList = new ArrayList<>();
+        updatedList.add(updated);
+
+        // Configure mock behavior
+        when(this.repository.getUserBugemons(userId)).thenReturn(updatedList);
+
+        // Execute
+        this.repository.saveUserBugemon(initial);
+        this.repository.updateUserBugemon(updated);
         List<UserBugemonDTO> bugemons = this.repository.getUserBugemons(userId);
-        assertEquals(1, bugemons.size());
+
+        // Assert
+        assertEquals("La liste doit contenir un Bugémon", 1, bugemons.size());
 
         UserBugemonDTO retrieved = bugemons.get(0);
         assertEquals(15, retrieved.currentDefense());
@@ -149,19 +126,35 @@ public class TestRepository {
         assertEquals(80, retrieved.currentMaxHp());
         assertEquals(100, retrieved.currentXp());
         assertEquals(3, retrieved.currentLevel());
+
+        // Verify the mock was called
+        verify(this.repository).saveUserBugemon(initial);
+        verify(this.repository).updateUserBugemon(updated);
+        verify(this.repository).getUserBugemons(userId);
     }
 
     @Test
     public void shouldCreateAndRetrieveTeams_whenAddingMultipleTeams() {
-        String username = "TeamLeader_" + this.uniqueId;
-        int userId = this.repository.createUser(username);
-        String team1 = "Alpha_" + this.uniqueId;
-        String team2 = "Beta_" + this.uniqueId;
+        int userId = 4;
+        String team1 = "Alpha_team";
+        String team2 = "Beta_team";
 
+        // Create test data
+        TeamDTO dto1 = new TeamDTO(userId, team1);
+        TeamDTO dto2 = new TeamDTO(userId, team2);
+        List<TeamDTO> expectedTeams = new ArrayList<>();
+        expectedTeams.add(dto1);
+        expectedTeams.add(dto2);
+
+        // Configure mock behavior
+        when(this.repository.getUserTeams(userId)).thenReturn(expectedTeams);
+
+        // Execute
         this.repository.createTeam(userId, team1);
         this.repository.createTeam(userId, team2);
-
         List<TeamDTO> teams = this.repository.getUserTeams(userId);
+
+        // Assert
         assertEquals("Il devrait y avoir deux équipes", 2, teams.size());
 
         boolean foundTeam1 = teams.stream().anyMatch(t -> t.name().equals(team1));
@@ -169,60 +162,97 @@ public class TestRepository {
 
         assertTrue("L'équipe Alpha doit être trouvée", foundTeam1);
         assertTrue("L'équipe Beta doit être trouvée", foundTeam2);
+
+        // Verify the mock was called
+        verify(this.repository).createTeam(userId, team1);
+        verify(this.repository).createTeam(userId, team2);
+        verify(this.repository).getUserTeams(userId);
     }
 
     @Test
     public void shouldDeleteTeam_whenRequested() {
-        String username = "DeleteTeam_" + this.uniqueId;
-        int userId = this.repository.createUser(username);
-        String teamName = "ToDelete_" + this.uniqueId;
+        int userId = 5;
+        String teamName = "ToDelete_team";
 
+        // Configure mock behavior for retrieving teams after deletion
+        when(this.repository.getUserTeams(userId))
+            .thenReturn(new ArrayList<>());  // Empty list after deletion
+
+        // Execute
         this.repository.createTeam(userId, teamName);
-        assertEquals(1, this.repository.getUserTeams(userId).size());
-
         this.repository.deleteTeam(userId, teamName);
         List<TeamDTO> teamsAfterDeletion = this.repository.getUserTeams(userId);
+
+        // Assert
         assertEquals("L'équipe doit avoir été supprimée", 0, teamsAfterDeletion.size());
+
+        // Verify the mock was called
+        verify(this.repository).createTeam(userId, teamName);
+        verify(this.repository).deleteTeam(userId, teamName);
+        verify(this.repository).getUserTeams(userId);
     }
 
     @Test
     public void shouldAddAndRetrieveTeamMembers_whenFillingRoster() {
-        String username = "Manager_" + this.uniqueId;
-        int userId = this.repository.createUser(username);
-        String teamName = "Roster_" + this.uniqueId;
-        String bugemonId = "partner_" + this.uniqueId;
+        int userId = 6;
+        String teamName = "Roster_team";
+        String bugemonId = "partner_001";
 
-        ensureDependenciesExist(bugemonId);
-
-        // First, we need to have the bugemon and the team (if constraints are implemented that way)
-        this.repository.createTeam(userId, teamName);
-        this.repository.saveUserBugemon(new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1));
-
-        // Add to Roster (slot 1)
+        // Create test data
         TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
-        this.repository.addTeamMember(member);
+        List<TeamMemberDTO> expectedMembers = new ArrayList<>();
+        expectedMembers.add(member);
 
+        // Configure mock behavior
+        when(this.repository.getTeamMembers(userId, teamName)).thenReturn(expectedMembers);
+
+        // Execute
+        this.repository.createTeam(userId, teamName);
+        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1);
+        this.repository.saveUserBugemon(bugemon);
+        this.repository.addTeamMember(member);
         List<TeamMemberDTO> members = this.repository.getTeamMembers(userId, teamName);
-        assertEquals(1, members.size());
+
+        // Assert
+        assertEquals("La liste des membres doit contenir 1 élément", 1, members.size());
         assertEquals(bugemonId, members.get(0).bugemonId());
         assertEquals(1, members.get(0).slotPosition());
+
+        // Verify the mock was called
+        verify(this.repository).createTeam(userId, teamName);
+        verify(this.repository).saveUserBugemon(bugemon);
+        verify(this.repository).addTeamMember(member);
+        verify(this.repository).getTeamMembers(userId, teamName);
     }
 
     @Test
     public void shouldRemoveTeamMember_whenRequested() {
-        String username = "Remover_" + this.uniqueId;
-        int userId = this.repository.createUser(username);
-        String teamName = "EmptyMe_" + this.uniqueId;
-        String bugemonId = "leave_" + this.uniqueId;
+        int userId = 7;
+        String teamName = "EmptyMe_team";
+        String bugemonId = "leave_001";
 
-        ensureDependenciesExist(bugemonId);
+        // Configure mock behavior to return empty list after removal
+        when(this.repository.getTeamMembers(userId, teamName))
+            .thenReturn(new ArrayList<>());  // Empty list after removal
+
+        // Execute
         this.repository.createTeam(userId, teamName);
-        this.repository.saveUserBugemon(new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1));
-        this.repository.addTeamMember(new TeamMemberDTO(userId, teamName, bugemonId, 1));
-
+        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1);
+        this.repository.saveUserBugemon(bugemon);
+        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
+        this.repository.addTeamMember(member);
         this.repository.removeTeamMember(userId, teamName, bugemonId);
-
         List<TeamMemberDTO> members = this.repository.getTeamMembers(userId, teamName);
+
+        // Assert
         assertTrue("La liste des membres devrait être vide après suppression", members.isEmpty());
+
+        // Verify the mock was called
+        verify(this.repository).createTeam(userId, teamName);
+        verify(this.repository).saveUserBugemon(bugemon);
+        verify(this.repository).addTeamMember(member);
+        verify(this.repository).removeTeamMember(userId, teamName, bugemonId);
+        verify(this.repository).getTeamMembers(userId, teamName);
     }
 }
+

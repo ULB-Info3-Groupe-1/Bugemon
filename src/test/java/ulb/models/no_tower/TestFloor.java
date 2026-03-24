@@ -8,14 +8,13 @@ import org.junit.Test;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.no_tower.room.*;
 import ulb.models.trainer.*;
-import ulb.services.CombatService;
-import ulb.services.PlayerService;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestFloor {
 
     @Test
     public void testFloorInitialization() {
-        BugemonTeam playerTeam = CombatService.createRandomTeam(PlayerService.getAllDefaultBugemons(), 3);
+        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer playerTrainer = new ManualTrainer(playerTeam);
         Floor floor = new Floor(playerTrainer);
 
@@ -24,7 +23,7 @@ public class TestFloor {
 
     @Test
     public void testFloorCompletion() {
-        BugemonTeam playerTeam = CombatService.createRandomTeam(PlayerService.getAllDefaultBugemons(), 3);
+        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer playerTrainer = new ManualTrainer(playerTeam);
         Floor floor = new Floor(playerTrainer);
 

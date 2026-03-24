@@ -4,16 +4,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseConnection {
-    private String currentUrl;
+
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+
+    private static final String URL = dotenv.get("PRODUCTION_DB_URL");
 
     private Connection connection;
 
-    public DatabaseConnection(String dbUrl) {
-        this.currentUrl = dbUrl;
+    public DatabaseConnection() {
         try {
-            this.connection = DriverManager.getConnection(this.currentUrl);
+            this.connection = DriverManager.getConnection(URL);
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to connect to the database", e);
         }
@@ -22,7 +25,7 @@ public class DatabaseConnection {
     public void getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(this.currentUrl);
+                connection = DriverManager.getConnection(URL);
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to reconnect to database", e);
@@ -47,25 +50,5 @@ public class DatabaseConnection {
      */
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         return this.connection.prepareStatement(sql);
-    }
-
-    /**
-     * Checks if the database connection is currently active.
-     * @return true if connected, false otherwise
-     */
-    public boolean isConnected() {
-        try {
-            return this.connection != null && !this.connection.isClosed();
-        } catch (SQLException e) {
-            throw new IllegalStateException("Failed to check connection status", e);
-        }
-    }
-
-    /**
-     * Provides direct access to the underlying Connection object for advanced operations.
-     * @return The active Connection object
-     */
-    public Connection getConnectionObject() {
-        return this.connection;
     }
 }

@@ -2,20 +2,15 @@ package ulb.services;
 
 import java.util.List;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.repository.DatabaseConnection;
 import ulb.repository.DatabaseRepository;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
 
 public class PlayerService {
 
-    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-
-    private static final String PRODUCTION_URL = dotenv.get("PRODUCTION_DB_URL");
 
     // Player's active team
     private static BugemonTeam activeTeam;
@@ -26,7 +21,7 @@ public class PlayerService {
     private static Inventory inventory;
 
     // Repository for database interactions
-    private static final DatabaseRepository databaseRepository = new DatabaseRepository(new DatabaseConnection(PRODUCTION_URL));
+    private static final DatabaseRepository databaseRepository = new DatabaseRepository();
 
     // Cache for all default Bugemons to avoid multiple database calls
     private static List<Bugemon> allDefaultBugemonsCache;

@@ -17,11 +17,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.junit.Assume;
 import org.junit.Test;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -31,8 +30,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
-import ulb.repository.DatabaseConnection;
-import ulb.repository.DatabaseRepository;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestCombatService {
     @Test
@@ -167,14 +165,11 @@ public class TestCombatService {
 
     @Test
     public void testRandomTeamNumber() {
-        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        String testDbUrl = dotenv.get("TEST_DB_URL");
-        Assume.assumeTrue("TEST_DB_URL non définie, test ignoré en CI",
-                          testDbUrl != null && !testDbUrl.isBlank());
-
-        DatabaseRepository repository = new DatabaseRepository(new DatabaseConnection(testDbUrl));
-        BugemonTeam teamOfSix =
-                CombatService.createRandomTeam(repository.getAllDefaultBugemons(), 6);
+        List<Bugemon> bugemons = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            bugemons.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
+        }
+        BugemonTeam teamOfSix = CombatService.createRandomTeam(bugemons, 6);
         assertEquals(6, teamOfSix.size());
     }
 }

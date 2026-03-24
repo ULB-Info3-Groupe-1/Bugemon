@@ -1,55 +1,55 @@
 package ulb.models.no_tower;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.services.CombatService;
-import ulb.services.PlayerService;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestNOTower {
 
     @Test
     public void testNOTowerInitialization() {
-        BugemonTeam playerTeam = CombatService.createRandomTeam(PlayerService.getAllDefaultBugemons(), 3);
+        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         NOTower noTower = new NOTower(playerTeam);
 
-        assertTrue(noTower.getCurrentFloorNumber() == 0);
+        assertEquals(0, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFloorComplete());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 1);
+        assertEquals(1, noTower.getCurrentFloorNumber());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 2);
+        assertEquals(2, noTower.getCurrentFloorNumber());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 3);
+        assertEquals(3, noTower.getCurrentFloorNumber());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 4);
+        assertEquals(4, noTower.getCurrentFloorNumber());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 5);
+        assertEquals(5, noTower.getCurrentFloorNumber());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 6);
+        assertEquals(6, noTower.getCurrentFloorNumber());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 7);
+        assertEquals(7, noTower.getCurrentFloorNumber());
 
         assertTrue(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 8);
+        assertEquals(8, noTower.getCurrentFloorNumber());
 
         assertFalse(noTower.goToNextFloor());
-        assertTrue(noTower.getCurrentFloorNumber() == 9);
+        assertEquals(9, noTower.getCurrentFloorNumber());
     }
 
     @Test
     public void testFloorCompletion() {
-        BugemonTeam playerTeam = CombatService.createRandomTeam(PlayerService.getAllDefaultBugemons(), 3);
+        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         NOTower noTower = new NOTower(playerTeam);
 
         assertFalse(noTower.isFloorComplete());
