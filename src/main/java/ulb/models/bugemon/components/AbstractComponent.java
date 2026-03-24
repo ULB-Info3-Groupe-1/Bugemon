@@ -12,11 +12,11 @@ public abstract class AbstractComponent {
         this.clearExpired();
     }
 
-    public void notifyTick() {
+    private void notifyTick() {
         this.modifiers.forEach(Modifier::tick);
     }
 
-    public void clearExpired() {
+    private void clearExpired() {
         this.modifiers.removeIf(Modifier::isExpired);
     }
 
@@ -24,7 +24,7 @@ public abstract class AbstractComponent {
         this.modifiers.add(attackEffect);
     }
 
-    public void cleanModifiers() {
+    public void clearModifiers() {
         this.modifiers.clear();
     }
 }
