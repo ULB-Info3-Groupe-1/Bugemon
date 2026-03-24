@@ -3,16 +3,18 @@ package ulb.models.no_tower;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import ulb.factory.TeamFactory;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.trainer.*;
+import ulb.services.CombatService;
+import ulb.services.PlayerService;
 
 public class TestNOTower {
+
     @Test
     public void testNOTowerInitialization() {
-        BugemonTeam playerTeam = TeamFactory.createRandomTeam(3);
+        BugemonTeam playerTeam = CombatService.createRandomTeam(PlayerService.getInstance().getAllDefaultBugemons(), 3);
         NOTower noTower = new NOTower(playerTeam);
 
         assertTrue(noTower.getCurrentFloorNumber() == 0);
@@ -48,7 +50,7 @@ public class TestNOTower {
 
     @Test
     public void testFloorCompletion() {
-        BugemonTeam playerTeam = TeamFactory.createRandomTeam(3);
+        BugemonTeam playerTeam = CombatService.createRandomTeam(PlayerService.getInstance().getAllDefaultBugemons(), 3);
         NOTower noTower = new NOTower(playerTeam);
 
         assertFalse(noTower.isFloorComplete());

@@ -17,6 +17,7 @@ package ulb.services;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
@@ -34,6 +35,10 @@ import ulb.models.trainer.Trainer;
  * <p>This class is not meant to be instantiated; all methods are static.</p>
  */
 public class CombatService {
+
+    private static final String BOSS_ID = "finalboss";
+
+
     private CombatService() {
         // Private constructor to prevent instantiation
     }
@@ -204,4 +209,24 @@ public class CombatService {
         }
         return team;
     }
+
+    /**
+     * Creates a boss {@link BugemonTeam} containing the unique boss Bugemon defined by {@code BOSS_ID}.
+     * 
+     * @param bugemonList the list of available {@link Bugemon}s to search for the boss; must not be {@code null}
+     * @return a new {@link BugemonTeam} containing the boss Bugemon.
+     */
+    public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
+        final Optional<Bugemon> bossBugemon =
+                bugemonList.stream().filter(obj -> obj.getId().equals(BOSS_ID)).findFirst();
+        BugemonTeam bossTeam = new BugemonTeam();
+
+        bossTeam.add(bossBugemon.orElseThrow(
+                ()
+                        -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID
+                                                + "' not found in the list.")));
+
+        return bossTeam;
+    }
+
 }

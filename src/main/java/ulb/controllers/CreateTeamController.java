@@ -18,7 +18,6 @@ import ulb.views.CreateTeamView;
  * </p>
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
-    private final PlayerService playerService;
     private final BugemonTeam selectedTeam;
 
     /**
@@ -30,17 +29,16 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * @param playerService the service used to access and mutate player data.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public CreateTeamController(MetaController metaController, PlayerService playerService)
+    public CreateTeamController(MetaController metaController)
             throws IOException {
         super(metaController, new CreateTeamView());
-        this.playerService = playerService;
         this.selectedTeam = new BugemonTeam();
 
         this.view.setModel(this.selectedTeam);
         this.view.setValidate(this::returnToMainMenu);
         this.view.setLoad(this::loadTeam);
         this.view.setSave(this::saveTeam);
-        this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
+        this.view.setAllBugemonsAvailable(PlayerService.getInstance().getAllDefaultBugemons());
         this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
         this.view.refresh();
     }
@@ -62,11 +60,11 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     public void saveTeam() {
-        this.playerService.saveTeam("test_1", this.selectedTeam);
+        PlayerService.getInstance().saveTeam("test_1", this.selectedTeam);
     }
 
     public void loadTeam() {
-        List<Bugemon> team = this.playerService.loadTeam("test_1");
+        List<Bugemon> team = PlayerService.getInstance().loadTeam("test_1");
         this.selectedTeam.clear();
         team.forEach(this.selectedTeam::add);
         this.view.refreshTeam(this.selectedTeam);

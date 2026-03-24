@@ -80,18 +80,17 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage main JavaFX stage of the application
-     * @param playerService service for managing player data and persistence
      * @throws IOException if a controller or view fails to initialize
      */
-    public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
+    public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
 
-        this.mainMenuController = new MainMenuController(this, playerService);
-        this.createTeamController = new CreateTeamController(this, playerService);
-        this.manualCombatController = new ManualCombatController(this, playerService);
-        this.automaticCombatController = new AutomaticCombatController(this, playerService);
-        this.combatVictoryController = new CombatVictoryController(this, playerService);
-        this.combatDefeatController = new CombatDefeatController(this, playerService);
+        this.mainMenuController = new MainMenuController(this);
+        this.createTeamController = new CreateTeamController(this);
+        this.manualCombatController = new ManualCombatController(this);
+        this.automaticCombatController = new AutomaticCombatController(this);
+        this.combatVictoryController = new CombatVictoryController(this);
+        this.combatDefeatController = new CombatDefeatController(this);
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();

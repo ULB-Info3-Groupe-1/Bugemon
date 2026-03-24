@@ -30,15 +30,15 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @param metaController the application-level controller used for navigation.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public AutomaticCombatController(MetaController metaController, PlayerService playerService)
+    public AutomaticCombatController(MetaController metaController)
             throws IOException {
-        super(metaController, new AutomaticCombatView(), playerService);
+        super(metaController, new AutomaticCombatView());
     }
 
     /** Starts a complete automatic combat session and drives it to completion. */
     @Override
     public void startCombat() {
-        AutoTrainer playerTrainer = new AutoTrainer(playerService.getActiveTeam());
+        AutoTrainer playerTrainer = new AutoTrainer(PlayerService.getInstance().getActiveTeam());
         AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 

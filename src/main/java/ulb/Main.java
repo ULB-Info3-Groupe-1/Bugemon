@@ -96,8 +96,7 @@ public class Main extends Application {
             primaryStage.setMinHeight(rectangle2d.getHeight() * 0.5);
             primaryStage.setTitle(STAGE_TITLE);
 
-            PlayerService playerService = new PlayerService();
-            MetaController controller = new MetaController(primaryStage, playerService);
+            MetaController controller = new MetaController(primaryStage);
             controller.switchTo(Window.MAIN_MENU);
         } catch (IOException e) {
             e.printStackTrace();

@@ -18,6 +18,7 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.effect.EffectDuration;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
@@ -156,7 +157,7 @@ public class StaticDataRepository {
         psEffect.setObject(4, modifier.stat() != null ? modifier.stat().name() : null,
                            Types.VARCHAR);
         psEffect.setInt(5, modifier.modifier());
-        psEffect.setString(6, modifier.duration());
+        psEffect.setString(6, modifier.duration().name());
         psEffect.setNull(7, Types.INTEGER);
     }
 
@@ -332,7 +333,7 @@ public class StaticDataRepository {
                                                   ? rs.getString(DatabaseColumns.COL_DURATION)
                                                   : "0_tour";
                         effects.add(new EffectStatModifier(
-                                target, stat, rs.getInt(DatabaseColumns.COL_MODIFIER), duration));
+                                target, stat, rs.getInt(DatabaseColumns.COL_MODIFIER), EffectDuration.fromLabel(duration)));
                         break;
 
                     case "EffectHeal":

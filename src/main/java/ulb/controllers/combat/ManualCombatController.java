@@ -32,12 +32,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * and registers the attack, switch, and surrender callbacks.
      *
      * @param metaController the application-level controller used for navigation.
-     * @param playerService  the service providing access to player data and teams.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public ManualCombatController(MetaController metaController, PlayerService playerService)
+    public ManualCombatController(MetaController metaController)
             throws IOException {
-        super(metaController, new ManualCombatView(), playerService);
+        super(metaController, new ManualCombatView());
 
         this.view.setOnAttack(this::onAttack);
         this.view.setOnSwitch(this::onSwitch);
@@ -47,7 +46,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat() {
-        this.playerTrainer = new ManualTrainer(this.playerService.getActiveTeam());
+        this.playerTrainer = new ManualTrainer(PlayerService.getInstance().getActiveTeam());
         AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(playerTrainer, opponentTrainer);
 

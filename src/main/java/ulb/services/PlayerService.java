@@ -13,6 +13,9 @@ import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
 
 public class PlayerService {
+
+    private static PlayerService instance;
+
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private static final String PRODUCTION_URL = dotenv.get("PRODUCTION_DB_URL");
@@ -35,8 +38,20 @@ public class PlayerService {
     /**
      * Contructor for PlayerService.
      */
-    public PlayerService() {
+    private PlayerService() {
         this.databaseRepository = new DatabaseRepository(new DatabaseConnection(PRODUCTION_URL));
+    }
+
+    /**
+     * Returns the singleton instance of PlayerService. If the instance does not
+     * exist yet, it is created.
+     * @return the singleton instance of PlayerService
+     */
+    public static PlayerService getInstance() {
+        if (instance == null) {
+            instance = new PlayerService();
+        }
+        return instance;
     }
 
     /**

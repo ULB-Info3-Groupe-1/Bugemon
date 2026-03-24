@@ -13,13 +13,14 @@ import java.util.EmptyStackException;
 import java.util.Optional;
 import java.util.Stack;
 
-import ulb.factory.TeamFactory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.no_tower.room.CombatRoom;
 import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
 import ulb.models.trainer.*;
+import ulb.services.CombatService;
+import ulb.services.PlayerService;
 
 public class Floor {
     private final Trainer playerTrainer;
@@ -60,7 +61,7 @@ public class Floor {
 
     private CombatRoom initCombatRoom() {
         Trainer opponentTrainer =
-                new ManualTrainer(TeamFactory.createRandomTeam(playerTrainer.getTeamSize()));
+                new ManualTrainer(CombatService.createRandomTeam(PlayerService.getInstance().getAllDefaultBugemons(), playerTrainer.getTeamSize()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);
@@ -72,7 +73,7 @@ public class Floor {
     }
 
     private CombatRoom initBossCombatRoom() {
-        Trainer opponentTrainer = new ManualTrainer(TeamFactory.createBossTeam());
+        Trainer opponentTrainer = new ManualTrainer(CombatService.createBossTeam(PlayerService.getInstance().getAllDefaultBugemons()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);
