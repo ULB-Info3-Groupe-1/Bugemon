@@ -34,6 +34,8 @@ import ulb.views.victory_view.CombatDefeatView;
  * @see Controller
  */
 public class CombatDefeatController extends Controller<CombatDefeatView> {
+    private final PlayerService playerService;
+
     /**
      * Constructs a {@code CombatDefeatController}, initialises its
      * {@link CombatDefeatView}, and registers this controller as the view's
@@ -52,10 +54,10 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * @throws IOException if the {@link CombatDefeatView} fails to load its FXML
      *                     resource.
      */
-    public CombatDefeatController(MetaController metaController)
+    public CombatDefeatController(MetaController metaController, PlayerService playerService)
             throws IOException {
         super(metaController, new CombatDefeatView());
-
+        this.playerService = playerService;        
         this.view.setOnRetry(this::retry);
         this.view.setOnBackToMainMenu(this::backToMainMenu);
     }
@@ -76,7 +78,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void retry() {
-        PlayerService.clearActiveTeam();
+        this.playerService.clearActiveTeam();
         this.metaController.switchTo(Window.CREATE_TEAM);
     }
 
@@ -90,7 +92,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void backToMainMenu() {
-        PlayerService.clearActiveTeam();
+        this.playerService.clearActiveTeam();
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 }

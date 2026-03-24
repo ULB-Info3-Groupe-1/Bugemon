@@ -3,18 +3,35 @@ package ulb.models.no_tower;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.services.PlayerService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestNOTower {
 
+     private PlayerService getPlayerServiceMock() {
+        PlayerService playerServiceMock = mock(PlayerService.class);
+        List<Bugemon> testBugemons = new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
+        // Add boss Bugemon required by Floor.initBossCombatRoom()
+        testBugemons.add(TestUtilsBugemons.createDefaultBugemon("finalboss"));
+        when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
+        return playerServiceMock;
+    }
+
     @Test
     public void testNOTowerInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        NOTower noTower = new NOTower(playerTeam);
+        
+        NOTower noTower = new NOTower(playerTeam, getPlayerServiceMock());
 
         assertEquals(0, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFloorComplete());
@@ -50,7 +67,8 @@ public class TestNOTower {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        NOTower noTower = new NOTower(playerTeam);
+        
+        NOTower noTower = new NOTower(playerTeam, getPlayerServiceMock());
 
         assertFalse(noTower.isFloorComplete());
     }

@@ -11,50 +11,45 @@ import ulb.repository.dto.UserBugemonDTO;
 
 public class PlayerService {
 
-
     // Player's active team
-    private static BugemonTeam activeTeam;
+    private BugemonTeam activeTeam;
 
     // List of all user-created teams
-    private static List<BugemonTeam> userTeams;
+    private List<BugemonTeam> userTeams;
 
-    private static Inventory inventory;
+    private Inventory inventory;
 
     // Repository for database interactions
-    private static final DatabaseRepository databaseRepository = new DatabaseRepository();
+    private final DatabaseRepository databaseRepository = new DatabaseRepository();
 
     // Cache for all default Bugemons to avoid multiple database calls
-    private static List<Bugemon> allDefaultBugemonsCache;
+    private List<Bugemon> allDefaultBugemonsCache;
 
     // TODO: remove
-    private static final String username = "admin";
-
-    private PlayerService() {
-       // Private constructor to prevent instantiation
-    }
+    private final String username = "admin";
 
     /**
      * Returns the currently active team of Bugemons.
      * @return the active BugemonTeam
      */
-    public static BugemonTeam getActiveTeam() {
-        return activeTeam;
+    public BugemonTeam getActiveTeam() {
+        return this.activeTeam;
     }
 
     /**
      * Sets the active team to the given BugemonTeam.
      */
-    public static void setActiveTeam(BugemonTeam team) {
-        activeTeam = team;
+    public void setActiveTeam(BugemonTeam team) {
+        this.activeTeam = team;
     }
 
     /**
      * Clears the active team by removing all Bugemons from it. This method is useful for resetting
      * the player's team between sessions or when starting a new game.
      */
-    public static void clearActiveTeam() {
-        if (activeTeam != null) {
-            activeTeam.clear();
+    public void clearActiveTeam() {
+        if (this.activeTeam != null) {
+            this.activeTeam.clear();
         }
     }
 
@@ -63,45 +58,45 @@ public class PlayerService {
      * after the first call to minimize database access.
      * @return a list of all default Bugemons
      */
-    public static List<Bugemon> getAllDefaultBugemons() {
-        if (allDefaultBugemonsCache == null) {
-            allDefaultBugemonsCache = databaseRepository.getAllDefaultBugemons();
+    public List<Bugemon> getAllDefaultBugemons() {
+        if (this.allDefaultBugemonsCache == null) {
+            this.allDefaultBugemonsCache = this.databaseRepository.getAllDefaultBugemons();
         }
-        return allDefaultBugemonsCache;
+        return this.allDefaultBugemonsCache;
     }
 
-    public static void saveTeam(String teamName, BugemonTeam team) {
-        int userId = databaseRepository.getUserIdByUsername(username).orElseGet(() -> {
-            databaseRepository.createUser(username);
-            return databaseRepository.getUserIdByUsername(username).orElse(-1);
+    public void saveTeam(String teamName, BugemonTeam team) {
+        int userId = this.databaseRepository.getUserIdByUsername(this.username).orElseGet(() -> {
+            this.databaseRepository.createUser(this.username);
+            return this.databaseRepository.getUserIdByUsername(this.username).orElse(-1);
         });
         if (userId == -1) {
             throw new IllegalStateException("Failed to create or retrieve user ID for username: "
-                                       + username + ". Cannot save team.");
+                                       + this.username + ". Cannot save team.");
         }
-        databaseRepository.createTeam(userId, teamName);
-        List<UserBugemonDTO> userBugemonDTOs = databaseRepository.getUserBugemons(userId);
+        this.databaseRepository.createTeam(userId, teamName);
+        List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(userId);
         for (Bugemon bugemon : team) {
             if (userBugemonDTOs.stream().noneMatch(
                         dto -> dto.bugemonId().equals(bugemon.getId()))) {
-                databaseRepository.saveUserBugemon(new UserBugemonDTO(
+                this.databaseRepository.saveUserBugemon(new UserBugemonDTO(
                         userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(),
                         bugemon.getLevel()));
             }
             TeamMemberDTO memberDTO = new TeamMemberDTO(userId, teamName, bugemon.getId(),
                                                         team.getSlotPosition(bugemon));
-            databaseRepository.addTeamMember(memberDTO);
+            this.databaseRepository.addTeamMember(memberDTO);
         }
     }
 
-    public static List<Bugemon> loadTeam(String teamName) {
-        int userId = databaseRepository.getUserIdByUsername(username).orElse(-1);
+    public List<Bugemon> loadTeam(String teamName) {
+        int userId = this.databaseRepository.getUserIdByUsername(this.username).orElse(-1);
         if (userId == -1) {
-            throw new IllegalStateException("User not found for username: " + username
+            throw new IllegalStateException("User not found for username: " + this.username
                                        + ". Cannot load team.");
         }
-        List<TeamMemberDTO> teamMembers = databaseRepository.getTeamMembers(userId, teamName);
+        List<TeamMemberDTO> teamMembers = this.databaseRepository.getTeamMembers(userId, teamName);
         BugemonTeam loadedTeam = new BugemonTeam();
         for (TeamMemberDTO member : teamMembers) {
             Bugemon bugemon =

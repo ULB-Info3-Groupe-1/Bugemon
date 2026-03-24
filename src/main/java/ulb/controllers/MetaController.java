@@ -12,6 +12,7 @@ import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import ulb.services.PlayerService;
 
 /**
  * Central controller responsible for managing all screen controllers and
@@ -81,15 +82,15 @@ public class MetaController {
      * @param primaryStage main JavaFX stage of the application
      * @throws IOException if a controller or view fails to initialize
      */
-    public MetaController(Stage primaryStage) throws IOException {
+    public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
         this.stage = primaryStage;
 
         this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(this);
-        this.manualCombatController = new ManualCombatController(this);
-        this.automaticCombatController = new AutomaticCombatController(this);
-        this.combatVictoryController = new CombatVictoryController(this);
-        this.combatDefeatController = new CombatDefeatController(this);
+        this.createTeamController = new CreateTeamController(this, playerService);
+        this.manualCombatController = new ManualCombatController(this, playerService);
+        this.automaticCombatController = new AutomaticCombatController(this, playerService);
+        this.combatVictoryController = new CombatVictoryController(this, playerService);
+        this.combatDefeatController = new CombatDefeatController(this, playerService);
         this.levelUpController = new LevelUpController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();

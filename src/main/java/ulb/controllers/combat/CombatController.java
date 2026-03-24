@@ -33,10 +33,10 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected final AttackAnimationController animationController;
     protected final PlayerService playerService;
 
-    protected CombatController(MetaController metaController, V view) {
+    protected CombatController(MetaController metaController, PlayerService playerService, V view) {
         super(metaController, view);
         this.animationController = new AttackAnimationController(view);
-        this.playerService = PlayerService.getInstance();
+        this.playerService = playerService;
     }
 
     public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
@@ -71,7 +71,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
         return new AutoTrainer(CombatService.createRandomTeam(
-                PlayerService.getAllDefaultBugemons(), playerTeamSize));
+                this.playerService.getAllDefaultBugemons(), playerTeamSize));
     }
 
     /**

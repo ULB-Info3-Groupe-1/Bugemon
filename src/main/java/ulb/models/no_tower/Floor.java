@@ -22,10 +22,12 @@ import ulb.services.PlayerService;
 
 public class Floor {
     private final Trainer playerTrainer;
+    private final PlayerService playerService;
     private Stack<Room> stages = new Stack<>();
 
-    public Floor(Trainer playerTrainer) {
+    public Floor(Trainer playerTrainer, PlayerService playerService) {
         this.playerTrainer = playerTrainer;
+        this.playerService = playerService;
 
         init();
         // 1. Combat obligatoire
@@ -59,7 +61,7 @@ public class Floor {
 
     private CombatRoom initCombatRoom() {
         Trainer opponentTrainer =
-                new ManualTrainer(CombatService.createRandomTeam(PlayerService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
+                new ManualTrainer(CombatService.createRandomTeam(this.playerService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);
@@ -71,7 +73,7 @@ public class Floor {
     }
 
     private CombatRoom initBossCombatRoom() {
-        Trainer opponentTrainer = new ManualTrainer(CombatService.createBossTeam(PlayerService.getAllDefaultBugemons()));
+        Trainer opponentTrainer = new ManualTrainer(CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);
