@@ -10,6 +10,11 @@ public enum EffectDuration {
         this.label = label;
     }
 
+    @Override
+    public String toString() {
+        return this.label;
+    }
+
     /**
      * Get the EffectDuration enum value corresponding to the given label.
      * @param label the label to search for

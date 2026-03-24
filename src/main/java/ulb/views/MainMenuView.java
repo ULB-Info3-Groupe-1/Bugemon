@@ -4,8 +4,6 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.models.bugemon_team.BugemonTeam;
-
 /**
  * View for the main menu screen.
  *
@@ -22,12 +20,6 @@ public class MainMenuView extends View {
     @FXML private Button launchAutomaticCombat;
     @FXML private Button launchManualCombat;
 
-    private Runnable onCreateTeam;
-    private Runnable onQuit;
-    private Runnable onStartAutoCombat;
-    private Runnable onStartManualCombat;
-    private BugemonTeam bugemonTeam;
-
     /**
      * Loads the main-menu FXML layout and wires the button actions to the
      * registered callbacks.
@@ -35,56 +27,31 @@ public class MainMenuView extends View {
      * @throws IOException if the FXML resource cannot be loaded.
      */
     public MainMenuView() throws IOException {
-        super("/fxml/MainMenu.fxml");
-        this.createTeamButton.setOnAction(e -> {
-            if (onCreateTeam != null)
-                onCreateTeam.run();
-        });
-        this.quitButton.setOnAction(e -> {
-            if (onQuit != null)
-                onQuit.run();
-        });
-
-        this.launchAutomaticCombat.setOnAction(e -> launchCombat(onStartAutoCombat));
-        this.launchManualCombat.setOnAction(e -> launchCombat(onStartManualCombat));
+        super("/fxml/MainMenu.fxml");  
     }
 
     /** Registers the callback invoked when the player clicks "Créer une équipe". */
     public void setOnCreateTeam(Runnable callback) {
-        this.onCreateTeam = callback;
+        this.createTeamButton.setOnAction(e -> callback.run());
     }
 
     /** Registers the callback invoked when the player clicks "Quitter". */
     public void setOnQuit(Runnable callback) {
-        this.onQuit = callback;
-    }
-
-    @Override
-    public void refresh() {
-        // No dynamic data to display on the main menu.
+        this.quitButton.setOnAction(e -> callback.run());
     }
 
     /** Registers the callback invoked when the player launches an automatic combat. */
     public void setOnStartAutoCombat(Runnable callback) {
-        this.onStartAutoCombat = callback;
+        this.launchAutomaticCombat.setOnAction(e -> callback.run());
     }
 
     /** Registers the callback invoked when the player launches a manual combat. */
     public void setOnStartManualCombat(Runnable callback) {
-        this.onStartManualCombat = callback;
+        this.launchManualCombat.setOnAction(e -> callback.run());
     }
 
-    private void launchCombat(Runnable onStart) {
-        if (bugemonTeam != null && bugemonTeam.isEmpty()) {
-            showAlert("Équipe incomplète",
-                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        } else if (onStart != null) {
-            onStart.run();
-        }
-    }
-
-    /** Gives the view a reference to the team model it should read from. */
-    public void setModel(BugemonTeam bugemonTeam) {
-        this.bugemonTeam = bugemonTeam;
+    @Override
+    public void refresh() {
+        // No dynamic content to refresh in the main menu, so this method is empty.
     }
 }

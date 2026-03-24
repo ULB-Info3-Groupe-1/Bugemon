@@ -76,7 +76,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void retry() {
-        PlayerService.getInstance().clearActiveTeam();
+        PlayerService.clearActiveTeam();
         this.metaController.switchTo(Window.CREATE_TEAM);
     }
 
@@ -90,7 +90,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
      * </p>
      */
     public void backToMainMenu() {
-        PlayerService.getInstance().clearActiveTeam();
+        PlayerService.clearActiveTeam();
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 }

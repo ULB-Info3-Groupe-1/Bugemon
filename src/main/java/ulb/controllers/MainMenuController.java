@@ -28,7 +28,6 @@ import ulb.views.MainMenuView;
  * @see Controller
  */
 public class MainMenuController extends Controller<MainMenuView> {
-    private final BugemonTeam selectedTeam;
 
     /**
      * Constructs a {@code MainMenuController}, initialises its {@link MainMenuView},
@@ -47,8 +46,6 @@ public class MainMenuController extends Controller<MainMenuView> {
     public MainMenuController(MetaController metaController)
             throws IOException {
         super(metaController, new MainMenuView());
-        this.selectedTeam = PlayerService.getInstance().getActiveTeam();
-        this.view.setModel(this.selectedTeam);
         this.view.setOnCreateTeam(this::createTeam);
         this.view.setOnQuit(this::quit);
         this.view.setOnStartAutoCombat(this::startAutoCombat);
@@ -76,13 +73,11 @@ public class MainMenuController extends Controller<MainMenuView> {
 
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
-        PlayerService.getInstance().setActiveTeam(this.selectedTeam);
         this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
     }
 
     /** Launches a manual combat session. */
     public void startManualCombat() {
-        PlayerService.getInstance().setActiveTeam(this.selectedTeam);
         this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
     }
 }

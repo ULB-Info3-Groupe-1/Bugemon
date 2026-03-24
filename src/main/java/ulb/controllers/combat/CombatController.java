@@ -71,7 +71,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
         return new AutoTrainer(CombatService.createRandomTeam(
-                PlayerService.getInstance().getAllDefaultBugemons(), playerTeamSize));
+                PlayerService.getAllDefaultBugemons(), playerTeamSize));
     }
 
     /**

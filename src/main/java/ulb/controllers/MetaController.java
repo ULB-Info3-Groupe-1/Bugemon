@@ -12,7 +12,6 @@ import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
-import ulb.services.PlayerService;
 
 /**
  * Central controller responsible for managing all screen controllers and

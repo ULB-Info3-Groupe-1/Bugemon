@@ -157,7 +157,7 @@ public class StaticDataRepository {
         psEffect.setObject(4, modifier.stat() != null ? modifier.stat().name() : null,
                            Types.VARCHAR);
         psEffect.setInt(5, modifier.modifier());
-        psEffect.setString(6, modifier.duration().name());
+        psEffect.setString(6, modifier.duration().toString());
         psEffect.setNull(7, Types.INTEGER);
     }
 

@@ -10,10 +10,8 @@
 package ulb.models.no_tower;
 
 import java.util.EmptyStackException;
-import java.util.Optional;
 import java.util.Stack;
 
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.no_tower.room.CombatRoom;
 import ulb.models.no_tower.room.RewardRoom;
@@ -61,7 +59,7 @@ public class Floor {
 
     private CombatRoom initCombatRoom() {
         Trainer opponentTrainer =
-                new ManualTrainer(CombatService.createRandomTeam(PlayerService.getInstance().getAllDefaultBugemons(), playerTrainer.getTeamSize()));
+                new ManualTrainer(CombatService.createRandomTeam(PlayerService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);
@@ -73,7 +71,7 @@ public class Floor {
     }
 
     private CombatRoom initBossCombatRoom() {
-        Trainer opponentTrainer = new ManualTrainer(CombatService.createBossTeam(PlayerService.getInstance().getAllDefaultBugemons()));
+        Trainer opponentTrainer = new ManualTrainer(CombatService.createBossTeam(PlayerService.getAllDefaultBugemons()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);

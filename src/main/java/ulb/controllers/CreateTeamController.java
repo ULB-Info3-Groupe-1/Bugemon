@@ -38,7 +38,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.setValidate(this::returnToMainMenu);
         this.view.setLoad(this::loadTeam);
         this.view.setSave(this::saveTeam);
-        this.view.setAllBugemonsAvailable(PlayerService.getInstance().getAllDefaultBugemons());
+        this.view.setAllBugemonsAvailable(PlayerService.getAllDefaultBugemons());
         this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
         this.view.refresh();
     }
@@ -60,11 +60,12 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     public void saveTeam() {
-        PlayerService.getInstance().saveTeam("test_1", this.selectedTeam);
+        PlayerService.saveTeam("test_1", this.selectedTeam);
+        PlayerService.setActiveTeam(this.selectedTeam);
     }
 
     public void loadTeam() {
-        List<Bugemon> team = PlayerService.getInstance().loadTeam("test_1");
+        List<Bugemon> team = PlayerService.loadTeam("test_1");
         this.selectedTeam.clear();
         team.forEach(this.selectedTeam::add);
         this.view.refreshTeam(this.selectedTeam);

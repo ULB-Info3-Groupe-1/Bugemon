@@ -38,7 +38,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     /** Starts a complete automatic combat session and drives it to completion. */
     @Override
     public void startCombat() {
-        AutoTrainer playerTrainer = new AutoTrainer(PlayerService.getInstance().getActiveTeam());
+        AutoTrainer playerTrainer = new AutoTrainer(PlayerService.getActiveTeam());
         AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
