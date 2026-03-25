@@ -313,29 +313,30 @@ public class Parser {
 
             Inventory inventory = new Inventory();
             for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
-                String objectId = entry.getKey();
-                int quantity = entry.getValue();
+                        String objectId = entry.getKey();
+                        int quantity = entry.getValue();
 
-                Item obj = Items.stream()
-                                   .filter(o -> o.id().equals(objectId))
-                                   .findFirst()
-                                   .orElseThrow(()
-                                                        -> new RuntimeException("Object with ID "
-                                                                                + objectId
-                                                                                + " not found"));
-                inventory.addItem(obj, quantity);
+                        Item obj = Items.stream()
+                                           .filter(o -> o.id().equals(objectId))
+                                           .findFirst()
+                                           .orElseThrow(()
+                                                                -> new RuntimeException(
+                                                                        "Object with ID " + objectId
+                                                                        + " not found"));
+                        inventory.addItem(obj, quantity);
+                    }
+
+                    reader.close();
+                    return new ItemWrapper(Items, inventory);
             }
-
-            reader.close();
-            return new ItemWrapper(Items, inventory);
-        } catch (Exception e) {
-            // TODO: Use of a Logger or external error management ?
-            System.out.println("Error when parsing Items and inventory");
-            e.printStackTrace();
+            catch (Exception e) {
+                // TODO: Use of a Logger or external error management ?
+                System.out.println("Error when parsing Items and inventory");
+                e.printStackTrace();
+            }
+            return null;
         }
-        return null;
-    }
 
-    /** Placeholder for future skill-tree parsing. Currently a no-op. */
-    static void parseSkillTree(Path fileName) {}
-}
+        /** Placeholder for future skill-tree parsing. Currently a no-op. */
+        static void parseSkillTree(Path fileName) {}
+    }
