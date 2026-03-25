@@ -32,10 +32,12 @@ import ulb.views.combat.CombatView;
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
     private Consumer<List<LevelUp>> onVictory;
     protected final Player player;
+    protected final AttackAnimationController animationController;
 
     public CombatController(MetaController metaController, V view, Player player) {
         super(metaController, view);
         this.player = player;
+        this.animationController = new AttackAnimationController(view);
     }
 
     public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
@@ -57,21 +59,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected void playTurnAnimations(TurnResult result, Trainer playerTrainer,
                                       Runnable onFinished) {
-        if (result == null || !result.first().wasAttack()) {
-            onFinished.run();
-            return;
-        }
-
-        boolean firstFromPlayer = result.first().attacker() == playerTrainer;
-        this.view.playAttackAnimation(firstFromPlayer, () -> {
-            if (result.second().isPresent() && result.second().orElseThrow().wasAttack()) {
-                boolean secondFromPlayer =
-                        result.second().orElseThrow().attacker() == playerTrainer;
-                this.view.playAttackAnimation(secondFromPlayer, onFinished);
-            } else {
-                onFinished.run();
-            }
-        });
+        this.animationController.playTurnAnimations(result, playerTrainer, onFinished);
     }
 
     /**
