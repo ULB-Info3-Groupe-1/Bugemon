@@ -1,7 +1,6 @@
 package ulb.views;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
@@ -9,7 +8,6 @@ import javafx.scene.control.Button;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.Parser;
 
 /**
  * View for the team creation screen.
@@ -25,13 +23,16 @@ public class CreateTeamView extends View {
 
     @FXML private AllBugemonsGridView allBugemonsGridView;
     @FXML private BugemonTeamView bugemonsTeamView;
-    @FXML private Button launchAutomaticCombat;
-    @FXML private Button launchManualCombat;
+    @FXML private Button validateTeamBtn;
+    @FXML private Button loadTeamBtn;
+    @FXML private Button saveTeamBtn;
 
     private BugemonTeam bugemonTeam;
+    private List<Bugemon> allBugemonsAvailable;
     private Consumer<Bugemon> onGridBugemonClicked;
-    private Runnable onStartAutoCombat;
-    private Runnable onStartManualCombat;
+    private Runnable validate;
+    private Runnable load;
+    private Runnable save;
 
     /**
      * Loads the team-creation FXML layout and wires click handlers on the
@@ -47,8 +48,9 @@ public class CreateTeamView extends View {
                 onGridBugemonClicked.accept(b);
         });
 
-        this.launchAutomaticCombat.setOnAction(e -> launchCombat(onStartAutoCombat));
-        this.launchManualCombat.setOnAction(e -> launchCombat(onStartManualCombat));
+        this.validateTeamBtn.setOnAction(e -> returnToMainMenu(validate));
+        this.loadTeamBtn.setOnAction(e -> loadTeam(load));
+        this.saveTeamBtn.setOnAction(e -> saveTeam(save));
     }
 
     /** Gives the view a reference to the team model it should read from. */
@@ -58,28 +60,20 @@ public class CreateTeamView extends View {
                 b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
     }
 
+    /**
+     * Gives the view a reference to the list of all available Bugemons, so it can
+     * display them in the selection grid and mark the ones already in the team as
+     * selected.
+     * @param allBugemons
+     */
+    public void setAllBugemonsAvailable(List<Bugemon> allBugemons) {
+        this.allBugemonsAvailable = allBugemons;
+        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
+    }
+
     /** Registers the callback invoked when the player clicks a Bugemon in the selection grid. */
     public void setOnGridBugemonClicked(Consumer<Bugemon> callback) {
         this.onGridBugemonClicked = callback;
-    }
-
-    /** Registers the callback invoked when the player launches an automatic combat. */
-    public void setOnStartAutoCombat(Runnable callback) {
-        this.onStartAutoCombat = callback;
-    }
-
-    /** Registers the callback invoked when the player launches a manual combat. */
-    public void setOnStartManualCombat(Runnable callback) {
-        this.onStartManualCombat = callback;
-    }
-
-    private void launchCombat(Runnable onStart) {
-        if (bugemonTeam != null && bugemonTeam.isEmpty()) {
-            showAlert("Équipe incomplète",
-                      "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        } else if (onStart != null) {
-            onStart.run();
-        }
     }
 
     public void refreshTeam(BugemonTeam team) {
@@ -89,8 +83,37 @@ public class CreateTeamView extends View {
 
     @Override
     public void refresh() {
-        List<Bugemon> allBugemons = new ArrayList<>(Parser.getInstance().getBugemons());
-        this.allBugemonsGridView.showAll(allBugemons);
+        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
+    }
+
+    public void setValidate(Runnable validate) {
+        this.validate = validate;
+    }
+
+    public void returnToMainMenu(Runnable validate) {
+        if (validate != null) {
+            validate.run();
+        }
+    }
+
+    public void setLoad(Runnable load) {
+        this.load = load;
+    }
+
+    public void setSave(Runnable save) {
+        this.save = save;
+    }
+
+    public void saveTeam(Runnable save) {
+        if (save != null) {
+            save.run();
+        }
+    }
+
+    public void loadTeam(Runnable load) {
+        if (load != null) {
+            load.run();
+        }
     }
 }

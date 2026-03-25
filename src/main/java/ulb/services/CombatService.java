@@ -15,12 +15,15 @@
 package ulb.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 
 /**
@@ -32,6 +35,12 @@ import ulb.models.trainer.Trainer;
  * <p>This class is not meant to be instantiated; all methods are static.</p>
  */
 public class CombatService {
+    private static final String BOSS_ID = "finalboss";
+
+    private CombatService() {
+        // Private constructor to prevent instantiation
+    }
+
     /**
      * Determines which trainer's Bugemon attacks first based on initiative.
      * In case of a tie, the winner is chosen randomly.
@@ -99,8 +108,7 @@ public class CombatService {
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon,
                                       final Bugemon defenderBugemon) {
         final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
-        return (int)Math.ceil(
-                calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier));
+        return calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
     }
 
     /**
@@ -152,7 +160,7 @@ public class CombatService {
     public static Efficiency compareBugemonType(final BugemonType offensiveType,
                                                 final BugemonType defensiveType) {
         // Use the BugemonType enum declaration order as the type cycle
-        final List<BugemonType> cycle = new ArrayList<BugemonType>(List.of(BugemonType.values()));
+        final List<BugemonType> cycle = new ArrayList<>(List.of(BugemonType.values()));
 
         final int atkIdx = cycle.indexOf(offensiveType);
         final int defIdx = cycle.indexOf(defensiveType);
@@ -167,5 +175,57 @@ public class CombatService {
         } else {
             return Efficiency.NEUTRAL;
         }
+    }
+
+    /**
+     * Generates a random {@link BugemonTeam} of the specified size by sampling
+     * without replacement from the given pool of available {@link Bugemon}s.
+     *
+     * <p>
+     * Each selected Bugemon is {@link Bugemon#clone() cloned} before being added
+     * to the team so that the originals in {@code bugemonList} are not modified
+     * during combat.
+     * </p>
+     *
+     * @param bugemonList the pool of {@link Bugemon}s to sample from; must not
+     *                    be {@code null} and must contain at least {@code teamSize}
+     *                    distinct entries.
+     * @param teamSize    the number of {@link Bugemon}s the resulting team should
+     *                    contain; must be between {@code 1} and
+     *                    {@code bugemonList.size()} inclusive.
+     * @return a new {@link BugemonTeam} containing {@code teamSize} randomly
+     *         chosen, cloned {@link Bugemon}s.
+     * @throws RuntimeException if cloning a selected {@link Bugemon} fails.
+     */
+    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList,
+                                               final int teamSize) {
+        List<Bugemon> pool = new ArrayList<>(bugemonList);
+        Collections.shuffle(pool);
+        BugemonTeam team = new BugemonTeam();
+        for (int i = 0; i < teamSize; i++) {
+            team.add(pool.get(i).clone());
+        }
+        return team;
+    }
+
+    /**
+     * Creates a boss {@link BugemonTeam} containing the unique boss Bugemon defined by {@code
+     * BOSS_ID}.
+     *
+     * @param bugemonList the list of available {@link Bugemon}s to search for the boss; must not be
+     *         {@code null}
+     * @return a new {@link BugemonTeam} containing the boss Bugemon.
+     */
+    public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
+        final Optional<Bugemon> bossBugemon =
+                bugemonList.stream().filter(obj -> obj.getId().equals(BOSS_ID)).findFirst();
+        BugemonTeam bossTeam = new BugemonTeam();
+
+        bossTeam.add(bossBugemon.orElseThrow(
+                ()
+                        -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID
+                                                + "' not found in the list.")));
+
+        return bossTeam;
     }
 }

@@ -44,6 +44,8 @@ public class MainMenuController extends Controller<MainMenuView> {
         super(metaController, new MainMenuView());
         this.view.setOnCreateTeam(this::createTeam);
         this.view.setOnQuit(this::quit);
+        this.view.setOnStartAutoCombat(this::startAutoCombat);
+        this.view.setOnStartManualCombat(this::startManualCombat);
     }
 
     /**
@@ -63,5 +65,15 @@ public class MainMenuController extends Controller<MainMenuView> {
      */
     public void quit() {
         javafx.application.Platform.exit();
+    }
+
+    /** Launches an automatic combat session. */
+    public void startAutoCombat() {
+        this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
+    }
+
+    /** Launches a manual combat session. */
+    public void startManualCombat() {
+        this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
     }
 }

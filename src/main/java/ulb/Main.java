@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.utils.Parser;
+import ulb.services.PlayerService;
 
 /**
  * JavaFX {@link Application} subclass that bootstraps the Bugemon game.
@@ -85,8 +85,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parser.getInstance().parse();
-
             InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
             if (fontStream != null) {
                 Font.loadFont(fontStream, 16);
@@ -98,7 +96,8 @@ public class Main extends Application {
             primaryStage.setMinHeight(rectangle2d.getHeight() * 0.5);
             primaryStage.setTitle(STAGE_TITLE);
 
-            MetaController controller = new MetaController(primaryStage);
+            PlayerService playerService = new PlayerService();
+            MetaController controller = new MetaController(primaryStage, playerService);
             controller.switchTo(Window.MAIN_MENU);
         } catch (IOException e) {
             e.printStackTrace();

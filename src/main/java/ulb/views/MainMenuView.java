@@ -17,9 +17,8 @@ import javafx.scene.control.Button;
 public class MainMenuView extends View {
     @FXML private Button createTeamButton;
     @FXML private Button quitButton;
-
-    private Runnable onCreateTeam;
-    private Runnable onQuit;
+    @FXML private Button launchAutomaticCombat;
+    @FXML private Button launchManualCombat;
 
     /**
      * Loads the main-menu FXML layout and wires the button actions to the
@@ -29,28 +28,30 @@ public class MainMenuView extends View {
      */
     public MainMenuView() throws IOException {
         super("/fxml/MainMenu.fxml");
-        this.createTeamButton.setOnAction(e -> {
-            if (onCreateTeam != null)
-                onCreateTeam.run();
-        });
-        this.quitButton.setOnAction(e -> {
-            if (onQuit != null)
-                onQuit.run();
-        });
     }
 
     /** Registers the callback invoked when the player clicks "Créer une équipe". */
     public void setOnCreateTeam(Runnable callback) {
-        this.onCreateTeam = callback;
+        this.createTeamButton.setOnAction(e -> callback.run());
     }
 
     /** Registers the callback invoked when the player clicks "Quitter". */
     public void setOnQuit(Runnable callback) {
-        this.onQuit = callback;
+        this.quitButton.setOnAction(e -> callback.run());
+    }
+
+    /** Registers the callback invoked when the player launches an automatic combat. */
+    public void setOnStartAutoCombat(Runnable callback) {
+        this.launchAutomaticCombat.setOnAction(e -> callback.run());
+    }
+
+    /** Registers the callback invoked when the player launches a manual combat. */
+    public void setOnStartManualCombat(Runnable callback) {
+        this.launchManualCombat.setOnAction(e -> callback.run());
     }
 
     @Override
     public void refresh() {
-        // No dynamic data to display on the main menu.
+        // No dynamic content to refresh in the main menu, so this method is empty.
     }
 }

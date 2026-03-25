@@ -5,7 +5,7 @@ import java.io.IOException;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.models.player.Player;
+import ulb.services.PlayerService;
 import ulb.views.victory_view.CombatVictoryView;
 
 /**
@@ -34,7 +34,7 @@ import ulb.views.victory_view.CombatVictoryView;
  * @see Controller
  */
 public class CombatVictoryController extends Controller<CombatVictoryView> {
-    private final Player player;
+    private final PlayerService playerService;
 
     /**
      * Constructs a {@code CombatVictoryController}, initialises its
@@ -52,12 +52,10 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      * @throws IOException if the {@link CombatVictoryView} fails to load its FXML
      *                     resource.
      */
-    public CombatVictoryController(MetaController metaController, Player player)
+    public CombatVictoryController(MetaController metaController, PlayerService playerService)
             throws IOException {
         super(metaController, new CombatVictoryView());
-
-        this.player = player;
-
+        this.playerService = playerService;
         this.view.setOnContinue(this::continueToMainMenu);
     }
 
@@ -86,7 +84,7 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
         // Optional<LevelUp> lvlup = bugemon.addxp(xpwonatfight)
         // if lvlup.isPresent() -> switch to level up screen
         // else -> back to main menu
-        this.player.clearActiveTeam();
+        this.playerService.clearActiveTeam();
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 }

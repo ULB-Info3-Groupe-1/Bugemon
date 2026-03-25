@@ -1,63 +1,87 @@
 .action-menu {
     -fx-background-color: #f5f5f5;
+    background-color: #f5f5f5;
     -fx-padding: 16;
+    padding: 16;
     -fx-border-color: #cccccc;
+    border-color: #cccccc;
     -fx-border-radius: 8;
+    border-radius: 8;
     -fx-background-radius: 8;
     -fx-border-width: 1;
+    border-width: 1;
 }
 
 .action-button {
-    -fx-background-color: #7f8c8d;
+    -fx-background-color: #5a6268;
+    background-color: #5a6268;
     -fx-text-fill: white;
+    color: white;
     -fx-font-weight: bold;
+    font-weight: bold;
     -fx-font-size: 14px;
+    font-size: 14px;
     -fx-background-radius: 6;
+    border-radius: 6;
     -fx-cursor: hand;
+    cursor: pointer;
     -fx-padding: 10 16;
+    padding: 10 16;
 }
 
 .action-button:hover {
     -fx-background-color: #626567;
+    background-color: #626567;
 }
 
 .action-attack {
     -fx-background-color: #c0392b;
+    background-color: #c0392b;
 }
-.action-attack:hover { -fx-background-color: #a93226; }
+.action-attack:hover { -fx-background-color: #a93226; background-color: #a93226; }
 
 .action-switch {
     -fx-background-color: #2980b9;
+    background-color: #2980b9;
 }
-.action-switch:hover { -fx-background-color: #1f6691; }
+.action-switch:hover { -fx-background-color: #1f6691; background-color: #1f6691; }
 
 .action-item {
     -fx-background-color: #e67e22;
+    background-color: #e67e22;
 }
-.action-item:hover { -fx-background-color: #ca6f1e; }
+.action-item:hover { -fx-background-color: #ca6f1e; background-color: #ca6f1e; }
 
 .switch-menu-button {
-    -fx-background-color: #2980b9;
-    -fx-text-fill: white;
+    -fx-background-color: #1f6691;
+    background-color: #1f6691;
+    -fx-text-fill: #ecf0f1;
+    color: #ecf0f1;
     -fx-font-size: 13px;
+    font-size: 13px;
     -fx-font-weight: bold;
+    font-weight: bold;
     -fx-background-radius: 6;
+    border-radius: 6;
     -fx-cursor: hand;
+    cursor: pointer;
     -fx-padding: 8 16;
+    padding: 8 16;
 }
 
 .switch-menu-button:hover {
-    -fx-background-color: #1f6691;
+    -fx-background-color: #163d5c;
+    background-color: #163d5c;
 }
 
-.attack-FLORA { -fx-background-color: #27ae60; }
-.attack-FLORA:hover { -fx-background-color: #1e8449; }
+.attack-FLORA { -fx-background-color: #27ae60; background-color: #27ae60; }
+.attack-FLORA:hover { -fx-background-color: #1e8449; background-color: #1e8449; }
 
-.attack-PYRO { -fx-background-color: #e74c3c; }
-.attack-PYRO:hover { -fx-background-color: #a93226; }
+.attack-PYRO { -fx-background-color: #e74c3c; background-color: #e74c3c; }
+.attack-PYRO:hover { -fx-background-color: #a93226; background-color: #a93226; }
 
-.attack-AQUA { -fx-background-color: #2980b9; }
-.attack-AQUA:hover { -fx-background-color: #1f6691; }
+.attack-AQUA { -fx-background-color: #2980b9; background-color: #2980b9; }
+.attack-AQUA:hover { -fx-background-color: #1f6691; background-color: #1f6691; }
 
-.attack-LITHO { -fx-background-color: #8e44ad; }
-.attack-LITHO:hover { -fx-background-color: #6c3483; }
+.attack-LITHO { -fx-background-color: #8e44ad; background-color: #8e44ad; }
+.attack-LITHO:hover { -fx-background-color: #6c3483; background-color: #6c3483; }

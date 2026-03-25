@@ -106,7 +106,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
         if (!this.contains(bugemon)) {
             throw new BugemonNotInTeamException("This Bugemon is not in the team!");
         }
-        this.team.remove(bugemon);
+        this.team.removeIf(member -> member.getId().equals(bugemon.getId()));
     }
 
     /**
@@ -127,7 +127,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
      *         false otherwise
      */
     public boolean contains(Bugemon bugemon) {
-        return this.team.contains(bugemon);
+        return this.team.stream().anyMatch(member -> member.getId().equals(bugemon.getId()));
     }
 
     /**
@@ -199,5 +199,14 @@ public class BugemonTeam implements Iterable<Bugemon> {
 
     public void killAll() {
         this.team.forEach(Bugemon::kill);
+    }
+
+    public int getSlotPosition(Bugemon bugemon) {
+        int slot = this.team.indexOf(bugemon);
+        if (slot == -1) {
+            throw new BugemonNotInTeamException(
+                    "This Bugemon is not in the team!\nSlot position cannot be determined.");
+        }
+        return slot;
     }
 }

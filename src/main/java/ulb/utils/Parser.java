@@ -15,10 +15,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -71,38 +71,18 @@ import ulb.models.bugemon.effect.EffectTarget;
  * @see ulb.models.bugemon.Attack
  */
 public class Parser {
+    private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
+
     // Constants for the paths to the JSON data files within the resources directory
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
     private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
-    private static final String JSON_Items_PATH = "/json/objets.json";
+    private static final String JSON_ITEMS_PATH = "/json/objets.json";
 
     // Static fields to hold the parsed data, accessible via getter methods
     private static Map<String, Attack> attacks;
     private static List<Bugemon> bugemons;
     private static List<Item> items;
     private static Inventory inventory;
-
-    // Singleton instance of the Parser class
-    private static Parser instance;
-
-    /**
-     * Private constructor to prevent instantiation of the Parser class, enforcing the singleton
-     * pattern.
-     */
-    private Parser() {}
-
-    /**
-     * Returns the singleton instance of the Parser class, creating it if it does not already exist.
-     * This method is thread-safe to ensure that only one instance of the Parser is created even in
-     * a multi-threaded environment.
-     * @return the singleton instance of the Parser class
-     */
-    public static synchronized Parser getInstance() {
-        if (instance == null) {
-            instance = new Parser();
-        }
-        return instance;
-    }
 
     /**
      * Parses the three bundled JSON resource files (attacks, Bugemons,
@@ -116,25 +96,25 @@ public class Parser {
     public void parse() {
         InputStream attacksStream;
         InputStream bugemonsStream;
-        InputStream ItemsStream;
+        InputStream itemsStream;
         try {
             attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
             bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
-            ItemsStream = getClass().getResourceAsStream(JSON_Items_PATH);
-            if (attacksStream == null || bugemonsStream == null || ItemsStream == null) {
+            itemsStream = getClass().getResourceAsStream(JSON_ITEMS_PATH);
+            if (attacksStream == null || bugemonsStream == null || itemsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }
         } catch (IOException e) {
-            // TODO: handle callback
+            LOGGER.severe("Error loading JSON files: " + e.getMessage());
             return;
         }
 
         Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
         Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
-        Reader ItemsReader = new InputStreamReader(ItemsStream, StandardCharsets.UTF_8);
+        Reader itemsReader = new InputStreamReader(itemsStream, StandardCharsets.UTF_8);
         parseAttacks(attacksReader);
         parseBugemons(bugemonsReader);
-        parseItemsAndInventory(ItemsReader);
+        parseItemsAndInventory(itemsReader);
     }
 
     /**
@@ -246,7 +226,7 @@ public class Parser {
         try {
             reader.close();
         } catch (IOException e) {
-            System.err.println("Error when parsing attacks");
+            LOGGER.severe("Error when parsing attacks: " + e.getMessage());
         }
 
         JsonArray attacksArray = root.getAsJsonArray("attaques");
@@ -274,7 +254,7 @@ public class Parser {
         try {
             reader.close();
         } catch (IOException e) {
-            System.err.println("Error when parsing bugemons");
+            LOGGER.severe("Error when parsing bugemons: " + e.getMessage());
         }
 
         JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
@@ -302,9 +282,9 @@ public class Parser {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
 
             // Extract and parse Items
-            JsonArray ItemsArray = root.getAsJsonArray("objets");
+            JsonArray itemsArray = root.getAsJsonArray("objets");
             Type desType = new TypeToken<List<Item>>() {}.getType();
-            List<Item> Items = gson.fromJson(ItemsArray, desType);
+            List<Item> items = gson.fromJson(itemsArray, desType);
 
             // Extract and parse inventory
             JsonObject startInventory = root.getAsJsonObject("inventaire_depart");
@@ -316,7 +296,7 @@ public class Parser {
                         String objectId = entry.getKey();
                         int quantity = entry.getValue();
 
-                        Item obj = Items.stream()
+                        Item obj = items.stream()
                                            .filter(o -> o.id().equals(objectId))
                                            .findFirst()
                                            .orElseThrow(()
@@ -327,16 +307,11 @@ public class Parser {
                     }
 
                     reader.close();
-                    return new ItemWrapper(Items, inventory);
+                    return new ItemWrapper(items, inventory);
             }
             catch (Exception e) {
-                // TODO: Use of a Logger or external error management ?
-                System.out.println("Error when parsing Items and inventory");
-                e.printStackTrace();
+                LOGGER.severe("Error when parsing Items and inventory: " + e.getMessage());
             }
             return null;
         }
-
-        /** Placeholder for future skill-tree parsing. Currently a no-op. */
-        static void parseSkillTree(Path fileName) {}
     }

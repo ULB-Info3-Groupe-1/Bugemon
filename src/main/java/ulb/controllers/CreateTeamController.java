@@ -1,10 +1,11 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.player.Player;
+import ulb.services.PlayerService;
 import ulb.views.CreateTeamView;
 
 /**
@@ -17,7 +18,7 @@ import ulb.views.CreateTeamView;
  * </p>
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
-    private final Player player;
+    private final PlayerService playerService;
     private final BugemonTeam selectedTeam;
 
     /**
@@ -26,18 +27,21 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * the Bugemon grid.
      *
      * @param metaController the application-level controller used for navigation.
-     * @param bugemonTeam    the player's team model to mutate in response to selections.
+     * @param playerService the service used to access and mutate player data.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public CreateTeamController(MetaController metaController, Player player) throws IOException {
+    public CreateTeamController(MetaController metaController, PlayerService playerService)
+            throws IOException {
         super(metaController, new CreateTeamView());
-        this.player = player;
+        this.playerService = playerService;
         this.selectedTeam = new BugemonTeam();
 
         this.view.setModel(this.selectedTeam);
+        this.view.setValidate(this::returnToMainMenu);
+        this.view.setLoad(this::loadTeam);
+        this.view.setSave(this::saveTeam);
+        this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
         this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
-        this.view.setOnStartAutoCombat(this::startAutoCombat);
-        this.view.setOnStartManualCombat(this::startManualCombat);
         this.view.refresh();
     }
 
@@ -53,15 +57,19 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.refreshTeam(this.selectedTeam);
     }
 
-    /** Launches an automatic combat session. */
-    public void startAutoCombat() {
-        this.player.setActiveTeam(this.selectedTeam);
-        this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
+    public void returnToMainMenu() {
+        this.metaController.switchTo(MetaController.Window.MAIN_MENU);
     }
 
-    /** Launches a manual combat session. */
-    public void startManualCombat() {
-        this.player.setActiveTeam(this.selectedTeam);
-        this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
+    public void saveTeam() {
+        this.playerService.saveTeam("test_1", this.selectedTeam);
+        this.playerService.setActiveTeam(this.selectedTeam);
+    }
+
+    public void loadTeam() {
+        List<Bugemon> team = this.playerService.loadTeam("test_1");
+        this.selectedTeam.clear();
+        team.forEach(this.selectedTeam::add);
+        this.view.refreshTeam(this.selectedTeam);
     }
 }

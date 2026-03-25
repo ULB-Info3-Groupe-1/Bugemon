@@ -2,7 +2,6 @@ package ulb.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,8 +18,6 @@ import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.ItemWrapper;
 import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon.effect.EffectHeal;
-import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
@@ -28,7 +25,7 @@ import ulb.models.bugemon.effect.EffectTarget;
 public class TestParser {
     @Test
     public void testAttackParsing() {
-        Parser tempInstance = Parser.getInstance();
+        Parser tempInstance = new Parser();
         tempInstance.parse();
 
         // check if a list has been returned
@@ -58,7 +55,7 @@ public class TestParser {
 
     @Test
     public void testBugemonParsing() {
-        Parser tempInstance = Parser.getInstance();
+        Parser tempInstance = new Parser();
         tempInstance.parse();
 
         // check if a list has been returned
@@ -117,7 +114,7 @@ public class TestParser {
         assertNotNull(bugemonsStream);
         assertNotNull(objectsStream);
 
-        Parser parser = Parser.getInstance();
+        Parser parser = new Parser();
         parser.parse();
 
         // check attacks

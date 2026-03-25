@@ -50,6 +50,32 @@ git merge ma-branche
 git reset --soft HEAD~1
 ```
 
+## Base de données & Requêtes SQL
+
+### Structure Singleton pour la DB
+
+Toute interaction avec la base de données doit passer par le Repository pattern.
+La connexion à la base de données est gérée par le Singleton `DatabaseManager` (dans `src/main/java/ulb/repository/`).
+
+### Formatage des requêtes SQL
+
+Toutes les requêtes SQL complexes ou de base doivent être stockées **dans des fichiers `.sql` dédiés** dans le dossier `src/main/resources/sql/`.
+
+Chaque requête **doit obligatoirement** être précédée de sa documentation sous le format exact :
+
+```sql
+-- Query to create an object x
+-- NameOfRequest
+SELECT ...
+```
+
+*Exemple d'un fichier `bugemon_queries.sql` :*
+```sql
+-- Query to create a team member
+-- InsertTeamMember
+INSERT INTO team_members (user_id, team_name, bugemon_id, slot_position) VALUES (?, ?, ?, ?);
+```
+
 ### Issues
 
 #### Contexte

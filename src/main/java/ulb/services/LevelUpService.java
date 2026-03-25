@@ -18,6 +18,10 @@ import ulb.models.trainer.Trainer;
  * </p>
  */
 public class LevelUpService {
+    private LevelUpService() {
+        // Private constructor to prevent instantiation
+    }
+
     /**
      * Calculates the XP gained from defeating opponents in combat.
      *
@@ -73,7 +77,7 @@ public class LevelUpService {
         final int numParticipatingBugemon = participatingBugemon.size();
 
         final int xpWon = xpGain(floor, multiplier, nAdversaries);
-        final int xpPerBugemon = (int)(xpWon / numParticipatingBugemon);
+        final int xpPerBugemon = (xpWon / numParticipatingBugemon);
 
         // My functional bros will love this one :-D
         //

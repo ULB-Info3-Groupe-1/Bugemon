@@ -28,18 +28,16 @@ public final class TestUtilsBugemons {
                 new Attack("TestAttack2", "TestAttack2", BugemonType.FLORA, "", 20, effects);
         List<Attack> attackList = List.of(attack1, attack2);
 
-        Bugemon bugemon = new BugemonBuilder()
-                                  .id(id)
-                                  .name("TestBugemon_" + id)
-                                  .hp(100)
-                                  .attack(20)
-                                  .defense(10)
-                                  .initiative(5)
-                                  .attackList(attackList)
-                                  .isStarter(false)
-                                  .build();
-
-        return bugemon;
+        return new BugemonBuilder()
+                .id(id)
+                .name("TestBugemon_" + id)
+                .hp(100)
+                .attack(20)
+                .defense(10)
+                .initiative(5)
+                .attackList(attackList)
+                .isStarter(false)
+                .build();
     }
 
     public static BugemonTeam createDefaultTeam(int count) {

@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -29,6 +30,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestCombatService {
     @Test
@@ -159,5 +161,15 @@ public class TestCombatService {
         BugemonType pyroType = BugemonType.PYRO;
 
         assertEquals(Efficiency.HIGH, CombatService.compareBugemonType(aquaType, pyroType));
+    }
+
+    @Test
+    public void testRandomTeamNumber() {
+        List<Bugemon> bugemons = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            bugemons.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
+        }
+        BugemonTeam teamOfSix = CombatService.createRandomTeam(bugemons, 6);
+        assertEquals(6, teamOfSix.size());
     }
 }

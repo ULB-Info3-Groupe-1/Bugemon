@@ -1,20 +1,29 @@
 .victory-title {
     -fx-font-size: 48px;
+    font-size: 48px;
     -fx-font-weight: bold;
-    -fx-font-family: 'Pixels';
+    font-weight: bold;
+    -fx-font-family: 'Pixels', monospace;
+    font-family: 'Pixels', monospace;
     -fx-text-fill: #FFD700;
 }
 
 .victory-continue-button {
     -fx-background-color: #3daa6e;
+    background-color: #3daa6e;
     -fx-text-fill: white;
     -fx-font-size: 16px;
+    font-size: 16px;
     -fx-font-weight: bold;
+    font-weight: bold;
     -fx-background-radius: 6;
     -fx-cursor: hand;
+    cursor: hand;
     -fx-padding: 12 30;
+    padding: 12 30;
 }
 
 .victory-continue-button:hover {
     -fx-background-color: #2e8a57;
+    background-color: #2e8a57;
 }

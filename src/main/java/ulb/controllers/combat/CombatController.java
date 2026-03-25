@@ -6,14 +6,13 @@ import java.util.function.Consumer;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.factory.TeamFactory;
 import ulb.models.combat.TurnResult;
 import ulb.models.level_up.LevelUp;
-import ulb.models.player.Player;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.CombatService;
 import ulb.services.LevelUpService;
-import ulb.utils.Parser;
+import ulb.services.PlayerService;
 import ulb.views.combat.CombatView;
 
 /**
@@ -31,13 +30,13 @@ import ulb.views.combat.CombatView;
  */
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
     private Consumer<List<LevelUp>> onVictory;
-    protected final Player player;
     protected final AttackAnimationController animationController;
+    protected final PlayerService playerService;
 
-    public CombatController(MetaController metaController, V view, Player player) {
+    protected CombatController(MetaController metaController, PlayerService playerService, V view) {
         super(metaController, view);
-        this.player = player;
         this.animationController = new AttackAnimationController(view);
+        this.playerService = playerService;
     }
 
     public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
@@ -71,7 +70,8 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * @return an {@link AutoTrainer} with a randomly generated team.
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
-        return new AutoTrainer(TeamFactory.createRandomTeam(playerTeamSize));
+        return new AutoTrainer(CombatService.createRandomTeam(
+                this.playerService.getAllDefaultBugemons(), playerTeamSize));
     }
 
     /**

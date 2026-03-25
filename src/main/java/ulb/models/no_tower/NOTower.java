@@ -10,11 +10,10 @@
 package ulb.models.no_tower;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.List;
 
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.*;
+import ulb.services.PlayerService;
 
 public class NOTower {
     //
@@ -24,8 +23,8 @@ public class NOTower {
     private ArrayList<Floor> floors = new ArrayList<>();
 
     // TODO: change to Player class when it will be implemented
-    public NOTower(BugemonTeam playerTeam) {
-        generateFloors(playerTeam);
+    public NOTower(BugemonTeam playerTeam, PlayerService playerService) {
+        generateFloors(playerTeam, playerService);
     }
 
     public int getCurrentFloorNumber() {
@@ -51,10 +50,10 @@ public class NOTower {
         }
     }
 
-    private void generateFloors(BugemonTeam playerTeam) {
+    private void generateFloors(BugemonTeam playerTeam, PlayerService playerService) {
         Trainer playerTrainer = new ManualTrainer(playerTeam);
         for (int i = 0; i < MAX_FLOORS; i++) {
-            floors.add(new Floor(playerTrainer));
+            floors.add(new Floor(playerTrainer, playerService));
         }
     }
 }
