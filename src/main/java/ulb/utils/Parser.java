@@ -292,8 +292,8 @@ public class Parser {
 
             inventory = new Inventory();
             for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
-                String objectId = entry.getKey();
-                int quantity = entry.getValue();
+                        String objectId = entry.getKey();
+                        int quantity = entry.getValue();
 
                 Item obj = items.stream()
                                    .filter(o -> o.id().equals(objectId))
