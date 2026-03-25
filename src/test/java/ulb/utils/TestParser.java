@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +14,6 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
-import ulb.models.bugemon.ItemWrapper;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
@@ -144,10 +141,11 @@ public class TestParser {
 
         assertNotNull(objectsStream);
 
-        ItemWrapper wrapper = Parser.parseItemsAndInventory(
-                new InputStreamReader(objectsStream, StandardCharsets.UTF_8));
-        List<Item> objectsList = wrapper.getItems();
-        Inventory inventory = wrapper.getInventory();
+        Parser tempInstance = new Parser();
+        tempInstance.parse();
+
+        List<Item> objectsList = tempInstance.getItems();
+        Inventory inventory = tempInstance.getInventory();
 
         assertNotNull(objectsList);
         assertNotNull(inventory);
