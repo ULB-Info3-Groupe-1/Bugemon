@@ -5,7 +5,7 @@ import ulb.models.trainer.Trainer;
 import ulb.views.combat.CombatView;
 
 /**
- * Manages attack animations for combat sequences.
+ * Class that manages attack animations for combat sequences.
  *
  * <p>
  * This controller encapsulates all animation logic related to bugemon attacks,
@@ -24,7 +24,11 @@ import ulb.views.combat.CombatView;
  * </p>
  */
 public class AttackAnimationController {
+    // Attributes
+
     private final CombatView view;
+
+    // Constructor
 
     /**
      * Creates an animation controller for the given combat view.
@@ -34,6 +38,8 @@ public class AttackAnimationController {
     public AttackAnimationController(CombatView view) {
         this.view = view;
     }
+
+    // Methods
 
     /**
      * Plays all attack animations from a turn result sequentially.
