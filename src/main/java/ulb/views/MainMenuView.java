@@ -27,7 +27,7 @@ public class MainMenuView extends View {
      * @throws IOException if the FXML resource cannot be loaded.
      */
     public MainMenuView() throws IOException {
-        super("/fxml/MainMenu.fxml");  
+        super("/fxml/MainMenu.fxml");
     }
 
     /** Registers the callback invoked when the player clicks "Créer une équipe". */

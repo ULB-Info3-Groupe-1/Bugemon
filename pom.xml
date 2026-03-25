@@ -93,6 +93,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
+        <configuration>
+            <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+        </configuration>
       </plugin>
       <plugin>
           <groupId>org.codehaus.mojo</groupId>

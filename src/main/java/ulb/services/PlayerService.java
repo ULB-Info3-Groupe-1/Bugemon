@@ -10,7 +10,6 @@ import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
 
 public class PlayerService {
-
     // Player's active team
     private BugemonTeam activeTeam;
 
@@ -72,7 +71,7 @@ public class PlayerService {
         });
         if (userId == -1) {
             throw new IllegalStateException("Failed to create or retrieve user ID for username: "
-                                       + this.username + ". Cannot save team.");
+                                            + this.username + ". Cannot save team.");
         }
         this.databaseRepository.createTeam(userId, teamName);
         List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(userId);
@@ -94,7 +93,7 @@ public class PlayerService {
         int userId = this.databaseRepository.getUserIdByUsername(this.username).orElse(-1);
         if (userId == -1) {
             throw new IllegalStateException("User not found for username: " + this.username
-                                       + ". Cannot load team.");
+                                            + ". Cannot load team.");
         }
         List<TeamMemberDTO> teamMembers = this.databaseRepository.getTeamMembers(userId, teamName);
         BugemonTeam loadedTeam = new BugemonTeam();

@@ -60,8 +60,8 @@ public class Floor {
     }
 
     private CombatRoom initCombatRoom() {
-        Trainer opponentTrainer =
-                new ManualTrainer(CombatService.createRandomTeam(this.playerService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
+        Trainer opponentTrainer = new ManualTrainer(CombatService.createRandomTeam(
+                this.playerService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);
@@ -73,7 +73,8 @@ public class Floor {
     }
 
     private CombatRoom initBossCombatRoom() {
-        Trainer opponentTrainer = new ManualTrainer(CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
+        Trainer opponentTrainer = new ManualTrainer(
+                CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);

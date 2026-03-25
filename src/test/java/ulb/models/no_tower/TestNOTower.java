@@ -17,10 +17,10 @@ import ulb.services.PlayerService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestNOTower {
-
-     private PlayerService getPlayerServiceMock() {
+    private PlayerService getPlayerServiceMock() {
         PlayerService playerServiceMock = mock(PlayerService.class);
-        List<Bugemon> testBugemons = new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
+        List<Bugemon> testBugemons =
+                new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("finalboss"));
         when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
@@ -30,7 +30,7 @@ public class TestNOTower {
     @Test
     public void testNOTowerInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        
+
         NOTower noTower = new NOTower(playerTeam, getPlayerServiceMock());
 
         assertEquals(0, noTower.getCurrentFloorNumber());
@@ -67,7 +67,7 @@ public class TestNOTower {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        
+
         NOTower noTower = new NOTower(playerTeam, getPlayerServiceMock());
 
         assertFalse(noTower.isFloorComplete());

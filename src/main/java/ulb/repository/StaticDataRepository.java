@@ -13,12 +13,12 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
-import ulb.models.bugemon.effect.EffectDuration;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
@@ -332,8 +332,9 @@ public class StaticDataRepository {
                         String duration = (rs.getString(DatabaseColumns.COL_DURATION) != null)
                                                   ? rs.getString(DatabaseColumns.COL_DURATION)
                                                   : "0_tour";
-                        effects.add(new EffectStatModifier(
-                                target, stat, rs.getInt(DatabaseColumns.COL_MODIFIER), EffectDuration.fromLabel(duration)));
+                        effects.add(new EffectStatModifier(target, stat,
+                                                           rs.getInt(DatabaseColumns.COL_MODIFIER),
+                                                           EffectDuration.fromLabel(duration)));
                         break;
 
                     case "EffectHeal":

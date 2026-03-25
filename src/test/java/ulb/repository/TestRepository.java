@@ -18,9 +18,7 @@ import ulb.repository.dto.UserBugemonDTO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestRepository {
-
-    @Mock
-    private DatabaseRepository repository;
+    @Mock private DatabaseRepository repository;
 
     @Test
     public void shouldCreateAndRetrieveUser_whenValidUsernameProvided() {
@@ -176,7 +174,7 @@ public class TestRepository {
 
         // Configure mock behavior for retrieving teams after deletion
         when(this.repository.getUserTeams(userId))
-            .thenReturn(new ArrayList<>());  // Empty list after deletion
+                .thenReturn(new ArrayList<>()); // Empty list after deletion
 
         // Execute
         this.repository.createTeam(userId, teamName);
@@ -233,7 +231,7 @@ public class TestRepository {
 
         // Configure mock behavior to return empty list after removal
         when(this.repository.getTeamMembers(userId, teamName))
-            .thenReturn(new ArrayList<>());  // Empty list after removal
+                .thenReturn(new ArrayList<>()); // Empty list after removal
 
         // Execute
         this.repository.createTeam(userId, teamName);
@@ -255,4 +253,3 @@ public class TestRepository {
         verify(this.repository).getTeamMembers(userId, teamName);
     }
 }
-

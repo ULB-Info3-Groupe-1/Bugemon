@@ -57,7 +57,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> {
     public CombatDefeatController(MetaController metaController, PlayerService playerService)
             throws IOException {
         super(metaController, new CombatDefeatView());
-        this.playerService = playerService;        
+        this.playerService = playerService;
         this.view.setOnRetry(this::retry);
         this.view.setOnBackToMainMenu(this::backToMainMenu);
     }

@@ -4,10 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseConnection {
-
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private static final String URL = dotenv.get("PRODUCTION_DB_URL");

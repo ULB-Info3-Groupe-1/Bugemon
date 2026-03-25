@@ -293,24 +293,25 @@ public class Parser {
 
             Inventory inventory = new Inventory();
             for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
-                String objectId = entry.getKey();
-                int quantity = entry.getValue();
+                        String objectId = entry.getKey();
+                        int quantity = entry.getValue();
 
-                Item obj = items.stream()
-                                   .filter(o -> o.id().equals(objectId))
-                                   .findFirst()
-                                   .orElseThrow(()
-                                                        -> new RuntimeException("Object with ID "
-                                                                                + objectId
-                                                                                + " not found"));
-                inventory.addItem(obj, quantity);
+                        Item obj = items.stream()
+                                           .filter(o -> o.id().equals(objectId))
+                                           .findFirst()
+                                           .orElseThrow(()
+                                                                -> new RuntimeException(
+                                                                        "Object with ID " + objectId
+                                                                        + " not found"));
+                        inventory.addItem(obj, quantity);
+                    }
+
+                    reader.close();
+                    return new ItemWrapper(items, inventory);
             }
-
-            reader.close();
-            return new ItemWrapper(items, inventory);
-        } catch (Exception e) {
-            LOGGER.severe("Error when parsing Items and inventory: " + e.getMessage());
+            catch (Exception e) {
+                LOGGER.severe("Error when parsing Items and inventory: " + e.getMessage());
+            }
+            return null;
         }
-        return null;
     }
-}

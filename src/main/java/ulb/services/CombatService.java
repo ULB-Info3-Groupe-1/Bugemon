@@ -35,9 +35,7 @@ import ulb.models.trainer.Trainer;
  * <p>This class is not meant to be instantiated; all methods are static.</p>
  */
 public class CombatService {
-
     private static final String BOSS_ID = "finalboss";
-
 
     private CombatService() {
         // Private constructor to prevent instantiation
@@ -211,9 +209,11 @@ public class CombatService {
     }
 
     /**
-     * Creates a boss {@link BugemonTeam} containing the unique boss Bugemon defined by {@code BOSS_ID}.
-     * 
-     * @param bugemonList the list of available {@link Bugemon}s to search for the boss; must not be {@code null}
+     * Creates a boss {@link BugemonTeam} containing the unique boss Bugemon defined by {@code
+     * BOSS_ID}.
+     *
+     * @param bugemonList the list of available {@link Bugemon}s to search for the boss; must not be
+     *         {@code null}
      * @return a new {@link BugemonTeam} containing the boss Bugemon.
      */
     public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
@@ -228,5 +228,4 @@ public class CombatService {
 
         return bossTeam;
     }
-
 }
