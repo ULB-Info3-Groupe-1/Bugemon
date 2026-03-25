@@ -43,7 +43,6 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
  * @see ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException
  */
 public class BugemonTeam implements Iterable<Bugemon> {
-
     private static final String DEFAULT_NAME = "Unnamed Team";
 
     // Attributes

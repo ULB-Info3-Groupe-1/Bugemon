@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -128,8 +129,8 @@ public class CreateTeamView extends View {
 
     /**
      * @return the team name currently entered in the text field of the load team input.
-     */    
+     */
     public String getTeamNameToLoad() {
         return this.loadTeamNameInput.getText();
-     }
+    }
 }

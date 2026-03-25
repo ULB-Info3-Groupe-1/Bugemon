@@ -64,7 +64,12 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     /**
-     * Saves the player's currently selected team under the name specified in the view's saveTeamNameInput field. If the team name is valid (not null, not empty, not already used by another team owned by the user), the team is saved to the database through the PlayerService, set as the active team in the PlayerService, and the view is updated to reflect any changes. If the team name is invalid, an appropriate alert is shown to the user and no changes are made to the active team or the view.
+     * Saves the player's currently selected team under the name specified in the view's
+     * saveTeamNameInput field. If the team name is valid (not null, not empty, not already used by
+     * another team owned by the user), the team is saved to the database through the PlayerService,
+     * set as the active team in the PlayerService, and the view is updated to reflect any changes.
+     * If the team name is invalid, an appropriate alert is shown to the user and no changes are
+     * made to the active team or the view.
      */
     public void saveTeam() {
         String teamName = this.view.getTeamNameToSave();
@@ -76,7 +81,11 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     /**
-     * Loads the team with the name specified in the view's loadTeamNameInput field, sets it as the active team in the PlayerService, and updates the view to display the loaded team. If the team name is invalid (null, empty, or does not correspond to an existing team), an appropriate alert is shown to the user and no changes are made to the active team or the view.
+     * Loads the team with the name specified in the view's loadTeamNameInput field, sets it as the
+     * active team in the PlayerService, and updates the view to display the loaded team. If the
+     * team name is invalid (null, empty, or does not correspond to an existing team), an
+     * appropriate alert is shown to the user and no changes are made to the active team or the
+     * view.
      */
     public void loadTeam() {
         String teamName = this.view.getTeamNameToLoad();
@@ -88,7 +97,10 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     }
 
     /**
-     * Checks if the given team name is valid for saving a team. A valid team name must not be null, empty, or consist only of whitespace, and it must not already be used by another team owned by the user. If the team name is invalid, an appropriate alert is shown to the user explaining the reason.
+     * Checks if the given team name is valid for saving a team. A valid team name must not be null,
+     * empty, or consist only of whitespace, and it must not already be used by another team owned
+     * by the user. If the team name is invalid, an appropriate alert is shown to the user
+     * explaining the reason.
      * @param teamName the name of the team to validate for saving
      * @return true if the team name is valid for saving a team, false otherwise
      */
@@ -97,14 +109,19 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
             return false;
         } else if (this.playerService.teamNameExists(teamName)) {
-            this.view.showAlert("Nom d'équipe déjà utilisé", "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
+            this.view.showAlert(
+                    "Nom d'équipe déjà utilisé",
+                    "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
             return false;
         }
         return true;
     }
 
     /**
-     * Checks if the given team name is valid for loading a team. A valid team name must not be null, empty, or consist only of whitespace, and it must correspond to an existing team owned by the user. If the team name is invalid, an appropriate alert is shown to the user explaining the reason.
+     * Checks if the given team name is valid for loading a team. A valid team name must not be
+     * null, empty, or consist only of whitespace, and it must correspond to an existing team owned
+     * by the user. If the team name is invalid, an appropriate alert is shown to the user
+     * explaining the reason.
      * @param teamName the name of the team to validate for loading
      * @return true if the team name is valid for loading a team, false otherwise
      */
@@ -113,7 +130,9 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
             return false;
         } else if (!this.playerService.teamNameExists(teamName)) {
-            this.view.showAlert("Nom d'équipe introuvable", "Vous n'avez aucune équipe avec ce nom. Veuillez vérifier l'orthographe ou en choisir un autre.");
+            this.view.showAlert("Nom d'équipe introuvable",
+                                "Vous n'avez aucune équipe avec ce nom. Veuillez vérifier "
+                                        + "l'orthographe ou en choisir un autre.");
             return false;
         }
         return true;
