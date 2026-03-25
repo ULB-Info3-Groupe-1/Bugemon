@@ -5,21 +5,36 @@ import java.util.List;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repository.DatabaseRepository;
+import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
 
 public class PlayerService {
+
+    // Unique identifier for the user/player.
+    private final int userId;
+
     // Player's active team
     private BugemonTeam activeTeam;
 
+    // List of all teams owned by the user
+    private List<TeamDTO> userTeams;
+
     // Repository for database interactions
-    private final DatabaseRepository databaseRepository = new DatabaseRepository();
+    private final DatabaseRepository databaseRepository;
 
     // Cache for all default Bugemons to avoid multiple database calls
     private List<Bugemon> allDefaultBugemonsCache;
 
-    // TODO: remove
-    private final String username = "admin";
+    /**
+     * Constructor for PlayerService. Initializes the service by retrieving the user ID based on the provided username, loading the user's teams, and setting up the database repository for future interactions.
+     * @param username the username of the player, used to retrieve or create a user ID in the database
+     */
+    public PlayerService(String username) {
+       this.databaseRepository = new DatabaseRepository();
+       this.userId = this.databaseRepository.getUserIdByUsername(username).orElseGet(() ->this.databaseRepository.createUser(username));
+       this.userTeams = this.databaseRepository.getUserTeams(this.userId);
+    }
 
     /**
      * Returns the currently active team of Bugemons.
@@ -59,16 +74,8 @@ public class PlayerService {
     }
 
     public void saveTeam(String teamName, BugemonTeam team) {
-        int userId = this.databaseRepository.getUserIdByUsername(this.username).orElseGet(() -> {
-            this.databaseRepository.createUser(this.username);
-            return this.databaseRepository.getUserIdByUsername(this.username).orElse(-1);
-        });
-        if (userId == -1) {
-            throw new IllegalStateException("Failed to create or retrieve user ID for username: "
-                                            + this.username + ". Cannot save team.");
-        }
-        this.databaseRepository.createTeam(userId, teamName);
-        List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(userId);
+        this.databaseRepository.createTeam(this.userId, teamName);
+        List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(this.userId);
         for (Bugemon bugemon : team) {
             if (userBugemonDTOs.stream().noneMatch(
                         dto -> dto.bugemonId().equals(bugemon.getId()))) {
@@ -77,20 +84,20 @@ public class PlayerService {
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(),
                         bugemon.getLevel()));
             }
-            TeamMemberDTO memberDTO = new TeamMemberDTO(userId, teamName, bugemon.getId(),
+            TeamMemberDTO memberDTO = new TeamMemberDTO(this.userId, teamName, bugemon.getId(),
                                                         team.getSlotPosition(bugemon));
             this.databaseRepository.addTeamMember(memberDTO);
         }
+        this.userTeams.add(new TeamDTO(this.userId, teamName));
     }
 
-    public List<Bugemon> loadTeam(String teamName) {
-        int userId = this.databaseRepository.getUserIdByUsername(this.username).orElse(-1);
-        if (userId == -1) {
-            throw new IllegalStateException("User not found for username: " + this.username
-                                            + ". Cannot load team.");
-        }
-        List<TeamMemberDTO> teamMembers = this.databaseRepository.getTeamMembers(userId, teamName);
-        BugemonTeam loadedTeam = new BugemonTeam();
+    /**
+     * Loads the team with the given name from the database and sets it as the active team. This method assumes that the team with the given name exists and belongs to the user. It retrieves the team members from the database, constructs a BugemonTeam object, and populates it with the corresponding Bugemons based on their IDs. If any Bugemon in the team cannot be found in the default Bugemons cache, an exception is thrown.
+     * @param teamName the name of the team to load and set as active
+     */
+    public void loadTeamAndSetActiveTeam(String teamName) {
+        List<TeamMemberDTO> teamMembers = this.databaseRepository.getTeamMembers(this.userId, teamName);
+        BugemonTeam loadedTeam = new BugemonTeam(teamName);
         for (TeamMemberDTO member : teamMembers) {
             Bugemon bugemon =
                     getAllDefaultBugemons()
@@ -98,10 +105,10 @@ public class PlayerService {
                             .filter(b -> b.getId().equals(member.bugemonId()))
                             .findFirst()
                             .orElseThrow(()
-                                                 -> new RuntimeException(
-                                                         "Bugemon with ID " + member.bugemonId()
-                                                         + (" not found in default Bugemons cache. "
-                                                            + "Cannot load team.")));
+                            -> new RuntimeException(
+                                    "Bugemon with ID " + member.bugemonId()
+                                    + (" not found in default Bugemons cache. "
+                                    + "Cannot load team.")));
             try {
                 loadedTeam.add(bugemon);
             } catch (Exception e) {
@@ -109,6 +116,16 @@ public class PlayerService {
                         "Failed to add Bugemon to loaded team: " + e.getMessage(), e);
             }
         }
-        return loadedTeam.getAll();
+        this.activeTeam = loadedTeam;
     }
+
+    /**
+     * Checks if the user already has a team with the given name. This is used to prevent duplicate team names when saving a new team.
+     * @param teamName the name of the team to check for existence
+     * @return true if a team with the given name already exists for the user, false otherwise
+     */
+    public boolean teamNameExists(String teamName) {
+        return this.userTeams.stream().anyMatch(team -> team.name().equals(teamName));
+    }
+
 }

@@ -59,8 +59,9 @@ public class UserRepository {
                      dbConnection.prepareStatement(this.dbRepository.getSql("GetUserByUsername"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 return Optional.of(rs.getInt(DatabaseColumns.COL_ID));
+            }
         } catch (SQLException e) {
             throw new IllegalStateException("getUserIdByUsername failed", e);
         }
