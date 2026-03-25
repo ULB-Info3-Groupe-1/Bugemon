@@ -3,7 +3,6 @@ package ulb.services;
 import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repository.DatabaseRepository;
 import ulb.repository.dto.TeamMemberDTO;
@@ -12,11 +11,6 @@ import ulb.repository.dto.UserBugemonDTO;
 public class PlayerService {
     // Player's active team
     private BugemonTeam activeTeam;
-
-    // List of all user-created teams
-    private List<BugemonTeam> userTeams;
-
-    private Inventory inventory;
 
     // Repository for database interactions
     private final DatabaseRepository databaseRepository = new DatabaseRepository();
