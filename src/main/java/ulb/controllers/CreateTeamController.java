@@ -75,20 +75,18 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * the user and no changes are made to the active team or the view.
      */
     public void saveTeam() {
-        String teamName = this.view.getTeamNameToSave();
-        if (this.teamNameIsEmpty(teamName)) {
+        if (this.teamNameIsEmpty(this.view.getTeamNameToSave())) {
             this.showEmptyNameAlert();
             return;
         }
 
         try {
-            this.playerService.saveTeam(teamName, this.selectedTeam);
+            this.playerService.saveTeam(this.view.getTeamNameToSave(), this.selectedTeam);
             this.view.updateTeamList(this.playerService.getTeamNames());
         } catch (TeamNameAlreadyExistsException e) {
-            this.view.showAlert(
-                    "Nom d'équipe déjà utilisé",
-                    "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
-        }        
+            this.view.showAlert("Nom d'équipe déjà utilisé",
+                                "Une équipe est déjà sauvée avec le nom " + this.view.getTeamNameToSave());
+        }
     }
 
     /**
@@ -108,7 +106,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.selectedTeam = this.playerService.getActiveTeam();
             this.view.refreshTeam(this.selectedTeam);
         } catch (TeamNotFoundException e) {
-            this.view.showAlert("Nom d'équipe introuvable", "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
+            this.view.showAlert("Nom d'équipe introuvable",
+                                "Aucune équipe sauvée avec le nom " + this.view.getTeamNameToLoad());
         }
     }
 
