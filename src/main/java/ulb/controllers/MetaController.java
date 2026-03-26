@@ -9,6 +9,7 @@ import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
+import ulb.controllers.combat.NOTowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
@@ -59,6 +60,7 @@ public class MetaController {
         CREATE_TEAM,
         MANUAL_COMBAT,
         AUTOMATIC_COMBAT,
+        NOTOWER,
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
         LEVEL_UP,
@@ -70,11 +72,14 @@ public class MetaController {
     private final CreateTeamController createTeamController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
+    private final NOTowerController noTowerController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
+    private final PlayerService playerService;
+    private boolean noTowerFlowActive;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -84,14 +89,16 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
         this.stage = primaryStage;
+        this.playerService = playerService;
 
-        this.mainMenuController = new MainMenuController(this, playerService);
-        this.createTeamController = new CreateTeamController(this, playerService);
-        this.manualCombatController = new ManualCombatController(this, playerService);
-        this.automaticCombatController = new AutomaticCombatController(this, playerService);
+        this.mainMenuController = new MainMenuController(this, this.playerService);
+        this.createTeamController = new CreateTeamController(this, this.playerService);
+        this.manualCombatController = new ManualCombatController(this, this.playerService);
+        this.automaticCombatController = new AutomaticCombatController(this, this.playerService);
+        this.noTowerController = new NOTowerController(this, this.playerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.levelUpController = new LevelUpController(this, playerService);
+        this.levelUpController = new LevelUpController(this, this.playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         initializeMusicResources();
@@ -134,6 +141,11 @@ public class MetaController {
             automaticCombatController.startCombat(true);
             automaticCombatController.show(stage);
         });
+        transitions.put(Window.NOTOWER, () -> {
+            this.noTowerFlowActive = true;
+            musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+            noTowerController.runNOTower(stage);
+        });
         transitions.put(Window.COMBAT_VICTORY, () -> {
             combatVictoryController.show(stage);
             this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
@@ -157,5 +169,13 @@ public class MetaController {
             throw new IllegalArgumentException("Unknown window: " + window);
         musicPlayer.stopMusic();
         transition.run();
+    }
+
+    public boolean isNOTowerFlowActive() {
+        return this.noTowerFlowActive;
+    }
+
+    public void endNOTowerFlow() {
+        this.noTowerFlowActive = false;
     }
 }

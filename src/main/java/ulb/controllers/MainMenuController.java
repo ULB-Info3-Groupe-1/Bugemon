@@ -49,6 +49,7 @@ public class MainMenuController extends Controller<MainMenuView> {
         this.playerService = playerService;
 
         this.view.setOnCreateTeam(this::createTeam);
+        this.view.setOnNoTower(this::launchNoTower);
         this.view.setOnQuit(this::quit);
         this.view.setOnStartAutoCombat(this::startAutoCombat);
         this.view.setOnStartManualCombat(this::startManualCombat);
@@ -64,6 +65,11 @@ public class MainMenuController extends Controller<MainMenuView> {
      */
     public void createTeam() {
         this.metaController.switchTo(Window.CREATE_TEAM);
+    }
+
+    /** Callback invoked when the player requests to launch the NO Tower mode. */
+    public void launchNoTower() {
+        this.metaController.switchTo(Window.NOTOWER);
     }
 
     /**

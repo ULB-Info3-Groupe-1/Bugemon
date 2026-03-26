@@ -16,7 +16,8 @@ import ulb.models.combat.Combat;
 import ulb.models.no_tower.room.CombatRoom;
 import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
-import ulb.models.trainer.*;
+import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.services.CombatService;
 import ulb.services.PlayerService;
 
@@ -60,10 +61,8 @@ public class Floor {
     }
 
     private CombatRoom initCombatRoom() {
-        Trainer opponentTrainer = new ManualTrainer(
-                CombatService.createRandomTeam(this.playerService.getAllDefaultBugemons(),
-                                               playerTrainer.getTeamSize()),
-                playerService.getInventory());
+        Trainer opponentTrainer = new AutoTrainer(CombatService.createRandomTeam(
+                this.playerService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);
@@ -75,9 +74,8 @@ public class Floor {
     }
 
     private CombatRoom initBossCombatRoom() {
-        Trainer opponentTrainer = new ManualTrainer(
-                CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()),
-                playerService.getInventory());
+        Trainer opponentTrainer = new AutoTrainer(
+            CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);
