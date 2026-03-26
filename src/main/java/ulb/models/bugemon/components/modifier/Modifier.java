@@ -2,7 +2,7 @@ package ulb.models.bugemon.components.modifier;
 
 import java.util.Optional;
 
-public abstract class Modifier {
+public class Modifier {
     Optional<Ticker> ticker;
     private int amount;
 
@@ -25,6 +25,12 @@ public abstract class Modifier {
     }
 
     public int apply(int value) {
+        this.ticker.ifPresent(t -> {
+            if (t.isExpired()) {
+                throw new IllegalStateException("apply called on an expired modifier");
+            }
+        });
+
         return value + this.amount;
     }
 }

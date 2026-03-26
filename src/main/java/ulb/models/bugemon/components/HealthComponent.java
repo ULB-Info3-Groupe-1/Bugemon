@@ -3,13 +3,12 @@ package ulb.models.bugemon.components;
 import ulb.models.bugemon.components.modifier.Modifier;
 
 public class HealthComponent extends AbstractComponent {
-    // FIXME: @SerializedName(...)
     private int maxHp;
     private int hp;
 
     public HealthComponent(int hp, int maxHp) {
         this.hp = hp;
-        this.maxHp = hp;
+        this.maxHp = maxHp;
     }
 
     public int getHp() {
@@ -27,7 +26,7 @@ public class HealthComponent extends AbstractComponent {
     }
 
     public void increaseMaxHp(int amount) {
-        this.maxHp = amount;
+        this.maxHp += amount;
     }
 
     public void decreaseHp(int amount) {

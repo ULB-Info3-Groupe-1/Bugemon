@@ -3,7 +3,6 @@ package ulb.models.bugemon.components;
 import ulb.models.bugemon.components.modifier.Modifier;
 
 public class InitiativeComponent extends AbstractComponent {
-    // FIXME: @SerializedName(...)
     private int initiative;
 
     public InitiativeComponent(int initiative) {

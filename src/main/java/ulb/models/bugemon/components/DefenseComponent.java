@@ -3,7 +3,6 @@ package ulb.models.bugemon.components;
 import ulb.models.bugemon.components.modifier.Modifier;
 
 public class DefenseComponent extends AbstractComponent {
-    // FIXME: @SerializedName(...)
     private int defense;
 
     public DefenseComponent(int defense) {

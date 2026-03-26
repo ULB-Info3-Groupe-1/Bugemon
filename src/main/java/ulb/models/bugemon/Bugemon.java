@@ -19,8 +19,11 @@ import ulb.models.bugemon.components.DefenseComponent;
 import ulb.models.bugemon.components.HealthComponent;
 import ulb.models.bugemon.components.InitiativeComponent;
 import ulb.models.bugemon.components.LevelComponent;
+import ulb.models.bugemon.components.modifier.Modifier;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.level_up.Upgrade;
@@ -210,53 +213,6 @@ public class Bugemon implements BugemonDTO {
     }
 
     /**
-     * Adds (or subtracts) {@code value} to the combat statistic identified by
-     * {@code stat}.
-     *
-     * <p>
-     * Positive values buff the stat; negative values debuff it. The change is
-     * applied to the <em>current</em> (mutable) state, not the initial state,
-     * so it will be undone when {@link #reset()} is called.
-     * </p>
-     *
-     * @param stat  the {@link EffectStat} identifying which statistic to modify
-     *              ({@code HP}, {@code ATTACK}, {@code DEFENSE}, or
-     *              {@code INITIATIVE}).
-     * @param value the signed integer delta to add to the stat; positive values
-     *              buff, negative values debuff.
-     * @throws IllegalArgumentException if {@code stat} does not match any known
-     *                      {@link EffectStat} constant (should not occur with a
-     *                      well-formed enum value).
-     */
-    public void editStat(Effect effect) {
-        switch (effect) {
-            case EffectStatModifier e: {
-                int value = e.modifier();
-
-                switch (e.stat()) {
-                    case ATTACK:
-                        this.attackComponent.increaseAttack(value);
-                        break;
-                    case DEFENSE:
-                        this.defenseComponent.increaseDefense(value);
-                        break;
-                    case INITIATIVE:
-                        this.initiativeComponent.increaseInitiative(value);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("unknown effect type");
-                }
-            } break;
-            case EffectHeal e: {
-                this.healthComponent.increaseHp(e.amount());
-                break;
-            }
-            default:
-                throw new IllegalArgumentException("unknown effect type");
-        }
-    }
-
-    /**
      * Get the list of attacks that the bugemon can have.
      *
      * @return (AttackList) the list of attacks that the bugemon can have.
@@ -323,10 +279,10 @@ public class Bugemon implements BugemonDTO {
      * Reset the bugemon's current state to its initial state, restoring its original stats.
      */
     public void resetModifiers() {
-        this.healthComponent.cleanModifiers();
-        this.attackComponent.cleanModifiers();
-        this.defenseComponent.cleanModifiers();
-        this.initiativeComponent.cleanModifiers();
+        this.healthComponent.clearModifiers();
+        this.attackComponent.clearModifiers();
+        this.defenseComponent.clearModifiers();
+        this.initiativeComponent.clearModifiers();
     }
 
     @Override
@@ -372,6 +328,47 @@ public class Bugemon implements BugemonDTO {
         this.attackComponent.increaseAttack(choice.attack());
         this.defenseComponent.increaseDefense(choice.defense());
         this.initiativeComponent.increaseInitiative(choice.initiative());
+    }
+
+    public void addEffect(Effect effect) {
+        switch (effect) {
+            case EffectStatModifier e
+                    -> {
+
+                // TODO: I feel like this part should probably be done elsewhere
+                EffectDuration duration = e.duration();
+                Modifier modifier =
+                        (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1):
+                new Modifier(e.modifier());
+
+                switch (e.stat()) {
+                    case EffectStat.HP:
+                        this.healthComponent.addModifier(modifier);
+                        break;
+                    case EffectStat.ATTACK:
+                        this.attackComponent.addModifier(modifier);
+                        break;
+                    case EffectStat.DEFENSE:
+                        this.defenseComponent.addModifier(modifier);
+                        break;
+                    case EffectStat.INITIATIVE:
+                        this.initiativeComponent.addModifier(modifier);
+                        break;
+                }
+        }
+
+            case EffectHeal e -> {
+                this.healthComponent.increaseHp(e.amount());
+                break;
+            }
+            case EffectResetMalus e -> {
+                this.resetModifiers();
+                break;
+            }
+            default -> {
+                throw new RuntimeException("unknown effect");
+            }
+        }
     }
 
     /**
