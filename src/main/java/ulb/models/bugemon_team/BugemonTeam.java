@@ -208,6 +208,10 @@ public class BugemonTeam implements Iterable<Bugemon> {
         this.team.forEach(Bugemon::kill);
     }
 
+    public void restoreHp() {
+        this.team.forEach(Bugemon::restoreHp);
+    }
+
     public int getSlotPosition(Bugemon bugemon) {
         int slot = this.team.indexOf(bugemon);
         if (slot == -1) {
