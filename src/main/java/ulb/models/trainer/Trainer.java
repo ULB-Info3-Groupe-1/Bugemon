@@ -50,9 +50,9 @@ public abstract class Trainer {
      * @param team the {@link BugemonTeam} owned by this trainer; must not be
      *             {@code null} and must contain at least one Bugemon.
      */
-    public Trainer(BugemonTeam team) {
+    protected Trainer(BugemonTeam team) {
         this.team = team;
-        currentBugemon = team.getFirst();
+        this.currentBugemon = team.getFirst();
     }
 
     // ── strategy contract ────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ public abstract class Trainer {
      * </p>
      */
     public void killTeam() {
-        team.killAll();
+        this.team.killAll();
     }
 
     // ── shared state queries ─────────────────────────────────────────────────
@@ -112,7 +112,7 @@ public abstract class Trainer {
      * @return {@code true} if all Bugemons are dead, {@code false} otherwise.
      */
     public boolean isDefeated() {
-        return team.stream().allMatch(b -> !b.isAlive());
+        return this.team.stream().allMatch(b -> !b.isAlive());
     }
 
     /**
@@ -121,7 +121,7 @@ public abstract class Trainer {
      * @return {@code true} if the active Bugemon's HP is above zero.
      */
     public boolean isCurrentBugemonAlive() {
-        return currentBugemon.isAlive();
+        return this.currentBugemon.isAlive();
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class Trainer {
      *         {@code false} otherwise.
      */
     public boolean checkCurrentBugemonHasAttack(Attack attack) {
-        List<Attack> attackList = currentBugemon.getAttackList();
+        List<Attack> attackList = this.currentBugemon.getAttackList();
         return attackList.contains(attack);
     }
 
@@ -145,7 +145,7 @@ public abstract class Trainer {
      * @return the initiative value of the active Bugemon.
      */
     public int getCurrentBugemonInitiative() {
-        return currentBugemon.getInitiative();
+        return this.currentBugemon.getInitiative();
     }
 
     /**
@@ -154,7 +154,7 @@ public abstract class Trainer {
      * @return the active {@link Bugemon}; never {@code null}.
      */
     public Bugemon getCurrentBugemon() {
-        return currentBugemon;
+        return this.currentBugemon;
     }
 
     /**
@@ -163,11 +163,11 @@ public abstract class Trainer {
      * @return a {@link List} of {@link Attack}s; never {@code null}.
      */
     public List<Attack> getCurrentBugemonAttackList() {
-        return currentBugemon.getAttackList();
+        return this.currentBugemon.getAttackList();
     }
 
     public String getCurrentBugemonName() {
-        return currentBugemon.getName();
+        return this.currentBugemon.getName();
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class Trainer {
      * @return the HP value as an {@code int}.
      */
     public int getCurrentBugemonHp() {
-        return currentBugemon.getHp();
+        return this.currentBugemon.getHp();
     }
 
     /**
@@ -185,7 +185,7 @@ public abstract class Trainer {
      * @return the {@link BugemonType} of the active Bugemon; never {@code null}.
      */
     public BugemonType getCurrentBugemonType() {
-        return currentBugemon.getType();
+        return this.currentBugemon.getType();
     }
 
     /**
@@ -194,7 +194,7 @@ public abstract class Trainer {
      * @return the {@link BugemonTeam}; never {@code null}.
      */
     public BugemonTeam getTeam() {
-        return team;
+        return this.team;
     }
 
     /**
@@ -203,7 +203,7 @@ public abstract class Trainer {
      * @return the team size as an {@code int}.
      */
     public int getTeamSize() {
-        return team.size();
+        return this.team.size();
     }
 
     // ── mutators ─────────────────────────────────────────────────────────────
@@ -217,7 +217,7 @@ public abstract class Trainer {
         if (damage < 0) {
             throw new IllegalArgumentException("damage must be positive");
         }
-        currentBugemon.takeDamage(damage);
+        this.currentBugemon.takeDamage(damage);
     }
 
     /**
@@ -232,7 +232,7 @@ public abstract class Trainer {
      *                must not be {@code null}.
      */
     public void setCurrentBugemon(Bugemon bugemon) {
-        currentBugemon = bugemon;
+        this.currentBugemon = bugemon;
     }
 
     /**
@@ -243,6 +243,14 @@ public abstract class Trainer {
      * fought.
      */
     public void addBugemonParticipation() {
-        currentBugemon.setParticipation(true);
+        this.currentBugemon.setParticipation(true);
+    }
+
+    /**
+     * Returns the list of Bugemons in this trainer's team.
+     * @return a list of Bugemons.
+     */
+    public List<Bugemon> getBugemons() {
+        return this.team.getAll();
     }
 }

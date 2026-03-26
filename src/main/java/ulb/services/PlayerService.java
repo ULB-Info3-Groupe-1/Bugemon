@@ -136,4 +136,39 @@ public class PlayerService {
     public boolean teamNameExists(String teamName) {
         return this.userTeams.stream().anyMatch(team -> team.name().equals(teamName));
     }
+
+    /**
+     * Saves the current state of the given Bugemon to the database. This method updates the
+     * Bugemon's attributes such as HP, attack, defense, initiative, XP, and level in the database
+     * to reflect any changes that occurred during gameplay. It first checks if the Bugemon is part
+     * of the active team to ensure that only Bugemons currently in use are saved. If the Bugemon is
+     * not in the active team, an exception is thrown to prevent saving invalid data. If the Bugemon
+     * is valid, its current state is printed to the console for debugging purposes, and then the
+     * database repository is called to update the Bugemon's information in the database using a
+     * UserBugemonDTO object that encapsulates the necessary data for the update operation.
+     * @param bugemon the Bugemon whose state is to be saved to the database. Must be part of the
+     *         active team.
+     */
+    public void saveBugemonState(Bugemon bugemon) {
+        if (!this.activeTeam.contains(bugemon)) {
+            throw new IllegalArgumentException(
+                    "Cannot save state of a Bugemon that is not in the active team.");
+        }
+
+        this.databaseRepository.updateUserBugemon(new UserBugemonDTO(
+                userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+    }
+
+    /**
+     * Restores the HP of all Bugemons in the active team to their maximum HP. This method is
+     * typically called after a combat session to ensure that all Bugemons are fully healed before
+     * the next encounter. It iterates through each Bugemon in the active team and calls their
+     * restoreHp() method, which sets their current HP back to their maximum HP value. This allows
+     * players to start the next combat with their Bugemons at full health, providing a fair and
+     * consistent gameplay experience.
+     */
+    public void restoreHpActiveTeam() {
+        this.activeTeam.forEach(Bugemon::restoreHp);
+    }
 }

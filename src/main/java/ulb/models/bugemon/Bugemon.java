@@ -324,7 +324,7 @@ public class Bugemon implements BugemonDTO {
     // TODO: this should be removed, a choice should know how to apply itself on a
     // bugemon instead.
     public void applyChoice(Upgrade choice) {
-        this.healthComponent.increaseHp(choice.hp());
+        this.healthComponent.increaseMaxHp(choice.hp());
         this.attackComponent.increaseAttack(choice.attack());
         this.defenseComponent.increaseDefense(choice.defense());
         this.initiativeComponent.increaseInitiative(choice.initiative());

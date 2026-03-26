@@ -32,6 +32,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     private Consumer<List<LevelUp>> onVictory;
     protected final AttackAnimationController animationController;
     protected final PlayerService playerService;
+    protected boolean restoreHpAfterCombat;
 
     protected CombatController(MetaController metaController, PlayerService playerService, V view) {
         super(metaController, view);
@@ -43,7 +44,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         this.onVictory = onVictory;
     }
 
-    public abstract void startCombat();
+    public abstract void startCombat(boolean resetPvAfterCombat);
 
     /**
      * Plays the attack animations contained in a turn result, then invokes
@@ -92,6 +93,9 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             this.onVictory.accept(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
+        }
+        if (this.restoreHpAfterCombat) {
+            this.playerService.restoreHpActiveTeam();
         }
     }
 }

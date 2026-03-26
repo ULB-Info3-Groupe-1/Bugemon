@@ -34,8 +34,6 @@ import ulb.views.victory_view.CombatVictoryView;
  * @see Controller
  */
 public class CombatVictoryController extends Controller<CombatVictoryView> {
-    private final PlayerService playerService;
-
     /**
      * Constructs a {@code CombatVictoryController}, initialises its
      * {@link CombatVictoryView}, and registers this controller as the view's
@@ -52,10 +50,8 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
      * @throws IOException if the {@link CombatVictoryView} fails to load its FXML
      *                     resource.
      */
-    public CombatVictoryController(MetaController metaController, PlayerService playerService)
-            throws IOException {
+    public CombatVictoryController(MetaController metaController) throws IOException {
         super(metaController, new CombatVictoryView());
-        this.playerService = playerService;
         this.view.setOnContinue(this::continueToMainMenu);
     }
 
@@ -84,7 +80,6 @@ public class CombatVictoryController extends Controller<CombatVictoryView> {
         // Optional<LevelUp> lvlup = bugemon.addxp(xpwonatfight)
         // if lvlup.isPresent() -> switch to level up screen
         // else -> back to main menu
-        this.playerService.clearActiveTeam();
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 }
