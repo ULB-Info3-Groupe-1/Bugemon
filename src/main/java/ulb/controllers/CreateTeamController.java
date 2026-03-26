@@ -1,7 +1,6 @@
 package ulb.controllers;
 
 import java.io.IOException;
-import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -19,7 +18,7 @@ import ulb.views.CreateTeamView;
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
     private final PlayerService playerService;
-    private final BugemonTeam selectedTeam;
+    private BugemonTeam selectedTeam;
 
     /**
      * Constructs a {@code CreateTeamController}, wires the view callbacks, and
@@ -57,19 +56,85 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.refreshTeam(this.selectedTeam);
     }
 
+    /**
+     * Returns the user to the main menu by switching the current view in the MetaController.
+     */
     public void returnToMainMenu() {
         this.metaController.switchTo(MetaController.Window.MAIN_MENU);
     }
 
+    /**
+     * Saves the player's currently selected team under the name specified in the view's
+     * saveTeamNameInput field. If the team name is valid (not null, not empty, not already used by
+     * another team owned by the user), the team is saved to the database through the PlayerService,
+     * set as the active team in the PlayerService, and the view is updated to reflect any changes.
+     * If the team name is invalid, an appropriate alert is shown to the user and no changes are
+     * made to the active team or the view.
+     */
     public void saveTeam() {
-        this.playerService.saveTeam("test_1", this.selectedTeam);
-        this.playerService.setActiveTeam(this.selectedTeam);
+        String teamName = this.view.getTeamNameToSave();
+        if (this.saveTeamNameIsValid(teamName)) {
+            this.selectedTeam.setName(teamName);
+            this.playerService.saveTeam(teamName, this.selectedTeam);
+            this.playerService.setActiveTeam(this.selectedTeam);
+        }
     }
 
+    /**
+     * Loads the team with the name specified in the view's loadTeamNameInput field, sets it as the
+     * active team in the PlayerService, and updates the view to display the loaded team. If the
+     * team name is invalid (null, empty, or does not correspond to an existing team), an
+     * appropriate alert is shown to the user and no changes are made to the active team or the
+     * view.
+     */
     public void loadTeam() {
-        List<Bugemon> team = this.playerService.loadTeam("test_1");
-        this.selectedTeam.clear();
-        team.forEach(this.selectedTeam::add);
-        this.view.refreshTeam(this.selectedTeam);
+        String teamName = this.view.getTeamNameToLoad();
+        if (this.loadTeamNameIsValid(teamName)) {
+            this.playerService.loadTeamAndSetActiveTeam(teamName);
+            this.selectedTeam = this.playerService.getActiveTeam();
+            this.view.refreshTeam(this.selectedTeam);
+        }
+    }
+
+    /**
+     * Checks if the given team name is valid for saving a team. A valid team name must not be null,
+     * empty, or consist only of whitespace, and it must not already be used by another team owned
+     * by the user. If the team name is invalid, an appropriate alert is shown to the user
+     * explaining the reason.
+     * @param teamName the name of the team to validate for saving
+     * @return true if the team name is valid for saving a team, false otherwise
+     */
+    private boolean saveTeamNameIsValid(String teamName) {
+        if (teamName == null || teamName.trim().isEmpty()) {
+            this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
+            return false;
+        } else if (this.playerService.teamNameExists(teamName)) {
+            this.view.showAlert(
+                    "Nom d'équipe déjà utilisé",
+                    "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the given team name is valid for loading a team. A valid team name must not be
+     * null, empty, or consist only of whitespace, and it must correspond to an existing team owned
+     * by the user. If the team name is invalid, an appropriate alert is shown to the user
+     * explaining the reason.
+     * @param teamName the name of the team to validate for loading
+     * @return true if the team name is valid for loading a team, false otherwise
+     */
+    private boolean loadTeamNameIsValid(String teamName) {
+        if (teamName == null || teamName.trim().isEmpty()) {
+            this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
+            return false;
+        } else if (!this.playerService.teamNameExists(teamName)) {
+            this.view.showAlert("Nom d'équipe introuvable",
+                                "Vous n'avez aucune équipe avec ce nom. Veuillez vérifier "
+                                        + "l'orthographe ou en choisir un autre.");
+            return false;
+        }
+        return true;
     }
 }

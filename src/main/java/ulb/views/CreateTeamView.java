@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -23,14 +24,16 @@ public class CreateTeamView extends View {
 
     @FXML private AllBugemonsGridView allBugemonsGridView;
     @FXML private BugemonTeamView bugemonsTeamView;
-    @FXML private Button validateTeamBtn;
+    @FXML private Button returnMainMenuBtn;
     @FXML private Button loadTeamBtn;
     @FXML private Button saveTeamBtn;
+    @FXML private TextField saveTeamNameInput;
+    @FXML private TextField loadTeamNameInput;
 
     private BugemonTeam bugemonTeam;
     private List<Bugemon> allBugemonsAvailable;
     private Consumer<Bugemon> onGridBugemonClicked;
-    private Runnable validate;
+    private Runnable returnToMainMenu;
     private Runnable load;
     private Runnable save;
 
@@ -48,9 +51,11 @@ public class CreateTeamView extends View {
                 onGridBugemonClicked.accept(b);
         });
 
-        this.validateTeamBtn.setOnAction(e -> returnToMainMenu(validate));
+        this.returnMainMenuBtn.setOnAction(e -> returnToMainMenu(returnToMainMenu));
         this.loadTeamBtn.setOnAction(e -> loadTeam(load));
         this.saveTeamBtn.setOnAction(e -> saveTeam(save));
+        this.saveTeamNameInput.setOnAction(e -> saveTeam(save));
+        this.loadTeamNameInput.setOnAction(e -> loadTeam(load));
     }
 
     /** Gives the view a reference to the team model it should read from. */
@@ -87,8 +92,8 @@ public class CreateTeamView extends View {
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
-    public void setValidate(Runnable validate) {
-        this.validate = validate;
+    public void setValidate(Runnable returnToMainMenu) {
+        this.returnToMainMenu = returnToMainMenu;
     }
 
     public void returnToMainMenu(Runnable validate) {
@@ -115,5 +120,19 @@ public class CreateTeamView extends View {
         if (load != null) {
             load.run();
         }
+    }
+
+    /**
+     * @return the team name currently entered in the text field for saving teams.
+     */
+    public String getTeamNameToSave() {
+        return this.saveTeamNameInput.getText();
+    }
+
+    /**
+     * @return the team name currently entered in the text field of the load team input.
+     */
+    public String getTeamNameToLoad() {
+        return this.loadTeamNameInput.getText();
     }
 }

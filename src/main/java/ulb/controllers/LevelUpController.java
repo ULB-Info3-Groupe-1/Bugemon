@@ -7,6 +7,7 @@ import ulb.controllers.MetaController.Window;
 import ulb.models.level_up.LevelUp;
 import ulb.models.level_up.LevelUpSession;
 import ulb.models.level_up.Upgrade;
+import ulb.services.PlayerService;
 import ulb.views.LevelUpView;
 
 /**
@@ -20,6 +21,7 @@ import ulb.views.LevelUpView;
  */
 public class LevelUpController extends Controller<LevelUpView> {
     private final LevelUpSession session = new LevelUpSession();
+    private final PlayerService playerService;
 
     /**
      * Constructs a {@code LevelUpController}, initialises its {@link LevelUpView},
@@ -28,8 +30,10 @@ public class LevelUpController extends Controller<LevelUpView> {
      * @param metaController the application-level controller used for navigation.
      * @throws IOException if the view fails to load its FXML resource.
      */
-    public LevelUpController(MetaController metaController) throws IOException {
+    public LevelUpController(MetaController metaController, PlayerService playerService)
+            throws IOException {
         super(metaController, new LevelUpView());
+        this.playerService = playerService;
         this.view.setSession(session);
         this.view.setOnChooseOption(this::chooseOption);
     }
@@ -39,6 +43,7 @@ public class LevelUpController extends Controller<LevelUpView> {
         LevelUp levelUp = session.getCurrent();
         Upgrade choice = levelUp.getChoices().get(optionIdx);
         levelUp.getBugemon().applyChoice(choice);
+        this.playerService.saveBugemonState(levelUp.getBugemon());
         cont();
     }
 

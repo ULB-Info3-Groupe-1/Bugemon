@@ -304,7 +304,6 @@ public class Parser {
                                                                         + " not found"));
                         inventory.addItem(obj, quantity);
                     }
-
                     reader.close();
             }
             catch (Exception e) {

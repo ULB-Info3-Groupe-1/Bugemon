@@ -46,3 +46,36 @@
     background-color: #a0c8b0;
     -fx-text-fill: #e0e0e0;
 }
+
+.team-input-label {
+    -fx-text-fill: #1a1a1a;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-font-size: 13px;
+    font-size: 13px;
+    -fx-font-family: 'Pixels', monospace;
+    font-family: 'Pixels', monospace;
+}
+
+.text-field {
+    -fx-background-color: #ffffff;
+    background-color: #ffffff;
+    -fx-text-fill: #1a1a1a;
+    -fx-prompt-text-fill: #888888;
+    -fx-border-color: #cccccc;
+    border-color: #cccccc;
+    -fx-border-width: 2px;
+    border-width: 2px;
+    -fx-border-radius: 8;
+    border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+    padding: 10 12;
+}
+
+.text-field:focus {
+    -fx-border-color: #3daa6e;
+    border-color: #3daa6e;
+    -fx-background-color: #f4fff9;
+    background-color: #f4fff9;
+}

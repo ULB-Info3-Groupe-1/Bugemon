@@ -85,20 +85,18 @@ public class MetaController {
     public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
         this.stage = primaryStage;
 
-        this.mainMenuController = new MainMenuController(this);
+        this.mainMenuController = new MainMenuController(this, playerService);
         this.createTeamController = new CreateTeamController(this, playerService);
         this.manualCombatController = new ManualCombatController(this, playerService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService);
-        this.combatVictoryController = new CombatVictoryController(this, playerService);
-        this.combatDefeatController = new CombatDefeatController(this, playerService);
-        this.levelUpController = new LevelUpController(this);
+        this.combatVictoryController = new CombatVictoryController(this);
+        this.combatDefeatController = new CombatDefeatController(this);
+        this.levelUpController = new LevelUpController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         initializeMusicResources();
-        this.manualCombatController.setOnVictory(
-                levelUps -> levelUpController.setLevelUp(levelUps));
-        this.automaticCombatController.setOnVictory(
-                levelUps -> levelUpController.setLevelUp(levelUps));
+        this.manualCombatController.setOnVictory(levelUpController::setLevelUp);
+        this.automaticCombatController.setOnVictory(levelUpController::setLevelUp);
 
         initTransitions();
     }
@@ -128,12 +126,12 @@ public class MetaController {
         });
         transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            manualCombatController.startCombat();
+            manualCombatController.startCombat(true);
             manualCombatController.show(stage);
         });
         transitions.put(Window.AUTOMATIC_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            automaticCombatController.startCombat();
+            automaticCombatController.startCombat(true);
             automaticCombatController.show(stage);
         });
         transitions.put(Window.COMBAT_VICTORY, () -> {

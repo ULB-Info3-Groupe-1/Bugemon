@@ -43,20 +43,27 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
  * @see ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException
  */
 public class BugemonTeam implements Iterable<Bugemon> {
-    // Attributes
+    private static final String DEFAULT_NAME = "Unnamed Team";
 
+    // Attributes
     public static final int MAX_SIZE = 6;
     private final ArrayList<Bugemon> team = new ArrayList<>();
+    private String name;
 
     /**
-     * Constructs an empty {@code BugemonTeam} with no members.
-     *
-     * <p>
-     * After construction {@link #size()} returns {@code 0} and
-     * {@link #isEmpty()} returns {@code true}.
-     * </p>
+     * Public constructor with no arguments. Initializes an empty team with no name.
      */
-    public BugemonTeam() {}
+    public BugemonTeam() {
+        this.name = DEFAULT_NAME;
+    }
+
+    /**
+     * Public constructor with name argument. Initializes an empty team with the given name.
+     * @param name the name of the team
+     */
+    public BugemonTeam(String name) {
+        this.name = name;
+    }
 
     /**
      * Returns the number of Bugemons in the team
@@ -208,5 +215,21 @@ public class BugemonTeam implements Iterable<Bugemon> {
                     "This Bugemon is not in the team!\nSlot position cannot be determined.");
         }
         return slot;
+    }
+
+    /**
+     * Returns the name of the team.
+     * @return the name of the team
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Sets the name of the team.
+     * @param name the name to set for the team
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

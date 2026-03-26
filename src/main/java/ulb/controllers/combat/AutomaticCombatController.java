@@ -37,7 +37,9 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
     /** Starts a complete automatic combat session and drives it to completion. */
     @Override
-    public void startCombat() {
+    public void startCombat(boolean restoreHpAfterCombat) {
+        this.restoreHpAfterCombat = restoreHpAfterCombat;
+
         AutoTrainer playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
         AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
         Combat combat = new Combat(playerTrainer, opponentTrainer);

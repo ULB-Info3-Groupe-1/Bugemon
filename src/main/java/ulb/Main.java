@@ -96,7 +96,9 @@ public class Main extends Application {
             primaryStage.setMinHeight(rectangle2d.getHeight() * 0.5);
             primaryStage.setTitle(STAGE_TITLE);
 
-            PlayerService playerService = new PlayerService();
+            // TODO: remove hardcoded username and move it to have a proper login screen that sets
+            // the username then creates the PlayerService
+            PlayerService playerService = new PlayerService("default_user");
             MetaController controller = new MetaController(primaryStage, playerService);
             controller.switchTo(Window.MAIN_MENU);
         } catch (IOException e) {

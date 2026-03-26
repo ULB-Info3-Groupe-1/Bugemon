@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
 
 <?import ulb.views.AllBugemonsGridView?>
 <?import ulb.views.BugemonTeamView?>
@@ -16,11 +17,29 @@
 
     <!-- Title -->
     <top>
-        <Label text="Sélection de ton équipe"
-               styleClass="create-team-title"
-               BorderPane.alignment="CENTER_RIGHT">
-            <BorderPane.margin><Insets top="20" right="30" bottom="10"/></BorderPane.margin>
-        </Label>
+        <HBox alignment="CENTER_LEFT" spacing="25"> 
+            <BorderPane.margin>
+                <Insets top="20" left="30" right="30" bottom="15"/>
+            </BorderPane.margin>
+            
+            <Label text="Sélection de ton équipe" styleClass="create-team-title"/>
+            
+            <VBox spacing="4" alignment="CENTER_LEFT"> 
+                <Label text="Nom de l'équipe à sauvegarder :" styleClass="team-input-label"/>
+                <TextField fx:id="saveTeamNameInput" 
+                            prefWidth="220" 
+                            styleClass="text-field"
+                            promptText="Nouveau nom..."/>
+            </VBox>
+
+            <VBox spacing="4" alignment="CENTER_LEFT"> 
+                <Label text="Nom de l'équipe à charger :" styleClass="team-input-label"/>
+                <TextField fx:id="loadTeamNameInput" 
+                            prefWidth="220" 
+                            styleClass="text-field"
+                            promptText="Nom de l'équipe..."/>
+            </VBox>
+        </HBox>
     </top>
 
     <!-- Team slots (left) + launch buttons (right) -->
@@ -35,8 +54,8 @@
 
             <VBox spacing="10" alignment="BOTTOM_RIGHT" HBox.hgrow="ALWAYS">
                 <VBox.margin><Insets top="30" right="30"/></VBox.margin>
-                <Button fx:id="validateTeamBtn"
-                        text="Valider"
+                <Button fx:id="returnMainMenuBtn"
+                        text="Retour au menu principal"
                         styleClass="menu-button"
                         maxWidth="260" minWidth="260"/>
                 <Button fx:id="loadTeamBtn"
