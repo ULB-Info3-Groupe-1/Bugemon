@@ -198,3 +198,5 @@ Todo.md
 .env
 # Database file
 db.sqlite
+
+org.mockito.plugins.MockMaker
