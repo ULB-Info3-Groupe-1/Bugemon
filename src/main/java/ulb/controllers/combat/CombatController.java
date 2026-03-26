@@ -44,7 +44,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         this.onVictory = onVictory;
     }
 
-    public abstract void startCombat(boolean resetPvAfterCombat);
+    public abstract void startCombat(boolean restoreHpAfterCombat);
 
     /**
      * Plays the attack animations contained in a turn result, then invokes
