@@ -175,7 +175,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * @return true if the team name is valid for saving a team, false otherwise
      */
     private boolean saveTeamNameIsValid(String teamName) {
-        if (teamName == null || teamName.trim().isEmpty()) {
+        if (this.teamNameIsEmpty(teamName)) {
             this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
             return false;
         } else if (this.playerService.teamNameExists(teamName)) {
@@ -187,6 +187,10 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         return true;
     }
 
+    public boolean teamNameIsEmpty(String name) {
+        return name.trim().isEmpty();
+    }
+
     /**
      * Checks if the given team name is valid for loading a team. A valid team name must not be
      * null, empty, or consist only of whitespace, and it must correspond to an existing team owned
@@ -196,7 +200,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * @return true if the team name is valid for loading a team, false otherwise
      */
     private boolean loadTeamNameIsValid(String teamName) {
-        if (teamName == null || teamName.trim().isEmpty()) {
+        if (this.teamNameIsEmpty(teamName)) {
             this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
             return false;
         } else if (!this.playerService.teamNameExists(teamName)) {
