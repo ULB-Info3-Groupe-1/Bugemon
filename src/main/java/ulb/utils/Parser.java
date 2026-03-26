@@ -37,7 +37,6 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
-import ulb.models.bugemon.ItemWrapper;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
@@ -272,7 +271,7 @@ public class Parser {
      * @return an {@link ItemWrapper} containing the parsed Items and inventory,
      *         or {@code null} if parsing fails.
      */
-    static ItemWrapper parseItemsAndInventory(Reader reader) {
+    static void parseItemsAndInventory(Reader reader) {
         Gson gson = new GsonBuilder()
                             .registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
                             .registerTypeAdapter(Effect.class, new EffectDeserializer())
@@ -284,14 +283,14 @@ public class Parser {
             // Extract and parse Items
             JsonArray itemsArray = root.getAsJsonArray("objets");
             Type desType = new TypeToken<List<Item>>() {}.getType();
-            List<Item> items = gson.fromJson(itemsArray, desType);
+            items = gson.fromJson(itemsArray, desType);
 
             // Extract and parse inventory
             JsonObject startInventory = root.getAsJsonObject("inventaire_depart");
             Type invType = new TypeToken<Map<String, Integer>>() {}.getType();
             Map<String, Integer> inventoryMap = gson.fromJson(startInventory, invType);
 
-            Inventory inventory = new Inventory();
+            inventory = new Inventory();
             for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
                         String objectId = entry.getKey();
                         int quantity = entry.getValue();
@@ -307,11 +306,9 @@ public class Parser {
                     }
 
                     reader.close();
-                    return new ItemWrapper(items, inventory);
             }
             catch (Exception e) {
                 LOGGER.severe("Error when parsing Items and inventory: " + e.getMessage());
             }
-            return null;
         }
     }
