@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.no_tower.room.*;
 import ulb.models.trainer.*;
@@ -25,6 +26,7 @@ public class TestFloor {
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("finalboss"));
         when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
+        when(playerServiceMock.getInventory()).thenReturn(new Inventory());
         return playerServiceMock;
     }
 
