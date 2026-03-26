@@ -13,6 +13,9 @@ import java.util.Optional;
 
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
+import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.models.trainer.TurnAction;
 import ulb.services.CombatService;
@@ -257,6 +260,10 @@ public class Combat {
     private void applyPassiveAction(Trainer trainer, TurnAction action) {
         if (action instanceof TurnAction.SwitchAction sw) {
             trainer.setCurrentBugemon(sw.target());
+        } else if (action instanceof TurnAction.UseItemAction ui
+                   && trainer instanceof ManualTrainer manualTrainer) {
+            Item item = ui.item();
+            manualTrainer.useItem(item);
         }
     }
 

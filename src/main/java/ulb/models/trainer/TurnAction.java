@@ -2,6 +2,7 @@ package ulb.models.trainer;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Item;
 
 /**
  * Represents the action a {@link Trainer} has decided to take for a given
@@ -37,7 +38,7 @@ import ulb.models.bugemon.Bugemon;
  * @see ulb.models.combat.Combat
  */
 public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.SwitchAction,
-        TurnAction.ForfeitAction {
+        TurnAction.ForfeitAction, TurnAction.UseItemAction {
     /**
      * Returns {@code true} if this action generates a direct hit on the
      * opposing trainer's active {@link Bugemon}.
@@ -131,6 +132,14 @@ public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.S
          */
         @Override
         public boolean isAttack() {
+            return false;
+        }
+    }
+
+    record UseItemAction(Item item) implements TurnAction {
+        @Override
+        public boolean isAttack() {
+            // Item are never used against the opponent
             return false;
         }
     }

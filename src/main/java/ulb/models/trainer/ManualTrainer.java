@@ -13,7 +13,10 @@ import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.services.InventoryService;
 
 /**
  * Represents a human-controlled trainer whose actions are driven by the
@@ -45,6 +48,7 @@ import ulb.models.bugemon_team.BugemonTeam;
 public class ManualTrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
+    private Inventory inventory;
 
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
@@ -60,8 +64,9 @@ public class ManualTrainer extends Trainer {
      * @param team the {@link BugemonTeam} this trainer owns; must not be
      *             {@code null} and must contain at least one Bugemon.
      */
-    public ManualTrainer(BugemonTeam team) {
+    public ManualTrainer(BugemonTeam team, Inventory inventory) {
         super(team);
+        this.inventory = inventory;
     }
 
     // ── strategy contract ────────────────────────────────────────────────────
@@ -214,6 +219,21 @@ public class ManualTrainer extends Trainer {
      */
     public void registerSwitchAfterKO(Bugemon target) {
         bugemonTargetForSwitch = Optional.of(target);
+    }
+
+    public void registerUseItem(Item item) {
+        if (inventory.hasItem(item)) {
+            registerAction(new TurnAction.UseItemAction(item));
+        } else {
+            throw new IllegalArgumentException("The player does not have the specified item.");
+        }
+    }
+
+    // ── item usage ───────────────────────────────────────────────────────────
+
+    public void useItem(Item item) {
+        inventory.useItem(item);
+        currentBugemon.addEffect(item.effect());
     }
 
     // ── state queries ─────────────────────────────────────────────────────────

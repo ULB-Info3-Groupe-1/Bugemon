@@ -4,6 +4,7 @@ import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repository.DatabaseRepository;
 import ulb.repository.dto.TeamDTO;
@@ -26,6 +27,9 @@ public class PlayerService {
     // Cache for all default Bugemons to avoid multiple database calls
     private List<Bugemon> allDefaultBugemonsCache;
 
+    // Player Inventory
+    private Inventory inventory;
+
     /**
      * Constructor for PlayerService. Initializes the service by retrieving the user ID based on the
      * provided username, loading the user's teams, and setting up the database repository for
@@ -38,6 +42,9 @@ public class PlayerService {
         this.userId = this.databaseRepository.getUserIdByUsername(username).orElseGet(
                 () -> this.databaseRepository.createUser(username));
         this.userTeams = this.databaseRepository.getUserTeams(this.userId);
+
+        // TODO: probably connect to db
+        inventory = InventoryService.addStarterItem(new Inventory());
     }
 
     /**
@@ -46,6 +53,10 @@ public class PlayerService {
      */
     public BugemonTeam getActiveTeam() {
         return this.activeTeam;
+    }
+
+    public Inventory getInventory() {
+        return this.inventory;
     }
 
     /**

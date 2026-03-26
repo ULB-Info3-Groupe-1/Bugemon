@@ -5,7 +5,6 @@ import java.io.IOException;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.services.PlayerService;
 import ulb.views.victory_view.CombatVictoryView;
 
 /**
