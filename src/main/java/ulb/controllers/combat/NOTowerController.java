@@ -17,7 +17,6 @@ import ulb.views.combat.ManualCombatView;
 public class NOTowerController extends Controller<ManualCombatView> {
     private NOTower noTower;
     private final PlayerService playerService;
-    private ManualCombatController manualCombatController;
     private boolean runEnded;
     private Stage stage;
 
@@ -51,8 +50,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
      * @return
      */
     private boolean ensureRunIsReady() {
-        if (this.playerService.getActiveTeam() == null
-            || this.playerService.getActiveTeam().isEmpty()) {
+        if (this.playerService.getActiveTeam().isEmpty()) {
             this.runEnded = true;
             this.metaController.switchTo(Window.CREATE_TEAM);
             return false;
@@ -93,12 +91,12 @@ public class NOTowerController extends Controller<ManualCombatView> {
     private void handleRoom(Floor floor, Room room) {
         if (room instanceof CombatRoom combatRoom) {
             try {
-                this.manualCombatController =
+                ManualCombatController manualCombatController =
                         new ManualCombatController(this.metaController, this.playerService);
-                this.manualCombatController.setOnCombatFinished(
+                manualCombatController.setOnCombatFinished(
                         playerWon -> handleCombatResult(playerWon, floor));
-                this.manualCombatController.startCombat(combatRoom.getCombat());
-                this.manualCombatController.display(this.stage);
+                manualCombatController.startCombat(combatRoom.getCombat());
+                manualCombatController.display(this.stage);
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to initialize manual combat", e);
             }

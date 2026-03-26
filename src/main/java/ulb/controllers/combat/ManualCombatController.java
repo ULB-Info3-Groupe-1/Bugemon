@@ -29,7 +29,6 @@ import ulb.views.combat.ManualCombatView;
 public class ManualCombatController extends CombatController<ManualCombatView> {
     private Combat combat;
     private ManualTrainer playerTrainer;
-    private Trainer opponentTrainer;
     private Consumer<Boolean> onCombatFinished;
 
     /**
@@ -56,10 +55,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.restoreHpAfterCombat = restoreHpAfterCombat;
 
         this.playerTrainer = new ManualTrainer(
-                this.playerService.getActiveTeam().orElseThrow(
-                        ()
-                                -> new IllegalStateException("attempted to start a combat without "
-                                                             + "having an active team")),
+                this.playerService.getActiveTeam(),
                 this.playerService.getInventory());
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
@@ -81,7 +77,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         }
 
         this.playerTrainer = manualAlly;
-        this.opponentTrainer = combat.getAdversaryTrainer();
+        Trainer opponentTrainer = combat.getAdversaryTrainer();
         this.combat = combat;
 
         this.view.setModel(playerTrainer, opponentTrainer, this.combat);

@@ -1,11 +1,12 @@
 package ulb.controllers;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.PlayerService;
+import ulb.services.exceptions.TeamNameAlreadyExistsException;
+import ulb.services.exceptions.TeamNotFoundException;
 import ulb.views.CreateTeamView;
 
 /**
@@ -68,94 +69,80 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     /**
      * Saves the player's currently selected team under the name specified in the view's
-     * saveTeamNameInput field. If the team name is valid (not null, not empty, not already used by
-     * another team owned by the user), the team is saved to the database through the PlayerService,
-     * set as the active team in the PlayerService, and the view is updated to reflect any changes.
-     * If the team name is invalid, an appropriate alert is shown to the user and no changes are
-     * made to the active team or the view.
+     * saveTeamNameInput field. If the team name is valid (not null, not empty), the team is saved
+     * to the database through the PlayerService and set as the active team. If the team name is
+     * empty or already used by another team owned by the user, an appropriate alert is shown to
+     * the user and no changes are made to the active team or the view.
      */
     public void saveTeam() {
         String teamName = this.view.getTeamNameToSave();
-        if (this.playerService.teamNameExists(teamName)) {
-            this.selectedTeam.setName(teamName);
-            this.playerService.updateTeamMembers(teamName, this.selectedTeam);
-            this.playerService.setActiveTeam(this.selectedTeam);
-        } else if (this.saveTeamNameIsValid(teamName)) {
-            this.selectedTeam.setName(teamName);
-            this.playerService.saveTeam(teamName, this.selectedTeam);
-            this.playerService.setActiveTeam(this.selectedTeam);
-            this.view.updateTeamList(this.playerService.getTeamNames());
+        if (this.teamNameIsEmpty(teamName)) {
+            this.showEmptyNameAlert();
+            return;
         }
+
+        try {
+            this.playerService.saveTeam(teamName, this.selectedTeam);
+            this.view.updateTeamList(this.playerService.getTeamNames());
+        } catch (TeamNameAlreadyExistsException e) {
+            this.view.showAlert(
+                    "Nom d'équipe déjà utilisé",
+                    "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
+        }        
     }
 
     /**
      * Loads the team with the name specified in the view's loadTeamNameInput field, sets it as the
      * active team in the PlayerService, and updates the view to display the loaded team. If the
-     * team name is invalid (null, empty, or does not correspond to an existing team), an
-     * appropriate alert is shown to the user and no changes are made to the active team or the
-     * view.
+     * team name is empty or does not correspond to an existing team, an appropriate alert is shown
+     * to the user and no changes are made to the active team or the view.
      */
     public void loadTeam() {
-        String teamName = this.view.getTeamNameToLoad();
-        if (this.loadTeamNameIsValid(teamName)) {
-            this.playerService.loadTeamAndSetActiveTeam(teamName);
-            this.selectedTeam = this.playerService.getActiveTeam().orElseThrow(
-                    ()
-                            -> new IllegalStateException("an error occured while loading the team "
-                                                         + this.selectedTeam));
+        if (this.teamNameIsEmpty(this.view.getTeamNameToLoad())) {
+            this.showEmptyNameAlert();
+            return;
+        }
+
+        try {
+            this.playerService.loadTeamAndSetActiveTeam(this.view.getTeamNameToLoad());
+            this.selectedTeam = this.playerService.getActiveTeam();
             this.view.refreshTeam(this.selectedTeam);
+        } catch (TeamNotFoundException e) {
+            this.view.showAlert("Nom d'équipe introuvable", "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
         }
     }
 
     public void deleteTeam(String teamName) {
-        if (teamName == null || teamName.trim().isEmpty()) {
-            this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
-            return;
-        }
-        if (!this.playerService.teamNameExists(teamName)) {
-            this.view.showAlert("Nom d'équipe introuvable",
-                                "Vous n'avez aucune équipe avec ce nom.");
-            return;
-        }
-        this.playerService.deleteTeam(teamName);
-        this.view.updateTeamList(this.playerService.getTeamNames());
-        if (this.selectedTeam != null && teamName.equals(this.selectedTeam.getName())) {
-            this.selectedTeam = new BugemonTeam();
-            this.view.refreshTeam(this.selectedTeam);
+        try {
+            this.playerService.deleteTeam(teamName);
+            this.view.updateTeamList(this.playerService.getTeamNames());
+            if (this.selectedTeam != null && teamName.equals(this.selectedTeam.getName())) {
+                this.selectedTeam = new BugemonTeam();
+                this.view.refreshTeam(this.selectedTeam);
+            }
+        } catch (TeamNotFoundException e) {
+            this.view.showAlert("Nom d'équipe introuvable", "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
         }
     }
 
     public void renameTeam(String oldTeamName, String newTeamName) {
-        if (Logger.getGlobal().isLoggable(java.util.logging.Level.INFO)) {
-            Logger.getGlobal().info(String.format("Attempting to rename team from '%s' to '%s'",
-                                                  oldTeamName, newTeamName));
+        if (this.teamNameIsEmpty(newTeamName)) {
+            this.showEmptyNameAlert();
+            return;
         }
 
-        if (oldTeamName == null || oldTeamName.trim().isEmpty()) {
-            this.view.showAlert("Nom d'équipe invalide",
-                                "Le nom de l'équipe à renommer ne peut pas être vide.");
-            return;
-        }
-        if (newTeamName == null || newTeamName.trim().isEmpty()) {
-            this.view.showAlert("Nouveau nom invalide",
-                                "Le nouveau nom d'équipe ne peut pas être vide.");
-            return;
-        }
-        if (!this.playerService.teamNameExists(oldTeamName)) {
-            this.view.showAlert("Nom d'équipe introuvable",
-                                "Vous n'avez aucune équipe avec ce nom.");
-            return;
-        }
-        if (this.playerService.teamNameExists(newTeamName)) {
+        try {
+            this.playerService.renameTeam(oldTeamName, newTeamName);
+            this.view.updateTeamList(this.playerService.getTeamNames());
+            if (this.selectedTeam != null && oldTeamName.equals(this.selectedTeam.getName())) {
+                this.selectedTeam.setName(newTeamName);
+            }
+        } catch (TeamNotFoundException e) {
+            this.view.showAlert("Nom d'équipe introuvable", "L'équipe que vous souhaitez renommer n'existe pas");
+        } catch (TeamNameAlreadyExistsException e) {
             this.view.showAlert(
                     "Nom d'équipe déjà utilisé",
                     "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
-            return;
-        }
-        this.playerService.renameTeam(oldTeamName, newTeamName);
-        this.view.updateTeamList(this.playerService.getTeamNames());
-        if (this.selectedTeam != null && oldTeamName.equals(this.selectedTeam.getName())) {
-            this.selectedTeam.setName(newTeamName);
         }
     }
 
@@ -164,49 +151,11 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.refreshTeam(this.selectedTeam);
     }
 
-    /**
-     * Checks if the given team name is valid for saving a team. A valid team name must not be null,
-     * empty, or consist only of whitespace, and it must not already be used by another team owned
-     * by the user. If the team name is invalid, an appropriate alert is shown to the user
-     * explaining the reason.
-     * @param teamName the name of the team to validate for saving
-     * @return true if the team name is valid for saving a team, false otherwise
-     */
-    private boolean saveTeamNameIsValid(String teamName) {
-        if (this.teamNameIsEmpty(teamName)) {
-            this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
-            return false;
-        } else if (this.playerService.teamNameExists(teamName)) {
-            this.view.showAlert(
-                    "Nom d'équipe déjà utilisé",
-                    "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
-            return false;
-        }
-        return true;
+    public void showEmptyNameAlert() {
+        this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
     }
 
     public boolean teamNameIsEmpty(String name) {
         return name.trim().isEmpty();
-    }
-
-    /**
-     * Checks if the given team name is valid for loading a team. A valid team name must not be
-     * null, empty, or consist only of whitespace, and it must correspond to an existing team owned
-     * by the user. If the team name is invalid, an appropriate alert is shown to the user
-     * explaining the reason.
-     * @param teamName the name of the team to validate for loading
-     * @return true if the team name is valid for loading a team, false otherwise
-     */
-    private boolean loadTeamNameIsValid(String teamName) {
-        if (this.teamNameIsEmpty(teamName)) {
-            this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
-            return false;
-        } else if (!this.playerService.teamNameExists(teamName)) {
-            this.view.showAlert("Nom d'équipe introuvable",
-                                "Vous n'avez aucune équipe avec ce nom. Veuillez vérifier "
-                                        + "l'orthographe ou en choisir un autre.");
-            return false;
-        }
-        return true;
     }
 }
