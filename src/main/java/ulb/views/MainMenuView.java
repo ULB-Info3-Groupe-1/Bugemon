@@ -16,7 +16,12 @@ import javafx.scene.control.Button;
  */
 public class MainMenuView extends View {
     @FXML private Button createTeamButton;
+    @FXML private Button noTowerButton;
     @FXML private Button quitButton;
+
+    private Runnable onCreateTeam;
+    private Runnable onNoTower;
+    private Runnable onQuit;
     @FXML private Button launchAutomaticCombat;
     @FXML private Button launchManualCombat;
 
@@ -28,11 +33,28 @@ public class MainMenuView extends View {
      */
     public MainMenuView() throws IOException {
         super("/fxml/MainMenu.fxml");
+        this.createTeamButton.setOnAction(e -> {
+            if (onCreateTeam != null)
+                onCreateTeam.run();
+        });
+        this.noTowerButton.setOnAction(e -> {
+            if (onNoTower != null)
+                onNoTower.run();
+        });
+        this.quitButton.setOnAction(e -> {
+            if (onQuit != null)
+                onQuit.run();
+        });
     }
 
     /** Registers the callback invoked when the player clicks "Créer une équipe". */
     public void setOnCreateTeam(Runnable callback) {
-        this.createTeamButton.setOnAction(e -> callback.run());
+        this.onCreateTeam = callback;
+    }
+
+    /** Registers the callback invoked when the player clicks "Lancer la NO Tower". */
+    public void setOnNoTower(Runnable callback) {
+        this.onNoTower = callback;
     }
 
     /** Registers the callback invoked when the player clicks "Quitter". */
