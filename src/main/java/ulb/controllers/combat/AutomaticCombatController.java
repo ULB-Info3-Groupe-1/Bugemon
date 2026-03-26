@@ -40,10 +40,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     public void startCombat(boolean restoreHpAfterCombat) {
         this.restoreHpAfterCombat = restoreHpAfterCombat;
 
-        AutoTrainer playerTrainer = new AutoTrainer(this.playerService.getActiveTeam().orElseThrow(
-                ()
-                        -> new IllegalStateException(
-                                "attempted to start a combat without having an active team")));
+        AutoTrainer playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
         AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
