@@ -14,7 +14,9 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.services.InventoryService;
 
 /**
  * Abstract base for any participant in a combat session.

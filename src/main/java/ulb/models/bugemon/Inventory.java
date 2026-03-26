@@ -14,6 +14,11 @@ public class Inventory {
         return this.items.containsKey(item) && items.get(item) > 0;
     }
 
+    public boolean hasItem(String itemId) {
+        return items.keySet().stream().anyMatch(
+                item -> item.id().equals(itemId) && items.get(item) > 0);
+    }
+
     public void useItem(Item item) {
         if (!hasItem(item)) {
             throw new IllegalStateException("Objet not in inventory or item quantity is 0");

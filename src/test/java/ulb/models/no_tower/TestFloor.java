@@ -31,7 +31,8 @@ public class TestFloor {
     @Test
     public void testFloorInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam);
+        Trainer playerTrainer =
+                new ManualTrainer(playerTeam, getPlayerServiceMock().getInventory());
 
         Floor floor = new Floor(playerTrainer, getPlayerServiceMock());
 
@@ -41,7 +42,8 @@ public class TestFloor {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam);
+        Trainer playerTrainer =
+                new ManualTrainer(playerTeam, getPlayerServiceMock().getInventory());
 
         Floor floor = new Floor(playerTrainer, getPlayerServiceMock());
 

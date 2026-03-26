@@ -51,7 +51,7 @@ public class NOTower {
     }
 
     private void generateFloors(BugemonTeam playerTeam, PlayerService playerService) {
-        Trainer playerTrainer = new ManualTrainer(playerTeam);
+        Trainer playerTrainer = new ManualTrainer(playerTeam, playerService.getInventory());
         for (int i = 0; i < MAX_FLOORS; i++) {
             floors.add(new Floor(playerTrainer, playerService));
         }
