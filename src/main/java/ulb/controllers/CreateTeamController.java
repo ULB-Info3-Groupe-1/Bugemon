@@ -91,7 +91,10 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         String teamName = this.view.getTeamNameToLoad();
         if (this.loadTeamNameIsValid(teamName)) {
             this.playerService.loadTeamAndSetActiveTeam(teamName);
-            this.selectedTeam = this.playerService.getActiveTeam();
+            this.selectedTeam = this.playerService.getActiveTeam().orElseThrow(
+                    ()
+                            -> new IllegalStateException("an error occured while loading the team "
+                                                         + this.selectedTeam));
             this.view.refreshTeam(this.selectedTeam);
         }
     }

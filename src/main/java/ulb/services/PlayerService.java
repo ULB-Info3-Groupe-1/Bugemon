@@ -1,6 +1,7 @@
 package ulb.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
@@ -15,7 +16,7 @@ public class PlayerService {
     private final int userId;
 
     // Player's active team
-    private BugemonTeam activeTeam;
+    private Optional<BugemonTeam> activeTeam;
 
     // List of all teams owned by the user
     private List<TeamDTO> userTeams;
@@ -44,7 +45,7 @@ public class PlayerService {
      * Returns the currently active team of Bugemons.
      * @return the active BugemonTeam
      */
-    public BugemonTeam getActiveTeam() {
+    public Optional<BugemonTeam> getActiveTeam() {
         return this.activeTeam;
     }
 
@@ -52,7 +53,7 @@ public class PlayerService {
      * Sets the active team to the given BugemonTeam.
      */
     public void setActiveTeam(BugemonTeam team) {
-        this.activeTeam = team;
+        this.activeTeam = Optional.of(team);
     }
 
     /**
@@ -60,9 +61,7 @@ public class PlayerService {
      * the player's team between sessions or when starting a new game.
      */
     public void clearActiveTeam() {
-        if (this.activeTeam != null) {
-            this.activeTeam.clear();
-        }
+        this.activeTeam.ifPresent(BugemonTeam::clear);
     }
 
     /**
@@ -108,7 +107,7 @@ public class PlayerService {
                 this.databaseRepository.getTeamMembers(this.userId, teamName);
         List<UserBugemonDTO> userBugemons = this.databaseRepository.getUserBugemons(this.userId);
 
-        this.activeTeam = new BugemonTeam(teamName);
+        this.activeTeam = Optional.of(new BugemonTeam(teamName));
 
         for (TeamMemberDTO member : teamMembers) {
             UserBugemonDTO userBugemon =
@@ -121,8 +120,11 @@ public class PlayerService {
                                                          + member.bugemonId()
                                                          + (" not found. Cannot load team.")));
             try {
-                this.activeTeam.add(this.buildUserBugemon(userBugemon));
+                this.activeTeam.ifPresent(team -> team.add(this.buildUserBugemon(userBugemon)));
             } catch (Exception e) {
+                // WARN: this causes a loss of information.
+                // is it really what we want ?
+
                 throw new IllegalStateException(
                         "Failed to add Bugemon to loaded team: " + e.getMessage(), e);
             }
@@ -152,7 +154,13 @@ public class PlayerService {
      *         active team.
      */
     public void saveBugemonState(Bugemon bugemon) {
-        if (!this.activeTeam.contains(bugemon)) {
+        BugemonTeam team = this.activeTeam.orElseThrow(
+                ()
+                        -> new IllegalArgumentException(
+                                "Cannot save state of the given Bugemon as there is no active "
+                                + "team."));
+
+        if (!team.contains(bugemon)) {
             throw new IllegalArgumentException(
                     "Cannot save state of a Bugemon that is not in the active team.");
         }
@@ -171,7 +179,7 @@ public class PlayerService {
      * consistent gameplay experience.
      */
     public void restoreHpActiveTeam() {
-        this.activeTeam.forEach(Bugemon::restoreHp);
+        this.activeTeam.ifPresent(team -> team.forEach(Bugemon::restoreHp));
     }
 
     /**
