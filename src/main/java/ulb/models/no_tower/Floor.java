@@ -75,7 +75,7 @@ public class Floor {
 
     private CombatRoom initBossCombatRoom() {
         Trainer opponentTrainer = new AutoTrainer(
-            CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
+                CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);

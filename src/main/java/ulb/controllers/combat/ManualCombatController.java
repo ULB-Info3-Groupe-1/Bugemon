@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import java.io.IOException;
 import java.util.function.Consumer;
+import javafx.stage.Stage;
 
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
@@ -13,7 +14,6 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.PlayerService;
 import ulb.views.combat.ManualCombatView;
-import javafx.stage.Stage;
 
 /**
  * Controller for the manual combat screen.
@@ -43,7 +43,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             throws IOException {
         super(metaController, playerService, new ManualCombatView());
 
-        this.view.setOnAttack(this::onAttack); 
+        this.view.setOnAttack(this::onAttack);
         this.view.setOnSwitch(this::onSwitch);
         this.view.setOnSurrender(this::onSurrender);
     }

@@ -142,7 +142,8 @@ public class PlayerService {
      */
     public void loadTeamAndSetActiveTeam(String teamName) {
         if (!this.databaseAvailable || this.databaseRepository == null) {
-            throw new IllegalStateException("Database unavailable: loading a saved team is disabled in offline mode.");
+            throw new IllegalStateException(
+                    "Database unavailable: loading a saved team is disabled in offline mode.");
         }
 
         List<TeamMemberDTO> teamMembers =

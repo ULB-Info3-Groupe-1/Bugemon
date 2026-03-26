@@ -20,8 +20,9 @@ public class DatabaseConnection {
         try {
             this.connection = DriverManager.getConnection(this.url);
         } catch (SQLException e) {
-            throw new IllegalStateException(
-                    "Failed to connect to the database using URL '" + sanitizeUrl(this.url) + "'", e);
+            throw new IllegalStateException("Failed to connect to the database using URL '"
+                                                    + sanitizeUrl(this.url) + "'",
+                                            e);
         }
     }
 

@@ -2,8 +2,8 @@ package ulb.views.combat;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -131,7 +131,7 @@ public class ManualCombatView extends CombatView {
                 player.getTeam()
                         .stream()
                         .filter(b -> b != player.getCurrentBugemon() && b.isAlive())
-                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
 
         for (Bugemon b : available) {
             HBox row = new HBox(10);

@@ -15,7 +15,6 @@ import ulb.services.PlayerService;
 import ulb.views.combat.ManualCombatView;
 
 public class NOTowerController extends Controller<ManualCombatView> {
-
     private NOTower noTower;
     private final PlayerService playerService;
     private ManualCombatController manualCombatController;
@@ -48,11 +47,12 @@ public class NOTowerController extends Controller<ManualCombatView> {
      * Ensures that a NO Tower run can be started or continued. If the player has no
      * active team, or if the current run has ended, a new run is initialised. If a
      * new run cannot be started.
-     * 
+     *
      * @return
      */
     private boolean ensureRunIsReady() {
-        if (this.playerService.getActiveTeam() == null || this.playerService.getActiveTeam().isEmpty()) {
+        if (this.playerService.getActiveTeam() == null
+            || this.playerService.getActiveTeam().isEmpty()) {
             this.runEnded = true;
             this.metaController.switchTo(Window.CREATE_TEAM);
             return false;
@@ -71,7 +71,6 @@ public class NOTowerController extends Controller<ManualCombatView> {
      * or the tower is completed.
      */
     private void continueRun() {
-
         while (!this.runEnded) {
             Floor currentFloor = this.noTower.getCurrentFloor();
 
@@ -96,8 +95,8 @@ public class NOTowerController extends Controller<ManualCombatView> {
             try {
                 this.manualCombatController =
                         new ManualCombatController(this.metaController, this.playerService);
-                this.manualCombatController
-                        .setOnCombatFinished(playerWon -> handleCombatResult(playerWon, floor));
+                this.manualCombatController.setOnCombatFinished(
+                        playerWon -> handleCombatResult(playerWon, floor));
                 this.manualCombatController.startCombat(combatRoom.getCombat());
                 this.manualCombatController.display(this.stage);
             } catch (IOException e) {
