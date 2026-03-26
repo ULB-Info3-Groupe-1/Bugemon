@@ -332,14 +332,12 @@ public class Bugemon implements BugemonDTO {
 
     public void addEffect(Effect effect) {
         switch (effect) {
-            case EffectStatModifier e
-                    -> {
-
+            case EffectStatModifier e -> {
                 // TODO: I feel like this part should probably be done elsewhere
                 EffectDuration duration = e.duration();
-                Modifier modifier =
-                        (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1):
-                new Modifier(e.modifier());
+                Modifier modifier = (duration == EffectDuration.ONE_TURN)
+                                            ? new Modifier(e.modifier(), 1)
+                                            : new Modifier(e.modifier());
 
                 switch (e.stat()) {
                     case EffectStat.HP:
@@ -355,7 +353,7 @@ public class Bugemon implements BugemonDTO {
                         this.initiativeComponent.addModifier(modifier);
                         break;
                 }
-        }
+            }
 
             case EffectHeal e -> {
                 this.healthComponent.increaseHp(e.amount());
