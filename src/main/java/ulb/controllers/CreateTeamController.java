@@ -51,8 +51,6 @@ public class CreateTeamController extends Controller<CreateTeamView> {
 
     /** Toggles {@code bugemon} in the player's selected team. */
     public void toggleBugemonSelection(Bugemon bugemon) {
-        // TODO: handle exceptions thrown by BugemonTeam
-        // + change logic
         if (this.selectedTeam.contains(bugemon)) {
             this.selectedTeam.remove(bugemon);
         } else if (!this.selectedTeam.isFull()) {
