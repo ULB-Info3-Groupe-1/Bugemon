@@ -3,6 +3,7 @@ package ulb.controllers;
 import java.io.IOException;
 
 import ulb.controllers.MetaController.Window;
+import ulb.services.PlayerService;
 import ulb.views.MainMenuView;
 
 /**
@@ -26,6 +27,8 @@ import ulb.views.MainMenuView;
  * @see Controller
  */
 public class MainMenuController extends Controller<MainMenuView> {
+    private final PlayerService playerService;
+
     /**
      * Constructs a {@code MainMenuController}, initialises its {@link MainMenuView},
      * and registers this controller as the view's event handler.
@@ -40,8 +43,11 @@ public class MainMenuController extends Controller<MainMenuView> {
      * @throws IOException if the {@link MainMenuView} fails to load its FXML
      *                     resource.
      */
-    public MainMenuController(MetaController metaController) throws IOException {
+    public MainMenuController(MetaController metaController, PlayerService playerService)
+            throws IOException {
         super(metaController, new MainMenuView());
+        this.playerService = playerService;
+
         this.view.setOnCreateTeam(this::createTeam);
         this.view.setOnQuit(this::quit);
         this.view.setOnStartAutoCombat(this::startAutoCombat);
@@ -69,11 +75,21 @@ public class MainMenuController extends Controller<MainMenuView> {
 
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
-        this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
+        if (playerService.getActiveTeam() == null || playerService.getActiveTeam().isEmpty()) {
+            this.view.showAlert("Aucune équipe active",
+                                "Veuillez créer ou charger une équipe avant de lancer un combat.");
+        } else {
+            this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
+        }
     }
 
     /** Launches a manual combat session. */
     public void startManualCombat() {
-        this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
+        if (playerService.getActiveTeam() == null || playerService.getActiveTeam().isEmpty()) {
+            this.view.showAlert("Aucune équipe active",
+                                "Veuillez créer ou charger une équipe avant de lancer un combat.");
+        } else {
+            this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
+        }
     }
 }

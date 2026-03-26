@@ -54,6 +54,8 @@ public class CreateTeamView extends View {
         this.returnMainMenuBtn.setOnAction(e -> returnToMainMenu(returnToMainMenu));
         this.loadTeamBtn.setOnAction(e -> loadTeam(load));
         this.saveTeamBtn.setOnAction(e -> saveTeam(save));
+        this.saveTeamNameInput.setOnAction(e -> saveTeam(save));
+        this.loadTeamNameInput.setOnAction(e -> loadTeam(load));
     }
 
     /** Gives the view a reference to the team model it should read from. */

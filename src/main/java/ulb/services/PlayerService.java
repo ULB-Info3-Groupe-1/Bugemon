@@ -3,6 +3,7 @@ package ulb.services;
 import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repository.DatabaseRepository;
 import ulb.repository.dto.TeamDTO;
@@ -98,33 +99,34 @@ public class PlayerService {
      * Loads the team with the given name from the database and sets it as the active team. This
      * method assumes that the team with the given name exists and belongs to the user. It retrieves
      * the team members from the database, constructs a BugemonTeam object, and populates it with
-     * the corresponding Bugemons based on their IDs. If any Bugemon in the team cannot be found in
-     * the default Bugemons cache, an exception is thrown.
+     * the corresponding user Bugemons based on their IDs. If any Bugemon in the team cannot be
+     * found, an exception is thrown.
      * @param teamName the name of the team to load and set as active
      */
     public void loadTeamAndSetActiveTeam(String teamName) {
         List<TeamMemberDTO> teamMembers =
                 this.databaseRepository.getTeamMembers(this.userId, teamName);
-        BugemonTeam loadedTeam = new BugemonTeam(teamName);
+        List<UserBugemonDTO> userBugemons = this.databaseRepository.getUserBugemons(this.userId);
+
+        this.activeTeam = new BugemonTeam(teamName);
+
         for (TeamMemberDTO member : teamMembers) {
-            Bugemon bugemon =
-                    getAllDefaultBugemons()
-                            .stream()
-                            .filter(b -> b.getId().equals(member.bugemonId()))
+            UserBugemonDTO userBugemon =
+                    userBugemons.stream()
+                            .filter(b -> b.bugemonId().equals(member.bugemonId()))
                             .findFirst()
                             .orElseThrow(()
                                                  -> new RuntimeException(
-                                                         "Bugemon with ID " + member.bugemonId()
-                                                         + (" not found in default Bugemons cache. "
-                                                            + "Cannot load team.")));
+                                                         "User Bugemon with ID "
+                                                         + member.bugemonId()
+                                                         + (" not found. Cannot load team.")));
             try {
-                loadedTeam.add(bugemon);
+                this.activeTeam.add(this.buildUserBugemon(userBugemon));
             } catch (Exception e) {
                 throw new IllegalStateException(
                         "Failed to add Bugemon to loaded team: " + e.getMessage(), e);
             }
         }
-        this.activeTeam = loadedTeam;
     }
 
     /**
@@ -170,5 +172,43 @@ public class PlayerService {
      */
     public void restoreHpActiveTeam() {
         this.activeTeam.forEach(Bugemon::restoreHp);
+    }
+
+    /**
+     * Builds a Bugemon object based on the provided UserBugemonDTO. This method retrieves the
+     * default Bugemon information from the cache using the bugemon ID from the UserBugemonDTO, and
+     * then constructs a new Bugemon object using the attributes from both the default Bugemon and
+     * the UserBugemonDTO. The resulting Bugemon object reflects the current state of the user's
+     * Bugemon, including its current HP, attack, defense, initiative, XP, and level, while
+     * retaining the base attributes such as name, type, and sprite from the default Bugemon.
+     * @param userBugemon the UserBugemonDTO containing the data needed to build the Bugemon object,
+     *         including its current state and attributes
+     * @return the constructed Bugemon object
+     */
+    private Bugemon buildUserBugemon(UserBugemonDTO userBugemon) {
+        Bugemon defaultBugemon =
+                this.allDefaultBugemonsCache.stream()
+                        .filter(b -> b.getId().equals(userBugemon.bugemonId()))
+                        .findFirst()
+                        .orElseThrow(()
+                                             -> new RuntimeException("Default Bugemon with ID "
+                                                                     + userBugemon.bugemonId()
+                                                                     + " not found."));
+
+        BugemonBuilder builder = new BugemonBuilder();
+        builder.id(userBugemon.bugemonId());
+        builder.name(defaultBugemon.getName());
+        builder.type(defaultBugemon.getType());
+        builder.sprite(defaultBugemon.getSpriteURL());
+        builder.hp(userBugemon.currentMaxHp());
+        builder.attack(userBugemon.currentAttackPower());
+        builder.defense(userBugemon.currentDefense());
+        builder.initiative(userBugemon.currentInitiative());
+        builder.xp(userBugemon.currentXp());
+        builder.level(userBugemon.currentLevel());
+        builder.attackList(defaultBugemon.getAttackList());
+        builder.isStarter(defaultBugemon.isStarter());
+
+        return builder.build();
     }
 }
