@@ -9,10 +9,13 @@
 
 package ulb.models.combat;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.trainer.ManualTrainer;
@@ -70,6 +73,12 @@ public class Combat {
     /** The result of the most recently resolved turn, or {@code null} before the first turn. */
     private TurnResult lastTurnResult;
 
+    /** Set of ally Bugemons that have participated in this combat. */
+    private final Set<Bugemon> allyParticipants = new HashSet<>();
+
+    /** Set of adversary Bugemons that have participated in this combat. */
+    private final Set<Bugemon> adversaryParticipants = new HashSet<>();
+
     // ── constructor ───────────────────────────────────────────────────────────
 
     /**
@@ -118,8 +127,8 @@ public class Combat {
      *         {@code null}.
      */
     public TurnResult turn() {
-        allyTrainer.addBugemonParticipation();
-        adversaryTrainer.addBugemonParticipation();
+        allyParticipants.add(allyTrainer.getCurrentBugemon());
+        adversaryParticipants.add(adversaryTrainer.getCurrentBugemon());
 
         TurnAction allyAction = allyTrainer.getAction();
         TurnAction adversaryAction = adversaryTrainer.getAction();
@@ -157,10 +166,13 @@ public class Combat {
      *         an empty {@link Optional} if the combat has not yet ended.
      * @see #isFinished()
      */
-    public Optional<Trainer> getWinner() {
-        return allyTrainer.isDefeated() ? Optional.of(adversaryTrainer)
-        : adversaryTrainer.isDefeated() ? Optional.of(allyTrainer)
-                                        : Optional.empty();
+    public Trainer getWinner() {
+        if (allyTrainer.isDefeated() && adversaryTrainer.isDefeated()) {
+            throw new IllegalStateException(
+                    "could not determine a winner: both players are defeated");
+        }
+
+        return allyTrainer.isDefeated() ? adversaryTrainer : allyTrainer;
     }
 
     /**
@@ -217,6 +229,33 @@ public class Combat {
      */
     public int getTurn() {
         return turn;
+    }
+
+    /**
+     * Returns a {@link CombatResult} encapsulating the outcome of this combat.
+     *
+     * <p>
+     * The result includes the winner (if the combat is finished), both trainers,
+     * and the sets of Bugemons from each side that participated in at least one turn.
+     * </p>
+     *
+     * <p>
+     * This method can be called at any time during or after the combat. If the combat
+     * is still ongoing, the winner field will be an empty {@link Optional}.
+     * </p>
+     *
+     * @return a {@link CombatResult} containing the combat outcome and participant data;
+     *         never {@code null}.
+     * @see CombatResult
+     */
+    public CombatResult getCombatResult() {
+        if (!this.isFinished()) {
+            throw new IllegalStateException(
+                    "attempted to get a CombatResult but the combat was not yet finished");
+        }
+
+        return new CombatResult(this.getWinner(), this.allyTrainer, this.adversaryTrainer,
+                                this.allyParticipants, this.adversaryParticipants);
     }
 
     // ── private helpers ───────────────────────────────────────────────────────

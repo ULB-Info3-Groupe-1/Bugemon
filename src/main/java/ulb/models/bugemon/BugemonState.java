@@ -39,13 +39,6 @@ class BugemonState {
     int level;
 
     /**
-     * Whether this bugemon participated in the last combat.
-     * Used by the XP distribution logic to award experience only to bugemons
-     * that actually fought.
-     */
-    boolean participatedLastFight;
-
-    /**
      * Constructs a new {@code State} with the given stat values.
      *
      * @param hp         the initial hit points.
@@ -63,7 +56,6 @@ class BugemonState {
         this.maxHp = hp;
         this.xp = xp;
         this.level = level;
-        this.participatedLastFight = false;
     }
 
     /**
@@ -81,6 +73,5 @@ class BugemonState {
         this.maxHp = other.maxHp;
         this.xp = other.xp;
         this.level = other.level;
-        this.participatedLastFight = other.participatedLastFight;
     }
 }

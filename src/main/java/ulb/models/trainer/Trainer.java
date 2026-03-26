@@ -238,17 +238,6 @@ public abstract class Trainer {
     }
 
     /**
-     * Marks the currently active Bugemon as having participated in the current
-     * combat, which is used later by
-     * {@link ulb.services.LevelUpService#distributeXpAndGetLevelUps(ulb.models.trainer.Trainer,
-     * ulb.models.trainer.Trainer)} to distribute experience points only to Bugemons that actually
-     * fought.
-     */
-    public void addBugemonParticipation() {
-        this.currentBugemon.setParticipation(true);
-    }
-
-    /**
      * Returns the list of Bugemons in this trainer's team.
      * @return a list of Bugemons.
      */

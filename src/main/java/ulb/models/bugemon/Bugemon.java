@@ -69,8 +69,6 @@ public class Bugemon implements BugemonDTO {
 
     LevelComponent levelComponent;
 
-    boolean participatedLastFight;
-
     /**
      * Whether this bugemon is available as a starter choice. Serialised as
      * {@code "starter"}.
@@ -369,35 +367,6 @@ public class Bugemon implements BugemonDTO {
                 throw new RuntimeException("unknown effect");
             }
         }
-    }
-
-    /**
-     * Returns whether this bugemon participated in the last combat.
-     *
-     * <p>
-     * This flag is set to {@code true} by
-     * {@link ulb.models.trainer.Trainer#addBugemonParticipation()} at the start
-     * of each turn the bugemon is active, and is used by
-     * {@link ulb.services.LevelUpService#distributeXpAndGetLevelUps(ulb.models.trainer.Trainer,
-     * ulb.models.trainer.Trainer)} to distribute experience only to bugemons that actually fought.
-     * </p>
-     *
-     * @return {@code true} if this bugemon participated in the last combat,
-     *         {@code false} otherwise.
-     */
-    public boolean getParticipation() {
-        return this.participatedLastFight;
-    }
-
-    /**
-     * Sets whether this bugemon participated in the last combat.
-     *
-     * @param participated {@code true} to mark this bugemon as having
-     *                     participated; {@code false} to clear the flag.
-     * @see #getParticipation()
-     */
-    public void setParticipation(boolean participated) {
-        this.participatedLastFight = participated;
     }
 
     public void kill() {

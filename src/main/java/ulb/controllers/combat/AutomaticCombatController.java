@@ -54,10 +54,10 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
             TurnResult turnResult = combat.turn();
             timeline.pause();
 
-            combat.getWinner().ifPresent(winner -> {
+            if (combat.isFinished()) {
                 timeline.stop();
-                handleCombatResult(winner, playerTrainer);
-            });
+                this.handleCombatResult(combat.getCombatResult(), playerTrainer);
+            }
         });
 
         timeline.getKeyFrames().add(keyFrame);

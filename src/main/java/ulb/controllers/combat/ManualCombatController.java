@@ -100,8 +100,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     private void handlePostTurn(TurnResult result) {
         if (this.combat.isFinished()) {
-            this.combat.getWinner().ifPresent(
-                    winner -> handleCombatResult(winner, this.playerTrainer));
+            this.handleCombatResult(this.combat.getCombatResult(), this.playerTrainer);
         } else {
             if (result.allyIsKo()) {
                 this.playerTrainer.setForcedSwitch(true);
@@ -118,6 +117,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     private void onSurrender() {
         this.playerTrainer.registerForfeit();
         this.combat.turn();
-        this.combat.getWinner().ifPresent(winner -> handleCombatResult(winner, this.playerTrainer));
+        this.handleCombatResult(this.combat.getCombatResult(), this.playerTrainer);
     }
 }

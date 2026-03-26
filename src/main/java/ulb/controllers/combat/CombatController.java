@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
+import ulb.models.combat.CombatResult;
 import ulb.models.combat.TurnResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
@@ -79,21 +80,19 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * Resolves the end of a combat session by distributing XP on victory and
      * navigating to the appropriate outcome screen.
      *
-     * @param winner        the winning trainer, used to determine if the player won
+     * @param combat        the combat instance containing the result and participants.
+     * @param playerTrainer the player's trainer, used to determine if the player won
      *                      or lost.
-     * @param playerTrainer the player's trainer, used to determine if the player
-     *                      won
-     *                      or lost and to distribute XP on victory.
      */
-    protected void handleCombatResult(Trainer winner, Trainer playerTrainer) {
-        if (winner == playerTrainer) {
-            List<LevelUp> levelUps =
-                    LevelUpService.distributeXpAndGetLevelUps(winner, playerTrainer);
-
+    protected void handleCombatResult(CombatResult result, Trainer playerTrainer) {
+        // distribute xp only if the winner is "ally"
+        if (result.winner() == playerTrainer) {
+            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(result);
             this.onVictory.accept(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
         }
+
         if (this.restoreHpAfterCombat) {
             this.playerService.restoreHpActiveTeam();
         }
