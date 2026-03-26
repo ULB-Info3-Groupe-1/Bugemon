@@ -119,15 +119,8 @@ public class PlayerService {
                                                          "User Bugemon with ID "
                                                          + member.bugemonId()
                                                          + (" not found. Cannot load team.")));
-            try {
-                this.activeTeam.ifPresent(team -> team.add(this.buildUserBugemon(userBugemon)));
-            } catch (Exception e) {
-                // WARN: this causes a loss of information.
-                // is it really what we want ?
 
-                throw new IllegalStateException(
-                        "Failed to add Bugemon to loaded team: " + e.getMessage(), e);
-            }
+            this.activeTeam.ifPresent(team -> team.add(this.buildUserBugemon(userBugemon)));
         }
     }
 
