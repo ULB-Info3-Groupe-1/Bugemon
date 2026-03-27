@@ -182,7 +182,7 @@ public class PlayerService {
      * consistent gameplay experience.
      */
     public void restoreHpActiveTeam() {
-        this.activeTeam.forEach(Bugemon::restoreHp);
+        this.activeTeam.restoreHp();
     }
 
     /**
