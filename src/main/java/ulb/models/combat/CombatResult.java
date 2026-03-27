@@ -14,5 +14,6 @@ import java.util.Set;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.trainer.Trainer;
 
-public record CombatResult(Trainer winner, Trainer allyTrainer, Trainer adversaryTrainer,
-                           Set<Bugemon> allyParticipants, Set<Bugemon> adversaryParticipants) {}
+// TODO: winnerParticipants & loserParticipants should probably be encapsulated inside Trainer.
+public record CombatResult(Trainer winner, Trainer loser, Set<Bugemon> winnerParticipants,
+                           Set<Bugemon> loserParticipants) {}

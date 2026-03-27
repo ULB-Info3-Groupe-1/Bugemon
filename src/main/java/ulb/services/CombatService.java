@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import ulb.common.Efficiency;
@@ -278,26 +279,23 @@ public class CombatService {
      */
     public static List<LevelUp> distributeXpAndGetLevelUps(final CombatResult combatResult,
                                                            final int floor, final int multiplier) {
-        final Trainer winner = combatResult.winner();
-        final Trainer loser = (winner == combatResult.allyTrainer())
-                                      ? combatResult.adversaryTrainer()
-                                      : combatResult.allyTrainer();
+        Trainer winner = combatResult.winner();
+        Trainer loser = combatResult.loser();
 
-        final List<Bugemon> participatingBugemon =
-                (winner == combatResult.allyTrainer())
-                        ? combatResult.allyParticipants().stream().toList()
-                        : combatResult.adversaryParticipants().stream().toList();
+        // playing against a bot does not give any xp
+        if (winner.isBot()) {
+            return List.of();
+        }
 
-        final int nAdversaries = loser.getTeamSize();
-        final int numParticipatingBugemon = participatingBugemon.size();
+        Set<Bugemon> winnerParticipatingBugemons = combatResult.winnerParticipants();
 
-        final int xpWon = xpGain(floor, multiplier, nAdversaries);
-        final int xpPerBugemon = (xpWon / numParticipatingBugemon);
+        int xpWon = xpGain(floor, multiplier, loser.getTeamSize());
+        int xpPerBugemon = (xpWon / winnerParticipatingBugemons.size());
 
         // My functional bros will love this one :-D
         //
         // process each participating Bugemon and collect all level-ups
-        return participatingBugemon.stream()
+        return winnerParticipatingBugemons.stream()
                 .flatMap(bugemon -> {
                     int numLevelUps = bugemon.gainXp(xpPerBugemon);
 
