@@ -258,13 +258,7 @@ public class Combat {
      * @param action  the action to apply; no-op if it is an attack or forfeit.
      */
     private void applyPassiveAction(Trainer trainer, TurnAction action) {
-        if (action instanceof TurnAction.SwitchAction sw) {
-            trainer.setCurrentBugemon(sw.target());
-        } else if (action instanceof TurnAction.UseItemAction ui
-                   && trainer instanceof ManualTrainer manualTrainer) {
-            Item item = ui.item();
-            manualTrainer.useItem(item);
-        }
+        trainer.applyPassiveAction(action);
     }
 
     /**

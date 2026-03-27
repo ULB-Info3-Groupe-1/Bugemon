@@ -9,6 +9,7 @@ import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
+import ulb.models.bugemon.Item;
 import ulb.services.PlayerService;
 import ulb.views.combat.ManualCombatView;
 
@@ -41,6 +42,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.view.setOnAttack(this::onAttack);
         this.view.setOnSwitch(this::onSwitch);
         this.view.setOnSurrender(this::onSurrender);
+        this.view.setOnItemSelected(this::onItemSelected);
+
     }
 
     /** Initialises and starts a new manual combat session for the given player. */
@@ -119,5 +122,13 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.playerTrainer.registerForfeit();
         this.combat.turn();
         this.combat.getWinner().ifPresent(winner -> handleCombatResult(winner, this.playerTrainer));
+    }
+
+    private void onItemSelected(Item item) {
+        this.playerTrainer.registerUseItem(item);
+        this.combat.turn();
+        this.view.refresh();
+
+
     }
 }
