@@ -63,9 +63,6 @@ public class Combat {
     /** The adversary (opponent-side) trainer participating in this combat. */
     private final Trainer adversaryTrainer;
 
-    /** The current turn number, starting at {@code 0}. */
-    private int turn = 0;
-
     /** The result of the most recently resolved turn, or {@code null} before the first turn. */
     private TurnResult lastTurnResult;
 
@@ -134,7 +131,6 @@ public class Combat {
         Optional<Attack> allyAttack = extractAttack(allyAction);
         Optional<Attack> adversaryAttack = extractAttack(adversaryAction);
 
-        turn++;
         this.lastTurnResult = resolveAttacks(allyAttack, adversaryAttack);
         return this.lastTurnResult;
     }
@@ -181,18 +177,6 @@ public class Combat {
      */
     public TurnResult getLastTurnResult() {
         return lastTurnResult;
-    }
-
-    /**
-     * Returns the current turn number.
-     *
-     * <p>The counter starts at {@code 0} and is incremented at the end of every
-     * non-forfeit turn.</p>
-     *
-     * @return the zero-based turn index.
-     */
-    public int getTurn() {
-        return turn;
     }
 
     /**
