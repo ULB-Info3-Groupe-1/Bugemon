@@ -115,7 +115,7 @@ public class Combat {
      */
     public TurnResult turn() {
         allyTrainer.markBugemonParticipation(allyTrainer.getCurrentBugemon());
-        allyTrainer.markBugemonParticipation(adversaryTrainer.getCurrentBugemon());
+        adversaryTrainer.markBugemonParticipation(adversaryTrainer.getCurrentBugemon());
 
         TurnAction allyAction = allyTrainer.getAction();
         TurnAction adversaryAction = adversaryTrainer.getAction();
