@@ -9,6 +9,7 @@
 
 package ulb.models.trainer;
 
+import java.util.Map;
 import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
@@ -112,6 +113,14 @@ public class ManualTrainer extends Trainer {
         if (bugemonTargetForSwitch.isPresent()) {
             currentBugemon = bugemonTargetForSwitch.get();
             bugemonTargetForSwitch = Optional.empty();
+        }
+    }
+
+    @Override
+    public void applyPassiveAction(TurnAction action) {
+        super.applyPassiveAction(action);
+        if (action instanceof TurnAction.UseItemAction ui) {
+            useItem(ui.item());
         }
     }
 
@@ -234,6 +243,10 @@ public class ManualTrainer extends Trainer {
     public void useItem(Item item) {
         inventory.useItem(item);
         currentBugemon.addEffect(item.effect());
+    }
+
+    public Map<Item, Integer> getInventory() {
+        return this.inventory.getItems();
     }
 
     // ── state queries ─────────────────────────────────────────────────────────

@@ -334,7 +334,6 @@ public class Bugemon implements BugemonDTO {
         switch (effect) {
             case EffectStatModifier e
                     -> {
-
                 // TODO: I feel like this part should probably be done elsewhere
                 EffectDuration duration = e.duration();
                 Modifier modifier =
