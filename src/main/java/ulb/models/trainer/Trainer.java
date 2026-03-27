@@ -59,6 +59,8 @@ public abstract class Trainer {
 
     // ── strategy contract ────────────────────────────────────────────────────
 
+    public abstract boolean isBot();
+
     /**
      * Returns the {@link TurnAction} this trainer has decided to take for the
      * current turn.

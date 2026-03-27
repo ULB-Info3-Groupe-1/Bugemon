@@ -56,6 +56,11 @@ public class AutoTrainer extends Trainer {
 
     // ── Trainer contract ──────────────────────────────────────────────────────
 
+    @Override
+    public boolean isBot() {
+        return true;
+    }
+
     /**
      * Decides the action for this turn by selecting a random attack from the
      * current {@link Bugemon}'s move-set.

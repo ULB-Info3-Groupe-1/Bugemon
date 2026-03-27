@@ -71,6 +71,11 @@ public class ManualTrainer extends Trainer {
 
     // ── strategy contract ────────────────────────────────────────────────────
 
+    @Override
+    public boolean isBot() {
+        return false;
+    }
+
     /**
      * Returns and consumes the action that was previously queued by the
      * controller via {@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
