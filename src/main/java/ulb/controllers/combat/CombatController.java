@@ -12,7 +12,6 @@ import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.CombatService;
-import ulb.services.LevelUpService;
 import ulb.services.PlayerService;
 import ulb.views.combat.CombatView;
 
@@ -87,7 +86,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected void handleCombatResult(CombatResult result, Trainer playerTrainer) {
         // distribute xp only if the winner is "ally"
         if (result.winner() == playerTrainer) {
-            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(result);
+            List<LevelUp> levelUps = CombatService.distributeXpAndGetLevelUps(result);
             this.onVictory.accept(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
