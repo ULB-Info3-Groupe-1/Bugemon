@@ -10,32 +10,31 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class DatabaseConnection {
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
-    private static final String URL = dotenv.get("PRODUCTION_DB_URL");
-
     private Connection connection;
 
     public DatabaseConnection() {
-        try {
-            this.connection = DriverManager.getConnection(URL);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Failed to connect to the database", e);
-        }
+        this.getConnection();
     }
 
-    public void getConnection() {
+    private void getConnection() {
+        String url = dotenv.get("DB_URL");
+        String user = dotenv.get("DB_USER");
+        String password = dotenv.get("DB_PASSWORD");
+
         try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(URL);
+            if (this.connection == null || this.connection.isClosed()) {
+                this.connection = DriverManager.getConnection(url, user, password);
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to reconnect to database", e);
         }
     }
 
+    // TODO: this is unused -> concerning
     public void closeConnection() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
+            if (this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to close connection", e);
