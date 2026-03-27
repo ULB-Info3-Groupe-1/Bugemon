@@ -29,7 +29,6 @@ public class TestAutomaticCombat {
             combat.turn();
         }
         assertTrue(combat.isFinished());
-        assertNotNull(combat.getWinner());
     }
 
     @Test

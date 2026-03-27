@@ -287,7 +287,7 @@ public class CombatService {
             return List.of();
         }
 
-        Set<Bugemon> winnerParticipatingBugemons = combatResult.winnerParticipants();
+        Set<Bugemon> winnerParticipatingBugemons = combatResult.winner().getParticipatedBugemons();
 
         int xpWon = xpGain(floor, multiplier, loser.getTeamSize());
         int xpPerBugemon = (xpWon / winnerParticipatingBugemons.size());
