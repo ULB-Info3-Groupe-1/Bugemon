@@ -7,3 +7,6 @@ DELETE FROM users;
 DELETE FROM bugemons;
 DELETE FROM attacks;
 DELETE FROM attack_effects;
+DELETE FROM items;
+DELETE FROM item_effect;
+DELETE FROM item_user;
