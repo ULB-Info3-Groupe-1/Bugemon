@@ -31,17 +31,18 @@ public class Inventory {
         }
     }
 
-
-
     public void addItem(Item item, int quantity) {
         items.put(item, items.getOrDefault(item, 0) + quantity);
     }
 
     public Item getItem(String id) {
-        return this.items.keySet().stream()
+        return this.items.keySet()
+                .stream()
                 .filter(item -> item.id().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No objects has been found with this id : " + id));
+                .orElseThrow(()
+                                     -> new IllegalArgumentException(
+                                             "No objects has been found with this id : " + id));
     }
     public Map<Item, Integer> getItems() {
         return new HashMap<>(items);

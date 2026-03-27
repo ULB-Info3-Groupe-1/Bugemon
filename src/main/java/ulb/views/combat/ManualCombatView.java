@@ -130,7 +130,7 @@ public class ManualCombatView extends CombatView {
         this.actionMenuView.getChildren().setAll(buildSwitchMenu(forced));
     }
 
-    private void showInventory(boolean forced){
+    private void showInventory(boolean forced) {
         this.actionMenuView.getChildren().setAll(buildInventoryMenu(forced));
     }
     private VBox buildSwitchMenu(boolean forced) {
@@ -181,7 +181,7 @@ public class ManualCombatView extends CombatView {
         panel.setAlignment(Pos.CENTER_RIGHT);
 
         Map<Item, Integer> inventory = player.getInventory();
-        for (Map.Entry<Item, Integer> entry  : inventory.entrySet()) {
+        for (Map.Entry<Item, Integer> entry : inventory.entrySet()) {
             HBox row = new HBox(10);
             row.setAlignment(Pos.CENTER_LEFT);
 
@@ -208,5 +208,3 @@ public class ManualCombatView extends CombatView {
         return panel;
     }
 }
-
-
