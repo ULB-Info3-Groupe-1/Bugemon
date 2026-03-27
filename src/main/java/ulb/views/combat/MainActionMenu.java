@@ -51,11 +51,10 @@ public class MainActionMenu extends ActionMenuView {
                 callback.run();
         });
     }
-    public void setOnInventory(Runnable callback){
+    public void setOnInventory(Runnable callback) {
         this.action3.setOnAction(e -> {
             if (callback != null)
                 callback.run();
         });
     }
 }
-
