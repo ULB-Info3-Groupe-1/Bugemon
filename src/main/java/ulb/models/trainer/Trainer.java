@@ -105,6 +105,13 @@ public abstract class Trainer {
         this.team.killAll();
     }
 
+
+    public void applyPassiveAction(TurnAction action) {
+        if (action instanceof TurnAction.SwitchAction sw) {
+            setCurrentBugemon(sw.target());
+        }
+    }
+
     // ── shared state queries ─────────────────────────────────────────────────
 
     /**
@@ -255,4 +262,6 @@ public abstract class Trainer {
     public List<Bugemon> getBugemons() {
         return this.team.getAll();
     }
+
+
 }
