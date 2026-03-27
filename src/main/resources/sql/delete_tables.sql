@@ -6,4 +6,4 @@ DELETE FROM user_bugemons;
 DELETE FROM users;
 DELETE FROM bugemons;
 DELETE FROM attacks;
-DELETE FROM effects;
+DELETE FROM attack_effects;
