@@ -9,73 +9,25 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseConnection {
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-    private static final String[] DB_URL_KEYS = {"PRODUCTION_DB_URL", "DATABASE_URL", "DB_URL"};
 
     private Connection connection;
-    private final String url;
 
     public DatabaseConnection() {
-        this.url = resolveDatabaseUrl();
-
-        try {
-            this.connection = DriverManager.getConnection(this.url);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Failed to connect to the database using URL '"
-                                                    + sanitizeUrl(this.url) + "'",
-                                            e);
-        }
+        this.getConnection();
     }
 
-    public void getConnection() {
+    private void getConnection() {
+        String url = dotenv.get("DB_URL");
+        String user = dotenv.get("DB_USER");
+        String password = dotenv.get("DB_PASSWORD");
+
         try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(this.url);
+            if (this.connection == null || this.connection.isClosed()) {
+                this.connection = DriverManager.getConnection(url, user, password);
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to reconnect to database", e);
         }
-    }
-
-    private String resolveDatabaseUrl() {
-        for (String key : DB_URL_KEYS) {
-            String fromDotenv = dotenv.get(key);
-            if (fromDotenv != null && !fromDotenv.isBlank()) {
-                return fromDotenv;
-            }
-
-            String fromEnv = System.getenv(key);
-            if (fromEnv != null && !fromEnv.isBlank()) {
-                return fromEnv;
-            }
-        }
-
-        throw new IllegalStateException(
-                "Database URL is missing. Set one of: PRODUCTION_DB_URL, DATABASE_URL, DB_URL.");
-    }
-
-    private String sanitizeUrl(String rawUrl) {
-        return rawUrl.replaceAll("password=[^&]*", "password=****");
-    }
-
-    private String resolveDatabaseUrl() {
-        for (String key : DB_URL_KEYS) {
-            String fromDotenv = dotenv.get(key);
-            if (fromDotenv != null && !fromDotenv.isBlank()) {
-                return fromDotenv;
-            }
-
-            String fromEnv = System.getenv(key);
-            if (fromEnv != null && !fromEnv.isBlank()) {
-                return fromEnv;
-            }
-        }
-
-        throw new IllegalStateException(
-                "Database URL is missing. Set one of: PRODUCTION_DB_URL, DATABASE_URL, DB_URL.");
-    }
-
-    private String sanitizeUrl(String rawUrl) {
-        return rawUrl.replaceAll("password=[^&]*", "password=****");
     }
 
     // TODO: this is unused -> concerning
