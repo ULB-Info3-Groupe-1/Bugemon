@@ -1,6 +1,5 @@
 package ulb.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
@@ -11,11 +10,10 @@ import ulb.repository.DatabaseRepository;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
-import ulb.utils.Parser;
 
 public class PlayerService {
     // Unique identifier for the user/player.
-    private int userId;
+    private final int userId;
 
     // Player's active team
     private BugemonTeam activeTeam;
@@ -24,14 +22,13 @@ public class PlayerService {
     private List<TeamDTO> userTeams;
 
     // Repository for database interactions
-    private DatabaseRepository databaseRepository;
+    private final DatabaseRepository databaseRepository;
 
     // Cache for all default Bugemons to avoid multiple database calls
     private List<Bugemon> allDefaultBugemonsCache;
 
     // Player Inventory
     private Inventory inventory;
-    private boolean databaseAvailable;
 
     /**
      * Constructor for PlayerService. Initializes the service by retrieving the user ID based on the
@@ -41,25 +38,13 @@ public class PlayerService {
      *         database
      */
     public PlayerService(String username) {
-        this.inventory = InventoryService.addStarterItem(new Inventory());
+        this.databaseRepository = new DatabaseRepository();
+        this.userId = this.databaseRepository.getUserIdByUsername(username).orElseGet(
+                () -> this.databaseRepository.createUser(username));
+        this.userTeams = this.databaseRepository.getUserTeams(this.userId);
 
-        try {
-            this.databaseRepository = new DatabaseRepository();
-            this.userId = this.databaseRepository.getUserIdByUsername(username).orElseGet(
-                    () -> this.databaseRepository.createUser(username));
-            this.userTeams = this.databaseRepository.getUserTeams(this.userId);
-            this.databaseAvailable = true;
-        } catch (IllegalStateException e) {
-            // Local fallback: allow the game to start even if remote DB is unreachable.
-            this.databaseRepository = null;
-            this.userId = -1;
-            this.userTeams = new ArrayList<>();
-            this.databaseAvailable = false;
-
-            Parser parser = new Parser();
-            parser.parse();
-            this.allDefaultBugemonsCache = parser.getBugemons();
-        }
+        // TODO: probably connect to db
+        inventory = InventoryService.addStarterItem(new Inventory());
     }
 
     /**
@@ -98,23 +83,12 @@ public class PlayerService {
      */
     public List<Bugemon> getAllDefaultBugemons() {
         if (this.allDefaultBugemonsCache == null) {
-            if (!this.databaseAvailable || this.databaseRepository == null) {
-                Parser parser = new Parser();
-                parser.parse();
-                this.allDefaultBugemonsCache = parser.getBugemons();
-                return this.allDefaultBugemonsCache;
-            }
             this.allDefaultBugemonsCache = this.databaseRepository.getAllDefaultBugemons();
         }
         return this.allDefaultBugemonsCache;
     }
 
     public void saveTeam(String teamName, BugemonTeam team) {
-        if (!this.databaseAvailable || this.databaseRepository == null) {
-            this.setActiveTeam(team);
-            return;
-        }
-
         this.databaseRepository.createTeam(this.userId, teamName);
         List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(this.userId);
         for (Bugemon bugemon : team) {
@@ -141,11 +115,6 @@ public class PlayerService {
      * @param teamName the name of the team to load and set as active
      */
     public void loadTeamAndSetActiveTeam(String teamName) {
-        if (!this.databaseAvailable || this.databaseRepository == null) {
-            throw new IllegalStateException(
-                    "Database unavailable: loading a saved team is disabled in offline mode.");
-        }
-
         List<TeamMemberDTO> teamMembers =
                 this.databaseRepository.getTeamMembers(this.userId, teamName);
         List<UserBugemonDTO> userBugemons = this.databaseRepository.getUserBugemons(this.userId);
@@ -194,10 +163,6 @@ public class PlayerService {
      *         active team.
      */
     public void saveBugemonState(Bugemon bugemon) {
-        if (!this.databaseAvailable || this.databaseRepository == null) {
-            return;
-        }
-
         if (!this.activeTeam.contains(bugemon)) {
             throw new IllegalArgumentException(
                     "Cannot save state of a Bugemon that is not in the active team.");
@@ -217,10 +182,7 @@ public class PlayerService {
      * consistent gameplay experience.
      */
     public void restoreHpActiveTeam() {
-        if (this.activeTeam == null) {
-            return;
-        }
-        this.activeTeam.forEach(Bugemon::restoreHp);
+        this.activeTeam.restoreHp();
     }
 
     /**
