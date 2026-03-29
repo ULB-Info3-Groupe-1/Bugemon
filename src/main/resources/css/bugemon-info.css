@@ -1,43 +1,17 @@
+/* ── Bugemon info panel ────────────────────────────────── */
 .bugemon-name {
-    -fx-font-family: 'Pixels';
-    font-family: 'Pixels', sans-serif;
     -fx-font-weight: bold;
-    font-weight: bold;
-    -fx-font-size: 16px;
-    font-size: 16px;
-    -fx-text-fill: #1a1a1a;
+    -fx-font-size: 32px;
+    -fx-text-fill: color-text-dark;
 }
 
 .bugemon-type {
-    -fx-font-family: 'Pixels';
-    font-family: 'Pixels', sans-serif;
     -fx-font-style: italic;
-    font-style: italic;
-    -fx-font-size: 14px;
-    font-size: 14px;
-    -fx-text-fill: #444444;
+    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
 }
 
 .hp-label {
-    -fx-font-size: 13px;
-    font-size: 13px;
-    -fx-text-fill: #444444;
+    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
 }
-
-.progress-bar > .track {
-    -fx-background-color: #dddddd;
-    background-color: #dddddd;
-    -fx-background-radius: 4;
-}
-
-.progress-bar > .bar {
-    -fx-background-color: #2ecc71;
-    background-color: #2ecc71;
-    -fx-background-radius: 4;
-}
-
-/* Type-coloured name */
-.PYRO  { -fx-text-fill: #e74c3c; -fx-font-family: 'Pixels'; font-family: 'Pixels', sans-serif; -fx-font-weight: bold; font-weight: bold; -fx-font-size: 16px; font-size: 16px; }
-.AQUA  { -fx-text-fill: #2980b9; -fx-font-family: 'Pixels'; font-family: 'Pixels', sans-serif; -fx-font-weight: bold; font-weight: bold; -fx-font-size: 16px; font-size: 16px; }
-.LITHO { -fx-text-fill: #8e44ad; -fx-font-family: 'Pixels'; font-family: 'Pixels', sans-serif; -fx-font-weight: bold; font-weight: bold; -fx-font-size: 16px; font-size: 16px; }
-.FLORA { -fx-text-fill: #27ae60; -fx-font-family: 'Pixels'; font-family: 'Pixels', sans-serif; -fx-font-weight: bold; font-weight: bold; -fx-font-size: 16px; font-size: 16px; }

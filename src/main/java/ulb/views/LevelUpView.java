@@ -74,7 +74,7 @@ public class LevelUpView extends View {
         LevelUpDTO levelUp = session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
-        bugemonImage.setImage(new Image(bugemon.getSpriteURL()));
+        bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
         levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
                             + bugemon.getLevel() + " !");
 

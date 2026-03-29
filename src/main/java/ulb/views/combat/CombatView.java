@@ -195,7 +195,8 @@ public abstract class CombatView extends View {
      */
     protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
-        this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL()));
+        this.bugemonTrainerImage.setImage(
+                new Image(trainerBugemon.getSpriteURL(), 256, 256, true, false));
         makeTrainerBugemonReappear();
     }
 
@@ -208,7 +209,8 @@ public abstract class CombatView extends View {
      */
     protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
-        this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));
+        this.bugemonOpponentImage.setImage(
+                new Image(opponentBugemon.getSpriteURL(), 256, 256, true, false));
         makeOpponentBugemonReappear();
     }
 

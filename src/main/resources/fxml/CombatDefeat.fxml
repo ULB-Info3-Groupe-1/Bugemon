@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
@@ -9,13 +10,14 @@
       alignment="CENTER"
       spacing="20"
       stylesheets="@../css/combat-defeat.css">
+    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
 
     <Label text="DÉFAITE..." styleClass="defeat-title" />
 
     <HBox spacing="50.0" alignment="CENTER">
         <children>
-            <Button fx:id="retryButton"          text="Réessayer"               prefHeight="65.0" prefWidth="230.0" styleClass="defeat-retry-button" />
-            <Button fx:id="backToMainMenuButton" text="Retour au menu principal"   prefHeight="65.0" prefWidth="230.0" styleClass="defeat-back-button" />
+            <Button fx:id="retryButton"          text="Réessayer"                prefHeight="65.0" prefWidth="256.0" styleClass="btn,btn-danger" />
+            <Button fx:id="backToMainMenuButton" text="Retour au menu principal" prefHeight="65.0" prefWidth="256.0" styleClass="btn,btn-secondary" />
         </children>
     </HBox>
 

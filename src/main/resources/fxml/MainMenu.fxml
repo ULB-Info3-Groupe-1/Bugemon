@@ -12,20 +12,10 @@
 
     <Label text="BUGÉMON" styleClass="main-title" />
 
-    <Button fx:id="createTeamButton" text="Gérer mes équipes" styleClass="menu-button" />
-
-    <Button fx:id="launchAutomaticCombat"
-            text="Lancer combat automatique"
-            styleClass="menu-button"
-            maxWidth="260" minWidth="260"/>
-    <Button fx:id="launchManualCombat"
-            text="Lancer combat manuel"
-            styleClass="menu-button"
-            maxWidth="260" minWidth="260"/>
-
-    <Button fx:id="noTowerButton" text="Lancer la NO Tower" styleClass="menu-button" />
-
-    <Button fx:id="quitButton" text="Quitter" styleClass="menu-button" />
+    <Button fx:id="createTeamButton"      text="Gérer mes équipes"         styleClass="btn,btn-primary" prefWidth="380"/>
+    <Button fx:id="launchAutomaticCombat" text="Lancer combat automatique" styleClass="btn,btn-primary" prefWidth="380"/>
+    <Button fx:id="launchManualCombat"    text="Lancer combat manuel"      styleClass="btn,btn-primary" prefWidth="380"/>
+    <Button fx:id="noTowerButton"         text="Lancer la NO Tower"        styleClass="btn,btn-primary" prefWidth="380"/>
+    <Button fx:id="quitButton"            text="Quitter"                   styleClass="btn,btn-danger"  prefWidth="380"/>
 
 </VBox>
-

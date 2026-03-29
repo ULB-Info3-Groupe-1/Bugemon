@@ -55,7 +55,7 @@ public class AttackActionMenu extends ActionMenuView {
 
     private void configureAttackButton(Button button, Attack attack) {
         button.getStyleClass().clear();
-        button.getStyleClass().add("action-button");
+        button.getStyleClass().addAll("btn", "btn-secondary");
 
         Efficiency efficiency =
                 CombatService.compareBugemonType(attack.type(), opponent.getCurrentBugemonType());
