@@ -46,38 +46,32 @@ public abstract class CombatView extends View {
      * Info panel (name, type, HP bar) for the player's active Bugemon,
      * displayed on the player's side of the combat screen.
      */
-    @FXML
-    protected BugemonInfoView bugemonTrainerInfo;
+    @FXML protected BugemonInfoView bugemonTrainerInfo;
 
     /**
      * Info panel (name, type, HP bar) for the opponent's active Bugemon,
      * displayed on the opponent's side of the combat screen.
      */
-    @FXML
-    protected BugemonInfoView bugemonOpponentInfo;
+    @FXML protected BugemonInfoView bugemonOpponentInfo;
 
     /** Sprite image of the player's currently active Bugemon. */
-    @FXML
-    protected ImageView bugemonTrainerImage;
+    @FXML protected ImageView bugemonTrainerImage;
 
     /** Sprite image of the opponent's currently active Bugemon. */
-    @FXML
-    protected ImageView bugemonOpponentImage;
+    @FXML protected ImageView bugemonOpponentImage;
 
     /**
      * Container for the action menu components (main menu, attack menu, …).
      * Subclasses populate this container via their own menu components.
      */
-    @FXML
-    protected ActionMenuView actionMenuView;
+    @FXML protected ActionMenuView actionMenuView;
 
     /**
      * Overlay banner used to display turn feedback messages such as attack
      * effectiveness or KO notifications. Toggled visible/invisible by
      * {@link #showDialog(String, String)} and {@link #hideDialog()}.
      */
-    @FXML
-    protected DialogZoneView dialogZoneView;
+    @FXML protected DialogZoneView dialogZoneView;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
@@ -94,7 +88,8 @@ public abstract class CombatView extends View {
      */
     public CombatView() throws IOException {
         super("/fxml/Combat.fxml");
-        this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
+        this.attackAnimationView =
+                new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
     }
 
     // ── Abstract contract ─────────────────────────────────────────────────────
@@ -147,15 +142,15 @@ public abstract class CombatView extends View {
      *                           one attack was made this turn.
      */
     public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
-            Optional<TurnResult.AttackResult> secondAttackResult) {
+                                 Optional<TurnResult.AttackResult> secondAttackResult) {
         String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
-                + " à utilisé l'attaque " + firstAttackResult.getAttackName() + "\n";
+                         + " à utilisé l'attaque " + firstAttackResult.getAttackName() + "\n";
         String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
 
         if (secondAttackResult.isPresent()) {
             message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
-                    + " à utilisé l'attaque "
-                    + secondAttackResult.orElseThrow().getAttackName();
+                       + " à utilisé l'attaque "
+                       + secondAttackResult.orElseThrow().getAttackName();
             efficiency += "2- " + formatEfficiency(secondAttackResult.orElseThrow().efficiency());
         }
         showDialog(message, efficiency);
