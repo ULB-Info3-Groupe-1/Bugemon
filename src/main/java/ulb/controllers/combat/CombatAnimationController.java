@@ -17,7 +17,7 @@ import ulb.views.combat.CombatView;
  *
  * <p>
  * Usage example:
- * 
+ *
  * <pre>
  * CombatAnimationController animController = new CombatAnimationController(view);
  * animController.playTurnAnimations(turnResult, playerTrainer, () -> {
@@ -78,9 +78,9 @@ public class CombatAnimationController {
 
         if (result.first().wasAttack()) {
             boolean firstFromPlayer = result.first().attacker() == playerTrainer;
-            playAttackAnimation(firstFromPlayer,
-                    () -> playSecondAttackIfPresent(result, playerTrainer,
-                            afterAttackAnimations));
+            playAttackAnimation(
+                    firstFromPlayer,
+                    () -> playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations));
             return;
         }
 
@@ -90,7 +90,7 @@ public class CombatAnimationController {
     /**
      * Plays the second attack animation if a second attack is present in the turn
      * result, then executes the callback.
-     * 
+     *
      * @param result        the turn result containing the attack to check for a
      *                      second attack.
      * @param playerTrainer the player trainer, used to determine which sprite
@@ -100,7 +100,7 @@ public class CombatAnimationController {
      *                      must not be {@code null}.
      */
     private void playSecondAttackIfPresent(TurnResult result, Trainer playerTrainer,
-            Runnable onFinished) {
+                                           Runnable onFinished) {
         if (result.second().isPresent() && result.second().orElseThrow().wasAttack()) {
             boolean secondFromPlayer = result.second().orElseThrow().attacker() == playerTrainer;
             playAttackAnimation(secondFromPlayer, onFinished);
@@ -112,7 +112,7 @@ public class CombatAnimationController {
     /**
      * Determines if a KO occurred in the turn result and on which side (player or
      * opponent).
-     * 
+     *
      * @param result        the turn result to check for KO occurrences.
      * @param playerTrainer the player trainer.
      * @return {@code true} if the player's Bugemon was knocked out, {@code false}
@@ -121,12 +121,12 @@ public class CombatAnimationController {
      */
     private Boolean findKoDefenderSide(TurnResult result, Trainer playerTrainer) {
         if (result.second().isPresent() && result.second().orElseThrow().wasAttack()
-                && result.second().orElseThrow().defender().getCurrentBugemon().getHp() <= 0) {
+            && result.second().orElseThrow().defender().getCurrentBugemon().getHp() <= 0) {
             return result.second().orElseThrow().defender() == playerTrainer;
         }
 
         if (result.first().wasAttack()
-                && result.first().defender().getCurrentBugemon().getHp() <= 0) {
+            && result.first().defender().getCurrentBugemon().getHp() <= 0) {
             return result.first().defender() == playerTrainer;
         }
 
@@ -177,7 +177,7 @@ public class CombatAnimationController {
      * Plays the death animation for the trainer's active Bugemon if
      * {@code forTrainer} is {@code true}, or for the opponent's active Bugemon if
      * {@code forTrainer} is {@code false}.
-     * 
+     *
      * @param onFinished callback executed once the animation completes.
      */
     private void playDeathAnimationForTrainer(Runnable onFinished) {
@@ -186,7 +186,7 @@ public class CombatAnimationController {
 
     /**
      * Plays the death animation for the opponent's active Bugemon.
-     * 
+     *
      * @param onFinished callback executed once the animation completes.
      */
     private void playDeathAnimationForOpponent(Runnable onFinished) {
@@ -216,7 +216,7 @@ public class CombatAnimationController {
      * {@code true},
      * or the opponent's active Bugemon reappear if {@code forTrainer} is
      * {@code false}.
-     * 
+     *
      * @param forTrainer {@code true} to make the trainer's Bugemon reappear,
      *                   {@code false} to make the opponent's Bugemon reappear.
      */

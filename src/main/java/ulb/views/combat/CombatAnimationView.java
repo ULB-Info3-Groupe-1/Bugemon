@@ -12,7 +12,6 @@ import javafx.util.Duration;
  * Class responsible for managing attack animations in combat views.
  */
 public class CombatAnimationView {
-    
     // Attributes
 
     private static final double ATTACK_LUNGE_DISTANCE = 100;
@@ -87,7 +86,7 @@ public class CombatAnimationView {
      * Plays the death animation for the trainer's active Bugemon if
      * {@code forTrainer} is {@code true}, or for the opponent's active Bugemon if
      * {@code forTrainer} is {@code false}.
-     * 
+     *
      * @param onFinished callback executed once the animation completes.
      */
     public void playDeathAnimationForTrainer(Runnable onFinished) {
@@ -96,7 +95,7 @@ public class CombatAnimationView {
 
     /**
      * Plays the death animation for the opponent's active Bugemon.
-     * 
+     *
      * @param onFinished callback executed once the animation completes.
      */
     public void playDeathAnimationForOpponent(Runnable onFinished) {
@@ -107,7 +106,7 @@ public class CombatAnimationView {
      * Plays the death animation for the trainer's active Bugemon if
      * {@code forTrainer} is {@code true}, or for the opponent's active Bugemon if
      * {@code forTrainer} is {@code false}.
-     * 
+     *
      * @param sprite     the sprite to animate.
      * @param onFinished callback executed once the animation completes.
      */
@@ -149,7 +148,7 @@ public class CombatAnimationView {
      * {@code true},
      * or the opponent's active Bugemon reappear if {@code forTrainer} is
      * {@code false}.
-     * 
+     *
      * @param sprite the sprite to reset.
      */
     public void makeBugemonReappear(ImageView sprite) {
