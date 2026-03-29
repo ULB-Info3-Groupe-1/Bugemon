@@ -75,5 +75,5 @@ ALTER TABLE "effects" ADD FOREIGN KEY ("attack_id") REFERENCES "attacks" ("id") 
 ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("bugemon_id") REFERENCES "bugemons" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "teams" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "team_name") REFERENCES "teams" ("user_id", "name") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "bugemon_id") REFERENCES "user_bugemons" ("user_id", "bugemon_id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "team_name") REFERENCES "teams" ("user_id", "name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "bugemon_id") REFERENCES "user_bugemons" ("user_id", "bugemon_id") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;

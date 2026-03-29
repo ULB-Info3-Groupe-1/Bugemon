@@ -47,6 +47,34 @@
     -fx-text-fill: #e0e0e0;
 }
 
+.delete-button {
+    -fx-background-color: #c0392b;
+    background-color: #c0392b;
+}
+
+.delete-button:hover,
+.delete-button:active {
+    -fx-background-color: #c0392b;
+    background-color: #c0392b;
+}
+
+.delete-button:disabled {
+    -fx-background-color: #d9a19c;
+    background-color: #d9a19c;
+    -fx-text-fill: #f3e6e4;
+}
+
+.return-button {
+    -fx-background-color: #5a6268;
+    background-color: #5a6268;
+}
+
+.return-button:hover,
+.return-button:active {
+    -fx-background-color: #626567;
+    background-color: #626567;
+}
+
 .team-input-label {
     -fx-text-fill: #1a1a1a;
     -fx-font-weight: bold;

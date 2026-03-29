@@ -252,4 +252,58 @@ public class TestRepository {
         verify(this.repository).removeTeamMember(userId, teamName, bugemonId);
         verify(this.repository).getTeamMembers(userId, teamName);
     }
+
+    @Test
+    public void shouldRenameTeam_whenRequested() {
+        int userId = 8;
+        String oldTeamName = "Old_name_team";
+        String newTeamName = "New_name_team";
+
+        // Configure mock behavior for retrieving teams after rename
+        when(this.repository.getUserTeams(userId))
+                .thenReturn(List.of(new TeamDTO(userId, newTeamName)));
+
+        // Execute
+        this.repository.createTeam(userId, oldTeamName);
+        this.repository.renameTeam(userId, oldTeamName, newTeamName);
+        List<TeamDTO> teams = this.repository.getUserTeams(userId);
+
+        // Assert
+        assertEquals("L'équipe renommée doit être présente", 1, teams.size());
+        assertEquals("Le nouveau nom doit être présent", newTeamName, teams.get(0).name());
+
+        // Verify the mock was called
+        verify(this.repository).createTeam(userId, oldTeamName);
+        verify(this.repository).renameTeam(userId, oldTeamName, newTeamName);
+        verify(this.repository).getUserTeams(userId);
+    }
+
+    @Test
+    public void shouldDeleteTeamMembers_whenRequested() {
+        int userId = 9;
+        String teamName = "ClearMembers_team";
+        String bugemonId = "clear_001";
+
+        // Configure mock behavior to return empty list after member deletion
+        when(this.repository.getTeamMembers(userId, teamName)).thenReturn(new ArrayList<>());
+
+        // Execute
+        this.repository.createTeam(userId, teamName);
+        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1);
+        this.repository.saveUserBugemon(bugemon);
+        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
+        this.repository.addTeamMember(member);
+        this.repository.deleteTeamMembers(userId, teamName);
+        List<TeamMemberDTO> members = this.repository.getTeamMembers(userId, teamName);
+
+        // Assert
+        assertTrue("Les membres de l'équipe doivent avoir été supprimés", members.isEmpty());
+
+        // Verify the mock was called
+        verify(this.repository).createTeam(userId, teamName);
+        verify(this.repository).saveUserBugemon(bugemon);
+        verify(this.repository).addTeamMember(member);
+        verify(this.repository).deleteTeamMembers(userId, teamName);
+        verify(this.repository).getTeamMembers(userId, teamName);
+    }
 }

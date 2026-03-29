@@ -76,7 +76,29 @@ public class PlayerService {
         }
     }
 
-    /**
+    public List<String> getTeamNames() {
+        return this.userTeams.stream().map(TeamDTO::name).toList();
+    }
+
+    public void renameTeam(String oldName, String newName) {
+        this.databaseRepository.renameTeam(this.userId, oldName, newName);
+        this.userTeams = this.databaseRepository.getUserTeams(this.userId);
+
+        if (this.activeTeam != null && this.activeTeam.getName().equals(oldName)) {
+            this.activeTeam.setName(newName);
+        }
+    }
+
+    public void deleteTeam(String teamName) {
+        this.databaseRepository.deleteTeam(this.userId, teamName);
+        this.userTeams.removeIf(t -> t.name().equals(teamName)); // fix
+
+        if (this.activeTeam != null && this.activeTeam.getName().equals(teamName)) {
+            this.activeTeam = null;
+        }
+    }
+
+    /**i
      * Returns a list of all default Bugemons available in the game. This method caches the result
      * after the first call to minimize database access.
      * @return a list of all default Bugemons
@@ -86,6 +108,23 @@ public class PlayerService {
             this.allDefaultBugemonsCache = this.databaseRepository.getAllDefaultBugemons();
         }
         return this.allDefaultBugemonsCache;
+    }
+
+    public void updateTeamMembers(String teamName, BugemonTeam team) {
+        this.databaseRepository.deleteTeamMembers(this.userId, teamName);
+        List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(this.userId);
+        for (Bugemon bugemon : team) {
+            if (userBugemonDTOs.stream().noneMatch(
+                        dto -> dto.bugemonId().equals(bugemon.getId()))) {
+                this.databaseRepository.saveUserBugemon(new UserBugemonDTO(
+                        userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(),
+                        bugemon.getLevel()));
+            }
+            TeamMemberDTO memberDTO = new TeamMemberDTO(this.userId, teamName, bugemon.getId(),
+                                                        team.getSlotPosition(bugemon));
+            this.databaseRepository.addTeamMember(memberDTO);
+        }
     }
 
     public void saveTeam(String teamName, BugemonTeam team) {
