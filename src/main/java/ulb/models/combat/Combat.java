@@ -117,8 +117,8 @@ public class Combat {
      *         {@code null}.
      */
     public TurnResult turn() {
-        allyTrainer.addBugemonParticipation();
-        adversaryTrainer.addBugemonParticipation();
+        allyTrainer.markCurrentBugemonParticipation();
+        adversaryTrainer.markCurrentBugemonParticipation();
 
         TurnAction allyAction = allyTrainer.getAction();
         TurnAction adversaryAction = adversaryTrainer.getAction();
