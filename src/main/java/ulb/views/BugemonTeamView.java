@@ -72,7 +72,9 @@ public class BugemonTeamView extends VBox {
      * @return a VBox containing the image and name of the Bugemon to be displayed in the grid view
      */
     private VBox createBugemonCell(BugemonDTO bugemon) {
-        Image image = (bugemon != null) ? new Image(bugemon.getSpriteURL()) : this.UNKNOWN_IMAGE;
+        Image image = (bugemon != null) ? new Image(bugemon.getSpriteURL(), IMAGE_SIZE, IMAGE_SIZE,
+                                                    true, false)
+                                        : this.UNKNOWN_IMAGE;
 
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(IMAGE_SIZE);

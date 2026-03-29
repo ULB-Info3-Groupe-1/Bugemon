@@ -18,11 +18,11 @@ public class MainActionMenu extends ActionMenuView {
     public MainActionMenu() {
         super();
         this.action1.setText("Attaque");
-        this.action1.getStyleClass().add("action-attack");
+        this.action1.getStyleClass().setAll("btn", "btn-danger");
         this.action2.setText("Changer de Bugémon");
-        this.action2.getStyleClass().add("action-switch");
+        this.action2.getStyleClass().setAll("btn", "btn-action-blue");
         this.action3.setText("Utiliser un objet");
-        this.action3.getStyleClass().add("action-item");
+        this.action3.getStyleClass().setAll("btn", "btn-warning");
         this.action4.setText("Abandonner");
     }
 

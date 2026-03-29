@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import ulb.controllers.combat.ManualCombatController;
@@ -152,15 +153,16 @@ public class ManualCombatView extends CombatView {
             HBox row = new HBox(BOX_DIM);
             row.setAlignment(Pos.CENTER_LEFT);
 
-            ImageView sprite = new ImageView(new Image(b.getSpriteURL()));
+            ImageView sprite = new ImageView(new Image(b.getSpriteURL(), 40, 40, true, false));
             sprite.setFitWidth(40);
             sprite.setFitHeight(40);
             sprite.setPreserveRatio(true);
 
             Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/"
                                     + b.getMaxHp() + " PV");
-            btn.getStyleClass().add("switch-menu-button");
-            btn.setMinWidth(200);
+            btn.getStyleClass().addAll("btn", "btn-action-blue");
+            btn.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(btn, Priority.ALWAYS);
             btn.setOnAction(e -> {
                 if (onSwitch != null)
                     onSwitch.accept(b);
@@ -172,7 +174,7 @@ public class ManualCombatView extends CombatView {
 
         if (!forced) {
             Button back = new Button("Retour");
-            back.getStyleClass().add("action-button");
+            back.getStyleClass().addAll("btn", "btn-secondary");
             back.setMinWidth(200);
             back.setOnAction(e -> showMainActionMenu());
             panel.getChildren().add(back);

@@ -1,37 +1,4 @@
+/* ── All bugemons grid ─────────────────────────────────── */
 .all-bugemons-grid {
     -fx-padding: 10 30 10 10;
-    padding: 10 30 10 10;
-}
-
-.bugemon-cell-name {
-    -fx-font-size: 10px;
-    font-size: 10px;
-    -fx-font-weight: bold;
-    font-weight: bold;
-}
-
-.bugemon-cell {
-    -fx-border-color: black;
-    border-color: black;
-    -fx-border-width: 2;
-    border-width: 2;
-    -fx-padding: 3;
-    padding: 3;
-    -fx-background-color: transparent;
-    background-color: transparent;
-}
-
-.bugemon-cell-selected {
-    -fx-border-color: red;
-    border-color: red;
-    -fx-border-width: 3;
-    border-width: 3;
-    -fx-padding: 2;
-    padding: 2;
-    -fx-background-color: lightcoral;
-    background-color: lightcoral;
-}
-
-.bugemon-image-selected {
-    -fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);
 }
