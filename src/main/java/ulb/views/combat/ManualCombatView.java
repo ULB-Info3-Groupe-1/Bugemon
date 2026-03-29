@@ -3,6 +3,7 @@ package ulb.views.combat;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -14,14 +15,14 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
-import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
+import ulb.models.trainer.Trainer;
 
 /**
  * View for the manual combat screen.
  *
  * <p>
- * Holds references to the {@link ManualTrainer}, {@link AutoTrainer}, and
+ * Holds references to the {@link ManualTrainer}, the opponent {@link Trainer}, and
  * {@link Combat} models. All sub-menu navigation (attack menu, switch panel,
  * main menu) is managed internally; the controller never calls any show/hide
  * method. User actions are dispatched through the callbacks registered via
@@ -30,7 +31,7 @@ import ulb.models.trainer.ManualTrainer;
  */
 public class ManualCombatView extends CombatView {
     private ManualTrainer player;
-    private AutoTrainer opponent;
+    private Trainer opponent;
     private Combat combat;
 
     private final MainActionMenu mainActionMenu;
@@ -48,7 +49,7 @@ public class ManualCombatView extends CombatView {
     }
 
     /** Gives the view the model objects it reads from and wires the sub-menu callbacks. */
-    public void setModel(ManualTrainer player, AutoTrainer opponent, Combat combat) {
+    public void setModel(ManualTrainer player, Trainer opponent, Combat combat) {
         this.player = player;
         this.opponent = opponent;
         this.combat = combat;
@@ -130,7 +131,7 @@ public class ManualCombatView extends CombatView {
                 player.getTeam()
                         .stream()
                         .filter(b -> b != player.getCurrentBugemon() && b.isAlive())
-                        .toList();
+                        .collect(Collectors.toList());
 
         for (Bugemon b : available) {
             HBox row = new HBox(10);

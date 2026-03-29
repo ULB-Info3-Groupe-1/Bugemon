@@ -23,6 +23,8 @@
             styleClass="menu-button"
             maxWidth="260" minWidth="260"/>
 
+    <Button fx:id="noTowerButton" text="Lancer la NO Tower" styleClass="menu-button" />
+
     <Button fx:id="quitButton" text="Quitter" styleClass="menu-button" />
 
 </VBox>

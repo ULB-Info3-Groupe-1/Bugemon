@@ -1,6 +1,8 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
+import java.util.function.Consumer;
+import javafx.stage.Stage;
 
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
@@ -9,6 +11,7 @@ import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.services.PlayerService;
 import ulb.views.combat.ManualCombatView;
 
@@ -25,6 +28,8 @@ import ulb.views.combat.ManualCombatView;
 public class ManualCombatController extends CombatController<ManualCombatView> {
     private Combat combat;
     private ManualTrainer playerTrainer;
+    private Trainer opponentTrainer;
+    private Consumer<Boolean> onCombatFinished;
 
     /**
      * Constructs a {@code ManualCombatController}, initialises its
@@ -55,6 +60,41 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
         this.view.setModel(playerTrainer, opponentTrainer, this.combat);
         this.view.refresh();
+    }
+
+    /**
+     * Starts a manual combat session using an already prepared combat instance.
+     *
+     * @param combat combat model to drive from this controller.
+     * @throws IllegalArgumentException if the ally trainer is not a ManualTrainer.
+     */
+    public void startCombat(Combat combat) {
+        if (!(combat.getAllyTrainer() instanceof ManualTrainer manualAlly)) {
+            throw new IllegalArgumentException("Manual combat requires a ManualTrainer as ally");
+        }
+
+        this.playerTrainer = manualAlly;
+        this.opponentTrainer = combat.getAdversaryTrainer();
+        this.combat = combat;
+
+        this.view.setModel(playerTrainer, opponentTrainer, this.combat);
+        this.view.refresh();
+    }
+
+    /**
+     * Registers a callback invoked when the combat ends.
+     *
+     * @param callback receives true when the player wins, false otherwise.
+     */
+    public void setOnCombatFinished(Consumer<Boolean> callback) {
+        this.onCombatFinished = callback;
+    }
+
+    /**
+     * Public bridge used by other controllers to display this combat controller.
+     */
+    public void display(Stage stage) {
+        this.show(stage);
     }
 
     // ── Private callbacks (registered on the view) ───────────────────────────
@@ -100,8 +140,12 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     private void handlePostTurn(TurnResult result) {
         if (this.combat.isFinished()) {
-            this.combat.getWinner().ifPresent(
-                    winner -> handleCombatResult(winner, this.playerTrainer));
+            boolean playerWon = this.combat.getWinner().orElseThrow() == this.playerTrainer;
+            if (this.onCombatFinished != null) {
+                this.onCombatFinished.accept(playerWon);
+                return;
+            }
+            handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
         } else {
             if (result.allyIsKo()) {
                 this.playerTrainer.setForcedSwitch(true);
@@ -118,6 +162,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     private void onSurrender() {
         this.playerTrainer.registerForfeit();
         this.combat.turn();
-        this.combat.getWinner().ifPresent(winner -> handleCombatResult(winner, this.playerTrainer));
+        boolean playerWon = this.combat.getWinner().orElseThrow() == this.playerTrainer;
+        if (this.onCombatFinished != null) {
+            this.onCombatFinished.accept(playerWon);
+            return;
+        }
+        handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
     }
 }
