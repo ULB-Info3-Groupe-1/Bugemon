@@ -30,13 +30,13 @@ import ulb.views.combat.CombatView;
  */
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
     private Consumer<List<LevelUp>> onVictory;
-    protected final AttackAnimationController animationController;
+    protected final CombatAnimationController animationController;
     protected final PlayerService playerService;
     protected boolean restoreHpAfterCombat;
 
     protected CombatController(MetaController metaController, PlayerService playerService, V view) {
         super(metaController, view);
-        this.animationController = new AttackAnimationController(view);
+        this.animationController = new CombatAnimationController(view);
         this.playerService = playerService;
     }
 

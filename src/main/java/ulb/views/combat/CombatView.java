@@ -38,7 +38,7 @@ import ulb.views.View;
  * @see ManualCombatView
  */
 public abstract class CombatView extends View {
-    private final AttackAnimationView attackAnimationView;
+    private final CombatAnimationView attackAnimationView;
 
     // ── FXML-injected components ──────────────────────────────────────────────
 
@@ -89,7 +89,7 @@ public abstract class CombatView extends View {
     public CombatView() throws IOException {
         super("/fxml/Combat.fxml");
         this.attackAnimationView =
-                new AttackAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
+                new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
     }
 
     // ── Abstract contract ─────────────────────────────────────────────────────
@@ -168,6 +168,7 @@ public abstract class CombatView extends View {
                 return "Dégats standards";
         }
     }
+
     /**
      * Hides the dialog zone, removing it from the layout flow so that it does
      * not occupy space when empty.
@@ -195,6 +196,7 @@ public abstract class CombatView extends View {
     protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL()));
+        makeTrainerBugemonReappear();
     }
 
     /**
@@ -207,6 +209,7 @@ public abstract class CombatView extends View {
     protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL()));
+        makeOpponentBugemonReappear();
     }
 
     // ── Attack animations ─────────────────────────────────────────────────────
@@ -231,5 +234,21 @@ public abstract class CombatView extends View {
      */
     public void playOpponentAttackAnimation(Runnable onFinished) {
         attackAnimationView.playOpponentAttackAnimation(onFinished);
+    }
+
+    public void playDeathAnimationForTrainer(Runnable onFinished) {
+        attackAnimationView.playDeathAnimationForTrainer(onFinished);
+    }
+
+    public void playDeathAnimationForOpponent(Runnable onFinished) {
+        attackAnimationView.playDeathAnimationForOpponent(onFinished);
+    }
+
+    public void makeTrainerBugemonReappear() {
+        attackAnimationView.makeBugemonReappear(this.bugemonTrainerImage);
+    }
+
+    public void makeOpponentBugemonReappear() {
+        attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
     }
 }
