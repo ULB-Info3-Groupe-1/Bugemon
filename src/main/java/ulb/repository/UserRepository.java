@@ -195,12 +195,29 @@ public class UserRepository {
      * @param userId the ID of the user for whom to delete a team
      * @param teamName the name of the team to be deleted
      */
-    public void deleteTeam(int userId, String teamName) {
+    public void deleteTeamMembers(int userId, String teamName) {
         try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
+                     dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("deleteTeamMembers failed", e);
+        }
+    }
+
+    public void deleteTeam(int userId, String teamName) {
+        try (PreparedStatement psMembers =
+                     dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"));
+             PreparedStatement psTeam =
+                     dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
+            psMembers.setInt(1, userId);
+            psMembers.setString(2, teamName);
+            psMembers.executeUpdate();
+
+            psTeam.setInt(1, userId);
+            psTeam.setString(2, teamName);
+            psTeam.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("deleteTeam failed", e);
         }
@@ -308,5 +325,18 @@ public class UserRepository {
             throw new IllegalStateException("getTeamMembers failed", e);
         }
         return result;
+    }
+
+    public void renameTeam(int userId, String oldTeamName, String newTeamName) {
+        try (PreparedStatement psRenameTeam =
+                     dbConnection.prepareStatement(this.dbRepository.getSql("RenameTeam"))) {
+            psRenameTeam.setString(1, newTeamName);
+            psRenameTeam.setInt(2, userId);
+            psRenameTeam.setString(3, oldTeamName);
+            psRenameTeam.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("renameTeam failed", e);
+        }
     }
 }

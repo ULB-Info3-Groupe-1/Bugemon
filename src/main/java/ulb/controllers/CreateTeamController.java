@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -39,8 +40,12 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.setValidate(this::returnToMainMenu);
         this.view.setLoad(this::loadTeam);
         this.view.setSave(this::saveTeam);
+        this.view.setDelete(this::deleteTeam);
+        this.view.setRename(this::renameTeam);
+        this.view.setAddNewTeam(this::addNewTeam);
         this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
         this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
+        this.view.updateTeamList(this.playerService.getTeamNames());
         this.view.refresh();
     }
 
@@ -73,10 +78,15 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      */
     public void saveTeam() {
         String teamName = this.view.getTeamNameToSave();
-        if (this.saveTeamNameIsValid(teamName)) {
+        if (this.playerService.teamNameExists(teamName)) {
+            this.selectedTeam.setName(teamName);
+            this.playerService.updateTeamMembers(teamName, this.selectedTeam);
+            this.playerService.setActiveTeam(this.selectedTeam);
+        } else if (this.saveTeamNameIsValid(teamName)) {
             this.selectedTeam.setName(teamName);
             this.playerService.saveTeam(teamName, this.selectedTeam);
             this.playerService.setActiveTeam(this.selectedTeam);
+            this.view.updateTeamList(this.playerService.getTeamNames());
         }
     }
 
@@ -94,6 +104,63 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.selectedTeam = this.playerService.getActiveTeam();
             this.view.refreshTeam(this.selectedTeam);
         }
+    }
+
+    public void deleteTeam(String teamName) {
+        if (teamName == null || teamName.trim().isEmpty()) {
+            this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
+            return;
+        }
+        if (!this.playerService.teamNameExists(teamName)) {
+            this.view.showAlert("Nom d'équipe introuvable",
+                                "Vous n'avez aucune équipe avec ce nom.");
+            return;
+        }
+        this.playerService.deleteTeam(teamName);
+        this.view.updateTeamList(this.playerService.getTeamNames());
+        if (this.selectedTeam != null && teamName.equals(this.selectedTeam.getName())) {
+            this.selectedTeam = new BugemonTeam();
+            this.view.refreshTeam(this.selectedTeam);
+        }
+    }
+
+    public void renameTeam(String oldTeamName, String newTeamName) {
+        if (Logger.getGlobal().isLoggable(java.util.logging.Level.INFO)) {
+            Logger.getGlobal().info(String.format("Attempting to rename team from '%s' to '%s'",
+                                                  oldTeamName, newTeamName));
+        }
+
+        if (oldTeamName == null || oldTeamName.trim().isEmpty()) {
+            this.view.showAlert("Nom d'équipe invalide",
+                                "Le nom de l'équipe à renommer ne peut pas être vide.");
+            return;
+        }
+        if (newTeamName == null || newTeamName.trim().isEmpty()) {
+            this.view.showAlert("Nouveau nom invalide",
+                                "Le nouveau nom d'équipe ne peut pas être vide.");
+            return;
+        }
+        if (!this.playerService.teamNameExists(oldTeamName)) {
+            this.view.showAlert("Nom d'équipe introuvable",
+                                "Vous n'avez aucune équipe avec ce nom.");
+            return;
+        }
+        if (this.playerService.teamNameExists(newTeamName)) {
+            this.view.showAlert(
+                    "Nom d'équipe déjà utilisé",
+                    "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
+            return;
+        }
+        this.playerService.renameTeam(oldTeamName, newTeamName);
+        this.view.updateTeamList(this.playerService.getTeamNames());
+        if (this.selectedTeam != null && oldTeamName.equals(this.selectedTeam.getName())) {
+            this.selectedTeam.setName(newTeamName);
+        }
+    }
+
+    public void addNewTeam() {
+        this.selectedTeam = new BugemonTeam();
+        this.view.refreshTeam(this.selectedTeam);
     }
 
     /**

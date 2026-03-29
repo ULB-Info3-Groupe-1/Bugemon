@@ -325,6 +325,10 @@ public class DatabaseRepository {
         userRepository.addTeamMember(dto);
     }
 
+    public void renameTeam(int userId, String oldTeamName, String newTeamName) {
+        userRepository.renameTeam(userId, oldTeamName, newTeamName);
+    }
+
     /**
      * Remove a member from a team in the database. This method takes the user ID, team name, and
      * bugemon ID of the team member to be removed, and deletes the corresponding entry from the
@@ -347,5 +351,9 @@ public class DatabaseRepository {
      */
     public void deleteTeam(int userId, String teamName) {
         userRepository.deleteTeam(userId, teamName);
+    }
+
+    public void deleteTeamMembers(int userId, String teamName) {
+        userRepository.deleteTeamMembers(userId, teamName);
     }
 }

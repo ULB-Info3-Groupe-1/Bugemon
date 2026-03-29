@@ -5,6 +5,10 @@ VALUES (?, ?)
 ON CONFLICT (user_id, name) DO NOTHING;
 
 -- Query
+-- DeleteTeamMembers
+DELETE FROM team_members WHERE user_id = ? AND team_name = ?;
+
+-- Query
 -- DeleteTeam
 DELETE FROM teams WHERE user_id = ? AND name = ?;
 
@@ -26,3 +30,11 @@ WHERE user_id = ? AND team_name = ? AND bugemon_id = ?;
 -- Query
 -- GetTeamMembers
 SELECT * FROM team_members WHERE user_id = ? AND team_name = ?;
+
+-- Query
+-- RenameTeam
+UPDATE teams SET name = ? WHERE user_id = ? AND name = ?;
+
+-- Query
+-- RenameTeamMembers
+UPDATE team_members SET team_name = ? WHERE user_id = ? AND team_name = ?;

@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
