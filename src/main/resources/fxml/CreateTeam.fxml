@@ -3,10 +3,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.text.Text?>
 
 <?import ulb.views.AllBugemonsGridView?>
 <?import ulb.views.BugemonTeamView?>
@@ -31,14 +33,6 @@
                             styleClass="text-field"
                             promptText="Nouveau nom..."/>
             </VBox>
-
-            <VBox spacing="4" alignment="CENTER_LEFT"> 
-                <Label text="Nom de l'équipe à charger :" styleClass="team-input-label"/>
-                <TextField fx:id="loadTeamNameInput" 
-                            prefWidth="220" 
-                            styleClass="text-field"
-                            promptText="Nom de l'équipe..."/>
-            </VBox>
         </HBox>
     </top>
 
@@ -48,27 +42,39 @@
             <HBox.margin><Insets left="20" top="10"/></HBox.margin>
 
             <VBox spacing="8">
-                <Label text="Ton équipe" styleClass="section-label"/>
+                <HBox spacing="10"> 
+                    <Label text="Ton Équipe: "/>
+                    <Text fx:id="selectedTeamName"/>
+                </HBox>
                 <BugemonTeamView fx:id="bugemonsTeamView"/>
             </VBox>
 
             <VBox spacing="10" alignment="BOTTOM_RIGHT" HBox.hgrow="ALWAYS">
                 <VBox.margin><Insets top="30" right="30"/></VBox.margin>
-                <Button fx:id="returnMainMenuBtn"
-                        text="Retour au menu principal"
-                        styleClass="menu-button"
-                        maxWidth="260" minWidth="260"/>
-                <Button fx:id="loadTeamBtn"
-                        text="Charger"
-                        styleClass="menu-button"
-                        maxWidth="260" minWidth="260"/>
+                <Label text="Mes équipes" styleClass="section-label"/>
+                <ListView fx:id="teamListView" prefHeight="150" maxWidth="260" minWidth="260"/>
+                
                 <Button fx:id="saveTeamBtn"
                         text="Sauvegarder"
                         styleClass="menu-button"
                         maxWidth="260" minWidth="260"/>
-
+                <Button fx:id="renameTeamBtn"
+                        text="Renommer"
+                        styleClass="menu-button"
+                        maxWidth="260" minWidth="260"/>
+                <Button fx:id="addNewTeamBtn"
+                        text="Nouvelle équipe +"
+                        styleClass="menu-button"
+                        maxWidth="260" minWidth="260"/>
+                <Button fx:id="deleteTeamBtn"
+                        text="Supprimer"
+                    styleClass="menu-button, delete-button"
+                        maxWidth="260" minWidth="260"/>
+                <Button fx:id="returnMainMenuBtn"
+                        text="Retour au menu principal"
+                        styleClass="menu-button, return-button"
+                        maxWidth="260" minWidth="260"/>
             </VBox>
-
         </HBox>
     </center>
 
