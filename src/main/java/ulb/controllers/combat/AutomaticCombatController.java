@@ -1,7 +1,6 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
@@ -23,6 +22,7 @@ import ulb.views.combat.AutomaticCombatView;
  * </p>
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
+    private Timeline turnTimeline;
     /**
      * Constructs an {@code AutomaticCombatController} and initialises its
      * {@link AutomaticCombatView}.
@@ -40,6 +40,11 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     public void startCombat(boolean restoreHpAfterCombat) {
         this.restoreHpAfterCombat = restoreHpAfterCombat;
 
+        // Stop any existing timeline from a previous combat
+        if (this.turnTimeline != null) {
+            this.turnTimeline.stop();
+        }
+
         AutoTrainer playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
         AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
         Combat combat = new Combat(playerTrainer, opponentTrainer);
@@ -47,28 +52,37 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.view.setModel(playerTrainer, opponentTrainer, combat);
         this.view.refresh();
 
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(Animation.INDEFINITE);
+        scheduleTurn(combat, playerTrainer, Duration.seconds(1));
+    }
 
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
-            timeline.pause();
+    /**
+     * Schedules the next combat turn to happen after the specified delay.
+     * Creates a fresh Timeline for each turn to avoid timing drift issues.
+     *
+     * @param combat the combat model
+     * @param playerTrainer the player trainer
+     * @param delay the delay before executing the turn
+     */
+    private void scheduleTurn(Combat combat, AutoTrainer playerTrainer, Duration delay) {
+        this.turnTimeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(delay, event -> {
             TurnResult turnResult = combat.turn();
 
             playTurnAnimations(turnResult, playerTrainer, () -> {
                 this.view.refresh();
 
                 if (combat.getWinner().isPresent()) {
-                    timeline.stop();
+                    this.turnTimeline.stop();
                     handleCombatResult(combat.getWinner().orElseThrow(), playerTrainer);
                     return;
                 }
 
-                timeline.play();
+                // Schedule the next turn after 3 seconds
+                scheduleTurn(combat, playerTrainer, Duration.seconds(3));
             });
         });
 
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setDelay(Duration.seconds(1));
-        timeline.play();
+        this.turnTimeline.getKeyFrames().add(keyFrame);
+        this.turnTimeline.play();
     }
 }
