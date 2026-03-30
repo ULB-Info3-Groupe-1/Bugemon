@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -13,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
@@ -34,7 +32,7 @@ import ulb.models.trainer.Trainer;
  * </p>
  */
 public class ManualCombatView extends CombatView {
-    private final int BOX_DIM = 10;
+    private static final int BOX_DIM = 10;
     private ManualTrainer player;
     private Trainer opponent;
     private Combat combat;
@@ -63,7 +61,7 @@ public class ManualCombatView extends CombatView {
         this.opponent = opponent;
         this.combat = combat;
 
-        this.mainActionMenu.setOnInventory(() -> showInventory());
+        this.mainActionMenu.setOnInventory(this::showInventory);
         this.mainActionMenu.setOnAttack(this::showAttackMenu);
         this.mainActionMenu.setOnSwitch(() -> showSwitchMenu(false));
         this.mainActionMenu.setOnSurrender(() -> {
@@ -147,7 +145,7 @@ public class ManualCombatView extends CombatView {
                 player.getTeam()
                         .stream()
                         .filter(b -> b != player.getCurrentBugemon() && b.isAlive())
-                        .collect(Collectors.toList());
+                        .toList();
 
         for (Bugemon b : available) {
             HBox row = new HBox(BOX_DIM);
@@ -184,8 +182,8 @@ public class ManualCombatView extends CombatView {
     }
 
     private VBox buildInventoryMenu() {
-        final VBox itemPanel = new VBox(BOX_DIM);
-        itemPanel.setAlignment(Pos.CENTER_RIGHT);
+        final VBox inventoryPanel = new VBox(BOX_DIM);
+        inventoryPanel.setAlignment(Pos.CENTER_RIGHT);
 
         for (Map.Entry<Item, Integer> entry : this.player.getInventoryMap().entrySet()) {
             Item item = entry.getKey();
@@ -200,14 +198,14 @@ public class ManualCombatView extends CombatView {
                     this.onItemSelected.accept(item);
             });
 
-            itemPanel.getChildren().add(btn);
+            inventoryPanel.getChildren().add(btn);
         }
         Button back = new Button("Retour");
         back.getStyleClass().add("action-button");
         back.setMinWidth(200);
         back.setOnAction(e -> showMainActionMenu());
-        itemPanel.getChildren().add(back);
+        inventoryPanel.getChildren().add(back);
 
-        return itemPanel;
+        return inventoryPanel;
     }
 }

@@ -17,7 +17,6 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.services.InventoryService;
 
 /**
  * Represents a human-controlled trainer whose actions are driven by the
