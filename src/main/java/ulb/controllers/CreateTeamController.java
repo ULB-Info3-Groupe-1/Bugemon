@@ -85,7 +85,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.view.updateTeamList(this.playerService.getTeamNames());
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showAlert("Nom d'équipe déjà utilisé",
-                                "Une équipe est déjà sauvée avec le nom " + this.view.getTeamNameToSave());
+                                "Une équipe est déjà sauvée avec le nom "
+                                        + this.view.getTeamNameToSave());
         }
     }
 
@@ -107,7 +108,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.view.refreshTeam(this.selectedTeam);
         } catch (TeamNotFoundException e) {
             this.view.showAlert("Nom d'équipe introuvable",
-                                "Aucune équipe sauvée avec le nom " + this.view.getTeamNameToLoad());
+                                "Aucune équipe sauvée avec le nom "
+                                        + this.view.getTeamNameToLoad());
         }
     }
 
@@ -120,7 +122,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
                 this.view.refreshTeam(this.selectedTeam);
             }
         } catch (TeamNotFoundException e) {
-            this.view.showAlert("Nom d'équipe introuvable", "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
+            this.view.showAlert("Nom d'équipe introuvable",
+                                "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
         }
     }
 
@@ -137,7 +140,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
                 this.selectedTeam.setName(newTeamName);
             }
         } catch (TeamNotFoundException e) {
-            this.view.showAlert("Nom d'équipe introuvable", "L'équipe que vous souhaitez renommer n'existe pas");
+            this.view.showAlert("Nom d'équipe introuvable",
+                                "L'équipe que vous souhaitez renommer n'existe pas");
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showAlert(
                     "Nom d'équipe déjà utilisé",

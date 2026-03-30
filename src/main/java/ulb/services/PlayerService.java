@@ -73,13 +73,15 @@ public class PlayerService {
         return this.userTeams.stream().map(TeamDTO::name).toList();
     }
 
-    public void renameTeam(String oldName, String newName) throws TeamNotFoundException, TeamNameAlreadyExistsException {
+    public void renameTeam(String oldName, String newName)
+            throws TeamNotFoundException, TeamNameAlreadyExistsException {
         if (!this.teamNameExists(oldName)) {
             throw new TeamNotFoundException("No team saved with the name " + oldName);
         }
 
         if (this.teamNameExists(newName)) {
-            throw new TeamNameAlreadyExistsException("A team is already saved with the name " + newName);
+            throw new TeamNameAlreadyExistsException("A team is already saved with the name "
+                                                     + newName);
         }
 
         this.databaseRepository.renameTeam(this.userId, oldName, newName);

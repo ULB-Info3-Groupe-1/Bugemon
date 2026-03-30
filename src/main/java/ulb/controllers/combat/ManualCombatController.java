@@ -54,9 +54,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     public void startCombat(boolean restoreHpAfterCombat) {
         this.restoreHpAfterCombat = restoreHpAfterCombat;
 
-        this.playerTrainer = new ManualTrainer(
-                this.playerService.getActiveTeam(),
-                this.playerService.getInventory());
+        this.playerTrainer = new ManualTrainer(this.playerService.getActiveTeam(),
+                                               this.playerService.getInventory());
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(playerTrainer, opponentTrainer);
