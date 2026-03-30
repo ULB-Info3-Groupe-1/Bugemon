@@ -13,8 +13,6 @@ import java.util.Optional;
 
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Item;
-import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.models.trainer.TurnAction;
 import ulb.services.CombatService;
@@ -383,10 +381,8 @@ public class Combat {
         Efficiency efficiency =
                 CombatService.compareBugemonType(attack.type(), defender.getCurrentBugemonType());
 
-        if (!defender.isCurrentBugemonAlive()) {
-            if (!defender.isDefeated()) {
-                defender.reactToKo();
-            }
+        if (!defender.isCurrentBugemonAlive() && !defender.isDefeated()) {
+            defender.reactToKo();
         }
         return new TurnResult.AttackResult(attacker, defender, Optional.of(attack), efficiency);
     }
