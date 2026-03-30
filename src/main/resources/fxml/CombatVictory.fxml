@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
@@ -8,9 +9,10 @@
       alignment="CENTER"
       spacing="20"
       stylesheets="@../css/combat-victory.css">
+    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
 
     <Label text="VICTOIRE !" styleClass="victory-title" />
-
-    <Button fx:id="continueButton" text="Continuer" prefHeight="65.0" prefWidth="230.0" styleClass="victory-continue-button" />
+    <Button fx:id="continueButton" text="Continuer" prefHeight="65.0" prefWidth="256.0"
+            styleClass="btn,btn-success" />
 
 </VBox>
