@@ -245,8 +245,8 @@ public class ManualTrainer extends Trainer {
         currentBugemon.addEffect(item.effect());
     }
 
-    public Map<Item, Integer> getInventory() {
-        return this.inventory.getItems();
+    public Map<Item, Integer> getInventoryMap() {
+        return this.inventory.getMap();
     }
 
     // ── state queries ─────────────────────────────────────────────────────────
