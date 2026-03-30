@@ -71,7 +71,12 @@ public class MusicLoader {
      */
     private Path resolveDirectory(URI uri, String resourceDir) throws IOException {
         if ("jar".equals(uri.getScheme())) {
-            FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of());
+            FileSystem fs;
+            try {
+                fs = FileSystems.getFileSystem(uri);
+            } catch (java.nio.file.FileSystemNotFoundException e) {
+                fs = FileSystems.newFileSystem(uri, java.util.Map.of());
+            }
             return fs.getPath(resourceDir);
         } else {
             return Paths.get(uri);
