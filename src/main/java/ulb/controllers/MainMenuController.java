@@ -81,21 +81,24 @@ public class MainMenuController extends Controller<MainMenuView> {
 
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
-        if (playerService.getActiveTeam() == null || playerService.getActiveTeam().isEmpty()) {
-            this.view.showAlert("Aucune équipe active",
-                                "Veuillez créer ou charger une équipe avant de lancer un combat.");
+        if (this.playerService.isActiveTeamEmpty()) {
+            showNoTeamAlert();
         } else {
-            this.metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT);
+            this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
         }
     }
 
     /** Launches a manual combat session. */
     public void startManualCombat() {
-        if (playerService.getActiveTeam() == null || playerService.getActiveTeam().isEmpty()) {
-            this.view.showAlert("Aucune équipe active",
-                                "Veuillez créer ou charger une équipe avant de lancer un combat.");
+        if (this.playerService.isActiveTeamEmpty()) {
+            showNoTeamAlert();
         } else {
-            this.metaController.switchTo(MetaController.Window.MANUAL_COMBAT);
+            this.metaController.switchTo(Window.MANUAL_COMBAT);
         }
+    }
+
+    private void showNoTeamAlert() {
+        view.showAlert("Aucune équipe active",
+                       "Veuillez créer ou charger une équipe avant de lancer un combat.");
     }
 }

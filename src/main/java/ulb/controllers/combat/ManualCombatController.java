@@ -29,7 +29,6 @@ import ulb.views.combat.ManualCombatView;
 public class ManualCombatController extends CombatController<ManualCombatView> {
     private Combat combat;
     private ManualTrainer playerTrainer;
-    private Trainer opponentTrainer;
     private Consumer<Boolean> onCombatFinished;
 
     /**
@@ -57,6 +56,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
         this.playerTrainer = new ManualTrainer(this.playerService.getActiveTeam(),
                                                this.playerService.getInventory());
+
         AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(playerTrainer, opponentTrainer);
 
@@ -76,7 +76,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         }
 
         this.playerTrainer = manualAlly;
-        this.opponentTrainer = combat.getAdversaryTrainer();
+        Trainer opponentTrainer = combat.getAdversaryTrainer();
         this.combat = combat;
 
         this.view.setModel(playerTrainer, opponentTrainer, this.combat);
