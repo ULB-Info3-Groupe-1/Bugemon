@@ -1,6 +1,7 @@
 package ulb.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import ulb.models.bugemon.Bugemon;
@@ -70,8 +71,7 @@ public class LevelUpService {
     public static List<LevelUp> distributeXpAndGetLevelUps(final Trainer winner,
                                                            final Trainer loser, final int floor,
                                                            final int multiplier) {
-        final List<Bugemon> participatingBugemon =
-                winner.getTeam().stream().filter(Bugemon::getParticipation).toList();
+        final Set<Bugemon> participatingBugemon = winner.getParticipatingBugemons();
 
         final int nAdversaries = loser.getTeamSize();
         final int numParticipatingBugemon = participatingBugemon.size();

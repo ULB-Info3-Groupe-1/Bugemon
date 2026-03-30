@@ -9,7 +9,9 @@
 
 package ulb.models.trainer;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -44,6 +46,7 @@ import ulb.services.InventoryService;
 public abstract class Trainer {
     protected final BugemonTeam team;
     protected Bugemon currentBugemon;
+    Set<Bugemon> participatedBugemons = new HashSet<>();
 
     /**
      * Constructs a {@code Trainer} with the given team, setting the first member
@@ -250,8 +253,12 @@ public abstract class Trainer {
      * ulb.models.trainer.Trainer)} to distribute experience points only to Bugemons that actually
      * fought.
      */
-    public void addBugemonParticipation() {
-        this.currentBugemon.setParticipation(true);
+    public void markCurrentBugemonParticipation() {
+        this.participatedBugemons.add(this.currentBugemon);
+    }
+
+    public Set<Bugemon> getParticipatingBugemons() {
+        return this.participatedBugemons;
     }
 
     /**
