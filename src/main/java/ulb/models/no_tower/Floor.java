@@ -31,12 +31,6 @@ public class Floor {
         this.playerService = playerService;
 
         init();
-        // 1. Combat obligatoire
-        // 2. Récompense (choix parmi 3 options) (cf. histoire « Récompenses d’étage »)
-        // 3. Combat obligatoire
-        // 4. Combat obligatoire
-        // 5. Récompense (choix parmi 3 options)
-        // 6. Boss d’étage
     }
 
     public boolean isComplete() {
