@@ -58,4 +58,3 @@ public class MainActionMenu extends ActionMenuView {
         });
     }
 }
-
