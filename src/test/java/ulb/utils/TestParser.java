@@ -165,8 +165,8 @@ public class TestParser {
         assertEquals(potion.type(), testObject.type());
         // assertEquals(potion.sprite(), testObject.sprite());
 
-        assertEquals(7, inventory.getItems().values().stream().mapToInt(i -> i).sum());
-        Map<Item, Integer> objects = inventory.getItems();
+        assertEquals(7, inventory.getMap().values().stream().mapToInt(i -> i).sum());
+        Map<Item, Integer> objects = inventory.getMap();
         long revigoranteCount = objects.entrySet()
                                         .stream()
                                         .filter(e -> "baie_revigorante".equals(e.getKey().id()))

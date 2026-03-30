@@ -48,12 +48,12 @@ public class TestInventoryService {
     @Test
     public void testAddStarterItem() {
         InventoryService.addStarterItem(inventory);
-        assertEquals(expectedInventory.getItems(), inventory.getItems());
+        assertEquals(expectedInventory.getMap(), inventory.getMap());
 
-        for (Item item : expectedInventory.getItems().keySet()) {
+        for (Item item : expectedInventory.getMap().keySet()) {
             assertTrue(inventory.hasItem(item));
-            assertEquals((int)expectedInventory.getItems().get(item),
-                         (int)inventory.getItems().get(item));
+            assertEquals((int)expectedInventory.getMap().get(item),
+                         (int)inventory.getMap().get(item));
         }
     }
 }

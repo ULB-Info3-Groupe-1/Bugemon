@@ -31,18 +31,18 @@ public class TestInventory {
     public void testAddItemQuantity() {
         inventory.addItem(baieRevigorante, 3);
 
-        assertEquals((int)inventory.getItems().get(baieRevigorante), (int)3);
+        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)3);
 
         inventory.addItem(baieRevigorante, 4);
 
-        assertEquals((int)inventory.getItems().get(baieRevigorante), (int)7);
+        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)7);
     }
 
     @Test
     public void testUseItem() {
         inventory.addItem(baieRevigorante, 2);
         inventory.useItem(baieRevigorante);
-        assertEquals((int)inventory.getItems().get(baieRevigorante), (int)1);
+        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)1);
     }
 
     @Test
