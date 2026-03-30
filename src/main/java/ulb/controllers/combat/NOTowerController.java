@@ -57,8 +57,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
         }
 
         if (this.noTower == null || this.runEnded) {
-            this.noTower =
-                    new NOTower(this.playerService.getActiveTeam().get(), this.playerService);
+            this.noTower = new NOTower(this.playerService.getActiveTeam(), this.playerService);
             this.runEnded = false;
         }
 

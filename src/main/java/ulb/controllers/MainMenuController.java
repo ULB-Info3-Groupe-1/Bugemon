@@ -81,20 +81,20 @@ public class MainMenuController extends Controller<MainMenuView> {
 
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
-        playerService.getActiveTeam()
-                .filter(team -> !team.isEmpty())
-                .ifPresentOrElse(team
-                                 -> metaController.switchTo(MetaController.Window.AUTOMATIC_COMBAT),
-                                 this::showNoTeamAlert);
+        if (this.playerService.isActiveTeamEmpty()) {
+            showNoTeamAlert();
+        } else {
+            this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
+        }
     }
 
     /** Launches a manual combat session. */
     public void startManualCombat() {
-        playerService.getActiveTeam()
-                .filter(team -> !team.isEmpty())
-                .ifPresentOrElse(team
-                                 -> metaController.switchTo(MetaController.Window.MANUAL_COMBAT),
-                                 this::showNoTeamAlert);
+        if (this.playerService.isActiveTeamEmpty()) {
+            showNoTeamAlert();
+        } else {
+            this.metaController.switchTo(Window.MANUAL_COMBAT);
+        }
     }
 
     private void showNoTeamAlert() {
