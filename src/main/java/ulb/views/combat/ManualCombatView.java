@@ -33,9 +33,12 @@ import ulb.models.trainer.Trainer;
  * </p>
  */
 public class ManualCombatView extends CombatView {
+    private final int BOX_DIM = 10;
     private ManualTrainer player;
     private Trainer opponent;
     private Combat combat;
+
+    private final VBox itemPanel;
 
     private final MainActionMenu mainActionMenu;
     private final AttackActionMenu attackActionMenu;
@@ -48,6 +51,8 @@ public class ManualCombatView extends CombatView {
         super();
         this.mainActionMenu = new MainActionMenu();
         this.attackActionMenu = new AttackActionMenu();
+        this.itemPanel = new VBox(BOX_DIM);
+        this.itemPanel.setSpacing(BOX_DIM);
         this.initCombatMode();
     }
 
@@ -57,7 +62,7 @@ public class ManualCombatView extends CombatView {
         this.opponent = opponent;
         this.combat = combat;
 
-        this.mainActionMenu.setOnInventory(() -> showInventory(false));
+        this.mainActionMenu.setOnInventory(() -> showInventory());
         this.mainActionMenu.setOnAttack(this::showAttackMenu);
         this.mainActionMenu.setOnSwitch(() -> showSwitchMenu(false));
         this.mainActionMenu.setOnSurrender(() -> {
@@ -130,11 +135,11 @@ public class ManualCombatView extends CombatView {
         this.actionMenuView.getChildren().setAll(buildSwitchMenu(forced));
     }
 
-    private void showInventory(boolean forced) {
-        this.actionMenuView.getChildren().setAll(buildInventoryMenu(forced));
+    private void showInventory() {
+        this.actionMenuView.getChildren().setAll(buildInventoryMenu());
     }
     private VBox buildSwitchMenu(boolean forced) {
-        VBox panel = new VBox(10);
+        VBox panel = new VBox(BOX_DIM);
         panel.setAlignment(Pos.CENTER_RIGHT);
 
         List<Bugemon> available =
@@ -144,7 +149,7 @@ public class ManualCombatView extends CombatView {
                         .collect(Collectors.toList());
 
         for (Bugemon b : available) {
-            HBox row = new HBox(10);
+            HBox row = new HBox(BOX_DIM);
             row.setAlignment(Pos.CENTER_LEFT);
 
             ImageView sprite = new ImageView(new Image(b.getSpriteURL()));
@@ -176,35 +181,31 @@ public class ManualCombatView extends CombatView {
         return panel;
     }
 
-    private VBox buildInventoryMenu(boolean forced) {
-        VBox panel = new VBox(10);
-        panel.setAlignment(Pos.CENTER_RIGHT);
+    private VBox buildInventoryMenu() {
+        final VBox itemPanel = new VBox(BOX_DIM);
+        itemPanel.setAlignment(Pos.CENTER_RIGHT);
 
-        Map<Item, Integer> inventory = player.getInventory();
-        for (Map.Entry<Item, Integer> entry : inventory.entrySet()) {
-            HBox row = new HBox(10);
-            row.setAlignment(Pos.CENTER_LEFT);
+        for (Map.Entry<Item, Integer> entry : this.player.getInventoryMap().entrySet()) {
+            Item item = entry.getKey();
+            int quantity = entry.getValue();
 
-            Button btn = new Button(entry.getKey().name() + " Nb." + entry.getValue());
+            Button btn = new Button(item.name() + " ×" + quantity);
+
             btn.getStyleClass().add("switch-menu-button");
             btn.setMinWidth(200);
             btn.setOnAction(e -> {
                 if (this.onItemSelected != null)
-                    this.onItemSelected.accept(entry.getKey());
+                    this.onItemSelected.accept(item);
             });
 
-            row.getChildren().add(btn);
-            panel.getChildren().add(row);
+            itemPanel.getChildren().add(btn);
         }
+        Button back = new Button("Retour");
+        back.getStyleClass().add("action-button");
+        back.setMinWidth(200);
+        back.setOnAction(e -> showMainActionMenu());
+        itemPanel.getChildren().add(back);
 
-        if (!forced) {
-            Button back = new Button("Retour");
-            back.getStyleClass().add("action-button");
-            back.setMinWidth(200);
-            back.setOnAction(e -> showMainActionMenu());
-            panel.getChildren().add(back);
-        }
-
-        return panel;
+        return itemPanel;
     }
 }
