@@ -261,6 +261,4 @@ public abstract class Trainer {
     public List<Bugemon> getBugemons() {
         return this.team.getAll();
     }
-
-
 }
