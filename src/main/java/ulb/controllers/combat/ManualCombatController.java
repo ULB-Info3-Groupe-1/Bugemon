@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
@@ -46,6 +47,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.view.setOnAttack(this::onAttack);
         this.view.setOnSwitch(this::onSwitch);
         this.view.setOnSurrender(this::onSurrender);
+        this.view.setOnItemSelected(this::onItemSelected);
     }
 
     /** Initialises and starts a new manual combat session for the given player. */
@@ -168,5 +170,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
             return;
         }
         handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
+    }
+
+    private void onItemSelected(Item item) {
+        this.playerTrainer.registerUseItem(item);
+        this.combat.turn();
+        this.view.refresh();
     }
 }

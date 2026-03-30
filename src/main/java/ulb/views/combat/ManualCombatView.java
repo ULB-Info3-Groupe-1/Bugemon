@@ -2,6 +2,7 @@ package ulb.views.combat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javafx.geometry.Pos;
@@ -11,8 +12,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import ulb.controllers.combat.ManualCombatController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.ManualTrainer;
@@ -30,13 +33,16 @@ import ulb.models.trainer.Trainer;
  * </p>
  */
 public class ManualCombatView extends CombatView {
+    private final int BOX_DIM = 10;
     private ManualTrainer player;
     private Trainer opponent;
     private Combat combat;
 
+    private final VBox itemPanel;
+
     private final MainActionMenu mainActionMenu;
     private final AttackActionMenu attackActionMenu;
-
+    private Consumer<Item> onItemSelected;
     private Consumer<Attack> onAttack;
     private Consumer<Bugemon> onSwitch;
     private Runnable onSurrender;
@@ -45,6 +51,8 @@ public class ManualCombatView extends CombatView {
         super();
         this.mainActionMenu = new MainActionMenu();
         this.attackActionMenu = new AttackActionMenu();
+        this.itemPanel = new VBox(BOX_DIM);
+        this.itemPanel.setSpacing(BOX_DIM);
         this.initCombatMode();
     }
 
@@ -54,6 +62,7 @@ public class ManualCombatView extends CombatView {
         this.opponent = opponent;
         this.combat = combat;
 
+        this.mainActionMenu.setOnInventory(() -> showInventory());
         this.mainActionMenu.setOnAttack(this::showAttackMenu);
         this.mainActionMenu.setOnSwitch(() -> showSwitchMenu(false));
         this.mainActionMenu.setOnSurrender(() -> {
@@ -77,6 +86,9 @@ public class ManualCombatView extends CombatView {
     }
     public void setOnSurrender(Runnable callback) {
         this.onSurrender = callback;
+    }
+    public void setOnItemSelected(Consumer<Item> callback) {
+        this.onItemSelected = callback;
     }
 
     @Override
@@ -109,7 +121,7 @@ public class ManualCombatView extends CombatView {
 
     // ──  navigation ───────────────────────────────────────────────────
 
-    private void showMainActionMenu() {
+    public void showMainActionMenu() {
         this.actionMenuView.getChildren().setAll(mainActionMenu);
     }
 
@@ -123,8 +135,11 @@ public class ManualCombatView extends CombatView {
         this.actionMenuView.getChildren().setAll(buildSwitchMenu(forced));
     }
 
+    private void showInventory() {
+        this.actionMenuView.getChildren().setAll(buildInventoryMenu());
+    }
     private VBox buildSwitchMenu(boolean forced) {
-        VBox panel = new VBox(10);
+        VBox panel = new VBox(BOX_DIM);
         panel.setAlignment(Pos.CENTER_RIGHT);
 
         List<Bugemon> available =
@@ -134,7 +149,7 @@ public class ManualCombatView extends CombatView {
                         .collect(Collectors.toList());
 
         for (Bugemon b : available) {
-            HBox row = new HBox(10);
+            HBox row = new HBox(BOX_DIM);
             row.setAlignment(Pos.CENTER_LEFT);
 
             ImageView sprite = new ImageView(new Image(b.getSpriteURL()));
@@ -164,5 +179,33 @@ public class ManualCombatView extends CombatView {
         }
 
         return panel;
+    }
+
+    private VBox buildInventoryMenu() {
+        final VBox itemPanel = new VBox(BOX_DIM);
+        itemPanel.setAlignment(Pos.CENTER_RIGHT);
+
+        for (Map.Entry<Item, Integer> entry : this.player.getInventoryMap().entrySet()) {
+            Item item = entry.getKey();
+            int quantity = entry.getValue();
+
+            Button btn = new Button(item.name() + " ×" + quantity);
+
+            btn.getStyleClass().add("switch-menu-button");
+            btn.setMinWidth(200);
+            btn.setOnAction(e -> {
+                if (this.onItemSelected != null)
+                    this.onItemSelected.accept(item);
+            });
+
+            itemPanel.getChildren().add(btn);
+        }
+        Button back = new Button("Retour");
+        back.getStyleClass().add("action-button");
+        back.setMinWidth(200);
+        back.setOnAction(e -> showMainActionMenu());
+        itemPanel.getChildren().add(back);
+
+        return itemPanel;
     }
 }
