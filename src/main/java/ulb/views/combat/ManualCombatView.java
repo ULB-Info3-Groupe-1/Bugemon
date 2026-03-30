@@ -192,6 +192,7 @@ public class ManualCombatView extends CombatView {
             int quantity = entry.getValue();
 
             Button btn = new Button(item.name() + " ×" + quantity);
+
             btn.getStyleClass().add("switch-menu-button");
             btn.setMinWidth(200);
             btn.setOnAction(e -> {
@@ -210,5 +211,3 @@ public class ManualCombatView extends CombatView {
         return itemPanel;
     }
 }
-
-
