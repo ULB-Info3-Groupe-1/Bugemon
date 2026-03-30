@@ -1,67 +1,70 @@
 package ulb.views.combat;
 
-import ulb.controllers.combat.ManualCombatController;
-import ulb.models.bugemon.Attack;
-import ulb.views.ActionMenuView;
+import java.util.function.Consumer;
+import javafx.scene.control.Button;
 
+import ulb.common.Efficiency;
+import ulb.models.bugemon.Attack;
+import ulb.models.trainer.Trainer;
+import ulb.services.CombatService;
+
+/**
+ * Action menu displaying the three attacks available to the player's active Bugemon.
+ *
+ * <p>
+ * Reads type-matchup efficiency directly from {@link CombatService} using the
+ * opponent {@link Trainer} reference set via {@link #setOpponent(Trainer)}.
+ * Dispatches attack selections through the callback registered via
+ * {@link #setOnAttack(Consumer)}. Holds no reference to any controller class.
+ * </p>
+ */
 public class AttackActionMenu extends ActionMenuView {
-    private ManualCombatController controller;
+    private Trainer opponent;
+    private Consumer<Attack> onAttack;
 
     public AttackActionMenu() {
         super();
         this.action4.setText("Retour");
-
         this.action1.getStyleClass().add("attack");
         this.action2.getStyleClass().add("attack");
         this.action3.getStyleClass().add("attack");
     }
 
-    /**
-     * Set the controller for the AttackActionMenu and define the action for the "Back" button to
-     * show the main action menu
-     */
-    public void setController(ManualCombatController controller) {
-        this.controller = controller;
-        this.action4.setOnAction(e -> controller.showMainActionMenu());
+    /** Gives the menu the opponent trainer so it can compute type efficiency. */
+    public void setOpponent(Trainer opponent) {
+        this.opponent = opponent;
     }
 
-    /**
-     * Set the text and action for the attack buttons based on the list of available attacks for the
-     * player's current Bugemon
-     */
+    public void setOnAttack(Consumer<Attack> callback) {
+        this.onAttack = callback;
+    }
+
+    public void setOnBack(Runnable callback) {
+        this.action4.setOnAction(e -> {
+            if (callback != null)
+                callback.run();
+        });
+    }
+
+    /** Populates the three attack buttons with the given moves and their type efficiency. */
     public void setAttacks(Attack attack1, Attack attack2, Attack attack3) {
-        this.action1.getStyleClass().clear();
+        configureAttackButton(this.action1, attack1);
+        configureAttackButton(this.action2, attack2);
+        configureAttackButton(this.action3, attack3);
+    }
 
-        this.action1.getStyleClass().add("action-button");
-        this.action1.setText(attack1.getName() + "\n"
-                             + this.controller
-                                       .isAttackEfficient(attack1.getType(),
-                                                          this.controller.getOpponentBugemonType())
-                                       .toString());
+    private void configureAttackButton(Button button, Attack attack) {
+        button.getStyleClass().clear();
+        button.getStyleClass().addAll("btn", "btn-secondary");
 
-        this.action1.getStyleClass().add("attack-" + attack1.getType().toString());
-        this.action1.setOnAction(e -> this.controller.playerAttack(attack1));
+        Efficiency efficiency =
+                CombatService.compareBugemonType(attack.type(), opponent.getCurrentBugemonType());
 
-        this.action2.getStyleClass().clear();
-        this.action2.getStyleClass().add("action-button");
-        this.action2.setText(attack2.getName() + "\n"
-                             + this.controller
-                                       .isAttackEfficient(attack2.getType(),
-                                                          this.controller.getOpponentBugemonType())
-                                       .toString());
-
-        this.action2.getStyleClass().add("attack-" + attack2.getType().toString());
-        this.action2.setOnAction(e -> this.controller.playerAttack(attack2));
-
-        this.action3.getStyleClass().clear();
-        this.action3.getStyleClass().add("action-button");
-        this.action3.setText(attack3.getName() + "\n"
-                             + this.controller
-                                       .isAttackEfficient(attack3.getType(),
-                                                          this.controller.getOpponentBugemonType())
-                                       .toString());
-
-        this.action3.getStyleClass().add("attack-" + attack3.getType().toString());
-        this.action3.setOnAction(e -> this.controller.playerAttack(attack3));
+        button.setText(attack.name() + "\n" + efficiency.toString());
+        button.getStyleClass().add("attack-" + attack.type().toString());
+        button.setOnAction(e -> {
+            if (onAttack != null)
+                onAttack.accept(attack);
+        });
     }
 }

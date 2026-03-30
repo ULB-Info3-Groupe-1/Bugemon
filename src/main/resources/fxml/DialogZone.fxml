@@ -12,6 +12,7 @@
          xmlns:fx="http://javafx.com/fxml"
          xmlns="http://javafx.com/javafx"
          spacing="20"
+         alignment="CENTER"
          stylesheets="@../css/dialog-zone.css"
          >
 
@@ -22,6 +23,7 @@
         <HBox>
             <Text fx:id="additionalInfo" styleClass="additional-info" />
         </HBox>
+        <Button fx:id="nextButton" />
     </VBox>
 
 </fx:root>

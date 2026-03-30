@@ -4,209 +4,284 @@
  *
  * @author Liefferinckx Romain
  * @date 02 March. 2026
- * @version 1.0
+ * @version 2.0
  */
 
 package ulb.models.trainer;
 
+import java.util.Map;
+import java.util.Optional;
+
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * Represents a human-controlled trainer who selects actions explicitly during
- * combat.
+ * Represents a human-controlled trainer whose actions are driven by the
+ * controller layer through a <em>queue-based</em> API.
  *
  * <p>
- * A {@code ManualTrainer} extends {@link Trainer} by adding the concept of a
- * <em>selected action</em>: before each turn the player (or the controller
- * layer) must call {@link #selectAction(TAction)} to choose whether to attack,
- * switch the active Bugemon, or forfeit. Supporting selection methods
- * ({@link #selectAttack}, {@link #selectBugemon}) let the player further
- * specify the details of the chosen action.
- * </p>
+ * Before each call to {@link ulb.models.combat.Combat#turn()}, the controller
+ * must enqueue exactly one action via one of the convenience methods:
+ * <ul>
+ *   <li>{@link #registerAttack(Attack)}  — attack with a specific move.</li>
+ *   <li>{@link #registerSwitch(Bugemon)} — voluntarily swap the active Bugemon
+ *       (counts as the turn action; the opponent still attacks).</li>
+ *   <li>{@link #registerForfeit()}       — immediately concede the match.</li>
+ * </ul>
+ * The queued action is consumed exactly once by {@link #getAction()} and
+ * cleared afterwards; a new action must be queued every turn.
  *
  * <p>
- * All selection state is held locally and is not cleared automatically between
- * turns; the controller is responsible for resetting or overwriting it as
- * needed.
+ * A separate code path handles <em>forced</em> switches that occur when the
+ * active Bugemon faints mid-turn. In that case the controller calls
+ * {@link #switchAfterKO(Bugemon)} directly, which replaces
+ * {@code currentBugemon} immediately without going through a combat turn.
  * </p>
  *
  * @see AutoTrainer
- * @see ulb.models.combat.ManualCombat
- * @see TAction
+ * @see ulb.models.combat.Combat
+ * @see TurnAction
  */
 public class ManualTrainer extends Trainer {
-    // Enums
+    private Optional<TurnAction> pendingAction = Optional.empty();
+    private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
+    private Inventory inventory;
+
+    private boolean forcedSwitch = false;
+    private boolean switchedThisTurn = false;
 
     /**
-     * Enumerates the actions a {@link ManualTrainer} can take during a combat turn.
+     * Constructs a {@code ManualTrainer} with the given team.
      *
      * <p>
-     * The selected action is passed to
-     * {@link ulb.models.combat.ManualCombat#turn(TAction)} to drive the turn
-     * resolution logic:
-     * <ul>
-     *   <li>{@link #ATTACK}  — use the currently {@link ManualTrainer#selectAttack
-     *       selected attack} against the opponent.</li>
-     *   <li>{@link #SWITCH}  — swap the active Bugemon for the one set via
-     *       {@link ManualTrainer#selectBugemon}.</li>
-     *   <li>{@link #FORFEIT} — immediately concede the match; the opponent is
-     *       declared the winner.</li>
-     * </ul>
+     * The first Bugemon in the team is automatically set as the active one.
+     * Both the pending action and the KO switch target start as empty.
      * </p>
-     */
-    public static enum TAction {
-        /** Use the currently selected {@link Attack} against the opponent. */
-        ATTACK,
-
-        /**
-         * Switch the active {@link Bugemon} for the one chosen via
-         * {@link ManualTrainer#selectBugemon}.
-         */
-        SWITCH,
-
-        /** Concede the match; the opponent wins immediately. */
-        FORFEIT,
-    }
-
-    // Attributes
-
-    private TAction selectedAction;
-    private Attack selectedAttack;
-    private Bugemon selectedBugemon;
-
-    // Constructor
-
-    /**
-     * Constructor for the ManualTrainer class, initializing the team of the
-     * trainer.
      *
-     * @param team (BugemonTeam) the team of the trainer, which is a list of
-     *             bugemon.
+     * @param team the {@link BugemonTeam} this trainer owns; must not be
+     *             {@code null} and must contain at least one Bugemon.
      */
-    public ManualTrainer(BugemonTeam team) {
+    public ManualTrainer(BugemonTeam team, Inventory inventory) {
         super(team);
-        this.selectedAction = null;
-        this.selectedAttack = null;
-        this.selectedBugemon = null;
+        this.inventory = inventory;
     }
 
-    // Methods
+    // ── strategy contract ────────────────────────────────────────────────────
 
     /**
-     * Select a bugemon from the team of the trainer if it is alive.
+     * Returns and consumes the action that was previously queued by the
+     * controller via {@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
+     * {@link #registerForfeit()}, or the lower-level {@link #registerAction(TurnAction)}.
      *
-     * @param bugemon (Bugemon) the bugemon to select from the team of the trainer.
+     * <p>
+     * The pending action is cleared after this call; the controller must queue
+     * a new action before the next turn.
+     * </p>
+     *
+     * @return the {@link TurnAction} chosen for this turn; never {@code null}.
+     * @throws IllegalStateException if no action has been queued yet.
      */
-    public void selectBugemon(Bugemon bugemon) {
-        if (this.isDefeated()) {
-            return;
-        }
-
-        Bugemon found = this.team.stream()
-                                .filter(b -> b.equals(bugemon))
-                                .findFirst()
-                                .orElseThrow(()
-                                                     -> new IllegalArgumentException(
-                                                             "The selected bugemon is not in the "
-                                                             + "team of the trainer."));
-
-        if (!found.isAlive()) {
-            throw new IllegalArgumentException("The selected bugemon is not alive.");
-        }
-
-        this.selectedBugemon = found;
+    @Override
+    public TurnAction getAction() {
+        return pendingAction
+                .map(a -> {
+                    pendingAction = Optional.empty();
+                    return a;
+                })
+                .orElseThrow(()
+                                     -> new IllegalStateException(
+                                             "No action has been selected for this turn."));
     }
 
     /**
-     * Select an attack from the list of attacks of the current bugemon of the
-     * trainer
+     * Reacts to the active Bugemon fainting by switching to the target
+     * previously registered via {@link #registerSwitchAfterKO(Bugemon)}.
      *
-     * @param attack (Attack) the attack to select from the list of attacks of the
-     *               current bugemon of the trainer.
+     * <p>
+     * If no KO switch target has been registered (i.e. the controller has not
+     * yet called {@link #registerSwitchAfterKO(Bugemon)}), this method does nothing;
+     * the controller is responsible for calling {@link #switchAfterKO(Bugemon)}
+     * when the player has made their choice.
+     * </p>
      */
-    public void selectAttack(Attack attack) {
-        if (this.currentBugemonContainsAttack(attack)) {
-            this.selectedAttack = attack;
+    @Override
+    public void reactToKo() {
+        if (bugemonTargetForSwitch.isPresent()) {
+            currentBugemon = bugemonTargetForSwitch.get();
+            bugemonTargetForSwitch = Optional.empty();
+        }
+    }
+
+    @Override
+    public void applyPassiveAction(TurnAction action) {
+        super.applyPassiveAction(action);
+        if (action instanceof TurnAction.UseItemAction ui) {
+            useItem(ui.item());
+        }
+    }
+
+    // ── forced KO switch ─────────────────────────────────────────────────────
+
+    /**
+     * Immediately replaces the active Bugemon with {@code target} after a KO,
+     * without going through a combat turn.
+     *
+     * <p>
+     * This method is called by the controller when the player selects a
+     * replacement Bugemon following a mid-turn KO. It bypasses the normal
+     * turn flow: no opponent attack is triggered and no turn counter is
+     * incremented.
+     * </p>
+     *
+     * @param target the alive {@link Bugemon} to send into battle; must not be
+     *               {@code null} and must be alive.
+     * @throws IllegalArgumentException if {@code target} is not alive.
+     */
+    public void switchAfterKO(Bugemon target) {
+        if (!target.isAlive()) {
+            throw new IllegalArgumentException("The target bugemon is not alive.");
+        }
+        currentBugemon = target;
+    }
+
+    // ── controller queue API ─────────────────────────────────────────────────
+
+    /**
+     * Enqueues an arbitrary {@link TurnAction} to be consumed on the next
+     * {@link #getAction()} call.
+     *
+     * <p>
+     * Any previously queued action is silently overwritten. Prefer the typed
+     * convenience methods ({@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
+     * {@link #registerForfeit()}) to benefit from built-in validation.
+     * </p>
+     *
+     * @param action the {@link TurnAction} to queue; must not be {@code null}.
+     */
+    public void registerAction(TurnAction action) {
+        pendingAction = Optional.of(action);
+    }
+
+    /**
+     * Queues an {@link TurnAction.AttackAction} for the given attack.
+     *
+     * <p>
+     * The attack must belong to the current Bugemon's move-set. If it does not,
+     * an {@link IllegalArgumentException} is thrown and no action is queued.
+     * </p>
+     *
+     * @param attack the {@link Attack} to use; must be in the active Bugemon's
+     *               attack list.
+     * @throws IllegalArgumentException if {@code attack} is not in the active
+     *                                  Bugemon's move-set.
+     */
+    public void registerAttack(Attack attack) {
+        if (!checkCurrentBugemonHasAttack(attack)) {
+            throw new IllegalArgumentException(
+                    "The selected attack is not in the current bugemon's attack list.");
+        }
+        registerAction(new TurnAction.AttackAction(attack));
+    }
+
+    /**
+     * Queues a {@link TurnAction.SwitchAction} for the given Bugemon.
+     *
+     * <p>
+     * This represents a <em>voluntary</em> switch: it consumes the player's
+     * turn and the opponent still attacks afterwards. The target must be alive;
+     * if it is not, an {@link IllegalArgumentException} is thrown.
+     * </p>
+     *
+     * @param target the {@link Bugemon} to switch in; must be alive.
+     * @throws IllegalArgumentException if {@code target} is not alive.
+     */
+    public void registerSwitch(Bugemon target) {
+        if (!target.isAlive()) {
+            throw new IllegalArgumentException("The target bugemon is not alive.");
+        }
+        registerAction(new TurnAction.SwitchAction(target));
+    }
+
+    /**
+     * Queues a {@link TurnAction.ForfeitAction}, causing the player to
+     * immediately concede the match on the next {@link ulb.models.combat.Combat#turn()} call.
+     */
+    public void registerForfeit() {
+        registerAction(new TurnAction.ForfeitAction());
+    }
+
+    /**
+     * Pre-registers a KO switch target to be applied by {@link #reactToKo()}.
+     *
+     * <p>
+     * This is an alternative to {@link #switchAfterKO(Bugemon)} for cases where
+     * the switch target is known before {@link #reactToKo()} is invoked by the
+     * combat engine.
+     * </p>
+     *
+     * @param target the {@link Bugemon} to switch in on KO; must not be
+     *               {@code null}.
+     */
+    public void registerSwitchAfterKO(Bugemon target) {
+        bugemonTargetForSwitch = Optional.of(target);
+    }
+
+    public void registerUseItem(Item item) {
+        if (inventory.hasItem(item)) {
+            registerAction(new TurnAction.UseItemAction(item));
         } else {
-            throw new IllegalArgumentException("The selected attack is not in the list of attacks "
-                                               + "of the current bugemon of the trainer.");
+            throw new IllegalArgumentException("The player does not have the specified item.");
         }
     }
 
-    /**
-     * Returns the base power of the currently selected {@link Attack}.
-     *
-     * <p>
-     * This is a convenience accessor used by the combat layer to determine
-     * how much damage the trainer's chosen attack will deal before modifiers
-     * are applied.
-     * </p>
-     *
-     * @return the {@link Attack#getPower() power} of the selected attack, or
-     *         {@code 0} if no attack has been selected yet.
-     */
-    public int getAttackPower() {
-        if (this.selectedAttack == null) {
-            return 0;
-        }
-        return this.selectedAttack.getPower();
+    // ── item usage ───────────────────────────────────────────────────────────
+
+    public void useItem(Item item) {
+        inventory.useItem(item);
+        currentBugemon.addEffect(item.effect());
     }
 
-    // Getters and setters
-
-    /**
-     * Returns the selected action for the trainer during a combat.
-     *
-     * @return (TAction) the selected action for the trainer during a combat.
-     */
-    public TAction getSelectedAction() {
-        return this.selectedAction;
+    public Map<Item, Integer> getInventoryMap() {
+        return this.inventory.getMap();
     }
 
-    /**
-     * Select an action for the trainer during a combat.
-     *
-     * @param action (TAction) the action to select for the trainer during a combat.
-     */
-    public void selectAction(TAction action) {
-        this.selectedAction = action;
-    }
+    // ── state queries ─────────────────────────────────────────────────────────
 
     /**
-     * Returns the selected attack for the trainer during a combat.
+     * Returns {@code true} if an action has been queued and not yet consumed.
      *
-     * @return (Attack) the selected attack for the trainer during a combat.
+     * @return {@code true} if {@link #getAction()} can be called without
+     *         throwing, {@code false} otherwise.
      */
-    public Attack getSelectedAttack() {
-        return this.selectedAttack;
+    public boolean hasPendingAction() {
+        return pendingAction.isPresent();
     }
 
-    /**
-     * Returns the selected bugemon for the trainer during a combat.
-     *
-     * @return (Bugemon) the selected bugemon for the trainer during a combat.
-     */
-    public Bugemon getSelectedBugemon() {
-        return this.selectedBugemon;
+    /** Returns {@code true} if a forced post-KO switch is pending. */
+    public boolean isForcedToSwitch() {
+        return forcedSwitch;
     }
 
-    /**
-     * Directly sets the Bugemon that will be switched in on the next
-     * {@link TAction#SWITCH} turn, bypassing the validation performed by
-     * {@link #selectBugemon(Bugemon)}.
-     *
-     * <p>
-     * This setter is primarily intended for use by the controller layer when
-     * it needs to programmatically pre-assign a switch target without triggering
-     * the alive-check guard in {@link #selectBugemon}.
-     * </p>
-     *
-     * @param selectedBugemon the {@link Bugemon} to set as the switch target;
-     *                        may be {@code null} to clear a previous selection.
-     */
-    public void setSelectedBugemon(Bugemon selectedBugemon) {
-        this.selectedBugemon = selectedBugemon;
+    /** Sets whether a forced post-KO switch is pending. */
+    public void setForcedSwitch(boolean value) {
+        this.forcedSwitch = value;
+    }
+
+    /** Returns {@code true} if the player has already used a voluntary switch this turn. */
+    public boolean hasSwitchedThisTurn() {
+        return switchedThisTurn;
+    }
+
+    /** Sets whether a voluntary switch has been used this turn. */
+    public void setHasSwitchedThisTurn(boolean value) {
+        this.switchedThisTurn = value;
+    }
+
+    /** Returns {@code true} if the player may perform a voluntary switch right now. */
+    public boolean canVoluntarilySwitch() {
+        return !forcedSwitch && !switchedThisTurn;
     }
 }

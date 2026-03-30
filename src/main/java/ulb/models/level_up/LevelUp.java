@@ -12,21 +12,23 @@ package ulb.models.level_up;
 import java.util.List;
 import java.util.Random;
 
-import ulb.common.LevelUpDTO;
+import ulb.common.dto.LevelUpDTO;
 import ulb.models.bugemon.Bugemon;
 
 public class LevelUp implements LevelUpDTO {
     // Attributes
     private Bugemon bugemon;
-    private List<Choice> choices;
+    private List<Upgrade> choices;
 
     // Constructor
 
     /**
-     * Constructor for the LevelUp class, initializing the Bugemon and generating random choices for
-     * the level-up process.
+     * Constructs a {@code LevelUp} for the given {@link Bugemon}, automatically
+     * generating three random stat-bonus {@link Upgrade}s for the player to
+     * select from.
      *
-     * @param bugemon (Bugemon) the Bugemon that is leveling up
+     * @param bugemon the {@link Bugemon} that is levelling up; must not be
+     *                {@code null}.
      */
     public LevelUp(Bugemon bugemon) {
         this.bugemon = bugemon;
@@ -35,10 +37,29 @@ public class LevelUp implements LevelUpDTO {
     }
 
     /**
-     * Generates a random choice of stat bonuses for the level-up process, ensuring that the total
-     * points allocated across all stats equals 10.
+     * Generates a single random {@link Upgrade} of stat bonuses for the level-up
+     * process.
+     *
+     * <p>
+     * A total of 10 points are distributed randomly across the four stats
+     * ({@code HP}, {@code Attack}, {@code Defense}, {@code Initiative}). Each
+     * point is independently assigned to one of the four stats with equal
+     * probability. The raw point counts are then scaled before being passed to
+     * the {@link Upgrade} constructor:
+     * </p>
+     * <ul>
+     *   <li><strong>HP</strong> and <strong>Initiative</strong> are multiplied
+     *       by {@code 2}, so each can yield between {@code 0} and {@code 20}
+     *       bonus points.</li>
+     *   <li><strong>Attack</strong> and <strong>Defense</strong> are kept at
+     *       face value, so each can yield between {@code 0} and {@code 10}
+     *       bonus points.</li>
+     * </ul>
+     *
+     * @return a new {@link Upgrade} whose four bonus values sum to at most
+     *         {@code 60} (all 10 points on HP or Initiative at 2× weight).
      */
-    private Choice generateRandomChoice() {
+    private Upgrade generateRandomChoice() {
         Random rand = new Random();
         int hp = 0, attack = 0, defense = 0, initiative = 0;
         for (int i = 0; i < 10; i++) {
@@ -51,19 +72,25 @@ public class LevelUp implements LevelUpDTO {
                 case 3 -> initiative++;
             }
         }
-        return new Choice(hp*2, attack, defense, initiative*2);
+        return new Upgrade(hp * 2, attack, defense, initiative * 2);
     }
 
     /**
-     * Gets the list of choices available to the player during the level-up process.
+     * Returns the list of stat-bonus choices available to the player during the
+     * level-up process.
+     *
+     * @return an unmodifiable {@link List} of exactly three {@link Upgrade}
+     *         instances generated at construction time; never {@code null}.
      */
     @Override
-    public List<Choice> getChoices() {
+    public List<Upgrade> getChoices() {
         return this.choices;
     }
-    
+
     /**
-     * Gets the Bugemon that is leveling up.
+     * Returns the {@link Bugemon} that triggered this level-up.
+     *
+     * @return the levelling-up {@link Bugemon}; never {@code null}.
      */
     @Override
     public Bugemon getBugemon() {

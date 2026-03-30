@@ -9,6 +9,9 @@
 
 package ulb.models.bugemon;
 
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
+
 /**
  * Represents an {@link Effect} that is currently active on a {@link Bugemon},
  * tracking the number of turns remaining before it expires.

@@ -14,9 +14,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.utils.TestUtilsBugemonTeam;
-import ulb.utils.TestUtilsBugemons;
+import ulb.utils.test.TestUtilsBugemonTeam;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestAutoTrainer {
     @Test
@@ -26,6 +27,7 @@ public class TestAutoTrainer {
         TestUtilsBugemons.killBugemon(team, "1");
         trainer.selectRandomBugemon();
         assertTrue(trainer.isCurrentBugemonAlive());
-        assertNotEquals(team.getBugemon("1"), trainer.getCurrentBugemon());
+        Bugemon killed = team.stream().filter(b -> b.getId().equals("1")).findFirst().get();
+        assertNotEquals(killed, trainer.getCurrentBugemon());
     }
 }

@@ -12,6 +12,8 @@ import com.google.gson.JsonParseException;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.BugemonBuilder;
+import ulb.models.bugemon.BugemonType;
 
 /**
  * Custom JSON deserializer for {@link Bugemon} objects.
@@ -45,7 +47,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
      * <ul>
      *   <li>{@code id} - the unique identifier of the Bugemon</li>
      *   <li>{@code nom} - the name of the Bugemon</li>
-     *   <li>{@code type} - the type of the Bugemon, deserialized as {@link Bugemon.BType}</li>
+     *   <li>{@code type} - the type of the Bugemon, deserialized as {@link BugemonType}</li>
      *   <li>{@code sprite} - the path to the sprite image; if not prefixed with {@code "png/"},
      *       the prefix is added automatically</li>
      *   <li>{@code starter} - whether the Bugemon is a starter Bugemon</li>
@@ -54,7 +56,6 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
      *   <li>{@code attaques} - a JSON array of attack IDs referencing entries in the attacks
      * map</li>
      * </ul>
-     * </p>
      *
      * @param json    the JSON element to deserialize
      * @param typeOfT the type of the object to deserialize into
@@ -69,7 +70,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
 
         String id = obj.get("id").getAsString();
         String name = obj.get("nom").getAsString();
-        Bugemon.BType type = context.deserialize(obj.get("type"), Bugemon.BType.class);
+        BugemonType type = context.deserialize(obj.get("type"), BugemonType.class);
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 
@@ -95,19 +96,17 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
             }
         }
 
-        Bugemon bugemon = new Bugemon.Builder()
-                                  .id(id)
-                                  .name(name)
-                                  .type(type)
-                                  .sprite(sprite)
-                                  .hp(statsMap.get("pv"))
-                                  .attack(statsMap.get("attaque"))
-                                  .defense(statsMap.get("defense"))
-                                  .initiative(statsMap.get("initiative"))
-                                  .attackList(attackList)
-                                  .isStarter(starter)
-                                  .build();
-
-        return bugemon;
+        return new BugemonBuilder()
+                .id(id)
+                .name(name)
+                .type(type)
+                .sprite(sprite)
+                .hp(statsMap.get("pv"))
+                .attack(statsMap.get("attaque"))
+                .defense(statsMap.get("defense"))
+                .initiative(statsMap.get("initiative"))
+                .attackList(attackList)
+                .isStarter(starter)
+                .build();
     }
 }

@@ -12,16 +12,18 @@ import javafx.scene.text.Text;
  * Reusable custom component displaying a dialog zone.
  */
 public class DialogZoneView extends VBox {
-    private final static String FXML_PATH = "/fxml/DialogZone.fxml";
+    private static final String FXML_PATH = "/fxml/DialogZone.fxml";
 
     @FXML private Text dialogText;
+
     @FXML private Button nextButton;
+
     @FXML private Text additionalInfo;
 
     /**
      * Constructor for DialogZoneView.
      * Loads the FXML layout and initializes the component.
-     * @throws IOException if the FXML file cannot be loaded
+     * Throws a {@link RuntimeException} if the FXML file cannot be loaded.
      */
     public DialogZoneView() {
         URL url = getClass().getResource(FXML_PATH);

@@ -1,20 +1,58 @@
-.menu-button {
-    -fx-background-color: #3CB371;
-    -fx-text-fill: white;
+/* ── Create team screen ────────────────────────────────── */
+.create-team-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.section-label {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-padding: 12 30 12 30;
-    -fx-border-color: transparent;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-cursor: hand;
-    -fx-min-width: 380;
+    -fx-text-fill: color-text-dark;
 }
 
-.menu-button:hover {
-    -fx-background-color: #8BB39E;
+.team-input-label {
+    -fx-text-fill: color-text-dark;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
 }
 
-.menu-button:pressed {
-    -fx-background-color: #8BB39E;
+.text-field {
+    -fx-background-color: color-white;
+    -fx-text-fill: color-text-dark;
+    -fx-prompt-text-fill: color-text-light;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+}
+
+.text-field:focus {
+    -fx-border-color: color-success;
+    -fx-background-color: #f4fff9;
+}
+
+/* ── Team list ──────────────────────────────────────────── */
+.team-list-view {
+    /* 2-layer trick: layer 1 = "border" color, layer 2 = fill inset by 2px */
+    -fx-background-color: color-surface-border, color-white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 4, 3;
+}
+
+.team-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: color-text-dark;
+    -fx-padding: 6 10;
+    -fx-font-size: 18px;
+}
+
+.team-list-view .list-cell:selected {
+    -fx-background-color: color-primary;
+    -fx-text-fill: white;
+}
+
+.team-list-view .list-cell:hover:!selected {
+    -fx-background-color: color-surface;
 }

@@ -4,48 +4,70 @@ import java.io.IOException;
 import java.util.List;
 
 import ulb.controllers.MetaController.Window;
-import ulb.models.level_up.Choice;
 import ulb.models.level_up.LevelUp;
+import ulb.models.level_up.LevelUpSession;
+import ulb.models.level_up.Upgrade;
+import ulb.services.PlayerService;
 import ulb.views.LevelUpView;
 
+/**
+ * Controller responsible for the level-up screen.
+ *
+ * <p>
+ * Manages a {@link LevelUpSession} model. After each user choice or advance,
+ * the controller mutates the session and calls {@code view.refresh()} so the
+ * view pulls the updated event data directly from the session.
+ * </p>
+ */
 public class LevelUpController extends Controller<LevelUpView> {
-    List<LevelUp> levelUps;
-    int currentIdx;
+    private final LevelUpSession session = new LevelUpSession();
+    private final PlayerService playerService;
 
-    public LevelUpController(MetaController metaController) throws IOException {
+    /**
+     * Constructs a {@code LevelUpController}, initialises its {@link LevelUpView},
+     * and registers the choice callback.
+     *
+     * @param metaController the application-level controller used for navigation.
+     * @throws IOException if the view fails to load its FXML resource.
+     */
+    public LevelUpController(MetaController metaController, PlayerService playerService)
+            throws IOException {
         super(metaController, new LevelUpView());
-        this.view.setController(this);
+        this.playerService = playerService;
+        this.view.setSession(session);
+        this.view.setOnChooseOption(this::chooseOption);
+    }
+
+    /** Applies the chosen stat bonus and advances to the next level-up event. */
+    public void chooseOption(int optionIdx) {
+        LevelUp levelUp = session.getCurrent();
+        Upgrade choice = levelUp.getChoices().get(optionIdx);
+        levelUp.getBugemon().applyChoice(choice);
+        this.playerService.saveBugemonState(levelUp.getBugemon());
+        cont();
     }
 
     /**
-     * @param optionIdx the index of the chosen option
+     * Initialises the session with the given list and navigates to the level-up
+     * screen, or goes directly to victory if the list is empty.
      */
-    public void chooseOption(int optionIdx) {
-        LevelUp levelUp = this.levelUps.get(this.currentIdx);
-        List<Choice> choices = levelUp.getChoices();
-        Choice choice = choices.get(optionIdx);
-        levelUp.getBugemon().applyChoice(choice);
-        this.cont();
-    }
-
     public void setLevelUp(List<LevelUp> lvlsUp) {
         if (!lvlsUp.isEmpty()) {
-            this.levelUps = lvlsUp;
-            this.currentIdx = 0;
-            this.view.setLevelUp(this.levelUps.get(this.currentIdx));
+            session.start(lvlsUp);
             this.metaController.switchTo(Window.LEVEL_UP);
+            this.view.refresh();
         } else {
             this.metaController.switchTo(Window.COMBAT_VICTORY);
         }
     }
 
+    /** Advances to the next pending level-up event, or navigates to victory if done. */
     public void cont() {
-        this.currentIdx++;
-        if (this.currentIdx < this.levelUps.size()) {
-            this.view.setLevelUp(this.levelUps.get(this.currentIdx));
+        if (session.hasNext()) {
+            session.advance();
+            this.view.refresh();
         } else {
             this.metaController.switchTo(Window.COMBAT_VICTORY);
-            // TODO: see with client, this.metaController.resetTeam();
         }
     }
 }

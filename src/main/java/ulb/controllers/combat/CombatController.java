@@ -1,114 +1,101 @@
 package ulb.controllers.combat;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon.BType;
-import ulb.models.combat.CombatHelper;
+import ulb.models.combat.TurnResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.CombatService;
+import ulb.services.LevelUpService;
+import ulb.services.PlayerService;
 import ulb.views.combat.CombatView;
 
-public abstract class CombatController<View extends CombatView> extends Controller<View> {
-    /**
-     * Enum representing the efficiency of an attack based on the types of the attack and the
-     * defending bugemon.
-     */
-    public enum AttackEfficiency { EFFICIENT, INFERIOR, NEUTRAL }
+/**
+ * Abstract base controller for all combat screens.
+ *
+ * <p>
+ * Provides the shared {@link #handleCombatResult(Trainer, Trainer)} method that
+ * distributes XP and navigates to the correct outcome screen. Concrete
+ * subclasses drive the combat loop and call {@code view.refresh()} after each
+ * model mutation; they never push data into the view directly.
+ * </p>
+ *
+ * @param <V> the concrete {@link CombatView} subtype managed by this
+ *            controller.
+ */
+public abstract class CombatController<V extends CombatView> extends Controller<V> {
+    private Consumer<List<LevelUp>> onVictory;
+    protected final CombatAnimationController animationController;
+    protected final PlayerService playerService;
+    protected boolean restoreHpAfterCombat;
 
-    /**
-     * Map representing the type advantages in the combat system. Each key is a bugemon type and its
-     * corresponding value is the type it is strong against.
-     */
-    private static final Map<BType, BType> STRONG_AGAINST =
-            Map.of(BType.FLORA, BType.AQUA, BType.AQUA, BType.PYRO, BType.PYRO, BType.LITHO,
-                   BType.LITHO, BType.FLORA);
-
-    public CombatController(MetaController metaController, View view) {
+    protected CombatController(MetaController metaController, PlayerService playerService, V view) {
         super(metaController, view);
+        this.animationController = new CombatAnimationController(view);
+        this.playerService = playerService;
+    }
+
+    public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
+        this.onVictory = onVictory;
+    }
+
+    public abstract void startCombat(boolean restoreHpAfterCombat);
+
+    /**
+     * Plays the attack animations contained in a turn result, then invokes
+     * {@code onFinished}. If the turn has no attacks, the callback is executed
+     * immediately.
+     *
+     * @param result        the turn result containing the attacks to animate.
+     * @param playerTrainer the player's trainer, used to determine animation
+     *                      direction.
+     * @param onFinished    the callback to execute after all animations have
+     *                      played.
+     */
+    protected void playTurnAnimations(TurnResult result, Trainer playerTrainer,
+                                      Runnable onFinished) {
+        this.animationController.playTurnAnimations(result, playerTrainer, onFinished);
     }
 
     /**
-     * Resolves the end of a combat session by navigating to the appropriate
-     * outcome screen based on whether the given {@code winner} is the player.
+     * Creates a random opponent team sized to match the given player's team.
      *
-     * <p>
-     * The navigation rules are:
-     * <ul>
-     *   <li>If {@code winner == player}, the player won: navigate to
-     *       {@link Window#COMBAT_VICTORY}.</li>
-     *   <li>Otherwise the player lost: navigate to
-     *       {@link Window#COMBAT_DEFEAT}.</li>
-     * </ul>
-     * </p>
+     * @param playerTeamSize the size of the player's team, used to size the
+     *                       opponent's team.
      *
-     * <p>
-     * This method should be called by a subclass as soon as
-     * {@link ulb.models.combat.Combat#isFinished()} returns {@code true} and
-     * {@link ulb.models.combat.Combat#getWinner()} returns a non-{@code null}
-     * value.
-     * </p>
-     *
-     * @param winner the {@link Trainer} that won the combat; must not be
-     *               {@code null}.
-     * @param player the {@link Trainer} representing the local player, used to
-     *               determine whether the outcome is a victory or a defeat; must
-     *               not be {@code null}.
+     * @return an {@link AutoTrainer} with a randomly generated team.
      */
-    protected void handleCombatResult(Trainer winner, Trainer player) {
-        List<LevelUp> levelUps = new ArrayList<>();
-        if (winner == player) {
-            int xp = CombatHelper.calculateXP(winner, player);
-            winner.getTeam().stream().filter(b -> b.getParticipation()).forEach(b -> {
-                b.addXp(xp).ifPresent(lvlup -> levelUps.add(lvlup));
-            });
-            this.metaController.setLevelUp(levelUps);
+    protected AutoTrainer createRandomOpponent(int playerTeamSize) {
+        return new AutoTrainer(CombatService.createRandomTeam(
+                this.playerService.getAllDefaultBugemons(), playerTeamSize));
+    }
+
+    /**
+     * Resolves the end of a combat session by distributing XP on victory and
+     * navigating to the appropriate outcome screen.
+     *
+     * @param winner        the winning trainer, used to determine if the player won
+     *                      or lost.
+     * @param playerTrainer the player's trainer, used to determine if the player
+     *                      won
+     *                      or lost and to distribute XP on victory.
+     */
+    protected void handleCombatResult(Trainer winner, Trainer playerTrainer) {
+        if (winner == playerTrainer) {
+            List<LevelUp> levelUps =
+                    LevelUpService.distributeXpAndGetLevelUps(winner, playerTrainer);
+
+            this.onVictory.accept(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
         }
-    }
-
-    /**
-     * Update the combat view with the current state of the player's and opponent's bugemon
-     * @param player the player trainer whose bugemon is being updated in the view
-     * @param opponent the opponent trainer whose bugemon is being updated in the view
-     */
-    public void updateCombatView(Trainer player, AutoTrainer opponent, Attack attack) {
-        this.view.hideDialog();
-        this.view.updateTrainerBugemon(player.getCurrentBugemon());
-        this.view.updateOpponentBugemon(opponent.getCurrentBugemon());
-
-        if (attack != null) {
-            if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType())
-                        .equals(AttackEfficiency.EFFICIENT)) {
-                this.view.showDialog("ATTAQUE EFFICACE: félicitation", null);
-            } else if (isAttackEfficient(attack.getType(), opponent.getCurrentBugemonType())
-                               .equals(AttackEfficiency.INFERIOR)) {
-                this.view.showDialog("Peu d'effet ...", null);
-            } else {
-                this.view.showDialog("Dégats standards", null);
-            }
+        if (this.restoreHpAfterCombat) {
+            this.playerService.restoreHpActiveTeam();
         }
-    }
-
-    /**
-     * Determine the efficiency of the trainer attack against the opponent's bugemon based on their
-     * types
-     * @param attackType the type of the attack selected by the player
-     * @param defenseBugemonType the type of the opponent's bugemon
-     */
-    public AttackEfficiency isAttackEfficient(BType attackType, BType defenseBugemonType) {
-        if (STRONG_AGAINST.get(attackType).equals(defenseBugemonType)) {
-            return AttackEfficiency.EFFICIENT;
-        } else if (STRONG_AGAINST.get(defenseBugemonType).equals(attackType)) {
-            return AttackEfficiency.INFERIOR;
-        }
-        return AttackEfficiency.NEUTRAL;
     }
 }

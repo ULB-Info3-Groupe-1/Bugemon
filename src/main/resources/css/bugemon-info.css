@@ -1,35 +1,17 @@
-.progress-bar {
-    -fx-accent: #278A27;
-    -fx-control-inner-background: #8A0000;
-}
-
+/* ── Bugemon info panel ────────────────────────────────── */
 .bugemon-name {
     -fx-font-weight: bold;
-    -fx-font-size: 18px;
+    -fx-font-size: 32px;
+    -fx-text-fill: color-text-dark;
 }
 
 .bugemon-type {
     -fx-font-style: italic;
-    -fx-font-size: 14px;
+    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
 }
 
-.PYRO {
-    -fx-fill: #ff7300;
-    -fx-font-style: italic;
+.hp-label {
     -fx-font-size: 18px;
-}
-.AQUA {
-    -fx-fill: #00afda;
-    -fx-font-style: italic;
-    -fx-font-size: 18px;
-}
-.LITHO {
-    -fx-fill: #8800c3;
-    -fx-font-style: italic;
-    -fx-font-size: 18px;
-}
-.FLORA {
-    -fx-fill: #22911c;
-    -fx-font-style: italic;
-    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
 }

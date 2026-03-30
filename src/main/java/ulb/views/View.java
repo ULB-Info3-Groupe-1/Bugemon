@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -30,16 +32,24 @@ public abstract class View {
 
         this.root = loader.load();
         this.scene = new Scene(root);
+        this.scene.getStylesheets().add(0,
+                                        View.class.getResource("/css/theme.css").toExternalForm());
+        // Ensure Modena label lookup can always resolve on this scene tree.
+        this.root.setStyle("-fx-text-background-color: -fx-text-inner-color;");
         this.root.prefWidthProperty().bind(this.scene.widthProperty());
         this.root.prefHeightProperty().bind(this.scene.heightProperty());
     }
 
     /**
-     * Returns the root pane of this view.
+     * Reads the current state from the model and updates every UI component.
+     *
+     * <p>
+     * Called by the controller after any model mutation. The view is responsible
+     * for pulling all data it needs directly from the model references it holds.
+     * The controller never pushes data into the view.
+     * </p>
      */
-    public Pane getRoot() {
-        return this.root;
-    }
+    public abstract void refresh();
 
     /**
      * Displays this view on the given stage.
@@ -49,5 +59,18 @@ public abstract class View {
     public void show(Stage stage) {
         stage.setScene(this.scene);
         stage.show();
+    }
+
+    /**
+     * Displays an alert dialog with the specified title and message.
+     * @param title the title of the alert dialog
+     * @param message the content message of the alert dialog
+     */
+    public void showAlert(String title, String message) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

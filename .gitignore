@@ -192,3 +192,11 @@ Todo.md
 
 # Personal settings file
 .settings/*
+.zed
+
+# Environment variables file
+.env
+# Database file
+db.sqlite
+
+org.mockito.plugins.MockMaker

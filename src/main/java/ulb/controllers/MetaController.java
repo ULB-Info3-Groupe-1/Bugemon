@@ -1,57 +1,85 @@
 package ulb.controllers;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import java.util.EnumMap;
+import java.util.Map;
 import javafx.stage.Stage;
 
 import ulb.controllers.combat.AutomaticCombatController;
+import ulb.controllers.combat.CombatDefeatController;
+import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
-import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.level_up.LevelUp;
-import ulb.models.trainer.AutoTrainer;
-import ulb.models.trainer.ManualTrainer;
-import ulb.utils.Parser;
+import ulb.controllers.combat.NOTowerController;
+import ulb.controllers.music.Ambiance;
+import ulb.controllers.music.MusicLoader;
+import ulb.controllers.music.MusicPlayer;
+import ulb.services.PlayerService;
 
 /**
- * MetaController
+ * Central controller responsible for managing all screen controllers and
+ * orchestrating application-level navigation.
  *
- * Central controller responsible for managing other controllers (corresponding
- * to other application screens).
- * Instantiates all controllers and handles window transitions.
+ * <p>
+ * {@code MetaController} is instantiated once at startup by {@link ulb.Main}
+ * and owns every concrete {@link Controller} in the application. It is the
+ * single authority for:
+ * <ul>
+ * <li>Loading game resources from JSON files via {@link ulb.utils.Parser}.</li>
+ * <li>Navigating between screens via
+ * {@link #switchTo(Window)}.</li>
+ * <li>Launching combat sessions ({@link #launchAutoCombat()},
+ * {@link #launchManualCombat()}).</li>
+ * <li>Resetting the player's team between sessions
+ * ({@link #resetTeam()}).</li>
+ * <li>Displaying application-wide alert dialogs
+ * ({@link #showAlert(String, String)}).</li>
+ * </ul>
+ *
+ * <p>
+ * All lower-level controllers hold a reference to this class and call its
+ * methods to trigger navigation or access shared state (e.g. the list of all
+ * available Bugemons).
+ * </p>
+ *
+ * @see Controller
+ * @see Window
+ * @see ulb.utils.Parser
  */
 public class MetaController {
     /**
-     * Window
+     * Enumerates all navigable screens in the application.
      *
-     * Available application screens.
+     * <p>
+     * Each constant corresponds to a concrete {@link Controller} managed by
+     * the {@link MetaController}. Pass one of these values to
+     * {@link MetaController#switchTo(Window)} to trigger a screen transition.
+     * </p>
      */
     public enum Window {
         MAIN_MENU,
         CREATE_TEAM,
         MANUAL_COMBAT,
         AUTOMATIC_COMBAT,
+        NOTOWER,
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
         LEVEL_UP,
     }
 
-    private static final String JSON_ATTACK_PATH = "/json/attaques.json";
-    private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
-
     private final Stage stage;
-    private final Parser.ParseResult parseResult;
+    private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final MainMenuController mainMenuController;
     private final CreateTeamController createTeamController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
+    private final NOTowerController noTowerController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
-    private final BugemonTeam playerTeam;
     private final LevelUpController levelUpController;
+    private final MusicPlayer musicPlayer;
+    private final MusicLoader musicLoader;
+    private final PlayerService playerService;
+    private boolean noTowerFlowActive;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -59,18 +87,74 @@ public class MetaController {
      * @param primaryStage main JavaFX stage of the application
      * @throws IOException if a controller or view fails to initialize
      */
-    public MetaController(Stage primaryStage) throws IOException {
+    public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
         this.stage = primaryStage;
-        this.parseResult = loadResources();
+        this.playerService = playerService;
 
-        this.playerTeam = new BugemonTeam();
-        this.mainMenuController = new MainMenuController(this);
-        this.createTeamController = new CreateTeamController(this, playerTeam);
-        this.manualCombatController = new ManualCombatController(this);
-        this.automaticCombatController = new AutomaticCombatController(this);
+        this.mainMenuController = new MainMenuController(this, this.playerService);
+        this.createTeamController = new CreateTeamController(this, this.playerService);
+        this.manualCombatController = new ManualCombatController(this, this.playerService);
+        this.automaticCombatController = new AutomaticCombatController(this, this.playerService);
+        this.noTowerController = new NOTowerController(this, this.playerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.levelUpController = new LevelUpController(this);
+        this.levelUpController = new LevelUpController(this, this.playerService);
+        this.musicPlayer = new MusicPlayer();
+        this.musicLoader = new MusicLoader();
+        initializeMusicResources();
+        this.manualCombatController.setOnVictory(levelUpController::setLevelUp);
+        this.automaticCombatController.setOnVictory(levelUpController::setLevelUp);
+
+        initTransitions();
+    }
+
+    /**
+     * Call the method from the musicLoader to load all music and sound effects
+     * resources and register them with the musicPlayer.
+     *
+     * @throws IOException if any resource directory cannot be accessed
+     */
+    private void initializeMusicResources() throws IOException {
+        musicLoader.loadAllResources(musicPlayer);
+    }
+
+    /**
+     * Initializes the screen transition map, associating each {@link Window} with
+     * a lambda that performs the necessary actions to display that screen.
+     */
+    private void initTransitions() {
+        transitions.put(Window.MAIN_MENU, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
+            mainMenuController.show(stage);
+        });
+        transitions.put(Window.CREATE_TEAM, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
+            createTeamController.show(stage);
+        });
+        transitions.put(Window.MANUAL_COMBAT, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+            manualCombatController.startCombat(true);
+            manualCombatController.show(stage);
+        });
+        transitions.put(Window.AUTOMATIC_COMBAT, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+            automaticCombatController.startCombat(true);
+            automaticCombatController.show(stage);
+        });
+        transitions.put(Window.NOTOWER, () -> {
+            this.noTowerFlowActive = true;
+            musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+            noTowerController.runNOTower(stage);
+        });
+        transitions.put(Window.COMBAT_VICTORY, () -> {
+            combatVictoryController.show(stage);
+            this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
+        });
+        transitions.put(Window.COMBAT_DEFEAT, () -> {
+            combatDefeatController.show(stage);
+            this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
+        });
+        transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
     }
 
     /**
@@ -80,131 +164,18 @@ public class MetaController {
      * @throws IllegalArgumentException if the window is invalid
      */
     public final void switchTo(Window window) {
-        switch (window) {
-            case MAIN_MENU ->
-                this.mainMenuController.show(this.stage);
-            case CREATE_TEAM ->
-                this.createTeamController.show(this.stage);
-            case AUTOMATIC_COMBAT ->
-                this.automaticCombatController.show(stage);
-            case MANUAL_COMBAT ->
-                this.manualCombatController.show(this.stage);
-            case COMBAT_VICTORY ->
-                this.combatVictoryController.show(this.stage);
-            case COMBAT_DEFEAT ->
-                this.combatDefeatController.show(this.stage);
-            case LEVEL_UP ->
-                this.levelUpController.show(this.stage);
-            default ->
-                throw new IllegalArgumentException("Invalid window");
-        }
+        Runnable transition = transitions.get(window);
+        if (transition == null)
+            throw new IllegalArgumentException("Unknown window: " + window);
+        musicPlayer.stopMusic();
+        transition.run();
     }
 
-    /**
-     * Loads and parses the game data from JSON resource files.
-     * @return a Parser.ParseResult containing the maps of attacks and the list of Bugemons
-     * @throws IOException if the JSON directory is missing or if an error occurs during path conversion or file reading
-     */
-    private Parser.ParseResult loadResources() throws IOException {
-        try (
-            InputStream attacksStream = getClass().getResourceAsStream(
-                JSON_ATTACK_PATH
-            );
-            InputStream bugemonsStream = getClass().getResourceAsStream(
-                JSON_BUGEMON_PATH
-            );
-        ) {
-            if (attacksStream == null || bugemonsStream == null) {
-                throw new IOException("JSON files not found in resources: ");
-            }
-            return Parser.parse(attacksStream, bugemonsStream);
-        }
+    public boolean isNOTowerFlowActive() {
+        return this.noTowerFlowActive;
     }
 
-    /**
-     * Instructs the {@link AutomaticCombatController} to start an automatic
-     * combat using the player's current team.
-     *
-     * <p>
-     * If the player's team is empty, an alert dialog is displayed and no combat
-     * is started. Otherwise, the adversary team is built by randomly sampling
-     * the pool of all available Bugemons (same size as the player's team), and
-     * the application navigates to the {@link Window#COMBAT} screen.
-     * </p>
-     *
-     * <p>
-     * In an automatic combat both sides choose their actions randomly each turn;
-     * see {@link AutomaticCombatController#runAutoCombat(AutoTrainer)} for
-     * details.
-     * </p>
-     */
-    public void launchAutoCombat() {
-        if (this.playerTeam.isEmpty()) {
-            showAlert("Équipe incomplète", "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        }
-        else {
-            switchTo(Window.AUTOMATIC_COMBAT);
-            this.automaticCombatController.runAutoCombat(new AutoTrainer(this.playerTeam));
-        }
-    }
-
-    /**
-     * Instructs the {@link ManualCombatController} to start a manual combat
-     * using the player's current team.
-     *
-     * <p>
-     * If the player's team is empty, an alert dialog is displayed and no combat
-     * is started. Otherwise, the adversary team is built by randomly sampling
-     * the pool of all available Bugemons (same size as the player's team), and
-     * the application navigates to the {@link Window#COMBAT} screen.
-     * </p>
-     *
-     * <p>
-     * In a manual combat the player selects their action each turn via the UI;
-     * see {@link ManualCombatController#runManuelCombat(ManualTrainer)} for
-     * details.
-     * </p>
-     */
-    public void launchManuelCombat() {
-        if (this.playerTeam.isEmpty()) {
-            showAlert("Équipe incomplète", "Veuillez sélectionner au moins un Bugemon pour démarrer un combat.");
-        }
-        else {
-            switchTo(Window.MANUAL_COMBAT);
-            this.manualCombatController.runManuelCombat(new ManualTrainer(this.playerTeam));
-        }
-    }
-
-    /**
-     * Retrieves the complete list of all available Bugemons in the game
-     *
-     * @return a List containing all Bugemon objects loaded from the game resources
-     */
-    public final List<Bugemon> getAllBugemonsAvailable() {
-        return this.parseResult.getBugemonsList();
-    }
-
-    /**
-     * Resets the bugemon team of the trainer.
-     */
-    public void resetTeam() {
-        this.playerTeam.reset();
-    }
-
-    /**
-     * Displays an alert dialog with the specified title and message.
-     * @param title the title of the alert dialog
-     * @param message the content message of the alert dialog
-     */
-    public void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    public void setLevelUp(List<LevelUp> levelUps) {
-        this.levelUpController.setLevelUp(levelUps);
+    public void endNOTowerFlow() {
+        this.noTowerFlowActive = false;
     }
 }

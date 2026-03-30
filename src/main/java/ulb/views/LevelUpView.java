@@ -2,21 +2,27 @@ package ulb.views;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import ulb.common.BugemonDTO;
-import ulb.common.LevelUpDTO;
-import ulb.controllers.LevelUpController;
-import ulb.models.level_up.Choice;
+import ulb.common.dto.BugemonDTO;
+import ulb.common.dto.LevelUpDTO;
+import ulb.models.level_up.LevelUpSession;
+import ulb.models.level_up.Upgrade;
 
 /**
- * LevelUpView
+ * View for the level-up screen.
  *
- * View for the level up screen.
+ * <p>
+ * Holds a reference to a {@link LevelUpSession} and reads the current level-up
+ * event directly from it in {@link #refresh()}. Dispatches the player's choice
+ * through the callback registered via {@link #setOnChooseOption(Consumer)}.
+ * Holds no reference to any concrete controller class.
+ * </p>
  */
 public class LevelUpView extends View {
     @FXML private Label levelUpText;
@@ -25,43 +31,56 @@ public class LevelUpView extends View {
     @FXML private Button choice3Button;
     @FXML private ImageView bugemonImage;
 
-    private LevelUpController controller;
-
-    public LevelUpView() throws IOException {
-        super("/fxml/LevelUp.fxml");
-        this.controller = null;
-
-        this.choice1Button.setOnAction((e) -> this.controller.chooseOption(0));
-        this.choice2Button.setOnAction((e) -> this.controller.chooseOption(1));
-        this.choice3Button.setOnAction((e) -> this.controller.chooseOption(2));
-    }
-
-    public void setLevelUp(LevelUpDTO levelUp) {
-        BugemonDTO bugemon = levelUp.getBugemon();
-
-        Image sprite = new Image(bugemon.getSpriteURL());
-
-        StringBuilder texte = new StringBuilder();
-        texte.append(bugemon.getName());
-        texte.append(" vient juste de passer au niveau ");
-        texte.append(bugemon.getLevel());
-        texte.append(" !");
-
-        levelUpText.setText(texte.toString());
-        bugemonImage.setImage(sprite);
-
-        List<Choice> choices = levelUp.getChoices();
-        this.choice1Button.setText(choices.get(0).toString());
-        this.choice2Button.setText(choices.get(1).toString());
-        this.choice3Button.setText(choices.get(2).toString());
-    }
+    private LevelUpSession session;
+    private Consumer<Integer> onChooseOption;
 
     /**
-     * Binds Level up view to its controller.
+     * Loads the level-up FXML layout and wires each choice button to fire the
+     * registered callback with its zero-based index (0, 1, or 2).
      *
-     * @param controller controller handling level up
+     * @throws IOException if the FXML resource cannot be loaded.
      */
-    public void setController(LevelUpController controller) {
-        this.controller = controller;
+    public LevelUpView() throws IOException {
+        super("/fxml/LevelUp.fxml");
+        this.choice1Button.setOnAction(e -> {
+            if (onChooseOption != null)
+                onChooseOption.accept(0);
+        });
+        this.choice2Button.setOnAction(e -> {
+            if (onChooseOption != null)
+                onChooseOption.accept(1);
+        });
+        this.choice3Button.setOnAction(e -> {
+            if (onChooseOption != null)
+                onChooseOption.accept(2);
+        });
+    }
+
+    /** Gives the view a reference to the level-up session model it should read from. */
+    public void setSession(LevelUpSession session) {
+        this.session = session;
+    }
+
+    /** Registers the callback invoked when the player selects a stat-upgrade option. */
+    public void setOnChooseOption(Consumer<Integer> callback) {
+        this.onChooseOption = callback;
+    }
+
+    @Override
+    public void refresh() {
+        if (session == null || !session.isStarted())
+            return;
+
+        LevelUpDTO levelUp = session.getCurrent();
+        BugemonDTO bugemon = levelUp.getBugemon();
+
+        bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
+        levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
+                            + bugemon.getLevel() + " !");
+
+        List<Upgrade> choices = levelUp.getChoices();
+        choice1Button.setText(choices.get(0).toString());
+        choice2Button.setText(choices.get(1).toString());
+        choice3Button.setText(choices.get(2).toString());
     }
 }
