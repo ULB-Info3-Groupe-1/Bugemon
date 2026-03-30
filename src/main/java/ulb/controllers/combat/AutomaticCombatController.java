@@ -51,12 +51,19 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         timeline.setCycleCount(Animation.INDEFINITE);
 
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(3), event -> {
-            TurnResult turnResult = combat.turn();
             timeline.pause();
+            TurnResult turnResult = combat.turn();
 
-            combat.getWinner().ifPresent(winner -> {
-                timeline.stop();
-                handleCombatResult(winner, playerTrainer);
+            playTurnAnimations(turnResult, playerTrainer, () -> {
+                this.view.refresh();
+
+                combat.getWinner().ifPresent(winner -> {
+                    timeline.stop();
+                    handleCombatResult(winner, playerTrainer);
+                    return;
+                });
+
+                timeline.play();
             });
         });
 
