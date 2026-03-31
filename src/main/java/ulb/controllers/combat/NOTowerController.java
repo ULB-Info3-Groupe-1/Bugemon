@@ -117,6 +117,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
             this.runEnded = true;
             this.metaController.endNOTowerFlow();
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
+            this.playerService.restoreHpActiveTeam();
             return;
         }
 
