@@ -10,10 +10,9 @@ import ulb.models.trainer.AutoTrainer;
  * View for the automatic combat screen.
  *
  * <p>
- * Holds references to the player {@link AutoTrainer}, the opponent
- * {@link AutoTrainer}, and the {@link Combat} model. In {@link #refresh()} it
- * reads their current state and updates the Bugemon panels and dialog zone.
- * No controller reference is held.
+ * Holds references to the player {@link AutoTrainer}, the opponent {@link AutoTrainer}, and the
+ * {@link Combat} model. In {@link #refresh()} it reads their current state and updates the Bugemon
+ * panels and dialog zone. No controller reference is held.
  * </p>
  */
 public class AutomaticCombatView extends CombatView {
@@ -22,10 +21,11 @@ public class AutomaticCombatView extends CombatView {
     private Combat combat;
 
     /**
-     * Loads the shared combat FXML layout and configures it for automatic mode
-     * (hides the action menu and team pane).
+     * Loads the shared combat FXML layout and configures it for automatic mode (hides the action
+     * menu and team pane).
      *
-     * @throws IOException if the FXML resource cannot be loaded.
+     * @throws IOException
+     *             if the FXML resource cannot be loaded.
      */
     public AutomaticCombatView() throws IOException {
         super();

@@ -18,7 +18,8 @@ import ulb.repository.dto.UserBugemonDTO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestRepository {
-    @Mock private DatabaseRepository repository;
+    @Mock
+    private DatabaseRepository repository;
 
     @Test
     public void shouldCreateAndRetrieveUser_whenValidUsernameProvided() {
@@ -37,7 +38,7 @@ public class TestRepository {
         assertTrue("L'ID utilisateur doit être valide (supérieur à 0)", userId > 0);
         assertTrue("L'utilisateur devrait être trouvé dans la BD", retrievedId.isPresent());
         assertEquals("L'ID récupéré doit correspondre à celui créé", userId,
-                     retrievedId.get().intValue());
+                retrievedId.get().intValue());
 
         // Verify the mock was called
         verify(this.repository).createUser(username);
@@ -173,8 +174,8 @@ public class TestRepository {
         String teamName = "ToDelete_team";
 
         // Configure mock behavior for retrieving teams after deletion
-        when(this.repository.getUserTeams(userId))
-                .thenReturn(new ArrayList<>()); // Empty list after deletion
+        when(this.repository.getUserTeams(userId)).thenReturn(new ArrayList<>()); // Empty list
+                                                                                  // after deletion
 
         // Execute
         this.repository.createTeam(userId, teamName);
@@ -230,8 +231,10 @@ public class TestRepository {
         String bugemonId = "leave_001";
 
         // Configure mock behavior to return empty list after removal
-        when(this.repository.getTeamMembers(userId, teamName))
-                .thenReturn(new ArrayList<>()); // Empty list after removal
+        when(this.repository.getTeamMembers(userId, teamName)).thenReturn(new ArrayList<>()); // Empty
+                                                                                              // list
+                                                                                              // after
+                                                                                              // removal
 
         // Execute
         this.repository.createTeam(userId, teamName);

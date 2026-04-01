@@ -20,29 +20,29 @@ public class TestInventory {
     public void setUp() {
         inventory = new Inventory();
 
-        baieRevigorante =
-                new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
-                         Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
+        baieRevigorante = new Item("baie_revigorante", "Baie Revigorante",
+                "Restaure 20 PV au Bugémon actif.", Item.ItemType.HEALING,
+                new EffectHeal(EffectTarget.THROWER, 20));
         baieTonique = new Item("baie_tonique", "Baie Tonique", "Restaure 10 PV au Bugémon actif.",
-                               Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 10));
+                Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 10));
     }
 
     @Test
     public void testAddItemQuantity() {
         inventory.addItem(baieRevigorante, 3);
 
-        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)3);
+        assertEquals((int) inventory.getMap().get(baieRevigorante), (int) 3);
 
         inventory.addItem(baieRevigorante, 4);
 
-        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)7);
+        assertEquals((int) inventory.getMap().get(baieRevigorante), (int) 7);
     }
 
     @Test
     public void testUseItem() {
         inventory.addItem(baieRevigorante, 2);
         inventory.useItem(baieRevigorante);
-        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)1);
+        assertEquals((int) inventory.getMap().get(baieRevigorante), (int) 1);
     }
 
     @Test

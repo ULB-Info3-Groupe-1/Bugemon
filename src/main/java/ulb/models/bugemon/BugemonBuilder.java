@@ -13,34 +13,34 @@ import ulb.models.bugemon.components.LevelComponent;
 /**
  * Fluent Bugemonbuilder for constructing {@link Bugemon} instances.
  * <p>
- * Every property except {@code id} has a sensible default value so that
- * callers only need to supply the fields that differ from the defaults.
- * Calling {@link #build()} without setting an {@code id} will throw an
- * {@link IllegalStateException}.
+ * Every property except {@code id} has a sensible default value so that callers only need to supply
+ * the fields that differ from the defaults. Calling {@link #build()} without setting an {@code id}
+ * will throw an {@link IllegalStateException}.
  * </p>
  *
- * <p><b>Default values:</b></p>
+ * <p>
+ * <b>Default values:</b>
+ * </p>
  * <ul>
- *   <li>name        – {@value #DEFAULT_NAME}</li>
- *   <li>type        – {@link BugemonType#FLORA}</li>
- *   <li>sprite      – {@value #DEFAULT_SPRITE}</li>
- *   <li>hp          – {@value #DEFAULT_HP}</li>
- *   <li>attack      – {@value #DEFAULT_ATTACK}</li>
- *   <li>defense     – {@value #DEFAULT_DEFENSE}</li>
- *   <li>initiative  – {@value #DEFAULT_INITIATIVE}</li>
- *   <li>xp          – {@value #DEFAULT_XP}</li>
- *   <li>isStarter   – {@value #DEFAULT_IS_STARTER}</li>
- *   <li>attackList  – empty list</li>
+ * <li>name – {@value #DEFAULT_NAME}</li>
+ * <li>type – {@link BugemonType#FLORA}</li>
+ * <li>sprite – {@value #DEFAULT_SPRITE}</li>
+ * <li>hp – {@value #DEFAULT_HP}</li>
+ * <li>attack – {@value #DEFAULT_ATTACK}</li>
+ * <li>defense – {@value #DEFAULT_DEFENSE}</li>
+ * <li>initiative – {@value #DEFAULT_INITIATIVE}</li>
+ * <li>xp – {@value #DEFAULT_XP}</li>
+ * <li>isStarter – {@value #DEFAULT_IS_STARTER}</li>
+ * <li>attackList – empty list</li>
  * </ul>
  *
- * <p><b>Typical usage:</b></p>
+ * <p>
+ * <b>Typical usage:</b>
+ * </p>
+ *
  * <pre>{@code
- * Bugemon b = new Bugemon.BugemonBuilder()
- *     .id("001")
- *     .name("Florasect")
- *     .type(BType.FLORA)
- *     .hp(120)
- *     .build();
+ * Bugemon b = new Bugemon.BugemonBuilder().id("001").name("Florasect").type(BType.FLORA).hp(120)
+ *         .build();
  * }</pre>
  */
 public final class BugemonBuilder {
@@ -111,11 +111,12 @@ public final class BugemonBuilder {
     /**
      * Sets the unique identifier for the bugemon under construction.
      * <p>
-     * This field is <b>mandatory</b>; {@link #build()} will throw an
-     * {@link IllegalStateException} if it is not supplied.
+     * This field is <b>mandatory</b>; {@link #build()} will throw an {@link IllegalStateException}
+     * if it is not supplied.
      * </p>
      *
-     * @param id the non-null unique identifier string.
+     * @param id
+     *            the non-null unique identifier string.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder id(String id) {
@@ -126,7 +127,8 @@ public final class BugemonBuilder {
     /**
      * Sets the display name for the bugemon under construction.
      *
-     * @param name the non-null display name.
+     * @param name
+     *            the non-null display name.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder name(String name) {
@@ -137,7 +139,8 @@ public final class BugemonBuilder {
     /**
      * Sets the elemental type for the bugemon under construction.
      *
-     * @param type the non-null {@link BugemonType} to assign.
+     * @param type
+     *            the non-null {@link BugemonType} to assign.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder type(BugemonType type) {
@@ -148,7 +151,8 @@ public final class BugemonBuilder {
     /**
      * Sets the sprite path or URL for the bugemon under construction.
      *
-     * @param sprite the non-null sprite path or URL string.
+     * @param sprite
+     *            the non-null sprite path or URL string.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder sprite(String sprite) {
@@ -159,7 +163,8 @@ public final class BugemonBuilder {
     /**
      * Sets the initial hit-point value for the bugemon under construction.
      *
-     * @param hp the hit-point value (typically a positive integer).
+     * @param hp
+     *            the hit-point value (typically a positive integer).
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder hp(int hp) {
@@ -170,7 +175,8 @@ public final class BugemonBuilder {
     /**
      * Sets the attack stat for the bugemon under construction.
      *
-     * @param attack the attack power value.
+     * @param attack
+     *            the attack power value.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder attack(int attack) {
@@ -181,7 +187,8 @@ public final class BugemonBuilder {
     /**
      * Sets the defense stat for the bugemon under construction.
      *
-     * @param defense the defense rating value.
+     * @param defense
+     *            the defense rating value.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder defense(int defense) {
@@ -192,7 +199,8 @@ public final class BugemonBuilder {
     /**
      * Sets the initiative stat for the bugemon under construction.
      *
-     * @param initiative the initiative (turn-order priority) value.
+     * @param initiative
+     *            the initiative (turn-order priority) value.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder initiative(int initiative) {
@@ -203,7 +211,8 @@ public final class BugemonBuilder {
     /**
      * Sets the experience points for the bugemon under construction.
      *
-     * @param xp the experience points value
+     * @param xp
+     *            the experience points value
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder xp(int xp) {
@@ -214,7 +223,8 @@ public final class BugemonBuilder {
     /**
      * Sets the level for the bugemon under construction.
      *
-     * @param level the level value
+     * @param level
+     *            the level value
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder level(int level) {
@@ -225,12 +235,12 @@ public final class BugemonBuilder {
     /**
      * Appends an {@link Attack} to the bugemon's attack list.
      * <p>
-     * May be called multiple times to add several attacks. If no attack
-     * list has been initialised yet, a new {@link ArrayList} is created
-     * automatically.
+     * May be called multiple times to add several attacks. If no attack list has been initialised
+     * yet, a new {@link ArrayList} is created automatically.
      * </p>
      *
-     * @param attack the non-null {@link Attack} to add.
+     * @param attack
+     *            the non-null {@link Attack} to add.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder addAttack(Attack attack) {
@@ -241,13 +251,12 @@ public final class BugemonBuilder {
     /**
      * Sets the complete list of attacks for the bugemon under construction.
      * <p>
-     * Replaces any attacks previously added via {@link #addAttack(Attack)}.
-     * If individual attacks need to be appended incrementally, use
-     * {@link #addAttack(Attack)} instead.
+     * Replaces any attacks previously added via {@link #addAttack(Attack)}. If individual attacks
+     * need to be appended incrementally, use {@link #addAttack(Attack)} instead.
      * </p>
      *
-     * @param attackList the non-null {@link List} of {@link Attack} instances
-     *                   to assign to the bugemon.
+     * @param attackList
+     *            the non-null {@link List} of {@link Attack} instances to assign to the bugemon.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder attackList(List<Attack> attackList) {
@@ -256,11 +265,10 @@ public final class BugemonBuilder {
     }
 
     /**
-     * Sets whether the bugemon under construction should be considered a
-     * starter bugemon.
+     * Sets whether the bugemon under construction should be considered a starter bugemon.
      *
-     * @param isStarter {@code true} if the bugemon is a starter;
-     *                  {@code false} otherwise.
+     * @param isStarter
+     *            {@code true} if the bugemon is a starter; {@code false} otherwise.
      * @return this {@code BugemonBuilder} instance for method chaining.
      */
     public BugemonBuilder isStarter(boolean isStarter) {
@@ -271,23 +279,22 @@ public final class BugemonBuilder {
     /**
      * Constructs and returns the configured {@link Bugemon} instance.
      * <p>
-     * All fields that were not explicitly set will receive their default
-     * values (see {@link BugemonBuilder} class-level documentation). The
-     * bugemon's {@code state} is initialised as an independent copy of
-     * {@code initialState}, so that the initial stats can always be
+     * All fields that were not explicitly set will receive their default values (see
+     * {@link BugemonBuilder} class-level documentation). The bugemon's {@code state} is initialised
+     * as an independent copy of {@code initialState}, so that the initial stats can always be
      * recovered.
      * </p>
      *
      * @return a fully initialised {@link Bugemon}.
-     * @throws IllegalStateException if no {@code id} was provided via
-     *                               {@link #id(String)}.
+     * @throws IllegalStateException
+     *             if no {@code id} was provided via {@link #id(String)}.
      */
     public Bugemon build() {
         Bugemon bugemon = new Bugemon();
 
         // NOTE: ID has no default value
-        bugemon.id =
-                this.id.orElseThrow(() -> new IllegalStateException("Bugemon id must be provided"));
+        bugemon.id = this.id
+                .orElseThrow(() -> new IllegalStateException("Bugemon id must be provided"));
 
         bugemon.name = this.name;
         bugemon.type = this.type;

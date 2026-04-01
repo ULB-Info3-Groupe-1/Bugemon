@@ -14,8 +14,8 @@ import ulb.views.CreateTeamView;
  *
  * <p>
  * Mutates the {@link BugemonTeam} model in response to user actions, then calls
- * {@code view.refresh()} so the view can pull the updated state from the model
- * directly. The controller never pushes data into the view.
+ * {@code view.refresh()} so the view can pull the updated state from the model directly. The
+ * controller never pushes data into the view.
  * </p>
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
@@ -25,13 +25,15 @@ public class CreateTeamController extends Controller<CreateTeamView> {
     private BugemonTeam selectedTeam;
 
     /**
-     * Constructs a {@code CreateTeamController}, wires the view callbacks, and
-     * performs an initial {@link ulb.views.CreateTeamView#refresh()} to populate
-     * the Bugemon grid.
+     * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
+     * {@link ulb.views.CreateTeamView#refresh()} to populate the Bugemon grid.
      *
-     * @param metaController the application-level controller used for navigation.
-     * @param playerService the service used to access and mutate player data.
-     * @throws IOException if the view fails to load its FXML resource.
+     * @param metaController
+     *            the application-level controller used for navigation.
+     * @param playerService
+     *            the service used to access and mutate player data.
+     * @throws IOException
+     *             if the view fails to load its FXML resource.
      */
     public CreateTeamController(MetaController metaController, PlayerService playerService)
             throws IOException {
@@ -75,8 +77,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * Saves the player's currently selected team under the name specified in the view's
      * saveTeamNameInput field. If the team name is valid (not null, not empty), the team is saved
      * to the database through the PlayerService and set as the active team. If the team name is
-     * empty or already used by another team owned by the user, an appropriate alert is shown to
-     * the user and no changes are made to the active team or the view.
+     * empty or already used by another team owned by the user, an appropriate alert is shown to the
+     * user and no changes are made to the active team or the view.
      */
     public void saveTeam() {
         if (this.teamNameIsEmpty(this.view.getTeamNameToSave())) {
@@ -89,8 +91,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.view.updateTeamList(this.playerService.getTeamNames());
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showAlert("Nom d'équipe déjà utilisé",
-                                "Une équipe est déjà sauvée avec le nom "
-                                        + this.view.getTeamNameToSave());
+                    "Une équipe est déjà sauvée avec le nom " + this.view.getTeamNameToSave());
         }
     }
 
@@ -111,8 +112,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.selectedTeam = this.playerService.getActiveTeam();
             this.view.refreshTeam(this.selectedTeam);
         } catch (TeamNotFoundException e) {
-            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND, "Aucune équipe sauvée avec le nom "
-                                                                 + this.view.getTeamNameToLoad());
+            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND,
+                    "Aucune équipe sauvée avec le nom " + this.view.getTeamNameToLoad());
         }
     }
 
@@ -126,7 +127,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             }
         } catch (TeamNotFoundException e) {
             this.view.showAlert(STR_TEAM_NAME_NOT_FOUND,
-                                "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
+                    "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
         }
     }
 
@@ -144,10 +145,9 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             }
         } catch (TeamNotFoundException e) {
             this.view.showAlert(STR_TEAM_NAME_NOT_FOUND,
-                                "L'équipe que vous souhaitez renommer n'existe pas");
+                    "L'équipe que vous souhaitez renommer n'existe pas");
         } catch (TeamNameAlreadyExistsException e) {
-            this.view.showAlert(
-                    "Nom d'équipe déjà utilisé",
+            this.view.showAlert("Nom d'équipe déjà utilisé",
                     "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
         }
     }

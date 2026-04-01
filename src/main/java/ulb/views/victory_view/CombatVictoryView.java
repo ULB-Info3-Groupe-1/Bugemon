@@ -11,19 +11,20 @@ import ulb.views.View;
  *
  * <p>
  * Dispatches user interactions through the callback registered via
- * {@link #setOnContinue(Runnable)}. Holds no reference to any concrete
- * controller class.
+ * {@link #setOnContinue(Runnable)}. Holds no reference to any concrete controller class.
  * </p>
  */
 public class CombatVictoryView extends View {
-    @FXML private Button continueButton;
+    @FXML
+    private Button continueButton;
 
     private Runnable onContinue;
 
     /**
      * Loads the victory-screen FXML layout and wires the continue button.
      *
-     * @throws IOException if the FXML resource cannot be loaded.
+     * @throws IOException
+     *             if the FXML resource cannot be loaded.
      */
     public CombatVictoryView() throws IOException {
         super("/fxml/CombatVictory.fxml");

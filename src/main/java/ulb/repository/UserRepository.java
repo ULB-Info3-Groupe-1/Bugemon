@@ -27,12 +27,14 @@ public class UserRepository {
      * Create a new user in the database with the specified username. This method executes an SQL
      * statement to insert a new user record into the database and retrieves the generated user ID
      * for the newly created user.
-     * @param username the username of the new user
+     *
+     * @param username
+     *            the username of the new user
      * @return the ID of the newly created user
      */
     public int createUser(String username) {
-        try (PreparedStatement ps =
-                     this.dbConnection.prepareStatement(this.dbRepository.getSql("CreateUser"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("CreateUser"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -49,15 +51,17 @@ public class UserRepository {
      * executes an SQL query to search for a user record with the given username and returns the
      * corresponding user ID if found. If no user is found with the specified username, an empty
      * Optional is returned.
-     * @param username the username for which to retrieve the user ID. This should correspond to a
-     *         user that has been previously created in the database.
+     *
+     * @param username
+     *            the username for which to retrieve the user ID. This should correspond to a user
+     *            that has been previously created in the database.
      * @return an Optional containing the user ID associated with the specified username if found,
      *         or an empty Optional if no user is found with that username. If an error occurs
      *         during the database query, an IllegalStateException is thrown.
      */
     public Optional<Integer> getUserIdByUsername(String username) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("GetUserByUsername"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("GetUserByUsername"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -77,15 +81,17 @@ public class UserRepository {
      * into the database representing this UserBugemon. The details of the UserBugemon, such as its
      * current stats and level, are included in the DTO and are used to populate the corresponding
      * fields in the database record.
-     * @param dto the UserBugemonDTO object containing the details of the UserBugemon to be saved to
-     *         the database. This DTO should include the user ID, Bugemon ID, and the current stats
-     *         and level of the UserBugemon. The method will use this information to create a new
-     *         record in the database representing this UserBugemon. If an error occurs during the
-     *         database operation, an IllegalStateException is thrown.
+     *
+     * @param dto
+     *            the UserBugemonDTO object containing the details of the UserBugemon to be saved to
+     *            the database. This DTO should include the user ID, Bugemon ID, and the current
+     *            stats and level of the UserBugemon. The method will use this information to create
+     *            a new record in the database representing this UserBugemon. If an error occurs
+     *            during the database operation, an IllegalStateException is thrown.
      */
     public void saveUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("SaveUserBugemon"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("SaveUserBugemon"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.bugemonId());
             ps.setInt(3, dto.currentDefense());
@@ -107,16 +113,18 @@ public class UserRepository {
      * based on the user ID and Bugemon ID provided in the DTO, and updates the current stats and
      * level of the UserBugemon in the database with the new values from the DTO. If an error occurs
      * during the database operation, an IllegalStateException is thrown.
-     * @param dto the UserBugemonDTO object containing the updated details of the UserBugemon to be
-     *         updated in the database. This DTO should include the user ID, Bugemon ID, and the new
-     *         current stats and level of the UserBugemon. The method will use this information to
-     *         identify the existing record in the database representing this UserBugemon and update
-     *         it with the new values. If an error occurs during the database operation, an
-     *         IllegalStateException is thrown.
+     *
+     * @param dto
+     *            the UserBugemonDTO object containing the updated details of the UserBugemon to be
+     *            updated in the database. This DTO should include the user ID, Bugemon ID, and the
+     *            new current stats and level of the UserBugemon. The method will use this
+     *            information to identify the existing record in the database representing this
+     *            UserBugemon and update it with the new values. If an error occurs during the
+     *            database operation, an IllegalStateException is thrown.
      */
     public void updateUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("UpdateUserBugemon"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("UpdateUserBugemon"))) {
             ps.setInt(1, dto.currentDefense());
             ps.setInt(2, dto.currentAttackPower());
             ps.setInt(3, dto.currentInitiative());
@@ -138,25 +146,27 @@ public class UserRepository {
      * containing the details of each UserBugemon found. The details include the Bugemon ID, current
      * stats, and level of each UserBugemon. If an error occurs during the database query, an
      * IllegalStateException is thrown.
-     * @param userId the ID of the user for whom to retrieve Bugemons
+     *
+     * @param userId
+     *            the ID of the user for whom to retrieve Bugemons
      * @return a list of UserBugemonDTO objects representing the UserBugemons owned by the specified
      *         user
      */
     public List<UserBugemonDTO> getUserBugemons(int userId) {
         List<UserBugemonDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("GetUserBugemons"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("GetUserBugemons"))) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(new UserBugemonDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
-                                              rs.getString(DatabaseColumns.COL_BUGEMON_ID),
-                                              rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
-                                              rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK_POWER),
-                                              rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
-                                              rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP),
-                                              rs.getInt(DatabaseColumns.COL_CURRENT_XP),
-                                              rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)));
+                        rs.getString(DatabaseColumns.COL_BUGEMON_ID),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK_POWER),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_XP),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)));
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getUserBugemons failed", e);
@@ -172,12 +182,15 @@ public class UserRepository {
      * database associated with the specified user. The team name is provided as a parameter, and
      * the method ensures that the new team is linked to the correct user in the database. If an
      * error occurs during the database operation, an IllegalStateException is thrown.
-     * @param userId the ID of the user for whom to create a team
-     * @param teamName the name of the team to be created
+     *
+     * @param userId
+     *            the ID of the user for whom to create a team
+     * @param teamName
+     *            the name of the team to be created
      */
     public void createTeam(int userId, String teamName) {
-        try (PreparedStatement ps =
-                     this.dbConnection.prepareStatement(this.dbRepository.getSql("CreateTeam"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("CreateTeam"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.executeUpdate();
@@ -193,12 +206,15 @@ public class UserRepository {
      * provided user ID and team name, ensuring that only the specified team associated with the
      * correct user is removed from the database. If an error occurs during the database operation,
      * an IllegalStateException is thrown.
-     * @param userId the ID of the user for whom to delete a team
-     * @param teamName the name of the team to be deleted
+     *
+     * @param userId
+     *            the ID of the user for whom to delete a team
+     * @param teamName
+     *            the name of the team to be deleted
      */
     public void deleteTeamMembers(int userId, String teamName) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("DeleteTeamMembers"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.executeUpdate();
@@ -208,10 +224,10 @@ public class UserRepository {
     }
 
     public void deleteTeam(int userId, String teamName) {
-        try (PreparedStatement psMembers = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("DeleteTeamMembers"));
-             PreparedStatement psTeam =
-                     this.dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
+        try(PreparedStatement psMembers = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"));
+                PreparedStatement psTeam = this.dbConnection
+                        .prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
             psMembers.setInt(1, userId);
             psMembers.setString(2, teamName);
             psMembers.executeUpdate();
@@ -230,18 +246,20 @@ public class UserRepository {
      * the given user ID and constructs a list of TeamDTO objects containing the details of each
      * team found. The details include the user ID and the name of each team. If an error occurs
      * during the database query, an IllegalStateException is thrown.
-     * @param userId the ID of the user for whom to retrieve teams
+     *
+     * @param userId
+     *            the ID of the user for whom to retrieve teams
      * @return a list of TeamDTO objects representing the teams owned by the specified user
      */
     public List<TeamDTO> getUserTeams(int userId) {
         List<TeamDTO> result = new ArrayList<>();
-        try (PreparedStatement ps =
-                     this.dbConnection.prepareStatement(this.dbRepository.getSql("GetUserTeams"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("GetUserTeams"))) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(new TeamDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
-                                       rs.getString(DatabaseColumns.COL_NAME)));
+                        rs.getString(DatabaseColumns.COL_NAME)));
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getUserTeams failed", e);
@@ -259,11 +277,13 @@ public class UserRepository {
      * ensures that the new team member is correctly linked to the appropriate team and user in the
      * database. If an error occurs during the database operation, an IllegalStateException is
      * thrown.
-     * @param dto the TeamMemberDTO object containing the details of the team member to be added
+     *
+     * @param dto
+     *            the TeamMemberDTO object containing the details of the team member to be added
      */
     public void addTeamMember(TeamMemberDTO dto) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("AddTeamMember"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("AddTeamMember"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.teamName());
             ps.setString(3, dto.bugemonId());
@@ -281,13 +301,17 @@ public class UserRepository {
      * specified team member from the team. The method ensures that only the team member matching
      * the provided user ID, team name, and Bugemon ID is removed from the database. If an error
      * occurs during the database operation, an IllegalStateException is thrown.
-     * @param userId the ID of the user whose team member is to be removed
-     * @param teamName the name of the team from which to remove the member
-     * @param bugemonId the ID of the Bugemon to be removed from the team
+     *
+     * @param userId
+     *            the ID of the user whose team member is to be removed
+     * @param teamName
+     *            the name of the team from which to remove the member
+     * @param bugemonId
+     *            the ID of the Bugemon to be removed from the team
      */
     public void removeTeamMember(int userId, String teamName, String bugemonId) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("RemoveTeamMember"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("RemoveTeamMember"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.setString(3, bugemonId);
@@ -304,23 +328,26 @@ public class UserRepository {
      * TeamMemberDTO objects containing the details of each team member found. The details include
      * the user ID, team name, Bugemon ID, and slot position of each team member. If an error occurs
      * during the database query, an IllegalStateException is thrown.
-     * @param userId the ID of the user for whom to retrieve team members
-     * @param teamName the name of the team for which to retrieve members
+     *
+     * @param userId
+     *            the ID of the user for whom to retrieve team members
+     * @param teamName
+     *            the name of the team for which to retrieve members
      * @return a list of TeamMemberDTO objects representing the members of the specified team for
      *         the user
      */
     public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
         List<TeamMemberDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(
-                     this.dbRepository.getSql("GetTeamMembers"))) {
+        try(PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("GetTeamMembers"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(new TeamMemberDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
-                                             rs.getString(DatabaseColumns.COL_TEAM_NAME),
-                                             rs.getString(DatabaseColumns.COL_BUGEMON_ID),
-                                             rs.getInt(DatabaseColumns.COL_SLOT_POSITION)));
+                        rs.getString(DatabaseColumns.COL_TEAM_NAME),
+                        rs.getString(DatabaseColumns.COL_BUGEMON_ID),
+                        rs.getInt(DatabaseColumns.COL_SLOT_POSITION)));
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getTeamMembers failed", e);
@@ -329,8 +356,8 @@ public class UserRepository {
     }
 
     public void renameTeam(int userId, String oldTeamName, String newTeamName) {
-        try (PreparedStatement psRenameTeam =
-                     this.dbConnection.prepareStatement(this.dbRepository.getSql("RenameTeam"))) {
+        try(PreparedStatement psRenameTeam = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("RenameTeam"))) {
             psRenameTeam.setString(1, newTeamName);
             psRenameTeam.setInt(2, userId);
             psRenameTeam.setString(3, oldTeamName);

@@ -21,8 +21,8 @@ import ulb.utils.test.TestUtilsBugemons;
 public class TestNOTower {
     private PlayerService getPlayerServiceMock() {
         PlayerService playerServiceMock = mock(PlayerService.class);
-        List<Bugemon> testBugemons =
-                new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
+        List<Bugemon> testBugemons = new ArrayList<Bugemon>(
+                TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("finalboss"));
         when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);

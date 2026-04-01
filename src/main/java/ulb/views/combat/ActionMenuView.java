@@ -11,10 +11,14 @@ import javafx.scene.layout.VBox;
 public class ActionMenuView extends VBox {
     private static final String FXML_PATH = "/fxml/ActionMenu.fxml";
 
-    @FXML protected Button action1;
-    @FXML protected Button action2;
-    @FXML protected Button action3;
-    @FXML protected Button action4;
+    @FXML
+    protected Button action1;
+    @FXML
+    protected Button action2;
+    @FXML
+    protected Button action3;
+    @FXML
+    protected Button action4;
 
     public ActionMenuView() {
         URL url = getClass().getResource(FXML_PATH);

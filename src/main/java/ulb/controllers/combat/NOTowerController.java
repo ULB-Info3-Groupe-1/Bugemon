@@ -28,9 +28,8 @@ public class NOTowerController extends Controller<ManualCombatView> {
     }
 
     /**
-     * Runs the NO Tower flow until a combat starts, the run ends, or the tower is
-     * completed.
-     * Reward rooms are resolved immediately; combat rooms continue via callback.
+     * Runs the NO Tower flow until a combat starts, the run ends, or the tower is completed. Reward
+     * rooms are resolved immediately; combat rooms continue via callback.
      */
     public void runNOTower(Stage stage) {
         this.stage = stage;
@@ -43,9 +42,8 @@ public class NOTowerController extends Controller<ManualCombatView> {
     }
 
     /**
-     * Ensures that a NO Tower run can be started or continued. If the player has no
-     * active team, or if the current run has ended, a new run is initialised. If a
-     * new run cannot be started.
+     * Ensures that a NO Tower run can be started or continued. If the player has no active team, or
+     * if the current run has ended, a new run is initialised. If a new run cannot be started.
      *
      * @return
      */
@@ -65,8 +63,8 @@ public class NOTowerController extends Controller<ManualCombatView> {
     }
 
     /**
-     * Continues the current NO Tower run until a combat room is reached, the run ends,
-     * or the tower is completed.
+     * Continues the current NO Tower run until a combat room is reached, the run ends, or the tower
+     * is completed.
      */
     private void continueRun() {
         while (!this.runEnded) {
@@ -91,8 +89,8 @@ public class NOTowerController extends Controller<ManualCombatView> {
     private void handleRoom(Floor floor, Room room) {
         if (room instanceof CombatRoom combatRoom) {
             try {
-                ManualCombatController manualCombatController =
-                        new ManualCombatController(this.metaController, this.playerService);
+                ManualCombatController manualCombatController = new ManualCombatController(
+                        this.metaController, this.playerService);
                 manualCombatController.setOnCombatFinished(
                         playerWon -> this.handleCombatResult(playerWon, floor));
                 manualCombatController.startCombat(combatRoom.getCombat());
