@@ -15,17 +15,8 @@ variables:
 
 check-style:
   stage: lint
-  before_script:
-    - apt-get update && apt-get install -y clang-format
   script:
-    - |
-      if [ -f ".clang-format" ]; then
-        echo "File .clang-format detected. Verification in progress..."
-        find src -name "*.java" -exec clang-format --dry-run --Werror -style=file {} +
-        echo "The code is perfectly formatted."
-      else
-        echo "No .clang-format file found at the root. Job skipped."
-      fi
+    - mvn $MAVEN_OPTS checkstyle:check
   allow_failure: true
 
 # Job test

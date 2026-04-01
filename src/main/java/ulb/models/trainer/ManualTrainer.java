@@ -86,9 +86,9 @@ public class ManualTrainer extends Trainer {
      */
     @Override
     public TurnAction getAction() {
-        return pendingAction
+        return this.pendingAction
                 .map(a -> {
-                    pendingAction = Optional.empty();
+                    this.pendingAction = Optional.empty();
                     return a;
                 })
                 .orElseThrow(()
@@ -109,9 +109,9 @@ public class ManualTrainer extends Trainer {
      */
     @Override
     public void reactToKo() {
-        if (bugemonTargetForSwitch.isPresent()) {
-            currentBugemon = bugemonTargetForSwitch.get();
-            bugemonTargetForSwitch = Optional.empty();
+        if (this.bugemonTargetForSwitch.isPresent()) {
+            currentBugemon = this.bugemonTargetForSwitch.get();
+            this.bugemonTargetForSwitch = Optional.empty();
         }
     }
 
@@ -119,7 +119,7 @@ public class ManualTrainer extends Trainer {
     public void applyPassiveAction(TurnAction action) {
         super.applyPassiveAction(action);
         if (action instanceof TurnAction.UseItemAction(Item item)) {
-            useItem(item);
+            this.useItem(item);
         }
     }
 
@@ -162,7 +162,7 @@ public class ManualTrainer extends Trainer {
      * @param action the {@link TurnAction} to queue; must not be {@code null}.
      */
     public void registerAction(TurnAction action) {
-        pendingAction = Optional.of(action);
+        this.pendingAction = Optional.of(action);
     }
 
     /**
@@ -183,7 +183,7 @@ public class ManualTrainer extends Trainer {
             throw new IllegalArgumentException(
                     "The selected attack is not in the current bugemon's attack list.");
         }
-        registerAction(new TurnAction.AttackAction(attack));
+        this.registerAction(new TurnAction.AttackAction(attack));
     }
 
     /**
@@ -202,7 +202,7 @@ public class ManualTrainer extends Trainer {
         if (!target.isAlive()) {
             throw new IllegalArgumentException("The target bugemon is not alive.");
         }
-        registerAction(new TurnAction.SwitchAction(target));
+        this.registerAction(new TurnAction.SwitchAction(target));
     }
 
     /**
@@ -210,7 +210,7 @@ public class ManualTrainer extends Trainer {
      * immediately concede the match on the next {@link ulb.models.combat.Combat#turn()} call.
      */
     public void registerForfeit() {
-        registerAction(new TurnAction.ForfeitAction());
+        this.registerAction(new TurnAction.ForfeitAction());
     }
 
     /**
@@ -226,12 +226,12 @@ public class ManualTrainer extends Trainer {
      *               {@code null}.
      */
     public void registerSwitchAfterKO(Bugemon target) {
-        bugemonTargetForSwitch = Optional.of(target);
+        this.bugemonTargetForSwitch = Optional.of(target);
     }
 
     public void registerUseItem(Item item) {
-        if (inventory.hasItem(item)) {
-            registerAction(new TurnAction.UseItemAction(item));
+        if (this.inventory.hasItem(item)) {
+            this.registerAction(new TurnAction.UseItemAction(item));
         } else {
             throw new IllegalArgumentException("The player does not have the specified item.");
         }
@@ -240,8 +240,8 @@ public class ManualTrainer extends Trainer {
     // ── item usage ───────────────────────────────────────────────────────────
 
     public void useItem(Item item) {
-        inventory.useItem(item);
-        currentBugemon.addEffect(item.effect());
+        this.inventory.useItem(item);
+        this.currentBugemon.addEffect(item.effect());
     }
 
     public Map<Item, Integer> getInventoryMap() {
@@ -257,12 +257,12 @@ public class ManualTrainer extends Trainer {
      *         throwing, {@code false} otherwise.
      */
     public boolean hasPendingAction() {
-        return pendingAction.isPresent();
+        return this.pendingAction.isPresent();
     }
 
     /** Returns {@code true} if a forced post-KO switch is pending. */
     public boolean isForcedToSwitch() {
-        return forcedSwitch;
+        return this.forcedSwitch;
     }
 
     /** Sets whether a forced post-KO switch is pending. */
@@ -272,7 +272,7 @@ public class ManualTrainer extends Trainer {
 
     /** Returns {@code true} if the player has already used a voluntary switch this turn. */
     public boolean hasSwitchedThisTurn() {
-        return switchedThisTurn;
+        return this.switchedThisTurn;
     }
 
     /** Sets whether a voluntary switch has been used this turn. */
@@ -282,6 +282,6 @@ public class ManualTrainer extends Trainer {
 
     /** Returns {@code true} if the player may perform a voluntary switch right now. */
     public boolean canVoluntarilySwitch() {
-        return !forcedSwitch && !switchedThisTurn;
+        return !this.forcedSwitch && !this.switchedThisTurn;
     }
 }

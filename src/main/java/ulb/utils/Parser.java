@@ -305,8 +305,7 @@ public class Parser {
                         inventory.addItem(obj, quantity);
                     }
                     reader.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.severe("Error when parsing Items and inventory: " + e.getMessage());
             }
         }

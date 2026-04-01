@@ -34,7 +34,7 @@ public class HealthComponent extends AbstractComponent {
     }
 
     public void increaseHp(int amount) {
-        this.hp = Math.min(maxHp, this.hp + amount);
+        this.hp = Math.min(this.maxHp, this.hp + amount);
     }
 
     public void restoreHp() {

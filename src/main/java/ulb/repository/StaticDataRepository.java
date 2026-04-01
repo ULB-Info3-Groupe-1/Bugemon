@@ -41,8 +41,8 @@ public class StaticDataRepository {
     public void addDefaultGameData() {
         Parser parser = new Parser();
         parser.parse();
-        saveGameDataAttacks(parser.getAttacks());
-        saveGameDataBugemon(parser.getBugemons());
+        this.saveGameDataAttacks(parser.getAttacks());
+        this.saveGameDataBugemon(parser.getBugemons());
     }
 
     /**
@@ -56,8 +56,8 @@ public class StaticDataRepository {
     private void saveGameDataAttacks(Map<String, Attack> attacks) {
         for (Attack attack : attacks.values()) {
             try {
-                saveAttack(attack);
-                saveAttackEffects(attack);
+                this.saveAttack(attack);
+                this.saveAttackEffects(attack);
             } catch (SQLException e) {
                 throw new IllegalStateException(
                         "Error occurred while saving the default game data for attack: "
@@ -76,7 +76,7 @@ public class StaticDataRepository {
      */
     private void saveAttack(Attack attack) throws SQLException {
         try (PreparedStatement psAttack =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("SaveAttack"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveAttack"))) {
             psAttack.setString(1, attack.id());
             psAttack.setString(2, attack.name());
             psAttack.setObject(3, attack.type() != null ? attack.type().name() : null,
@@ -100,10 +100,10 @@ public class StaticDataRepository {
         }
 
         try (PreparedStatement psEffect =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("SaveEffect"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveEffect"))) {
             for (Effect effect : attack.effects()) {
                 psEffect.setString(1, attack.id()); // Foreign key to the attack
-                setEffectParameters(psEffect, effect);
+                this.setEffectParameters(psEffect, effect);
                 psEffect.addBatch();
             }
             psEffect.executeBatch();
@@ -124,15 +124,15 @@ public class StaticDataRepository {
             throws SQLException {
         switch (effect) {
             case EffectStatModifier modifier:
-                setStatModifierParameters(psEffect, modifier);
+                this.setStatModifierParameters(psEffect, modifier);
                 break;
 
             case EffectHeal heal:
-                setHealParameters(psEffect, heal);
+                this.setHealParameters(psEffect, heal);
                 break;
 
             case EffectResetMalus malus:
-                setResetMalusParameters(psEffect, malus);
+                this.setResetMalusParameters(psEffect, malus);
                 break;
 
             default:
@@ -212,7 +212,7 @@ public class StaticDataRepository {
      */
     private void saveGameDataBugemon(List<Bugemon> bugemons) {
         try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
             for (Bugemon bugemon : bugemons) {
                 ps.setString(1, bugemon.getId());
                 ps.setString(2, bugemon.getName());
@@ -246,15 +246,15 @@ public class StaticDataRepository {
      */
     public List<Bugemon> getAllDefaultBugemons() {
         List<Bugemon> bugemons = new ArrayList<>();
-        try (PreparedStatement ps = dbConnection.prepareStatement(
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
                      this.dbRepository.getSql("GetAllDefaultBugemons"))) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 BugemonType type = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TYPE,
                                                                 BugemonType.class);
-                Attack attack1 = getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
-                Attack attack2 = getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
-                Attack attack3 = getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
+                Attack attack1 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
+                Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
+                Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
                 BugemonBuilder builder = new BugemonBuilder();
                 builder.id(rs.getString(DatabaseColumns.COL_ID))
                         .name(rs.getString(DatabaseColumns.COL_NAME))
@@ -288,12 +288,12 @@ public class StaticDataRepository {
      *         thrown.
      */
     public Attack getAttackById(String attackId) {
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("GetAttackById"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("GetAttackById"))) {
             ps.setString(1, attackId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                List<Effect> effects = getEffectByAttackId(attackId);
+                List<Effect> effects = this.getEffectByAttackId(attackId);
                 BugemonType type = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TYPE,
                                                                 BugemonType.class);
                 return new Attack(rs.getString(DatabaseColumns.COL_ID),
@@ -318,7 +318,7 @@ public class StaticDataRepository {
      */
     public List<Effect> getEffectByAttackId(String attackId) {
         List<Effect> effects = new ArrayList<>();
-        try (PreparedStatement ps = dbConnection.prepareStatement(
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
                      this.dbRepository.getSql("GetEffectByAttackId"))) {
             ps.setString(1, attackId);
             ResultSet rs = ps.executeQuery();

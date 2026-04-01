@@ -24,7 +24,6 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
-import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.level_up.Upgrade;
 
@@ -133,10 +132,12 @@ public class Bugemon implements BugemonDTO {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null || getClass() != obj.getClass())
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
+        }
         Bugemon other = (Bugemon)obj;
         return this.id.equals(other.id);
     }
@@ -317,7 +318,7 @@ public class Bugemon implements BugemonDTO {
                 // TODO: I feel like this part should probably be done elsewhere
                 EffectDuration duration = e.duration();
                 Modifier modifier =
-                        (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1):
+                        (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1) :
                 new Modifier(e.modifier());
 
                 switch (e.stat()) {

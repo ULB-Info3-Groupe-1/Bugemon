@@ -53,7 +53,7 @@ public class AllBugemonsGridView extends VBox {
         // Keep grid width in sync with the available area to avoid clipped columns.
         widthProperty().addListener((obs, oldWidth, newWidth) -> {
             if (!this.displayedBugemons.isEmpty()) {
-                renderGrid();
+                this.renderGrid();
             }
         });
     }
@@ -85,7 +85,7 @@ public class AllBugemonsGridView extends VBox {
      */
     public void showAll(List<Bugemon> bugemonList) {
         this.displayedBugemons = (bugemonList == null) ? List.of() : bugemonList;
-        renderGrid();
+        this.renderGrid();
     }
 
     private void renderGrid() {
@@ -94,7 +94,7 @@ public class AllBugemonsGridView extends VBox {
             return;
         }
 
-        int imagesPerRow = computeImagesPerRow();
+        int imagesPerRow = this.computeImagesPerRow();
 
         for (int i = 0; i < this.displayedBugemons.size(); i++) {
             Bugemon bugemon = this.displayedBugemons.get(i);
@@ -102,9 +102,9 @@ public class AllBugemonsGridView extends VBox {
             int row = i / imagesPerRow;
             int col = i % imagesPerRow;
 
-            VBox cell = createBugemonCell(bugemon);
+            VBox cell = this.createBugemonCell(bugemon);
 
-            gridPane.add(cell, col, row);
+            this.gridPane.add(cell, col, row);
         }
     }
 
@@ -146,10 +146,10 @@ public class AllBugemonsGridView extends VBox {
         cell.getChildren().addAll(imagePane, nameLabel);
         cell.setUserData(bugemon);
 
-        if (selectionChecker != null && selectionChecker.apply(bugemon)) {
-            select(cell);
+        if (this.selectionChecker != null && this.selectionChecker.apply(bugemon)) {
+            this.select(cell);
         } else {
-            unselect(cell);
+            this.unselect(cell);
         }
 
         if (this.onBugemonClicked != null) {

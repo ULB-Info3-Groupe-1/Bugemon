@@ -87,11 +87,11 @@ public record TurnResult(AttackResult first, Optional<AttackResult> second, bool
          * @return {@code true} if an attack was performed, {@code false} otherwise.
          */
         public boolean wasAttack() {
-            return attack.isPresent();
+            return this.attack.isPresent();
         }
 
         public String getAttackName() {
-            return attack.orElseThrow().name();
+            return this.attack.orElseThrow().name();
         }
     }
 }

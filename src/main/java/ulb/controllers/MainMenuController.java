@@ -82,7 +82,7 @@ public class MainMenuController extends Controller<MainMenuView> {
     /** Launches an automatic combat session. */
     public void startAutoCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
-            showNoTeamAlert();
+            this.showNoTeamAlert();
         } else {
             this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
         }
@@ -91,7 +91,7 @@ public class MainMenuController extends Controller<MainMenuView> {
     /** Launches a manual combat session. */
     public void startManualCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
-            showNoTeamAlert();
+            this.showNoTeamAlert();
         } else {
             this.metaController.switchTo(Window.MANUAL_COMBAT);
         }

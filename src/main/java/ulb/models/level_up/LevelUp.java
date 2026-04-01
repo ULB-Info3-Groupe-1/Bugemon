@@ -7,6 +7,7 @@
  * @date 09 mar. 2026
  * @version 1.0
  */
+
 package ulb.models.level_up;
 
 import java.util.List;
@@ -34,8 +35,8 @@ public class LevelUp implements LevelUpDTO {
      */
     public LevelUp(Bugemon bugemon) {
         this.bugemon = bugemon;
-        this.choices =
-                List.of(generateRandomChoice(), generateRandomChoice(), generateRandomChoice());
+        this.choices = List.of(this.generateRandomChoice(), this.generateRandomChoice(),
+                               this.generateRandomChoice());
     }
 
     /**

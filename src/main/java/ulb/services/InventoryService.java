@@ -2,7 +2,11 @@ package ulb.services;
 
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
-import ulb.models.bugemon.effect.*;
+import ulb.models.bugemon.effect.EffectDuration;
+import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectStatModifier;
+import ulb.models.bugemon.effect.EffectTarget;
 
 public class InventoryService {
     private InventoryService() {

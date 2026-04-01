@@ -47,7 +47,7 @@ public class PlayerService {
         this.userTeams = this.databaseRepository.getUserTeams(this.userId);
 
         // TODO: probably connect to db
-        inventory = InventoryService.addStarterItem(new Inventory());
+        this.inventory = InventoryService.addStarterItem(new Inventory());
     }
 
     /**
@@ -124,7 +124,7 @@ public class PlayerService {
             if (userBugemonDTOs.stream().noneMatch(
                         dto -> dto.bugemonId().equals(bugemon.getId()))) {
                 this.databaseRepository.saveUserBugemon(new UserBugemonDTO(
-                        userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                        this.userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(),
                         bugemon.getLevel()));
             }
@@ -154,7 +154,7 @@ public class PlayerService {
             if (userBugemonDTOs.stream().noneMatch(
                         dto -> dto.bugemonId().equals(bugemon.getId()))) {
                 this.databaseRepository.saveUserBugemon(new UserBugemonDTO(
-                        userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                        this.userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(),
                         bugemon.getLevel()));
             }
@@ -230,7 +230,7 @@ public class PlayerService {
         }
 
         this.databaseRepository.updateUserBugemon(new UserBugemonDTO(
-                userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                this.userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
                 bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
 

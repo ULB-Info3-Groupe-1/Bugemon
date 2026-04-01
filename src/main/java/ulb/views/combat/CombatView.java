@@ -145,15 +145,16 @@ public abstract class CombatView extends View {
                                  Optional<TurnResult.AttackResult> secondAttackResult) {
         String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
                          + " à utilisé l'attaque " + firstAttackResult.getAttackName() + "\n";
-        String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
+        String efficiency = "1- " + this.formatEfficiency(firstAttackResult.efficiency()) + "\n";
 
         if (secondAttackResult.isPresent()) {
             message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
                        + " à utilisé l'attaque "
                        + secondAttackResult.orElseThrow().getAttackName();
-            efficiency += "2- " + formatEfficiency(secondAttackResult.orElseThrow().efficiency());
+            efficiency +=
+                    "2- " + this.formatEfficiency(secondAttackResult.orElseThrow().efficiency());
         }
-        showDialog(message, efficiency);
+        this.showDialog(message, efficiency);
     }
 
     /** Converts an {@link Efficiency} value to a human-readable French label. */
@@ -197,7 +198,7 @@ public abstract class CombatView extends View {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(
                 new Image(trainerBugemon.getSpriteURL(), 256, 256, true, false));
-        makeTrainerBugemonReappear();
+        this.makeTrainerBugemonReappear();
     }
 
     /**
@@ -211,7 +212,7 @@ public abstract class CombatView extends View {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(
                 new Image(opponentBugemon.getSpriteURL(), 256, 256, true, false));
-        makeOpponentBugemonReappear();
+        this.makeOpponentBugemonReappear();
     }
 
     // ── Attack animations ─────────────────────────────────────────────────────
@@ -224,7 +225,7 @@ public abstract class CombatView extends View {
      *                   not be {@code null}.
      */
     public void playTrainerAttackAnimation(Runnable onFinished) {
-        attackAnimationView.playTrainerAttackAnimation(onFinished);
+        this.attackAnimationView.playTrainerAttackAnimation(onFinished);
     }
 
     /**
@@ -235,22 +236,22 @@ public abstract class CombatView extends View {
      *                   not be {@code null}.
      */
     public void playOpponentAttackAnimation(Runnable onFinished) {
-        attackAnimationView.playOpponentAttackAnimation(onFinished);
+        this.attackAnimationView.playOpponentAttackAnimation(onFinished);
     }
 
     public void playDeathAnimationForTrainer(Runnable onFinished) {
-        attackAnimationView.playDeathAnimationForTrainer(onFinished);
+        this.attackAnimationView.playDeathAnimationForTrainer(onFinished);
     }
 
     public void playDeathAnimationForOpponent(Runnable onFinished) {
-        attackAnimationView.playDeathAnimationForOpponent(onFinished);
+        this.attackAnimationView.playDeathAnimationForOpponent(onFinished);
     }
 
     public void makeTrainerBugemonReappear() {
-        attackAnimationView.makeBugemonReappear(this.bugemonTrainerImage);
+        this.attackAnimationView.makeBugemonReappear(this.bugemonTrainerImage);
     }
 
     public void makeOpponentBugemonReappear() {
-        attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
+        this.attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
     }
 }

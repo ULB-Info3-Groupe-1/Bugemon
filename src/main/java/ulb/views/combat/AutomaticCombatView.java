@@ -47,12 +47,13 @@ public class AutomaticCombatView extends CombatView {
 
     @Override
     public void refresh() {
-        if (player == null)
+        if (this.player == null) {
             return;
-        updateTrainerBugemon(player.getCurrentBugemon());
-        updateOpponentBugemon(opponent.getCurrentBugemon());
+        }
+        updateTrainerBugemon(this.player.getCurrentBugemon());
+        updateOpponentBugemon(this.opponent.getCurrentBugemon());
 
-        TurnResult last = combat.getLastTurnResult();
+        TurnResult last = this.combat.getLastTurnResult();
         if (last != null && last.first().wasAttack()) {
             showCombatDialog(last.first(), last.second());
         } else {

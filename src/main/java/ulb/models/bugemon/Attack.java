@@ -58,21 +58,23 @@ public record Attack(
      *         {@code false} otherwise.
      */
     public boolean containsEffect(Effect effect) {
-        return effects.contains(effect);
+        return this.effects.contains(effect);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof Attack))
+        }
+        if (!(o instanceof Attack)) {
             return false;
+        }
         Attack attack = (Attack)o;
-        return Objects.equals(id, attack.id);
+        return Objects.equals(this.id, attack.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(this.id);
     }
 }

@@ -31,12 +31,12 @@ public class MusicLoader {
      * @throws IOException if the directory cannot be accessed
      */
     public List<Music> loadFromDirectory(String resourceDir, Ambiance ambiance) throws IOException {
-        URI uri = getResourceURI(resourceDir);
-        Path dir = resolveDirectory(uri, resourceDir);
+        URI uri = this.getResourceURI(resourceDir);
+        Path dir = this.resolveDirectory(uri, resourceDir);
 
-        return listFiles(dir)
+        return this.listFiles(dir)
                 .stream()
-                .map(path -> loadMusic(path, ambiance))
+                .map(path -> this.loadMusic(path, ambiance))
                 .flatMap(Optional::stream)
                 .toList();
     }
@@ -104,13 +104,14 @@ public class MusicLoader {
      * @throws IOException if any resource directory cannot be accessed
      */
     public void loadAllResources(MusicPlayer musicPlayer) throws IOException {
-        loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT).forEach(musicPlayer::addMusic);
-        loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU).forEach(musicPlayer::addMusic);
-        loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
+        this.loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT)
                 .forEach(musicPlayer::addMusic);
-        loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
+        this.loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
                 .forEach(musicPlayer::addMusic);
-        loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT)
+        this.loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
+                .forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT)
                 .forEach(musicPlayer::addMusic);
     }
 
