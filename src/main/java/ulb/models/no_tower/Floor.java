@@ -30,7 +30,7 @@ public class Floor {
         this.playerTrainer = playerTrainer;
         this.playerService = playerService;
 
-        init();
+        this.init();
     }
 
     public boolean isComplete() {
@@ -38,26 +38,26 @@ public class Floor {
     }
 
     public Room getNextRoom() throws EmptyStackException {
-        return stages.pop();
+        return this.stages.pop();
     }
 
     public Room getCurrentRoom() throws EmptyStackException {
-        return stages.peek();
+        return this.stages.peek();
     }
 
     private void init() {
-        stages.push(initBossCombatRoom());
-        stages.push(initRewardRoom());
-        stages.push(initCombatRoom());
-        stages.push(initCombatRoom());
-        stages.push(initRewardRoom());
-        stages.push(initCombatRoom());
+        this.stages.push(this.initBossCombatRoom());
+        this.stages.push(this.initRewardRoom());
+        this.stages.push(this.initCombatRoom());
+        this.stages.push(this.initCombatRoom());
+        this.stages.push(this.initRewardRoom());
+        this.stages.push(this.initCombatRoom());
     }
 
     private CombatRoom initCombatRoom() {
-        Trainer opponentTrainer = new AutoTrainer(CombatService.createRandomTeam(
-                this.playerService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
-        Combat combat = new Combat(playerTrainer, opponentTrainer);
+        Trainer opponentTrainer = new AutoTrainer(CombatService
+                .createRandomTeam(this.playerService.getAllDefaultBugemons(), this.playerTrainer.getTeamSize()));
+        Combat combat = new Combat(this.playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);
     }
@@ -70,12 +70,12 @@ public class Floor {
     private CombatRoom initBossCombatRoom() {
         Trainer opponentTrainer = new AutoTrainer(
                 CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
-        Combat combat = new Combat(playerTrainer, opponentTrainer);
+        Combat combat = new Combat(this.playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);
     }
 
     void advance() throws EmptyStackException {
-        stages.pop();
+        this.stages.pop();
     }
 }

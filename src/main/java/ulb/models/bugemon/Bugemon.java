@@ -24,22 +24,19 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
-import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.level_up.Upgrade;
 
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
  * <p>
- * A {@code Bugemon} is the central entity of the game. It holds identifying
- * information (ID, name, type, sprite), combat statistics (HP, attack, defense,
- * initiative), a list of available {@link Attack}s, and a flag indicating
+ * A {@code Bugemon} is the central entity of the game. It holds identifying information (ID, name, type, sprite),
+ * combat statistics (HP, attack, defense, initiative), a list of available {@link Attack}s, and a flag indicating
  * whether the bugemon is a starter.
  * </p>
  * <p>
- * Instances must be created via the {@link BugemonBuilder} class. The class
- * implements {@link Cloneable} to support deep-copying of bugemon instances,
- * and {@link BugemonDTO} to expose a common data-transfer interface.
+ * Instances must be created via the {@link BugemonBuilder} class. The class implements {@link Cloneable} to support
+ * deep-copying of bugemon instances, and {@link BugemonDTO} to expose a common data-transfer interface.
  * </p>
  *
  * @see BugemonBuilder
@@ -51,7 +48,8 @@ public class Bugemon implements BugemonDTO {
     String id;
 
     /** Display name of this bugemon. Serialised as {@code "nom"}. */
-    @SerializedName("nom") String name;
+    @SerializedName("nom")
+    String name;
 
     /** Elemental type of this bugemon. */
     BugemonType type;
@@ -70,16 +68,16 @@ public class Bugemon implements BugemonDTO {
     LevelComponent levelComponent;
 
     /**
-     * Whether this bugemon is available as a starter choice. Serialised as
-     * {@code "starter"}.
+     * Whether this bugemon is available as a starter choice. Serialised as {@code "starter"}.
      */
-    @SerializedName("starter") boolean isStarter;
+    @SerializedName("starter")
+    boolean isStarter;
 
     /**
-     * The list of attacks available to this bugemon. Serialised as
-     * {@code "attaques"}.
+     * The list of attacks available to this bugemon. Serialised as {@code "attaques"}.
      */
-    @SerializedName("attaques") List<Attack> attackList;
+    @SerializedName("attaques")
+    List<Attack> attackList;
 
     /**
      * Private no-arg constructor used exclusively by the {@link BugemonBuilder}.
@@ -87,7 +85,8 @@ public class Bugemon implements BugemonDTO {
      * Direct instantiation is not supported; use {@link BugemonBuilder} instead.
      * </p>
      */
-    Bugemon() {}
+    Bugemon() {
+    }
 
     public Bugemon(Bugemon copy) {
         this.id = copy.getId();
@@ -99,26 +98,25 @@ public class Bugemon implements BugemonDTO {
         this.defenseComponent = new DefenseComponent(copy.getDefense());
         this.initiativeComponent = new InitiativeComponent(copy.getInitiative());
         this.levelComponent = new LevelComponent(copy.getXp(), copy.getLevel());
-        this.attackList =
-                List.copyOf(copy.getAttackList()); // Safe because Attack is immutable (record)
+        // Safe because Attack is immutable (record)
+        this.attackList = List.copyOf(copy.getAttackList());
         this.isStarter = copy.isStarter();
     }
 
     /**
      * Apply damage to the bugemon, reducing its HP by the specified amount.
      *
-     * @param damage the amount of damage to apply.
+     * @param damage
+     *            the amount of damage to apply.
      */
     public void takeDamage(int damage) {
         this.healthComponent.decreaseHp(damage);
     }
 
     /**
-     * Check if the bugemon is alive, which is determined by whether its HP is
-     * greater than 0.
+     * Check if the bugemon is alive, which is determined by whether its HP is greater than 0.
      *
-     * @return {@code true} if the bugemon's current HP is greater than 0;
-     *         {@code false} otherwise.
+     * @return {@code true} if the bugemon's current HP is greater than 0; {@code false} otherwise.
      */
     public boolean isAlive() {
         return this.healthComponent.getHp() > 0;
@@ -127,23 +125,25 @@ public class Bugemon implements BugemonDTO {
     /**
      * Override the equals method to compare bugemons based on their unique ID.
      *
-     * @param obj the object to compare with this bugemon.
-     * @return {@code true} if {@code obj} is a {@code Bugemon} with the same
-     *         ID as this instance; {@code false} otherwise.
+     * @param obj
+     *            the object to compare with this bugemon.
+     * @return {@code true} if {@code obj} is a {@code Bugemon} with the same ID as this instance; {@code false}
+     *         otherwise.
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null || getClass() != obj.getClass())
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
-        Bugemon other = (Bugemon)obj;
+        }
+        Bugemon other = (Bugemon) obj;
         return this.id.equals(other.id);
     }
 
     /**
-     * Override the hashCode method to generate a hash code based on the unique ID
-     * of the bugemon.
+     * Override the hashCode method to generate a hash code based on the unique ID of the bugemon.
      *
      * @return an {@code int} hash code derived from the bugemon's unique ID.
      */
@@ -212,6 +212,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the maximum hit points of the bugemon (at the start of a battle).
+     *
      * @return (int) the maximum hit points of the bugemon.
      */
     public int getMaxHp() {
@@ -237,8 +238,7 @@ public class Bugemon implements BugemonDTO {
     }
 
     /**
-     * Get the initiative value of the bugemon, which determines turn order in
-     * combat.
+     * Get the initiative value of the bugemon, which determines turn order in combat.
      *
      * @return (int) the initiative value of the bugemon.
      */
@@ -289,7 +289,8 @@ public class Bugemon implements BugemonDTO {
     /**
      * Adds xp, and returns the number of levels that have just been crossed
      *
-     * @param xp the amount of experience points to add
+     * @param xp
+     *            the amount of experience points to add
      * @return the number of levels that have just been crossed
      */
     public int gainXp(int xp) {
@@ -299,7 +300,8 @@ public class Bugemon implements BugemonDTO {
     /**
      * Applies a level-up choice to the bugemon, adding the choice's stat bonuses.
      *
-     * @param choice the {@link Upgrade} to apply, containing stat bonuses
+     * @param choice
+     *            the {@link Upgrade} to apply, containing stat bonuses
      */
     // TODO: this should be removed, a choice should know how to apply itself on a
     // bugemon instead.
@@ -312,19 +314,18 @@ public class Bugemon implements BugemonDTO {
 
     public void addEffect(Effect effect) {
         switch (effect) {
-            case EffectStatModifier e
-                    -> {
+            case EffectStatModifier e -> {
                 // TODO: I feel like this part should probably be done elsewhere
                 EffectDuration duration = e.duration();
-                Modifier modifier =
-                        (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1):
-                new Modifier(e.modifier());
+                Modifier modifier = (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1)
+                        : new Modifier(e.modifier());
 
                 switch (e.stat()) {
                     case HP -> this.healthComponent.addModifier(modifier);
                     case ATTACK -> this.attackComponent.addModifier(modifier);
                     case DEFENSE -> this.defenseComponent.addModifier(modifier);
                     case INITIATIVE -> this.initiativeComponent.addModifier(modifier);
+                    default -> throw new IllegalArgumentException("unknown stat: " + e.stat());
                 }
             }
 
@@ -341,6 +342,7 @@ public class Bugemon implements BugemonDTO {
 
     /**
      * Get the list of attack IDs that the bugemon can have.
+     *
      * @return (List<String>) the list of attack IDs that the bugemon can have.
      */
     public List<String> getListAttacksId() {

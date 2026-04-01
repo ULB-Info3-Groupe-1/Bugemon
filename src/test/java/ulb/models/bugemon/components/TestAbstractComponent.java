@@ -7,7 +7,8 @@ import org.junit.Test;
 import ulb.models.bugemon.components.modifier.Modifier;
 
 public class TestAbstractComponent {
-    private static class TestableComponent extends AbstractComponent {}
+    private static class TestableComponent extends AbstractComponent {
+    }
 
     @Test
     public void testCreation() {

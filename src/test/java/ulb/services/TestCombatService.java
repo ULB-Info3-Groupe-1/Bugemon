@@ -55,19 +55,13 @@ public class TestCombatService {
     public void testDamageApplied() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker =
-                new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder()
-                                   .id("2")
-                                   .attack(20)
-                                   .defense(20)
-                                   .addAttack(attack)
-                                   .type(BugemonType.PYRO)
-                                   .build();
+        Bugemon striker = new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder().id("2").attack(20).defense(20).addAttack(attack).type(BugemonType.PYRO)
+                .build();
 
         double expectedDamage = attack.power() * ((100.0 + striker.getAttack()) / 100.0)
-                                * (100.0 / (100.0 + defender.getDefense()))
-                                * CombatService.getEfficiencyFactor(attack, defender.getType());
+                * (100.0 / (100.0 + defender.getDefense()))
+                * CombatService.getEfficiencyFactor(attack, defender.getType());
 
         int damage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
@@ -78,25 +72,13 @@ public class TestCombatService {
     public void testDamageMultiplicatorHigh() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker =
-                new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder()
-                                   .id("2")
-                                   .attack(20)
-                                   .defense(20)
-                                   .addAttack(attack)
-                                   .type(BugemonType.PYRO)
-                                   .build();
+        Bugemon striker = new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder().id("2").attack(20).defense(20).addAttack(attack).type(BugemonType.PYRO)
+                .build();
 
         double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new BugemonBuilder()
-                           .id("2")
-                           .attack(20)
-                           .defense(20)
-                           .addAttack(attack)
-                           .type(BugemonType.AQUA)
-                           .build();
+        defender = new BugemonBuilder().id("2").attack(20).defense(20).addAttack(attack).type(BugemonType.AQUA).build();
 
         double highDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
@@ -107,25 +89,14 @@ public class TestCombatService {
     public void testDamageMultiplicatorLow() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker =
-                new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder()
-                                   .id("2")
-                                   .attack(20)
-                                   .defense(20)
-                                   .addAttack(attack)
-                                   .type(BugemonType.PYRO)
-                                   .build();
+        Bugemon striker = new BugemonBuilder().id("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder().id("2").attack(20).defense(20).addAttack(attack).type(BugemonType.PYRO)
+                .build();
 
         double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new BugemonBuilder()
-                           .id("2")
-                           .attack(20)
-                           .defense(20)
-                           .addAttack(attack)
-                           .type(BugemonType.LITHO)
-                           .build();
+        defender = new BugemonBuilder().id("2").attack(20).defense(20).addAttack(attack).type(BugemonType.LITHO)
+                .build();
 
         double lowDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 

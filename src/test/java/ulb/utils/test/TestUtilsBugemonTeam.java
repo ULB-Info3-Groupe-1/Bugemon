@@ -3,7 +3,8 @@ package ulb.utils.test;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public class TestUtilsBugemonTeam {
-    private TestUtilsBugemonTeam() {}
+    private TestUtilsBugemonTeam() {
+    }
 
     public static BugemonTeam createDefaultBugemonTeam(boolean isDefeated) {
         BugemonTeam bugemonTeam = new BugemonTeam();

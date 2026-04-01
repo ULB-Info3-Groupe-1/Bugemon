@@ -10,24 +10,24 @@
 package ulb.models.bugemon_team.exceptions;
 
 /**
- * Unchecked exception thrown when an attempt is made to add a {@code Bugemon}
- * to a {@link ulb.models.bugemon_team.BugemonTeam} that already contains a
- * member with the same ID.
+ * Unchecked exception thrown when an attempt is made to add a {@code Bugemon} to a
+ * {@link ulb.models.bugemon_team.BugemonTeam} that already contains a member with the same ID.
  *
  * <p>
- * Because a team must hold at most one instance of each Bugemon (identified
- * by its unique string ID), {@link ulb.models.bugemon_team.BugemonTeam#addBugemon}
- * raises this exception rather than silently ignoring or overwriting the
- * duplicate entry.
+ * Because a team must hold at most one instance of each Bugemon (identified by its unique string ID),
+ * {@link ulb.models.bugemon_team.BugemonTeam#addBugemon} raises this exception rather than silently ignoring or
+ * overwriting the duplicate entry.
  * </p>
  *
  * <p>
- * This is a {@link RuntimeException} so callers are not forced to declare it
- * in their {@code throws} clause, but they should still handle it wherever
- * duplicate additions are a realistic possibility.
+ * This is a {@link RuntimeException} so callers are not forced to declare it in their {@code throws} clause, but they
+ * should still handle it wherever duplicate additions are a realistic possibility.
  * </p>
  *
- * <p>Example usage:</p>
+ * <p>
+ * Example usage:
+ * </p>
+ *
  * <pre>{@code
  * try {
  *     team.addBugemon(bugemon);
@@ -40,12 +40,11 @@ package ulb.models.bugemon_team.exceptions;
  */
 public class BugemonAlreadyExistsException extends RuntimeException {
     /**
-     * Constructs a new {@code BugemonAlreadyExistsException} with the specified
-     * detail message.
+     * Constructs a new {@code BugemonAlreadyExistsException} with the specified detail message.
      *
-     * @param message a human-readable description of the duplication conflict;
-     *                typically includes the ID of the Bugemon that was already
-     *                present in the team.
+     * @param message
+     *            a human-readable description of the duplication conflict; typically includes the ID of the Bugemon
+     *            that was already present in the team.
      */
     public BugemonAlreadyExistsException(String message) {
         super(message);

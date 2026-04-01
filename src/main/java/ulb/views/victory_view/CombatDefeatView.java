@@ -10,14 +10,15 @@ import ulb.views.View;
  * View for the combat defeat screen.
  *
  * <p>
- * Dispatches user interactions through the callbacks registered via
- * {@link #setOnRetry(Runnable)} and {@link #setOnBackToMainMenu(Runnable)}.
- * Holds no reference to any concrete controller class.
+ * Dispatches user interactions through the callbacks registered via {@link #setOnRetry(Runnable)} and
+ * {@link #setOnBackToMainMenu(Runnable)}. Holds no reference to any concrete controller class.
  * </p>
  */
 public class CombatDefeatView extends View {
-    @FXML private Button retryButton;
-    @FXML private Button backToMainMenuButton;
+    @FXML
+    private Button retryButton;
+    @FXML
+    private Button backToMainMenuButton;
 
     private Runnable onRetry;
     private Runnable onBackToMainMenu;
@@ -25,17 +26,20 @@ public class CombatDefeatView extends View {
     /**
      * Loads the defeat-screen FXML layout and wires the retry and back-to-menu buttons.
      *
-     * @throws IOException if the FXML resource cannot be loaded.
+     * @throws IOException
+     *             if the FXML resource cannot be loaded.
      */
     public CombatDefeatView() throws IOException {
         super("/fxml/CombatDefeat.fxml");
         this.retryButton.setOnAction(e -> {
-            if (onRetry != null)
-                onRetry.run();
+            if (this.onRetry != null) {
+                this.onRetry.run();
+            }
         });
         this.backToMainMenuButton.setOnAction(e -> {
-            if (onBackToMainMenu != null)
-                onBackToMainMenu.run();
+            if (this.onBackToMainMenu != null) {
+                this.onBackToMainMenu.run();
+            }
         });
     }
 

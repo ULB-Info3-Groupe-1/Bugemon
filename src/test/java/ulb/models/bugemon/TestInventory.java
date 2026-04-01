@@ -18,43 +18,42 @@ public class TestInventory {
 
     @Before
     public void setUp() {
-        inventory = new Inventory();
+        this.inventory = new Inventory();
 
-        baieRevigorante =
-                new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
-                         Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
-        baieTonique = new Item("baie_tonique", "Baie Tonique", "Restaure 10 PV au Bugémon actif.",
-                               Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 10));
+        this.baieRevigorante = new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
+                Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
+        this.baieTonique = new Item("baie_tonique", "Baie Tonique", "Restaure 10 PV au Bugémon actif.",
+                Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 10));
     }
 
     @Test
     public void testAddItemQuantity() {
-        inventory.addItem(baieRevigorante, 3);
+        this.inventory.addItem(this.baieRevigorante, 3);
 
-        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)3);
+        assertEquals((int) this.inventory.getMap().get(this.baieRevigorante), (int) 3);
 
-        inventory.addItem(baieRevigorante, 4);
+        this.inventory.addItem(this.baieRevigorante, 4);
 
-        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)7);
+        assertEquals((int) this.inventory.getMap().get(this.baieRevigorante), (int) 7);
     }
 
     @Test
     public void testUseItem() {
-        inventory.addItem(baieRevigorante, 2);
-        inventory.useItem(baieRevigorante);
-        assertEquals((int)inventory.getMap().get(baieRevigorante), (int)1);
+        this.inventory.addItem(this.baieRevigorante, 2);
+        this.inventory.useItem(this.baieRevigorante);
+        assertEquals((int) this.inventory.getMap().get(this.baieRevigorante), (int) 1);
     }
 
     @Test
     public void testUseItemNotInInventory() {
-        inventory.addItem(baieRevigorante, 2);
-        assertThrows(IllegalStateException.class, () -> inventory.useItem(baieTonique));
+        this.inventory.addItem(this.baieRevigorante, 2);
+        assertThrows(IllegalStateException.class, () -> this.inventory.useItem(this.baieTonique));
     }
 
     @Test
     public void testHasItem() {
-        inventory.addItem(baieRevigorante, 2);
-        assertTrue(inventory.hasItem(baieRevigorante));
-        assertFalse(inventory.hasItem(baieTonique));
+        this.inventory.addItem(this.baieRevigorante, 2);
+        assertTrue(this.inventory.hasItem(this.baieRevigorante));
+        assertFalse(this.inventory.hasItem(this.baieTonique));
     }
 }

@@ -10,7 +10,9 @@
 
 package ulb.models.bugemon_team;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -46,16 +48,19 @@ public class TestBugemonTeam {
     @Test
     public void testRemoveBugemon() {
         Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
 
         BugemonTeam team = new BugemonTeam();
         team.add(expectedBugemon1);
         team.remove(expectedBugemon1);
 
+        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
+
         assertEquals(0, team.size());
 
         team.add(expectedBugemon1);
-        assertThrows(BugemonNotInTeamException.class, () -> { team.remove(expectedBugemon2); });
+        assertThrows(BugemonNotInTeamException.class, () -> {
+            team.remove(expectedBugemon2);
+        });
     }
 
     @Test
@@ -66,8 +71,9 @@ public class TestBugemonTeam {
 
         team.add(expectedBugemon);
 
-        assertThrows(BugemonAlreadyExistsException.class,
-                     () -> { team.add(expectedBugemonDuplicate); });
+        assertThrows(BugemonAlreadyExistsException.class, () -> {
+            team.add(expectedBugemonDuplicate);
+        });
     }
 
     @Test
@@ -75,7 +81,9 @@ public class TestBugemonTeam {
         BugemonTeam team = new BugemonTeam();
         Bugemon expectedBugemon = TestUtilsBugemons.createDefaultBugemon("1");
 
-        assertThrows(TeamAlreadyEmptyException.class, () -> { team.remove(expectedBugemon); });
+        assertThrows(TeamAlreadyEmptyException.class, () -> {
+            team.remove(expectedBugemon);
+        });
     }
 
     @Test
@@ -87,7 +95,9 @@ public class TestBugemonTeam {
         assertTrue(fullTeam.isFull());
 
         Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("7");
-        assertThrows(TeamAlreadyFullException.class, () -> { fullTeam.add(extraBugemon); });
+        assertThrows(TeamAlreadyFullException.class, () -> {
+            fullTeam.add(extraBugemon);
+        });
     }
 
     @Test

@@ -12,7 +12,8 @@ package ulb.models.no_tower;
 import java.util.ArrayList;
 
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.trainer.*;
+import ulb.models.trainer.ManualTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.services.PlayerService;
 
 public class NOTower {
@@ -24,40 +25,40 @@ public class NOTower {
 
     // TODO: change to Player class when it will be implemented
     public NOTower(BugemonTeam playerTeam, PlayerService playerService) {
-        generateFloors(playerTeam, playerService);
+        this.generateFloors(playerTeam, playerService);
     }
 
     public int getCurrentFloorNumber() {
-        return currentFloor;
+        return this.currentFloor;
     }
 
     // TODO: is it really useful ?
     public boolean isFloorComplete() {
-        return floors.get(currentFloor).isComplete();
+        return this.floors.get(this.currentFloor).isComplete();
     }
 
     public Floor getCurrentFloor() {
-        return floors.get(currentFloor);
+        return this.floors.get(this.currentFloor);
     }
 
     public void goToNextFloor() {
-        if (!getCurrentFloor().isComplete()) {
+        if (!this.getCurrentFloor().isComplete()) {
             throw new IllegalStateException("Current floor is not complete");
         }
-        if (!hasNextFloor()) {
+        if (!this.hasNextFloor()) {
             throw new IllegalStateException("No more floors");
         }
-        currentFloor++;
+        this.currentFloor++;
     }
 
     private boolean hasNextFloor() {
-        return currentFloor < MAX_FLOORS - 1;
+        return this.currentFloor < MAX_FLOORS - 1;
     }
 
     private void generateFloors(BugemonTeam playerTeam, PlayerService playerService) {
         Trainer playerTrainer = new ManualTrainer(playerTeam, playerService.getInventory());
         for (int i = 0; i < MAX_FLOORS; i++) {
-            floors.add(new Floor(playerTrainer, playerService));
+            this.floors.add(new Floor(playerTrainer, playerService));
         }
     }
 }

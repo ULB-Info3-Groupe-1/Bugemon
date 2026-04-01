@@ -16,29 +16,29 @@ import ulb.views.combat.AutomaticCombatView;
  * Controller for the automatic combat screen.
  *
  * <p>
- * Drives the {@link Combat} loop via a JavaFX {@link Timeline}. After each
- * turn it calls {@code view.refresh()} so the view can pull the updated state
- * from the model; no data is pushed into the view.
+ * Drives the {@link Combat} loop via a JavaFX {@link Timeline}. After each turn it calls {@code view.refresh()} so the
+ * view can pull the updated state from the model; no data is pushed into the view.
  * </p>
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
     private Timeline turnTimeline;
+
     /**
-     * Constructs an {@code AutomaticCombatController} and initialises its
-     * {@link AutomaticCombatView}.
+     * Constructs an {@code AutomaticCombatController} and initialises its {@link AutomaticCombatView}.
      *
-     * @param metaController the application-level controller used for navigation.
-     * @throws IOException if the view fails to load its FXML resource.
+     * @param metaController
+     *            the application-level controller used for navigation.
+     * @throws IOException
+     *             if the view fails to load its FXML resource.
      */
-    public AutomaticCombatController(MetaController metaController, PlayerService playerService)
-            throws IOException {
+    public AutomaticCombatController(MetaController metaController, PlayerService playerService) throws IOException {
         super(metaController, playerService, new AutomaticCombatView());
     }
 
     /** Starts a complete automatic combat session and drives it to completion. */
     @Override
-    public void startCombat(boolean restoreHpAfterCombat) {
-        this.restoreHpAfterCombat = restoreHpAfterCombat;
+    public void startCombat(boolean shouldRestoreHp) {
+        this.restoreHpAfterCombat = shouldRestoreHp;
 
         // Stop any existing timeline from a previous combat
         if (this.turnTimeline != null) {
@@ -52,16 +52,19 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.view.setModel(playerTrainer, opponentTrainer, combat);
         this.view.refresh();
 
-        scheduleTurn(combat, playerTrainer, Duration.seconds(1));
+        this.scheduleTurn(combat, playerTrainer, Duration.seconds(1));
     }
 
     /**
-     * Schedules the next combat turn to happen after the specified delay.
-     * Creates a fresh Timeline for each turn to avoid timing drift issues.
+     * Schedules the next combat turn to happen after the specified delay. Creates a fresh Timeline for each turn to
+     * avoid timing drift issues.
      *
-     * @param combat the combat model
-     * @param playerTrainer the player trainer
-     * @param delay the delay before executing the turn
+     * @param combat
+     *            the combat model
+     * @param playerTrainer
+     *            the player trainer
+     * @param delay
+     *            the delay before executing the turn
      */
     private void scheduleTurn(Combat combat, AutoTrainer playerTrainer, Duration delay) {
         this.turnTimeline = new Timeline();
@@ -78,7 +81,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
                 }
 
                 // Schedule the next turn after 3 seconds
-                scheduleTurn(combat, playerTrainer, Duration.seconds(3));
+                this.scheduleTurn(combat, playerTrainer, Duration.seconds(3));
             });
         });
 

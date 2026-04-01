@@ -18,41 +18,49 @@ import ulb.models.level_up.Upgrade;
  * View for the level-up screen.
  *
  * <p>
- * Holds a reference to a {@link LevelUpSession} and reads the current level-up
- * event directly from it in {@link #refresh()}. Dispatches the player's choice
- * through the callback registered via {@link #setOnChooseOption(Consumer)}.
- * Holds no reference to any concrete controller class.
+ * Holds a reference to a {@link LevelUpSession} and reads the current level-up event directly from it in
+ * {@link #refresh()}. Dispatches the player's choice through the callback registered via
+ * {@link #setOnChooseOption(Consumer)}. Holds no reference to any concrete controller class.
  * </p>
  */
 public class LevelUpView extends View {
-    @FXML private Label levelUpText;
-    @FXML private Button choice1Button;
-    @FXML private Button choice2Button;
-    @FXML private Button choice3Button;
-    @FXML private ImageView bugemonImage;
+    @FXML
+    private Label levelUpText;
+    @FXML
+    private Button choice1Button;
+    @FXML
+    private Button choice2Button;
+    @FXML
+    private Button choice3Button;
+    @FXML
+    private ImageView bugemonImage;
 
     private LevelUpSession session;
     private Consumer<Integer> onChooseOption;
 
     /**
-     * Loads the level-up FXML layout and wires each choice button to fire the
-     * registered callback with its zero-based index (0, 1, or 2).
+     * Loads the level-up FXML layout and wires each choice button to fire the registered callback with its zero-based
+     * index (0, 1, or 2).
      *
-     * @throws IOException if the FXML resource cannot be loaded.
+     * @throws IOException
+     *             if the FXML resource cannot be loaded.
      */
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
         this.choice1Button.setOnAction(e -> {
-            if (onChooseOption != null)
-                onChooseOption.accept(0);
+            if (this.onChooseOption != null) {
+                this.onChooseOption.accept(0);
+            }
         });
         this.choice2Button.setOnAction(e -> {
-            if (onChooseOption != null)
-                onChooseOption.accept(1);
+            if (this.onChooseOption != null) {
+                this.onChooseOption.accept(1);
+            }
         });
         this.choice3Button.setOnAction(e -> {
-            if (onChooseOption != null)
-                onChooseOption.accept(2);
+            if (this.onChooseOption != null) {
+                this.onChooseOption.accept(2);
+            }
         });
     }
 
@@ -68,19 +76,18 @@ public class LevelUpView extends View {
 
     @Override
     public void refresh() {
-        if (session == null || !session.isStarted())
+        if (this.session == null || !this.session.isStarted()) {
             return;
-
-        LevelUpDTO levelUp = session.getCurrent();
+        }
+        LevelUpDTO levelUp = this.session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
-        bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
-        levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
-                            + bugemon.getLevel() + " !");
+        this.bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
+        this.levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau " + bugemon.getLevel() + " !");
 
         List<Upgrade> choices = levelUp.getChoices();
-        choice1Button.setText(choices.get(0).toString());
-        choice2Button.setText(choices.get(1).toString());
-        choice3Button.setText(choices.get(2).toString());
+        this.choice1Button.setText(choices.get(0).toString());
+        this.choice2Button.setText(choices.get(1).toString());
+        this.choice3Button.setText(choices.get(2).toString());
     }
 }

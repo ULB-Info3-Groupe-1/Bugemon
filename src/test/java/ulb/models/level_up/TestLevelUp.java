@@ -23,9 +23,9 @@ public class TestLevelUp {
 
     @Test
     public void testChoicesTotalTenPoints() {
-        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+        this.bugemon = TestUtilsBugemons.createDefaultBugemon("1");
 
-        LevelUp levelUp = new LevelUp(bugemon);
+        LevelUp levelUp = new LevelUp(this.bugemon);
         List<Upgrade> choices = levelUp.getChoices();
 
         for (Upgrade choice : choices) {
@@ -42,8 +42,7 @@ public class TestLevelUp {
 
             assertEquals(0, choice.hp() % 2);
             assertEquals(0, choice.initiative() % 2);
-            assertTrue(choice.hp() >= 0 && choice.attack() >= 0 && choice.defense() >= 0
-                       && choice.initiative() >= 0);
+            assertTrue(choice.hp() >= 0 && choice.attack() >= 0 && choice.defense() >= 0 && choice.initiative() >= 0);
         }
     }
 }

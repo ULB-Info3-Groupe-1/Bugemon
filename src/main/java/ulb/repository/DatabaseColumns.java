@@ -1,10 +1,9 @@
 package ulb.repository;
 
 /**
- * This class defines constants for database column names used in the application.
- * It provides a centralized location for all column name definitions, ensuring consistency across
- * the codebase. By using constants, we can avoid hardcoding column names in multiple places, making
- * the code easier to maintain and less error-prone.
+ * This class defines constants for database column names used in the application. It provides a centralized location
+ * for all column name definitions, ensuring consistency across the codebase. By using constants, we can avoid
+ * hardcoding column names in multiple places, making the code easier to maintain and less error-prone.
  */
 public class DatabaseColumns {
     private DatabaseColumns() {

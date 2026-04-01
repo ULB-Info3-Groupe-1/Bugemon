@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseConnection {
-    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    private static final Dotenv DOTENV = Dotenv.configure().ignoreIfMissing().load();
 
     private Connection connection;
 
@@ -17,9 +17,9 @@ public class DatabaseConnection {
     }
 
     private void getConnection() {
-        String url = dotenv.get("DB_URL");
-        String user = dotenv.get("DB_USER");
-        String password = dotenv.get("DB_PASSWORD");
+        String url = DOTENV.get("DB_URL");
+        String user = DOTENV.get("DB_USER");
+        String password = DOTENV.get("DB_PASSWORD");
 
         try {
             if (this.connection == null || this.connection.isClosed()) {
@@ -32,9 +32,12 @@ public class DatabaseConnection {
 
     /**
      * Helper method to prepare a SQL statement using the current database connection.
-     * @param sql The SQL query to prepare
+     *
+     * @param sql
+     *            The SQL query to prepare
      * @return A PreparedStatement ready to be executed
-     * @throws SQLException if the preparation fails
+     * @throws SQLException
+     *             if the preparation fails
      */
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         return this.connection.prepareStatement(sql);

@@ -29,21 +29,13 @@ public class TestParser {
         assertNotNull(tempInstance.getAttacks());
 
         // check if the attacks were parsed correctly
-        Attack fouetLiane = tempInstance.getAttacks()
-                                    .values()
-                                    .stream()
-                                    .filter(a -> "fouet_liane".equals(a.id()))
-                                    .findFirst()
-                                    .orElseThrow();
+        Attack fouetLiane = tempInstance.getAttacks().values().stream().filter(a -> "fouet_liane".equals(a.id()))
+                .findFirst().orElseThrow();
         assertEquals("fouet_liane", fouetLiane.id());
 
         // check s
-        Attack racinesVives = tempInstance.getAttacks()
-                                      .values()
-                                      .stream()
-                                      .filter(a -> "racines_vives".equals(a.id()))
-                                      .findFirst()
-                                      .orElseThrow();
+        Attack racinesVives = tempInstance.getAttacks().values().stream().filter(a -> "racines_vives".equals(a.id()))
+                .findFirst().orElseThrow();
         List<Effect> effects = racinesVives.effects();
         assertEquals(effects.get(0).getClass(), EffectStatModifier.class);
     }
@@ -57,29 +49,20 @@ public class TestParser {
         assertNotNull(tempInstance.getBugemons());
 
         // check attributes
-        Bugemon florachu = tempInstance.getBugemons()
-                                   .stream()
-                                   .filter(b -> "Florachu".equals(b.getName()))
-                                   .findFirst()
-                                   .orElseThrow();
+        Bugemon florachu = tempInstance.getBugemons().stream().filter(b -> "Florachu".equals(b.getName())).findFirst()
+                .orElseThrow();
         assertEquals("Florachu", florachu.getName());
 
-        Bugemon moussil = tempInstance.getBugemons()
-                                  .stream()
-                                  .filter(b -> "Moussil".equals(b.getName()))
-                                  .findFirst()
-                                  .orElseThrow();
+        Bugemon moussil = tempInstance.getBugemons().stream().filter(b -> "Moussil".equals(b.getName())).findFirst()
+                .orElseThrow();
         assertEquals(BugemonType.FLORA, moussil.getType());
 
         // check sprite URL begins with "png/"
         assertEquals("png/florachu.png", florachu.getSpriteURL());
 
         // check attacks
-        Bugemon verdurion = tempInstance.getBugemons()
-                                    .stream()
-                                    .filter(b -> "Verdurion".equals(b.getName()))
-                                    .findFirst()
-                                    .orElseThrow();
+        Bugemon verdurion = tempInstance.getBugemons().stream().filter(b -> "Verdurion".equals(b.getName())).findFirst()
+                .orElseThrow();
         List<Attack> verdurionAttackList = verdurion.getAttackList();
 
         for (Attack a : verdurionAttackList) {
@@ -87,11 +70,8 @@ public class TestParser {
         }
 
         // check stats
-        Bugemon loopine = tempInstance.getBugemons()
-                                  .stream()
-                                  .filter(b -> "Loopine".equals(b.getName()))
-                                  .findFirst()
-                                  .orElseThrow();
+        Bugemon loopine = tempInstance.getBugemons().stream().filter(b -> "Loopine".equals(b.getName())).findFirst()
+                .orElseThrow();
 
         assertEquals(50, loopine.getAttack());
         assertEquals(85, loopine.getHp());
@@ -120,16 +100,10 @@ public class TestParser {
 
         // check bugemons
         List<Bugemon> bugemons = parser.getBugemons();
-        Bugemon florachu = bugemons.stream()
-                                   .filter(b -> "Florachu".equals(b.getName()))
-                                   .findFirst()
-                                   .orElseThrow();
+        Bugemon florachu = bugemons.stream().filter(b -> "Florachu".equals(b.getName())).findFirst().orElseThrow();
         assertEquals("Florachu", florachu.getName());
 
-        Bugemon moussil = bugemons.stream()
-                                  .filter(b -> "Moussil".equals(b.getName()))
-                                  .findFirst()
-                                  .orElseThrow();
+        Bugemon moussil = bugemons.stream().filter(b -> "Moussil".equals(b.getName())).findFirst().orElseThrow();
         assertEquals(BugemonType.FLORA, moussil.getType());
     }
 
@@ -148,14 +122,11 @@ public class TestParser {
         assertNotNull(objectsList);
         assertNotNull(inventory);
 
-        Item testObject = objectsList.stream()
-                                  .filter(o -> "baie_revigorante".equals(o.id()))
-                                  .findFirst()
-                                  .orElseThrow();
+        Item testObject = objectsList.stream().filter(o -> "baie_revigorante".equals(o.id())).findFirst().orElseThrow();
 
         Effect effect = new EffectStatModifier(EffectTarget.THROWER, EffectStat.HP, 20, null);
-        Item potion = new Item("baie_revigorante", "Baie Revigorante",
-                               "Restaure 20 PV au Bugémon actif.", Item.ItemType.HEALING, effect);
+        Item potion = new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
+                Item.ItemType.HEALING, effect);
 
         assertEquals(potion.id(), testObject.id());
         assertEquals(potion.name(), testObject.name());
@@ -164,26 +135,15 @@ public class TestParser {
 
         assertEquals(7, inventory.getMap().values().stream().mapToInt(i -> i).sum());
         Map<Item, Integer> objects = inventory.getMap();
-        long revigoranteCount = objects.entrySet()
-                                        .stream()
-                                        .filter(e -> "baie_revigorante".equals(e.getKey().id()))
-                                        .mapToLong(Map.Entry::getValue)
-                                        .sum();
-        long toniqueCount = objects.entrySet()
-                                    .stream()
-                                    .filter(e -> "baie_tonique".equals(e.getKey().id()))
-                                    .mapToLong(Map.Entry::getValue)
-                                    .sum();
-        long gelCount = objects.entrySet()
-                                .stream()
-                                .filter(e -> "gel_defensif".equals(e.getKey().id()))
-                                .mapToLong(Map.Entry::getValue)
-                                .sum();
-        long serumCount = objects.entrySet()
-                                  .stream()
-                                  .filter(e -> "serum_offensif".equals(e.getKey().id()))
-                                  .mapToLong(Map.Entry::getValue)
-                                  .sum();
+        long revigoranteCount = objects.entrySet().stream().filter(e -> "baie_revigorante".equals(e.getKey().id()))
+                .mapToLong(Map.Entry::getValue).sum();
+        long toniqueCount = objects.entrySet().stream().filter(e -> "baie_tonique".equals(e.getKey().id()))
+                .mapToLong(Map.Entry::getValue).sum();
+        long gelCount = objects.entrySet().stream().filter(e -> "gel_defensif".equals(e.getKey().id()))
+                .mapToLong(Map.Entry::getValue).sum();
+
+        long serumCount = objects.entrySet().stream().filter(e -> "serum_offensif".equals(e.getKey().id()))
+                .mapToLong(Map.Entry::getValue).sum();
 
         assertEquals(3, revigoranteCount);
         assertEquals(2, toniqueCount);
