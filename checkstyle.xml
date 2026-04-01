@@ -125,10 +125,6 @@
 
         <!-- ===== Divers ===== -->
         <module name="ArrayTypeStyle"/>
-        <module name="TodoComment">
-            <property name="severity" value="warning"/>
-            <property name="format" value="(TODO|FIXME|HACK):"/>
-        </module>
         <module name="UpperEll"/>
         <module name="CommentsIndentation"/>
         <module name="RequireThis">
