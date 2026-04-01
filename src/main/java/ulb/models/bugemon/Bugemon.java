@@ -30,14 +30,13 @@ import ulb.models.level_up.Upgrade;
 /**
  * This class represents a bugemon, which has an ID, name, type, and stats.
  * <p>
- * A {@code Bugemon} is the central entity of the game. It holds identifying information (ID, name,
- * type, sprite), combat statistics (HP, attack, defense, initiative), a list of available
- * {@link Attack}s, and a flag indicating whether the bugemon is a starter.
+ * A {@code Bugemon} is the central entity of the game. It holds identifying information (ID, name, type, sprite),
+ * combat statistics (HP, attack, defense, initiative), a list of available {@link Attack}s, and a flag indicating
+ * whether the bugemon is a starter.
  * </p>
  * <p>
- * Instances must be created via the {@link BugemonBuilder} class. The class implements
- * {@link Cloneable} to support deep-copying of bugemon instances, and {@link BugemonDTO} to expose
- * a common data-transfer interface.
+ * Instances must be created via the {@link BugemonBuilder} class. The class implements {@link Cloneable} to support
+ * deep-copying of bugemon instances, and {@link BugemonDTO} to expose a common data-transfer interface.
  * </p>
  *
  * @see BugemonBuilder
@@ -99,8 +98,8 @@ public class Bugemon implements BugemonDTO {
         this.defenseComponent = new DefenseComponent(copy.getDefense());
         this.initiativeComponent = new InitiativeComponent(copy.getInitiative());
         this.levelComponent = new LevelComponent(copy.getXp(), copy.getLevel());
-        this.attackList = List.copyOf(copy.getAttackList()); // Safe because Attack is immutable
-                                                             // (record)
+        // Safe because Attack is immutable (record)
+        this.attackList = List.copyOf(copy.getAttackList());
         this.isStarter = copy.isStarter();
     }
 
@@ -128,8 +127,8 @@ public class Bugemon implements BugemonDTO {
      *
      * @param obj
      *            the object to compare with this bugemon.
-     * @return {@code true} if {@code obj} is a {@code Bugemon} with the same ID as this instance;
-     *         {@code false} otherwise.
+     * @return {@code true} if {@code obj} is a {@code Bugemon} with the same ID as this instance; {@code false}
+     *         otherwise.
      */
     @Override
     public boolean equals(Object obj) {
@@ -318,8 +317,7 @@ public class Bugemon implements BugemonDTO {
             case EffectStatModifier e -> {
                 // TODO: I feel like this part should probably be done elsewhere
                 EffectDuration duration = e.duration();
-                Modifier modifier = (duration == EffectDuration.ONE_TURN)
-                        ? new Modifier(e.modifier(), 1)
+                Modifier modifier = (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1)
                         : new Modifier(e.modifier());
 
                 switch (e.stat()) {
@@ -327,6 +325,7 @@ public class Bugemon implements BugemonDTO {
                     case ATTACK -> this.attackComponent.addModifier(modifier);
                     case DEFENSE -> this.defenseComponent.addModifier(modifier);
                     case INITIATIVE -> this.initiativeComponent.addModifier(modifier);
+                    default -> throw new IllegalArgumentException("unknown stat: " + e.stat());
                 }
             }
 

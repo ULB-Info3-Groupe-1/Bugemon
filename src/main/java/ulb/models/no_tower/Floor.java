@@ -55,8 +55,8 @@ public class Floor {
     }
 
     private CombatRoom initCombatRoom() {
-        Trainer opponentTrainer = new AutoTrainer(CombatService.createRandomTeam(
-                this.playerService.getAllDefaultBugemons(), this.playerTrainer.getTeamSize()));
+        Trainer opponentTrainer = new AutoTrainer(CombatService
+                .createRandomTeam(this.playerService.getAllDefaultBugemons(), this.playerTrainer.getTeamSize()));
         Combat combat = new Combat(this.playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);

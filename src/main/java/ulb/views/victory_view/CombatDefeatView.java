@@ -10,8 +10,8 @@ import ulb.views.View;
  * View for the combat defeat screen.
  *
  * <p>
- * Dispatches user interactions through the callbacks registered via {@link #setOnRetry(Runnable)}
- * and {@link #setOnBackToMainMenu(Runnable)}. Holds no reference to any concrete controller class.
+ * Dispatches user interactions through the callbacks registered via {@link #setOnRetry(Runnable)} and
+ * {@link #setOnBackToMainMenu(Runnable)}. Holds no reference to any concrete controller class.
  * </p>
  */
 public class CombatDefeatView extends View {

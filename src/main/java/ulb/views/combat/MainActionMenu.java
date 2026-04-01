@@ -4,9 +4,9 @@ package ulb.views.combat;
  * The main action menu displayed at the start of each manual combat turn.
  *
  * <p>
- * Presents four choices: Attack, Switch, Item, Surrender. Each button dispatches its action through
- * a callback registered from the outside. The Switch button is disabled whenever a voluntary switch
- * is not available, as signalled by {@link #refresh(boolean)}.
+ * Presents four choices: Attack, Switch, Item, Surrender. Each button dispatches its action through a callback
+ * registered from the outside. The Switch button is disabled whenever a voluntary switch is not available, as signalled
+ * by {@link #refresh(boolean)}.
  * </p>
  *
  * <p>

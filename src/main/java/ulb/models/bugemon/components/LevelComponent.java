@@ -31,10 +31,10 @@ public class LevelComponent {
      *            the amount of experience points to add
      * @return the number of levels that have just been crossed
      */
-    public int addXp(int xp) {
+    public int addXp(int xpToAdd) {
         int numLevelUps = 0;
 
-        this.xp += xp;
+        this.xp += xpToAdd;
 
         while (this.xp >= this.getXpRequiredForNextLevel(this.level)) {
             this.xp -= this.getXpRequiredForNextLevel(this.level);
@@ -52,7 +52,7 @@ public class LevelComponent {
      *            current level
      * @return required XP to level up
      */
-    private int getXpRequiredForNextLevel(int level) {
-        return 50 + 100 * (level - 1);
+    private int getXpRequiredForNextLevel(int targetLevel) {
+        return 50 + 100 * (targetLevel - 1);
     }
 }

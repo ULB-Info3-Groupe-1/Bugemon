@@ -11,8 +11,8 @@ public class DatabaseHelper {
         // Private constructor to prevent instantiation
     }
 
-    public static <E extends Enum<E>> E getEnumOrNull(ResultSet rs, String columnName,
-            Class<E> enumClass) throws SQLException {
+    public static <E extends Enum<E>> E getEnumOrNull(ResultSet rs, String columnName, Class<E> enumClass)
+            throws SQLException {
         String value = rs.getString(columnName);
         if (value == null || value.trim().isEmpty()) {
             return null;

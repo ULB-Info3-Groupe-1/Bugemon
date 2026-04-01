@@ -12,10 +12,9 @@ import ulb.services.CombatService;
  * Action menu displaying the three attacks available to the player's active Bugemon.
  *
  * <p>
- * Reads type-matchup efficiency directly from {@link CombatService} using the opponent
- * {@link Trainer} reference set via {@link #setOpponent(Trainer)}. Dispatches attack selections
- * through the callback registered via {@link #setOnAttack(Consumer)}. Holds no reference to any
- * controller class.
+ * Reads type-matchup efficiency directly from {@link CombatService} using the opponent {@link Trainer} reference set
+ * via {@link #setOpponent(Trainer)}. Dispatches attack selections through the callback registered via
+ * {@link #setOnAttack(Consumer)}. Holds no reference to any controller class.
  * </p>
  */
 public class AttackActionMenu extends ActionMenuView {
@@ -60,8 +59,7 @@ public class AttackActionMenu extends ActionMenuView {
         button.getStyleClass().clear();
         button.getStyleClass().addAll("btn", "btn-secondary");
 
-        Efficiency efficiency = CombatService.compareBugemonType(attack.type(),
-                this.opponent.getCurrentBugemonType());
+        Efficiency efficiency = CombatService.compareBugemonType(attack.type(), this.opponent.getCurrentBugemonType());
 
         button.setText(attack.name() + "\n" + efficiency.toString());
         button.getStyleClass().add("attack-" + attack.type().toString());

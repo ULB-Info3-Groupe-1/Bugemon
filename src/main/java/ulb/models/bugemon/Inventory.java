@@ -32,8 +32,7 @@ public class Inventory {
 
     public Item getItem(String id) {
         return this.items.keySet().stream().filter(item -> item.id().equals(id)).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "No objects has been found with this id : " + id));
+                .orElseThrow(() -> new IllegalArgumentException("No objects has been found with this id : " + id));
     }
 
     public Map<Item, Integer> getMap() {

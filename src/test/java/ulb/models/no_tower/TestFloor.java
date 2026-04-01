@@ -13,16 +13,18 @@ import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.no_tower.room.*;
-import ulb.models.trainer.*;
+import ulb.models.no_tower.room.CombatRoom;
+import ulb.models.no_tower.room.RewardRoom;
+import ulb.models.no_tower.room.Room;
+import ulb.models.trainer.ManualTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.services.PlayerService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestFloor {
     private PlayerService getPlayerServiceMock() {
         PlayerService playerServiceMock = mock(PlayerService.class);
-        List<Bugemon> testBugemons = new ArrayList<Bugemon>(
-                TestUtilsBugemons.createDefaultTeam(6).stream().toList());
+        List<Bugemon> testBugemons = new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("finalboss"));
         when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
@@ -33,10 +35,9 @@ public class TestFloor {
     @Test
     public void testFloorInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam,
-                getPlayerServiceMock().getInventory());
+        Trainer playerTrainer = new ManualTrainer(playerTeam, this.getPlayerServiceMock().getInventory());
 
-        Floor floor = new Floor(playerTrainer, getPlayerServiceMock());
+        Floor floor = new Floor(playerTrainer, this.getPlayerServiceMock());
 
         assertFalse(floor.isComplete());
     }
@@ -44,10 +45,9 @@ public class TestFloor {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam,
-                getPlayerServiceMock().getInventory());
+        Trainer playerTrainer = new ManualTrainer(playerTeam, this.getPlayerServiceMock().getInventory());
 
-        Floor floor = new Floor(playerTrainer, getPlayerServiceMock());
+        Floor floor = new Floor(playerTrainer, this.getPlayerServiceMock());
 
         Room firstRoom = floor.getNextRoom();
         assertTrue(firstRoom instanceof CombatRoom);

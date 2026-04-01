@@ -13,9 +13,9 @@ import ulb.models.bugemon.components.LevelComponent;
 /**
  * Fluent Bugemonbuilder for constructing {@link Bugemon} instances.
  * <p>
- * Every property except {@code id} has a sensible default value so that callers only need to supply
- * the fields that differ from the defaults. Calling {@link #build()} without setting an {@code id}
- * will throw an {@link IllegalStateException}.
+ * Every property except {@code id} has a sensible default value so that callers only need to supply the fields that
+ * differ from the defaults. Calling {@link #build()} without setting an {@code id} will throw an
+ * {@link IllegalStateException}.
  * </p>
  *
  * <p>
@@ -39,10 +39,10 @@ import ulb.models.bugemon.components.LevelComponent;
  * </p>
  *
  * <pre>{@code
- * Bugemon b = new Bugemon.BugemonBuilder().id("001").name("Florasect").type(BType.FLORA).hp(120)
- *         .build();
+ * Bugemon b = new Bugemon.BugemonBuilder().id("001").name("Florasect").type(BType.FLORA).hp(120).build();
  * }</pre>
  */
+@SuppressWarnings("checkstyle:HiddenField")
 public final class BugemonBuilder {
     /** Default display name applied when none is provided. */
     private static final String DEFAULT_NAME = "default name";
@@ -111,8 +111,8 @@ public final class BugemonBuilder {
     /**
      * Sets the unique identifier for the bugemon under construction.
      * <p>
-     * This field is <b>mandatory</b>; {@link #build()} will throw an {@link IllegalStateException}
-     * if it is not supplied.
+     * This field is <b>mandatory</b>; {@link #build()} will throw an {@link IllegalStateException} if it is not
+     * supplied.
      * </p>
      *
      * @param id
@@ -235,8 +235,8 @@ public final class BugemonBuilder {
     /**
      * Appends an {@link Attack} to the bugemon's attack list.
      * <p>
-     * May be called multiple times to add several attacks. If no attack list has been initialised
-     * yet, a new {@link ArrayList} is created automatically.
+     * May be called multiple times to add several attacks. If no attack list has been initialised yet, a new
+     * {@link ArrayList} is created automatically.
      * </p>
      *
      * @param attack
@@ -251,8 +251,8 @@ public final class BugemonBuilder {
     /**
      * Sets the complete list of attacks for the bugemon under construction.
      * <p>
-     * Replaces any attacks previously added via {@link #addAttack(Attack)}. If individual attacks
-     * need to be appended incrementally, use {@link #addAttack(Attack)} instead.
+     * Replaces any attacks previously added via {@link #addAttack(Attack)}. If individual attacks need to be appended
+     * incrementally, use {@link #addAttack(Attack)} instead.
      * </p>
      *
      * @param attackList
@@ -279,10 +279,9 @@ public final class BugemonBuilder {
     /**
      * Constructs and returns the configured {@link Bugemon} instance.
      * <p>
-     * All fields that were not explicitly set will receive their default values (see
-     * {@link BugemonBuilder} class-level documentation). The bugemon's {@code state} is initialised
-     * as an independent copy of {@code initialState}, so that the initial stats can always be
-     * recovered.
+     * All fields that were not explicitly set will receive their default values (see {@link BugemonBuilder} class-level
+     * documentation). The bugemon's {@code state} is initialised as an independent copy of {@code initialState}, so
+     * that the initial stats can always be recovered.
      * </p>
      *
      * @return a fully initialised {@link Bugemon}.
@@ -293,8 +292,7 @@ public final class BugemonBuilder {
         Bugemon bugemon = new Bugemon();
 
         // NOTE: ID has no default value
-        bugemon.id = this.id
-                .orElseThrow(() -> new IllegalStateException("Bugemon id must be provided"));
+        bugemon.id = this.id.orElseThrow(() -> new IllegalStateException("Bugemon id must be provided"));
 
         bugemon.name = this.name;
         bugemon.type = this.type;

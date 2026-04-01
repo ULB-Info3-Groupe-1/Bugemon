@@ -10,7 +10,9 @@
 
 package ulb.models.bugemon_team;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -46,11 +48,12 @@ public class TestBugemonTeam {
     @Test
     public void testRemoveBugemon() {
         Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
 
         BugemonTeam team = new BugemonTeam();
         team.add(expectedBugemon1);
         team.remove(expectedBugemon1);
+
+        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
 
         assertEquals(0, team.size());
 

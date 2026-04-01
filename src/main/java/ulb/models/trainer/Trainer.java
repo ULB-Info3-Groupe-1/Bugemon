@@ -22,16 +22,15 @@ import ulb.models.bugemon_team.BugemonTeam;
  * Abstract base for any participant in a combat session.
  *
  * <p>
- * A {@code Trainer} holds a reference to its {@link BugemonTeam} and tracks the
- * {@code currentBugemon} — the member currently on the field. It exposes methods to query combat
- * state (HP, initiative, alive/defeated) and to delegate damage to the active Bugemon.
+ * A {@code Trainer} holds a reference to its {@link BugemonTeam} and tracks the {@code currentBugemon} — the member
+ * currently on the field. It exposes methods to query combat state (HP, initiative, alive/defeated) and to delegate
+ * damage to the active Bugemon.
  * </p>
  *
  * <p>
- * Subclasses must implement {@link #getAction()} to supply the {@link TurnAction} this trainer
- * wants to take on the current turn, and {@link #reactToKo()} to define how the trainer responds
- * when its active Bugemon faints mid-turn. All resolution logic lives in
- * {@link ulb.models.combat.Combat}; the trainer only <em>decides</em>.
+ * Subclasses must implement {@link #getAction()} to supply the {@link TurnAction} this trainer wants to take on the
+ * current turn, and {@link #reactToKo()} to define how the trainer responds when its active Bugemon faints mid-turn.
+ * All resolution logic lives in {@link ulb.models.combat.Combat}; the trainer only <em>decides</em>.
  * </p>
  *
  * @see AutoTrainer
@@ -45,12 +44,11 @@ public abstract class Trainer {
     Set<Bugemon> participatedBugemons = new HashSet<>();
 
     /**
-     * Constructs a {@code Trainer} with the given team, setting the first member as the initial
-     * active Bugemon.
+     * Constructs a {@code Trainer} with the given team, setting the first member as the initial active Bugemon.
      *
      * @param team
-     *            the {@link BugemonTeam} owned by this trainer; must not be {@code null} and must
-     *            contain at least one Bugemon.
+     *            the {@link BugemonTeam} owned by this trainer; must not be {@code null} and must contain at least one
+     *            Bugemon.
      */
     protected Trainer(BugemonTeam team) {
         this.team = team;
@@ -63,9 +61,9 @@ public abstract class Trainer {
      * Returns the {@link TurnAction} this trainer has decided to take for the current turn.
      *
      * <p>
-     * Called exactly once per turn by {@link ulb.models.combat.Combat#turn()}. {@link AutoTrainer}
-     * implements this by picking a random attack; {@link ManualTrainer} returns the action
-     * previously queued by the controller via one of the {@code queue*()} methods.
+     * Called exactly once per turn by {@link ulb.models.combat.Combat#turn()}. {@link AutoTrainer} implements this by
+     * picking a random attack; {@link ManualTrainer} returns the action previously queued by the controller via one of
+     * the {@code queue*()} methods.
      * </p>
      *
      * @return the chosen {@link TurnAction}; never {@code null}.
@@ -75,15 +73,13 @@ public abstract class Trainer {
     public abstract TurnAction getAction();
 
     /**
-     * Called by {@link ulb.models.combat.Combat} immediately after the active Bugemon faints and
-     * the trainer is not yet fully defeated, so that the trainer can bring in a replacement.
+     * Called by {@link ulb.models.combat.Combat} immediately after the active Bugemon faints and the trainer is not yet
+     * fully defeated, so that the trainer can bring in a replacement.
      *
      * <p>
-     * {@link AutoTrainer} switches to a randomly chosen alive Bugemon. {@link ManualTrainer}
-     * switches to the Bugemon previously set via
-     * {@link ManualTrainer#registerSwitchAfterKO(Bugemon)}, or does nothing if none has been set
-     * yet (the controller is then responsible for calling
-     * {@link ManualTrainer#switchAfterKO(Bugemon)} directly).
+     * {@link AutoTrainer} switches to a randomly chosen alive Bugemon. {@link ManualTrainer} switches to the Bugemon
+     * previously set via {@link ManualTrainer#registerSwitchAfterKO(Bugemon)}, or does nothing if none has been set yet
+     * (the controller is then responsible for calling {@link ManualTrainer#switchAfterKO(Bugemon)} directly).
      * </p>
      */
     public abstract void reactToKo();
@@ -92,8 +88,8 @@ public abstract class Trainer {
      * Instantly defeats the entire team.
      *
      * <p>
-     * Used by {@link ulb.models.combat.Combat} to resolve a {@link TurnAction.ForfeitAction}: the
-     * forfeiting trainer's team is killed so that {@link #isDefeated()} returns {@code true} and
+     * Used by {@link ulb.models.combat.Combat} to resolve a {@link TurnAction.ForfeitAction}: the forfeiting trainer's
+     * team is killed so that {@link #isDefeated()} returns {@code true} and
      * {@link ulb.models.combat.Combat#getWinner()} can identify the winner.
      * </p>
      */
@@ -110,8 +106,7 @@ public abstract class Trainer {
     // ── shared state queries ─────────────────────────────────────────────────
 
     /**
-     * Returns {@code true} if the trainer is defeated, i.e. every Bugemon in the team has fainted
-     * (HP &le; 0).
+     * Returns {@code true} if the trainer is defeated, i.e. every Bugemon in the team has fainted (HP &le; 0).
      *
      * @return {@code true} if all Bugemons are dead, {@code false} otherwise.
      */
@@ -129,8 +124,7 @@ public abstract class Trainer {
     }
 
     /**
-     * Returns {@code true} if the current {@link Bugemon}'s attack list contains the specified
-     * {@link Attack}.
+     * Returns {@code true} if the current {@link Bugemon}'s attack list contains the specified {@link Attack}.
      *
      * @param attack
      *            the {@link Attack} to look for; must not be {@code null}.
@@ -143,8 +137,8 @@ public abstract class Trainer {
 
     /**
      * Returns the initiative stat of the currently active Bugemon, used by
-     * {@link ulb.services.CombatService#attackPriority(ulb.models.trainer.Trainer, ulb.models.trainer.Trainer)}
-     * to determine which side strikes first.
+     * {@link ulb.services.CombatService#attackPriority(ulb.models.trainer.Trainer, ulb.models.trainer.Trainer)} to
+     * determine which side strikes first.
      *
      * @return the initiative value of the active Bugemon.
      */
@@ -229,8 +223,8 @@ public abstract class Trainer {
      * Replaces the currently active Bugemon with the specified one.
      *
      * <p>
-     * No validation is performed here; callers are responsible for ensuring the target Bugemon
-     * belongs to this trainer's team and is alive when required.
+     * No validation is performed here; callers are responsible for ensuring the target Bugemon belongs to this
+     * trainer's team and is alive when required.
      * </p>
      *
      * @param bugemon
@@ -241,8 +235,7 @@ public abstract class Trainer {
     }
 
     /**
-     * Marks the currently active Bugemon as having participated in the current combat, which is
-     * used later by
+     * Marks the currently active Bugemon as having participated in the current combat, which is used later by
      * {@link ulb.services.LevelUpService#distributeXpAndGetLevelUps(ulb.models.trainer.Trainer, ulb.models.trainer.Trainer)}
      * to distribute experience points only to Bugemons that actually fought.
      */

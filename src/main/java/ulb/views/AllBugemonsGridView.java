@@ -33,8 +33,7 @@ public class AllBugemonsGridView extends VBox {
     private List<Bugemon> displayedBugemons = List.of();
 
     /**
-     * Constructor of the AllBugemonsGridView class. It loads the FXML layout and initializes the
-     * view.
+     * Constructor of the AllBugemonsGridView class. It loads the FXML layout and initializes the view.
      */
     public AllBugemonsGridView() {
         URL url = getClass().getResource("/fxml/AllBugemonsGrid.fxml");
@@ -59,8 +58,7 @@ public class AllBugemonsGridView extends VBox {
     }
 
     /**
-     * Sets the callback used to check if the bugemon given to the callback should be marked as
-     * selected.
+     * Sets the callback used to check if the bugemon given to the callback should be marked as selected.
      */
     public void setSelectionChecker(Function<Bugemon, Boolean> checker) {
         this.selectionChecker = checker;
@@ -71,9 +69,8 @@ public class AllBugemonsGridView extends VBox {
      * {@link ulb.common.dto.BugemonDTO} of the clicked cell.
      *
      * @param callback
-     *            a {@code Consumer<BugemonDTO>} callback to be called when a bugemon cell is
-     *            clicked, receiving the {@link ulb.common.dto.BugemonDTO} of the clicked cell; must
-     *            not be {@code null}.
+     *            a {@code Consumer<BugemonDTO>} callback to be called when a bugemon cell is clicked, receiving the
+     *            {@link ulb.common.dto.BugemonDTO} of the clicked cell; must not be {@code null}.
      */
     public void setOnClickCallback(Consumer<Bugemon> callback) {
         this.onBugemonClicked = callback;
@@ -124,8 +121,8 @@ public class AllBugemonsGridView extends VBox {
     }
 
     /**
-     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon.
-     * If the Bugemon is null, it displays an unknown image and an empty name.
+     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon. If the Bugemon is
+     * null, it displays an unknown image and an empty name.
      *
      * @param bugemon
      *            the BugemonDTO representing the Bugemon to be displayed in the cell
@@ -172,13 +169,12 @@ public class AllBugemonsGridView extends VBox {
      * Marks the given cell as selected by changing its style to indicate selection.
      *
      * @param cell
-     *            the VBox cell to be marked as selected, containing the image and name of the
-     *            Bugemon to be styled as selected
+     *            the VBox cell to be marked as selected, containing the image and name of the Bugemon to be styled as
+     *            selected
      */
     private void select(VBox cell) {
-        StackPane imagePane = (StackPane) cell.getChildren().get(0); // TODO: Could break code with
-                                                                     // an exeption
-                                                                     // "IndexOutOfBoundsException"
+        // TODO: Could break code with an exception "IndexOutOfBoundsException"
+        StackPane imagePane = (StackPane) cell.getChildren().get(0);
         ImageView iv = (ImageView) imagePane.getChildren().get(0);
         iv.getStyleClass().add("bugemon-image-selected");
         cell.getStyleClass().remove("bugemon-cell");
@@ -189,8 +185,8 @@ public class AllBugemonsGridView extends VBox {
      * Marks the given cell as unselected by changing its style to indicate it is not selected.
      *
      * @param cell
-     *            the VBox cell to be marked as unselected, containing the image and name of the
-     *            Bugemon to be styled as unselected
+     *            the VBox cell to be marked as unselected, containing the image and name of the Bugemon to be styled as
+     *            unselected
      */
     private void unselect(VBox cell) {
         StackPane imagePane = (StackPane) cell.getChildren().get(0);

@@ -20,10 +20,9 @@ import ulb.views.combat.ManualCombatView;
  * Controller for the manual combat screen.
  *
  * <p>
- * Registers action callbacks on the {@link ManualCombatView} at construction time. Each callback
- * mutates the model, then calls {@code view.refresh()} so the view pulls the updated state itself.
- * The controller never calls any show/hide method on the view, and holds no knowledge of view
- * layout.
+ * Registers action callbacks on the {@link ManualCombatView} at construction time. Each callback mutates the model,
+ * then calls {@code view.refresh()} so the view pulls the updated state itself. The controller never calls any
+ * show/hide method on the view, and holds no knowledge of view layout.
  * </p>
  */
 public class ManualCombatController extends CombatController<ManualCombatView> {
@@ -32,16 +31,15 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     private Consumer<Boolean> onCombatFinished;
 
     /**
-     * Constructs a {@code ManualCombatController}, initialises its {@link ManualCombatView}, and
-     * registers the attack, switch, and surrender callbacks.
+     * Constructs a {@code ManualCombatController}, initialises its {@link ManualCombatView}, and registers the attack,
+     * switch, and surrender callbacks.
      *
      * @param metaController
      *            the application-level controller used for navigation.
      * @throws IOException
      *             if the view fails to load its FXML resource.
      */
-    public ManualCombatController(MetaController metaController, PlayerService playerService)
-            throws IOException {
+    public ManualCombatController(MetaController metaController, PlayerService playerService) throws IOException {
         super(metaController, playerService, new ManualCombatView());
 
         this.view.setOnAttack(this::onAttack);
@@ -52,11 +50,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
 
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
-    public void startCombat(boolean restoreHpAfterCombat) {
-        this.restoreHpAfterCombat = restoreHpAfterCombat;
+    public void startCombat(boolean shouldRestoreHp) {
+        this.restoreHpAfterCombat = shouldRestoreHp;
 
-        this.playerTrainer = new ManualTrainer(this.playerService.getActiveTeam(),
-                this.playerService.getInventory());
+        this.playerTrainer = new ManualTrainer(this.playerService.getActiveTeam(), this.playerService.getInventory());
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
         this.combat = new Combat(this.playerTrainer, opponentTrainer);
@@ -73,14 +70,14 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * @throws IllegalArgumentException
      *             if the ally trainer is not a ManualTrainer.
      */
-    public void startCombat(Combat combat) {
-        if (!(combat.getAllyTrainer() instanceof ManualTrainer manualAlly)) {
+    public void startCombat(Combat newCombat) {
+        if (!(newCombat.getAllyTrainer() instanceof ManualTrainer manualAlly)) {
             throw new IllegalArgumentException("Manual combat requires a ManualTrainer as ally");
         }
 
         this.playerTrainer = manualAlly;
-        Trainer opponentTrainer = combat.getAdversaryTrainer();
-        this.combat = combat;
+        this.combat = newCombat;
+        Trainer opponentTrainer = this.combat.getAdversaryTrainer();
 
         this.view.setModel(this.playerTrainer, opponentTrainer, this.combat);
         this.view.refresh();
@@ -109,8 +106,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      * Registers the chosen attack, advances the turn, then handles the result.
      *
      * @param attack
-     *            the attack chosen by the user, registered on the player trainer to be executed in
-     *            the next turn.
+     *            the attack chosen by the user, registered on the player trainer to be executed in the next turn.
      */
     private void onAttack(Attack attack) {
         this.playerTrainer.registerAttack(attack);
@@ -118,9 +114,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     }
 
     /**
-     * Handles a switch request. If a forced post-KO switch is pending the switch is applied
-     * immediately without consuming a turn; otherwise a normal switch action is registered and the
-     * turn is advanced.
+     * Handles a switch request. If a forced post-KO switch is pending the switch is applied immediately without
+     * consuming a turn; otherwise a normal switch action is registered and the turn is advanced.
      */
     private void onSwitch(Bugemon target) {
         if (this.playerTrainer.isForcedToSwitch()) {

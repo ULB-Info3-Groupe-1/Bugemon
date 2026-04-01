@@ -68,16 +68,15 @@ public class BugemonTeamView extends VBox {
     }
 
     /**
-     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon.
-     * If the Bugemon is null, it displays an unknown image and an empty name.
+     * Creates a cell for a Bugemon in the grid view, containing the image and name of the Bugemon. If the Bugemon is
+     * null, it displays an unknown image and an empty name.
      *
      * @param bugemon
      *            the BugemonDTO representing the Bugemon to be displayed in the cell
      * @return a VBox containing the image and name of the Bugemon to be displayed in the grid view
      */
     private VBox createBugemonCell(BugemonDTO bugemon) {
-        Image image = (bugemon != null)
-                ? new Image(bugemon.getSpriteURL(), IMAGE_SIZE, IMAGE_SIZE, true, false)
+        Image image = (bugemon != null) ? new Image(bugemon.getSpriteURL(), IMAGE_SIZE, IMAGE_SIZE, true, false)
                 : UNKNOWN_IMAGE;
 
         ImageView imageView = new ImageView(image);
@@ -117,9 +116,8 @@ public class BugemonTeamView extends VBox {
      * {@link ulb.common.dto.BugemonDTO} of the clicked cell.
      *
      * @param callback
-     *            a {@code Consumer<BugemonDTO>} callback to be called when a bugemon cell is
-     *            clicked, receiving the {@link ulb.common.dto.BugemonDTO} of the clicked cell; must
-     *            not be {@code null}.
+     *            a {@code Consumer<BugemonDTO>} callback to be called when a bugemon cell is clicked, receiving the
+     *            {@link ulb.common.dto.BugemonDTO} of the clicked cell; must not be {@code null}.
      */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
         this.onBugemonClicked = callback;

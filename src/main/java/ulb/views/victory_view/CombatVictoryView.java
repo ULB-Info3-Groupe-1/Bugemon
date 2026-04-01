@@ -10,8 +10,8 @@ import ulb.views.View;
  * View for the combat victory screen.
  *
  * <p>
- * Dispatches user interactions through the callback registered via
- * {@link #setOnContinue(Runnable)}. Holds no reference to any concrete controller class.
+ * Dispatches user interactions through the callback registered via {@link #setOnContinue(Runnable)}. Holds no reference
+ * to any concrete controller class.
  * </p>
  */
 public class CombatVictoryView extends View {

@@ -36,8 +36,8 @@ public class MusicLoader {
         URI uri = this.getResourceURI(resourceDir);
         Path dir = this.resolveDirectory(uri, resourceDir);
 
-        return this.listFiles(dir).stream().map(path -> this.loadMusic(path, ambiance))
-                .flatMap(Optional::stream).toList();
+        return this.listFiles(dir).stream().map(path -> this.loadMusic(path, ambiance)).flatMap(Optional::stream)
+                .toList();
     }
 
     /**
@@ -78,7 +78,7 @@ public class MusicLoader {
             try {
                 return FileSystems.getFileSystem(uri).getPath(resourceDir);
             } catch (java.nio.file.FileSystemNotFoundException e) {
-                try(FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of())) {
+                try (FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of())) {
                     return fs.getPath(resourceDir);
                 }
             }
@@ -97,7 +97,7 @@ public class MusicLoader {
      *             if listing fails
      */
     private List<Path> listFiles(Path dir) throws IOException {
-        try(Stream<Path> stream = Files.list(dir)) {
+        try (Stream<Path> stream = Files.list(dir)) {
             return stream.filter(Files::isRegularFile).toList();
         }
     }
@@ -111,15 +111,11 @@ public class MusicLoader {
      *             if any resource directory cannot be accessed
      */
     public void loadAllResources(MusicPlayer musicPlayer) throws IOException {
-        this.loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT)
-                .forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT).forEach(musicPlayer::addMusic);
         this.loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
-                .forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
-                .forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT)
-                .forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT).forEach(musicPlayer::addMusic);
     }
 
     /**

@@ -89,8 +89,8 @@ public class CombatAnimationView {
     }
 
     /**
-     * Plays the death animation for the trainer's active Bugemon if {@code forTrainer} is
-     * {@code true}, or for the opponent's active Bugemon if {@code forTrainer} is {@code false}.
+     * Plays the death animation for the trainer's active Bugemon if {@code forTrainer} is {@code true}, or for the
+     * opponent's active Bugemon if {@code forTrainer} is {@code false}.
      *
      * @param onFinished
      *            callback executed once the animation completes.
@@ -110,8 +110,8 @@ public class CombatAnimationView {
     }
 
     /**
-     * Plays the death animation for the trainer's active Bugemon if {@code forTrainer} is
-     * {@code true}, or for the opponent's active Bugemon if {@code forTrainer} is {@code false}.
+     * Plays the death animation for the trainer's active Bugemon if {@code forTrainer} is {@code true}, or for the
+     * opponent's active Bugemon if {@code forTrainer} is {@code false}.
      *
      * @param sprite
      *            the sprite to animate.
@@ -132,8 +132,6 @@ public class CombatAnimationView {
         flash.setAutoReverse(true);
         flash.setCycleCount(HIT_EFFECT_CYCLE_COUNT);
 
-        ParallelTransition hitEffect = new ParallelTransition(shake, flash);
-
         ScaleTransition shrink = new ScaleTransition(DEATH_BUGEMON_DURATION, sprite);
         shrink.setToX(DEATH_SCALE_FACTOR);
         shrink.setToY(DEATH_SCALE_FACTOR);
@@ -145,6 +143,7 @@ public class CombatAnimationView {
         floatUp.setByY(FLOAT_UP_DISTANCE_Y);
 
         ParallelTransition death = new ParallelTransition(shrink, fade, floatUp);
+        ParallelTransition hitEffect = new ParallelTransition(shake, flash);
 
         SequentialTransition sequence = new SequentialTransition(hitEffect, death);
         sequence.setOnFinished(e -> onFinished.run());
@@ -152,8 +151,8 @@ public class CombatAnimationView {
     }
 
     /**
-     * Makes the trainer's active Bugemon reappear if {@code forTrainer} is {@code true}, or the
-     * opponent's active Bugemon reappear if {@code forTrainer} is {@code false}.
+     * Makes the trainer's active Bugemon reappear if {@code forTrainer} is {@code true}, or the opponent's active
+     * Bugemon reappear if {@code forTrainer} is {@code false}.
      *
      * @param sprite
      *            the sprite to reset.

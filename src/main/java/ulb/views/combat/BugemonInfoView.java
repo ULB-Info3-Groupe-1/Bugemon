@@ -12,8 +12,7 @@ import javafx.scene.layout.VBox;
 import ulb.common.dto.BugemonDTO;
 
 /**
- * Reusable custom JavaFX component that displays the key information of a single {@link BugemonDTO}
- * in the combat HUD.
+ * Reusable custom JavaFX component that displays the key information of a single {@link BugemonDTO} in the combat HUD.
  *
  * <p>
  * Shows the Bugemon's name (coloured by type), type label, HP bar, and numeric HP counter.

@@ -18,9 +18,8 @@ import ulb.models.bugemon_team.BugemonTeam;
  * View for the team creation screen.
  *
  * <p>
- * Holds a reference to the {@link BugemonTeam} model and reads from it directly in
- * {@link #refresh()}. Dispatches user interactions through callbacks; holds no reference to any
- * concrete controller class.
+ * Holds a reference to the {@link BugemonTeam} model and reads from it directly in {@link #refresh()}. Dispatches user
+ * interactions through callbacks; holds no reference to any concrete controller class.
  * </p>
  */
 public class CreateTeamView extends View {
@@ -85,8 +84,7 @@ public class CreateTeamView extends View {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
         });
 
-        this.renameTeamBtn.setOnAction(
-                e -> this.rename.accept(this.getTeamNameToLoad(), this.getTeamNameToSave()));
+        this.renameTeamBtn.setOnAction(e -> this.rename.accept(this.getTeamNameToLoad(), this.getTeamNameToSave()));
         this.teamListView.setOnMouseClicked(e -> {
             String selected = this.teamListView.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -99,15 +97,15 @@ public class CreateTeamView extends View {
     }
 
     /** Gives the view a reference to the team model it should read from. */
-    public void setModel(BugemonTeam bugemonTeam) {
-        this.bugemonTeam = bugemonTeam;
-        this.allBugemonsGridView.setSelectionChecker(
-                b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
+    public void setModel(BugemonTeam newBugemonTeam) {
+        this.bugemonTeam = newBugemonTeam;
+        this.allBugemonsGridView
+                .setSelectionChecker(b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
     }
 
     /**
-     * Gives the view a reference to the list of all available Bugemons, so it can display them in
-     * the selection grid and mark the ones already in the team as selected.
+     * Gives the view a reference to the list of all available Bugemons, so it can display them in the selection grid
+     * and mark the ones already in the team as selected.
      *
      * @param allBugemons
      */
@@ -132,8 +130,8 @@ public class CreateTeamView extends View {
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
-    public void setValidate(Runnable returnToMainMenu) {
-        this.returnToMainMenu = returnToMainMenu;
+    public void setValidate(Runnable newReturnToMainMenu) {
+        this.returnToMainMenu = newReturnToMainMenu;
     }
 
     public void setLoad(Runnable load) {
