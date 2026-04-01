@@ -17,23 +17,22 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * Represents an AI-controlled trainer that selects actions automatically
- * during combat by choosing at random from available options.
+ * Represents an AI-controlled trainer that selects actions automatically during combat by choosing
+ * at random from available options.
  *
  * <p>
- * {@code AutoTrainer} extends {@link Trainer} by implementing the two abstract
- * strategy methods of the trainer contract:
+ * {@code AutoTrainer} extends {@link Trainer} by implementing the two abstract strategy methods of
+ * the trainer contract:
  * <ul>
- *   <li>{@link #getAction()} — always returns an {@link TurnAction.AttackAction}
- *       wrapping a randomly chosen {@link Attack} from the active
- *       {@link Bugemon}'s move-set.</li>
- *   <li>{@link #reactToKo()} — switches the active {@link Bugemon} to a
- *       randomly chosen alive member of the team when the current one faints.</li>
+ * <li>{@link #getAction()} — always returns an {@link TurnAction.AttackAction} wrapping a randomly
+ * chosen {@link Attack} from the active {@link Bugemon}'s move-set.</li>
+ * <li>{@link #reactToKo()} — switches the active {@link Bugemon} to a randomly chosen alive member
+ * of the team when the current one faints.</li>
  * </ul>
  *
  * <p>
- * This class is used both as the opponent side in a player-vs-AI combat and
- * as both participants in a fully automated combat session.
+ * This class is used both as the opponent side in a player-vs-AI combat and as both participants in
+ * a fully automated combat session.
  * </p>
  *
  * @see Trainer
@@ -46,9 +45,9 @@ public class AutoTrainer extends Trainer {
     /**
      * Constructs an {@code AutoTrainer} with the given team.
      *
-     * @param team the {@link BugemonTeam} assigned to this trainer;
-     *             must not be {@code null} and must contain at least one
-     *             {@link Bugemon}.
+     * @param team
+     *            the {@link BugemonTeam} assigned to this trainer; must not be {@code null} and
+     *            must contain at least one {@link Bugemon}.
      */
     public AutoTrainer(BugemonTeam team) {
         super(team);
@@ -57,17 +56,18 @@ public class AutoTrainer extends Trainer {
     // ── Trainer contract ──────────────────────────────────────────────────────
 
     /**
-     * Decides the action for this turn by selecting a random attack from the
-     * current {@link Bugemon}'s move-set.
+     * Decides the action for this turn by selecting a random attack from the current
+     * {@link Bugemon}'s move-set.
      *
      * <p>
-     * Always returns a {@link TurnAction.AttackAction}; an {@code AutoTrainer}
-     * never voluntarily switches or forfeits.
+     * Always returns a {@link TurnAction.AttackAction}; an {@code AutoTrainer} never voluntarily
+     * switches or forfeits.
      * </p>
      *
-     * @return a {@link TurnAction.AttackAction} wrapping a randomly chosen
-     *         {@link Attack}; never {@code null}.
-     * @throws IllegalArgumentException if the active Bugemon has no attacks.
+     * @return a {@link TurnAction.AttackAction} wrapping a randomly chosen {@link Attack}; never
+     *         {@code null}.
+     * @throws IllegalArgumentException
+     *             if the active Bugemon has no attacks.
      */
     @Override
     public TurnAction getAction() {
@@ -75,13 +75,13 @@ public class AutoTrainer extends Trainer {
     }
 
     /**
-     * Reacts to the current {@link Bugemon} fainting by switching to a randomly
-     * chosen alive member of the team.
+     * Reacts to the current {@link Bugemon} fainting by switching to a randomly chosen alive member
+     * of the team.
      *
      * <p>
-     * Delegates to {@link #selectRandomBugemon()}. If the trainer is already
-     * fully {@link #isDefeated() defeated}, this method returns immediately
-     * without modifying {@code currentBugemon}.
+     * Delegates to {@link #selectRandomBugemon()}. If the trainer is already fully
+     * {@link #isDefeated() defeated}, this method returns immediately without modifying
+     * {@code currentBugemon}.
      * </p>
      */
     @Override
@@ -92,19 +92,19 @@ public class AutoTrainer extends Trainer {
     // ── Public helpers ────────────────────────────────────────────────────────
 
     /**
-     * Returns a randomly selected {@link Attack} from the move-set of the
-     * currently active {@link Bugemon}.
+     * Returns a randomly selected {@link Attack} from the move-set of the currently active
+     * {@link Bugemon}.
      *
      * <p>
-     * The selection is uniformly random across all attacks known by the active
-     * Bugemon. The caller must ensure the current Bugemon has at least one
-     * attack before invoking this method.
+     * The selection is uniformly random across all attacks known by the active Bugemon. The caller
+     * must ensure the current Bugemon has at least one attack before invoking this method.
      * </p>
      *
-     * @return a randomly chosen {@link Attack}; never {@code null} provided the
-     *         active Bugemon's attack list is non-empty.
-     * @throws IllegalArgumentException if the active Bugemon has no attacks
-     *         (empty list passed to {@link Random#nextInt(int)}).
+     * @return a randomly chosen {@link Attack}; never {@code null} provided the active Bugemon's
+     *         attack list is non-empty.
+     * @throws IllegalArgumentException
+     *             if the active Bugemon has no attacks (empty list passed to
+     *             {@link Random#nextInt(int)}).
      */
     public Attack getRandomAttack() {
         List<Attack> attacks = currentBugemon.getAttackList();
@@ -112,19 +112,16 @@ public class AutoTrainer extends Trainer {
     }
 
     /**
-     * Switches the active {@link Bugemon} to a randomly chosen alive member of
-     * this trainer's team.
+     * Switches the active {@link Bugemon} to a randomly chosen alive member of this trainer's team.
      *
      * <p>
-     * If the trainer is already {@link #isDefeated() defeated} (i.e., all
-     * Bugemons have fainted), this method returns immediately without modifying
-     * {@code currentBugemon}.
+     * If the trainer is already {@link #isDefeated() defeated} (i.e., all Bugemons have fainted),
+     * this method returns immediately without modifying {@code currentBugemon}.
      * </p>
      *
      * <p>
-     * Only Bugemons for which {@link Bugemon#isAlive()} returns {@code true}
-     * are considered as candidates. The selection is uniformly random among
-     * those candidates.
+     * Only Bugemons for which {@link Bugemon#isAlive()} returns {@code true} are considered as
+     * candidates. The selection is uniformly random among those candidates.
      * </p>
      */
     public void selectRandomBugemon() {

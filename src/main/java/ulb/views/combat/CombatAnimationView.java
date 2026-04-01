@@ -35,8 +35,10 @@ public class CombatAnimationView {
     /**
      * Creates an animation view bound to the two combat sprites.
      *
-     * @param trainerSprite  trainer sprite image view.
-     * @param opponentSprite opponent sprite image view.
+     * @param trainerSprite
+     *            trainer sprite image view.
+     * @param opponentSprite
+     *            opponent sprite image view.
      */
     public CombatAnimationView(ImageView trainerSprite, ImageView opponentSprite) {
         this.trainerSprite = trainerSprite;
@@ -48,7 +50,8 @@ public class CombatAnimationView {
     /**
      * Plays the trainer attack animation.
      *
-     * @param onFinished callback executed when the animation ends.
+     * @param onFinished
+     *            callback executed when the animation ends.
      */
     public void playTrainerAttackAnimation(Runnable onFinished) {
         this.playLungeAnimation(this.trainerSprite, ATTACK_LUNGE_DISTANCE, onFinished);
@@ -57,7 +60,8 @@ public class CombatAnimationView {
     /**
      * Plays the opponent attack animation.
      *
-     * @param onFinished callback executed when the animation ends.
+     * @param onFinished
+     *            callback executed when the animation ends.
      */
     public void playOpponentAttackAnimation(Runnable onFinished) {
         this.playLungeAnimation(this.opponentSprite, -ATTACK_LUNGE_DISTANCE, onFinished);
@@ -66,10 +70,12 @@ public class CombatAnimationView {
     /**
      * Slides a sprite forward then back.
      *
-     * @param sprite     the sprite to animate.
-     * @param deltaX     the distance to slide the sprite (positive or negative
-     *                   depending on direction).
-     * @param onFinished callback executed once the animation completes.
+     * @param sprite
+     *            the sprite to animate.
+     * @param deltaX
+     *            the distance to slide the sprite (positive or negative depending on direction).
+     * @param onFinished
+     *            callback executed once the animation completes.
      */
     private void playLungeAnimation(ImageView sprite, double deltaX, Runnable onFinished) {
         TranslateTransition lunge = new TranslateTransition(ATTACK_LUNGE_DURATION, sprite);
@@ -83,11 +89,11 @@ public class CombatAnimationView {
     }
 
     /**
-     * Plays the death animation for the trainer's active Bugemon if
-     * {@code forTrainer} is {@code true}, or for the opponent's active Bugemon if
-     * {@code forTrainer} is {@code false}.
+     * Plays the death animation for the trainer's active Bugemon if {@code forTrainer} is
+     * {@code true}, or for the opponent's active Bugemon if {@code forTrainer} is {@code false}.
      *
-     * @param onFinished callback executed once the animation completes.
+     * @param onFinished
+     *            callback executed once the animation completes.
      */
     public void playDeathAnimationForTrainer(Runnable onFinished) {
         this.playDeathAnimation(this.trainerSprite, onFinished);
@@ -96,19 +102,21 @@ public class CombatAnimationView {
     /**
      * Plays the death animation for the opponent's active Bugemon.
      *
-     * @param onFinished callback executed once the animation completes.
+     * @param onFinished
+     *            callback executed once the animation completes.
      */
     public void playDeathAnimationForOpponent(Runnable onFinished) {
         this.playDeathAnimation(this.opponentSprite, onFinished);
     }
 
     /**
-     * Plays the death animation for the trainer's active Bugemon if
-     * {@code forTrainer} is {@code true}, or for the opponent's active Bugemon if
-     * {@code forTrainer} is {@code false}.
+     * Plays the death animation for the trainer's active Bugemon if {@code forTrainer} is
+     * {@code true}, or for the opponent's active Bugemon if {@code forTrainer} is {@code false}.
      *
-     * @param sprite     the sprite to animate.
-     * @param onFinished callback executed once the animation completes.
+     * @param sprite
+     *            the sprite to animate.
+     * @param onFinished
+     *            callback executed once the animation completes.
      */
     private void playDeathAnimation(ImageView sprite, Runnable onFinished) {
         sprite.setOpacity(DEFAULT_OPACITY);
@@ -144,12 +152,11 @@ public class CombatAnimationView {
     }
 
     /**
-     * Makes the trainer's active Bugemon reappear if {@code forTrainer} is
-     * {@code true},
-     * or the opponent's active Bugemon reappear if {@code forTrainer} is
-     * {@code false}.
+     * Makes the trainer's active Bugemon reappear if {@code forTrainer} is {@code true}, or the
+     * opponent's active Bugemon reappear if {@code forTrainer} is {@code false}.
      *
-     * @param sprite the sprite to reset.
+     * @param sprite
+     *            the sprite to reset.
      */
     public void makeBugemonReappear(ImageView sprite) {
         sprite.setOpacity(DEFAULT_OPACITY);

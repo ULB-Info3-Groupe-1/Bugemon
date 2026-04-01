@@ -162,30 +162,43 @@
             </execution>
         </executions>
       </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.0.1</version>
-            <executions>
-                <execution>
-                    <id>attach-javadocs</id>
-                    <goals>
-                        <goal>jar</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                <docletArtifact>
-                    <groupId>nl.talsmasoftware</groupId>
-                    <artifactId>umldoclet</artifactId>
-                    <version>2.2.5</version>
-                </docletArtifact>
-                <doclint>none</doclint>
-                <failOnError>false</failOnError>
-            </configuration>
-        </plugin>
-        <plugin>
+      <plugin>
+          <groupId>com.rudikershaw.gitbuildhook</groupId>
+          <artifactId>git-build-hook-maven-plugin</artifactId>
+          <version>3.5.0</version>
+          <configuration>
+              <installHooks>
+                  <pre-commit>.githooks/pre-commit</pre-commit>
+              </installHooks>
+          </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>install</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>2.43.0</version>
+          <configuration>
+              <java>
+                  <eclipse>
+                      <version>4.26</version>
+                      <file>${project.basedir}/.eclipse-formatter.xml</file>
+                  </eclipse>
+                  <removeUnusedImports/>
+                  <importOrder>
+                      <order>java,javax,org,com,ulb</order>
+                  </importOrder>
+                  <endWithNewline/>
+                  <trimTrailingWhitespace/>
+              </java>
+          </configuration>
+      </plugin>
+      <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>3.3.1</version>
@@ -193,14 +206,15 @@
               <dependency>
                   <groupId>com.puppycrawl.tools</groupId>
                   <artifactId>checkstyle</artifactId>
-                  <version>10.14.0</version>
+                  <version>10.18.2</version>
               </dependency>
           </dependencies>
           <configuration>
-              <configLocation>checkstyle.xml</configLocation>
+              <configLocation>${project.basedir}/checkstyle.xml</configLocation>
               <consoleOutput>true</consoleOutput>
               <failsOnError>true</failsOnError>
               <violationSeverity>warning</violationSeverity>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
               <propertyExpansion>checkstyle.java.version=21</propertyExpansion>
           </configuration>
           <executions>
@@ -212,6 +226,29 @@
                   </goals>
               </execution>
           </executions>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.1</version>
+          <executions>
+              <execution>
+                  <id>attach-javadocs</id>
+                  <goals>
+                      <goal>jar</goal>
+                  </goals>
+              </execution>
+          </executions>
+          <configuration>
+              <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+              <docletArtifact>
+                  <groupId>nl.talsmasoftware</groupId>
+                  <artifactId>umldoclet</artifactId>
+                  <version>2.2.5</version>
+              </docletArtifact>
+              <doclint>none</doclint>
+              <failOnError>false</failOnError>
+          </configuration>
       </plugin>
     </plugins>
   </build>

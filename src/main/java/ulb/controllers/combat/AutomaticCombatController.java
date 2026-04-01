@@ -16,9 +16,9 @@ import ulb.views.combat.AutomaticCombatView;
  * Controller for the automatic combat screen.
  *
  * <p>
- * Drives the {@link Combat} loop via a JavaFX {@link Timeline}. After each
- * turn it calls {@code view.refresh()} so the view can pull the updated state
- * from the model; no data is pushed into the view.
+ * Drives the {@link Combat} loop via a JavaFX {@link Timeline}. After each turn it calls
+ * {@code view.refresh()} so the view can pull the updated state from the model; no data is pushed
+ * into the view.
  * </p>
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
@@ -28,8 +28,10 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * Constructs an {@code AutomaticCombatController} and initialises its
      * {@link AutomaticCombatView}.
      *
-     * @param metaController the application-level controller used for navigation.
-     * @throws IOException if the view fails to load its FXML resource.
+     * @param metaController
+     *            the application-level controller used for navigation.
+     * @throws IOException
+     *             if the view fails to load its FXML resource.
      */
     public AutomaticCombatController(MetaController metaController, PlayerService playerService)
             throws IOException {
@@ -57,12 +59,15 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     }
 
     /**
-     * Schedules the next combat turn to happen after the specified delay.
-     * Creates a fresh Timeline for each turn to avoid timing drift issues.
+     * Schedules the next combat turn to happen after the specified delay. Creates a fresh Timeline
+     * for each turn to avoid timing drift issues.
      *
-     * @param combat the combat model
-     * @param playerTrainer the player trainer
-     * @param delay the delay before executing the turn
+     * @param combat
+     *            the combat model
+     * @param playerTrainer
+     *            the player trainer
+     * @param delay
+     *            the delay before executing the turn
      */
     private void scheduleTurn(Combat combat, AutoTrainer playerTrainer, Duration delay) {
         this.turnTimeline = new Timeline();

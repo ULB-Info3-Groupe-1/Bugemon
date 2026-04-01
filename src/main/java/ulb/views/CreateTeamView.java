@@ -18,25 +18,35 @@ import ulb.models.bugemon_team.BugemonTeam;
  * View for the team creation screen.
  *
  * <p>
- * Holds a reference to the {@link BugemonTeam} model and reads from it directly
- * in {@link #refresh()}. Dispatches user interactions through callbacks; holds
- * no reference to any concrete controller class.
+ * Holds a reference to the {@link BugemonTeam} model and reads from it directly in
+ * {@link #refresh()}. Dispatches user interactions through callbacks; holds no reference to any
+ * concrete controller class.
  * </p>
  */
 public class CreateTeamView extends View {
     private static final String FXML_PATH = "/fxml/CreateTeam.fxml";
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
 
-    @FXML private AllBugemonsGridView allBugemonsGridView;
-    @FXML private BugemonTeamView bugemonsTeamView;
-    @FXML private Button returnMainMenuBtn;
-    @FXML private Button saveTeamBtn;
-    @FXML private Button deleteTeamBtn;
-    @FXML private Button renameTeamBtn;
-    @FXML private Button addNewTeamBtn;
-    @FXML private TextField saveTeamNameInput;
-    @FXML private ListView<String> teamListView;
-    @FXML private Text selectedTeamName;
+    @FXML
+    private AllBugemonsGridView allBugemonsGridView;
+    @FXML
+    private BugemonTeamView bugemonsTeamView;
+    @FXML
+    private Button returnMainMenuBtn;
+    @FXML
+    private Button saveTeamBtn;
+    @FXML
+    private Button deleteTeamBtn;
+    @FXML
+    private Button renameTeamBtn;
+    @FXML
+    private Button addNewTeamBtn;
+    @FXML
+    private TextField saveTeamNameInput;
+    @FXML
+    private ListView<String> teamListView;
+    @FXML
+    private Text selectedTeamName;
 
     private BugemonTeam bugemonTeam;
     private List<Bugemon> allBugemonsAvailable;
@@ -48,7 +58,10 @@ public class CreateTeamView extends View {
     private Consumer<String> delete;
     private BiConsumer<String, String> rename;
 
-    /** @throws IOException if the FXML resource cannot be loaded. */
+    /**
+     * @throws IOException
+     *             if the FXML resource cannot be loaded.
+     */
     public CreateTeamView() throws IOException {
         super(FXML_PATH);
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
@@ -93,9 +106,9 @@ public class CreateTeamView extends View {
     }
 
     /**
-     * Gives the view a reference to the list of all available Bugemons, so it can
-     * display them in the selection grid and mark the ones already in the team as
-     * selected.
+     * Gives the view a reference to the list of all available Bugemons, so it can display them in
+     * the selection grid and mark the ones already in the team as selected.
+     *
      * @param allBugemons
      */
     public void setAllBugemonsAvailable(List<Bugemon> allBugemons) {

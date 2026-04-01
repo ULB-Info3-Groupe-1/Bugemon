@@ -24,11 +24,10 @@ import ulb.models.trainer.Trainer;
  * View for the manual combat screen.
  *
  * <p>
- * Holds references to the {@link ManualTrainer}, the opponent {@link Trainer}, and
- * {@link Combat} models. All sub-menu navigation (attack menu, switch panel,
- * main menu) is managed internally; the controller never calls any show/hide
- * method. User actions are dispatched through the callbacks registered via
- * {@link #setOnAttack}, {@link #setOnSwitch}, and {@link #setOnSurrender}.
+ * Holds references to the {@link ManualTrainer}, the opponent {@link Trainer}, and {@link Combat}
+ * models. All sub-menu navigation (attack menu, switch panel, main menu) is managed internally; the
+ * controller never calls any show/hide method. User actions are dispatched through the callbacks
+ * registered via {@link #setOnAttack}, {@link #setOnSwitch}, and {@link #setOnSurrender}.
  * </p>
  */
 public class ManualCombatView extends CombatView {
@@ -124,7 +123,7 @@ public class ManualCombatView extends CombatView {
         }
     }
 
-    // ──  navigation ───────────────────────────────────────────────────
+    // ── navigation ───────────────────────────────────────────────────
 
     public void showMainActionMenu() {
         this.actionMenuView.getChildren().setAll(this.mainActionMenu);
@@ -148,11 +147,8 @@ public class ManualCombatView extends CombatView {
         VBox panel = new VBox(BOX_DIM);
         panel.setAlignment(Pos.CENTER_RIGHT);
 
-        List<Bugemon> available =
-                this.player.getTeam()
-                        .stream()
-                        .filter(b -> b != this.player.getCurrentBugemon() && b.isAlive())
-                        .toList();
+        List<Bugemon> available = this.player.getTeam().stream()
+                .filter(b -> b != this.player.getCurrentBugemon() && b.isAlive()).toList();
 
         for (Bugemon b : available) {
             HBox row = new HBox(BOX_DIM);
@@ -164,7 +160,7 @@ public class ManualCombatView extends CombatView {
             sprite.setPreserveRatio(true);
 
             Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/"
-                                    + b.getMaxHp() + " PV");
+                    + b.getMaxHp() + " PV");
             btn.getStyleClass().addAll("btn", "btn-action-blue");
             btn.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(btn, Priority.ALWAYS);

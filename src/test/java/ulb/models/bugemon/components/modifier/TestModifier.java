@@ -40,6 +40,8 @@ public class TestModifier {
         Modifier mod = new Modifier(3, 1);
         mod.tick();
 
-        assertThrows(IllegalStateException.class, () -> { mod.apply(5); });
+        assertThrows(IllegalStateException.class, () -> {
+            mod.apply(5);
+        });
     }
 }

@@ -32,9 +32,12 @@ public class DatabaseConnection {
 
     /**
      * Helper method to prepare a SQL statement using the current database connection.
-     * @param sql The SQL query to prepare
+     *
+     * @param sql
+     *            The SQL query to prepare
      * @return A PreparedStatement ready to be executed
-     * @throws SQLException if the preparation fails
+     * @throws SQLException
+     *             if the preparation fails
      */
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         return this.connection.prepareStatement(sql);

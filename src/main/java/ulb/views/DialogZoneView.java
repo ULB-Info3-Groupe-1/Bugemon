@@ -15,16 +15,18 @@ import javafx.scene.text.Text;
 public class DialogZoneView extends VBox {
     private static final String FXML_PATH = "/fxml/DialogZone.fxml";
 
-    @FXML private Text dialogText;
+    @FXML
+    private Text dialogText;
 
-    @FXML private Button nextButton;
+    @FXML
+    private Button nextButton;
 
-    @FXML private Text additionalInfo;
+    @FXML
+    private Text additionalInfo;
 
     /**
-     * Constructor for DialogZoneView.
-     * Loads the FXML layout and initializes the component.
-     * Throws a {@link RuntimeException} if the FXML file cannot be loaded.
+     * Constructor for DialogZoneView. Loads the FXML layout and initializes the component. Throws a
+     * {@link RuntimeException} if the FXML file cannot be loaded.
      */
     public DialogZoneView() {
         URL url = getClass().getResource(FXML_PATH);
@@ -42,7 +44,9 @@ public class DialogZoneView extends VBox {
 
     /**
      * set the dialog text.
-     * @param text (String) the text to display in the dialog
+     *
+     * @param text
+     *            (String) the text to display in the dialog
      */
     public void setDialogText(String text) {
         this.dialogText.setText(text);
@@ -57,7 +61,9 @@ public class DialogZoneView extends VBox {
 
     /**
      * set the additional info text.
-     * @param text (String) the text to display as additional information
+     *
+     * @param text
+     *            (String) the text to display as additional information
      */
     public void setAdditionalInfo(String text) {
         this.additionalInfo.setText(text);
@@ -65,6 +71,7 @@ public class DialogZoneView extends VBox {
 
     /**
      * set the continue button text. (next or end)
+     *
      * @param text
      */
     public void setButtonText(String text) {

@@ -20,10 +20,9 @@ import ulb.models.bugemon.effect.Effect;
  * Represents an attack that a {@link Bugemon} can perform during battle.
  *
  * <p>
- * Each {@code Attack} has a unique identifier, a display name, an elemental
- * {@link BugemonType type}, a textual description, a base power value, and a
- * list of {@link Effect}s that may be applied to one or more targets when the
- * attack is used.
+ * Each {@code Attack} has a unique identifier, a display name, an elemental {@link BugemonType
+ * type}, a textual description, a base power value, and a list of {@link Effect}s that may be
+ * applied to one or more targets when the attack is used.
  * </p>
  *
  * @see Effect
@@ -50,12 +49,12 @@ public record Attack(
     }
 
     /**
-     * Returns {@code true} if this attack's effect list contains the specified
-     * {@link Effect}.
+     * Returns {@code true} if this attack's effect list contains the specified {@link Effect}.
      *
-     * @param effect the {@link Effect} to search for; must not be {@code null}.
-     * @return {@code true} if the effect is present in this attack's effect list,
-     *         {@code false} otherwise.
+     * @param effect
+     *            the {@link Effect} to search for; must not be {@code null}.
+     * @return {@code true} if the effect is present in this attack's effect list, {@code false}
+     *         otherwise.
      */
     public boolean containsEffect(Effect effect) {
         return this.effects.contains(effect);
@@ -69,7 +68,7 @@ public record Attack(
         if (!(o instanceof Attack)) {
             return false;
         }
-        Attack attack = (Attack)o;
+        Attack attack = (Attack) o;
         return Objects.equals(this.id, attack.id);
     }
 

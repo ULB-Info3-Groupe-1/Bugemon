@@ -25,9 +25,9 @@ public class TestManualTrainer {
     public void setUp() {
         inventory = new Inventory();
 
-        baieRevigorante =
-                new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
-                         Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
+        baieRevigorante = new Item("baie_revigorante", "Baie Revigorante",
+                "Restaure 20 PV au Bugémon actif.", Item.ItemType.HEALING,
+                new EffectHeal(EffectTarget.THROWER, 20));
 
         inventory.addItem(baieRevigorante, 5);
     }
@@ -51,7 +51,7 @@ public class TestManualTrainer {
         ManualTrainer trainer = new ManualTrainer(team, inventory);
 
         assertThrows(IllegalArgumentException.class,
-                     () -> trainer.registerSwitch(team.get("2").get()));
+                () -> trainer.registerSwitch(team.get("2").get()));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class TestManualTrainer {
 
         // Build an attack with an ID that is guaranteed to not be in any Bugemon's attacks
         Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", BugemonType.FLORA, "", 10,
-                                          new java.util.ArrayList<>());
+                new java.util.ArrayList<>());
 
         assertThrows(IllegalArgumentException.class, () -> trainer.registerAttack(foreignAttack));
     }
@@ -146,6 +146,6 @@ public class TestManualTrainer {
         TestUtilsBugemons.killBugemon(team, "2");
 
         assertThrows(IllegalArgumentException.class,
-                     () -> trainer.switchAfterKO(team.get("2").get()));
+                () -> trainer.switchAfterKO(team.get("2").get()));
     }
 }

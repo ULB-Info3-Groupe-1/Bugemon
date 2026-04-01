@@ -11,17 +11,16 @@
 package ulb.models.level_up;
 
 /**
- * Immutable data object representing one stat-bonus option offered to the
- * player during a {@link LevelUp}.
+ * Immutable data object representing one stat-bonus option offered to the player during a
+ * {@link LevelUp}.
  *
  * <p>
- * Each {@code Upgrade} bundles four non-negative bonus values — one per
- * combat stat
+ * Each {@code Upgrade} bundles four non-negative bonus values — one per combat stat
  * </p>
  *
  * <p>
- * Instances are created by {@link LevelUp#generateRandomChoice()} and are
- * never modified after construction.
+ * Instances are created by {@link LevelUp#generateRandomChoice()} and are never modified after
+ * construction.
  * </p>
  *
  * @see LevelUp
@@ -39,14 +38,13 @@ public record Upgrade(
 
 ) {
     /**
-     * Returns a human-readable summary of this choice's bonuses, suitable for
-     * display in the level-up screen.
+     * Returns a human-readable summary of this choice's bonuses, suitable for display in the
+     * level-up screen.
      *
-     * @return a formatted string of the form
-     *         {@code "+N HP +N Attack +N Defense +N Initiative"}.
+     * @return a formatted string of the form {@code "+N HP +N Attack +N Defense +N Initiative"}.
      */
     public String toString() {
         return String.format("+%d HP +%d Attack +%d Defense +%d Initiative", this.hp, this.attack,
-                             this.defense, this.initiative);
+                this.defense, this.initiative);
     }
 }

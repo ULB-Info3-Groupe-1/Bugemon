@@ -21,8 +21,8 @@ import ulb.utils.test.TestUtilsBugemons;
 public class TestFloor {
     private PlayerService getPlayerServiceMock() {
         PlayerService playerServiceMock = mock(PlayerService.class);
-        List<Bugemon> testBugemons =
-                new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
+        List<Bugemon> testBugemons = new ArrayList<Bugemon>(
+                TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("finalboss"));
         when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
@@ -33,8 +33,8 @@ public class TestFloor {
     @Test
     public void testFloorInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer =
-                new ManualTrainer(playerTeam, getPlayerServiceMock().getInventory());
+        Trainer playerTrainer = new ManualTrainer(playerTeam,
+                getPlayerServiceMock().getInventory());
 
         Floor floor = new Floor(playerTrainer, getPlayerServiceMock());
 
@@ -44,8 +44,8 @@ public class TestFloor {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer =
-                new ManualTrainer(playerTeam, getPlayerServiceMock().getInventory());
+        Trainer playerTrainer = new ManualTrainer(playerTeam,
+                getPlayerServiceMock().getInventory());
 
         Floor floor = new Floor(playerTrainer, getPlayerServiceMock());
 
@@ -66,7 +66,7 @@ public class TestFloor {
 
         Room sixthRoom = floor.getNextRoom();
         assertTrue(sixthRoom instanceof CombatRoom);
-        CombatRoom bossRoom = (CombatRoom)sixthRoom;
+        CombatRoom bossRoom = (CombatRoom) sixthRoom;
         assertTrue(bossRoom.isBoss());
 
         assertTrue(floor.isComplete());
