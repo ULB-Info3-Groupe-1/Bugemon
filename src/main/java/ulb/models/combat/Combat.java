@@ -155,9 +155,15 @@ public class Combat {
      * @see #isFinished()
      */
     public Optional<Trainer> getWinner() {
-        return allyTrainer.isDefeated() ? Optional.of(adversaryTrainer)
-        : adversaryTrainer.isDefeated() ? Optional.of(allyTrainer)
-                                        : Optional.empty();
+        if (allyTrainer.isDefeated()) {
+            return Optional.of(adversaryTrainer);
+        }
+
+        if (adversaryTrainer.isDefeated()) {
+            return Optional.of(allyTrainer);
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -267,8 +273,8 @@ public class Combat {
      *         is a switch, forfeit, or any other passive action.
      */
     private Optional<Attack> extractAttack(TurnAction action) {
-        if (action instanceof TurnAction.AttackAction aa) {
-            return Optional.of(aa.attack());
+        if (action instanceof TurnAction.AttackAction(Attack a)) {
+            return Optional.of(a);
         }
         return Optional.empty();
     }

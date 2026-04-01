@@ -19,6 +19,8 @@ import ulb.views.CreateTeamView;
  * </p>
  */
 public class CreateTeamController extends Controller<CreateTeamView> {
+    private static final String STR_TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";
+
     private final PlayerService playerService;
     private BugemonTeam selectedTeam;
 
@@ -50,12 +52,14 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.refresh();
     }
 
-    /** Toggles {@code bugemon} in the player's selected team. */
+    /**
+     * Toggles {@code bugemon} in the player's selected team.
+     */
     public void toggleBugemonSelection(Bugemon bugemon) {
         if (this.selectedTeam.contains(bugemon)) {
             this.selectedTeam.remove(bugemon);
         } else if (!this.selectedTeam.isFull()) {
-            this.selectedTeam.add(bugemon.clone());
+            this.selectedTeam.add(new Bugemon(bugemon));
         }
         this.view.refreshTeam(this.selectedTeam);
     }
@@ -107,9 +111,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
             this.selectedTeam = this.playerService.getActiveTeam();
             this.view.refreshTeam(this.selectedTeam);
         } catch (TeamNotFoundException e) {
-            this.view.showAlert("Nom d'équipe introuvable",
-                                "Aucune équipe sauvée avec le nom "
-                                        + this.view.getTeamNameToLoad());
+            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND, "Aucune équipe sauvée avec le nom "
+                                                                 + this.view.getTeamNameToLoad());
         }
     }
 
@@ -122,7 +125,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
                 this.view.refreshTeam(this.selectedTeam);
             }
         } catch (TeamNotFoundException e) {
-            this.view.showAlert("Nom d'équipe introuvable",
+            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND,
                                 "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
         }
     }
@@ -140,7 +143,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
                 this.selectedTeam.setName(newTeamName);
             }
         } catch (TeamNotFoundException e) {
-            this.view.showAlert("Nom d'équipe introuvable",
+            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND,
                                 "L'équipe que vous souhaitez renommer n'existe pas");
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showAlert(

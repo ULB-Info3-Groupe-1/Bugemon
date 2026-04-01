@@ -1,6 +1,7 @@
 package ulb.views.combat;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,7 +38,7 @@ public class BugemonInfoView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load BugemonInfo.fxml", e);
+            throw new UncheckedIOException("Failed to load BugemonInfo.fxml", e);
         }
     }
 

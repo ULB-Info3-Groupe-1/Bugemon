@@ -44,6 +44,11 @@ public record Attack(
         @SerializedName("effets") List<Effect> effects
 
 ) {
+    public Attack {
+        // Defensive copy of the effects list to ensure immutability of the record
+        effects = (effects == null) ? List.of() : List.copyOf(effects);
+    }
+
     /**
      * Returns {@code true} if this attack's effect list contains the specified
      * {@link Effect}.

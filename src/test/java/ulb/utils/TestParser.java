@@ -46,8 +46,6 @@ public class TestParser {
                                       .orElseThrow();
         List<Effect> effects = racinesVives.effects();
         assertEquals(effects.get(0).getClass(), EffectStatModifier.class);
-        // assertEquals(effects.get(0).modifier(), 5);
-        // assertEquals(effects.get(0).stat(), EffectStat.DEFENSE);
     }
 
     @Test
@@ -64,17 +62,17 @@ public class TestParser {
                                    .filter(b -> "Florachu".equals(b.getName()))
                                    .findFirst()
                                    .orElseThrow();
-        assertEquals(florachu.getName(), "Florachu");
+        assertEquals("Florachu", florachu.getName());
 
         Bugemon moussil = tempInstance.getBugemons()
                                   .stream()
                                   .filter(b -> "Moussil".equals(b.getName()))
                                   .findFirst()
                                   .orElseThrow();
-        assertEquals(moussil.getType(), BugemonType.FLORA);
+        assertEquals(BugemonType.FLORA, moussil.getType());
 
         // check sprite URL begins with "png/"
-        assertEquals(florachu.getSpriteURL(), "png/florachu.png");
+        assertEquals("png/florachu.png", florachu.getSpriteURL());
 
         // check attacks
         Bugemon verdurion = tempInstance.getBugemons()
@@ -95,10 +93,10 @@ public class TestParser {
                                   .findFirst()
                                   .orElseThrow();
 
-        assertEquals(loopine.getAttack(), 50);
-        assertEquals(loopine.getHp(), 85);
-        assertEquals(loopine.getDefense(), 50);
-        assertEquals(loopine.getInitiative(), 60);
+        assertEquals(50, loopine.getAttack());
+        assertEquals(85, loopine.getHp());
+        assertEquals(50, loopine.getDefense());
+        assertEquals(60, loopine.getInitiative());
     }
 
     @Test
@@ -163,7 +161,6 @@ public class TestParser {
         assertEquals(potion.name(), testObject.name());
         assertEquals(potion.description(), testObject.description());
         assertEquals(potion.type(), testObject.type());
-        // assertEquals(potion.sprite(), testObject.sprite());
 
         assertEquals(7, inventory.getMap().values().stream().mapToInt(i -> i).sum());
         Map<Item, Integer> objects = inventory.getMap();
