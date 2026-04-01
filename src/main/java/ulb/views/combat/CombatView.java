@@ -86,7 +86,7 @@ public abstract class CombatView extends View {
      * @throws IOException if the {@code Combat.fxml} resource cannot be found
      *                     or parsed.
      */
-    public CombatView() throws IOException {
+    protected CombatView() throws IOException {
         super("/fxml/Combat.fxml");
         this.attackAnimationView =
                 new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);

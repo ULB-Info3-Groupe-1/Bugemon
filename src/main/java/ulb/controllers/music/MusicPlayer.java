@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -22,10 +24,11 @@ import javafx.scene.media.MediaPlayer;
  * @see MediaPlayer
  */
 public class MusicPlayer {
+    private static final Logger LOGGER = Logger.getLogger(MusicPlayer.class.getName());
+
     // NOTE: This is optional because a MediaPlayer's constructor needs a Media
     // instance, but there is no media to play when constructing the MusicPlayer.
     private Optional<MediaPlayer> mediaPlayer;
-    private Optional<MediaPlayer> soundEffectPlayer;
 
     private List<Music> musics;
 
@@ -62,7 +65,7 @@ public class MusicPlayer {
                 player.play();
             });
         } catch (Exception e) {
-            System.err.println("Error playing music: " + e.getMessage());
+            LOGGER.severe("Error playing music: " + e.getMessage());
         }
     }
 
@@ -72,15 +75,16 @@ public class MusicPlayer {
      * @param music the music to play as a sound effect
      */
     public void playSoundEffect(Music music) {
+        Optional<MediaPlayer> soundEffectPlayer = Optional.empty();
         try {
             Media track = new Media(music.url().toExternalForm());
-            this.soundEffectPlayer = Optional.of(new MediaPlayer(track));
-            this.soundEffectPlayer.ifPresent(player -> {
+            soundEffectPlayer = Optional.of(new MediaPlayer(track));
+            soundEffectPlayer.ifPresent(player -> {
                 player.setCycleCount(1);
                 player.play();
             });
         } catch (Exception e) {
-            System.err.println("Error playing sound effect: " + e.getMessage());
+            LOGGER.severe("Error playing sound effect: " + e.getMessage());
         }
     }
 
@@ -94,8 +98,8 @@ public class MusicPlayer {
                 this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 
         if (matchingMusics.isEmpty()) {
-            System.err.println("Error playing music matching ambiance " + ambiance.toString()
-                               + ": no match");
+            LOGGER.log(Level.SEVERE, "Error playing music matching ambiance {0}: no match",
+                       ambiance);
             return;
         }
 
@@ -114,7 +118,7 @@ public class MusicPlayer {
      * method on the MediaPlayer instance.
      */
     public void stopMusic() {
-        this.mediaPlayer.ifPresent(player -> player.stop());
+        this.mediaPlayer.ifPresent(MediaPlayer::stop);
         this.mediaPlayer = Optional.empty();
     }
 }

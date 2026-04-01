@@ -19,15 +19,17 @@ import ulb.services.CombatService;
  * </p>
  */
 public class AttackActionMenu extends ActionMenuView {
+    private static final String STR_ATTACK = "attack";
+
     private Trainer opponent;
     private Consumer<Attack> onAttack;
 
     public AttackActionMenu() {
         super();
         this.action4.setText("Retour");
-        this.action1.getStyleClass().add("attack");
-        this.action2.getStyleClass().add("attack");
-        this.action3.getStyleClass().add("attack");
+        this.action1.getStyleClass().add(STR_ATTACK);
+        this.action2.getStyleClass().add(STR_ATTACK);
+        this.action3.getStyleClass().add(STR_ATTACK);
     }
 
     /** Gives the menu the opponent trainer so it can compute type efficiency. */

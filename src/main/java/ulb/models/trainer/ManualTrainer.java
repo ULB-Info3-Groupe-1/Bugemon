@@ -118,8 +118,8 @@ public class ManualTrainer extends Trainer {
     @Override
     public void applyPassiveAction(TurnAction action) {
         super.applyPassiveAction(action);
-        if (action instanceof TurnAction.UseItemAction ui) {
-            useItem(ui.item());
+        if (action instanceof TurnAction.UseItemAction(Item item)) {
+            useItem(item);
         }
     }
 

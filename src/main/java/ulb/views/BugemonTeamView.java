@@ -1,6 +1,7 @@
 package ulb.views;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,7 +32,7 @@ public class BugemonTeamView extends VBox {
     private Consumer<BugemonDTO> onBugemonClicked;
 
     // Unknown image if no Bugemon available
-    private final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
+    private static final Image UNKNOWN_IMAGE = new Image("/png/unknown.png");
 
     public BugemonTeamView() {
         URL url = getClass().getResource("/fxml/BugemonTeam.fxml");
@@ -42,7 +43,7 @@ public class BugemonTeamView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load BugemonTeamView.fxml", e);
+            throw new UncheckedIOException("Failed to load BugemonTeamView.fxml", e);
         }
 
         getStylesheets().add(getClass().getResource("/css/bugemon-team.css").toExternalForm());
@@ -74,7 +75,7 @@ public class BugemonTeamView extends VBox {
     private VBox createBugemonCell(BugemonDTO bugemon) {
         Image image = (bugemon != null) ? new Image(bugemon.getSpriteURL(), IMAGE_SIZE, IMAGE_SIZE,
                                                     true, false)
-                                        : this.UNKNOWN_IMAGE;
+                                        : UNKNOWN_IMAGE;
 
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(IMAGE_SIZE);

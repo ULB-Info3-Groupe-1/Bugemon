@@ -30,17 +30,6 @@ public class DatabaseConnection {
         }
     }
 
-    // TODO: this is unused -> concerning
-    public void closeConnection() {
-        try {
-            if (this.connection != null && !this.connection.isClosed()) {
-                this.connection.close();
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("Failed to close connection", e);
-        }
-    }
-
     /**
      * Helper method to prepare a SQL statement using the current database connection.
      * @param sql The SQL query to prepare

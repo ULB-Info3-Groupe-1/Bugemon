@@ -110,7 +110,7 @@ public class TestManualTrainer {
         trainer.getAction(); // consume the pending action
 
         // no action registered -> should throw
-        assertThrows(IllegalStateException.class, () -> trainer.getAction());
+        assertThrows(IllegalStateException.class, trainer::getAction);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class TestManualTrainer {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team, inventory);
 
-        assertThrows(IllegalStateException.class, () -> trainer.getAction());
+        assertThrows(IllegalStateException.class, trainer::getAction);
 
         trainer.registerForfeit();
         assertEquals(true, trainer.hasPendingAction());

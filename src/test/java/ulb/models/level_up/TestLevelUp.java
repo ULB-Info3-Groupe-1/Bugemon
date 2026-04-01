@@ -40,8 +40,8 @@ public class TestLevelUp {
 
             assertEquals(10, totalPoints);
 
-            assertTrue(choice.hp() % 2 == 0);
-            assertTrue(choice.initiative() % 2 == 0);
+            assertEquals(0, choice.hp() % 2);
+            assertEquals(0, choice.initiative() % 2);
             assertTrue(choice.hp() >= 0 && choice.attack() >= 0 && choice.defense() >= 0
                        && choice.initiative() >= 0);
         }
