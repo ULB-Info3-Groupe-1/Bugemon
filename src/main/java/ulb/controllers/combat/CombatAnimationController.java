@@ -1,5 +1,7 @@
 package ulb.controllers.combat;
 
+import java.util.Optional;
+
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.CombatView;
@@ -68,12 +70,12 @@ public class CombatAnimationController {
         }
 
         Runnable afterAttackAnimations = () -> {
-            Boolean koOnTrainerSide = findKoDefenderSide(result, playerTrainer);
-            if (koOnTrainerSide == null) {
+            Optional<Boolean> koOnTrainerSide = findKoDefenderSide(result, playerTrainer);
+            if (!koOnTrainerSide.isPresent()) {
                 onFinished.run();
                 return;
             }
-            playDeathAnimation(koOnTrainerSide, onFinished);
+            playDeathAnimation(koOnTrainerSide.get(), onFinished);
         };
 
         if (result.first().wasAttack()) {
@@ -119,18 +121,18 @@ public class CombatAnimationController {
      *         if the opponent's Bugemon was knocked out, or {@code null} if no KO
      *         occurred.
      */
-    private Boolean findKoDefenderSide(TurnResult result, Trainer playerTrainer) {
+    private Optional<Boolean> findKoDefenderSide(TurnResult result, Trainer playerTrainer) {
         if (result.second().isPresent() && result.second().orElseThrow().wasAttack()
             && result.second().orElseThrow().defender().getCurrentBugemon().getHp() <= 0) {
-            return result.second().orElseThrow().defender() == playerTrainer;
+            return Optional.of(result.second().orElseThrow().defender() == playerTrainer);
         }
 
         if (result.first().wasAttack()
             && result.first().defender().getCurrentBugemon().getHp() <= 0) {
-            return result.first().defender() == playerTrainer;
+            return Optional.of(result.first().defender() == playerTrainer);
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
