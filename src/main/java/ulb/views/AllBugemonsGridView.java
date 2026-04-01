@@ -1,6 +1,7 @@
 package ulb.views;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
@@ -44,7 +45,7 @@ public class AllBugemonsGridView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load AllBugemonsGridView.fxml", e);
+            throw new UncheckedIOException("Failed to load AllBugemonsGridView.fxml", e);
         }
 
         getStylesheets().add(getClass().getResource("/css/all-bugemons-grid.css").toExternalForm());

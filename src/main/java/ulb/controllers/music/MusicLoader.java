@@ -10,16 +10,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
  * MusicLoarder
  */
 public class MusicLoader {
-    private final String MUSIC_DIR = "/musics/";
-    private final String SOUND_EFFECTS_DIR = "/sound_effects/";
-
-    public MusicLoader() {}
+    private static final Logger LOGGER = Logger.getLogger(MusicLoader.class.getName());
+    private static final String MUSIC_DIR = "/musics/";
+    private static final String SOUND_EFFECTS_DIR = "/sound_effects/";
 
     /**
      * Loads all music files from the given resource directory and assigns them the
@@ -57,7 +57,7 @@ public class MusicLoader {
         try {
             return url.toURI();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Invalid resource URI for path: " + resourceDir, e);
         }
     }
 
@@ -71,13 +71,13 @@ public class MusicLoader {
      */
     private Path resolveDirectory(URI uri, String resourceDir) throws IOException {
         if ("jar".equals(uri.getScheme())) {
-            FileSystem fs;
             try {
-                fs = FileSystems.getFileSystem(uri);
+                return FileSystems.getFileSystem(uri).getPath(resourceDir);
             } catch (java.nio.file.FileSystemNotFoundException e) {
-                fs = FileSystems.newFileSystem(uri, java.util.Map.of());
+                try (FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of())) {
+                    return fs.getPath(resourceDir);
+                }
             }
-            return fs.getPath(resourceDir);
         } else {
             return Paths.get(uri);
         }
@@ -125,7 +125,7 @@ public class MusicLoader {
         try {
             return Optional.of(new Music(path.toUri().toURL(), ambiance));
         } catch (Exception e) {
-            System.err.println("error loading song: " + path);
+            LOGGER.severe("error loading song: " + path);
             return Optional.empty();
         }
     }

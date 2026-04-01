@@ -25,10 +25,10 @@ public abstract class View {
      * @param fxmlPath path to the FXML resource
      * @throws IOException if the FXML file cannot be loaded
      */
-    public View(String fxmlPath) throws IOException {
+    protected View(String fxmlPath) throws IOException {
         URL url = View.class.getResource(fxmlPath);
         FXMLLoader loader = new FXMLLoader(url);
-        loader.setController((Object)this);
+        loader.setController(this);
 
         this.root = loader.load();
         this.scene = new Scene(root);

@@ -24,7 +24,8 @@ import ulb.utils.test.TestUtilsBugemons;
 public class TestBugemon {
     @Test
     public void testBuilderNoIdThrows() {
-        assertThrows(IllegalStateException.class, () -> { new BugemonBuilder().build(); });
+        BugemonBuilder builder = new BugemonBuilder();
+        assertThrows(IllegalStateException.class, builder::build);
     }
 
     @Test

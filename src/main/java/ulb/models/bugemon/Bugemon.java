@@ -89,38 +89,20 @@ public class Bugemon implements BugemonDTO {
      */
     Bugemon() {}
 
-    /**
-     * Creates and returns a deep copy of this Bugemon instance.
-     * <p>
-     * The cloned Bugemon will have independent copies of both the current
-     * {@code state} and the {@code initialState}, ensuring that modifications
-     * to the clone's state do not affect the original, and vice versa.
-     * All other fields are shallow-copied via {@link Object#clone()}.
-     * </p>
-     *
-     * @return a new {@code Bugemon} instance that is a deep copy of this object.
-     * @throws CloneNotSupportedException if the object's class does not support
-     *                                    the {@link Cloneable} interface.
-     */
-    @Override
-    public Bugemon clone() {
-        return new BugemonBuilder()
-                .id(this.id)
-                .name(this.name)
-                .type(this.type)
-                .sprite(this.sprite)
-                .hp(this.healthComponent.getMaxHp())
-                .attack(this.attackComponent.getAttack())
-                .defense(this.defenseComponent.getDefense())
-                .initiative(this.initiativeComponent.getInitiative())
-                .xp(this.levelComponent.getXp())
-                .level(this.levelComponent.getLevel())
-                .attackList(List.copyOf(this.attackList)) // TODO: is this safe ?
-                .isStarter(this.isStarter)
-                .build();
+    public Bugemon(Bugemon copy) {
+        this.id = copy.getId();
+        this.name = copy.getName();
+        this.type = copy.getType();
+        this.sprite = copy.getSpriteURL();
+        this.healthComponent = new HealthComponent(copy.getHp(), copy.getMaxHp());
+        this.attackComponent = new AttackComponent(copy.getAttack());
+        this.defenseComponent = new DefenseComponent(copy.getDefense());
+        this.initiativeComponent = new InitiativeComponent(copy.getInitiative());
+        this.levelComponent = new LevelComponent(copy.getXp(), copy.getLevel());
+        this.attackList =
+                List.copyOf(copy.getAttackList()); // Safe because Attack is immutable (record)
+        this.isStarter = copy.isStarter();
     }
-
-    // Methods
 
     /**
      * Apply damage to the bugemon, reducing its HP by the specified amount.
@@ -339,32 +321,17 @@ public class Bugemon implements BugemonDTO {
                 new Modifier(e.modifier());
 
                 switch (e.stat()) {
-                    case EffectStat.HP:
-                        this.healthComponent.addModifier(modifier);
-                        break;
-                    case EffectStat.ATTACK:
-                        this.attackComponent.addModifier(modifier);
-                        break;
-                    case EffectStat.DEFENSE:
-                        this.defenseComponent.addModifier(modifier);
-                        break;
-                    case EffectStat.INITIATIVE:
-                        this.initiativeComponent.addModifier(modifier);
-                        break;
+                    case HP -> this.healthComponent.addModifier(modifier);
+                    case ATTACK -> this.attackComponent.addModifier(modifier);
+                    case DEFENSE -> this.defenseComponent.addModifier(modifier);
+                    case INITIATIVE -> this.initiativeComponent.addModifier(modifier);
                 }
-        }
+            }
 
-            case EffectHeal e -> {
-                this.healthComponent.increaseHp(e.amount());
-                break;
-            }
-            case EffectResetMalus e -> {
-                this.resetModifiers();
-                break;
-            }
-            default -> {
-                throw new RuntimeException("unknown effect");
-            }
+            case EffectHeal e -> this.healthComponent.increaseHp(e.amount());
+            case EffectResetMalus e -> this.resetModifiers();
+
+            default -> throw new IllegalArgumentException("unknown effect");
         }
     }
 

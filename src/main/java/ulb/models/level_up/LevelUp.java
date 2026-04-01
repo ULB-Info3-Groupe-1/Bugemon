@@ -16,6 +16,8 @@ import ulb.common.dto.LevelUpDTO;
 import ulb.models.bugemon.Bugemon;
 
 public class LevelUp implements LevelUpDTO {
+    private static final Random RANDOM = new Random();
+
     // Attributes
     private Bugemon bugemon;
     private List<Upgrade> choices;
@@ -60,16 +62,20 @@ public class LevelUp implements LevelUpDTO {
      *         {@code 60} (all 10 points on HP or Initiative at 2× weight).
      */
     private Upgrade generateRandomChoice() {
-        Random rand = new Random();
-        int hp = 0, attack = 0, defense = 0, initiative = 0;
+        int hp = 0;
+        int attack = 0;
+        int defense = 0;
+        int initiative = 0;
+
         for (int i = 0; i < 10; i++) {
-            int choice = rand.nextInt(4); // 0: HP, 1: Attack, 2: Defense, 3: Initiative
+            int choice = RANDOM.nextInt(4); // 0: HP, 1: Attack, 2: Defense, 3: Initiative
 
             switch (choice) {
                 case 0 -> hp++;
                 case 1 -> attack++;
                 case 2 -> defense++;
                 case 3 -> initiative++;
+                default -> throw new IllegalStateException("Unexpected value: " + choice);
             }
         }
         return new Upgrade(hp * 2, attack, defense, initiative * 2);
