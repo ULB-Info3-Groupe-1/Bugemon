@@ -6,9 +6,8 @@ import java.util.List;
  * Holds the state of an ongoing level-up sequence.
  *
  * <p>
- * The controller populates this object via {@link #start(List)} and advances it via
- * {@link #advance()}. The view reads {@link #getCurrent()} in its {@code refresh()} method — it
- * never receives data pushed by the controller.
+ * The controller populates this object via {@link #start(List)} and advances it via {@link #advance()}. The view reads
+ * {@link #getCurrent()} in its {@code refresh()} method — it never receives data pushed by the controller.
  * </p>
  */
 public class LevelUpSession {
@@ -16,8 +15,8 @@ public class LevelUpSession {
     private int currentIdx;
 
     /** Starts a new session with the given list of level-up events. */
-    public void start(List<LevelUp> levelUps) {
-        this.levelUps = List.copyOf(levelUps);
+    public void start(List<LevelUp> newLevelUps) {
+        this.levelUps = List.copyOf(newLevelUps);
         this.currentIdx = 0;
     }
 

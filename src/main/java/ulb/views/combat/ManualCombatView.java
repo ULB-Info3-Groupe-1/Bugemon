@@ -24,10 +24,10 @@ import ulb.models.trainer.Trainer;
  * View for the manual combat screen.
  *
  * <p>
- * Holds references to the {@link ManualTrainer}, the opponent {@link Trainer}, and {@link Combat}
- * models. All sub-menu navigation (attack menu, switch panel, main menu) is managed internally; the
- * controller never calls any show/hide method. User actions are dispatched through the callbacks
- * registered via {@link #setOnAttack}, {@link #setOnSwitch}, and {@link #setOnSurrender}.
+ * Holds references to the {@link ManualTrainer}, the opponent {@link Trainer}, and {@link Combat} models. All sub-menu
+ * navigation (attack menu, switch panel, main menu) is managed internally; the controller never calls any show/hide
+ * method. User actions are dispatched through the callbacks registered via {@link #setOnAttack}, {@link #setOnSwitch},
+ * and {@link #setOnSurrender}.
  * </p>
  */
 public class ManualCombatView extends CombatView {
@@ -55,10 +55,10 @@ public class ManualCombatView extends CombatView {
     }
 
     /** Gives the view the model objects it reads from and wires the sub-menu callbacks. */
-    public void setModel(ManualTrainer player, Trainer opponent, Combat combat) {
-        this.player = player;
-        this.opponent = opponent;
-        this.combat = combat;
+    public void setModel(ManualTrainer newPlayer, Trainer newOpponent, Combat newCombat) {
+        this.player = newPlayer;
+        this.opponent = newOpponent;
+        this.combat = newCombat;
 
         this.mainActionMenu.setOnInventory(this::showInventory);
         this.mainActionMenu.setOnAttack(this::showAttackMenu);
@@ -69,7 +69,7 @@ public class ManualCombatView extends CombatView {
             }
         });
 
-        this.attackActionMenu.setOpponent(opponent);
+        this.attackActionMenu.setOpponent(this.opponent);
         this.attackActionMenu.setOnAttack(attack -> {
             if (this.onAttack != null) {
                 this.onAttack.accept(attack);
@@ -159,8 +159,8 @@ public class ManualCombatView extends CombatView {
             sprite.setFitHeight(40);
             sprite.setPreserveRatio(true);
 
-            Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/"
-                    + b.getMaxHp() + " PV");
+            Button btn = new Button(
+                    b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/" + b.getMaxHp() + " PV");
             btn.getStyleClass().addAll("btn", "btn-action-blue");
             btn.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(btn, Priority.ALWAYS);

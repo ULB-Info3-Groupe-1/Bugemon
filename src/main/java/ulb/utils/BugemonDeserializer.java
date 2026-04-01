@@ -21,15 +21,14 @@ import ulb.models.bugemon.BugemonType;
 /**
  * Custom JSON deserializer for {@link Bugemon} objects.
  * <p>
- * This deserializer reads a JSON representation of a Bugemon and constructs a fully populated
- * {@link Bugemon} instance, resolving attack references from a pre-loaded map of {@link Attack}
- * objects.
+ * This deserializer reads a JSON representation of a Bugemon and constructs a fully populated {@link Bugemon} instance,
+ * resolving attack references from a pre-loaded map of {@link Attack} objects.
  * </p>
  */
 public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
     /**
-     * A map of attack IDs to their corresponding {@link Attack} objects, used to resolve attack
-     * references during deserialization.
+     * A map of attack IDs to their corresponding {@link Attack} objects, used to resolve attack references during
+     * deserialization.
      */
     private final Map<String, Attack> attacksMap;
 
@@ -37,8 +36,8 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
      * Constructs a new {@code BugemonDeserializer} with the given map of attacks.
      *
      * @param attacksMap
-     *            a map of attack IDs to {@link Attack} objects used to resolve attack references in
-     *            the Bugemon JSON data
+     *            a map of attack IDs to {@link Attack} objects used to resolve attack references in the Bugemon JSON
+     *            data
      */
     public BugemonDeserializer(Map<String, Attack> attacksMap) {
         this.attacksMap = attacksMap;
@@ -52,11 +51,10 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
      * <li>{@code id} - the unique identifier of the Bugemon</li>
      * <li>{@code nom} - the name of the Bugemon</li>
      * <li>{@code type} - the type of the Bugemon, deserialized as {@link BugemonType}</li>
-     * <li>{@code sprite} - the path to the sprite image; if not prefixed with {@code "png/"}, the
-     * prefix is added automatically</li>
+     * <li>{@code sprite} - the path to the sprite image; if not prefixed with {@code "png/"}, the prefix is added
+     * automatically</li>
      * <li>{@code starter} - whether the Bugemon is a starter Bugemon</li>
-     * <li>{@code stats} - a JSON object containing stat key-value pairs (e.g., hp, attack, defense,
-     * initiative)</li>
+     * <li>{@code stats} - a JSON object containing stat key-value pairs (e.g., hp, attack, defense, initiative)</li>
      * <li>{@code attaques} - a JSON array of attack IDs referencing entries in the attacks map</li>
      * </ul>
      *
@@ -75,6 +73,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
             throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
 
+        JsonObject statsObj = obj.getAsJsonObject("stats");
         String id = obj.get("id").getAsString();
         String name = obj.get("nom").getAsString();
         BugemonType type = context.deserialize(obj.get("type"), BugemonType.class);
@@ -84,8 +83,6 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
         if (sprite != null && !sprite.startsWith("png/")) {
             sprite = "png/" + sprite;
         }
-
-        JsonObject statsObj = obj.getAsJsonObject("stats");
         Map<String, Integer> statsMap = new HashMap<>();
         for (Map.Entry<String, JsonElement> entry : statsObj.entrySet()) {
             statsMap.put(entry.getKey(), entry.getValue().getAsInt());
@@ -103,9 +100,8 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
             }
         }
 
-        return new BugemonBuilder().id(id).name(name).type(type).sprite(sprite)
-                .hp(statsMap.get("pv")).attack(statsMap.get("attaque"))
-                .defense(statsMap.get("defense")).initiative(statsMap.get("initiative"))
+        return new BugemonBuilder().id(id).name(name).type(type).sprite(sprite).hp(statsMap.get("pv"))
+                .attack(statsMap.get("attaque")).defense(statsMap.get("defense")).initiative(statsMap.get("initiative"))
                 .attackList(attackList).isStarter(starter).build();
     }
 }

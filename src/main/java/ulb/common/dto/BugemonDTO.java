@@ -3,20 +3,18 @@ package ulb.common.dto;
 import ulb.models.bugemon.BugemonType;
 
 /**
- * Data Transfer Object (DTO) interface exposing a read-only view of a
- * {@link ulb.models.bugemon.Bugemon} for use outside the model layer (e.g., in views and
- * controllers).
+ * Data Transfer Object (DTO) interface exposing a read-only view of a {@link ulb.models.bugemon.Bugemon} for use
+ * outside the model layer (e.g., in views and controllers).
  *
  * <p>
- * {@code BugemonDTO} decouples the view and controller layers from the full
- * {@link ulb.models.bugemon.Bugemon} implementation by providing only the subset of data required
- * to render a Bugemon on screen. Any class that implements this interface can be safely passed to
- * UI components without exposing mutable model internals.
+ * {@code BugemonDTO} decouples the view and controller layers from the full {@link ulb.models.bugemon.Bugemon}
+ * implementation by providing only the subset of data required to render a Bugemon on screen. Any class that implements
+ * this interface can be safely passed to UI components without exposing mutable model internals.
  * </p>
  *
  * <p>
- * The {@link ulb.models.bugemon.Bugemon} class itself implements this interface. Other lightweight
- * or decorating wrappers may also implement it.
+ * The {@link ulb.models.bugemon.Bugemon} class itself implements this interface. Other lightweight or decorating
+ * wrappers may also implement it.
  * </p>
  *
  * @see ulb.models.bugemon.Bugemon
@@ -26,8 +24,8 @@ public interface BugemonDTO {
      * Returns the path to the sprite image associated with this Bugemon.
      *
      * <p>
-     * The returned string is a classpath-relative resource path (e.g., {@code "png/florachu.png"})
-     * suitable for use with {@link ClassLoader#getResource(String)}.
+     * The returned string is a classpath-relative resource path (e.g., {@code "png/florachu.png"}) suitable for use
+     * with {@link ClassLoader#getResource(String)}.
      * </p>
      *
      * @return the sprite resource path as a non-{@code null} {@code String}.
@@ -38,8 +36,8 @@ public interface BugemonDTO {
      * Returns the unique identifier of this Bugemon.
      *
      * <p>
-     * The ID is a stable, opaque string that uniquely distinguishes one Bugemon from another across
-     * the whole game (e.g., {@code "001"}).
+     * The ID is a stable, opaque string that uniquely distinguishes one Bugemon from another across the whole game
+     * (e.g., {@code "001"}).
      * </p>
      *
      * @return the unique identifier as a non-{@code null} {@code String}.
@@ -61,8 +59,8 @@ public interface BugemonDTO {
      * Returns the elemental type of this Bugemon.
      *
      * <p>
-     * The type affects combat effectiveness calculations; see
-     * {@link ulb.services.CombatService#compareBugemonType} for the type matchup rules.
+     * The type affects combat effectiveness calculations; see {@link ulb.services.CombatService#compareBugemonType} for
+     * the type matchup rules.
      * </p>
      *
      * @return the {@link BugemonType} of this Bugemon; never {@code null}.
@@ -73,9 +71,8 @@ public interface BugemonDTO {
      * Returns the current hit points (HP) of this Bugemon.
      *
      * <p>
-     * HP represents the Bugemon's remaining health during a battle. When HP reaches zero the
-     * Bugemon is considered defeated and {@link ulb.models.bugemon.Bugemon#isAlive()} returns
-     * {@code false}.
+     * HP represents the Bugemon's remaining health during a battle. When HP reaches zero the Bugemon is considered
+     * defeated and {@link ulb.models.bugemon.Bugemon#isAlive()} returns {@code false}.
      * </p>
      *
      * @return the current HP as a non-negative {@code int}.
@@ -94,8 +91,7 @@ public interface BugemonDTO {
      *
      * <p>
      * The level starts at {@code 1} and increases each time the Bugemon accumulates enough XP via
-     * {@link ulb.models.bugemon.Bugemon#addXp(int)}. It is used to determine XP thresholds for
-     * future level-ups.
+     * {@link ulb.models.bugemon.Bugemon#addXp(int)}. It is used to determine XP thresholds for future level-ups.
      * </p>
      *
      * @return the current level as a positive {@code int} (minimum {@code 1}).

@@ -12,13 +12,12 @@ import javafx.scene.media.MediaPlayer;
 /**
  * MusicPlayer
  *
- * Controller responsible for managing music playback within the application. Handles loading,
- * playing, stopping, and switching between music tracks.
+ * Controller responsible for managing music playback within the application. Handles loading, playing, stopping, and
+ * switching between music tracks.
  *
  * <p>
- * The controller maintains a list of available music tracks, each represented by the inner
- * {@code Music} class which encapsulates the song's link and name. The controller uses JavaFX's
- * {@link MediaPlayer} for audio playback.
+ * The controller maintains a list of available music tracks, each represented by the inner {@code Music} class which
+ * encapsulates the song's link and name. The controller uses JavaFX's {@link MediaPlayer} for audio playback.
  * </p>
  *
  * @see MediaPlayer
@@ -97,17 +96,14 @@ public class MusicPlayer {
      *            the ambiance of the music track to play.
      */
     public void playAmbiance(Ambiance ambiance, boolean isSoundEffect) {
-        List<Music> matchingMusics = this.musics.stream()
-                .filter(music -> music.ambiance() == ambiance).toList();
+        List<Music> matchingMusics = this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 
         if (matchingMusics.isEmpty()) {
-            LOGGER.log(Level.SEVERE, "Error playing music matching ambiance {0}: no match",
-                    ambiance);
+            LOGGER.log(Level.SEVERE, "Error playing music matching ambiance {0}: no match", ambiance);
             return;
         }
 
-        Music music = matchingMusics
-                .get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
+        Music music = matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
 
         if (isSoundEffect) {
             this.playSoundEffect(music);
@@ -117,8 +113,7 @@ public class MusicPlayer {
     }
 
     /**
-     * Stops the currently playing music track if there is one by calling the stop method on the
-     * MediaPlayer instance.
+     * Stops the currently playing music track if there is one by calling the stop method on the MediaPlayer instance.
      */
     public void stopMusic() {
         this.mediaPlayer.ifPresent(MediaPlayer::stop);

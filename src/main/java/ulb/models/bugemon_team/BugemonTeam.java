@@ -26,14 +26,14 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
  * Represents a team of up to {@value #MAX_SIZE} {@link Bugemon}s owned by a trainer.
  *
  * <p>
- * A {@code BugemonTeam} stores Bugemons in a fixed-size array and exposes operations to add,
- * remove, and query members. The team implements {@link Iterable} so it can be used directly in
- * enhanced for-loops; the iterator skips {@code null} slots transparently.
+ * A {@code BugemonTeam} stores Bugemons in a fixed-size array and exposes operations to add, remove, and query members.
+ * The team implements {@link Iterable} so it can be used directly in enhanced for-loops; the iterator skips
+ * {@code null} slots transparently.
  * </p>
  *
  * <p>
- * All mutating operations ({@link #addBugemon}, {@link #removeBugemon}) enforce the team's capacity
- * and uniqueness constraints, throwing the appropriate unchecked exceptions on violation.
+ * All mutating operations ({@link #addBugemon}, {@link #removeBugemon}) enforce the team's capacity and uniqueness
+ * constraints, throwing the appropriate unchecked exceptions on violation.
  * </p>
  *
  * @see Bugemon
@@ -91,8 +91,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return this.team.isEmpty();
     }
 
-    public void add(Bugemon bugemon)
-            throws TeamAlreadyFullException, BugemonAlreadyExistsException {
+    public void add(Bugemon bugemon) throws TeamAlreadyFullException, BugemonAlreadyExistsException {
         if (this.isFull()) {
             throw new TeamAlreadyFullException("Team already full!");
         }
@@ -104,8 +103,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
         this.team.add(bugemon);
     }
 
-    public void remove(Bugemon bugemon)
-            throws TeamAlreadyEmptyException, BugemonNotInTeamException {
+    public void remove(Bugemon bugemon) throws TeamAlreadyEmptyException, BugemonNotInTeamException {
         if (this.size() == 0) {
             throw new TeamAlreadyEmptyException("Team already empty!");
         }
@@ -138,12 +136,12 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     /**
-     * Returns an {@link Iterator} over the non-{@code null} {@link Bugemon}s in this team, in the
-     * order they were added.
+     * Returns an {@link Iterator} over the non-{@code null} {@link Bugemon}s in this team, in the order they were
+     * added.
      *
      * <p>
-     * Empty slots (i.e., {@code null} entries in the backing array) are silently skipped, so the
-     * iterator always yields exactly {@link #size()} elements.
+     * Empty slots (i.e., {@code null} entries in the backing array) are silently skipped, so the iterator always yields
+     * exactly {@link #size()} elements.
      * </p>
      *
      * @return an iterator over the live members of this team.
@@ -166,12 +164,12 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     /**
-     * Resets every {@link Bugemon} in the team to its initial state, restoring all stats to the
-     * values they had when the Bugemon was first constructed.
+     * Resets every {@link Bugemon} in the team to its initial state, restoring all stats to the values they had when
+     * the Bugemon was first constructed.
      *
      * <p>
-     * This method is typically called at the end of a combat session so that the team can be reused
-     * for a subsequent battle without retaining any in-combat stat modifications.
+     * This method is typically called at the end of a combat session so that the team can be reused for a subsequent
+     * battle without retaining any in-combat stat modifications.
      * </p>
      *
      * @see Bugemon#resetModifiers()
@@ -184,9 +182,8 @@ public class BugemonTeam implements Iterable<Bugemon> {
      * Returns the first {@link Bugemon} in the team, in insertion order.
      *
      * <p>
-     * This is a convenience method equivalent to retrieving the element at index {@code 0} of the
-     * backing list. It is typically used to initialise the active Bugemon when a
-     * {@link ulb.models.trainer.Trainer} is constructed.
+     * This is a convenience method equivalent to retrieving the element at index {@code 0} of the backing list. It is
+     * typically used to initialise the active Bugemon when a {@link ulb.models.trainer.Trainer} is constructed.
      * </p>
      *
      * @return the first {@link Bugemon} in the team; never {@code null} if the team is non-empty.

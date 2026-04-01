@@ -21,22 +21,20 @@ import ulb.services.CombatService;
  * Orchestrates a turn-based combat between any two {@link Trainer}s.
  *
  * <p>
- * A {@code Combat} holds references to an <em>ally</em> trainer (the player's side) and an
- * <em>adversary</em> trainer (the opponent's side), together with a turn counter incremented after
- * each resolved round.
+ * A {@code Combat} holds references to an <em>ally</em> trainer (the player's side) and an <em>adversary</em> trainer
+ * (the opponent's side), together with a turn counter incremented after each resolved round.
  * </p>
  *
  * <p>
- * The combat ends when at least one trainer has no more living {@link ulb.models.bugemon.Bugemon}s,
- * as detected by {@link #isFinished()}. {@link #getWinner()} then returns the surviving trainer
- * wrapped in an {@link Optional}, or an empty {@link Optional} if the combat is still ongoing.
+ * The combat ends when at least one trainer has no more living {@link ulb.models.bugemon.Bugemon}s, as detected by
+ * {@link #isFinished()}. {@link #getWinner()} then returns the surviving trainer wrapped in an {@link Optional}, or an
+ * empty {@link Optional} if the combat is still ongoing.
  * </p>
  *
  * <p>
- * Each call to {@link #turn()} asks both trainers for their chosen {@link TurnAction} via
- * {@link Trainer#getAction()}, applies passive actions (switches, items, …) immediately, then
- * resolves any attacks. The turn result is returned as a {@link TurnResult} so that the controller
- * layer can drive the view without inspecting the model directly.
+ * Each call to {@link #turn()} asks both trainers for their chosen {@link TurnAction} via {@link Trainer#getAction()},
+ * applies passive actions (switches, items, …) immediately, then resolves any attacks. The turn result is returned as a
+ * {@link TurnResult} so that the controller layer can drive the view without inspecting the model directly.
  * </p>
  *
  * <p>
@@ -70,17 +68,14 @@ public class Combat {
      * Constructs a {@code Combat} between the two given trainers.
      *
      * <p>
-     * Either trainer may be an {@link ulb.models.trainer.AutoTrainer} or a
-     * {@link ulb.models.trainer.ManualTrainer}; the combat does not distinguish between them — it
-     * only calls the {@link Trainer} interface.
+     * Either trainer may be an {@link ulb.models.trainer.AutoTrainer} or a {@link ulb.models.trainer.ManualTrainer};
+     * the combat does not distinguish between them — it only calls the {@link Trainer} interface.
      * </p>
      *
      * @param allyTrainer
-     *            the allied (player-side) trainer; must not be {@code null} and must have a
-     *            non-empty team.
+     *            the allied (player-side) trainer; must not be {@code null} and must have a non-empty team.
      * @param adversaryTrainer
-     *            the adversary (opponent-side) trainer; must not be {@code null} and must have a
-     *            non-empty team.
+     *            the adversary (opponent-side) trainer; must not be {@code null} and must have a non-empty team.
      */
     public Combat(Trainer allyTrainer, Trainer adversaryTrainer) {
         this.allyTrainer = allyTrainer;
@@ -90,26 +85,22 @@ public class Combat {
     // ── public API ────────────────────────────────────────────────────────────
 
     /**
-     * Resolves one full round of combat and returns a {@link TurnResult} describing every hit that
-     * occurred.
+     * Resolves one full round of combat and returns a {@link TurnResult} describing every hit that occurred.
      *
      * <p>
      * The sequence of events within a turn is:
      * <ol>
-     * <li>Both trainers' current {@link ulb.models.bugemon.Bugemon}s are marked as having
-     * participated.</li>
+     * <li>Both trainers' current {@link ulb.models.bugemon.Bugemon}s are marked as having participated.</li>
      * <li>Active status effects are ticked via {@link EffectManager#update()}.</li>
      * <li>Both trainers select their action via {@link Trainer#getAction()}.</li>
-     * <li>If either trainer forfeits, their team is instantly defeated and an empty result is
-     * returned.</li>
+     * <li>If either trainer forfeits, their team is instantly defeated and an empty result is returned.</li>
      * <li>Passive actions (switches, …) are applied for both trainers.</li>
-     * <li>Attacks are resolved in initiative order via
-     * {@link #resolveAttacks(Optional, Optional)}.</li>
+     * <li>Attacks are resolved in initiative order via {@link #resolveAttacks(Optional, Optional)}.</li>
      * <li>The turn counter is incremented.</li>
      * </ol>
      *
-     * @return a {@link TurnResult} describing the first and optional second hit of the turn, and
-     *         whether the ally was knocked out; never {@code null}.
+     * @return a {@link TurnResult} describing the first and optional second hit of the turn, and whether the ally was
+     *         knocked out; never {@code null}.
      */
     public TurnResult turn() {
         this.allyTrainer.markCurrentBugemonParticipation();
@@ -135,8 +126,7 @@ public class Combat {
     }
 
     /**
-     * Returns the winner of the combat if it is over, or an empty {@link Optional} if the combat is
-     * still ongoing.
+     * Returns the winner of the combat if it is over, or an empty {@link Optional} if the combat is still ongoing.
      *
      * <p>
      * The winner is determined as follows:
@@ -146,8 +136,8 @@ public class Combat {
      * <li>If neither trainer is defeated yet, an empty {@link Optional} is returned.</li>
      * </ul>
      *
-     * @return an {@link Optional} containing the winning {@link Trainer}, or an empty
-     *         {@link Optional} if the combat has not yet ended.
+     * @return an {@link Optional} containing the winning {@link Trainer}, or an empty {@link Optional} if the combat
+     *         has not yet ended.
      * @see #isFinished()
      */
     public Optional<Trainer> getWinner() {
@@ -166,12 +156,11 @@ public class Combat {
      * Returns {@code true} if the combat is finished, {@code false} otherwise.
      *
      * <p>
-     * A combat is considered finished when at least one of the two trainers has been defeated,
-     * meaning all of their {@link ulb.models.bugemon.Bugemon}s have fainted (HP &le; 0).
+     * A combat is considered finished when at least one of the two trainers has been defeated, meaning all of their
+     * {@link ulb.models.bugemon.Bugemon}s have fainted (HP &le; 0).
      * </p>
      *
-     * @return {@code true} if either trainer is defeated, {@code false} if both still have at least
-     *         one living Bugemon.
+     * @return {@code true} if either trainer is defeated, {@code false} if both still have at least one living Bugemon.
      * @see Trainer#isDefeated()
      */
     public boolean isFinished() {
@@ -221,15 +210,14 @@ public class Combat {
     // ── private helpers ───────────────────────────────────────────────────────
 
     /**
-     * Checks whether either trainer has chosen to forfeit, and if so instantly defeats that
-     * trainer's entire team.
+     * Checks whether either trainer has chosen to forfeit, and if so instantly defeats that trainer's entire team.
      *
      * @param allyAction
      *            the action chosen by the ally trainer.
      * @param adversaryAction
      *            the action chosen by the adversary trainer.
-     * @return {@code true} if at least one trainer forfeited and the combat should end immediately,
-     *         {@code false} otherwise.
+     * @return {@code true} if at least one trainer forfeited and the combat should end immediately, {@code false}
+     *         otherwise.
      */
     private boolean checkForForfeit(TurnAction allyAction, TurnAction adversaryAction) {
         if (allyAction instanceof TurnAction.ForfeitAction) {
@@ -249,11 +237,10 @@ public class Combat {
      * <p>
      * Currently handled passive actions:
      * <ul>
-     * <li>{@link TurnAction.SwitchAction} — sets the trainer's active
-     * {@link ulb.models.bugemon.Bugemon} to the chosen target.</li>
+     * <li>{@link TurnAction.SwitchAction} — sets the trainer's active {@link ulb.models.bugemon.Bugemon} to the chosen
+     * target.</li>
      * </ul>
-     * Future passive actions (e.g. item use) should add a new branch here without modifying any
-     * other method.
+     * Future passive actions (e.g. item use) should add a new branch here without modifying any other method.
      *
      * @param trainer
      *            the trainer performing the action; must not be {@code null}.
@@ -265,13 +252,13 @@ public class Combat {
     }
 
     /**
-     * Extracts the {@link Attack} from an {@link TurnAction.AttackAction}, or returns an empty
-     * {@link Optional} if the action is not an attack.
+     * Extracts the {@link Attack} from an {@link TurnAction.AttackAction}, or returns an empty {@link Optional} if the
+     * action is not an attack.
      *
      * @param action
      *            the action to inspect; must not be {@code null}.
-     * @return an {@link Optional} containing the attack, or empty if the action is a switch,
-     *         forfeit, or any other passive action.
+     * @return an {@link Optional} containing the attack, or empty if the action is a switch, forfeit, or any other
+     *         passive action.
      */
     private Optional<Attack> extractAttack(TurnAction action) {
         if (action instanceof TurnAction.AttackAction(Attack a)) {
@@ -287,32 +274,26 @@ public class Combat {
      * Three cases are handled:
      * <ul>
      * <li><strong>Both attack</strong> — initiative order is determined via
-     * {@link CombatHelper#attackPriority(Trainer, Trainer)}; the faster trainer hits first. If the
-     * combat is already finished after the first hit, the second hit is skipped.</li>
+     * {@link CombatHelper#attackPriority(Trainer, Trainer)}; the faster trainer hits first. If the combat is already
+     * finished after the first hit, the second hit is skipped.</li>
      * <li><strong>Only ally attacks</strong> — the ally hits the adversary; no retaliation.</li>
-     * <li><strong>Only adversary attacks</strong> — the adversary hits the ally; no
-     * retaliation.</li>
-     * <li><strong>Neither attacks</strong> (both switched, both used items, …) — an empty result is
-     * returned.</li>
+     * <li><strong>Only adversary attacks</strong> — the adversary hits the ally; no retaliation.</li>
+     * <li><strong>Neither attacks</strong> (both switched, both used items, …) — an empty result is returned.</li>
      * </ul>
      *
      * @param allyAttack
-     *            the ally's attack wrapped in an {@link Optional}, or empty if the ally did not
-     *            attack this turn.
+     *            the ally's attack wrapped in an {@link Optional}, or empty if the ally did not attack this turn.
      * @param adversaryAttack
-     *            the adversary's attack wrapped in an {@link Optional}, or empty if the adversary
-     *            did not attack this turn.
+     *            the adversary's attack wrapped in an {@link Optional}, or empty if the adversary did not attack this
+     *            turn.
      * @return a {@link TurnResult} describing what happened; never {@code null}.
      */
-    private TurnResult resolveAttacks(Optional<Attack> allyAttack,
-            Optional<Attack> adversaryAttack) {
+    private TurnResult resolveAttacks(Optional<Attack> allyAttack, Optional<Attack> adversaryAttack) {
         if (allyAttack.isPresent() && adversaryAttack.isPresent()) {
             Trainer first = CombatService.attackPriority(this.allyTrainer, this.adversaryTrainer);
             Trainer second = first == this.allyTrainer ? this.adversaryTrainer : this.allyTrainer;
-            Attack firstAttack = first == this.allyTrainer ? allyAttack.get()
-                    : adversaryAttack.get();
-            Attack secondAttack = second == this.allyTrainer ? allyAttack.get()
-                    : adversaryAttack.get();
+            Attack firstAttack = first == this.allyTrainer ? allyAttack.get() : adversaryAttack.get();
+            Attack secondAttack = second == this.allyTrainer ? allyAttack.get() : adversaryAttack.get();
 
             TurnResult.AttackResult firstResult = this.applyAttack(first, second, firstAttack);
             Optional<TurnResult.AttackResult> secondResult = this.isFinished() ? Optional.empty()
@@ -323,16 +304,14 @@ public class Combat {
         }
 
         if (allyAttack.isPresent()) {
-            TurnResult.AttackResult hit = this.applyAttack(this.allyTrainer, this.adversaryTrainer,
-                    allyAttack.get());
+            TurnResult.AttackResult hit = this.applyAttack(this.allyTrainer, this.adversaryTrainer, allyAttack.get());
             return new TurnResult(hit, Optional.empty(), false);
         }
 
         if (adversaryAttack.isPresent()) {
             TurnResult.AttackResult hit = this.applyAttack(this.adversaryTrainer, this.allyTrainer,
                     adversaryAttack.get());
-            boolean allyKO = !this.allyTrainer.isCurrentBugemonAlive()
-                    && !this.allyTrainer.isDefeated();
+            boolean allyKO = !this.allyTrainer.isCurrentBugemonAlive() && !this.allyTrainer.isDefeated();
             return new TurnResult(hit, Optional.empty(), allyKO);
         }
 
@@ -340,41 +319,36 @@ public class Combat {
     }
 
     /**
-     * Returns {@code true} if the ally trainer's current {@link ulb.models.bugemon.Bugemon} was
-     * knocked out during this turn's attack resolution.
+     * Returns {@code true} if the ally trainer's current {@link ulb.models.bugemon.Bugemon} was knocked out during this
+     * turn's attack resolution.
      *
      * <p>
-     * The ally can be knocked out by the first hit (when the adversary has higher initiative) or by
-     * the second hit (normal case). Both possibilities are checked.
+     * The ally can be knocked out by the first hit (when the adversary has higher initiative) or by the second hit
+     * (normal case). Both possibilities are checked.
      * </p>
      *
      * @param first
      *            the {@link TurnResult.AttackResult} of the first hit.
      * @param second
-     *            the optional {@link TurnResult.AttackResult} of the second hit; may be empty if
-     *            the combat ended after the first hit.
-     * @return {@code true} if the ally's current Bugemon is no longer alive after this turn,
-     *         {@code false} otherwise.
+     *            the optional {@link TurnResult.AttackResult} of the second hit; may be empty if the combat ended after
+     *            the first hit.
+     * @return {@code true} if the ally's current Bugemon is no longer alive after this turn, {@code false} otherwise.
      */
-    private boolean isAllyKo(TurnResult.AttackResult first,
-            Optional<TurnResult.AttackResult> second) {
-        boolean koByFirst = first.defender() == this.allyTrainer
-                && !this.allyTrainer.isCurrentBugemonAlive();
+    private boolean isAllyKo(TurnResult.AttackResult first, Optional<TurnResult.AttackResult> second) {
+        boolean koByFirst = first.defender() == this.allyTrainer && !this.allyTrainer.isCurrentBugemonAlive();
         boolean koBySecond = second.isPresent() && second.get().defender() == this.allyTrainer
                 && !this.allyTrainer.isCurrentBugemonAlive();
         return koByFirst || koBySecond;
     }
 
     /**
-     * Applies a single attack from {@code attacker} to {@code defender}, computes type
-     * effectiveness, triggers a KO reaction if the defending Bugemon faints, and records the
-     * result.
+     * Applies a single attack from {@code attacker} to {@code defender}, computes type effectiveness, triggers a KO
+     * reaction if the defending Bugemon faints, and records the result.
      *
      * <p>
-     * If the defending Bugemon survives, any {@link ulb.models.bugemon.Effect}s carried by the
-     * attack are applied via {@link EffectManager#applyEffect(Trainer, Trainer, Attack)}. Effects
-     * are <em>not</em> applied if the Bugemon faints, because it will be switched out before they
-     * could take effect.
+     * If the defending Bugemon survives, any {@link ulb.models.bugemon.Effect}s carried by the attack are applied via
+     * {@link EffectManager#applyEffect(Trainer, Trainer, Attack)}. Effects are <em>not</em> applied if the Bugemon
+     * faints, because it will be switched out before they could take effect.
      * </p>
      *
      * @param attacker
@@ -383,16 +357,14 @@ public class Combat {
      *            the trainer receiving the damage; must not be {@code null}.
      * @param attack
      *            the attack being used; must not be {@code null}.
-     * @return an {@link TurnResult.AttackResult} capturing the participants, the attack used, and
-     *         the computed {@link CombatHelper.Efficiency}.
+     * @return an {@link TurnResult.AttackResult} capturing the participants, the attack used, and the computed
+     *         {@link CombatHelper.Efficiency}.
      */
     private TurnResult.AttackResult applyAttack(Trainer attacker, Trainer defender, Attack attack) {
-        int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(),
-                defender.getCurrentBugemon());
+        int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
-        Efficiency efficiency = CombatService.compareBugemonType(attack.type(),
-                defender.getCurrentBugemonType());
+        Efficiency efficiency = CombatService.compareBugemonType(attack.type(), defender.getCurrentBugemonType());
 
         if (!defender.isCurrentBugemonAlive() && !defender.isDefeated()) {
             defender.reactToKo();
@@ -401,18 +373,17 @@ public class Combat {
     }
 
     /**
-     * Builds a {@link TurnResult} in which neither trainer performed an attack (e.g. both
-     * forfeited, both switched, or a forfeit was detected before attack resolution).
+     * Builds a {@link TurnResult} in which neither trainer performed an attack (e.g. both forfeited, both switched, or
+     * a forfeit was detected before attack resolution).
      *
-     * @return a {@link TurnResult} with two empty {@link TurnResult.AttackResult}s and an empty
-     *         {@code allyKnockedOut} flag.
+     * @return a {@link TurnResult} with two empty {@link TurnResult.AttackResult}s and an empty {@code allyKnockedOut}
+     *         flag.
      */
     private TurnResult emptyResult() {
         return new TurnResult(
-                new TurnResult.AttackResult(this.allyTrainer, this.adversaryTrainer,
-                        Optional.empty(), null),
-                Optional.of(new TurnResult.AttackResult(this.adversaryTrainer, this.allyTrainer,
-                        Optional.empty(), null)),
+                new TurnResult.AttackResult(this.allyTrainer, this.adversaryTrainer, Optional.empty(), null),
+                Optional.of(
+                        new TurnResult.AttackResult(this.adversaryTrainer, this.allyTrainer, Optional.empty(), null)),
                 false);
     }
 }

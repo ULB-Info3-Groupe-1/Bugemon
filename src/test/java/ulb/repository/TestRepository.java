@@ -1,7 +1,10 @@
 package ulb.repository;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +40,7 @@ public class TestRepository {
         // Assert
         assertTrue("L'ID utilisateur doit être valide (supérieur à 0)", userId > 0);
         assertTrue("L'utilisateur devrait être trouvé dans la BD", retrievedId.isPresent());
-        assertEquals("L'ID récupéré doit correspondre à celui créé", userId,
-                retrievedId.get().intValue());
+        assertEquals("L'ID récupéré doit correspondre à celui créé", userId, retrievedId.get().intValue());
 
         // Verify the mock was called
         verify(this.repository).createUser(username);
@@ -174,8 +176,8 @@ public class TestRepository {
         String teamName = "ToDelete_team";
 
         // Configure mock behavior for retrieving teams after deletion
-        when(this.repository.getUserTeams(userId)).thenReturn(new ArrayList<>()); // Empty list
-                                                                                  // after deletion
+        // Empty list after deletion
+        when(this.repository.getUserTeams(userId)).thenReturn(new ArrayList<>());
 
         // Execute
         this.repository.createTeam(userId, teamName);
@@ -231,10 +233,8 @@ public class TestRepository {
         String bugemonId = "leave_001";
 
         // Configure mock behavior to return empty list after removal
-        when(this.repository.getTeamMembers(userId, teamName)).thenReturn(new ArrayList<>()); // Empty
-                                                                                              // list
-                                                                                              // after
-                                                                                              // removal
+        // Empty list after removal
+        when(this.repository.getTeamMembers(userId, teamName)).thenReturn(new ArrayList<>());
 
         // Execute
         this.repository.createTeam(userId, teamName);
@@ -263,8 +263,7 @@ public class TestRepository {
         String newTeamName = "New_name_team";
 
         // Configure mock behavior for retrieving teams after rename
-        when(this.repository.getUserTeams(userId))
-                .thenReturn(List.of(new TeamDTO(userId, newTeamName)));
+        when(this.repository.getUserTeams(userId)).thenReturn(List.of(new TeamDTO(userId, newTeamName)));
 
         // Execute
         this.repository.createTeam(userId, oldTeamName);

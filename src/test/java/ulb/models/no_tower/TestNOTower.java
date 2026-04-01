@@ -21,8 +21,7 @@ import ulb.utils.test.TestUtilsBugemons;
 public class TestNOTower {
     private PlayerService getPlayerServiceMock() {
         PlayerService playerServiceMock = mock(PlayerService.class);
-        List<Bugemon> testBugemons = new ArrayList<Bugemon>(
-                TestUtilsBugemons.createDefaultTeam(6).stream().toList());
+        List<Bugemon> testBugemons = new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("finalboss"));
         when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
@@ -41,19 +40,19 @@ public class TestNOTower {
     public void testNOTowerInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        NOTower noTower = new NOTower(playerTeam, getPlayerServiceMock());
+        NOTower noTower = new NOTower(playerTeam, this.getPlayerServiceMock());
 
         assertEquals(0, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFloorComplete());
 
         for (int expectedFloor = 1; expectedFloor <= 8; expectedFloor++) {
-            completeCurrentFloor(noTower);
+            this.completeCurrentFloor(noTower);
             assertTrue(noTower.isFloorComplete());
             noTower.goToNextFloor();
             assertEquals(expectedFloor, noTower.getCurrentFloorNumber());
         }
 
-        completeCurrentFloor(noTower);
+        this.completeCurrentFloor(noTower);
         assertTrue(noTower.isFloorComplete());
         assertThrows(IllegalStateException.class, noTower::goToNextFloor);
         assertEquals(8, noTower.getCurrentFloorNumber());
@@ -63,7 +62,7 @@ public class TestNOTower {
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        NOTower noTower = new NOTower(playerTeam, getPlayerServiceMock());
+        NOTower noTower = new NOTower(playerTeam, this.getPlayerServiceMock());
 
         assertFalse(noTower.isFloorComplete());
     }

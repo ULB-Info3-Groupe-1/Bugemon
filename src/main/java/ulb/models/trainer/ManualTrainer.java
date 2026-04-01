@@ -19,25 +19,25 @@ import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * Represents a human-controlled trainer whose actions are driven by the controller layer through a
- * <em>queue-based</em> API.
+ * Represents a human-controlled trainer whose actions are driven by the controller layer through a <em>queue-based</em>
+ * API.
  *
  * <p>
- * Before each call to {@link ulb.models.combat.Combat#turn()}, the controller must enqueue exactly
- * one action via one of the convenience methods:
+ * Before each call to {@link ulb.models.combat.Combat#turn()}, the controller must enqueue exactly one action via one
+ * of the convenience methods:
  * <ul>
  * <li>{@link #registerAttack(Attack)} — attack with a specific move.</li>
- * <li>{@link #registerSwitch(Bugemon)} — voluntarily swap the active Bugemon (counts as the turn
- * action; the opponent still attacks).</li>
+ * <li>{@link #registerSwitch(Bugemon)} — voluntarily swap the active Bugemon (counts as the turn action; the opponent
+ * still attacks).</li>
  * <li>{@link #registerForfeit()} — immediately concede the match.</li>
  * </ul>
- * The queued action is consumed exactly once by {@link #getAction()} and cleared afterwards; a new
- * action must be queued every turn.
+ * The queued action is consumed exactly once by {@link #getAction()} and cleared afterwards; a new action must be
+ * queued every turn.
  *
  * <p>
- * A separate code path handles <em>forced</em> switches that occur when the active Bugemon faints
- * mid-turn. In that case the controller calls {@link #switchAfterKO(Bugemon)} directly, which
- * replaces {@code currentBugemon} immediately without going through a combat turn.
+ * A separate code path handles <em>forced</em> switches that occur when the active Bugemon faints mid-turn. In that
+ * case the controller calls {@link #switchAfterKO(Bugemon)} directly, which replaces {@code currentBugemon} immediately
+ * without going through a combat turn.
  * </p>
  *
  * @see AutoTrainer
@@ -56,13 +56,13 @@ public class ManualTrainer extends Trainer {
      * Constructs a {@code ManualTrainer} with the given team.
      *
      * <p>
-     * The first Bugemon in the team is automatically set as the active one. Both the pending action
-     * and the KO switch target start as empty.
+     * The first Bugemon in the team is automatically set as the active one. Both the pending action and the KO switch
+     * target start as empty.
      * </p>
      *
      * @param team
-     *            the {@link BugemonTeam} this trainer owns; must not be {@code null} and must
-     *            contain at least one Bugemon.
+     *            the {@link BugemonTeam} this trainer owns; must not be {@code null} and must contain at least one
+     *            Bugemon.
      */
     public ManualTrainer(BugemonTeam team, Inventory inventory) {
         super(team);
@@ -72,13 +72,12 @@ public class ManualTrainer extends Trainer {
     // ── strategy contract ────────────────────────────────────────────────────
 
     /**
-     * Returns and consumes the action that was previously queued by the controller via
-     * {@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
-     * {@link #registerForfeit()}, or the lower-level {@link #registerAction(TurnAction)}.
+     * Returns and consumes the action that was previously queued by the controller via {@link #registerAttack(Attack)},
+     * {@link #registerSwitch(Bugemon)}, {@link #registerForfeit()}, or the lower-level
+     * {@link #registerAction(TurnAction)}.
      *
      * <p>
-     * The pending action is cleared after this call; the controller must queue a new action before
-     * the next turn.
+     * The pending action is cleared after this call; the controller must queue a new action before the next turn.
      * </p>
      *
      * @return the {@link TurnAction} chosen for this turn; never {@code null}.
@@ -90,8 +89,7 @@ public class ManualTrainer extends Trainer {
         return this.pendingAction.map(a -> {
             this.pendingAction = Optional.empty();
             return a;
-        }).orElseThrow(
-                () -> new IllegalStateException("No action has been selected for this turn."));
+        }).orElseThrow(() -> new IllegalStateException("No action has been selected for this turn."));
     }
 
     /**
@@ -100,9 +98,8 @@ public class ManualTrainer extends Trainer {
      *
      * <p>
      * If no KO switch target has been registered (i.e. the controller has not yet called
-     * {@link #registerSwitchAfterKO(Bugemon)}), this method does nothing; the controller is
-     * responsible for calling {@link #switchAfterKO(Bugemon)} when the player has made their
-     * choice.
+     * {@link #registerSwitchAfterKO(Bugemon)}), this method does nothing; the controller is responsible for calling
+     * {@link #switchAfterKO(Bugemon)} when the player has made their choice.
      * </p>
      */
     @Override
@@ -124,18 +121,15 @@ public class ManualTrainer extends Trainer {
     // ── forced KO switch ─────────────────────────────────────────────────────
 
     /**
-     * Immediately replaces the active Bugemon with {@code target} after a KO, without going through
-     * a combat turn.
+     * Immediately replaces the active Bugemon with {@code target} after a KO, without going through a combat turn.
      *
      * <p>
-     * This method is called by the controller when the player selects a replacement Bugemon
-     * following a mid-turn KO. It bypasses the normal turn flow: no opponent attack is triggered
-     * and no turn counter is incremented.
+     * This method is called by the controller when the player selects a replacement Bugemon following a mid-turn KO. It
+     * bypasses the normal turn flow: no opponent attack is triggered and no turn counter is incremented.
      * </p>
      *
      * @param target
-     *            the alive {@link Bugemon} to send into battle; must not be {@code null} and must
-     *            be alive.
+     *            the alive {@link Bugemon} to send into battle; must not be {@code null} and must be alive.
      * @throws IllegalArgumentException
      *             if {@code target} is not alive.
      */
@@ -149,13 +143,12 @@ public class ManualTrainer extends Trainer {
     // ── controller queue API ─────────────────────────────────────────────────
 
     /**
-     * Enqueues an arbitrary {@link TurnAction} to be consumed on the next {@link #getAction()}
-     * call.
+     * Enqueues an arbitrary {@link TurnAction} to be consumed on the next {@link #getAction()} call.
      *
      * <p>
      * Any previously queued action is silently overwritten. Prefer the typed convenience methods
-     * ({@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)},
-     * {@link #registerForfeit()}) to benefit from built-in validation.
+     * ({@link #registerAttack(Attack)}, {@link #registerSwitch(Bugemon)}, {@link #registerForfeit()}) to benefit from
+     * built-in validation.
      * </p>
      *
      * @param action
@@ -169,8 +162,8 @@ public class ManualTrainer extends Trainer {
      * Queues an {@link TurnAction.AttackAction} for the given attack.
      *
      * <p>
-     * The attack must belong to the current Bugemon's move-set. If it does not, an
-     * {@link IllegalArgumentException} is thrown and no action is queued.
+     * The attack must belong to the current Bugemon's move-set. If it does not, an {@link IllegalArgumentException} is
+     * thrown and no action is queued.
      * </p>
      *
      * @param attack
@@ -180,8 +173,7 @@ public class ManualTrainer extends Trainer {
      */
     public void registerAttack(Attack attack) {
         if (!checkCurrentBugemonHasAttack(attack)) {
-            throw new IllegalArgumentException(
-                    "The selected attack is not in the current bugemon's attack list.");
+            throw new IllegalArgumentException("The selected attack is not in the current bugemon's attack list.");
         }
         this.registerAction(new TurnAction.AttackAction(attack));
     }
@@ -190,9 +182,8 @@ public class ManualTrainer extends Trainer {
      * Queues a {@link TurnAction.SwitchAction} for the given Bugemon.
      *
      * <p>
-     * This represents a <em>voluntary</em> switch: it consumes the player's turn and the opponent
-     * still attacks afterwards. The target must be alive; if it is not, an
-     * {@link IllegalArgumentException} is thrown.
+     * This represents a <em>voluntary</em> switch: it consumes the player's turn and the opponent still attacks
+     * afterwards. The target must be alive; if it is not, an {@link IllegalArgumentException} is thrown.
      * </p>
      *
      * @param target
@@ -208,8 +199,8 @@ public class ManualTrainer extends Trainer {
     }
 
     /**
-     * Queues a {@link TurnAction.ForfeitAction}, causing the player to immediately concede the
-     * match on the next {@link ulb.models.combat.Combat#turn()} call.
+     * Queues a {@link TurnAction.ForfeitAction}, causing the player to immediately concede the match on the next
+     * {@link ulb.models.combat.Combat#turn()} call.
      */
     public void registerForfeit() {
         this.registerAction(new TurnAction.ForfeitAction());
@@ -219,8 +210,8 @@ public class ManualTrainer extends Trainer {
      * Pre-registers a KO switch target to be applied by {@link #reactToKo()}.
      *
      * <p>
-     * This is an alternative to {@link #switchAfterKO(Bugemon)} for cases where the switch target
-     * is known before {@link #reactToKo()} is invoked by the combat engine.
+     * This is an alternative to {@link #switchAfterKO(Bugemon)} for cases where the switch target is known before
+     * {@link #reactToKo()} is invoked by the combat engine.
      * </p>
      *
      * @param target
@@ -254,8 +245,7 @@ public class ManualTrainer extends Trainer {
     /**
      * Returns {@code true} if an action has been queued and not yet consumed.
      *
-     * @return {@code true} if {@link #getAction()} can be called without throwing, {@code false}
-     *         otherwise.
+     * @return {@code true} if {@link #getAction()} can be called without throwing, {@code false} otherwise.
      */
     public boolean hasPendingAction() {
         return this.pendingAction.isPresent();

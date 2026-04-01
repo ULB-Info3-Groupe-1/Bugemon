@@ -33,8 +33,7 @@ public abstract class View {
 
         this.root = loader.load();
         this.scene = new Scene(this.root);
-        this.scene.getStylesheets().add(0,
-                View.class.getResource("/css/theme.css").toExternalForm());
+        this.scene.getStylesheets().add(0, View.class.getResource("/css/theme.css").toExternalForm());
         // Ensure Modena label lookup can always resolve on this scene tree.
         this.root.setStyle("-fx-text-background-color: -fx-text-inner-color;");
         this.root.prefWidthProperty().bind(this.scene.widthProperty());
@@ -45,9 +44,8 @@ public abstract class View {
      * Reads the current state from the model and updates every UI component.
      *
      * <p>
-     * Called by the controller after any model mutation. The view is responsible for pulling all
-     * data it needs directly from the model references it holds. The controller never pushes data
-     * into the view.
+     * Called by the controller after any model mutation. The view is responsible for pulling all data it needs directly
+     * from the model references it holds. The controller never pushes data into the view.
      * </p>
      */
     public abstract void refresh();

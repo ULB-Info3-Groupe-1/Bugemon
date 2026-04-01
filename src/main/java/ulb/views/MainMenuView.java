@@ -9,8 +9,8 @@ import javafx.scene.control.Button;
  *
  * <p>
  * Dispatches user interactions to the controller exclusively through callbacks registered via
- * {@link #setOnCreateTeam(Runnable)} and {@link #setOnQuit(Runnable)}. The view holds no reference
- * to any concrete controller class.
+ * {@link #setOnCreateTeam(Runnable)} and {@link #setOnQuit(Runnable)}. The view holds no reference to any concrete
+ * controller class.
  * </p>
  */
 public class MainMenuView extends View {
