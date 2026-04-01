@@ -71,7 +71,7 @@ public class AutoTrainer extends Trainer {
      */
     @Override
     public TurnAction getAction() {
-        return new TurnAction.AttackAction(getRandomAttack());
+        return new TurnAction.AttackAction(this.getRandomAttack());
     }
 
     /**
@@ -86,7 +86,7 @@ public class AutoTrainer extends Trainer {
      */
     @Override
     public void reactToKo() {
-        selectRandomBugemon();
+        this.selectRandomBugemon();
     }
 
     // ── Public helpers ────────────────────────────────────────────────────────

@@ -35,8 +35,8 @@ public class LevelComponent {
 
         this.xp += xp;
 
-        while (this.xp >= getXpRequiredForNextLevel(this.level)) {
-            this.xp -= getXpRequiredForNextLevel(this.level);
+        while (this.xp >= this.getXpRequiredForNextLevel(this.level)) {
+            this.xp -= this.getXpRequiredForNextLevel(this.level);
             numLevelUps++;
             this.level++;
         }

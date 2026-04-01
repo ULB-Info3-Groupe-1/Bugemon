@@ -101,11 +101,11 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this, this.playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        initializeMusicResources();
-        this.manualCombatController.setOnVictory(levelUpController::setLevelUp);
-        this.automaticCombatController.setOnVictory(levelUpController::setLevelUp);
+        this.initializeMusicResources();
+        this.manualCombatController.setOnVictory(this.levelUpController::setLevelUp);
+        this.automaticCombatController.setOnVictory(this.levelUpController::setLevelUp);
 
-        initTransitions();
+        this.initTransitions();
     }
 
     /**
@@ -115,7 +115,7 @@ public class MetaController {
      * @throws IOException if any resource directory cannot be accessed
      */
     private void initializeMusicResources() throws IOException {
-        musicLoader.loadAllResources(musicPlayer);
+        this.musicLoader.loadAllResources(this.musicPlayer);
     }
 
     /**
@@ -123,38 +123,38 @@ public class MetaController {
      * a lambda that performs the necessary actions to display that screen.
      */
     private void initTransitions() {
-        transitions.put(Window.MAIN_MENU, () -> {
+        this.transitions.put(Window.MAIN_MENU, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
-            mainMenuController.show(stage);
+            this.mainMenuController.show(this.stage);
         });
-        transitions.put(Window.CREATE_TEAM, () -> {
+        this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
-            createTeamController.show(stage);
+            this.createTeamController.show(this.stage);
         });
-        transitions.put(Window.MANUAL_COMBAT, () -> {
+        this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            manualCombatController.startCombat(true);
-            manualCombatController.show(stage);
+            this.manualCombatController.startCombat(true);
+            this.manualCombatController.show(this.stage);
         });
-        transitions.put(Window.AUTOMATIC_COMBAT, () -> {
+        this.transitions.put(Window.AUTOMATIC_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            automaticCombatController.startCombat(true);
-            automaticCombatController.show(stage);
+            this.automaticCombatController.startCombat(true);
+            this.automaticCombatController.show(this.stage);
         });
-        transitions.put(Window.NOTOWER, () -> {
+        this.transitions.put(Window.NOTOWER, () -> {
             this.noTowerFlowActive = true;
-            musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            noTowerController.runNOTower(stage);
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+            this.noTowerController.runNOTower(this.stage);
         });
-        transitions.put(Window.COMBAT_VICTORY, () -> {
-            combatVictoryController.show(stage);
+        this.transitions.put(Window.COMBAT_VICTORY, () -> {
+            this.combatVictoryController.show(this.stage);
             this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
         });
-        transitions.put(Window.COMBAT_DEFEAT, () -> {
-            combatDefeatController.show(stage);
+        this.transitions.put(Window.COMBAT_DEFEAT, () -> {
+            this.combatDefeatController.show(this.stage);
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
-        transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
+        this.transitions.put(Window.LEVEL_UP, () -> this.levelUpController.show(this.stage));
     }
 
     /**
@@ -164,10 +164,11 @@ public class MetaController {
      * @throws IllegalArgumentException if the window is invalid
      */
     public final void switchTo(Window window) {
-        Runnable transition = transitions.get(window);
-        if (transition == null)
+        Runnable transition = this.transitions.get(window);
+        if (transition == null) {
             throw new IllegalArgumentException("Unknown window: " + window);
-        musicPlayer.stopMusic();
+        }
+        this.musicPlayer.stopMusic();
         transition.run();
     }
 

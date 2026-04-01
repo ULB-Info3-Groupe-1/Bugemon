@@ -23,6 +23,7 @@ import ulb.views.combat.AutomaticCombatView;
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
     private Timeline turnTimeline;
+
     /**
      * Constructs an {@code AutomaticCombatController} and initialises its
      * {@link AutomaticCombatView}.
@@ -52,7 +53,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.view.setModel(playerTrainer, opponentTrainer, combat);
         this.view.refresh();
 
-        scheduleTurn(combat, playerTrainer, Duration.seconds(1));
+        this.scheduleTurn(combat, playerTrainer, Duration.seconds(1));
     }
 
     /**
@@ -78,7 +79,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
                 }
 
                 // Schedule the next turn after 3 seconds
-                scheduleTurn(combat, playerTrainer, Duration.seconds(3));
+                this.scheduleTurn(combat, playerTrainer, Duration.seconds(3));
             });
         });
 

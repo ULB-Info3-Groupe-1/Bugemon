@@ -108,7 +108,7 @@ public abstract class Trainer {
 
     public void applyPassiveAction(TurnAction action) {
         if (action instanceof TurnAction.SwitchAction(Bugemon target)) {
-            setCurrentBugemon(target);
+            this.setCurrentBugemon(target);
         }
     }
 

@@ -68,23 +68,24 @@ public class CombatAnimationController {
         }
 
         Runnable afterAttackAnimations = () -> {
-            Boolean koOnTrainerSide = findKoDefenderSide(result, playerTrainer);
+            Boolean koOnTrainerSide = this.findKoDefenderSide(result, playerTrainer);
             if (koOnTrainerSide == null) {
                 onFinished.run();
                 return;
             }
-            playDeathAnimation(koOnTrainerSide, onFinished);
+            this.playDeathAnimation(koOnTrainerSide, onFinished);
         };
 
         if (result.first().wasAttack()) {
             boolean firstFromPlayer = result.first().attacker() == playerTrainer;
-            playAttackAnimation(
-                    firstFromPlayer,
-                    () -> playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations));
+            this.playAttackAnimation(firstFromPlayer,
+                                     ()
+                                             -> this.playSecondAttackIfPresent(
+                                                     result, playerTrainer, afterAttackAnimations));
             return;
         }
 
-        playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations);
+        this.playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations);
     }
 
     /**
@@ -103,7 +104,7 @@ public class CombatAnimationController {
                                            Runnable onFinished) {
         if (result.second().isPresent() && result.second().orElseThrow().wasAttack()) {
             boolean secondFromPlayer = result.second().orElseThrow().attacker() == playerTrainer;
-            playAttackAnimation(secondFromPlayer, onFinished);
+            this.playAttackAnimation(secondFromPlayer, onFinished);
             return;
         }
         onFinished.run();
@@ -147,9 +148,9 @@ public class CombatAnimationController {
      */
     private void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
         if (trainerAttacks) {
-            playTrainerAttackAnimation(onFinished);
+            this.playTrainerAttackAnimation(onFinished);
         } else {
-            playOpponentAttackAnimation(onFinished);
+            this.playOpponentAttackAnimation(onFinished);
         }
     }
 
@@ -160,7 +161,7 @@ public class CombatAnimationController {
      * @param onFinished callback executed once the animation completes.
      */
     private void playTrainerAttackAnimation(Runnable onFinished) {
-        view.playTrainerAttackAnimation(onFinished);
+        this.view.playTrainerAttackAnimation(onFinished);
     }
 
     /**
@@ -170,7 +171,7 @@ public class CombatAnimationController {
      * @param onFinished callback executed once the animation completes.
      */
     private void playOpponentAttackAnimation(Runnable onFinished) {
-        view.playOpponentAttackAnimation(onFinished);
+        this.view.playOpponentAttackAnimation(onFinished);
     }
 
     /**
@@ -181,7 +182,7 @@ public class CombatAnimationController {
      * @param onFinished callback executed once the animation completes.
      */
     private void playDeathAnimationForTrainer(Runnable onFinished) {
-        view.playDeathAnimationForTrainer(onFinished);
+        this.view.playDeathAnimationForTrainer(onFinished);
     }
 
     /**
@@ -190,7 +191,7 @@ public class CombatAnimationController {
      * @param onFinished callback executed once the animation completes.
      */
     private void playDeathAnimationForOpponent(Runnable onFinished) {
-        view.playDeathAnimationForOpponent(onFinished);
+        this.view.playDeathAnimationForOpponent(onFinished);
     }
 
     /**
@@ -205,9 +206,9 @@ public class CombatAnimationController {
      */
     private void playDeathAnimation(boolean forTrainer, Runnable onFinished) {
         if (forTrainer) {
-            playDeathAnimationForTrainer(onFinished);
+            this.playDeathAnimationForTrainer(onFinished);
         } else {
-            playDeathAnimationForOpponent(onFinished);
+            this.playDeathAnimationForOpponent(onFinished);
         }
     }
 
@@ -222,9 +223,9 @@ public class CombatAnimationController {
      */
     public void makeBugemonReappear(boolean forTrainer) {
         if (forTrainer) {
-            view.makeTrainerBugemonReappear();
+            this.view.makeTrainerBugemonReappear();
         } else {
-            view.makeOpponentBugemonReappear();
+            this.view.makeOpponentBugemonReappear();
         }
     }
 }

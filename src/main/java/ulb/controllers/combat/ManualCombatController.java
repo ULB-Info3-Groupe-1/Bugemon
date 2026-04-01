@@ -58,9 +58,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
                                                this.playerService.getInventory());
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
-        this.combat = new Combat(playerTrainer, opponentTrainer);
+        this.combat = new Combat(this.playerTrainer, opponentTrainer);
 
-        this.view.setModel(playerTrainer, opponentTrainer, this.combat);
+        this.view.setModel(this.playerTrainer, opponentTrainer, this.combat);
         this.view.refresh();
     }
 
@@ -79,7 +79,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         Trainer opponentTrainer = combat.getAdversaryTrainer();
         this.combat = combat;
 
-        this.view.setModel(playerTrainer, opponentTrainer, this.combat);
+        this.view.setModel(this.playerTrainer, opponentTrainer, this.combat);
         this.view.refresh();
     }
 
@@ -109,7 +109,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
      */
     private void onAttack(Attack attack) {
         this.playerTrainer.registerAttack(attack);
-        handleAnimatedPostTurn(this.combat.turn());
+        this.handleAnimatedPostTurn(this.combat.turn());
     }
 
     /**
@@ -125,12 +125,12 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         } else {
             this.playerTrainer.setHasSwitchedThisTurn(true);
             this.playerTrainer.registerSwitch(target);
-            handleAnimatedPostTurn(this.combat.turn());
+            this.handleAnimatedPostTurn(this.combat.turn());
         }
     }
 
     private void handleAnimatedPostTurn(TurnResult result) {
-        playTurnAnimations(result, this.playerTrainer, () -> handlePostTurn(result));
+        this.playTurnAnimations(result, this.playerTrainer, () -> this.handlePostTurn(result));
     }
 
     /**

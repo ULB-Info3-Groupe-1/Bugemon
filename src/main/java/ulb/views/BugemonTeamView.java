@@ -59,7 +59,7 @@ public class BugemonTeamView extends VBox {
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
             Bugemon bugemon = aliveBugemons.get(i);
-            VBox cell = createBugemonCell(bugemon);
+            VBox cell = this.createBugemonCell(bugemon);
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
             this.gridPane.add(cell, col, row);

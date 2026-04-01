@@ -115,25 +115,25 @@ public class Combat {
      *         {@code null}.
      */
     public TurnResult turn() {
-        allyTrainer.markCurrentBugemonParticipation();
-        adversaryTrainer.markCurrentBugemonParticipation();
+        this.allyTrainer.markCurrentBugemonParticipation();
+        this.adversaryTrainer.markCurrentBugemonParticipation();
 
-        TurnAction allyAction = allyTrainer.getAction();
-        TurnAction adversaryAction = adversaryTrainer.getAction();
+        TurnAction allyAction = this.allyTrainer.getAction();
+        TurnAction adversaryAction = this.adversaryTrainer.getAction();
 
-        if (checkForForfeit(allyAction, adversaryAction)) {
-            this.lastTurnResult = emptyResult();
+        if (this.checkForForfeit(allyAction, adversaryAction)) {
+            this.lastTurnResult = this.emptyResult();
             return this.lastTurnResult;
         }
 
-        applyPassiveAction(allyTrainer, allyAction);
-        applyPassiveAction(adversaryTrainer, adversaryAction);
+        this.applyPassiveAction(this.allyTrainer, allyAction);
+        this.applyPassiveAction(this.adversaryTrainer, adversaryAction);
 
-        Optional<Attack> allyAttack = extractAttack(allyAction);
-        Optional<Attack> adversaryAttack = extractAttack(adversaryAction);
+        Optional<Attack> allyAttack = this.extractAttack(allyAction);
+        Optional<Attack> adversaryAttack = this.extractAttack(adversaryAction);
 
-        turn++;
-        this.lastTurnResult = resolveAttacks(allyAttack, adversaryAttack);
+        this.turn++;
+        this.lastTurnResult = this.resolveAttacks(allyAttack, adversaryAttack);
         return this.lastTurnResult;
     }
 
@@ -155,12 +155,12 @@ public class Combat {
      * @see #isFinished()
      */
     public Optional<Trainer> getWinner() {
-        if (allyTrainer.isDefeated()) {
-            return Optional.of(adversaryTrainer);
+        if (this.allyTrainer.isDefeated()) {
+            return Optional.of(this.adversaryTrainer);
         }
 
-        if (adversaryTrainer.isDefeated()) {
-            return Optional.of(allyTrainer);
+        if (this.adversaryTrainer.isDefeated()) {
+            return Optional.of(this.allyTrainer);
         }
 
         return Optional.empty();
@@ -180,7 +180,7 @@ public class Combat {
      * @see Trainer#isDefeated()
      */
     public boolean isFinished() {
-        return allyTrainer.isDefeated() || adversaryTrainer.isDefeated();
+        return this.allyTrainer.isDefeated() || this.adversaryTrainer.isDefeated();
     }
 
     /**
@@ -189,7 +189,7 @@ public class Combat {
      * @return the ally {@link Trainer}; never {@code null}.
      */
     public Trainer getAllyTrainer() {
-        return allyTrainer;
+        return this.allyTrainer;
     }
 
     /**
@@ -198,7 +198,7 @@ public class Combat {
      * @return the adversary {@link Trainer}; never {@code null}.
      */
     public Trainer getAdversaryTrainer() {
-        return adversaryTrainer;
+        return this.adversaryTrainer;
     }
 
     /**
@@ -207,7 +207,7 @@ public class Combat {
      * @return the last {@link TurnResult}, or {@code null} if no turn has been played yet.
      */
     public TurnResult getLastTurnResult() {
-        return lastTurnResult;
+        return this.lastTurnResult;
     }
 
     /**
@@ -219,7 +219,7 @@ public class Combat {
      * @return the zero-based turn index.
      */
     public int getTurn() {
-        return turn;
+        return this.turn;
     }
 
     // ── private helpers ───────────────────────────────────────────────────────
@@ -235,11 +235,11 @@ public class Combat {
      */
     private boolean checkForForfeit(TurnAction allyAction, TurnAction adversaryAction) {
         if (allyAction instanceof TurnAction.ForfeitAction) {
-            allyTrainer.killTeam();
+            this.allyTrainer.killTeam();
             return true;
         }
         if (adversaryAction instanceof TurnAction.ForfeitAction) {
-            adversaryTrainer.killTeam();
+            this.adversaryTrainer.killTeam();
             return true;
         }
         return false;
@@ -307,34 +307,37 @@ public class Combat {
     private TurnResult resolveAttacks(Optional<Attack> allyAttack,
                                       Optional<Attack> adversaryAttack) {
         if (allyAttack.isPresent() && adversaryAttack.isPresent()) {
-            Trainer first = CombatService.attackPriority(allyTrainer, adversaryTrainer);
-            Trainer second = first == allyTrainer ? adversaryTrainer : allyTrainer;
-            Attack firstAttack = first == allyTrainer ? allyAttack.get() : adversaryAttack.get();
-            Attack secondAttack = second == allyTrainer ? allyAttack.get() : adversaryAttack.get();
+            Trainer first = CombatService.attackPriority(this.allyTrainer, this.adversaryTrainer);
+            Trainer second = first == this.allyTrainer ? this.adversaryTrainer : this.allyTrainer;
+            Attack firstAttack =
+                    first == this.allyTrainer ? allyAttack.get() : adversaryAttack.get();
+            Attack secondAttack =
+                    second == this.allyTrainer ? allyAttack.get() : adversaryAttack.get();
 
-            TurnResult.AttackResult firstResult = applyAttack(first, second, firstAttack);
+            TurnResult.AttackResult firstResult = this.applyAttack(first, second, firstAttack);
             Optional<TurnResult.AttackResult> secondResult =
-                    isFinished() ? Optional.empty()
-                                 : Optional.of(applyAttack(second, first, secondAttack));
+                    this.isFinished() ? Optional.empty()
+                                      : Optional.of(this.applyAttack(second, first, secondAttack));
 
-            boolean allyKO = isAllyKo(firstResult, secondResult);
+            boolean allyKO = this.isAllyKo(firstResult, secondResult);
             return new TurnResult(firstResult, secondResult, allyKO);
         }
 
         if (allyAttack.isPresent()) {
             TurnResult.AttackResult hit =
-                    applyAttack(allyTrainer, adversaryTrainer, allyAttack.get());
+                    this.applyAttack(this.allyTrainer, this.adversaryTrainer, allyAttack.get());
             return new TurnResult(hit, Optional.empty(), false);
         }
 
         if (adversaryAttack.isPresent()) {
-            TurnResult.AttackResult hit =
-                    applyAttack(adversaryTrainer, allyTrainer, adversaryAttack.get());
-            boolean allyKO = !allyTrainer.isCurrentBugemonAlive() && !allyTrainer.isDefeated();
+            TurnResult.AttackResult hit = this.applyAttack(this.adversaryTrainer, this.allyTrainer,
+                                                           adversaryAttack.get());
+            boolean allyKO =
+                    !this.allyTrainer.isCurrentBugemonAlive() && !this.allyTrainer.isDefeated();
             return new TurnResult(hit, Optional.empty(), allyKO);
         }
 
-        return emptyResult();
+        return this.emptyResult();
     }
 
     /**
@@ -354,9 +357,10 @@ public class Combat {
      */
     private boolean isAllyKo(TurnResult.AttackResult first,
                              Optional<TurnResult.AttackResult> second) {
-        boolean koByFirst = first.defender() == allyTrainer && !allyTrainer.isCurrentBugemonAlive();
-        boolean koBySecond = second.isPresent() && second.get().defender() == allyTrainer
-                             && !allyTrainer.isCurrentBugemonAlive();
+        boolean koByFirst =
+                first.defender() == this.allyTrainer && !this.allyTrainer.isCurrentBugemonAlive();
+        boolean koBySecond = second.isPresent() && second.get().defender() == this.allyTrainer
+                             && !this.allyTrainer.isCurrentBugemonAlive();
         return koByFirst || koBySecond;
     }
 
@@ -403,8 +407,9 @@ public class Combat {
      */
     private TurnResult emptyResult() {
         return new TurnResult(
-                new TurnResult.AttackResult(allyTrainer, adversaryTrainer, Optional.empty(), null),
-                Optional.of(new TurnResult.AttackResult(adversaryTrainer, allyTrainer,
+                new TurnResult.AttackResult(this.allyTrainer, this.adversaryTrainer,
+                                            Optional.empty(), null),
+                Optional.of(new TurnResult.AttackResult(this.adversaryTrainer, this.allyTrainer,
                                                         Optional.empty(), null)),
                 false);
     }

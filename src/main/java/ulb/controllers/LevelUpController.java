@@ -34,17 +34,17 @@ public class LevelUpController extends Controller<LevelUpView> {
             throws IOException {
         super(metaController, new LevelUpView());
         this.playerService = playerService;
-        this.view.setSession(session);
+        this.view.setSession(this.session);
         this.view.setOnChooseOption(this::chooseOption);
     }
 
     /** Applies the chosen stat bonus and advances to the next level-up event. */
     public void chooseOption(int optionIdx) {
-        LevelUp levelUp = session.getCurrent();
+        LevelUp levelUp = this.session.getCurrent();
         Upgrade choice = levelUp.getChoices().get(optionIdx);
         levelUp.getBugemon().applyChoice(choice);
         this.playerService.saveBugemonState(levelUp.getBugemon());
-        cont();
+        this.cont();
     }
 
     /**
@@ -53,7 +53,7 @@ public class LevelUpController extends Controller<LevelUpView> {
      */
     public void setLevelUp(List<LevelUp> lvlsUp) {
         if (!lvlsUp.isEmpty()) {
-            session.start(lvlsUp);
+            this.session.start(lvlsUp);
             this.metaController.switchTo(Window.LEVEL_UP);
             this.view.refresh();
         } else {
@@ -63,8 +63,8 @@ public class LevelUpController extends Controller<LevelUpView> {
 
     /** Advances to the next pending level-up event, or navigates to victory if done. */
     public void cont() {
-        if (session.hasNext()) {
-            session.advance();
+        if (this.session.hasNext()) {
+            this.session.advance();
             this.view.refresh();
         } else {
             this.metaController.switchTo(Window.COMBAT_VICTORY);

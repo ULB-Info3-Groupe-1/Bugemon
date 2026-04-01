@@ -35,11 +35,11 @@ public class NOTowerController extends Controller<ManualCombatView> {
     public void runNOTower(Stage stage) {
         this.stage = stage;
 
-        if (!ensureRunIsReady()) {
+        if (!this.ensureRunIsReady()) {
             return;
         }
 
-        continueRun();
+        this.continueRun();
     }
 
     /**
@@ -73,14 +73,14 @@ public class NOTowerController extends Controller<ManualCombatView> {
             Floor currentFloor = this.noTower.getCurrentFloor();
 
             if (currentFloor.isComplete()) {
-                if (!advanceToNextFloorIfPossible()) {
+                if (!this.advanceToNextFloorIfPossible()) {
                     return;
                 }
                 continue;
             }
 
             Room currentRoom = currentFloor.getCurrentRoom();
-            handleRoom(currentFloor, currentRoom);
+            this.handleRoom(currentFloor, currentRoom);
 
             if (currentRoom instanceof CombatRoom) {
                 return;
@@ -94,7 +94,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
                 ManualCombatController manualCombatController =
                         new ManualCombatController(this.metaController, this.playerService);
                 manualCombatController.setOnCombatFinished(
-                        playerWon -> handleCombatResult(playerWon, floor));
+                        playerWon -> this.handleCombatResult(playerWon, floor));
                 manualCombatController.startCombat(combatRoom.getCombat());
                 manualCombatController.display(this.stage);
             } catch (IOException e) {
@@ -104,7 +104,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
         }
 
         if (room instanceof RewardRoom rewardRoom) {
-            handleRewardRoom(rewardRoom);
+            this.handleRewardRoom(rewardRoom);
             floor.getNextRoom();
             return;
         }
@@ -122,7 +122,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
         }
 
         floor.getNextRoom();
-        continueRun();
+        this.continueRun();
     }
 
     private void handleRewardRoom(RewardRoom rewardRoom) {

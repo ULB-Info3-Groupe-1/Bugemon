@@ -32,11 +32,12 @@ public class UserRepository {
      */
     public int createUser(String username) {
         try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("CreateUser"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("CreateUser"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 return rs.getInt(DatabaseColumns.COL_ID);
+            }
         } catch (SQLException e) {
             throw new IllegalStateException("createUser failed", e);
         }
@@ -55,8 +56,8 @@ public class UserRepository {
      *         during the database query, an IllegalStateException is thrown.
      */
     public Optional<Integer> getUserIdByUsername(String username) {
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("GetUserByUsername"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("GetUserByUsername"))) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -83,8 +84,8 @@ public class UserRepository {
      *         database operation, an IllegalStateException is thrown.
      */
     public void saveUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("SaveUserBugemon"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("SaveUserBugemon"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.bugemonId());
             ps.setInt(3, dto.currentDefense());
@@ -114,8 +115,8 @@ public class UserRepository {
      *         IllegalStateException is thrown.
      */
     public void updateUserBugemon(UserBugemonDTO dto) {
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("UpdateUserBugemon"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("UpdateUserBugemon"))) {
             ps.setInt(1, dto.currentDefense());
             ps.setInt(2, dto.currentAttackPower());
             ps.setInt(3, dto.currentInitiative());
@@ -143,8 +144,8 @@ public class UserRepository {
      */
     public List<UserBugemonDTO> getUserBugemons(int userId) {
         List<UserBugemonDTO> result = new ArrayList<>();
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("GetUserBugemons"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("GetUserBugemons"))) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -176,7 +177,7 @@ public class UserRepository {
      */
     public void createTeam(int userId, String teamName) {
         try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("CreateTeam"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("CreateTeam"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.executeUpdate();
@@ -196,8 +197,8 @@ public class UserRepository {
      * @param teamName the name of the team to be deleted
      */
     public void deleteTeamMembers(int userId, String teamName) {
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("DeleteTeamMembers"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.executeUpdate();
@@ -207,10 +208,10 @@ public class UserRepository {
     }
 
     public void deleteTeam(int userId, String teamName) {
-        try (PreparedStatement psMembers =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"));
+        try (PreparedStatement psMembers = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("DeleteTeamMembers"));
              PreparedStatement psTeam =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
             psMembers.setInt(1, userId);
             psMembers.setString(2, teamName);
             psMembers.executeUpdate();
@@ -235,7 +236,7 @@ public class UserRepository {
     public List<TeamDTO> getUserTeams(int userId) {
         List<TeamDTO> result = new ArrayList<>();
         try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("GetUserTeams"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("GetUserTeams"))) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -261,8 +262,8 @@ public class UserRepository {
      * @param dto the TeamMemberDTO object containing the details of the team member to be added
      */
     public void addTeamMember(TeamMemberDTO dto) {
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("AddTeamMember"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("AddTeamMember"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.teamName());
             ps.setString(3, dto.bugemonId());
@@ -285,8 +286,8 @@ public class UserRepository {
      * @param bugemonId the ID of the Bugemon to be removed from the team
      */
     public void removeTeamMember(int userId, String teamName, String bugemonId) {
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("RemoveTeamMember"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("RemoveTeamMember"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ps.setString(3, bugemonId);
@@ -310,8 +311,8 @@ public class UserRepository {
      */
     public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
         List<TeamMemberDTO> result = new ArrayList<>();
-        try (PreparedStatement ps =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("GetTeamMembers"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(
+                     this.dbRepository.getSql("GetTeamMembers"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
             ResultSet rs = ps.executeQuery();
@@ -329,7 +330,7 @@ public class UserRepository {
 
     public void renameTeam(int userId, String oldTeamName, String newTeamName) {
         try (PreparedStatement psRenameTeam =
-                     dbConnection.prepareStatement(this.dbRepository.getSql("RenameTeam"))) {
+                     this.dbConnection.prepareStatement(this.dbRepository.getSql("RenameTeam"))) {
             psRenameTeam.setString(1, newTeamName);
             psRenameTeam.setInt(2, userId);
             psRenameTeam.setString(3, oldTeamName);

@@ -13,7 +13,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,20 +44,20 @@ public class DatabaseRepository {
 
     public DatabaseRepository() {
         this.dbConnection = new DatabaseConnection();
-        this.userRepository = new UserRepository(this, dbConnection);
-        this.staticDataRepository = new StaticDataRepository(this, dbConnection);
+        this.userRepository = new UserRepository(this, this.dbConnection);
+        this.staticDataRepository = new StaticDataRepository(this, this.dbConnection);
 
-        loadSQLQueries();
-        prepareDatabase();
+        this.loadSQLQueries();
+        this.prepareDatabase();
     }
 
     /**
      * Load all SQL queries from files
      */
     private void loadSQLQueries() {
-        List<String> sqlFiles = getSqlFiles();
+        List<String> sqlFiles = this.getSqlFiles();
         for (String file : sqlFiles) {
-            loadQueriesFromFile(file);
+            this.loadQueriesFromFile(file);
         }
     }
 
@@ -79,7 +81,7 @@ public class DatabaseRepository {
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("-- Query")) {
                     if (currentQueryName != null && !currentSql.isEmpty()) {
-                        queries.put(currentQueryName, currentSql.toString().trim());
+                        this.queries.put(currentQueryName, currentSql.toString().trim());
                         currentSql.setLength(0); // We reset the StringBuilder for the next query
                     }
                     currentQueryName = null;
@@ -91,7 +93,7 @@ public class DatabaseRepository {
             }
             // Don't forget to save the last query after the loop
             if (currentQueryName != null && !currentSql.isEmpty()) {
-                queries.put(currentQueryName, currentSql.toString().trim());
+                this.queries.put(currentQueryName, currentSql.toString().trim());
             }
         } catch (Exception e) {
             throw new IllegalStateException("Error loading queries from " + filePath, e);
@@ -112,11 +114,11 @@ public class DatabaseRepository {
             }
             URI uri = url.toURI();
             if ("jar".equals(uri.getScheme())) {
-                try (FileSystem fs = getOrCreateFileSystem(uri)) {
-                    walkAndAddFiles(fs.getPath("/sql"), result);
+                try (FileSystem fs = this.getOrCreateFileSystem(uri)) {
+                    this.walkAndAddFiles(fs.getPath("/sql"), result);
                 }
             } else {
-                walkAndAddFiles(Paths.get(uri), result);
+                this.walkAndAddFiles(Paths.get(uri), result);
             }
 
         } catch (Exception e) {
@@ -159,7 +161,7 @@ public class DatabaseRepository {
      * @return the SQL query string associated with the given query name
      */
     public String getSql(String queryName) {
-        String sql = queries.get(queryName);
+        String sql = this.queries.get(queryName);
         if (sql == null) {
             throw new IllegalArgumentException("SQL query not found in Map : " + queryName);
         }
@@ -172,7 +174,8 @@ public class DatabaseRepository {
      * Create the database schema by executing the SQL query associated with the "CreateSchema" key.
      */
     private void createSchema() {
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("CreateSchema"))) {
+        try (PreparedStatement ps =
+                     this.dbConnection.prepareStatement(this.getSql("CreateSchema"))) {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("createSchema failed", e);
@@ -194,10 +197,11 @@ public class DatabaseRepository {
     private void prepareDatabase() {
         // Verify if the critical tables exist in the database. If not, we create the schema and add
         // the default game data
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("isTablesPresent"))) {
+        try (PreparedStatement ps =
+                     this.dbConnection.prepareStatement(this.getSql("isTablesPresent"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
-                createSchema();
+                this.createSchema();
                 this.staticDataRepository.addDefaultGameData();
                 return;
             }
@@ -207,7 +211,8 @@ public class DatabaseRepository {
 
         // If the tables exist, we check if they contain the static game data. If not, we add the
         // static game data
-        try (PreparedStatement ps = dbConnection.prepareStatement(getSql("IsDataEmpty"))) {
+        try (PreparedStatement ps =
+                     this.dbConnection.prepareStatement(this.getSql("IsDataEmpty"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("total_rows") == 0) {
                 this.staticDataRepository.addDefaultGameData();
@@ -225,7 +230,7 @@ public class DatabaseRepository {
      * @return a List of Bugemon objects representing all the default bugemons available in the game
      */
     public List<Bugemon> getAllDefaultBugemons() {
-        return staticDataRepository.getAllDefaultBugemons();
+        return this.staticDataRepository.getAllDefaultBugemons();
     }
 
     /**
@@ -236,7 +241,7 @@ public class DatabaseRepository {
      *         user
      */
     public List<UserBugemonDTO> getUserBugemons(int userId) {
-        return userRepository.getUserBugemons(userId);
+        return this.userRepository.getUserBugemons(userId);
     }
 
     /**
@@ -246,7 +251,7 @@ public class DatabaseRepository {
      *         an empty Optional if no such user exists
      */
     public Optional<Integer> getUserIdByUsername(String username) {
-        return userRepository.getUserIdByUsername(username);
+        return this.userRepository.getUserIdByUsername(username);
     }
 
     /**
@@ -256,7 +261,7 @@ public class DatabaseRepository {
      * @return a List of TeamDTO objects representing the teams owned by the specified user
      */
     public List<TeamDTO> getUserTeams(int userId) {
-        return userRepository.getUserTeams(userId);
+        return this.userRepository.getUserTeams(userId);
     }
 
     /**
@@ -267,7 +272,7 @@ public class DatabaseRepository {
      * @return
      */
     public List<TeamMemberDTO> getTeamMembers(int teamId, String teamName) {
-        return userRepository.getTeamMembers(teamId, teamName);
+        return this.userRepository.getTeamMembers(teamId, teamName);
     }
 
     // -── ACTIONS TO PERFORM ON THE DATABASE ───
@@ -279,7 +284,7 @@ public class DatabaseRepository {
      * @return the ID of the newly created user in the database
      */
     public int createUser(String username) {
-        return userRepository.createUser(username);
+        return this.userRepository.createUser(username);
     }
 
     /**
@@ -289,7 +294,7 @@ public class DatabaseRepository {
      * @param teamName the name of the new team to be created in the database for the specified user
      */
     public void createTeam(int userId, String teamName) {
-        userRepository.createTeam(userId, teamName);
+        this.userRepository.createTeam(userId, teamName);
     }
 
     /**
@@ -299,7 +304,7 @@ public class DatabaseRepository {
      * @param dto the UserBugemonDTO object containing the details of the user's bugemon to be saved
      */
     public void saveUserBugemon(UserBugemonDTO dto) {
-        userRepository.saveUserBugemon(dto);
+        this.userRepository.saveUserBugemon(dto);
     }
 
     /**
@@ -310,7 +315,7 @@ public class DatabaseRepository {
      *         be updated
      */
     public void updateUserBugemon(UserBugemonDTO dto) {
-        userRepository.updateUserBugemon(dto);
+        this.userRepository.updateUserBugemon(dto);
     }
 
     /**
@@ -322,11 +327,11 @@ public class DatabaseRepository {
      *         the database
      */
     public void addTeamMember(TeamMemberDTO dto) {
-        userRepository.addTeamMember(dto);
+        this.userRepository.addTeamMember(dto);
     }
 
     public void renameTeam(int userId, String oldTeamName, String newTeamName) {
-        userRepository.renameTeam(userId, oldTeamName, newTeamName);
+        this.userRepository.renameTeam(userId, oldTeamName, newTeamName);
     }
 
     /**
@@ -339,7 +344,7 @@ public class DatabaseRepository {
      *         specified team in the database
      */
     public void removeTeamMember(int userId, String teamName, String bugemonId) {
-        userRepository.removeTeamMember(userId, teamName, bugemonId);
+        this.userRepository.removeTeamMember(userId, teamName, bugemonId);
     }
 
     /**
@@ -350,10 +355,10 @@ public class DatabaseRepository {
      * @param teamName the name of the team to be deleted from the database for the specified user
      */
     public void deleteTeam(int userId, String teamName) {
-        userRepository.deleteTeam(userId, teamName);
+        this.userRepository.deleteTeam(userId, teamName);
     }
 
     public void deleteTeamMembers(int userId, String teamName) {
-        userRepository.deleteTeamMembers(userId, teamName);
+        this.userRepository.deleteTeamMembers(userId, teamName);
     }
 }

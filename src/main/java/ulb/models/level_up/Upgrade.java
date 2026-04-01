@@ -7,6 +7,7 @@
  * @date 09 mar. 2026
  * @version 1.0
  */
+
 package ulb.models.level_up;
 
 /**
@@ -45,7 +46,7 @@ public record Upgrade(
      *         {@code "+N HP +N Attack +N Defense +N Initiative"}.
      */
     public String toString() {
-        return String.format("+%d HP +%d Attack +%d Defense +%d Initiative", hp, attack, defense,
-                             initiative);
+        return String.format("+%d HP +%d Attack +%d Defense +%d Initiative", this.hp, this.attack,
+                             this.defense, this.initiative);
     }
 }

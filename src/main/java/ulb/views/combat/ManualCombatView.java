@@ -63,16 +63,18 @@ public class ManualCombatView extends CombatView {
 
         this.mainActionMenu.setOnInventory(this::showInventory);
         this.mainActionMenu.setOnAttack(this::showAttackMenu);
-        this.mainActionMenu.setOnSwitch(() -> showSwitchMenu(false));
+        this.mainActionMenu.setOnSwitch(() -> this.showSwitchMenu(false));
         this.mainActionMenu.setOnSurrender(() -> {
-            if (onSurrender != null)
-                onSurrender.run();
+            if (this.onSurrender != null) {
+                this.onSurrender.run();
+            }
         });
 
         this.attackActionMenu.setOpponent(opponent);
         this.attackActionMenu.setOnAttack(attack -> {
-            if (onAttack != null)
-                onAttack.accept(attack);
+            if (this.onAttack != null) {
+                this.onAttack.accept(attack);
+            }
         });
         this.attackActionMenu.setOnBack(this::showMainActionMenu);
     }
@@ -80,71 +82,76 @@ public class ManualCombatView extends CombatView {
     public void setOnAttack(Consumer<Attack> callback) {
         this.onAttack = callback;
     }
+
     public void setOnSwitch(Consumer<Bugemon> callback) {
         this.onSwitch = callback;
     }
+
     public void setOnSurrender(Runnable callback) {
         this.onSurrender = callback;
     }
+
     public void setOnItemSelected(Consumer<Item> callback) {
         this.onItemSelected = callback;
     }
 
     @Override
     protected void initCombatMode() {
-        showMainActionMenu();
+        this.showMainActionMenu();
     }
 
     @Override
     public void refresh() {
-        if (player == null)
+        if (this.player == null) {
             return;
+        }
 
-        updateTrainerBugemon(player.getCurrentBugemon());
-        updateOpponentBugemon(opponent.getCurrentBugemon());
+        updateTrainerBugemon(this.player.getCurrentBugemon());
+        updateOpponentBugemon(this.opponent.getCurrentBugemon());
 
-        TurnResult last = combat.getLastTurnResult();
+        TurnResult last = this.combat.getLastTurnResult();
         if (last != null && last.first().wasAttack()) {
             showCombatDialog(last.first(), last.second());
         } else {
             hideDialog();
         }
 
-        if (player.isForcedToSwitch()) {
-            showSwitchMenu(true);
+        if (this.player.isForcedToSwitch()) {
+            this.showSwitchMenu(true);
         } else {
-            mainActionMenu.refresh(player.canVoluntarilySwitch());
-            showMainActionMenu();
+            this.mainActionMenu.refresh(this.player.canVoluntarilySwitch());
+            this.showMainActionMenu();
         }
     }
 
     // ──  navigation ───────────────────────────────────────────────────
 
     public void showMainActionMenu() {
-        this.actionMenuView.getChildren().setAll(mainActionMenu);
+        this.actionMenuView.getChildren().setAll(this.mainActionMenu);
     }
 
     private void showAttackMenu() {
-        List<Attack> attacks = player.getCurrentBugemonAttackList();
+        List<Attack> attacks = this.player.getCurrentBugemonAttackList();
         this.attackActionMenu.setAttacks(attacks.get(0), attacks.get(1), attacks.get(2));
-        this.actionMenuView.getChildren().setAll(attackActionMenu);
+        this.actionMenuView.getChildren().setAll(this.attackActionMenu);
     }
 
     private void showSwitchMenu(boolean forced) {
-        this.actionMenuView.getChildren().setAll(buildSwitchMenu(forced));
+        this.actionMenuView.getChildren().setAll(this.buildSwitchMenu(forced));
     }
 
     private void showInventory() {
-        this.actionMenuView.getChildren().setAll(buildInventoryMenu());
+        this.actionMenuView.getChildren().setAll(this.buildInventoryMenu());
     }
+
     private VBox buildSwitchMenu(boolean forced) {
         VBox panel = new VBox(BOX_DIM);
         panel.setAlignment(Pos.CENTER_RIGHT);
 
         List<Bugemon> available =
-                player.getTeam()
+                this.player.getTeam()
                         .stream()
-                        .filter(b -> b != player.getCurrentBugemon() && b.isAlive())
+                        .filter(b -> b != this.player.getCurrentBugemon() && b.isAlive())
                         .toList();
 
         for (Bugemon b : available) {
@@ -162,8 +169,9 @@ public class ManualCombatView extends CombatView {
             btn.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(btn, Priority.ALWAYS);
             btn.setOnAction(e -> {
-                if (onSwitch != null)
-                    onSwitch.accept(b);
+                if (this.onSwitch != null) {
+                    this.onSwitch.accept(b);
+                }
             });
 
             row.getChildren().addAll(sprite, btn);
@@ -174,7 +182,7 @@ public class ManualCombatView extends CombatView {
             Button back = new Button("Retour");
             back.getStyleClass().addAll("btn", "btn-secondary");
             back.setMinWidth(200);
-            back.setOnAction(e -> showMainActionMenu());
+            back.setOnAction(e -> this.showMainActionMenu());
             panel.getChildren().add(back);
         }
 
@@ -194,8 +202,9 @@ public class ManualCombatView extends CombatView {
             btn.getStyleClass().add("switch-menu-button");
             btn.setMinWidth(200);
             btn.setOnAction(e -> {
-                if (this.onItemSelected != null)
+                if (this.onItemSelected != null) {
                     this.onItemSelected.accept(item);
+                }
             });
 
             inventoryPanel.getChildren().add(btn);
@@ -203,7 +212,7 @@ public class ManualCombatView extends CombatView {
         Button back = new Button("Retour");
         back.getStyleClass().add("action-button");
         back.setMinWidth(200);
-        back.setOnAction(e -> showMainActionMenu());
+        back.setOnAction(e -> this.showMainActionMenu());
         inventoryPanel.getChildren().add(back);
 
         return inventoryPanel;

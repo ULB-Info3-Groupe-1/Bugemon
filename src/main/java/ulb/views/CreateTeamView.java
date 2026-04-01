@@ -52,32 +52,33 @@ public class CreateTeamView extends View {
     public CreateTeamView() throws IOException {
         super(FXML_PATH);
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        initHandlers();
+        this.initHandlers();
     }
 
     private void initHandlers() {
         this.allBugemonsGridView.setOnClickCallback(b -> {
-            if (onGridBugemonClicked != null)
-                onGridBugemonClicked.accept(b);
+            if (this.onGridBugemonClicked != null) {
+                this.onGridBugemonClicked.accept(b);
+            }
         });
 
-        this.returnMainMenuBtn.setOnAction(e -> returnToMainMenu.run());
-        this.saveTeamBtn.setOnAction(e -> save.run());
-        this.saveTeamNameInput.setOnAction(e -> save.run());
-        this.addNewTeamBtn.setOnAction(e -> addNewTeam.run());
+        this.returnMainMenuBtn.setOnAction(e -> this.returnToMainMenu.run());
+        this.saveTeamBtn.setOnAction(e -> this.save.run());
+        this.saveTeamNameInput.setOnAction(e -> this.save.run());
+        this.addNewTeamBtn.setOnAction(e -> this.addNewTeam.run());
 
         this.deleteTeamBtn.setOnAction(e -> {
-            delete.accept(getTeamNameToLoad());
-            selectedTeamName.setText(NO_TEAM_SELECTED);
+            this.delete.accept(this.getTeamNameToLoad());
+            this.selectedTeamName.setText(NO_TEAM_SELECTED);
         });
 
         this.renameTeamBtn.setOnAction(
-                e -> rename.accept(getTeamNameToLoad(), getTeamNameToSave()));
+                e -> this.rename.accept(this.getTeamNameToLoad(), this.getTeamNameToSave()));
         this.teamListView.setOnMouseClicked(e -> {
             String selected = this.teamListView.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 this.selectedTeamName.setText(selected);
-                load.run();
+                this.load.run();
             } else {
                 this.selectedTeamName.setText(NO_TEAM_SELECTED);
             }
@@ -109,7 +110,7 @@ public class CreateTeamView extends View {
 
     public void refreshTeam(BugemonTeam team) {
         this.bugemonTeam = team;
-        refresh();
+        this.refresh();
     }
 
     @Override

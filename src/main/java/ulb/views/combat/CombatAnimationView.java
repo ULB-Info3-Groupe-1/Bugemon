@@ -51,7 +51,7 @@ public class CombatAnimationView {
      * @param onFinished callback executed when the animation ends.
      */
     public void playTrainerAttackAnimation(Runnable onFinished) {
-        playLungeAnimation(trainerSprite, ATTACK_LUNGE_DISTANCE, onFinished);
+        this.playLungeAnimation(this.trainerSprite, ATTACK_LUNGE_DISTANCE, onFinished);
     }
 
     /**
@@ -60,7 +60,7 @@ public class CombatAnimationView {
      * @param onFinished callback executed when the animation ends.
      */
     public void playOpponentAttackAnimation(Runnable onFinished) {
-        playLungeAnimation(opponentSprite, -ATTACK_LUNGE_DISTANCE, onFinished);
+        this.playLungeAnimation(this.opponentSprite, -ATTACK_LUNGE_DISTANCE, onFinished);
     }
 
     /**
@@ -90,7 +90,7 @@ public class CombatAnimationView {
      * @param onFinished callback executed once the animation completes.
      */
     public void playDeathAnimationForTrainer(Runnable onFinished) {
-        playDeathAnimation(trainerSprite, onFinished);
+        this.playDeathAnimation(this.trainerSprite, onFinished);
     }
 
     /**
@@ -99,7 +99,7 @@ public class CombatAnimationView {
      * @param onFinished callback executed once the animation completes.
      */
     public void playDeathAnimationForOpponent(Runnable onFinished) {
-        playDeathAnimation(opponentSprite, onFinished);
+        this.playDeathAnimation(this.opponentSprite, onFinished);
     }
 
     /**

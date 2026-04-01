@@ -33,28 +33,33 @@ public class MainActionMenu extends ActionMenuView {
 
     public void setOnAttack(Runnable callback) {
         this.action1.setOnAction(e -> {
-            if (callback != null)
+            if (callback != null) {
                 callback.run();
+            }
         });
     }
 
     public void setOnSwitch(Runnable callback) {
         this.action2.setOnAction(e -> {
-            if (callback != null)
+            if (callback != null) {
                 callback.run();
+            }
         });
     }
 
     public void setOnSurrender(Runnable callback) {
         this.action4.setOnAction(e -> {
-            if (callback != null)
+            if (callback != null) {
                 callback.run();
+            }
         });
     }
+
     public void setOnInventory(Runnable callback) {
         this.action3.setOnAction(e -> {
-            if (callback != null)
+            if (callback != null) {
                 callback.run();
+            }
         });
     }
 }

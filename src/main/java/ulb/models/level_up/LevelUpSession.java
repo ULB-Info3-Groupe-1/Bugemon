@@ -23,21 +23,21 @@ public class LevelUpSession {
 
     /** Returns the level-up event currently being displayed. */
     public LevelUp getCurrent() {
-        return levelUps.get(currentIdx);
+        return this.levelUps.get(this.currentIdx);
     }
 
     /** Advances to the next level-up event. */
     public void advance() {
-        currentIdx++;
+        this.currentIdx++;
     }
 
     /** Returns {@code true} if there is at least one more event after the current one. */
     public boolean hasNext() {
-        return currentIdx < levelUps.size() - 1;
+        return this.currentIdx < this.levelUps.size() - 1;
     }
 
     /** Returns {@code true} if the session has been started with a non-empty list. */
     public boolean isStarted() {
-        return levelUps != null && !levelUps.isEmpty();
+        return this.levelUps != null && !this.levelUps.isEmpty();
     }
 }

@@ -31,7 +31,7 @@ public abstract class View {
         loader.setController(this);
 
         this.root = loader.load();
-        this.scene = new Scene(root);
+        this.scene = new Scene(this.root);
         this.scene.getStylesheets().add(0,
                                         View.class.getResource("/css/theme.css").toExternalForm());
         // Ensure Modena label lookup can always resolve on this scene tree.

@@ -43,16 +43,19 @@ public class LevelUpView extends View {
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
         this.choice1Button.setOnAction(e -> {
-            if (onChooseOption != null)
-                onChooseOption.accept(0);
+            if (this.onChooseOption != null) {
+                this.onChooseOption.accept(0);
+            }
         });
         this.choice2Button.setOnAction(e -> {
-            if (onChooseOption != null)
-                onChooseOption.accept(1);
+            if (this.onChooseOption != null) {
+                this.onChooseOption.accept(1);
+            }
         });
         this.choice3Button.setOnAction(e -> {
-            if (onChooseOption != null)
-                onChooseOption.accept(2);
+            if (this.onChooseOption != null) {
+                this.onChooseOption.accept(2);
+            }
         });
     }
 
@@ -68,19 +71,19 @@ public class LevelUpView extends View {
 
     @Override
     public void refresh() {
-        if (session == null || !session.isStarted())
+        if (this.session == null || !this.session.isStarted()) {
             return;
-
-        LevelUpDTO levelUp = session.getCurrent();
+        }
+        LevelUpDTO levelUp = this.session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
-        bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
-        levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
-                            + bugemon.getLevel() + " !");
+        this.bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
+        this.levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau "
+                                 + bugemon.getLevel() + " !");
 
         List<Upgrade> choices = levelUp.getChoices();
-        choice1Button.setText(choices.get(0).toString());
-        choice2Button.setText(choices.get(1).toString());
-        choice3Button.setText(choices.get(2).toString());
+        this.choice1Button.setText(choices.get(0).toString());
+        this.choice2Button.setText(choices.get(1).toString());
+        this.choice3Button.setText(choices.get(2).toString());
     }
 }
