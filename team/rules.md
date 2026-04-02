@@ -6,7 +6,9 @@
 
 ```git
 Titre du commit
+
 Message du commit
+
 Co-authored-by: Frédéric <prenom.nom@ulb.be>
 ```
 
@@ -18,8 +20,11 @@ git commit -m "Titre du commit" -m "Message du commit" -m "Co-authored-by: Fréd
 
 ### Nom de branche
 
-Si nouvelle fonctionnalité : `feat/nom_fonctionnalite`
-Si fix : `fix/fix_en_question`
+Si nouvelle fonctionnalité : `feat/nom-fonctionnalite`
+Si fix : `fix/fix-en-question`
+Si refactor : `refactor/nom-court`
+
+Si plusieurs mots dans la fonctionnalité ou le fix, séparer les mots par des tirets : `feat/ajout-fonctionnalite-x`
 
 ### Merge branche
 
@@ -27,16 +32,17 @@ Avant de merge :
 
 ```bash
 git switch ma-branche
-git fetch origin
+git fetch [origin]
 git rebase origin/branche-principale
 ```
 
-Puis :
+Ensuite :
 
 ```bash
-git switch branche-principale
-git merge ma-branche
+git push origin ma-branche [--force]
 ```
+
+Et créer une MR sur GitLab.
 
 ### Workflow Git
 
@@ -55,7 +61,6 @@ git reset --soft HEAD~1
 ### Structure Singleton pour la DB
 
 Toute interaction avec la base de données doit passer par le Repository pattern.
-La connexion à la base de données est gérée par le Singleton `DatabaseManager` (dans `src/main/java/ulb/repository/`).
 
 ### Formatage des requêtes SQL
 
@@ -70,62 +75,66 @@ SELECT ...
 ```
 
 *Exemple d'un fichier `bugemon_queries.sql` :*
+
 ```sql
 -- Query to create a team member
 -- InsertTeamMember
 INSERT INTO team_members (user_id, team_name, bugemon_id, slot_position) VALUES (?, ?, ?, ?);
 ```
 
-### Issues
+## Issues
 
-#### Contexte
+### Contexte
 
 Description rapide du problème ou du besoin.
 
-#### Objectif
+### Objectif
 
-Ce que l’on veut obtenir concrètement.
+Ce que l'on veut obtenir concrètement.
 
-#### Tâches
+### Tâches
 
 - [ ] Étape 1
 - [ ] Étape 2
 - [ ] Étape 3
 
-#### Critères d’acceptation
+### Critères d'acceptation
 
 - Condition 1
 - Condition 2
 
-### Merge request
+## Merge request
 
-#### Choix des branches à merge et titre de la MR
+### Choix des branches à merge et titre de la MR
 
-Nom de la branche:
-feature/nom-court
-bugfix/nom-court
+Nom de la branche :
+
+```
+feat/nom-court
+fix/nom-court
 refactor/nom-court
+```
 
-Titre de la MR:
-Même format que l’issue:
-[TYPE] Description courte
+Titre de la MR : même format que l'issue : `[TYPE] Description courte`
 
-#### Changements effectués
+### Changements effectués
 
 - Modification 1
 - Modification 2
 
-#### Type de modification
+### Type de modification
 
 - [ ] Feature
 - [ ] Bug fix
 - [ ] Refactor
 - [ ] Documentation
 
-#### Vérifications
+### Vérifications
 
 - [ ] Le code compile
-- [ ] Les tests passent
+- [ ] Les tests passent (`mvn test`)
+- [ ] Le formatage est appliqué (`mvn spotless:apply`)
+- [ ] Checkstyle passe sans erreur (`mvn checkstyle:check`)
 - [ ] Pas de code mort ajouté
 - [ ] Relecture effectuée
 
@@ -133,23 +142,53 @@ Même format que l’issue:
 
 ### Formatage
 
-Toujours formater le code avant de commit :
+Toujours formater le code avant de commit avec Spotless :
 
 ```sh
-find src -name "*.java" | xargs clang-format -i
+mvn spotless:apply
+```
+
+Pour vérifier sans modifier :
+
+```sh
+mvn spotless:check
+```
+
+Spotless applique automatiquement :
+- Le formatter Eclipse (`.eclipse-formatter.xml`, profil `projet-ulb`)
+- La suppression des imports inutilisés
+- L'ordre des imports : `java`, `javax`, `org`, `com`, `ulb`
+- Une newline en fin de fichier
+- La suppression des espaces en fin de ligne
+
+
+### Checkstyle
+
+Les règles Checkstyle sont définies dans `checkstyle.xml`. Les principales contraintes :
+
+- Longueur de ligne max : **120 caractères**
+- Pas de tabulations (espaces uniquement)
+- Pas d'imports `*`
+- Accolades obligatoires sur toutes les structures de contrôle
+- Une instruction par ligne
+
+Pour vérifier manuellement :
+
+```sh
+mvn checkstyle:check
 ```
 
 ### Langue
 
-Tous les commentaires, nom de méthodes, etc se font en anglais.
+Tous les commentaires, noms de méthodes, etc. se font en anglais.
 
 ### Documentation
 
-On document toutes les méthodes avec la **Javadoc** :
+On documente toutes les méthodes avec la **Javadoc** :
 
 ```java
 /**
- * 
+ *
  * @param args
  */
 ```
@@ -160,26 +199,26 @@ Pas besoin de commenter les tests.
 
 - Chaque fonctionnalité doit être testée
 - Utiliser des tests unitaires (JUnit)
-- Nom des tests : shouldDoSomething_whenCondition
+- Nom des tests : `shouldDoSomething_whenCondition`
 - Les tests doivent passer avant chaque commit
 
 ### Structure
 
 - Architecture MVC (model / view / controller)
 - Un fichier = une classe
-- Packages en minuscules (ex: com.project.service)
-- Nom de fichier java commance en MAJUSCULE (ex: Bugemon.java)
+- Packages en minuscules (ex: `com.project.service`)
+- Nom de fichier Java commence en MAJUSCULE (ex: `Bugemon.java`)
 
 ### Naming
 
-- Classes : PascalCase → UserService
-- Méthodes : camelCase → getUserById
-- Variables : camelCase → userName
-- Constantes : UPPER_CASE → MAX_SIZE
-- Packages : lowercase → com.project.app
+- Classes : PascalCase → `UserService`
+- Méthodes : camelCase → `getUserById`
+- Variables : camelCase → `userName`
+- Constantes : UPPER_CASE → `MAX_SIZE`
+- Packages : lowercase → `com.project.app`
 
 ### Bonnes pratiques
 
 - Pas de duplication de code
-- Méthodes courtes (< 30 lignes si possible)
+- Méthodes courtes (< 80 lignes)
 - Une seule responsabilité par classe
