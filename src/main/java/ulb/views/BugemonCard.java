@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import ulb.models.bugemon.Bugemon;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -15,6 +12,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import ulb.models.bugemon.Bugemon;
 
 /**
  * Reusable custom component representing a single Bugemon cell with an image and name label.
@@ -47,7 +46,8 @@ public class BugemonCard extends VBox {
      * Constructor for BugemonCell with a Bugemon. Loads the FXML layout and initializes the view with the bugemon's
      * data.
      *
-     * @param bugemon the Bugemon to display
+     * @param bugemon
+     *            the Bugemon to display
      */
     public BugemonCard(Bugemon bugemon) {
         this(Optional.of(bugemon));
@@ -56,7 +56,8 @@ public class BugemonCard extends VBox {
     /**
      * Private constructor that handles the actual initialization.
      *
-     * @param bugemonData the Optional containing the Bugemon data (empty for empty cells)
+     * @param bugemonData
+     *            the Optional containing the Bugemon data (empty for empty cells)
      */
     private BugemonCard(Optional<Bugemon> bugemonData) {
         this.bugemonData = bugemonData;
@@ -140,7 +141,8 @@ public class BugemonCard extends VBox {
     /**
      * Sets the callback invoked when this cell is clicked.
      *
-     * @param callback a {@code Consumer<Bugemon>} receiving this cell's bugemon; must not be {@code null}
+     * @param callback
+     *            a {@code Consumer<Bugemon>} receiving this cell's bugemon; must not be {@code null}
      */
     public void setOnClick(Consumer<Bugemon> callback) {
         this.setOnMouseClicked(e -> this.bugemonData.ifPresent(callback));
@@ -149,7 +151,8 @@ public class BugemonCard extends VBox {
     /**
      * Sets the selection state of this cell.
      *
-     * @param selected true to select, false to unselect
+     * @param selected
+     *            true to select, false to unselect
      */
     public void setSelected(boolean selected) {
         if (selected) {
