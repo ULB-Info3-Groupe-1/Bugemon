@@ -9,11 +9,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-/**
- * View
- *
- * Base class for all JavaFX views. Loads an FXML layout and manages its associated scene.
- */
+/** Base class for all JavaFX views. Loads an FXML layout and manages its associated scene. */
 public abstract class View {
     protected final Pane root;
     protected final Scene scene;
@@ -50,25 +46,11 @@ public abstract class View {
      */
     public abstract void refresh();
 
-    /**
-     * Displays this view on the given stage.
-     *
-     * @param stage
-     *            JavaFX stage where the view is shown
-     */
     public void show(Stage stage) {
         stage.setScene(this.scene);
         stage.show();
     }
 
-    /**
-     * Displays an alert dialog with the specified title and message.
-     *
-     * @param title
-     *            the title of the alert dialog
-     * @param message
-     *            the content message of the alert dialog
-     */
     public void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle(title);

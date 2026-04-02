@@ -32,11 +32,6 @@ public class StaticDataRepository {
         this.dbConnection = dbConnection;
     }
 
-    /**
-     * Add the default game data to the database. This method is used during the game initialization to load the static
-     * data of the game. It uses a Parser to read the default game data from a source (e.g., JSON files) and then saves
-     * this data to the database using helper methods for attacks and Bugemons.
-     */
     public void addDefaultGameData() {
         Parser parser = new Parser();
         parser.parse();
@@ -44,14 +39,6 @@ public class StaticDataRepository {
         this.saveGameDataBugemon(parser.getBugemons());
     }
 
-    /**
-     * Save the default attacks to the database. This method is used during the game initialization to load the static
-     * data of the game. It takes a map of attack IDs to Attack objects and saves each attack to the database. For each
-     * attack, it also saves the associated effects, ensuring that all necessary data is present in the database.
-     *
-     * @param attacks
-     *            a map of attack IDs to Attack objects representing the default attacks to be saved in the database.
-     */
     private void saveGameDataAttacks(Map<String, Attack> attacks) {
         for (Attack attack : attacks.values()) {
             try {
@@ -64,16 +51,6 @@ public class StaticDataRepository {
         }
     }
 
-    /**
-     * Save an attack to the database. This method is used as part of the process to load the static data of the game
-     * during initialization. It takes an Attack object and saves its details to the database using a prepared
-     * statement.
-     *
-     * @param attack
-     *            the Attack object to be saved to the database
-     * @throws SQLException
-     *             if an error occurs while saving the attack to the database
-     */
     private void saveAttack(Attack attack) throws SQLException {
         try (PreparedStatement psAttack = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveAttack"))) {
             psAttack.setString(1, attack.id());
@@ -85,16 +62,6 @@ public class StaticDataRepository {
         }
     }
 
-    /**
-     * Save the effects of an attack to the database. This method is used as part of the process to load the static data
-     * of the game during initialization. It takes an Attack object and saves its associated effects to the database
-     * using a prepared statement.
-     *
-     * @param attack
-     *            the Attack object for which to save effects
-     * @throws SQLException
-     *             if an error occurs while saving the attack effects to the database
-     */
     private void saveAttackEffects(Attack attack) throws SQLException {
         if (attack.effects() == null || attack.effects().isEmpty()) {
             return;
@@ -110,19 +77,6 @@ public class StaticDataRepository {
         }
     }
 
-    /**
-     * Set the parameters of a prepared statement for an effect based on the type of the effect. This method is used as
-     * part of the process to save the effects of an attack to the database during game initialization. It takes a
-     * PreparedStatement and an Effect object, and sets the parameters of the PreparedStatement according to the
-     * specific type of the Effect (e.g., EffectStatModifier, EffectHeal, EffectResetMalus).
-     *
-     * @param psEffect
-     *            the PreparedStatement for which to set parameters
-     * @param effect
-     *            the Effect object for which to set parameters
-     * @throws SQLException
-     *             if an error occurs while setting the effect parameters
-     */
     private void setEffectParameters(PreparedStatement psEffect, Effect effect) throws SQLException {
         switch (effect) {
             case EffectStatModifier modifier :
@@ -142,19 +96,6 @@ public class StaticDataRepository {
         }
     }
 
-    /**
-     * Set the parameters of a prepared statement for an EffectStatModifier effect. This method is used as part of the
-     * process to save the effects of an attack to the database during game initialization. It takes a PreparedStatement
-     * and an EffectStatModifier object, and sets the parameters of the PreparedStatement according to the properties of
-     * the EffectStatModifier (e.g., target, stat, modifier, duration).
-     *
-     * @param psEffect
-     *            the PreparedStatement for which to set parameters
-     * @param modifier
-     *            the EffectStatModifier object for which to set parameters
-     * @throws SQLException
-     *             if an error occurs while setting the effect parameters
-     */
     private void setStatModifierParameters(PreparedStatement psEffect, EffectStatModifier modifier)
             throws SQLException {
         psEffect.setString(2, modifier.getClass().getSimpleName());
@@ -165,19 +106,6 @@ public class StaticDataRepository {
         psEffect.setNull(7, Types.INTEGER);
     }
 
-    /**
-     * Set the parameters of a prepared statement for an EffectHeal effect. This method is used as part of the process
-     * to save the effects of an attack to the database during game initialization. It takes a PreparedStatement and an
-     * EffectHeal object, and sets the parameters of the PreparedStatement according to the properties of the EffectHeal
-     * (e.g., target, amount).
-     *
-     * @param psEffect
-     *            the PreparedStatement for which to set parameters
-     * @param heal
-     *            the EffectHeal object for which to set parameters
-     * @throws SQLException
-     *             if an error occurs while setting the effect parameters
-     */
     private void setHealParameters(PreparedStatement psEffect, EffectHeal heal) throws SQLException {
         psEffect.setString(2, heal.getClass().getSimpleName());
         psEffect.setString(3, heal.target().name());
@@ -187,19 +115,6 @@ public class StaticDataRepository {
         psEffect.setInt(7, heal.amount());
     }
 
-    /**
-     * Set the parameters of a prepared statement for an EffectResetMalus effect. This method is used as part of the
-     * process to save the effects of an attack to the database during game initialization. It takes a PreparedStatement
-     * and an EffectResetMalus object, and sets the parameters of the PreparedStatement according to the properties of
-     * the EffectResetMalus (e.g., target).
-     *
-     * @param psEffect
-     *            the PreparedStatement for which to set parameters
-     * @param malus
-     *            the EffectResetMalus object for which to set parameters
-     * @throws SQLException
-     *             if an error occurs while setting the effect parameters
-     */
     private void setResetMalusParameters(PreparedStatement psEffect, EffectResetMalus malus) throws SQLException {
         psEffect.setString(2, malus.getClass().getSimpleName());
         psEffect.setString(3, malus.target().name());
@@ -209,17 +124,6 @@ public class StaticDataRepository {
         psEffect.setNull(7, Types.INTEGER);
     }
 
-    /**
-     * Save the default Bugemons to the database. This method is used during the game initialization to load the static
-     * data of the game. It takes a list of Bugemon objects and saves them to the database using a batch insert for
-     * efficiency. Each Bugemon's attacks are also saved as part of this process, ensuring that all necessary data is
-     * present in the database.
-     *
-     * @param bugemons
-     *            a list of Bugemon objects representing the default Bugemons to be saved in the database. Each Bugemon
-     *            should have its attacks already defined and linked by their IDs, as this method assumes that the
-     *            attacks have been saved beforehand.
-     */
     private void saveGameDataBugemon(List<Bugemon> bugemons) {
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
             for (Bugemon bugemon : bugemons) {
@@ -247,12 +151,6 @@ public class StaticDataRepository {
 
     // ─── UTILS FOR CLASS USING THIS REPO ──
 
-    /**
-     * Retrieve all default Bugemons from the database. This is useful for the game initialization to load the static
-     * data of the game.
-     *
-     * @return a list of Bugemon objects representing all the default Bugemons stored in the database.
-     */
     public List<Bugemon> getAllDefaultBugemons() {
         List<Bugemon> bugemons = new ArrayList<>();
         try (PreparedStatement ps = this.dbConnection
@@ -280,17 +178,6 @@ public class StaticDataRepository {
         return bugemons;
     }
 
-    /**
-     * Retrieve an attack by its ID from the database. This is useful for loading the details of an attack, including
-     * its effects, which are also retrieved as part of this process.
-     *
-     * @param attackId
-     *            the ID of the attack to be retrieved from the database. This ID should correspond to an attack that
-     *            has been previously saved in the database, either as part of the default game data or through other
-     *            means.
-     * @return an Attack object representing the attack with the specified ID, including its details and effects. If no
-     *         attack is found with the given ID, an IllegalStateException is thrown.
-     */
     public Attack getAttackById(String attackId) {
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetAttackById"))) {
             ps.setString(1, attackId);
@@ -307,16 +194,6 @@ public class StaticDataRepository {
         throw new IllegalStateException("Attack not found for id: " + attackId);
     }
 
-    /**
-     * Retrieve the effects of an attack by the attack's ID from the database. This is useful for loading the details of
-     * an attack, including its effects, which are also retrieved as part of this process.
-     *
-     * @param attackId
-     *            the ID of the attack whose effects are to be retrieved from the database. This ID should correspond to
-     *            an attack that has been previously saved in the database, either as part of the default game data or
-     *            through other means.
-     * @return a list of Effect objects representing the effects of the specified attack.
-     */
     public List<Effect> getEffectByAttackId(String attackId) {
         List<Effect> effects = new ArrayList<>();
         try (PreparedStatement ps = this.dbConnection
