@@ -45,19 +45,18 @@ public class Combat {
         this.allyTrainer.markCurrentBugemonParticipation();
         this.adversaryTrainer.markCurrentBugemonParticipation();
 
-
         TurnAction allyAction = null;
         TurnAction adversaryAction = null;
 
-        if(allyTrainer.isCurrentBugemonAlive()){
-            allyAction = allyTrainer.getAction();
+        if (this.allyTrainer.isCurrentBugemonAlive()) {
+            allyAction = this.allyTrainer.getAction();
         }
 
-        if(adversaryTrainer.isCurrentBugemonAlive()){
-            adversaryAction = adversaryTrainer.getAction();
+        if (this.adversaryTrainer.isCurrentBugemonAlive()) {
+            adversaryAction = this.adversaryTrainer.getAction();
         }
 
-        if (this.checkForForfeit(allyAction, adversaryAction) || !allyTrainer.isCurrentBugemonAlive()) {
+        if (this.checkForForfeit(allyAction, adversaryAction) || !this.allyTrainer.isCurrentBugemonAlive()) {
             this.lastTurnResult = this.emptyResult();
             return this.lastTurnResult;
         }
@@ -188,10 +187,9 @@ public class Combat {
     }
 
     private TurnResult emptyResult() {
-        return new TurnResult(
-                new TurnResult.AttackResult(allyTrainer, adversaryTrainer, Optional.empty(), null),
-                Optional.of(new TurnResult.AttackResult(adversaryTrainer, allyTrainer,
-                                                        Optional.empty(), null)),
-                true);
+        return new TurnResult(new TurnResult.AttackResult(this.allyTrainer, this.adversaryTrainer, 
+            Optional.empty(), null),
+                Optional.of(new TurnResult.AttackResult(this.adversaryTrainer, this.allyTrainer, 
+                    Optional.empty(), null)), true);
     }
 }
