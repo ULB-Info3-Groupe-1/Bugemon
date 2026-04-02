@@ -69,15 +69,15 @@ public class AllBugemonsGridView extends VBox {
      *            the list of all available Bugemons to be displayed
      */
     public void showAll(List<Bugemon> bugemonList) {
-        flowPane.getChildren().clear();
+        this.flowPane.getChildren().clear();
 
         if (bugemonList.isEmpty()) {
             return;
         }
 
         for (Bugemon bugemon : bugemonList) {
-            BugemonCardView card = createBugemonCard(bugemon);
-            flowPane.getChildren().add(card);
+            BugemonCardView card = this.createBugemonCard(bugemon);
+            this.flowPane.getChildren().add(card);
         }
     }
 
@@ -85,12 +85,12 @@ public class AllBugemonsGridView extends VBox {
         BugemonCardView card = new BugemonCardView(bugemon);
         card.setPrefWidth(CELL_WIDTH);
 
-        if (selectionChecker != null) {
-            card.setSelected(selectionChecker.apply(bugemon));
+        if (this.selectionChecker != null) {
+            card.setSelected(this.selectionChecker.apply(bugemon));
         }
 
-        if (onBugemonClicked != null) {
-            card.setOnClick(onBugemonClicked);
+        if (this.onBugemonClicked != null) {
+            card.setOnClick(this.onBugemonClicked);
         }
 
         return card;
