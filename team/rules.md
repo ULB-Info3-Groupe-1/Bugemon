@@ -184,16 +184,30 @@ Tous les commentaires, noms de méthodes, etc. se font en anglais.
 
 ### Documentation
 
-On documente toutes les méthodes avec la **Javadoc** :
+La Javadoc documente l'**intention**, pas l'implémentation. Elle est **obligatoire** sur :
+
+- Les méthodes `public` des **services** et **repositories**
+- Toute logique dont le comportement n'est pas évident (formule, contrainte implicite)
+- Les paramètres avec contraintes (`@param` si non trivial)
+- Les exceptions métier lancées (`@throws`)
+
+Elle est **inutile** sur :
+- Getters/setters et constructeurs triviaux
+- Overrides dont le comportement est identique au contrat parent
+- Les tests
 
 ```java
-/**
- *
- * @param args
- */
-```
+// Inutile — le nom dit tout
+public int getUserId() { ... }
 
-Pas besoin de commenter les tests.
+// Utile — contrainte implicite + logique métier
+/**
+ * Calculates damage dealt, applying type effectiveness and defense reduction.
+ * @param attacker must have initiative > 0
+ * @return damage value, always >= 1
+ */
+public int calculateDamage(Bugemon attacker, Bugemon defender) { ... }
+```
 
 ### Tests
 
