@@ -5,15 +5,14 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
-
-import ulb.common.dto.BugemonDTO;
-import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+
+import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable grid.
@@ -66,8 +65,9 @@ public class BugemonTeamView extends VBox {
      * Sets the callback used to handle clicks on bugemon cells. The callback receives the
      * {@link ulb.common.dto.BugemonDTO} of the clicked cell.
      *
-     * @param callback a {@code Consumer<BugemonDTO>} callback to be called when a bugemon cell is clicked, receiving
-     *                 the {@link ulb.common.dto.BugemonDTO} of the clicked cell; must not be {@code null}.
+     * @param callback
+     *            a {@code Consumer<BugemonDTO>} callback to be called when a bugemon cell is clicked, receiving the
+     *            {@link ulb.common.dto.BugemonDTO} of the clicked cell; must not be {@code null}.
      */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
         this.onBugemonClicked = callback;
