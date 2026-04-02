@@ -16,7 +16,7 @@ import ulb.models.bugemon.Bugemon;
 /**
  * Reusable custom component displaying all the bugemons inside of a scrollable grid.
  */
-public class AllBugemonsGridView extends VBox {
+public class AllBugemonsView extends VBox {
     @FXML
     private FlowPane flowPane;
 
@@ -26,10 +26,10 @@ public class AllBugemonsGridView extends VBox {
     private Consumer<Bugemon> onBugemonClicked;
 
     /**
-     * Constructor of the AllBugemonsGridView class. It loads the FXML layout and initializes the view.
+     * Constructor of the AllBugemonsView class. It loads the FXML layout and initializes the view.
      */
-    public AllBugemonsGridView() {
-        URL url = getClass().getResource("/fxml/AllBugemonsGrid.fxml");
+    public AllBugemonsView() {
+        URL url = getClass().getResource("/fxml/AllBugemons.fxml");
         FXMLLoader loader = new FXMLLoader(url);
         loader.setRoot(this);
         loader.setController(this);
@@ -37,10 +37,10 @@ public class AllBugemonsGridView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new UncheckedIOException("Failed to load AllBugemonsGridView.fxml", e);
+            throw new UncheckedIOException("Failed to load AllBugemonsView.fxml", e);
         }
 
-        getStylesheets().add(getClass().getResource("/css/all-bugemons-grid.css").toExternalForm());
+        getStylesheets().add(getClass().getResource("/css/all-bugemons.css").toExternalForm());
     }
 
     /**

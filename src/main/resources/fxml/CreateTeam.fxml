@@ -10,7 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.text.Text?>
 
-<?import ulb.views.AllBugemonsGridView?>
+<?import ulb.views.AllBugemonsView?>
 <?import ulb.views.BugemonTeamView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
@@ -70,7 +70,7 @@
         <VBox spacing="8" styleClass="available-bugemons-section">
             <VBox.margin><Insets left="20" right="20" bottom="16" top="4"/></VBox.margin>
             <Label text="Bugémons disponibles" styleClass="section-label"/>
-            <AllBugemonsGridView fx:id="allBugemonsGridView" styleClass="all-bugemons-selection" maxWidth="1.7976931348623157E308"/>
+            <AllBugemonsView fx:id="allBugemonsGridView" styleClass="all-bugemons-selection" maxWidth="1.7976931348623157E308"/>
         </VBox>
     </bottom>
 
