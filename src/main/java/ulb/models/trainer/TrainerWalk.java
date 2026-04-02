@@ -4,8 +4,8 @@ import ulb.models.utils.Vec2;
 
 public class TrainerWalk {
     /**
-     * Model for a trainer walking from one position to another on the map. Contains
-     * the current position and handles the interpolation logic for smooth movement.
+     * Model for a trainer walking from one position to another on the map. Contains the current position and handles
+     * the interpolation logic for smooth movement.
      */
 
     // Attributes
@@ -15,52 +15,54 @@ public class TrainerWalk {
     private Vec2 pos;
     private float walkProgress; // 0 to 1
     private boolean isMoving = false;
-    private final float DURATION = 0.5f;
+    private final float duration = 0.5f;
 
     // Constructors
 
     public TrainerWalk(Vec2 startPos) {
-        this.pos = new Vec2(startPos.x, startPos.y);
+        this.pos = new Vec2(startPos.getX(), startPos.getY());
     }
 
     // Methods
 
     /**
-     * Initiates movement towards a new position. If already moving, this call is
-     * ignored to prevent interrupting the current walk.
-     * 
-     * @param newPos (Vec2) the target position to walk to.
+     * Initiates movement towards a new position. If already moving, this call is ignored to prevent interrupting the
+     * current walk.
+     *
+     * @param newPos
+     *            (Vec2) the target position to walk to.
      */
     public void moveTo(Vec2 newPos) {
-        if (!isMoving) {
-            this.initPos = new Vec2(pos.x, pos.y);
-            this.endPos = new Vec2(newPos.x, newPos.y);
+        if (!this.isMoving) {
+            this.initPos = new Vec2(this.pos.getX(), this.pos.getY());
+            this.endPos = new Vec2(newPos.getX(), newPos.getY());
             this.walkProgress = 0f;
             this.isMoving = true;
         }
     }
 
     /**
-     * Updates the trainer's position based on the elapsed time since the last
-     * update. Should be called regularly (e.g., every frame) to ensure smooth
-     * movement. When the walk is complete, the position is set to the target and
-     * the movement flag is cleared.
-     * 
-     * @param deltaTime (float) the time elapsed since the last update, in seconds.
+     * Updates the trainer's position based on the elapsed time since the last update. Should be called regularly (e.g.,
+     * every frame) to ensure smooth movement. When the walk is complete, the position is set to the target and the
+     * movement flag is cleared.
+     *
+     * @param deltaTime
+     *            (float) the time elapsed since the last update, in seconds.
      */
     public void update(float deltaTime) {
-        if (!isMoving)
+        if (!this.isMoving) {
             return;
+        }
 
-        walkProgress += deltaTime / DURATION;
+        this.walkProgress += deltaTime / this.duration;
 
-        if (walkProgress >= 1f) {
-            walkProgress = 1f;
-            isMoving = false;
-            pos = new Vec2(endPos.x, endPos.y);
-            onArrival();
+        if (this.walkProgress >= 1f) {
+            this.walkProgress = 1f;
+            this.isMoving = false;
+            this.pos = new Vec2(this.endPos.getX(), this.endPos.getY());
+            this.onArrival();
         } else {
-            pos = Vec2.linearInterpolation(initPos, endPos, walkProgress);
+            this.pos = Vec2.linearInterpolation(this.initPos, this.endPos, this.walkProgress);
         }
     }
 
@@ -71,21 +73,20 @@ public class TrainerWalk {
 
     /**
      * Checks if the trainer is currently moving towards a target position.
-     * 
-     * @return (boolean) true if the trainer is in the process of walking, false
-     *         otherwise.
+     *
+     * @return (boolean) true if the trainer is in the process of walking, false otherwise.
      */
     public boolean isMoving() {
-        return isMoving;
+        return this.isMoving;
     }
 
     /**
-     * Returns the current position of the trainer, which may be in between the
-     * initial and target positions if the trainer is currently walking.
-     * 
+     * Returns the current position of the trainer, which may be in between the initial and target positions if the
+     * trainer is currently walking.
+     *
      * @return (Vec2) the current position of the trainer on the map.
      */
     public Vec2 getPosition() {
-        return pos;
+        return this.pos;
     }
 }
