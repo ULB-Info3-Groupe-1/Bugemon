@@ -1,12 +1,3 @@
-/**
- * File name : NOTower.java
- * Description : Class that represents the NO Tower.
- *
- * @author Rocca Manuel
- * @date 17 mar. 2026
- * @version 1.0
- */
-
 package ulb.models.no_tower;
 
 import java.util.ArrayList;

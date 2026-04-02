@@ -24,10 +24,6 @@ public class DialogZoneView extends VBox {
     @FXML
     private Text additionalInfo;
 
-    /**
-     * Constructor for DialogZoneView. Loads the FXML layout and initializes the component. Throws a
-     * {@link RuntimeException} if the FXML file cannot be loaded.
-     */
     public DialogZoneView() {
         URL url = getClass().getResource(FXML_PATH);
         FXMLLoader loader = new FXMLLoader(url);
@@ -42,38 +38,18 @@ public class DialogZoneView extends VBox {
         }
     }
 
-    /**
-     * set the dialog text.
-     *
-     * @param text
-     *            (String) the text to display in the dialog
-     */
     public void setDialogText(String text) {
         this.dialogText.setText(text);
     }
 
-    /**
-     * Clear the dialog text.
-     */
     public void clearDialog() {
         this.dialogText.setText("");
     }
 
-    /**
-     * set the additional info text.
-     *
-     * @param text
-     *            (String) the text to display as additional information
-     */
     public void setAdditionalInfo(String text) {
         this.additionalInfo.setText(text);
     }
 
-    /**
-     * set the continue button text. (next or end)
-     *
-     * @param text
-     */
     public void setButtonText(String text) {
         this.nextButton.setText(text);
     }

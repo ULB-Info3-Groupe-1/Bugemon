@@ -13,9 +13,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-/**
- * MusicLoarder
- */
+/** Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR). */
 public class MusicLoader {
     private static final Logger LOGGER = Logger.getLogger(MusicLoader.class.getName());
     private static final String MUSIC_DIR = "/musics/";
@@ -40,15 +38,6 @@ public class MusicLoader {
                 .toList();
     }
 
-    /**
-     * Resolves the URI of the given resource directory.
-     *
-     * @param resourceDir
-     *            path to the resource
-     * @return URI of the resource
-     * @throws IllegalArgumentException
-     *             if the resource does not exist
-     */
     private URI getResourceURI(String resourceDir) {
         URL url = getClass().getResource(resourceDir);
         if (url == null) {
@@ -62,17 +51,6 @@ public class MusicLoader {
         }
     }
 
-    /**
-     * Converts a URI to a Path, handling both filesystem and JAR schemes.
-     *
-     * @param uri
-     *            the URI to resolve
-     * @param resourceDir
-     *            resource path inside the URI
-     * @return Path representing the directory
-     * @throws IOException
-     *             if the directory cannot be accessed
-     */
     private Path resolveDirectory(URI uri, String resourceDir) throws IOException {
         if ("jar".equals(uri.getScheme())) {
             try {
@@ -87,15 +65,6 @@ public class MusicLoader {
         }
     }
 
-    /**
-     * Lists all regular files in the given directory.
-     *
-     * @param dir
-     *            directory to list
-     * @return list of file paths
-     * @throws IOException
-     *             if listing fails
-     */
     private List<Path> listFiles(Path dir) throws IOException {
         try (Stream<Path> stream = Files.list(dir)) {
             return stream.filter(Files::isRegularFile).toList();
@@ -118,15 +87,6 @@ public class MusicLoader {
         this.loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT).forEach(musicPlayer::addMusic);
     }
 
-    /**
-     * Loads a single music file from a path and assigns the given ambiance.
-     *
-     * @param path
-     *            path to the music file
-     * @param ambiance
-     *            ambiance to assign
-     * @return optional containing the Music object if loaded successfully
-     */
     private Optional<Music> loadMusic(Path path, Ambiance ambiance) {
         try {
             return Optional.of(new Music(path.toUri().toURL(), ambiance));
