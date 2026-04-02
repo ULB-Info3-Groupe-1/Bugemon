@@ -13,8 +13,8 @@ package ulb.views.combat;
  * Holds no reference to any controller class.
  * </p>
  */
-public class MainActionMenu extends ActionMenuView {
-    public MainActionMenu() {
+public class MainActionMenuView extends ActionMenuView {
+    public MainActionMenuView() {
         super();
         this.action1.setText("Attaque");
         this.action1.getStyleClass().setAll("btn", "btn-danger");
