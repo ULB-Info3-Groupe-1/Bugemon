@@ -20,7 +20,7 @@
                 <FlowPane fx:id="flowPane"
                           hgap="10"
                           vgap="10"
-                          styleClass="all-bugemons-grid" />
+                          styleClass="all-bugemons" />
             </content>
 
         </ScrollPane>

@@ -17,7 +17,7 @@
  * <li>{@link ulb.views.MainMenuView} — the first screen the player sees; provides buttons for navigating to team
  * creation or quitting.</li>
  * <li>{@link ulb.views.CreateTeamView} — the team-assembly screen; hosts both the full Bugemon grid
- * ({@link ulb.views.AllBugemonsGridView}) and the current team panel ({@link ulb.views.BugemonTeamView}).</li>
+ * ({@link ulb.views.AllBugemonsView}) and the current team panel ({@link ulb.views.BugemonTeamView}).</li>
  * <li>{@link ulb.views.CombatVictoryView} — shown when the player wins a combat session; presents a continue
  * button.</li>
  * <li>{@link ulb.views.CombatDefeatView} — shown when the player loses a combat session; presents retry and main-menu
@@ -30,7 +30,7 @@
  * <ul>
  * <li>{@link ulb.views.ActionMenuView} — generic container for swappable action menus used inside the combat
  * screens.</li>
- * <li>{@link ulb.views.AllBugemonsGridView} — scrollable grid of all available Bugemons, used in the team-creation
+ * <li>{@link ulb.views.AllBugemonsView} — scrollable grid of all available Bugemons, used in the team-creation
  * screen.</li>
  * <li>{@link ulb.views.BugemonTeamView} — panel displaying the current team members; used in team creation and during
  * combat switches.</li>

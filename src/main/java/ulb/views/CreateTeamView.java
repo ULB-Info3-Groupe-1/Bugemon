@@ -27,7 +27,7 @@ public class CreateTeamView extends View {
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
 
     @FXML
-    private AllBugemonsGridView allBugemonsGridView;
+    private AllBugemonsView allBugemonsGridView;
     @FXML
     private BugemonTeamView bugemonsTeamView;
     @FXML
