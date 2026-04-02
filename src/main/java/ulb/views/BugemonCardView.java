@@ -26,7 +26,7 @@ public class BugemonCardView extends VBox {
     @FXML
     private Label nameLabel;
 
-    private static final String FXML_PATH = "/fxml/BugemonCell.fxml";
+    private static final String FXML_PATH = "/fxml/BugemonCard.fxml";
     private static final double IMAGE_SIZE = 96;
 
     private static final String EMPTY_NAME = "?";
@@ -36,14 +36,14 @@ public class BugemonCardView extends VBox {
     private boolean selected = false;
 
     /**
-     * Constructor for an empty BugemonCell. Loads the FXML layout and initializes the view with placeholder data.
+     * Constructor for an empty BugemonCard. Loads the FXML layout and initializes the view with placeholder data.
      */
     public BugemonCardView() {
         this(Optional.empty());
     }
 
     /**
-     * Constructor for BugemonCell with a Bugemon. Loads the FXML layout and initializes the view with the bugemon's
+     * Constructor for BugemonCard with a Bugemon. Loads the FXML layout and initializes the view with the bugemon's
      * data.
      *
      * @param bugemon
@@ -92,7 +92,7 @@ public class BugemonCardView extends VBox {
         try {
             loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load BugemonCell.fxml", e);
+            throw new RuntimeException("Failed to load BugemonCard.fxml", e);
         }
     }
 
