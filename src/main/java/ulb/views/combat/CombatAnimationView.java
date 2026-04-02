@@ -32,14 +32,6 @@ public class CombatAnimationView {
 
     // Constructor
 
-    /**
-     * Creates an animation view bound to the two combat sprites.
-     *
-     * @param trainerSprite
-     *            trainer sprite image view.
-     * @param opponentSprite
-     *            opponent sprite image view.
-     */
     public CombatAnimationView(ImageView trainerSprite, ImageView opponentSprite) {
         this.trainerSprite = trainerSprite;
         this.opponentSprite = opponentSprite;
@@ -47,12 +39,6 @@ public class CombatAnimationView {
 
     // Methods
 
-    /**
-     * Plays the trainer attack animation.
-     *
-     * @param onFinished
-     *            callback executed when the animation ends.
-     */
     public void playTrainerAttackAnimation(Runnable onFinished) {
         this.playLungeAnimation(this.trainerSprite, ATTACK_LUNGE_DISTANCE, onFinished);
     }

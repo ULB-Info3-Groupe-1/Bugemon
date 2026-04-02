@@ -9,19 +9,7 @@ import java.util.logging.Logger;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-/**
- * MusicPlayer
- *
- * Controller responsible for managing music playback within the application. Handles loading, playing, stopping, and
- * switching between music tracks.
- *
- * <p>
- * The controller maintains a list of available music tracks, each represented by the inner {@code Music} class which
- * encapsulates the song's link and name. The controller uses JavaFX's {@link MediaPlayer} for audio playback.
- * </p>
- *
- * @see MediaPlayer
- */
+/** Manages music playback; holds a list of registered tracks and plays them via JavaFX {@link MediaPlayer}. */
 public class MusicPlayer {
     private static final Logger LOGGER = Logger.getLogger(MusicPlayer.class.getName());
 
@@ -31,9 +19,6 @@ public class MusicPlayer {
 
     private List<Music> musics;
 
-    /**
-     * MusicPlayer constructor
-     */
     public MusicPlayer() {
         this.musics = new ArrayList<>();
         this.mediaPlayer = Optional.empty();

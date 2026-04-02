@@ -1,12 +1,3 @@
-/**
- * File name: AutoTrainer.java
- * Description: Class representing an automatic trainer.
- *
- * @author Liefferinckx Romain
- * @date 01 March 2026
- * @version 2.0
- */
-
 package ulb.models.trainer;
 
 import java.util.List;
@@ -42,13 +33,6 @@ import ulb.models.bugemon_team.BugemonTeam;
 public class AutoTrainer extends Trainer {
     private static final Random RAND = new Random();
 
-    /**
-     * Constructs an {@code AutoTrainer} with the given team.
-     *
-     * @param team
-     *            the {@link BugemonTeam} assigned to this trainer; must not be {@code null} and must contain at least
-     *            one {@link Bugemon}.
-     */
     public AutoTrainer(BugemonTeam team) {
         super(team);
     }

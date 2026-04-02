@@ -39,52 +39,27 @@ public abstract class CombatView extends View {
 
     // ── FXML-injected components ──────────────────────────────────────────────
 
-    /**
-     * Info panel (name, type, HP bar) for the player's active Bugemon, displayed on the player's side of the combat
-     * screen.
-     */
     @FXML
     protected BugemonInfoView bugemonTrainerInfo;
 
-    /**
-     * Info panel (name, type, HP bar) for the opponent's active Bugemon, displayed on the opponent's side of the combat
-     * screen.
-     */
     @FXML
     protected BugemonInfoView bugemonOpponentInfo;
 
-    /** Sprite image of the player's currently active Bugemon. */
     @FXML
     protected ImageView bugemonTrainerImage;
 
-    /** Sprite image of the opponent's currently active Bugemon. */
     @FXML
     protected ImageView bugemonOpponentImage;
 
-    /**
-     * Container for the action menu components (main menu, attack menu, …). Subclasses populate this container via
-     * their own menu components.
-     */
     @FXML
     protected ActionMenuView actionMenuView;
 
-    /**
-     * Overlay banner used to display turn feedback messages such as attack effectiveness or KO notifications. Toggled
-     * visible/invisible by {@link #showDialog(String, String)} and {@link #hideDialog()}.
-     */
     @FXML
     protected DialogZoneView dialogZoneView;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
     /**
-     * Loads the shared {@code Combat.fxml} layout.
-     *
-     * <p>
-     * Subclass constructors must call {@code super()} and then invoke {@link #initCombatMode()} to finalise their
-     * mode-specific UI setup.
-     * </p>
-     *
      * @throws IOException
      *             if the {@code Combat.fxml} resource cannot be found or parsed.
      */
@@ -96,31 +71,12 @@ public abstract class CombatView extends View {
     // ── Abstract contract ─────────────────────────────────────────────────────
 
     /**
-     * Configures the combat UI for the specific mode implemented by the subclass.
-     *
-     * <p>
-     * Typical implementations show or hide regions that are irrelevant for their mode (e.g. {@link AutomaticCombatView}
-     * hides the action menu and team pane, while {@link ManualCombatView} shows the main action menu). This method is
-     * called once by the subclass constructor after the FXML components have been injected.
-     * </p>
+     * Shows/hides regions specific to the combat mode. Called once by the subclass constructor after FXML injection.
      */
     protected abstract void initCombatMode();
 
     // ── Dialog zone ───────────────────────────────────────────────────────────
 
-    /**
-     * Displays the dialog zone with the given message and optional additional information.
-     *
-     * <p>
-     * Typical uses include showing attack-effectiveness feedback ("ATTAQUE EFFICACE !") or KO announcements. The dialog
-     * zone remains visible until {@link #hideDialog()} is called.
-     * </p>
-     *
-     * @param dialog
-     *            the main message to display; must not be {@code null}.
-     * @param additionalInfo
-     *            a secondary line of text, or {@code null} if no additional information should be shown.
-     */
     private void showDialog(String dialog, String additionalInfo) {
         this.dialogZoneView.setDialogText(dialog);
         this.dialogZoneView.setAdditionalInfo(additionalInfo);
@@ -129,13 +85,8 @@ public abstract class CombatView extends View {
     }
 
     /**
-     * Builds and displays the turn-summary dialog from the two attack results of the last resolved turn. Only the
-     * attacks that actually happened are shown; the second result is absent when one trainer did not attack.
-     *
-     * @param firstAttackResult
-     *            result of the first attack; never {@code null}.
-     * @param secondAttackResult
-     *            result of the second attack, or empty if only one attack was made this turn.
+     * Builds and displays the turn-summary dialog. Only attacks that happened are shown; second is empty when one
+     * trainer did not attack.
      */
     public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
             Optional<TurnResult.AttackResult> secondAttackResult) {
@@ -164,9 +115,6 @@ public abstract class CombatView extends View {
         }
     }
 
-    /**
-     * Hides the dialog zone, removing it from the layout flow so that it does not occupy space when empty.
-     */
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
@@ -174,29 +122,12 @@ public abstract class CombatView extends View {
 
     // ── Bugemon display ───────────────────────────────────────────────────────
 
-    /**
-     * Updates the player-side info panel and sprite to reflect the given Bugemon's current state (name, type, HP).
-     *
-     * <p>
-     * Should be called by the controller at the start of a combat session and after every turn in which the player's
-     * active Bugemon may have changed or taken damage.
-     * </p>
-     *
-     * @param trainerBugemon
-     *            a {@link BugemonDTO} snapshot of the player's currently active Bugemon; must not be {@code null}.
-     */
     protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL(), 256, 256, true, false));
         this.makeTrainerBugemonReappear();
     }
 
-    /**
-     * Updates the opponent-side info panel and sprite to reflect the given Bugemon's current state (name, type, HP).
-     *
-     * @param opponentBugemon
-     *            a {@link BugemonDTO} snapshot of the opponent's currently active Bugemon; must not be {@code null}.
-     */
     protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL(), 256, 256, true, false));
@@ -205,24 +136,10 @@ public abstract class CombatView extends View {
 
     // ── Attack animations ─────────────────────────────────────────────────────
 
-    /**
-     * Plays a lunge animation on the player's sprite (slide toward the opponent then return), then invokes
-     * {@code onFinished} on the JavaFX thread.
-     *
-     * @param onFinished
-     *            callback executed once the animation completes; must not be {@code null}.
-     */
     public void playTrainerAttackAnimation(Runnable onFinished) {
         this.attackAnimationView.playTrainerAttackAnimation(onFinished);
     }
 
-    /**
-     * Plays a lunge animation on the opponent's sprite (slide toward the player then return), then invokes
-     * {@code onFinished} on the JavaFX thread.
-     *
-     * @param onFinished
-     *            callback executed once the animation completes; must not be {@code null}.
-     */
     public void playOpponentAttackAnimation(Runnable onFinished) {
         this.attackAnimationView.playOpponentAttackAnimation(onFinished);
     }

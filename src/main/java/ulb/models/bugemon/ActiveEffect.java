@@ -1,12 +1,3 @@
-/**
- * File name : ActiveEffect.java
- * Description : Wrapper for the Effect class to handle duration.
- *
- * @author Rocca Manuel
- * @date 3 mar. 2026
- * @version 1.0
- */
-
 package ulb.models.bugemon;
 
 import ulb.models.bugemon.effect.Effect;

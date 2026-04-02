@@ -16,37 +16,11 @@ import ulb.controllers.music.MusicPlayer;
 import ulb.services.PlayerService;
 
 /**
- * Central controller responsible for managing all screen controllers and orchestrating application-level navigation.
- *
- * <p>
- * {@code MetaController} is instantiated once at startup by {@link ulb.Main} and owns every concrete {@link Controller}
- * in the application. It is the single authority for:
- * <ul>
- * <li>Loading game resources from JSON files via {@link ulb.utils.Parser}.</li>
- * <li>Navigating between screens via {@link #switchTo(Window)}.</li>
- * <li>Launching combat sessions ({@link #launchAutoCombat()}, {@link #launchManualCombat()}).</li>
- * <li>Resetting the player's team between sessions ({@link #resetTeam()}).</li>
- * <li>Displaying application-wide alert dialogs ({@link #showAlert(String, String)}).</li>
- * </ul>
- *
- * <p>
- * All lower-level controllers hold a reference to this class and call its methods to trigger navigation or access
- * shared state (e.g. the list of all available Bugemons).
- * </p>
- *
- * @see Controller
- * @see Window
- * @see ulb.utils.Parser
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
-    /**
-     * Enumerates all navigable screens in the application.
-     *
-     * <p>
-     * Each constant corresponds to a concrete {@link Controller} managed by the {@link MetaController}. Pass one of
-     * these values to {@link MetaController#switchTo(Window)} to trigger a screen transition.
-     * </p>
-     */
+    /** All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition. */
     public enum Window {
         MAIN_MENU, CREATE_TEAM, MANUAL_COMBAT, AUTOMATIC_COMBAT, NOTOWER, COMBAT_VICTORY, COMBAT_DEFEAT, LEVEL_UP,
     }
@@ -95,21 +69,10 @@ public class MetaController {
         this.initTransitions();
     }
 
-    /**
-     * Call the method from the musicLoader to load all music and sound effects resources and register them with the
-     * musicPlayer.
-     *
-     * @throws IOException
-     *             if any resource directory cannot be accessed
-     */
     private void initializeMusicResources() throws IOException {
         this.musicLoader.loadAllResources(this.musicPlayer);
     }
 
-    /**
-     * Initializes the screen transition map, associating each {@link Window} with a lambda that performs the necessary
-     * actions to display that screen.
-     */
     private void initTransitions() {
         this.transitions.put(Window.MAIN_MENU, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
