@@ -175,5 +175,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
         this.playerTrainer.registerUseItem(item);
         this.combat.turn();
         this.view.refresh();
+        handlePostTurn(this.combat.turn());
     }
 }
