@@ -3,6 +3,10 @@ package ulb.views;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.function.Consumer;
+
+import ulb.models.bugemon.Bugemon;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -12,16 +16,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import ulb.models.bugemon.Bugemon;
-
 /**
- * Reusable custom component representing a single Bugemon cell
- * with an image and name label.
+ * Reusable custom component representing a single Bugemon cell with an image and name label.
  */
-public class BugemonCell extends VBox {
-    @FXML private StackPane imagePane;
-    @FXML private ImageView imageView;
-    @FXML private Label nameLabel;
+public class BugemonCard extends VBox {
+    @FXML
+    private StackPane imagePane;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private Label nameLabel;
 
     private static final String FXML_PATH = "/fxml/BugemonCell.fxml";
     private static final double IMAGE_SIZE = 96;
@@ -33,20 +37,19 @@ public class BugemonCell extends VBox {
     private boolean selected = false;
 
     /**
-     * Constructor for an empty BugemonCell.
-     * Loads the FXML layout and initializes the view with placeholder data.
+     * Constructor for an empty BugemonCell. Loads the FXML layout and initializes the view with placeholder data.
      */
-    public BugemonCell() {
+    public BugemonCard() {
         this(Optional.empty());
     }
 
     /**
-     * Constructor for BugemonCell with a Bugemon.
-     * Loads the FXML layout and initializes the view with the bugemon's data.
+     * Constructor for BugemonCell with a Bugemon. Loads the FXML layout and initializes the view with the bugemon's
+     * data.
      *
      * @param bugemon the Bugemon to display
      */
-    public BugemonCell(Bugemon bugemon) {
+    public BugemonCard(Bugemon bugemon) {
         this(Optional.of(bugemon));
     }
 
@@ -55,7 +58,7 @@ public class BugemonCell extends VBox {
      *
      * @param bugemonData the Optional containing the Bugemon data (empty for empty cells)
      */
-    public BugemonCell(Optional<Bugemon> bugemonData) {
+    private BugemonCard(Optional<Bugemon> bugemonData) {
         this.bugemonData = bugemonData;
         this.loadFXML();
         this.initializeComponents();
@@ -72,8 +75,7 @@ public class BugemonCell extends VBox {
     }
 
     private void updateImage() {
-        this.imageView.setImage(
-                this.bugemonData.map(d -> new Image(d.getSpriteURL())).orElse(EMPTY_IMAGE));
+        this.imageView.setImage(this.bugemonData.map(d -> new Image(d.getSpriteURL())).orElse(EMPTY_IMAGE));
     }
 
     /**
@@ -112,17 +114,6 @@ public class BugemonCell extends VBox {
     }
 
     /**
-     * Gets the bugemon data associated with this cell.
-     * @return the bugemon data
-     */
-    public Bugemon getBugemonData() {
-        return this.bugemonData.orElseThrow(
-                ()
-                        -> new IllegalStateException(
-                                "attempted to get bugemon-data of an empty BugemonCell"));
-    }
-
-    /**
      * Marks this cell as selected, applying the selected styling.
      */
     private void select() {
@@ -147,7 +138,17 @@ public class BugemonCell extends VBox {
     }
 
     /**
+     * Sets the callback invoked when this cell is clicked.
+     *
+     * @param callback a {@code Consumer<Bugemon>} receiving this cell's bugemon; must not be {@code null}
+     */
+    public void setOnClick(Consumer<Bugemon> callback) {
+        this.setOnMouseClicked(e -> this.bugemonData.ifPresent(callback));
+    }
+
+    /**
      * Sets the selection state of this cell.
+     *
      * @param selected true to select, false to unselect
      */
     public void setSelected(boolean selected) {
