@@ -1,12 +1,3 @@
-/**
- * File name : Floor.java
- * Description : Class that represents a floor in the NO Tower.
- *
- * @author Rocca Manuel
- * @date 17 mar. 2026
- * @version 1.0
- */
-
 package ulb.models.no_tower;
 
 import java.util.EmptyStackException;

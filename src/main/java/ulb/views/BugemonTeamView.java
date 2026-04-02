@@ -40,11 +40,6 @@ public class BugemonTeamView extends VBox {
         getStylesheets().add(getClass().getResource("/css/bugemon-team.css").toExternalForm());
     }
 
-    /**
-     * Displays the player's current team in the team view.
-     *
-     * @param bugemonList
-     */
     public void showTeam(BugemonTeam bugemonTeam) {
         this.gridPane.getChildren().clear();
 
@@ -61,14 +56,6 @@ public class BugemonTeamView extends VBox {
         }
     }
 
-    /**
-     * Sets the callback used to handle clicks on bugemon cells. The callback receives the
-     * {@link ulb.common.dto.BugemonDTO} of the clicked cell.
-     *
-     * @param callback
-     *            a {@code Consumer<BugemonDTO>} callback to be called when a bugemon cell is clicked, receiving the
-     *            {@link ulb.common.dto.BugemonDTO} of the clicked cell; must not be {@code null}.
-     */
     public void setOnClickCallback(Consumer<BugemonDTO> callback) {
         this.onBugemonClicked = callback;
     }
