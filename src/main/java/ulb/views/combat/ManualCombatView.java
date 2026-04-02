@@ -38,7 +38,7 @@ public class ManualCombatView extends CombatView {
 
     private final VBox itemPanel;
 
-    private final MainActionMenu mainActionMenu;
+    private final MainActionMenuView mainActionMenu;
     private final AttackActionMenu attackActionMenu;
     private Consumer<Item> onItemSelected;
     private Consumer<Attack> onAttack;
@@ -47,7 +47,7 @@ public class ManualCombatView extends CombatView {
 
     public ManualCombatView() throws IOException {
         super();
-        this.mainActionMenu = new MainActionMenu();
+        this.mainActionMenu = new MainActionMenuView();
         this.attackActionMenu = new AttackActionMenu();
         this.itemPanel = new VBox(BOX_DIM);
         this.itemPanel.setSpacing(BOX_DIM);

@@ -24,7 +24,7 @@
  * <ul>
  * <li>{@link ulb.views.combat.BugemonInfoView} — compact panel displaying a Bugemon's name, elemental type, current HP,
  * and HP bar. Shown for both the player's and the opponent's active Bugemon.</li>
- * <li>{@link ulb.views.combat.MainActionMenu} — the top-level action menu offering the player the choice to attack,
+ * <li>{@link ulb.views.combat.MainActionMenuView} — the top-level action menu offering the player the choice to attack,
  * switch their active Bugemon, or forfeit the match.</li>
  * <li>{@link ulb.views.combat.AttackActionMenu} — the attack-selection menu listing all moves available for the
  * player's currently active Bugemon, annotated with their type effectiveness against the current opponent.</li>

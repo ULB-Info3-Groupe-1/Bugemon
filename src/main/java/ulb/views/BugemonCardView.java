@@ -18,7 +18,7 @@ import ulb.models.bugemon.Bugemon;
 /**
  * Reusable custom component representing a single Bugemon cell with an image and name label.
  */
-public class BugemonCard extends VBox {
+public class BugemonCardView extends VBox {
     @FXML
     private StackPane imagePane;
     @FXML
@@ -38,7 +38,7 @@ public class BugemonCard extends VBox {
     /**
      * Constructor for an empty BugemonCell. Loads the FXML layout and initializes the view with placeholder data.
      */
-    public BugemonCard() {
+    public BugemonCardView() {
         this(Optional.empty());
     }
 
@@ -49,7 +49,7 @@ public class BugemonCard extends VBox {
      * @param bugemon
      *            the Bugemon to display
      */
-    public BugemonCard(Bugemon bugemon) {
+    public BugemonCardView(Bugemon bugemon) {
         this(Optional.of(bugemon));
     }
 
@@ -59,7 +59,7 @@ public class BugemonCard extends VBox {
      * @param bugemonData
      *            the Optional containing the Bugemon data (empty for empty cells)
      */
-    private BugemonCard(Optional<Bugemon> bugemonData) {
+    private BugemonCardView(Optional<Bugemon> bugemonData) {
         this.bugemonData = bugemonData;
         this.loadFXML();
         this.initializeComponents();

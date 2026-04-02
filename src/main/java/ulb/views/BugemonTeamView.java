@@ -51,7 +51,7 @@ public class BugemonTeamView extends VBox {
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
             Bugemon bugemon = aliveBugemons.get(i);
-            BugemonCard cell = new BugemonCard(bugemon);
+            BugemonCardView cell = new BugemonCardView(bugemon);
             if (this.onBugemonClicked != null) {
                 cell.setOnClick(this.onBugemonClicked::accept);
             }

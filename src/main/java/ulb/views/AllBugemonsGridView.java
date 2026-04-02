@@ -76,13 +76,13 @@ public class AllBugemonsGridView extends VBox {
         }
 
         for (Bugemon bugemon : bugemonList) {
-            BugemonCard card = createBugemonCard(bugemon);
+            BugemonCardView card = createBugemonCard(bugemon);
             flowPane.getChildren().add(card);
         }
     }
 
-    private BugemonCard createBugemonCard(Bugemon bugemon) {
-        BugemonCard card = new BugemonCard(bugemon);
+    private BugemonCardView createBugemonCard(Bugemon bugemon) {
+        BugemonCardView card = new BugemonCardView(bugemon);
         card.setPrefWidth(CELL_WIDTH);
 
         if (selectionChecker != null) {
