@@ -14,7 +14,8 @@ public class Vec2 {
     /**
      * Linearly interpolates between {@code a} and {@code b}.
      *
-     * @param t interpolation factor; must be in [0, 1]
+     * @param t
+     *            interpolation factor; must be in [0, 1]
      */
     public static Vec2 linearInterpolation(Vec2 a, Vec2 b, float t) {
         return new Vec2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);

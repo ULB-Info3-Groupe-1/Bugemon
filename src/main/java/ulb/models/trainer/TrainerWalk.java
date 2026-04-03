@@ -19,7 +19,8 @@ public class TrainerWalk {
     /**
      * Initiates movement towards a new position. Ignored if already moving.
      *
-     * @param newPos the target position to walk to
+     * @param newPos
+     *            the target position to walk to
      */
     public void moveTo(Vec2 newPos) {
         if (!this.isMoving) {
@@ -33,7 +34,8 @@ public class TrainerWalk {
     /**
      * Advances the walk animation. Must be called every frame.
      *
-     * @param deltaTime elapsed time since last call, in seconds
+     * @param deltaTime
+     *            elapsed time since last call, in seconds
      */
     public void update(float deltaTime) {
         if (!this.isMoving) {
