@@ -22,13 +22,11 @@ import ulb.models.level_up.Upgrade;
  * Central game entity. Stats are backed by components (see {@code ulb.models.bugemon.components}). Create instances via
  * {@link BugemonBuilder}; equality is based on {@link #id}.
  */
-public class Bugemon implements BugemonDTO {
+public abstract class Bugemon implements BugemonDTO {
     String id;
 
     @SerializedName("nom")
     String name;
-
-    BugemonType type;
 
     String sprite;
 
@@ -55,7 +53,6 @@ public class Bugemon implements BugemonDTO {
     public Bugemon(Bugemon copy) {
         this.id = copy.getId();
         this.name = copy.getName();
-        this.type = copy.getType();
         this.sprite = copy.getSpriteURL();
         this.healthComponent = new HealthComponent(copy.getHp(), copy.getMaxHp());
         this.attackComponent = new AttackComponent(copy.getAttack());
@@ -100,10 +97,6 @@ public class Bugemon implements BugemonDTO {
     @Override
     public String getName() {
         return this.name;
-    }
-
-    public BugemonType getType() {
-        return this.type;
     }
 
     public String getSpriteURL() {
