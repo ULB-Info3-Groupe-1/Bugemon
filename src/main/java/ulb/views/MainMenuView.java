@@ -20,11 +20,10 @@ public class MainMenuView extends View {
     private Button noTowerButton;
     @FXML
     private Button quitButton;
-
     @FXML
-    private Button launchAutomaticCombat;
+    private Button startAutomaticCombatButton;
     @FXML
-    private Button launchManualCombat;
+    private Button startManualCombatButton;
 
     Listener listener;
 
@@ -45,20 +44,16 @@ public class MainMenuView extends View {
         this.quitButton.setOnAction(e -> {
             this.listener.onQuit();
         });
+        this.startManualCombatButton.setOnAction(e -> {
+            this.listener.onStartManualCombat();
+        });
+        this.startAutomaticCombatButton.setOnAction(e -> {
+            this.listener.onStartAutomaticCombat();
+        });
     }
 
     public void setListener(Listener listener) {
         this.listener = listener;
-    }
-
-    /** Registers the callback invoked when the player launches an automatic combat. */
-    public void setOnStartAutoCombat(Runnable callback) {
-        this.launchAutomaticCombat.setOnAction(e -> callback.run());
-    }
-
-    /** Registers the callback invoked when the player launches a manual combat. */
-    public void setOnStartManualCombat(Runnable callback) {
-        this.launchManualCombat.setOnAction(e -> callback.run());
     }
 
     @Override
@@ -72,5 +67,9 @@ public class MainMenuView extends View {
         void onNoTower();
 
         void onQuit();
+
+        void onStartManualCombat();
+
+        void onStartAutomaticCombat();
     }
 }
