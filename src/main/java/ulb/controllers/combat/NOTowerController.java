@@ -1,7 +1,6 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
-import javafx.stage.Stage;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;

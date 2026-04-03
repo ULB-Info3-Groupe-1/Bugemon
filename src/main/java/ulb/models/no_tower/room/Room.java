@@ -1,5 +1,4 @@
 package ulb.models.no_tower.room;
 
-public abstract class Room {
-    //
+public sealed interface Room permits CombatRoom, RewardRoom, EmptyRoom {
 }
