@@ -21,13 +21,12 @@ public class MainMenuView extends View {
     @FXML
     private Button quitButton;
 
-    private Runnable onCreateTeam;
-    private Runnable onNoTower;
-    private Runnable onQuit;
     @FXML
     private Button launchAutomaticCombat;
     @FXML
     private Button launchManualCombat;
+
+    Listener listener;
 
     /**
      * Loads the main-menu FXML layout and wires the button actions to the registered callbacks.
@@ -38,35 +37,18 @@ public class MainMenuView extends View {
     public MainMenuView() throws IOException {
         super("/fxml/MainMenu.fxml");
         this.createTeamButton.setOnAction(e -> {
-            if (this.onCreateTeam != null) {
-                this.onCreateTeam.run();
-            }
+            this.listener.onCreateTeam();
         });
         this.noTowerButton.setOnAction(e -> {
-            if (this.onNoTower != null) {
-                this.onNoTower.run();
-            }
+            this.listener.onNoTower();
         });
         this.quitButton.setOnAction(e -> {
-            if (this.onQuit != null) {
-                this.onQuit.run();
-            }
+            this.listener.onQuit();
         });
     }
 
-    /** Registers the callback invoked when the player clicks "Créer une équipe". */
-    public void setOnCreateTeam(Runnable callback) {
-        this.onCreateTeam = callback;
-    }
-
-    /** Registers the callback invoked when the player clicks "Lancer la NO Tower". */
-    public void setOnNoTower(Runnable callback) {
-        this.onNoTower = callback;
-    }
-
-    /** Registers the callback invoked when the player clicks "Quitter". */
-    public void setOnQuit(Runnable callback) {
-        this.quitButton.setOnAction(e -> callback.run());
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /** Registers the callback invoked when the player launches an automatic combat. */
@@ -82,5 +64,13 @@ public class MainMenuView extends View {
     @Override
     public void refresh() {
         // No dynamic content to refresh in the main menu, so this method is empty.
+    }
+
+    public interface Listener {
+        void onCreateTeam();
+
+        void onNoTower();
+
+        void onQuit();
     }
 }
