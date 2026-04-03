@@ -20,9 +20,6 @@ import ulb.models.bugemon.components.LevelComponent;
  *
  * <p>
  * Usage: {@code new BugemonBuilder().id("001").name("Florasect").hp(120).build()}
- *
- * @throws IllegalStateException
- *             from {@link #build()} if no {@code id} was set
  */
 @SuppressWarnings("checkstyle:HiddenField")
 public final class BugemonBuilder {
