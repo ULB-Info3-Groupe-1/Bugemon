@@ -36,7 +36,8 @@ public class LevelUpView extends View {
     private ImageView bugemonImage;
 
     private LevelUpSession session;
-    private Consumer<Integer> onChooseOption;
+
+    Listener listener;
 
     /**
      * Loads the level-up FXML layout and wires each choice button to fire the registered callback with its zero-based
@@ -48,30 +49,23 @@ public class LevelUpView extends View {
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
         this.choice1Button.setOnAction(e -> {
-            if (this.onChooseOption != null) {
-                this.onChooseOption.accept(0);
-            }
+            this.listener.onChooseOption(0);
         });
         this.choice2Button.setOnAction(e -> {
-            if (this.onChooseOption != null) {
-                this.onChooseOption.accept(1);
-            }
+            this.listener.onChooseOption(1);
         });
         this.choice3Button.setOnAction(e -> {
-            if (this.onChooseOption != null) {
-                this.onChooseOption.accept(2);
-            }
+            this.listener.onChooseOption(2);
         });
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /** Gives the view a reference to the level-up session model it should read from. */
     public void setSession(LevelUpSession session) {
         this.session = session;
-    }
-
-    /** Registers the callback invoked when the player selects a stat-upgrade option. */
-    public void setOnChooseOption(Consumer<Integer> callback) {
-        this.onChooseOption = callback;
     }
 
     @Override
@@ -89,5 +83,11 @@ public class LevelUpView extends View {
         this.choice1Button.setText(choices.get(0).toString());
         this.choice2Button.setText(choices.get(1).toString());
         this.choice3Button.setText(choices.get(2).toString());
+    }
+
+    public interface Listener {
+
+        void onChooseOption(int idx);
+
     }
 }

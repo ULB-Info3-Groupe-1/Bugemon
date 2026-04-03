@@ -18,7 +18,7 @@ import ulb.views.LevelUpView;
  * calls {@code view.refresh()} so the view pulls the updated event data directly from the session.
  * </p>
  */
-public class LevelUpController extends Controller<LevelUpView> {
+public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
     private final LevelUpSession session = new LevelUpSession();
     private final PlayerService playerService;
 
@@ -34,11 +34,12 @@ public class LevelUpController extends Controller<LevelUpView> {
         super(metaController, new LevelUpView());
         this.playerService = playerService;
         this.view.setSession(this.session);
-        this.view.setOnChooseOption(this::chooseOption);
+        this.view.setListener(this);
     }
 
     /** Applies the chosen stat bonus and advances to the next level-up event. */
-    public void chooseOption(int optionIdx) {
+    @Override
+    public void onChooseOption(int optionIdx) {
         LevelUp levelUp = this.session.getCurrent();
         Upgrade choice = levelUp.getChoices().get(optionIdx);
         levelUp.getBugemon().applyChoice(choice);
