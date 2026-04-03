@@ -18,7 +18,7 @@ public final class TestUtilsBugemons {
     private TestUtilsBugemons() {
     }
 
-    public static Bugemon createDefaultBugemon(String id) {
+    public static Bugemon createDefaultBugemon(int id) {
         Effect effect = new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.ATTACK, 10, EffectDuration.ONE_TURN);
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
@@ -34,14 +34,14 @@ public final class TestUtilsBugemons {
         BugemonTeam bugemons = new BugemonTeam();
 
         for (int i = 1; i <= count; i++) {
-            bugemons.add(createDefaultBugemon(String.valueOf(i)));
+            bugemons.add(createDefaultBugemon(i));
         }
 
         return bugemons;
     }
 
-    public static void killBugemon(BugemonTeam team, String id) {
-        Bugemon bugemon = team.stream().filter(b -> b.getId().equals(id)).findFirst().get();
+    public static void killBugemon(BugemonTeam team, int id) {
+        Bugemon bugemon = team.stream().filter(b -> b.getId() == id).findFirst().get();
         bugemon.kill();
     }
 }

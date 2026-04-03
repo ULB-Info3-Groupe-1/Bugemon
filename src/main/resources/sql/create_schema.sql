@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "attack_effects" (
 );
 
 CREATE TABLE IF NOT EXISTS "bugemons" (
-  "id" varchar PRIMARY KEY,
+  "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" varchar,
   "type" varchar,
   "sprite" varchar,
@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE TABLE IF NOT EXISTS "user_bugemons" (
   "user_id" integer,
-  "bugemon_id" varchar,
+  "bugemon_id" integer,
   "current_defense" integer,
-  "current_attack_power" integer,
+  "current_attack" integer,
   "current_initiative" integer,
   "current_max_hp" integer,
   "current_xp" integer DEFAULT 0,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS "teams" (
 CREATE TABLE IF NOT EXISTS "team_members" (
   "user_id" integer,
   "team_name" varchar,
-  "bugemon_id" varchar,
+  "bugemon_id" integer,
   "slot_position" integer,
   PRIMARY KEY ("user_id", "team_name", "slot_position")
 );

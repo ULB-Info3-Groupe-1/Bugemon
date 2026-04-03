@@ -42,7 +42,7 @@ public interface BugemonDTO {
      *
      * @return the unique identifier as a non-{@code null} {@code String}.
      */
-    String getId();
+    int getId();
 
     /**
      * Returns the display name of this Bugemon.

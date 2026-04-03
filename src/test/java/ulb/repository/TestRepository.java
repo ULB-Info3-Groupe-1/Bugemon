@@ -65,7 +65,7 @@ public class TestRepository {
     @Test
     public void shouldSaveAndRetrieveUserBugemons_whenValidDataProvided() {
         int userId = 2;
-        String bugemonId = "bug_test001";
+        int bugemonId = 1;
 
         // Create test data
         UserBugemonDTO dto = new UserBugemonDTO(userId, bugemonId, 10, 20, 15, 100, 50, 5);
@@ -100,7 +100,7 @@ public class TestRepository {
     @Test
     public void shouldUpdateUserBugemon_whenDataIsModified() {
         int userId = 3;
-        String bugemonId = "bugU_test002";
+        int bugemonId = 2;
 
         // Initial data
         UserBugemonDTO initial = new UserBugemonDTO(userId, bugemonId, 10, 10, 10, 50, 0, 1);
@@ -197,7 +197,7 @@ public class TestRepository {
     public void shouldAddAndRetrieveTeamMembers_whenFillingRoster() {
         int userId = 6;
         String teamName = "Roster_team";
-        String bugemonId = "partner_001";
+        int bugemonId = 1;
 
         // Create test data
         TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
@@ -230,7 +230,7 @@ public class TestRepository {
     public void shouldRemoveTeamMember_whenRequested() {
         int userId = 7;
         String teamName = "EmptyMe_team";
-        String bugemonId = "leave_001";
+        int bugemonId = 1;
 
         // Configure mock behavior to return empty list after removal
         // Empty list after removal
@@ -284,7 +284,7 @@ public class TestRepository {
     public void shouldDeleteTeamMembers_whenRequested() {
         int userId = 9;
         String teamName = "ClearMembers_team";
-        String bugemonId = "clear_001";
+        int bugemonId = 1;
 
         // Configure mock behavior to return empty list after member deletion
         when(this.repository.getTeamMembers(userId, teamName)).thenReturn(new ArrayList<>());

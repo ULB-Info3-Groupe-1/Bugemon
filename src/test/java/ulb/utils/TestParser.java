@@ -4,13 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
@@ -18,6 +18,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.repository.dto.CreateBugemonDTO;
 
 public class TestParser {
     @Test
@@ -49,34 +50,35 @@ public class TestParser {
         assertNotNull(tempInstance.getBugemons());
 
         // check attributes
-        Bugemon florachu = tempInstance.getBugemons().stream().filter(b -> "Florachu".equals(b.getName())).findFirst()
-                .orElseThrow();
-        assertEquals("Florachu", florachu.getName());
+        CreateBugemonDTO florachu = tempInstance.getBugemons().stream().filter(b -> "Florachu".equals(b.name()))
+                .findFirst().orElseThrow();
+        assertEquals("Florachu", florachu.name());
 
-        Bugemon moussil = tempInstance.getBugemons().stream().filter(b -> "Moussil".equals(b.getName())).findFirst()
-                .orElseThrow();
-        assertEquals(BugemonType.FLORA, moussil.getType());
-
-        // check sprite URL begins with "png/"
-        assertEquals("png/florachu.png", florachu.getSpriteURL());
+        CreateBugemonDTO moussil = tempInstance.getBugemons().stream().filter(b -> "Moussil".equals(b.name()))
+                .findFirst().orElseThrow();
+        assertEquals(BugemonType.FLORA, moussil.type());
 
         // check attacks
-        Bugemon verdurion = tempInstance.getBugemons().stream().filter(b -> "Verdurion".equals(b.getName())).findFirst()
-                .orElseThrow();
-        List<Attack> verdurionAttackList = verdurion.getAttackList();
+        CreateBugemonDTO verdurion = tempInstance.getBugemons().stream().filter(b -> "Verdurion".equals(b.name()))
+                .findFirst().orElseThrow();
+
+        List<Attack> verdurionAttackList = new ArrayList<>();
+        verdurionAttackList.add(verdurion.attack1());
+        verdurionAttackList.add(verdurion.attack2());
+        verdurionAttackList.add(verdurion.attack3());
 
         for (Attack a : verdurionAttackList) {
             assertEquals(a, tempInstance.getAttacks().get(a.id()));
         }
 
         // check stats
-        Bugemon loopine = tempInstance.getBugemons().stream().filter(b -> "Loopine".equals(b.getName())).findFirst()
-                .orElseThrow();
+        CreateBugemonDTO loopine = tempInstance.getBugemons().stream().filter(b -> "Loopine".equals(b.name()))
+                .findFirst().orElseThrow();
 
-        assertEquals(50, loopine.getAttack());
-        assertEquals(85, loopine.getHp());
-        assertEquals(50, loopine.getDefense());
-        assertEquals(60, loopine.getInitiative());
+        assertEquals(50, loopine.attack());
+        assertEquals(85, loopine.maxHp());
+        assertEquals(50, loopine.defense());
+        assertEquals(60, loopine.initiative());
     }
 
     @Test
@@ -99,12 +101,13 @@ public class TestParser {
         assertEquals("fouet_liane", fouetLiane.id());
 
         // check bugemons
-        List<Bugemon> bugemons = parser.getBugemons();
-        Bugemon florachu = bugemons.stream().filter(b -> "Florachu".equals(b.getName())).findFirst().orElseThrow();
-        assertEquals("Florachu", florachu.getName());
+        List<CreateBugemonDTO> bugemons = parser.getBugemons();
+        CreateBugemonDTO florachu = bugemons.stream().filter(b -> "Florachu".equals(b.name())).findFirst()
+                .orElseThrow();
+        assertEquals("Florachu", florachu.name());
 
-        Bugemon moussil = bugemons.stream().filter(b -> "Moussil".equals(b.getName())).findFirst().orElseThrow();
-        assertEquals(BugemonType.FLORA, moussil.getType());
+        CreateBugemonDTO moussil = bugemons.stream().filter(b -> "Moussil".equals(b.name())).findFirst().orElseThrow();
+        assertEquals(BugemonType.FLORA, moussil.type());
     }
 
     @Test
