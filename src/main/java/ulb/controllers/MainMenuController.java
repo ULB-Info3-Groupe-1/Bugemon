@@ -13,10 +13,6 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     public MainMenuController(MetaController metaController, PlayerService playerService) throws IOException {
         super(metaController, new MainMenuView());
         this.playerService = playerService;
-
-        this.view.setOnStartAutoCombat(this::startAutoCombat);
-        this.view.setOnStartManualCombat(this::startManualCombat);
-
         this.view.setListener(this);
     }
 
@@ -36,7 +32,8 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     /** Launches an automatic combat session. */
-    public void startAutoCombat() {
+    @Override
+    public void onStartAutomaticCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
             this.showNoTeamAlert();
         } else {
@@ -45,7 +42,8 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     /** Launches a manual combat session. */
-    public void startManualCombat() {
+    @Override
+    public void onStartManualCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
             this.showNoTeamAlert();
         } else {
