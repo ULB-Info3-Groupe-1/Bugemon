@@ -1,11 +1,11 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.controllers.MetaController.Window;
 import ulb.models.level_up.LevelUp;
-import ulb.models.level_up.LevelUpSession;
 import ulb.models.level_up.Upgrade;
 import ulb.services.PlayerService;
 import ulb.views.LevelUpView;
@@ -19,7 +19,7 @@ import ulb.views.LevelUpView;
  * </p>
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
-    private final LevelUpSession session = new LevelUpSession();
+    private List<LevelUp> levelUps = new ArrayList<>();
     private final PlayerService playerService;
 
     /**
@@ -33,41 +33,33 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
     public LevelUpController(MetaController metaController, PlayerService playerService) throws IOException {
         super(metaController, new LevelUpView());
         this.playerService = playerService;
-        this.view.setSession(this.session);
         this.view.setListener(this);
     }
 
     /** Applies the chosen stat bonus and advances to the next level-up event. */
     @Override
-    public void onChooseOption(int optionIdx) {
-        LevelUp levelUp = this.session.getCurrent();
-        Upgrade choice = levelUp.getChoices().get(optionIdx);
-        levelUp.getBugemon().applyChoice(choice);
+    public void onChooseUpgrade(int idx) {
+        // retrieve upgrade that was chosen
+        LevelUp levelUp = this.levelUps.removeLast();
+        Upgrade upgrade = levelUp.getChoices().get(optionIdx);
+
+        // apply the upgrade
+        levelUp.getBugemon().applyChoice(upgrade);
         this.playerService.saveBugemonState(levelUp.getBugemon());
-        this.cont();
+
+        if (this.levelUps.size() > 0) {
+            this.view.refresh();
+        } else {
+            this.metaController.switchTo(Window.COMBAT_VICTORY);
+        }
     }
 
     /**
      * Initialises the session with the given list and navigates to the level-up screen, or goes directly to victory if
      * the list is empty.
      */
-    public void setLevelUp(List<LevelUp> lvlsUp) {
-        if (!lvlsUp.isEmpty()) {
-            this.session.start(lvlsUp);
-            this.metaController.switchTo(Window.LEVEL_UP);
-            this.view.refresh();
-        } else {
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
-        }
-    }
-
-    /** Advances to the next pending level-up event, or navigates to victory if done. */
-    public void cont() {
-        if (this.session.hasNext()) {
-            this.session.advance();
-            this.view.refresh();
-        } else {
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
-        }
+    public void setLevelUp(List<LevelUp> newLevelUps) {
+        this.levelUps = newLevelUps;
+        this.view.refresh();
     }
 }

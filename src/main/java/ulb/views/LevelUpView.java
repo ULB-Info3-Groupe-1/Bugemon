@@ -11,7 +11,6 @@ import javafx.scene.image.ImageView;
 
 import ulb.common.dto.BugemonDTO;
 import ulb.common.dto.LevelUpDTO;
-import ulb.models.level_up.LevelUpSession;
 import ulb.models.level_up.Upgrade;
 
 /**
@@ -35,8 +34,6 @@ public class LevelUpView extends View {
     @FXML
     private ImageView bugemonImage;
 
-    private LevelUpSession session;
-
     Listener listener;
 
     /**
@@ -49,23 +46,18 @@ public class LevelUpView extends View {
     public LevelUpView() throws IOException {
         super("/fxml/LevelUp.fxml");
         this.choice1Button.setOnAction(e -> {
-            this.listener.onChooseOption(0);
+            this.listener.onChooseUpgrade(0);
         });
         this.choice2Button.setOnAction(e -> {
-            this.listener.onChooseOption(1);
+            this.listener.onChooseUpgrade(1);
         });
         this.choice3Button.setOnAction(e -> {
-            this.listener.onChooseOption(2);
+            this.listener.onChooseUpgrade(2);
         });
     }
 
     public void setListener(Listener listener) {
         this.listener = listener;
-    }
-
-    /** Gives the view a reference to the level-up session model it should read from. */
-    public void setSession(LevelUpSession session) {
-        this.session = session;
     }
 
     @Override
@@ -87,7 +79,7 @@ public class LevelUpView extends View {
 
     public interface Listener {
 
-        void onChooseOption(int idx);
+        void onChooseUpgrade(int idx);
 
     }
 }
