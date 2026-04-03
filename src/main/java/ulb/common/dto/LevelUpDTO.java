@@ -1,7 +1,5 @@
 package ulb.common.dto;
 
-import java.util.List;
-
 import ulb.models.level_up.Upgrade;
 
 /**
@@ -30,15 +28,5 @@ public interface LevelUpDTO {
      */
     BugemonDTO getBugemon();
 
-    /**
-     * Returns the list of stat-bonus {@link Upgrade}s offered to the player during this level-up event.
-     *
-     * <p>
-     * Typically contains exactly three choices, each with randomly distributed bonuses across HP, attack, defense, and
-     * initiative.
-     * </p>
-     *
-     * @return an unmodifiable {@link List} of {@link Upgrade} instances; never {@code null}.
-     */
-    List<Upgrade> getChoices();
+    Upgrade get(int idx);
 }
