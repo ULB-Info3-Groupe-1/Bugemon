@@ -18,8 +18,7 @@ public class CombatDefeatView extends View {
     @FXML
     private Button backToMainMenuButton;
 
-    private Runnable onRetry;
-    private Runnable onBackToMainMenu;
+    Listener listener;
 
     /**
      * Loads the defeat-screen FXML layout and wires the retry and back-to-menu buttons.
@@ -30,29 +29,27 @@ public class CombatDefeatView extends View {
     public CombatDefeatView() throws IOException {
         super("/fxml/CombatDefeat.fxml");
         this.retryButton.setOnAction(e -> {
-            if (this.onRetry != null) {
-                this.onRetry.run();
-            }
+            this.listener.onRetry();
         });
         this.backToMainMenuButton.setOnAction(e -> {
-            if (this.onBackToMainMenu != null) {
-                this.onBackToMainMenu.run();
-            }
+            this.listener.onBackToMainMenu();
         });
     }
 
-    /** Registers the callback invoked when the player clicks the retry button. */
-    public void setOnRetry(Runnable callback) {
-        this.onRetry = callback;
-    }
-
-    /** Registers the callback invoked when the player clicks "retour au menu principal". */
-    public void setOnBackToMainMenu(Runnable callback) {
-        this.onBackToMainMenu = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
     public void refresh() {
         // No dynamic data to display on the defeat screen.
+    }
+
+    public interface Listener {
+
+        void onRetry();
+
+        void onBackToMainMenu();
+
     }
 }
