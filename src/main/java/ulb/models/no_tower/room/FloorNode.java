@@ -22,27 +22,27 @@ public class FloorNode {
 
     // Getters
     public int getX() {
-        return x;
+        return this.x;
     }
 
     public int getY() {
-        return y;
+        return this.y;
     }
 
     public int getDepth() {
-        return depth;
+        return this.depth;
     }
 
     public Room getRoom() {
-        return room;
+        return this.room;
     }
 
     public List<FloorNode> getChildren() {
-        return children;
+        return this.children;
     }
 
     public Optional<FloorNode> getParent() {
-        return parent;
+        return this.parent;
     }
 
     public void addChild(FloorNode child) {
@@ -58,13 +58,13 @@ public class FloorNode {
         while (n.getDepth() > 1 && n.getParent().isPresent()) {
             n = n.getParent().get();
         }
-        return countSubtree(n);
+        return this.countSubtree(n);
     }
 
     private int countSubtree(FloorNode n) {
         int count = 1;
         for (FloorNode child : n.getChildren()) {
-            count += countSubtree(child);
+            count += this.countSubtree(child);
         }
         return count;
     }

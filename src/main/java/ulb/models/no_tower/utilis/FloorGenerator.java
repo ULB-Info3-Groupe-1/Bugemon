@@ -29,7 +29,7 @@ public class FloorGenerator {
 
     private Set<String> visitedNode;
 
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     private Random random;
 
     public FloorGenerator() {
@@ -48,7 +48,7 @@ public class FloorGenerator {
 
             if (newX >= 0 && newX < GRID_SIZE && newY >= 0 && newY < GRID_SIZE) {
                 String key = newX + "," + newY;
-                if (!visitedNode.contains(key)) {
+                if (!this.visitedNode.contains(key)) {
                     neighbors.add(new FloorNode(newX, newY, null, new ArrayList<>(), node, node.getDepth() + 1));
                 }
             }
@@ -69,8 +69,8 @@ public class FloorGenerator {
             if (node.getBranchCount() >= MAX_DEPTH) {
                 break;
             }
-            if (!visitedNode.contains(nextNode.getX() + "," + nextNode.getY())) {
-                visitedNode.add(nextNode.getX() + "," + nextNode.getY());
+            if (!this.visitedNode.contains(nextNode.getX() + "," + nextNode.getY())) {
+                this.visitedNode.add(nextNode.getX() + "," + nextNode.getY());
                 node.addChild(nextNode);
                 this.generateBranch(nextNode);
             }
@@ -82,18 +82,18 @@ public class FloorGenerator {
         this.visitedNode = new HashSet<>();
         this.visitedNode.add(this.root.getX() + "," + this.root.getY());
 
-        List<FloorNode> rootNeighbors = this.getAvailableNeighbors(root);
+        List<FloorNode> rootNeighbors = this.getAvailableNeighbors(this.root);
         Collections.shuffle(rootNeighbors);
 
-        int branchCount = random.nextInt(MIN_BRANCHES, MAX_BRANCHES + 1);
+        int branchCount = this.random.nextInt(MIN_BRANCHES, MAX_BRANCHES + 1);
 
         // Adding the base branch
         List<FloorNode> branchStarts = new ArrayList<>();
         for (int i = 0; i < branchCount; i++) {
             FloorNode tmp = rootNeighbors.get(i);
-            FloorNode child = new FloorNode(tmp.getX(), tmp.getY(), null, new ArrayList<>(), root, 1);
+            FloorNode child = new FloorNode(tmp.getX(), tmp.getY(), null, new ArrayList<>(), this.root, 1);
             this.visitedNode.add(child.getX() + "," + child.getY());
-            root.addChild(child);
+            this.root.addChild(child);
             branchStarts.add(child);
         }
 
