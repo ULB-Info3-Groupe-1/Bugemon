@@ -5,7 +5,7 @@ import java.io.IOException;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.views.victory_view.CombatDefeatView;
+import ulb.views.CombatDefeatView;
 
 /**
  * Controller responsible for the defeat screen shown when the player loses a combat.
