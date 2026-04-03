@@ -120,13 +120,18 @@ public final class BugemonBuilder {
      *             if no {@code id} was provided
      */
     public Bugemon build() {
-        Bugemon bugemon = new Bugemon();
+        Bugemon bugemon = switch (this.type) {
+            case FLORA -> new FloraBugemon();
+            case AQUA -> new AquaBugemon();
+            case PYRO -> new PyroBugemon();
+            case LITHO -> new LithoBugemon();
+            default -> throw new IllegalArgumentException();
+        };
 
         // NOTE: ID has no default value
         bugemon.id = this.id.orElseThrow(() -> new IllegalStateException("Bugemon id must be provided"));
 
         bugemon.name = this.name;
-        bugemon.type = this.type;
         bugemon.sprite = this.sprite;
 
         bugemon.healthComponent = new HealthComponent(this.hp, this.hp);
