@@ -5,14 +5,14 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 
 /**
- * Sealed interface representing the action a {@link Trainer} takes for a given combat turn.
- * Passive actions (switch, forfeit, item use) return {@code false} from {@link #isAttack()};
- * the combat engine then skips damage calculation for them while still allowing the opponent to retaliate.
+ * Sealed interface representing the action a {@link Trainer} takes for a given combat turn. Passive actions (switch,
+ * forfeit, item use) return {@code false} from {@link #isAttack()}; the combat engine then skips damage calculation for
+ * them while still allowing the opponent to retaliate.
  */
 public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.SwitchAction, TurnAction.ForfeitAction, TurnAction.UseItemAction {
     /**
-     * Returns {@code true} if this action generates a hit on the opponent.
-     * Only {@link AttackAction} returns {@code true}.
+     * Returns {@code true} if this action generates a hit on the opponent. Only {@link AttackAction} returns
+     * {@code true}.
      */
     boolean isAttack();
 

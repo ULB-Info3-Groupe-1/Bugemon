@@ -1,4 +1,4 @@
 /**
- * ulb.common is a package that contains common utilities and classes used across the project.
+ * Shared DTOs and interfaces used for safe data exchange between the MVC layers.
  */
 package ulb.common;
