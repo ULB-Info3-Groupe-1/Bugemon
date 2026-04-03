@@ -34,14 +34,14 @@ public class LevelUpController extends Controller<LevelUpView> {
         super(metaController, new LevelUpView());
         this.playerService = playerService;
         this.view.setSession(this.session);
-        this.view.setOnChooseOption(this::chooseOption);
+        this.view.setOnUpgradeChosen(this::chooseOption);
     }
 
     /** Applies the chosen stat bonus and advances to the next level-up event. */
     public void chooseOption(int optionIdx) {
         LevelUp levelUp = this.session.getCurrent();
-        Upgrade choice = levelUp.getChoices().get(optionIdx);
-        levelUp.getBugemon().applyChoice(choice);
+        Upgrade upgrade = levelUp.get(optionIdx);
+        levelUp.getBugemon().applyUpgrade(upgrade);
         this.playerService.saveBugemonState(levelUp.getBugemon());
         this.cont();
     }
