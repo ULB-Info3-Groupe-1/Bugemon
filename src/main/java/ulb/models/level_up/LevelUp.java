@@ -18,8 +18,8 @@ public class LevelUp implements LevelUpDTO {
     }
 
     /**
-     * Distributes 10 points randomly across HP, Attack, Defense, Initiative.
-     * HP and Initiative are scaled ×2; Attack and Defense are face value.
+     * Distributes 10 points randomly across HP, Attack, Defense, Initiative. HP and Initiative are scaled ×2; Attack
+     * and Defense are face value.
      */
     private Upgrade generateRandomChoice() {
         int hp = 0;

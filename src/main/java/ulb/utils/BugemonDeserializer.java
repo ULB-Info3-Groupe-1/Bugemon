@@ -19,8 +19,8 @@ import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 
 /**
- * Custom Gson deserializer for {@link Bugemon}; resolves attack IDs via a pre-loaded map.
- * Sprite paths are normalised to {@code "png/<name>"} if the prefix is absent.
+ * Custom Gson deserializer for {@link Bugemon}; resolves attack IDs via a pre-loaded map. Sprite paths are normalised
+ * to {@code "png/<name>"} if the prefix is absent.
  */
 public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
     private final Map<String, Attack> attacksMap;

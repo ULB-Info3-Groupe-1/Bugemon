@@ -15,7 +15,8 @@ public enum EffectDuration {
     }
 
     /**
-     * @throws IllegalArgumentException if no value matches the label.
+     * @throws IllegalArgumentException
+     *             if no value matches the label.
      */
     public static EffectDuration fromLabel(String label) {
         for (EffectDuration duration : EffectDuration.values()) {
