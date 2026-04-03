@@ -16,7 +16,7 @@ public class CombatVictoryView extends View {
     @FXML
     private Button continueButton;
 
-    private Runnable onContinue;
+    Listener listener;
 
     /**
      * Loads the victory-screen FXML layout and wires the continue button.
@@ -27,19 +27,22 @@ public class CombatVictoryView extends View {
     public CombatVictoryView() throws IOException {
         super("/fxml/CombatVictory.fxml");
         this.continueButton.setOnAction(e -> {
-            if (this.onContinue != null) {
-                this.onContinue.run();
-            }
+            this.listener.onContinue();
         });
     }
 
-    /** Registers the callback invoked when the player clicks the continue button. */
-    public void setOnContinue(Runnable callback) {
-        this.onContinue = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
     public void refresh() {
         // No dynamic data to display on the victory screen.
+    }
+
+    public interface Listener {
+
+        void onContinue();
+
     }
 }
