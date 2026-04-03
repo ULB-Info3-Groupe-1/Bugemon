@@ -200,3 +200,6 @@ Todo.md
 db.sqlite
 
 org.mockito.plugins.MockMaker
+
+# config file of Claude code
+CLAUDE.md

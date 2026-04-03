@@ -15,11 +15,8 @@ public enum EffectDuration {
     }
 
     /**
-     * Get the EffectDuration enum value corresponding to the given label.
-     *
-     * @param label
-     *            the label to search for
-     * @return the EffectDuration enum value corresponding to the given label
+     * @throws IllegalArgumentException
+     *             if no value matches the label.
      */
     public static EffectDuration fromLabel(String label) {
         for (EffectDuration duration : EffectDuration.values()) {

@@ -1,17 +1,3 @@
-/**
- * Utility class providing helper methods for combat calculations.
- *
- * <p>Handles attack priority resolution, damage computation, and type
- * effectiveness based on a fixed cycle defined by the {@link
- * ulb.models.bugemon.Bugemon.BugemonType} enum order.</p>
- *
- * @author  Matteo Morbée
- * @author Lucas Verbeiren
- * @author Martin Gouverneur
- * @version 1.0
- * @date    05 mar. 2026
- */
-
 package ulb.services;
 
 import java.util.ArrayList;
@@ -27,15 +13,11 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 
 /**
- * Utility class providing helper methods for combat calculations.
+ * Stateless utility for combat calculations: attack priority, damage formula, and type effectiveness.
  *
  * <p>
- * Handles attack priority resolution, damage computation, and type effectiveness based on a fixed cycle defined by the
- * {@link BugemonType} enum order.
- * </p>
- *
- * <p>
- * This class is not meant to be instantiated; all methods are static.
+ * Types follow a fixed cycle defined by the {@link BugemonType} enum order — see
+ * {@link #compareBugemonType(BugemonType, BugemonType)}.
  * </p>
  */
 public class CombatService {
@@ -102,21 +84,8 @@ public class CombatService {
     }
 
     /**
-     * Calculates the damage dealt by an attack, factoring in the striker's attack stat, the defender's defense stat,
-     * type effectiveness, and a random critical hit chance (10% chance of 1.5x damage).
-     *
-     * <p>
-     * This is a convenience overload of {@link #calculateDamage(Attack, Bugemon, Bugemon, double)} that automatically
-     * determines whether a critical hit occurs.
-     * </p>
-     *
-     * @param attack
-     *            the attack being used
-     * @param offenderBugemon
-     *            the attacking Bugemon, used to access its attack stat
-     * @param defenderBugemon
-     *            the defending Bugemon, used to access its defense stat and type
-     * @return the computed damage as a double
+     * Overload of {@link #calculateDamage(Attack, Bugemon, Bugemon, double)} with a random crit factor (10% chance of
+     * 1.5×).
      */
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon,
             final Bugemon defenderBugemon) {
@@ -197,25 +166,6 @@ public class CombatService {
         }
     }
 
-    /**
-     * Generates a random {@link BugemonTeam} of the specified size by sampling without replacement from the given pool
-     * of available {@link Bugemon}s.
-     *
-     * <p>
-     * Each selected Bugemon is {@link Bugemon#clone() cloned} before being added to the team so that the originals in
-     * {@code bugemonList} are not modified during combat.
-     * </p>
-     *
-     * @param bugemonList
-     *            the pool of {@link Bugemon}s to sample from; must not be {@code null} and must contain at least
-     *            {@code teamSize} distinct entries.
-     * @param teamSize
-     *            the number of {@link Bugemon}s the resulting team should contain; must be between {@code 1} and
-     *            {@code bugemonList.size()} inclusive.
-     * @return a new {@link BugemonTeam} containing {@code teamSize} randomly chosen, cloned {@link Bugemon}s.
-     * @throws RuntimeException
-     *             if cloning a selected {@link Bugemon} fails.
-     */
     public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
         List<Bugemon> pool = new ArrayList<>(bugemonList);
         Collections.shuffle(pool);
@@ -226,14 +176,6 @@ public class CombatService {
         return team;
     }
 
-    /**
-     * Creates a boss {@link BugemonTeam} containing the unique boss Bugemon defined by {@code
-     * BOSS_ID}.
-     *
-     * @param bugemonList
-     *            the list of available {@link Bugemon}s to search for the boss; must not be {@code null}
-     * @return a new {@link BugemonTeam} containing the boss Bugemon.
-     */
     public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
         final Optional<Bugemon> bossBugemon = bugemonList.stream().filter(obj -> obj.getId().equals(BOSS_ID))
                 .findFirst();

@@ -1,12 +1,3 @@
-/**
- * File name : Parser.java
- * Description : Class to parse the json files.
- *
- * @author Rocca Manuel
- * @date 28 feb. 2026
- * @version 1.0
- */
-
 package ulb.utils;
 
 import java.io.IOException;
@@ -113,41 +104,18 @@ public class Parser {
         parseItemsAndInventory(itemsReader);
     }
 
-    /**
-     * Returns the list of Bugemon Items parsed from the JSON file, where each Bugemon is fully constructed with its
-     * associated attacks resolved from the attacks map.
-     *
-     * @return a list of Bugemon Items representing the parsed Bugemons from the JSON file
-     */
     public final List<Bugemon> getBugemons() {
         return bugemons;
     }
 
-    /**
-     * Returns the list of {@link Item} instances parsed from the Items JSON file.
-     *
-     * @return the parsed game Items, or {@code null} if {@link #parse()} has not been called.
-     */
     public final List<Item> getItems() {
         return items;
     }
 
-    /**
-     * Returns the Inventory object parsed from the JSON file, which contains the initial inventory of the player at the
-     * start of the game, with each Item and its corresponding quantity.
-     *
-     * @return an Inventory object representing the parsed inventory from the JSON file
-     */
     public final Inventory getInventory() {
         return inventory;
     }
 
-    /**
-     * Returns the map of attacks parsed from the JSON file, where each key is an attack ID and each value is the
-     * corresponding {@link Attack} object.
-     *
-     * @return a map of attack IDs to Attack Items
-     */
     public final Map<String, Attack> getAttacks() {
         return attacks;
     }
@@ -204,12 +172,6 @@ public class Parser {
         }
     }
 
-    /**
-     * Parses the attacks JSON file and returns a list of {@link Attack} Items.
-     *
-     * @param reader
-     *            reader providing the attacks JSON content
-     */
     private static void parseAttacks(Reader reader) {
         Gson gson = new GsonBuilder().registerTypeAdapter(BugemonType.class, new TypeDeserializer())
                 .registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
@@ -232,12 +194,6 @@ public class Parser {
         attacks = attacksList.stream().collect(Collectors.toMap(Attack::id, Function.identity()));
     }
 
-    /**
-     * Parses the bugemons JSON file and returns a list of fully constructed {@link ulb.models.bugemon.Bugemon} Items.
-     *
-     * @param reader
-     *            reader providing the bugemons JSON content
-     */
     private static void parseBugemons(Reader reader) {
         Gson gson = new GsonBuilder().registerTypeAdapter(Bugemon.class, new BugemonDeserializer(attacks))
                 .registerTypeAdapter(BugemonType.class, new TypeDeserializer()).create();
@@ -257,13 +213,6 @@ public class Parser {
         bugemons = gson.fromJson(bugemonsArray, destType);
     }
 
-    /**
-     * Parses the Items JSON file and builds both the list of {@link Item}s and the starting {@link Inventory}.
-     *
-     * @param reader
-     *            reader providing the Items JSON content.
-     * @return an {@link ItemWrapper} containing the parsed Items and inventory, or {@code null} if parsing fails.
-     */
     static void parseItemsAndInventory(Reader reader) {
         Gson gson = new GsonBuilder().registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
                 .registerTypeAdapter(Effect.class, new EffectDeserializer()).create();

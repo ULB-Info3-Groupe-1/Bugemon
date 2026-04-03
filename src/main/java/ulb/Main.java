@@ -71,7 +71,6 @@ public class Main extends Application {
      * </ol>
      *
      * @param primaryStage
-     * @param primaryStage
      *            the primary {@link Stage} provided by the JavaFX runtime; must not be {@code null}.
      */
     @Override

@@ -57,10 +57,6 @@ public class CreateTeamView extends View {
     private Consumer<String> delete;
     private BiConsumer<String, String> rename;
 
-    /**
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
-     */
     public CreateTeamView() throws IOException {
         super(FXML_PATH);
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
@@ -103,12 +99,6 @@ public class CreateTeamView extends View {
                 .setSelectionChecker(b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
     }
 
-    /**
-     * Gives the view a reference to the list of all available Bugemons, so it can display them in the selection grid
-     * and mark the ones already in the team as selected.
-     *
-     * @param allBugemons
-     */
     public void setAllBugemonsAvailable(List<Bugemon> allBugemons) {
         this.allBugemonsAvailable = allBugemons;
         this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
@@ -162,16 +152,10 @@ public class CreateTeamView extends View {
         this.saveTeamNameInput.setText(name);
     }
 
-    /**
-     * @return the team name currently entered in the text field for saving teams.
-     */
     public String getTeamNameToSave() {
         return this.saveTeamNameInput.getText();
     }
 
-    /**
-     * @return the team name currently entered in the text field of the load team input.
-     */
     public String getTeamNameToLoad() {
         return this.selectedTeamName.getText();
     }

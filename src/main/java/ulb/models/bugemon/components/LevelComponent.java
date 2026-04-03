@@ -25,11 +25,9 @@ public class LevelComponent {
     }
 
     /**
-     * Adds xp, and returns the number of levels that have just been crossed
+     * Adds XP and returns the number of levels crossed.
      *
-     * @param xp
-     *            the amount of experience points to add
-     * @return the number of levels that have just been crossed
+     * @return number of level-ups that just occurred
      */
     public int addXp(int xpToAdd) {
         int numLevelUps = 0;
@@ -45,13 +43,6 @@ public class LevelComponent {
         return numLevelUps;
     }
 
-    /**
-     * Computes XP required to level up
-     *
-     * @param level
-     *            current level
-     * @return required XP to level up
-     */
     private int getXpRequiredForNextLevel(int targetLevel) {
         return 50 + 100 * (targetLevel - 1);
     }

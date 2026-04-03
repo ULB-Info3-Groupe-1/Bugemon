@@ -1,9 +1,14 @@
 /**
- * This package contains classes related to the service layer of the application. The service layer is responsible for
- * implementing the business logic of the application, acting as an intermediary between the presentation layer (e.g.,
- * controllers) and the repository layer (e.g., DAOs). It includes classes that define the core functionality of the
- * application, such as managing user accounts, handling game mechanics, processing data, and coordinating interactions
- * between different components of the application. By centralizing the business logic in the service layer, we can
- * promote separation of concerns, improve code maintainability, and facilitate testing.
+ * Business logic layer, sitting between controllers and the repository.
+ *
+ * <p>
+ * {@link ulb.services.PlayerService} is the main entry point. It owns the player's runtime state: active team, team
+ * list, inventory, and a cache of all default Bugemons (loaded once on first access). All persistence calls go through
+ * {@link ulb.repository.DatabaseRepository}.
+ *
+ * <p>
+ * {@link ulb.services.CombatService} is stateless and handles damage formulas, type effectiveness, and initiative
+ * priority. {@link ulb.services.LevelUpService} handles XP distribution and level-up logic.
+ * {@link ulb.services.InventoryService} handles item management.
  */
 package ulb.services;
