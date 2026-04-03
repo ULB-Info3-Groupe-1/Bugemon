@@ -1,10 +1,8 @@
-package ulb.views.victory_view;
+package ulb.views;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-
-import ulb.views.View;
 
 /**
  * View for the combat defeat screen.
