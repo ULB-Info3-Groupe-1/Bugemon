@@ -34,7 +34,7 @@ public final class TestUtilsBugemons {
         BugemonTeam bugemons = new BugemonTeam();
 
         for (int i = 1; i <= count; i++) {
-            bugemons.add(createDefaultBugemon(String.valueOf(i)));
+            bugemons.add(createDefaultBugemon(i));
         }
         return bugemons;
     }

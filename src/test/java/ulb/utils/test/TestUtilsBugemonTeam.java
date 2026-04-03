@@ -9,7 +9,7 @@ public class TestUtilsBugemonTeam {
     public static BugemonTeam createDefaultBugemonTeam(boolean isDefeated) {
         BugemonTeam bugemonTeam = new BugemonTeam();
         for (int i = 1; i <= 6; i++) {
-            bugemonTeam.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
+            bugemonTeam.add(TestUtilsBugemons.createDefaultBugemon(i));
         }
         if (isDefeated) {
             bugemonTeam.killAll();
