@@ -10,50 +10,53 @@ import ulb.models.utils.Vec2;
 
 public class TestTrainerWalk {
     @Test
-    public void testProgressAtHalfDuration() {
+    public void testMoveToIfWalkableAcceptsWalkablePath() {
         TrainerWalk trainerWalk = new TrainerWalk(new Vec2(0, 0));
-        trainerWalk.moveTo(new Vec2(10, 0));
-        trainerWalk.update(0.25f); // moitié du temps (0.5s / 2)
-        Vec2 pos = trainerWalk.getPosition();
-        assertEquals(5f, pos.getX(), 0.001);
-        assertEquals(0f, pos.getY(), 0.001);
+        int[][] matrix = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
+
+        boolean started = trainerWalk.moveToIfWalkable(new Vec2(2, 0), matrix);
+
+        assertTrue(started);
         assertTrue(trainerWalk.isMoving());
     }
 
     @Test
-    public void testArrival() {
+    public void testMoveToIfWalkableRejectsBlockedTarget() {
         TrainerWalk trainerWalk = new TrainerWalk(new Vec2(0, 0));
-        trainerWalk.moveTo(new Vec2(10, 0));
-        trainerWalk.update(0.5f); // durée complète
-        Vec2 pos = trainerWalk.getPosition();
-        assertEquals(10f, pos.getX(), 0.001);
-        assertEquals(0f, pos.getY(), 0.001);
+        int[][] matrix = {{1, 1, 0}, {1, 1, 1}, {1, 1, 1}};
+
+        boolean started = trainerWalk.moveToIfWalkable(new Vec2(2, 0), matrix);
+
+        assertFalse(started);
         assertFalse(trainerWalk.isMoving());
+        assertEquals(0f, trainerWalk.getPosition().getX(), 0.001);
+        assertEquals(0f, trainerWalk.getPosition().getY(), 0.001);
     }
 
     @Test
-    public void testMultipleUpdatesAndTotalTime() {
+    public void testMoveToIfWalkableRejectsBlockedIntermediateCell() {
         TrainerWalk trainerWalk = new TrainerWalk(new Vec2(0, 0));
-        trainerWalk.moveTo(new Vec2(10, 0));
+        int[][] matrix = {{1, 0, 1}, {1, 1, 1}, {1, 1, 1}};
 
-        float deltaTime = 0.1f;
-        float totalTime = 0f;
+        boolean started = trainerWalk.moveToIfWalkable(new Vec2(2, 0), matrix);
+
+        assertTrue(started);
         while (trainerWalk.isMoving()) {
-            trainerWalk.update(deltaTime);
-            totalTime += deltaTime;
-            Vec2 pos = trainerWalk.getPosition();
-            assertTrue(pos.getX() >= 0 && pos.getX() <= 10);
+            trainerWalk.update(0.1f);
         }
-        assertEquals(0.5f, totalTime, 0.001);
+
+        assertEquals(2f, trainerWalk.getPosition().getX(), 0.001);
+        assertEquals(0f, trainerWalk.getPosition().getY(), 0.001);
     }
 
     @Test
-    public void testMoveWhileMoving() {
+    public void testMoveToIfWalkableRejectsWhenNoPathExists() {
         TrainerWalk trainerWalk = new TrainerWalk(new Vec2(0, 0));
-        trainerWalk.moveTo(new Vec2(10, 0));
-        trainerWalk.update(0.1f);
-        trainerWalk.moveTo(new Vec2(5, 0)); // tentative de changer la cible
-        Vec2 pos = trainerWalk.getPosition();
-        assertEquals(0.1f / 0.5f * 10, pos.getX(), 0.001); // continue vers 10, pas 5
+        int[][] matrix = {{1, 0, 1}, {0, 0, 0}, {1, 1, 1}};
+
+        boolean started = trainerWalk.moveToIfWalkable(new Vec2(2, 0), matrix);
+
+        assertFalse(started);
+        assertFalse(trainerWalk.isMoving());
     }
 }
