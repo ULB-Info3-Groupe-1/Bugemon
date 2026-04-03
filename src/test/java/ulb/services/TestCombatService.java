@@ -139,7 +139,7 @@ public class TestCombatService {
     public void testRandomTeamNumber() {
         List<Bugemon> bugemons = new ArrayList<>();
         for (int i = 1; i <= 6; i++) {
-            bugemons.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
+            bugemons.add(TestUtilsBugemons.createDefaultBugemon(i));
         }
         BugemonTeam teamOfSix = CombatService.createRandomTeam(bugemons, 6);
         assertEquals(6, teamOfSix.size());
