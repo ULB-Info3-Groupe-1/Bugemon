@@ -50,7 +50,7 @@ public abstract class Bugemon implements BugemonDTO {
     Bugemon() {
     }
 
-    public Bugemon(Bugemon copy) {
+    protected Bugemon(Bugemon copy) {
         this.id = copy.getId();
         this.name = copy.getName();
         this.sprite = copy.getSpriteURL();
@@ -64,6 +64,17 @@ public abstract class Bugemon implements BugemonDTO {
         this.isStarter = copy.isStarter();
     }
 
+<<<<<<< HEAD
+=======
+    public abstract Bugemon clone();
+
+    /**
+     * Apply damage to the bugemon, reducing its HP by the specified amount.
+     *
+     * @param damage
+     *            the amount of damage to apply.
+     */
+>>>>>>> 580e68f (clone method)
     public void takeDamage(int damage) {
         this.healthComponent.decreaseHp(damage);
     }

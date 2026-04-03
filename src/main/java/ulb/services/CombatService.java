@@ -171,7 +171,7 @@ public class CombatService {
         Collections.shuffle(pool);
         BugemonTeam team = new BugemonTeam();
         for (int i = 0; i < teamSize; i++) {
-            team.add(new Bugemon(pool.get(i))); // Clone the Bugemon to avoid modifying the original
+            team.add(pool.get(i).clone()); // Clone the Bugemon to avoid modifying the original
         }
         return team;
     }

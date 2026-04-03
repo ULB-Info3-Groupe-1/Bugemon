@@ -59,7 +59,7 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         if (this.selectedTeam.contains(bugemon)) {
             this.selectedTeam.remove(bugemon);
         } else if (!this.selectedTeam.isFull()) {
-            this.selectedTeam.add(new Bugemon(bugemon));
+            this.selectedTeam.add(bugemon.clone());
         }
         this.view.refreshTeam(this.selectedTeam);
     }
