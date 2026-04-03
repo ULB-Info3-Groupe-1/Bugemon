@@ -65,7 +65,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> {
     /**
      * Starts a manual combat session using an already prepared combat instance.
      *
-     * @param combat
+     * @param newCombat
      *            combat model to drive from this controller.
      * @throws IllegalArgumentException
      *             if the ally trainer is not a ManualTrainer.
