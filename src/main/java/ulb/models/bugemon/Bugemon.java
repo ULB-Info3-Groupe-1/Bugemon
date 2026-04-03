@@ -84,16 +84,16 @@ public class Bugemon implements BugemonDTO {
             return false;
         }
         Bugemon other = (Bugemon) obj;
-        return this.id.equals(other.id);
+        return this.id == other.id;
     }
 
     @Override
     public int hashCode() {
-        return this.id.hashCode();
+        return Integer.hashCode(this.id);
     }
 
     @Override
-    public String getId() {
+    public int getId() {
         return this.id;
     }
 

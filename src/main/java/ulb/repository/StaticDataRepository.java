@@ -1,5 +1,11 @@
 package ulb.repository;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +13,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -19,12 +27,15 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.repository.dto.CreateBugemonDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
 public class StaticDataRepository {
-    private final DatabaseRepository dbRepository;
 
+    private static final String SPRITE_RESOURCE_PATH = "/png/";
+
+    private final DatabaseRepository dbRepository;
     private final DatabaseConnection dbConnection;
 
     public StaticDataRepository(DatabaseRepository dbRepository, DatabaseConnection dbConnection) {
@@ -126,21 +137,20 @@ public class StaticDataRepository {
 
     private void saveGameDataBugemon(List<Bugemon> bugemons) {
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
-            for (Bugemon bugemon : bugemons) {
-                ps.setString(1, bugemon.getId());
-                ps.setString(2, bugemon.getName());
-                ps.setString(3, bugemon.getType().name());
-                ps.setString(4, bugemon.getSpriteURL());
-                ps.setInt(5, bugemon.getDefense());
-                ps.setInt(6, bugemon.getAttack());
-                ps.setInt(7, bugemon.getInitiative());
-                ps.setInt(8, bugemon.getMaxHp());
-                ps.setBoolean(9, bugemon.isStarter());
+            for (CreateBugemonDTO bugemon : bugemons) {
+                ps.setString(1, bugemon.name());
+                ps.setString(2, bugemon.type().name());
+                ps.setString(3, bugemon.spriteUrl());
+                ps.setInt(4, bugemon.defense());
+                ps.setInt(5, bugemon.attack());
+                ps.setInt(6, bugemon.initiative());
+                ps.setInt(7, bugemon.maxHp());
+                ps.setBoolean(8, bugemon.isStarter());
                 // Assuming each Bugemon has exactly 3 attacks, we insert them in the order they
                 // appear in the list
-                ps.setString(10, bugemon.getListAttacksId().get(0));
-                ps.setString(11, bugemon.getListAttacksId().get(1));
-                ps.setString(12, bugemon.getListAttacksId().get(2));
+                ps.setString(9, bugemon.attack1().id());
+                ps.setString(10, bugemon.attack2().id());
+                ps.setString(11, bugemon.attack3().id());
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -162,7 +172,7 @@ public class StaticDataRepository {
                 Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
                 Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
                 BugemonBuilder builder = new BugemonBuilder();
-                builder.id(rs.getString(DatabaseColumns.COL_ID)).name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
+                builder.id(rs.getInt(DatabaseColumns.COL_ID)).name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
                         .sprite(rs.getString(DatabaseColumns.COL_SPRITE))
                         .defense(rs.getInt(DatabaseColumns.COL_BASE_DEFENSE))
                         .attack(rs.getInt(DatabaseColumns.COL_BASE_ATTACK_POWER))
@@ -231,5 +241,65 @@ public class StaticDataRepository {
             throw new IllegalStateException("getEffectByAttackId failed for attack id: " + attackId, e);
         }
         return effects;
+    }
+
+    /**
+     * Save a new Bugemon to the database.
+     *
+     * @param request
+     *            the BugemonCreateRequest containing the details of the Bugemon to be saved.
+     */
+    public void saveBugemon(CreateBugemonDTO request) {
+        //
+        // try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
+        // ps.setString(1, request.name());
+        // ps.setString(2, request.type().name());
+        // ps.setString(3, request.spriteURL());
+        // ps.setInt(4, request.defense());
+        // ps.setInt(5, request.attack());
+        // ps.setInt(6, request.initiative());
+        // ps.setInt(7, request.maxHp());
+        // ps.setBoolean(8, request.isStarter());
+        // // Assuming the request contains exactly 3 attack IDs, we insert them in the order they appear in the list
+        // ps.setString(9, request.attackIds().get(0));
+        // ps.setString(10, request.attackIds().get(1));
+        // ps.setString(11, request.attackIds().get(2));
+        // ps.executeUpdate();
+        // } catch (SQLException e) {
+        // throw new IllegalStateException("saveBugemon failed for name: " + request.name(), e);
+        // }
+    }
+
+    /**
+     * Save the sprite file for a Bugemon.
+     *
+     * @param spriteFileName
+     *            the name of the sprite file to be saved, it should include the file extension (e.g.,
+     *            "my_bugemon.png").
+     * @throws IOException
+     *             if an error occurs while saving the sprite file, such as if the resource path is not found or if
+     *             there is an issue with file I/O operations.
+     */
+    private void saveSpriteFile(BufferedImage spriteImage, String spriteFileName) throws IOException {
+        URL url = getClass().getResource(SPRITE_RESOURCE_PATH);
+
+        if (url == null) {
+            throw new IOException("The sprite resource path " + SPRITE_RESOURCE_PATH + " is not found.");
+        }
+
+        try {
+            Path dirDestination = Paths.get(url.toURI());
+            Path fileTarget = dirDestination.resolve(spriteFileName);
+
+            String formatName = spriteFileName.substring(spriteFileName.lastIndexOf('.') + 1);
+
+            boolean success = ImageIO.write(spriteImage, formatName, fileTarget.toFile());
+
+            if (!success) {
+                throw new IOException("No appropriate writer found for format: " + formatName);
+            }
+        } catch (URISyntaxException e) {
+            throw new IOException("Error resolving URI", e);
+        }
     }
 }

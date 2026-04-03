@@ -35,7 +35,7 @@ public class TestManualTrainer {
     public void testRegisterSwitch() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team, this.inventory);
-        Bugemon target = team.get("2").get();
+        Bugemon target = team.get(2).get();
 
         trainer.registerSwitch(target);
 
@@ -46,10 +46,10 @@ public class TestManualTrainer {
     @Test
     public void testRegisterSwitchDeadBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        TestUtilsBugemons.killBugemon(team, "2");
+        TestUtilsBugemons.killBugemon(team, 2);
         ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
-        assertThrows(IllegalArgumentException.class, () -> trainer.registerSwitch(team.get("2").get()));
+        assertThrows(IllegalArgumentException.class, () -> trainer.registerSwitch(team.get(2).get()));
     }
 
     @Test
@@ -129,9 +129,9 @@ public class TestManualTrainer {
     public void testSwitchAfterKO() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team, this.inventory);
-        Bugemon replacement = team.get("2").get();
+        Bugemon replacement = team.get(2).get();
 
-        TestUtilsBugemons.killBugemon(team, "1"); // kill current bugemon
+        TestUtilsBugemons.killBugemon(team, 1); // kill current bugemon
         trainer.switchAfterKO(replacement);
 
         assertEquals(replacement, trainer.getCurrentBugemon());
@@ -141,8 +141,8 @@ public class TestManualTrainer {
     public void testSwitchAfterKODeadTarget() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team, this.inventory);
-        TestUtilsBugemons.killBugemon(team, "2");
+        TestUtilsBugemons.killBugemon(team, 2);
 
-        assertThrows(IllegalArgumentException.class, () -> trainer.switchAfterKO(team.get("2").get()));
+        assertThrows(IllegalArgumentException.class, () -> trainer.switchAfterKO(team.get(2).get()));
     }
 }

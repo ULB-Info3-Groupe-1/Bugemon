@@ -74,7 +74,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
         if (!this.contains(bugemon)) {
             throw new BugemonNotInTeamException("This Bugemon is not in the team!");
         }
-        this.team.removeIf(member -> member.getId().equals(bugemon.getId()));
+        this.team.removeIf(member -> member.getId() == bugemon.getId());
     }
 
     public Optional<Bugemon> get(String id) {
@@ -82,7 +82,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     public boolean contains(Bugemon bugemon) {
-        return this.team.stream().anyMatch(member -> member.getId().equals(bugemon.getId()));
+        return this.team.stream().anyMatch(member -> member.getId() == bugemon.getId());
     }
 
     @Override

@@ -63,7 +63,7 @@ public class UserRepository {
 
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveUserBugemon"))) {
             ps.setInt(1, dto.userId());
-            ps.setString(2, dto.bugemonId());
+            ps.setInt(2, dto.bugemonId());
             ps.setInt(3, dto.currentDefense());
             ps.setInt(4, dto.currentAttackPower());
             ps.setInt(5, dto.currentInitiative());
@@ -87,7 +87,7 @@ public class UserRepository {
             ps.setInt(5, dto.currentXp());
             ps.setInt(6, dto.currentLevel());
             ps.setInt(7, dto.userId());
-            ps.setString(8, dto.bugemonId());
+            ps.setInt(8, dto.bugemonId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("updateUserBugemon failed", e);
@@ -103,7 +103,7 @@ public class UserRepository {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(new UserBugemonDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
-                        rs.getString(DatabaseColumns.COL_BUGEMON_ID), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
+                        rs.getInt(DatabaseColumns.COL_BUGEMON_ID), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
                         rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK_POWER),
                         rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
                         rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
