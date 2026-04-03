@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.List;
-import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -23,7 +21,7 @@ public class BugemonTeamView extends VBox {
 
     private static final int IMAGES_PER_ROW = 3;
 
-    private Consumer<BugemonDTO> onBugemonClicked;
+    private Listener listener;
 
     public BugemonTeamView() {
         URL url = getClass().getResource("/fxml/BugemonTeam.fxml");
@@ -47,8 +45,8 @@ public class BugemonTeamView extends VBox {
         for (int i = 0; i < aliveBugemons.size(); i++) {
             Bugemon bugemon = aliveBugemons.get(i);
             BugemonCardView cell = new BugemonCardView(bugemon);
-            if (this.onBugemonClicked != null) {
-                cell.setOnClick(this.onBugemonClicked::accept);
+            if (this.listener != null) {
+                cell.setOnClick(this.listener::onBugemonClicked);
             }
             int row = i / IMAGES_PER_ROW;
             int col = i % IMAGES_PER_ROW;
@@ -56,7 +54,13 @@ public class BugemonTeamView extends VBox {
         }
     }
 
-    public void setOnClickCallback(Consumer<BugemonDTO> callback) {
-        this.onBugemonClicked = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    public interface Listener {
+
+        void onBugemonClicked(Bugemon bugemon);
+
     }
 }

@@ -70,6 +70,15 @@ public class CreateTeamView extends View {
             }
         });
 
+        this.bugemonsTeamView.setListener(new BugemonTeamView.Listener() {
+            @Override
+            public void onBugemonClicked(Bugemon bugemon) {
+                if (CreateTeamView.this.onGridBugemonClicked != null) {
+                    CreateTeamView.this.onGridBugemonClicked.accept(bugemon);
+                }
+            }
+        });
+
         this.returnMainMenuBtn.setOnAction(e -> this.returnToMainMenu.run());
         this.saveTeamBtn.setOnAction(e -> this.save.run());
         this.saveTeamNameInput.setOnAction(e -> this.save.run());
