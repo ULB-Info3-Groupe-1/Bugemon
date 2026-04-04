@@ -106,12 +106,12 @@ public abstract class CombatView extends View {
 
     protected String formatEfficiency(Efficiency efficiency) {
         switch (efficiency) {
-        case HIGH:
-            return "C'est super efficace !";
-        case LOW:
-            return "Ce n'est pas très efficace";
-        default:
-            return "";
+            case HIGH :
+                return "C'est super efficace !";
+            case LOW :
+                return "Ce n'est pas très efficace";
+            default :
+                return "";
         }
     }
 
