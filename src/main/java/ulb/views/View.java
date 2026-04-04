@@ -1,40 +1,25 @@
 package ulb.views;
 
-import java.io.IOException;
-import java.net.URL;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 /** Base class for all JavaFX views. Loads an FXML layout and manages its associated scene. */
 public abstract class View {
-    protected final Pane root;
-    protected final Scene scene;
+    protected Scene scene;
 
-    /**
-     * Loads the FXML file and initializes the scene.
-     *
-     * @param fxmlPath
-     *            path to the FXML resource
-     * @throws IOException
-     *             if the FXML file cannot be loaded
-     */
-    protected View(String fxmlPath) throws IOException {
-        URL url = View.class.getResource(fxmlPath);
-        FXMLLoader loader = new FXMLLoader(url);
-        loader.setController(this);
-
-        this.root = loader.load();
-        this.scene = new Scene(this.root);
-        this.scene.getStylesheets().add(0, View.class.getResource("/css/theme.css").toExternalForm());
-        // Ensure Modena label lookup can always resolve on this scene tree.
-        this.root.setStyle("-fx-text-background-color: -fx-text-inner-color;");
-        this.root.prefWidthProperty().bind(this.scene.widthProperty());
-        this.root.prefHeightProperty().bind(this.scene.heightProperty());
+    public void initScene(Parent root) {
+        this.scene = new Scene(root);
+        this.scene.getStylesheets().add(View.class.getResource("/css/theme.css").toExternalForm());
+        Region region = (Region) root;
+        region.prefWidthProperty().bind(this.scene.widthProperty());
+        region.prefHeightProperty().bind(this.scene.heightProperty());
     }
+
+    public abstract String getPath();
 
     /**
      * Reads the current state from the model and updates every UI component.

@@ -1,45 +1,35 @@
 package ulb.views;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.views.components.AllBugemonsView;
+import ulb.views.components.BugemonTeamView;
 
 /**
  * View for the team creation screen.
  *
  * <p>
  * Holds a reference to the {@link BugemonTeam} model and reads from it directly in {@link #refresh()}. Dispatches user
- * interactions through callbacks; holds no reference to any concrete controller class.
+ * interactions through a {@link Listener}; holds no reference to any concrete controller class.
  * </p>
  */
 public class CreateTeamView extends View {
-    private static final String FXML_PATH = "/fxml/CreateTeam.fxml";
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
+
+    private final String FXML_PATH = "/fxml/CreateTeam.fxml";
 
     @FXML
     private AllBugemonsView allBugemonsGridView;
     @FXML
     private BugemonTeamView bugemonsTeamView;
-    @FXML
-    private Button returnMainMenuBtn;
-    @FXML
-    private Button saveTeamBtn;
-    @FXML
-    private Button deleteTeamBtn;
-    @FXML
-    private Button renameTeamBtn;
-    @FXML
-    private Button addNewTeamBtn;
     @FXML
     private TextField saveTeamNameInput;
     @FXML
@@ -47,49 +37,65 @@ public class CreateTeamView extends View {
     @FXML
     private Text selectedTeamName;
 
+    private Listener listener;
     private BugemonTeam bugemonTeam;
     private List<Bugemon> allBugemonsAvailable;
-    private Consumer<Bugemon> onGridBugemonClicked;
-    private Runnable returnToMainMenu;
-    private Runnable load;
-    private Runnable save;
-    private Runnable addNewTeam;
-    private Consumer<String> delete;
-    private BiConsumer<String, String> rename;
 
-    public CreateTeamView() throws IOException {
-        super(FXML_PATH);
+    @FXML
+    private void initialize() {
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        this.initHandlers();
+        this.allBugemonsGridView.setOnClick(b -> {
+            if (this.listener != null) {
+                this.listener.onBugemonSelected(b);
+            }
+        });
     }
 
-    private void initHandlers() {
-        this.allBugemonsGridView.setOnClickCallback(b -> {
-            if (this.onGridBugemonClicked != null) {
-                this.onGridBugemonClicked.accept(b);
-            }
-        });
+    @Override
+    public String getPath() {
+        return this.FXML_PATH;
+    }
 
-        this.returnMainMenuBtn.setOnAction(e -> this.returnToMainMenu.run());
-        this.saveTeamBtn.setOnAction(e -> this.save.run());
-        this.saveTeamNameInput.setOnAction(e -> this.save.run());
-        this.addNewTeamBtn.setOnAction(e -> this.addNewTeam.run());
+    /** Registers the listener that receives all user interaction events from this view. */
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
 
-        this.deleteTeamBtn.setOnAction(e -> {
-            this.delete.accept(this.getTeamNameToLoad());
+    @FXML
+    private void onSaveClicked() {
+        this.listener.onSave();
+    }
+
+    @FXML
+    private void onReturnMainMenuClicked() {
+        this.listener.onReturnToMainMenu();
+    }
+
+    @FXML
+    private void onDeleteClicked() {
+        this.listener.onDelete(this.getTeamNameToLoad());
+        this.selectedTeamName.setText(NO_TEAM_SELECTED);
+    }
+
+    @FXML
+    private void onRenameClicked() {
+        this.listener.onRename(this.getTeamNameToLoad(), this.getTeamNameToSave());
+    }
+
+    @FXML
+    private void onAddNewTeamClicked() {
+        this.listener.onAddNewTeam();
+    }
+
+    @FXML
+    private void onTeamSelected(MouseEvent event) {
+        String selected = this.teamListView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            this.selectedTeamName.setText(selected);
+            this.listener.onLoad();
+        } else {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        });
-
-        this.renameTeamBtn.setOnAction(e -> this.rename.accept(this.getTeamNameToLoad(), this.getTeamNameToSave()));
-        this.teamListView.setOnMouseClicked(e -> {
-            String selected = this.teamListView.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                this.selectedTeamName.setText(selected);
-                this.load.run();
-            } else {
-                this.selectedTeamName.setText(NO_TEAM_SELECTED);
-            }
-        });
+        }
     }
 
     /** Gives the view a reference to the team model it should read from. */
@@ -99,16 +105,15 @@ public class CreateTeamView extends View {
                 .setSelectionChecker(b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
     }
 
+    /**
+     * Sets the full list of available Bugemons and displays them in the selection grid.
+     */
     public void setAllBugemonsAvailable(List<Bugemon> allBugemons) {
         this.allBugemonsAvailable = allBugemons;
         this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
     }
 
-    /** Registers the callback invoked when the player clicks a Bugemon in the selection grid. */
-    public void setOnGridBugemonClicked(Consumer<Bugemon> callback) {
-        this.onGridBugemonClicked = callback;
-    }
-
+    /** Updates the model reference and refreshes the view. */
     public void refreshTeam(BugemonTeam team) {
         this.bugemonTeam = team;
         this.refresh();
@@ -120,30 +125,7 @@ public class CreateTeamView extends View {
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
-    public void setValidate(Runnable newReturnToMainMenu) {
-        this.returnToMainMenu = newReturnToMainMenu;
-    }
-
-    public void setLoad(Runnable load) {
-        this.load = load;
-    }
-
-    public void setSave(Runnable save) {
-        this.save = save;
-    }
-
-    public void setDelete(Consumer<String> delete) {
-        this.delete = delete;
-    }
-
-    public void setRename(BiConsumer<String, String> rename) {
-        this.rename = rename;
-    }
-
-    public void setAddNewTeam(Runnable addNewTeam) {
-        this.addNewTeam = addNewTeam;
-    }
-
+    /** Replaces the team list displayed in the ListView. */
     public void updateTeamList(List<String> teamNames) {
         this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
     }
@@ -158,5 +140,22 @@ public class CreateTeamView extends View {
 
     public String getTeamNameToLoad() {
         return this.selectedTeamName.getText();
+    }
+
+    /** Callback interface for all user interactions on the team creation screen. */
+    public interface Listener {
+        void onReturnToMainMenu();
+
+        void onSave();
+
+        void onLoad();
+
+        void onDelete(String teamName);
+
+        void onRename(String oldName, String newName);
+
+        void onAddNewTeam();
+
+        void onBugemonSelected(Bugemon bugemon);
     }
 }

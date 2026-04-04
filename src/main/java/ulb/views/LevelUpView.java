@@ -22,6 +22,8 @@ import ulb.models.level_up.LevelUpSession;
  * </p>
  */
 public class LevelUpView extends View {
+    private final String FXML_PATH = "/fxml/LevelUp.fxml";
+
     @FXML
     private Label levelUpText;
     @FXML
@@ -34,7 +36,8 @@ public class LevelUpView extends View {
     private ImageView bugemonImage;
 
     private LevelUpSession session;
-    private Consumer<Integer> onChooseOption;
+
+    private Listener listener;
 
     /**
      * Loads the level-up FXML layout and wires each choice button to fire the registered callback with its zero-based
@@ -43,23 +46,7 @@ public class LevelUpView extends View {
      * @throws IOException
      *             if the FXML resource cannot be loaded.
      */
-    public LevelUpView() throws IOException {
-        super("/fxml/LevelUp.fxml");
-        this.choice1Button.setOnAction(e -> {
-            if (this.onChooseOption != null) {
-                this.onChooseOption.accept(0);
-            }
-        });
-        this.choice2Button.setOnAction(e -> {
-            if (this.onChooseOption != null) {
-                this.onChooseOption.accept(1);
-            }
-        });
-        this.choice3Button.setOnAction(e -> {
-            if (this.onChooseOption != null) {
-                this.onChooseOption.accept(2);
-            }
-        });
+    public LevelUpView() {
     }
 
     /** Gives the view a reference to the level-up session model it should read from. */
@@ -67,9 +54,28 @@ public class LevelUpView extends View {
         this.session = session;
     }
 
-    /** Registers the callback invoked when the player selects a stat-upgrade option. */
-    public void setOnUpgradeChosen(Consumer<Integer> callback) {
-        this.onChooseOption = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    @FXML
+    private void onChoice1Clicked() {
+        this.listener.onUpgradeChosen(0);
+    }
+
+    @FXML
+    private void onChoice2Clicked() {
+        this.listener.onUpgradeChosen(1);
+    }
+
+    @FXML
+    private void onChoice3Clicked() {
+        this.listener.onUpgradeChosen(2);
+    }
+
+    @Override
+    public String getPath() {
+        return this.FXML_PATH;
     }
 
     @Override
@@ -86,5 +92,9 @@ public class LevelUpView extends View {
         this.choice1Button.setText(levelUp.get(0).toString());
         this.choice2Button.setText(levelUp.get(1).toString());
         this.choice3Button.setText(levelUp.get(2).toString());
+    }
+
+    public interface Listener {
+        void onUpgradeChosen(int optionIdx);
     }
 }

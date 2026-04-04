@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+org.eclipse.wst.xml.core.cleanup.compress_empty_element_tags=true
+org.eclipse.wst.xml.core.cleanup.format_source=true
+org.eclipse.wst.xml.core.cleanup.convert_eol_codes=true
+org.eclipse.wst.xml.core.cleanup.end_of_line=\n
+org.eclipse.wst.xml.core.format.split_multi_attrs=true
+org.eclipse.wst.xml.core.format.align_end_bracket=true
+org.eclipse.wst.xml.core.format.indent_using_tabs=false
+org.eclipse.wst.xml.core.format.indentation.size=4
+org.eclipse.wst.xml.core.format.line_width=120
+org.eclipse.wst.xml.core.format.preserve_pc_data_content=true
+org.eclipse.wst.xml.core.format.preserve_whitespace_in_tags=false

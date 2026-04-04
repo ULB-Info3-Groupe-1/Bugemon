@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
  * </p>
  */
 public class CombatDefeatView extends View {
+    private final String FXML_PATH = "/fxml/CombatDefeat.fxml";
     @FXML
     private Button retryButton;
     @FXML
@@ -23,17 +24,14 @@ public class CombatDefeatView extends View {
     /**
      * Loads the defeat-screen FXML layout and wires the retry and back-to-menu buttons.
      *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
+     * @throws IOException if the FXML resource cannot be loaded.
      */
-    public CombatDefeatView() throws IOException {
-        super("/fxml/CombatDefeat.fxml");
-        this.retryButton.setOnAction(e -> {
-            this.listener.onRetry();
-        });
-        this.backToMainMenuButton.setOnAction(e -> {
-            this.listener.onBackToMainMenu();
-        });
+    public CombatDefeatView() {
+    }
+
+    @Override
+    public String getPath() {
+        return this.FXML_PATH;
     }
 
     public void setListener(Listener listener) {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
+    alignment="CENTER" spacing="2" styleClass="bugemon-cell">
+    <StackPane fx:id="imagePane" minWidth="96" minHeight="96"
+        maxWidth="96" maxHeight="96" onMouseClicked="#onSelected">
+        <ImageView fx:id="imageView" fitWidth="96" fitHeight="96"
+            preserveRatio="true" />
+    </StackPane>
+    <Label fx:id="nameLabel" styleClass="bugemon-cell-name" />
+</fx:root>

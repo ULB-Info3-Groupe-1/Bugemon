@@ -25,7 +25,9 @@ public class MainMenuView extends View {
     @FXML
     private Button startManualCombatButton;
 
-    Listener listener;
+    private Listener listener;
+
+    private final String FXML_PATH = "/fxml/MainMenu.fxml";
 
     /**
      * Loads the main-menu FXML layout and wires the button actions to the registered callbacks.
@@ -33,27 +35,41 @@ public class MainMenuView extends View {
      * @throws IOException
      *             if the FXML resource cannot be loaded.
      */
-    public MainMenuView() throws IOException {
-        super("/fxml/MainMenu.fxml");
-        this.createTeamButton.setOnAction(e -> {
-            this.listener.onCreateTeam();
-        });
-        this.noTowerButton.setOnAction(e -> {
-            this.listener.onNoTower();
-        });
-        this.quitButton.setOnAction(e -> {
-            this.listener.onQuit();
-        });
-        this.startManualCombatButton.setOnAction(e -> {
-            this.listener.onStartManualCombat();
-        });
-        this.startAutomaticCombatButton.setOnAction(e -> {
-            this.listener.onStartAutomaticCombat();
-        });
+    public MainMenuView() {
     }
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    @FXML
+    private void onCreateTeamClicked() {
+        this.listener.onCreateTeam();
+    }
+
+    @FXML
+    private void onNoTowerClicked() {
+        this.listener.onNoTower();
+    }
+
+    @FXML
+    private void onQuitClicked() {
+        this.listener.onQuit();
+    }
+
+    @FXML
+    private void onStartManualCombatClicked() {
+        this.listener.onStartManualCombat();
+    }
+
+    @FXML
+    private void onStartAutomaticCombatClicked() {
+        this.listener.onStartAutomaticCombat();
+    }
+
+    @Override
+    public String getPath() {
+        return this.FXML_PATH;
     }
 
     @Override
