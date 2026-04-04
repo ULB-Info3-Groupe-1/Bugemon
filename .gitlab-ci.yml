@@ -16,7 +16,13 @@ variables:
 check-format:
   stage: lint
   script:
-    - mvn $MAVEN_OPTS spotless:check
+    - mvn $MAVEN_OPTS spotless:check -Dspotless.formats.skip=true
+  allow_failure: false
+
+check-fxml-format:
+  stage: lint
+  script:
+    - mvn $MAVEN_OPTS spotless:check -Dspotless.java.skip=true
   allow_failure: false
 
 check-lint:
