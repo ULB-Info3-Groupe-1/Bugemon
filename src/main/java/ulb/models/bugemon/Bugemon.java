@@ -171,16 +171,14 @@ public class Bugemon implements BugemonDTO {
     /**
      * Applies a level-up upgrade's stat bonuses to this Bugemon.
      *
-     * @param choice
+     * @param upgrade
      *            the {@link Upgrade} to apply
      */
-    // TODO: this should be removed, a choice should know how to apply itself on a
-    // bugemon instead.
-    public void applyChoice(Upgrade choice) {
-        this.healthComponent.increaseMaxHp(choice.hp());
-        this.attackComponent.increaseAttack(choice.attack());
-        this.defenseComponent.increaseDefense(choice.defense());
-        this.initiativeComponent.increaseInitiative(choice.initiative());
+    public void applyUpgrade(Upgrade upgrade) {
+        this.healthComponent.increaseMaxHp(upgrade.hp());
+        this.attackComponent.increaseAttack(upgrade.attack());
+        this.defenseComponent.increaseDefense(upgrade.defense());
+        this.initiativeComponent.increaseInitiative(upgrade.initiative());
     }
 
     public void addEffect(Effect effect) {

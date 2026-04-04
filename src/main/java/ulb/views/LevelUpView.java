@@ -1,7 +1,6 @@
 package ulb.views;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,7 +11,6 @@ import javafx.scene.image.ImageView;
 import ulb.common.dto.BugemonDTO;
 import ulb.common.dto.LevelUpDTO;
 import ulb.models.level_up.LevelUpSession;
-import ulb.models.level_up.Upgrade;
 
 /**
  * View for the level-up screen.
@@ -20,7 +18,7 @@ import ulb.models.level_up.Upgrade;
  * <p>
  * Holds a reference to a {@link LevelUpSession} and reads the current level-up event directly from it in
  * {@link #refresh()}. Dispatches the player's choice through the callback registered via
- * {@link #setOnChooseOption(Consumer)}. Holds no reference to any concrete controller class.
+ * {@link #setOnUpgradeChosen(Consumer)}. Holds no reference to any concrete controller class.
  * </p>
  */
 public class LevelUpView extends View {
@@ -70,7 +68,7 @@ public class LevelUpView extends View {
     }
 
     /** Registers the callback invoked when the player selects a stat-upgrade option. */
-    public void setOnChooseOption(Consumer<Integer> callback) {
+    public void setOnUpgradeChosen(Consumer<Integer> callback) {
         this.onChooseOption = callback;
     }
 
@@ -85,9 +83,8 @@ public class LevelUpView extends View {
         this.bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
         this.levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau " + bugemon.getLevel() + " !");
 
-        List<Upgrade> choices = levelUp.getChoices();
-        this.choice1Button.setText(choices.get(0).toString());
-        this.choice2Button.setText(choices.get(1).toString());
-        this.choice3Button.setText(choices.get(2).toString());
+        this.choice1Button.setText(levelUp.get(0).toString());
+        this.choice2Button.setText(levelUp.get(1).toString());
+        this.choice3Button.setText(levelUp.get(2).toString());
     }
 }
