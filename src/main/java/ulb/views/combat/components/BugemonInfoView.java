@@ -5,24 +5,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
 import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.BugemonType;
 import ulb.views.components.ComponentView;
 
-/**
- * Reusable custom JavaFX component that displays the key information of a single {@link BugemonDTO} in the combat HUD.
- *
- * <p>
- * Shows the Bugemon's name (coloured by type), type label, HP bar, and numeric HP counter.
- * </p>
- */
+/** Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link BugemonDTO}. */
 public class BugemonInfoView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/BugemonInfo.fxml";
 
     @FXML
     private Label bugemonName;
     @FXML
-    private Label bugemonType;
+    private Label bugemonLevel;
     @FXML
     private ProgressBar bugemonHPBar;
+    @FXML
+    private ProgressBar bugemonXpBar;
     @FXML
     private Label bugemonHpLabel;
 
@@ -30,13 +27,16 @@ public class BugemonInfoView extends ComponentView {
         super(FXML_PATH);
     }
 
-    /** Updates all displayed fields from the given {@link BugemonDTO}. */
+    /** Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class. */
     public void setBugemonInfo(BugemonDTO bugemon) {
-        this.bugemonName.getStyleClass().clear();
-        this.bugemonName.getStyleClass().add(bugemon.getType().toString());
+        for (BugemonType type : BugemonType.values()) {
+            this.getStyleClass().remove(type.toString());
+        }
+        this.getStyleClass().add(bugemon.getType().toString());
         this.bugemonName.setText(bugemon.getName());
-        this.bugemonType.setText("(" + bugemon.getType().toString() + ")");
+        this.bugemonLevel.setText("Lv." + bugemon.getLevel());
         this.bugemonHPBar.setProgress((double) bugemon.getHp() / bugemon.getMaxHp());
-        this.bugemonHpLabel.setText(bugemon.getHp() + " / " + bugemon.getMaxHp());
+        this.bugemonXpBar.setProgress(bugemon.getXpProgress());
+        this.bugemonHpLabel.setText(bugemon.getHp() + " / " + bugemon.getMaxHp() + " HP");
     }
 }

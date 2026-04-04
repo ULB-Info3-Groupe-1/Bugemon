@@ -85,4 +85,18 @@ public interface BugemonDTO {
      * @return the current level as a positive {@code int} (minimum {@code 1}).
      */
     int getLevel();
+
+    /**
+     * Returns the current XP of this Bugemon within its current level.
+     *
+     * @return XP accumulated since the last level-up, always {@code >= 0}.
+     */
+    int getXp();
+
+    /**
+     * Returns XP progress toward the next level as a fraction in {@code [0.0, 1.0]}.
+     *
+     * @return {@code 0.0} at the start of a level, {@code 1.0} at the threshold for the next level-up.
+     */
+    double getXpProgress();
 }

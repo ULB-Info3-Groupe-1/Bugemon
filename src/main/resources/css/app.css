@@ -12,79 +12,192 @@
     -fx-padding: 10 16;
 }
 
-.btn-wide    { -fx-pref-width: size-btn-wide; }
-.btn-lg      { -fx-pref-height: size-btn-height; }
-.btn-outcome { -fx-pref-width: size-btn-outcome; -fx-pref-height: size-btn-height; }
-.btn-panel   { -fx-min-width: size-btn-panel; -fx-max-width: size-btn-panel; }
+.btn-wide {
+    -fx-pref-width: size-btn-wide;
+}
 
-.btn-primary { -fx-background-color: color-primary; }
+.btn-lg {
+    -fx-pref-height: size-btn-height;
+}
+
+.btn-outcome {
+    -fx-pref-width: size-btn-outcome;
+    -fx-pref-height: size-btn-height;
+}
+
+.btn-panel {
+    -fx-min-width: size-btn-panel;
+    -fx-max-width: size-btn-panel;
+}
+
+.btn-primary {
+    -fx-background-color: color-primary;
+}
+
 .btn-primary:hover,
-.btn-primary:active  { -fx-background-color: color-primary-hover; }
+.btn-primary:active {
+    -fx-background-color: color-primary-hover;
+}
 
-.btn-success { -fx-background-color: color-success; }
+.btn-success {
+    -fx-background-color: color-success;
+}
+
 .btn-success:hover,
-.btn-success:active  { -fx-background-color: color-success-hover; }
+.btn-success:active {
+    -fx-background-color: color-success-hover;
+}
+
 .btn-success:disabled {
     -fx-background-color: #a0c8b0;
     -fx-text-fill: #e0e0e0;
 }
 
-.btn-danger { -fx-background-color: color-danger; }
+.btn-danger {
+    -fx-background-color: color-danger;
+}
+
 .btn-danger:hover,
-.btn-danger:active   { -fx-background-color: color-danger-hover; }
+.btn-danger:active {
+    -fx-background-color: color-danger-hover;
+}
+
 .btn-danger:disabled {
     -fx-background-color: #d9a19c;
     -fx-text-fill: #f3e6e4;
 }
 
-.btn-warning { -fx-background-color: color-warning; }
+.btn-warning {
+    -fx-background-color: color-warning;
+}
+
 .btn-warning:hover,
-.btn-warning:active  { -fx-background-color: color-warning-hover; }
+.btn-warning:active {
+    -fx-background-color: color-warning-hover;
+}
 
-.btn-secondary { -fx-background-color: color-secondary; }
+.btn-secondary {
+    -fx-background-color: color-secondary;
+}
+
 .btn-secondary:hover,
-.btn-secondary:active { -fx-background-color: color-secondary-hover; }
+.btn-secondary:active {
+    -fx-background-color: color-secondary-hover;
+}
 
-.btn-action-blue { -fx-background-color: color-action-blue; }
+.btn-action-blue {
+    -fx-background-color: color-action-blue;
+}
+
 .btn-action-blue:hover,
-.btn-action-blue:active { -fx-background-color: color-action-blue-hover; }
+.btn-action-blue:active {
+    -fx-background-color: color-action-blue-hover;
+}
 
 /* ── Attack-type buttons ─────────────────────────────────── */
-.attack-FLORA { -fx-background-color: color-flora; }
+.attack-FLORA {
+    -fx-background-color: color-flora;
+}
+
 .attack-FLORA:hover,
-.attack-FLORA:active { -fx-background-color: color-flora-hover; }
+.attack-FLORA:active {
+    -fx-background-color: color-flora-hover;
+}
 
-.attack-PYRO  { -fx-background-color: color-pyro; }
+.attack-PYRO {
+    -fx-background-color: color-pyro;
+}
+
 .attack-PYRO:hover,
-.attack-PYRO:active  { -fx-background-color: color-pyro-hover; }
+.attack-PYRO:active {
+    -fx-background-color: color-pyro-hover;
+}
 
-.attack-AQUA  { -fx-background-color: color-aqua; }
+.attack-AQUA {
+    -fx-background-color: color-aqua;
+}
+
 .attack-AQUA:hover,
-.attack-AQUA:active  { -fx-background-color: color-aqua-hover; }
+.attack-AQUA:active {
+    -fx-background-color: color-aqua-hover;
+}
 
-.attack-LITHO { -fx-background-color: color-litho; }
+.attack-LITHO {
+    -fx-background-color: color-litho;
+}
+
 .attack-LITHO:hover,
-.attack-LITHO:active { -fx-background-color: color-litho-hover; }
+.attack-LITHO:active {
+    -fx-background-color: color-litho-hover;
+}
 
 /* ── Type-coloured labels ────────────────────────────────── */
-.FLORA { -fx-text-fill: color-flora;  -fx-font-weight: bold; }
-.PYRO  { -fx-text-fill: color-pyro;   -fx-font-weight: bold; }
-.AQUA  { -fx-text-fill: color-aqua;   -fx-font-weight: bold; }
-.LITHO { -fx-text-fill: color-litho;  -fx-font-weight: bold; }
+.FLORA {
+    -fx-text-fill: color-flora;
+    -fx-font-weight: bold;
+}
+
+.PYRO {
+    -fx-text-fill: color-pyro;
+    -fx-font-weight: bold;
+}
+
+.AQUA {
+    -fx-text-fill: color-aqua;
+    -fx-font-weight: bold;
+}
+
+.LITHO {
+    -fx-text-fill: color-litho;
+    -fx-font-weight: bold;
+}
+
+/* ── Bugemon name coloured by type (type class on parent component) ── */
+.FLORA .bugemon-name {
+    -fx-text-fill: color-flora;
+}
+
+.PYRO .bugemon-name {
+    -fx-text-fill: color-pyro;
+}
+
+.AQUA .bugemon-name {
+    -fx-text-fill: color-aqua;
+}
+
+.LITHO .bugemon-name {
+    -fx-text-fill: color-litho;
+}
 
 /* ── HP progress bar ─────────────────────────────────────── */
 .hp-bar {
-    -fx-pref-width: 200;
+    -fx-pref-width: size-hp-bar-width;
     -fx-pref-height: size-hp-bar-height;
 }
 
-.progress-bar > .track {
+.progress-bar>.track {
     -fx-background-color: color-hp-track;
     -fx-background-radius: 4;
 }
 
-.progress-bar > .bar {
+.progress-bar>.bar {
     -fx-background-color: color-hp-bar;
+    -fx-background-radius: 4;
+}
+
+/* ── XP progress bar ─────────────────────────────────────── */
+.xp-bar {
+    -fx-pref-width: size-xp-bar-width;
+    -fx-pref-height: size-xp-bar-height;
+}
+
+.xp-bar>.track {
+    -fx-background-color: color-hp-track;
+    -fx-background-radius: 4;
+}
+
+.xp-bar>.bar {
+    -fx-background-color: color-xp;
     -fx-background-radius: 4;
 }
 
@@ -129,10 +242,10 @@
 
 /* ── Bugemon grid cell ───────────────────────────────────── */
 .bugemon-card-pane {
-    -fx-min-width: 96;
-    -fx-max-width: 96;
-    -fx-min-height: 96;
-    -fx-max-height: 96;
+    -fx-min-width: size-bugemon-card;
+    -fx-max-width: size-bugemon-card;
+    -fx-min-height: size-bugemon-card;
+    -fx-max-height: size-bugemon-card;
 }
 
 .bugemon-cell {
@@ -144,6 +257,11 @@
 
 .bugemon-cell-name {
     -fx-font-weight: bold;
+}
+
+.bugemon-level-card {
+    -fx-font-size: 13px;
+    -fx-text-fill: color-text-muted;
 }
 
 .bugemon-cell-selected {
@@ -162,19 +280,20 @@
 /* ── Bugemon info panel ──────────────────────────────────── */
 .bugemon-name {
     -fx-font-weight: bold;
-    -fx-font-size: 32px;
-    -fx-text-fill: color-text-dark;
+    -fx-font-size: 22px;
 }
 
-.bugemon-type {
-    -fx-font-style: italic;
-    -fx-font-size: 18px;
-    -fx-text-fill: color-text-muted;
+
+.bugemon-level {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
 }
 
 .hp-label {
-    -fx-font-size: 18px;
+    -fx-font-size: 20px;
     -fx-text-fill: color-text-muted;
+    -fx-alignment: center;
+    -fx-max-width: Infinity;
 }
 
 /* ── Bugemon team grid ───────────────────────────────────── */
@@ -185,8 +304,8 @@
 /* ── All bugemons scroll panel ───────────────────────────── */
 .all-bugemons {
     -fx-padding: 10 30 10 10;
-    -fx-hgap: 10;
-    -fx-vgap: 10;
+    -fx-hgap: size-bugemon-grid-vgap;
+    -fx-vgap: size-bugemon-grid-vgap;
 }
 
 .all-bugemons-scroll {
@@ -228,15 +347,6 @@
     -fx-text-fill: color-text-muted;
 }
 
-.next-button {
-    -fx-background-color: color-success;
-    -fx-border-width: 2;
-    -fx-border-radius: 5;
-    -fx-border-color: color-success-hover;
-    -fx-text-fill: color-white;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
 
 /* ── Main menu ───────────────────────────────────────────── */
 .main-menu {
@@ -291,6 +401,7 @@
     -fx-background-color: color-surface-border, color-white;
     -fx-background-insets: 0, 2;
     -fx-background-radius: 4, 3;
+    -fx-min-height: size-team-list-min-height;
 }
 
 .team-list-view .list-cell {
@@ -305,7 +416,7 @@
     -fx-text-fill: white;
 }
 
-.team-list-view .list-cell:hover:!selected {
+.team-list-view .list-cell:hover: !selected {
     -fx-background-color: color-surface;
 }
 

@@ -1,9 +1,6 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
 
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
@@ -17,13 +14,21 @@ import ulb.views.combat.AutomaticCombatView;
 /**
  * Controller for the automatic combat screen.
  *
- * <p>
- * Drives the {@link Combat} loop via a JavaFX {@link Timeline}. After each turn it calls {@code view.refresh()} so the
- * view can pull the updated state from the model; no data is pushed into the view.
- * </p>
+ * Drives the {@link Combat} loop one action at a time, gated by the player's "Next" clicks. Each action triggers its
+ * animation and dialog before the next one is unlocked; implements {@link AutomaticCombatView.Listener} to receive
+ * those events.
  */
-public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
-    private Timeline turnTimeline;
+public class AutomaticCombatController extends CombatController<AutomaticCombatView>
+        implements AutomaticCombatView.Listener {
+
+    private Combat combat;
+    private AutoTrainer playerTrainer;
+
+    /** The turn result currently awaiting full display; {@code null} when idle. */
+    private TurnResult pendingResult;
+
+    /** {@code true} once the second action of {@link #pendingResult} has been shown. */
+    private boolean secondShown;
 
     /**
      * Constructs an {@code AutomaticCombatController} and initialises its {@link AutomaticCombatView}.
@@ -36,59 +41,72 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     public AutomaticCombatController(MetaController metaController, PlayerService playerService,
             BugemonService bugemonService) throws IOException {
         super(metaController, playerService, bugemonService, ViewLoader.load(AutomaticCombatView::new));
+        this.view.setListener(this);
     }
 
-    /** Starts a complete automatic combat session and drives it to completion. */
     @Override
     public void startCombat(boolean shouldRestoreHp) {
         this.restoreHpAfterCombat = shouldRestoreHp;
+        this.pendingResult = null;
+        this.secondShown = false;
 
-        // Stop any existing timeline from a previous combat
-        if (this.turnTimeline != null) {
-            this.turnTimeline.stop();
-        }
+        this.playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
+        AutoTrainer opponentTrainer = this.createRandomOpponent(this.playerTrainer.getTeamSize());
+        this.combat = new Combat(this.playerTrainer, opponentTrainer);
 
-        AutoTrainer playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
-        AutoTrainer opponentTrainer = this.createRandomOpponent(playerTrainer.getTeamSize());
-        Combat combat = new Combat(playerTrainer, opponentTrainer);
-
-        this.view.setModel(playerTrainer, opponentTrainer, combat);
+        this.view.setModel(this.playerTrainer, opponentTrainer);
         this.view.refresh();
-
-        this.scheduleTurn(combat, playerTrainer, Duration.seconds(1));
+        this.runNextTurn();
     }
 
-    /**
-     * Schedules the next combat turn to happen after the specified delay. Creates a fresh Timeline for each turn to
-     * avoid timing drift issues.
-     *
-     * @param combat
-     *            the combat model
-     * @param playerTrainer
-     *            the player trainer
-     * @param delay
-     *            the delay before executing the turn
-     */
-    private void scheduleTurn(Combat combat, AutoTrainer playerTrainer, Duration delay) {
-        this.turnTimeline = new Timeline();
-        KeyFrame keyFrame = new KeyFrame(delay, event -> {
-            TurnResult turnResult = combat.turn();
+    @Override
+    public void onNext() {
+        if (this.pendingResult == null) {
+            return;
+        }
 
-            this.playTurnAnimations(turnResult, playerTrainer, () -> {
+        boolean hasSecond = this.pendingResult.second().isPresent()
+                && this.pendingResult.second().orElseThrow().wasAttack();
+
+        if (hasSecond && !this.secondShown) {
+            TurnResult.AttackResult second = this.pendingResult.second().orElseThrow();
+            this.animationController.playSecondAction(this.pendingResult, this.playerTrainer, () -> {
                 this.view.refresh();
-
-                if (combat.getWinner().isPresent()) {
-                    this.turnTimeline.stop();
-                    this.handleCombatResult(combat.getWinner().orElseThrow(), playerTrainer);
-                    return;
-                }
-
-                // Schedule the next turn after 3 seconds
-                this.scheduleTurn(combat, playerTrainer, Duration.seconds(3));
+                this.view.showSecondAttackResult(second);
+                this.secondShown = true;
             });
-        });
+            return;
+        }
 
-        this.turnTimeline.getKeyFrames().add(keyFrame);
-        this.turnTimeline.play();
+        this.pendingResult = null;
+        this.secondShown = false;
+
+        if (this.combat.getWinner().isPresent()) {
+            this.handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
+            return;
+        }
+
+        this.runNextTurn();
+    }
+
+    private void runNextTurn() {
+        TurnResult result = this.combat.turn();
+        this.pendingResult = result;
+        this.secondShown = false;
+
+        this.animationController.playFirstAction(result, this.playerTrainer, () -> {
+            this.view.refresh();
+
+            if (!result.first().wasAttack()) {
+                if (this.combat.getWinner().isPresent()) {
+                    this.handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
+                } else {
+                    this.runNextTurn();
+                }
+                return;
+            }
+
+            this.view.showFirstAttackResult(result.first());
+        });
     }
 }

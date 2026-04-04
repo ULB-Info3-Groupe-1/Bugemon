@@ -16,25 +16,8 @@ import ulb.views.combat.components.BugemonInfoView;
 import ulb.views.components.DialogZoneView;
 
 /**
- * Abstract base view for all combat screens.
- *
- * <p>
- * {@code CombatView} loads the shared {@code Combat.fxml} layout and exposes the FXML-injected components that are
- * common to every combat mode: Bugemon info panels, sprite images, the action menu container, and the dialog zone.
- * </p>
- *
- * <p>
- * Concrete subclasses ({@link AutomaticCombatView}, {@link ManualCombatView}) must implement {@link #initCombatMode()}
- * to configure which UI regions are visible and how they behave for their specific mode.
- * </p>
- *
- * <p>
- * The controller layer interacts with the combat UI exclusively through the public methods of this class, keeping all
- * JavaFX node manipulation out of the controller.
- * </p>
- *
- * @see AutomaticCombatView
- * @see ManualCombatView
+ * Abstract base view for all combat screens, loaded from the shared {@code Combat.fxml} layout. Subclasses implement
+ * {@link #initCombatMode()} to configure their specific UI behaviour.
  */
 public abstract class CombatView extends View {
     private static final String FXML_PATH = "/fxml/Combat.fxml";
@@ -91,6 +74,11 @@ public abstract class CombatView extends View {
 
     // ── Dialog zone ───────────────────────────────────────────────────────────
 
+    /** Registers the callback invoked when the dialog's next button is clicked. */
+    protected void setDialogNextCallback(Runnable callback) {
+        this.dialogZoneView.setOnNext(callback);
+    }
+
     private void showDialog(String dialog, String additionalInfo) {
         this.dialogZoneView.setDialogText(dialog);
         this.dialogZoneView.setAdditionalInfo(additionalInfo);
@@ -116,7 +104,6 @@ public abstract class CombatView extends View {
         this.showDialog(message, efficiency);
     }
 
-    /** Converts an {@link Efficiency} value to a human-readable French label. */
     protected String formatEfficiency(Efficiency efficiency) {
         switch (efficiency) {
             case HIGH :
@@ -129,7 +116,6 @@ public abstract class CombatView extends View {
         }
     }
 
-    /** Hides the dialog overlay. */
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);

@@ -185,6 +185,15 @@ public class PlayerService {
                 bugemon.getAttack(), bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
 
+    /** Persists the current state (XP, level, stats) of every Bugemon in the active team. */
+    public void saveActiveTeamState() {
+        for (Bugemon bugemon : this.activeTeam) {
+            this.databaseRepository.updateUserBugemon(
+                    new UserBugemonDTO(this.userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                            bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+        }
+    }
+
     public void restoreHpActiveTeam() {
         this.activeTeam.restoreHp();
     }

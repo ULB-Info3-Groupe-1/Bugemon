@@ -8,14 +8,17 @@
 <fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
     alignment="CENTER" spacing="6">
 
-    <HBox spacing="8" alignment="CENTER">
-        <Label fx:id="bugemonName" styleClass="bugemon-name" text="Name" />
-        <Label fx:id="bugemonType" styleClass="bugemon-type" text="Type" />
-    </HBox>
-
-    <ProgressBar fx:id="bugemonHPBar" styleClass="hp-bar"
-        progress="0.0" />
-
-    <Label fx:id="bugemonHpLabel" styleClass="hp-label" text="0 / 0" />
-
+    <VBox spacing="0">
+        <HBox spacing="8" alignment="CENTER">
+            <Label fx:id="bugemonName" styleClass="bugemon-name"
+                text="Name" />
+            <Label fx:id="bugemonLevel" styleClass="bugemon-level"
+                text="Lv.1" />
+        </HBox>
+        <Label fx:id="bugemonHpLabel" styleClass="hp-label" text="0 / 0" />
+        <ProgressBar fx:id="bugemonHPBar" styleClass="hp-bar"
+            progress="0.0" />
+        <ProgressBar fx:id="bugemonXpBar" styleClass="xp-bar"
+            progress="0.0" />
+    </VBox>
 </fx:root>

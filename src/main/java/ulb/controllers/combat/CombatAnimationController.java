@@ -56,8 +56,53 @@ public class CombatAnimationController {
         onFinished.run();
     }
 
+    /**
+     * Plays only the first attack animation from {@code result}. If no second attack is present, also plays the death
+     * animation (if any) before calling {@code onFinished}.
+     */
+    public void playFirstAction(TurnResult result, Trainer playerTrainer, Runnable onFinished) {
+        if (result == null || !result.first().wasAttack()) {
+            onFinished.run();
+            return;
+        }
+        boolean firstFromPlayer = result.first().attacker() == playerTrainer;
+        boolean hasSecondAttack = result.second().isPresent() && result.second().orElseThrow().wasAttack();
+        if (hasSecondAttack) {
+            this.playAttackAnimation(firstFromPlayer, onFinished);
+        } else {
+            this.playAttackAnimation(firstFromPlayer, () -> {
+                Boolean ko = this.findKoDefenderSide(result, playerTrainer);
+                if (ko == null) {
+                    onFinished.run();
+                    return;
+                }
+                this.playDeathAnimation(ko, onFinished);
+            });
+        }
+    }
+
+    /**
+     * Plays the second attack animation (if present) followed by the death animation (if any), then calls
+     * {@code onFinished}. Does nothing and calls {@code onFinished} immediately when no second attack is present.
+     */
+    public void playSecondAction(TurnResult result, Trainer playerTrainer, Runnable onFinished) {
+        if (result.second().isEmpty() || !result.second().orElseThrow().wasAttack()) {
+            onFinished.run();
+            return;
+        }
+        boolean secondFromPlayer = result.second().orElseThrow().attacker() == playerTrainer;
+        this.playAttackAnimation(secondFromPlayer, () -> {
+            Boolean ko = this.findKoDefenderSide(result, playerTrainer);
+            if (ko == null) {
+                onFinished.run();
+                return;
+            }
+            this.playDeathAnimation(ko, onFinished);
+        });
+    }
+
     /** Returns {@code true} if the player's side was KO'd, {@code false} for opponent, {@code null} if no KO. */
-    private Boolean findKoDefenderSide(TurnResult result, Trainer playerTrainer) {
+    Boolean findKoDefenderSide(TurnResult result, Trainer playerTrainer) {
         if (result.second().isPresent() && result.second().orElseThrow().wasAttack()
                 && result.second().orElseThrow().defender().getCurrentBugemon().getHp() <= 0) {
             return result.second().orElseThrow().defender() == playerTrainer;

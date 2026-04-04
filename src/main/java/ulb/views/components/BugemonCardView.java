@@ -23,6 +23,8 @@ public class BugemonCardView extends ComponentView {
     private ImageView imageView;
     @FXML
     private Label nameLabel;
+    @FXML
+    private Label levelLabel;
 
     private final Optional<Bugemon> bugemonData;
     private boolean selected = false;
@@ -41,6 +43,7 @@ public class BugemonCardView extends ComponentView {
         super(FXML_PATH);
         this.bugemonData = bugemonData;
         this.nameLabel.setText(bugemonData.map(Bugemon::getName).orElse(EMPTY_NAME));
+        this.levelLabel.setText(bugemonData.map(b -> "Lv." + b.getLevel()).orElse(""));
         this.imageView.setImage(
                 bugemonData.map(d -> new Image(new File("resources/sprites/" + d.getSpriteURL()).toURI().toString()))
                         .orElse(EMPTY_IMAGE));
