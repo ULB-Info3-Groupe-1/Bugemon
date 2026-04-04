@@ -21,8 +21,7 @@ CREATE TABLE IF NOT EXISTS "effects" (
 );
 
 CREATE TABLE IF NOT EXISTS "bugemons" (
-  "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "name" varchar,
+  "name" varchar PRIMARY KEY,
   "type" varchar,
   "sprite" varchar,
   "base_defense" integer,
@@ -42,14 +41,14 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE TABLE IF NOT EXISTS "user_bugemons" (
   "user_id" integer,
-  "bugemon_id" integer,
+  "bugemon_name" varchar,
   "current_defense" integer,
   "current_attack" integer,
   "current_initiative" integer,
   "current_max_hp" integer,
   "current_xp" integer DEFAULT 0,
   "current_level" integer DEFAULT 1,
-  PRIMARY KEY ("user_id", "bugemon_id")
+  PRIMARY KEY ("user_id", "bugemon_name")
 );
 
 CREATE TABLE IF NOT EXISTS "teams" (
@@ -61,19 +60,19 @@ CREATE TABLE IF NOT EXISTS "teams" (
 CREATE TABLE IF NOT EXISTS "team_members" (
   "user_id" integer,
   "team_name" varchar,
-  "bugemon_id" integer,
+  "bugemon_name" varchar,
   "slot_position" integer,
   PRIMARY KEY ("user_id", "team_name", "slot_position")
 );
 
-CREATE UNIQUE INDEX ON "team_members" ("user_id", "team_name", "bugemon_id");
+CREATE UNIQUE INDEX ON "team_members" ("user_id", "team_name", "bugemon_name");
 
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_1_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_2_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_3_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "effects" ADD FOREIGN KEY ("attack_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("bugemon_id") REFERENCES "bugemons" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("bugemon_name") REFERENCES "bugemons" ("name") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "teams" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "team_name") REFERENCES "teams" ("user_id", "name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "bugemon_id") REFERENCES "user_bugemons" ("user_id", "bugemon_id") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "bugemon_name") REFERENCES "user_bugemons" ("user_id", "bugemon_name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;

@@ -21,7 +21,7 @@ public class TestLevelUp {
 
     @Test
     public void testChoicesTotalTenPoints() {
-        this.bugemon = TestUtilsBugemons.createDefaultBugemon(1);
+        this.bugemon = TestUtilsBugemons.createDefaultBugemon("1");
 
         LevelUp levelUp = new LevelUp(this.bugemon);
         for (Upgrade upgrade : levelUp.upgrades()) {

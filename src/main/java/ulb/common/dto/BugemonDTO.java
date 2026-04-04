@@ -33,18 +33,6 @@ public interface BugemonDTO {
     String getSpriteURL();
 
     /**
-     * Returns the unique identifier of this Bugemon.
-     *
-     * <p>
-     * The ID is a stable, opaque string that uniquely distinguishes one Bugemon from another across the whole game
-     * (e.g., {@code "001"}).
-     * </p>
-     *
-     * @return the unique identifier as a non-{@code null} {@code String}.
-     */
-    int getId();
-
-    /**
      * Returns the display name of this Bugemon.
      *
      * <p>

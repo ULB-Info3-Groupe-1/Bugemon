@@ -23,7 +23,7 @@ import ulb.models.bugemon.components.LevelComponent;
  */
 @SuppressWarnings("checkstyle:HiddenField")
 public final class BugemonBuilder {
-    private static final String DEFAULT_NAME = "default name";
+    /** Default elemental type applied when none is provided. */
     private static final BugemonType DEFAULT_TYPE = BugemonType.FLORA;
     private static final String DEFAULT_SPRITE = "/png/unknown.png";
     private static final int DEFAULT_HP = 100;
@@ -34,8 +34,10 @@ public final class BugemonBuilder {
     private static final int DEFAULT_XP = 0;
     private static final int DEFAULT_LEVEL = 1;
 
-    private Optional<String> id = Optional.empty();
-    private String name = DEFAULT_NAME;
+    /** The unique name to assign to the bugemon. */
+    private Optional<String> name = Optional.empty();
+
+    /** The elemental type to assign to the bugemon. */
     private BugemonType type = DEFAULT_TYPE;
     private String sprite = DEFAULT_SPRITE;
     private int hp = DEFAULT_HP;
@@ -47,14 +49,15 @@ public final class BugemonBuilder {
     private boolean isStarter = DEFAULT_IS_STARTER;
     private List<Attack> attackList = new ArrayList<>();
 
-    /** Mandatory — {@link #build()} throws if not set. */
-    public BugemonBuilder id(String id) {
-        this.id = Optional.of(id);
-        return this;
-    }
-
+    /**
+     * Sets the display name for the bugemon under construction.
+     *
+     * @param name
+     *            the non-null display name.
+     * @return this {@code BugemonBuilder} instance for method chaining.
+     */
     public BugemonBuilder name(String name) {
-        this.name = name;
+        this.name = Optional.of(name);
         return this;
     }
 
@@ -122,10 +125,9 @@ public final class BugemonBuilder {
     public Bugemon build() {
         Bugemon bugemon = new Bugemon();
 
-        // NOTE: ID has no default value
-        bugemon.id = this.id.orElseThrow(() -> new IllegalStateException("Bugemon id must be provided"));
+        // NOTE: name has no default value
+        bugemon.name = this.name.orElseThrow(() -> new IllegalStateException("Bugemon name must be provided"));
 
-        bugemon.name = this.name;
         bugemon.type = this.type;
         bugemon.sprite = this.sprite;
 

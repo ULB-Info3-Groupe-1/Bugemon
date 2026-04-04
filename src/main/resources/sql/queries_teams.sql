@@ -18,14 +18,14 @@ SELECT * FROM teams WHERE user_id = ?;
 
 -- Query
 -- AddTeamMember
-INSERT INTO team_members (user_id, team_name, bugemon_id, slot_position)
+INSERT INTO team_members (user_id, team_name, bugemon_name, slot_position)
 VALUES (?, ?, ?, ?)
 ON CONFLICT (user_id, team_name, slot_position) DO NOTHING;
 
 -- Query
 -- RemoveTeamMember
 DELETE FROM team_members
-WHERE user_id = ? AND team_name = ? AND bugemon_id = ?;
+WHERE user_id = ? AND team_name = ? AND bugemon_name = ?;
 
 -- Query
 -- GetTeamMembers

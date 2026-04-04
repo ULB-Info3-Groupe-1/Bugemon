@@ -26,7 +26,7 @@ public class TestFloor {
         PlayerService playerServiceMock = mock(PlayerService.class);
         List<Bugemon> testBugemons = new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         // Add boss Bugemon required by Floor.initBossCombatRoom()
-        testBugemons.add(TestUtilsBugemons.createDefaultBugemon(12));
+        testBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
         when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
         when(playerServiceMock.getInventory()).thenReturn(new Inventory());
         return playerServiceMock;
