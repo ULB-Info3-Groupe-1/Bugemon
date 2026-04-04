@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** Manages music playback; holds a list of registered tracks and plays them via JavaFX {@link MediaPlayer}. */
 public class MusicPlayer {
-    private static final Logger LOGGER = Logger.getLogger(MusicPlayer.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MusicPlayer.class);
 
     // NOTE: This is optional because a MediaPlayer's constructor needs a Media
     // instance, but there is no media to play when constructing the MusicPlayer.
@@ -48,9 +49,10 @@ public class MusicPlayer {
             this.mediaPlayer.ifPresent(player -> {
                 player.setCycleCount(MediaPlayer.INDEFINITE);
                 player.play();
+                LOG.debug("Now playing music: {}", music.ambiance());
             });
         } catch (Exception e) {
-            LOGGER.severe("Error playing music: " + e.getMessage());
+            LOG.error("Error playing music: {}", e.getMessage());
         }
     }
 
@@ -70,7 +72,7 @@ public class MusicPlayer {
                 player.play();
             });
         } catch (Exception e) {
-            LOGGER.severe("Error playing sound effect: " + e.getMessage());
+            LOG.error("Error playing sound effect: {}", e.getMessage());
         }
     }
 
@@ -84,7 +86,7 @@ public class MusicPlayer {
         List<Music> matchingMusics = this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
 
         if (matchingMusics.isEmpty()) {
-            LOGGER.log(Level.SEVERE, "Error playing music matching ambiance {0}: no match", ambiance);
+            LOG.error("Error playing music  matching ambiance {}: no match", ambiance);
             return;
         }
 

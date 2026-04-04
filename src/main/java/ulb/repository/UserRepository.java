@@ -7,11 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
 
 public class UserRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(UserRepository.class);
+
     private final DatabaseRepository dbRepository;
 
     private final DatabaseConnection dbConnection;
@@ -54,6 +59,8 @@ public class UserRepository {
     // ─── USER BUGEMONS ────────────────────────────────────────────────────────
 
     public void saveUserBugemon(UserBugemonDTO dto) {
+        LOG.debug("Saving user bugemon: {}", dto);
+
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveUserBugemon"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.bugemonId());
@@ -70,6 +77,8 @@ public class UserRepository {
     }
 
     public void updateUserBugemon(UserBugemonDTO dto) {
+        LOG.debug("Updating user bugemon: {}", dto);
+
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("UpdateUserBugemon"))) {
             ps.setInt(1, dto.currentDefense());
             ps.setInt(2, dto.currentAttackPower());
@@ -86,6 +95,8 @@ public class UserRepository {
     }
 
     public List<UserBugemonDTO> getUserBugemons(int userId) {
+        LOG.debug("Getting bugemons for userId: {}", userId);
+
         List<UserBugemonDTO> result = new ArrayList<>();
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetUserBugemons"))) {
             ps.setInt(1, userId);
@@ -107,6 +118,8 @@ public class UserRepository {
     // ─── TEAMS ────────────────────────────────────────────────────────────────
 
     public void createTeam(int userId, String teamName) {
+        LOG.debug("Creating team '{}' for userId: {}", teamName, userId);
+
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("CreateTeam"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
@@ -118,6 +131,8 @@ public class UserRepository {
 
     /** Deletes all members of the team, then the team record itself. */
     public void deleteTeam(int userId, String teamName) {
+        LOG.debug("Deleting team '{}' for userId: {}", teamName, userId);
+
         try (PreparedStatement psMembers = this.dbConnection
                 .prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"));
                 PreparedStatement psTeam = this.dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
@@ -134,6 +149,8 @@ public class UserRepository {
     }
 
     public void deleteTeamMembers(int userId, String teamName) {
+        LOG.debug("Deleting team members for userId: {} and teamName: {}", userId, teamName);
+
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
@@ -144,6 +161,8 @@ public class UserRepository {
     }
 
     public List<TeamDTO> getUserTeams(int userId) {
+        LOG.debug("Getting teams for userId: {}", userId);
+
         List<TeamDTO> result = new ArrayList<>();
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetUserTeams"))) {
             ps.setInt(1, userId);
@@ -158,6 +177,8 @@ public class UserRepository {
     }
 
     public void renameTeam(int userId, String oldTeamName, String newTeamName) {
+        LOG.debug("Renaming team for userId: {} from '{}' to '{}'", userId, oldTeamName, newTeamName);
+
         try (PreparedStatement psRenameTeam = this.dbConnection
                 .prepareStatement(this.dbRepository.getSql("RenameTeam"))) {
             psRenameTeam.setString(1, newTeamName);
@@ -173,6 +194,8 @@ public class UserRepository {
     // ─── TEAM MEMBERS ─────────────────────────────────────────────────────────
 
     public void addTeamMember(TeamMemberDTO dto) {
+        LOG.debug("Adding team member: {}", dto);
+
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("AddTeamMember"))) {
             ps.setInt(1, dto.userId());
             ps.setString(2, dto.teamName());
@@ -185,6 +208,8 @@ public class UserRepository {
     }
 
     public void removeTeamMember(int userId, String teamName, String bugemonId) {
+        LOG.debug("Removing team member for userId: {} and teamName: {}", userId, teamName);
+
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("RemoveTeamMember"))) {
             ps.setInt(1, userId);
             ps.setString(2, teamName);
@@ -196,6 +221,8 @@ public class UserRepository {
     }
 
     public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
+        LOG.debug("Getting team members for userId: {} and teamName: {}", userId, teamName);
+
         List<TeamMemberDTO> result = new ArrayList<>();
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetTeamMembers"))) {
             ps.setInt(1, userId);

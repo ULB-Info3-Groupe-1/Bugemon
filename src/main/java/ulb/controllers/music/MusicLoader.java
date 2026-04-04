@@ -10,12 +10,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR). */
 public class MusicLoader {
-    private static final Logger LOGGER = Logger.getLogger(MusicLoader.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MusicLoader.class);
+
     private static final String MUSIC_DIR = "/musics/";
     private static final String SOUND_EFFECTS_DIR = "/sound_effects/";
 
@@ -91,7 +94,7 @@ public class MusicLoader {
         try {
             return Optional.of(new Music(path.toUri().toURL(), ambiance));
         } catch (Exception e) {
-            LOGGER.severe("error loading song: " + path);
+            LOG.error("Error loading song: {}", path);
             return Optional.empty();
         }
     }
