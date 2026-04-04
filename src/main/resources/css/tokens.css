@@ -64,10 +64,18 @@
     size-btn-outcome: 256;
     size-btn-panel: 260;
     size-action-menu-width: 500;
-    size-team-list-min-height: 42;
-    /* fits one list cell (18px font + 6+6 padding) */
+    size-team-slot-height: 30;
+    /* one list cell: 18px font + 6+6 padding */
+    size-team-list-height: 90;
+    /* 3 visible slots: 3 × size-team-slot-height */
     size-bugemon-card: 96;
     /* matches .bugemon-card-pane min/max-height */
+    size-bugemon-cell-width: 112;
+    /* card width in the all-bugemons grid (wider than image for label room) */
     size-bugemon-grid-vgap: 10;
     /* matches .all-bugemons -fx-vgap */
+    size-switch-row-spacing: 10;
+    /* spacing between sprite and button inside a switch-menu row */
+    size-menu-btn-min: 200;
+    /* min-width for switch/item menu buttons */
 }

@@ -10,7 +10,6 @@ import ulb.views.components.ComponentView;
 /** Reusable component displaying the player's inventory as a list of clickable item buttons. */
 public class ItemMenuView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/ItemMenu.fxml";
-    private static final double MIN_BUTTON_WIDTH = 200;
 
     private Consumer<Item> onItemSelected;
     private Runnable onBack;
@@ -36,8 +35,7 @@ public class ItemMenuView extends ComponentView {
         }
 
         Button back = new Button("Retour");
-        back.getStyleClass().addAll("btn", "btn-secondary");
-        back.setMinWidth(MIN_BUTTON_WIDTH);
+        back.getStyleClass().addAll("btn", "btn-secondary", "menu-btn-min");
         back.setOnAction(e -> {
             if (this.onBack != null) {
                 this.onBack.run();
@@ -48,8 +46,7 @@ public class ItemMenuView extends ComponentView {
 
     private Button createItemButton(Item item, int quantity) {
         Button btn = new Button(item.name() + " ×" + quantity);
-        btn.getStyleClass().addAll("btn", "btn-warning");
-        btn.setMinWidth(MIN_BUTTON_WIDTH);
+        btn.getStyleClass().addAll("btn", "btn-warning", "menu-btn-min");
         btn.setOnAction(e -> {
             if (this.onItemSelected != null) {
                 this.onItemSelected.accept(item);
