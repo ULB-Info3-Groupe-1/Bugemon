@@ -10,6 +10,7 @@ import ulb.models.combat.TurnResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.LevelUpService;
 import ulb.services.PlayerService;
@@ -31,12 +32,15 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     private Consumer<List<LevelUp>> onVictory;
     protected final CombatAnimationController animationController;
     protected final PlayerService playerService;
+    protected final BugemonService bugemonService;
     protected boolean restoreHpAfterCombat;
 
-    protected CombatController(MetaController metaController, PlayerService playerService, V view) {
+    protected CombatController(MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
         this.playerService = playerService;
+        this.bugemonService = bugemonService;
     }
 
     public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
@@ -70,7 +74,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
         return new AutoTrainer(
-                CombatService.createRandomTeam(this.playerService.getAllDefaultBugemons(), playerTeamSize));
+                CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTeamSize));
     }
 
     /**

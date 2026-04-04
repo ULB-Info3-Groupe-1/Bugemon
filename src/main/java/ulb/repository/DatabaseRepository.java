@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repository.dto.StaticBugemonDataDTO;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
@@ -33,6 +34,8 @@ import ulb.repository.dto.UserBugemonDTO;
 public class DatabaseRepository {
     // Number of tables of the critical schema
     private static final int CRITICAL_TABLES_COUNT = 7;
+
+    private static final DatabaseRepository INSTANCE = new DatabaseRepository();
 
     private final DatabaseConnection dbConnection;
 
@@ -43,13 +46,17 @@ public class DatabaseRepository {
     private final Map<String, String> queries = new HashMap<>();
 
     /** Loads SQL queries, creates the schema if absent, and bootstraps static game data. */
-    public DatabaseRepository() {
+    private DatabaseRepository() {
         this.dbConnection = new DatabaseConnection();
         this.userRepository = new UserRepository(this, this.dbConnection);
         this.staticDataRepository = new StaticDataRepository(this, this.dbConnection);
 
         this.loadSQLQueries();
         this.prepareDatabase();
+    }
+
+    public static DatabaseRepository getInstance() {
+        return INSTANCE;
     }
 
     private void loadSQLQueries() {
@@ -265,5 +272,16 @@ public class DatabaseRepository {
      */
     public void saveBugemon(CreateBugemonDTO bugemon) {
         this.staticDataRepository.saveBugemon(bugemon);
+    }
+
+    /**
+     * Get a bugemon by its name and return it as a StaticBugemonDataDTO with just the static data info of the bugemon.
+     *
+     * @param bugemonName
+     *            (String) the name of the bugemon
+     * @return (StaticBugemonDataDTO) the bugemon
+     */
+    public StaticBugemonDataDTO getBugemonByName(String bugemonName) {
+        return this.staticDataRepository.getBugemonByName(bugemonName);
     }
 }

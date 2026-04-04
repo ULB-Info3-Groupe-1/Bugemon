@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
@@ -18,26 +19,30 @@ import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestFloor {
-    private PlayerService getPlayerServiceMock() {
-        PlayerService playerServiceMock = mock(PlayerService.class);
+
+    private static final PlayerService PLAYER_SERVICE_MOCK = mock(PlayerService.class);
+    private static final BugemonService BUGEMON_SERVICE_MOCK = mock(BugemonService.class);
+
+    @Before
+    public void addBossBugemon() {
         List<Bugemon> testBugemons = new ArrayList<Bugemon>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
-        when(playerServiceMock.getAllDefaultBugemons()).thenReturn(testBugemons);
-        when(playerServiceMock.getInventory()).thenReturn(new Inventory());
-        return playerServiceMock;
+        when(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons()).thenReturn(testBugemons);
+        when(PLAYER_SERVICE_MOCK.getInventory()).thenReturn(new Inventory());
     }
 
     @Test
     public void testFloorInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam, this.getPlayerServiceMock().getInventory());
+        Trainer playerTrainer = new ManualTrainer(playerTeam, PLAYER_SERVICE_MOCK.getInventory());
 
-        Floor floor = new Floor(playerTrainer, this.getPlayerServiceMock());
+        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK);
 
         assertFalse(floor.isComplete());
     }
@@ -45,9 +50,9 @@ public class TestFloor {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam, this.getPlayerServiceMock().getInventory());
+        Trainer playerTrainer = new ManualTrainer(playerTeam, PLAYER_SERVICE_MOCK.getInventory());
 
-        Floor floor = new Floor(playerTrainer, this.getPlayerServiceMock());
+        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK);
 
         Room firstRoom = floor.getNextRoom();
         assertTrue(firstRoom instanceof CombatRoom);

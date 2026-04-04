@@ -28,6 +28,7 @@ import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repository.dto.StaticBugemonDataDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
@@ -280,5 +281,51 @@ public class StaticDataRepository {
         } catch (IOException e) {
             throw new IOException("Impossible to save sprite file: " + fileTarget, e);
         }
+    }
+
+    /**
+     * Get a Bugemon by its name. It return a StaticBugemonDataDTO with just the static data info of the bugemon.
+     *
+     * @param name
+     *            (String) the name of the bugemon
+     * @return (StaticBugemonDataDTO) the bugemon
+     */
+    public StaticBugemonDataDTO getBugemonByName(String name) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetBugemonByName"))) {
+            ps.setString(1, name.toLowerCase());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return this.getBugemonFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("getBugemonByName failed for name: " + name, e);
+        }
+        return null;
+    }
+
+    /**
+     * Get a Bugemon from a ResultSet.
+     *
+     * @param rs
+     *            (ResultSet) the ResultSet
+     * @return (StaticBugemonDataDTO) the Bugemon
+     * @throws SQLException
+     *             if the ResultSet is not valid
+     */
+    private StaticBugemonDataDTO getBugemonFromResultSet(ResultSet rs) throws SQLException {
+        String name = rs.getString(DatabaseColumns.COL_NAME);
+        String type = rs.getString(DatabaseColumns.COL_TYPE);
+        String spriteFileName = rs.getString(DatabaseColumns.COL_SPRITE);
+        boolean isStarter = rs.getBoolean(DatabaseColumns.COL_IS_STARTER);
+
+        Attack attack1 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
+        Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
+        Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
+        List<Attack> attacks = new ArrayList<>();
+        attacks.add(attack1);
+        attacks.add(attack2);
+        attacks.add(attack3);
+
+        return new StaticBugemonDataDTO(name, type, spriteFileName, attacks, isStarter);
     }
 }
