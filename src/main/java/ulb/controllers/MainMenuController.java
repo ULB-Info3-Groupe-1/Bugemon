@@ -7,35 +7,33 @@ import ulb.services.PlayerService;
 import ulb.views.MainMenuView;
 
 /** Controller for the main menu screen. */
-public class MainMenuController extends Controller<MainMenuView> {
+public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
     private final PlayerService playerService;
 
     public MainMenuController(MetaController metaController, PlayerService playerService) throws IOException {
         super(metaController, new MainMenuView());
         this.playerService = playerService;
-
-        this.view.setOnCreateTeam(this::createTeam);
-        this.view.setOnNoTower(this::launchNoTower);
-        this.view.setOnQuit(this::quit);
-        this.view.setOnStartAutoCombat(this::startAutoCombat);
-        this.view.setOnStartManualCombat(this::startManualCombat);
+        this.view.setListener(this);
     }
 
-    public void createTeam() {
+    @Override
+    public void onCreateTeam() {
         this.metaController.switchTo(Window.CREATE_TEAM);
     }
 
-    /** Callback invoked when the player requests to launch the NO Tower mode. */
-    public void launchNoTower() {
+    @Override
+    public void onNoTower() {
         this.metaController.switchTo(Window.NOTOWER);
     }
 
-    public void quit() {
+    @Override
+    public void onQuit() {
         javafx.application.Platform.exit();
     }
 
     /** Launches an automatic combat session. */
-    public void startAutoCombat() {
+    @Override
+    public void onStartAutomaticCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
             this.showNoTeamAlert();
         } else {
@@ -44,7 +42,8 @@ public class MainMenuController extends Controller<MainMenuView> {
     }
 
     /** Launches a manual combat session. */
-    public void startManualCombat() {
+    @Override
+    public void onStartManualCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
             this.showNoTeamAlert();
         } else {
