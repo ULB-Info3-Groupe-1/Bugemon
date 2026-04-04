@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.repository.dto.CreateBugemonDTO;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
@@ -253,5 +254,16 @@ public class DatabaseRepository {
 
     public void deleteTeamMembers(int userId, String teamName) {
         this.userRepository.deleteTeamMembers(userId, teamName);
+    }
+
+    /**
+     * Save a new bugemon in the database. This method takes a CreateBugemonDTO object containing the details of the
+     * bugemon to be saved, and inserts a new entry in the database. It also save the sprite image file for the bugemon.
+     *
+     * @param bugemon
+     *            (CreateBugemonDTO) the bugemon to be saved
+     */
+    public void saveBugemon(CreateBugemonDTO bugemon) {
+        this.staticDataRepository.saveBugemon(bugemon);
     }
 }
