@@ -1,15 +1,12 @@
 package ulb.models.utils;
 
-/** Immutable 2D vector used for map positions and smooth movement interpolation. */
-public class Vec2 {
+/**
+ * Simple 2D vector class for representing positions and directions in the game world. Contains a static method for
+ * linear interpolation between two vectors, which is used for smooth movement and animations.
+ */
+public record Vec2(float x, float y) {
 
-    private float x;
-    private float y;
-
-    public Vec2(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
+    // Methods
 
     /**
      * Linearly interpolates between {@code a} and {@code b}.
