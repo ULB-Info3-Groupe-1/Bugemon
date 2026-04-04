@@ -9,7 +9,7 @@ public class DatabaseColumns {
     public static final String COL_USER_ID = "user_id";
     public static final String COL_BUGEMON_NAME = "bugemon_name";
     public static final String COL_CURRENT_DEFENSE = "current_defense";
-    public static final String COL_CURRENT_ATTACK_POWER = "current_attack_power";
+    public static final String COL_CURRENT_ATTACK = "current_attack";
     public static final String COL_CURRENT_INITIATIVE = "current_initiative";
     public static final String COL_CURRENT_MAX_HP = "current_max_hp";
     public static final String COL_CURRENT_XP = "current_xp";
