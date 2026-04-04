@@ -1,5 +1,6 @@
 package ulb.views.combat.components;
 
+import java.io.File;
 import java.util.List;
 import java.util.function.Consumer;
 import javafx.geometry.Pos;
@@ -66,7 +67,8 @@ public class SwitchMenuView extends ComponentView {
         HBox row = new HBox(ROW_SPACING);
         row.setAlignment(Pos.CENTER_LEFT);
 
-        ImageView sprite = new ImageView(new Image(b.getSpriteURL(), SPRITE_SIZE, SPRITE_SIZE, true, false));
+        File file = new File("resources/sprites/" + b.getSpriteURL());
+        ImageView sprite = new ImageView(new Image(file.toURI().toString(), SPRITE_SIZE, SPRITE_SIZE, true, false));
         sprite.setFitWidth(SPRITE_SIZE);
         sprite.setFitHeight(SPRITE_SIZE);
         sprite.setPreserveRatio(true);
