@@ -32,6 +32,12 @@ public record Attack(
         return this.effects.contains(effect);
     }
 
+    /** Compact representation for logging: {@code Explosion Ardente (PYRO, 70pw)}. */
+    @Override
+    public String toString() {
+        return this.name + " (" + this.type + ", " + this.power + "pw)";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
