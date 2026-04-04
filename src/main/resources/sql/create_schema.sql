@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "bugemons" (
   "type" varchar,
   "sprite" varchar,
   "base_defense" integer,
-  "base_attack_power" integer,
+  "base_attack" integer,
   "base_initiative" integer,
   "base_max_hp" integer,
   "is_starter" boolean,
