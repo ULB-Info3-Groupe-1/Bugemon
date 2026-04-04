@@ -35,7 +35,7 @@ public class DatabaseRepository {
     // Number of tables of the critical schema
     private static final int CRITICAL_TABLES_COUNT = 7;
 
-    private static final DatabaseRepository INSTANCE = new DatabaseRepository();
+    private static DatabaseRepository instance;
 
     private final DatabaseConnection dbConnection;
 
@@ -56,7 +56,10 @@ public class DatabaseRepository {
     }
 
     public static DatabaseRepository getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            instance = new DatabaseRepository();
+        }
+        return instance;
     }
 
     private void loadSQLQueries() {
