@@ -8,13 +8,14 @@ import ulb.controllers.MetaController.Window;
 import ulb.views.CombatVictoryView;
 
 /** Controller for the victory screen; navigates to NO Tower or main menu on continue. */
-public class CombatVictoryController extends Controller<CombatVictoryView> {
+public class CombatVictoryController extends Controller<CombatVictoryView> implements CombatVictoryView.Listener {
     public CombatVictoryController(MetaController metaController) throws IOException {
         super(metaController, new CombatVictoryView());
-        this.view.setOnContinue(this::continueToMainMenu);
+        this.view.setListener(this);
     }
 
-    public void continueToMainMenu() {
+    @Override
+    public void onContinue() {
         if (this.metaController.isNOTowerFlowActive()) {
             this.metaController.switchTo(Window.NOTOWER);
             return;
