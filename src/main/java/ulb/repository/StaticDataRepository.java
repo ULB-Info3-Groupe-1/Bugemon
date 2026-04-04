@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
