@@ -58,10 +58,11 @@ public class BugemonCardView extends ComponentView {
     }
 
     @FXML
-    private void onSelected(MouseEvent event) {
+    private void onClick(MouseEvent event) {
         if (event.getButton() != MouseButton.PRIMARY) {
             return;
         }
+
         this.bugemonData.ifPresent(b -> {
             if (this.onClickCallback != null) {
                 this.onClickCallback.accept(b);
