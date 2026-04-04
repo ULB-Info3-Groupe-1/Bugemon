@@ -23,6 +23,11 @@ public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.S
         public boolean isAttack() {
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "attack(" + this.attack.name() + ")";
+        }
     }
 
     /** The switching trainer does not deal damage this turn, but the opponent still attacks. */
@@ -30,6 +35,11 @@ public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.S
         @Override
         public boolean isAttack() {
             return false;
+        }
+
+        @Override
+        public String toString() {
+            return "switch(" + this.target.getName() + ")";
         }
     }
 
@@ -41,6 +51,11 @@ public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.S
         public boolean isAttack() {
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "forfeit";
+        }
     }
 
     record UseItemAction(Item item) implements TurnAction {
@@ -48,6 +63,11 @@ public sealed interface TurnAction permits TurnAction.AttackAction, TurnAction.S
         public boolean isAttack() {
             // Item are never used against the opponent
             return false;
+        }
+
+        @Override
+        public String toString() {
+            return "item(" + this.item.name() + ")";
         }
     }
 }

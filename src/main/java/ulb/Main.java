@@ -9,6 +9,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.services.PlayerService;
@@ -18,6 +20,8 @@ public class Main extends Application {
     private static final String STAGE_TITLE = "Bugemon";
 
     public static void main(String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
         launch(args);
     }
 
