@@ -13,6 +13,7 @@ import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
@@ -37,8 +38,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      * @throws IOException
      *             if the view fails to load its FXML resource.
      */
-    public ManualCombatController(MetaController metaController, PlayerService playerService) throws IOException {
-        super(metaController, playerService, ViewLoader.load(ManualCombatView::new));
+    public ManualCombatController(MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService) throws IOException {
+        super(metaController, playerService, bugemonService, ViewLoader.load(ManualCombatView::new));
         this.view.setListener(this);
     }
 
