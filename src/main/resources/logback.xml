@@ -1,0 +1,36 @@
+<!--
+  Logback configuration
+  Reference: https://logback.qos.ch/manual/configuration.html
+             https://logback.qos.ch/manual/layouts.html
+
+  scan="true" enables hot-reload without restarting (checks every 60s).
+  Tip: set level="DEBUG" on a logger without recompiling.
+-->
+<configuration scan="true" scanPeriod="60 seconds">
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/bugemon.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>logs/bugemon.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>7</maxHistory>
+      <totalSizeCap>100MB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="ulb.models" level="DEBUG" />
+  <logger name="ulb.utils"  level="DEBUG" />
+
+  <root level="WARN">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE"    />
+  </root>
+
+</configuration>
