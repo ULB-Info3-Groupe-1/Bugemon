@@ -92,27 +92,26 @@ public abstract class CombatView extends View {
      */
     public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
             Optional<TurnResult.AttackResult> secondAttackResult) {
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName() + " à utilisé l'attaque "
-                + firstAttackResult.getAttackName() + "\n";
-        String efficiency = "1- " + this.formatEfficiency(firstAttackResult.efficiency()) + "\n";
+        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName() + " à utilisé l'attaque \""
+                + firstAttackResult.getAttackName() + "\" " + this.formatEfficiency(firstAttackResult.efficiency())
+                + "\n";
 
         if (secondAttackResult.isPresent()) {
             message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
-                    + " à utilisé l'attaque " + secondAttackResult.orElseThrow().getAttackName();
-            efficiency += "2- " + this.formatEfficiency(secondAttackResult.orElseThrow().efficiency());
+                    + " à utilisé l'attaque \"" + secondAttackResult.orElseThrow().getAttackName() + "\" "
+                    + this.formatEfficiency(secondAttackResult.orElseThrow().efficiency());
         }
-        this.showDialog(message, efficiency);
+        this.showDialog(message, "");
     }
 
     protected String formatEfficiency(Efficiency efficiency) {
         switch (efficiency) {
-            case HIGH :
-                return "ATTAQUE EFFICACE: félicitation";
-            case LOW :
-                return "Peu d'effet ...";
-            case NEUTRAL :
-            default :
-                return "Dégats standards";
+        case HIGH:
+            return "C'est super efficace !";
+        case LOW:
+            return "Ce n'est pas très efficace";
+        default:
+            return "";
         }
     }
 
