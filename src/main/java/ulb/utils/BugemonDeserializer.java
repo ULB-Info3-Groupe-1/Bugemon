@@ -23,7 +23,7 @@ import ulb.repository.dto.CreateBugemonDTO;
  * Custom Gson deserializer for {@link Bugemon}; resolves attack IDs via a pre-loaded map. Sprite paths are normalised
  * to {@code "png/<name>"} if the prefix is absent.
  */
-public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
+public class BugemonDeserializer implements JsonDeserializer<CreateBugemonDTO> {
     private final Map<String, Attack> attacksMap;
 
     public BugemonDeserializer(Map<String, Attack> attacksMap) {

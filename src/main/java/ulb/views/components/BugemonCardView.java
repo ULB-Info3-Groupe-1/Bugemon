@@ -1,5 +1,6 @@
 package ulb.views.components;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
@@ -40,7 +41,9 @@ public class BugemonCardView extends ComponentView {
         super(FXML_PATH);
         this.bugemonData = bugemonData;
         this.nameLabel.setText(bugemonData.map(Bugemon::getName).orElse(EMPTY_NAME));
-        this.imageView.setImage(bugemonData.map(d -> new Image(d.getSpriteURL())).orElse(EMPTY_IMAGE));
+        this.imageView.setImage(
+                bugemonData.map(d -> new Image(new File("resources/sprites/" + d.getSpriteURL()).toURI().toString()))
+                        .orElse(EMPTY_IMAGE));
     }
 
     @FXML

@@ -111,7 +111,7 @@ public class Parser {
         LOG.info("Finished parsing data");
     }
 
-    public final List<Bugemon> getBugemons() {
+    public final List<CreateBugemonDTO> getBugemons() {
         return bugemons;
     }
 
