@@ -87,8 +87,7 @@
                 <Insets left="20" right="20" bottom="16" top="4" />
             </VBox.margin>
             <Label text="Bugémons disponibles" styleClass="section-label" />
-            <AllBugemonsView fx:id="allBugemonsGridView"
-                maxWidth="1.7976931348623157E308" />
+            <AllBugemonsView fx:id="allBugemonsGridView" />
         </VBox>
     </bottom>
 

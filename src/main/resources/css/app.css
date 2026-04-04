@@ -178,11 +178,14 @@
 .progress-bar>.track {
     -fx-background-color: color-hp-track;
     -fx-background-radius: 4;
+    -fx-background-insets: 0;
 }
 
 .progress-bar>.bar {
     -fx-background-color: color-hp-bar;
     -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
 }
 
 /* ── XP progress bar ─────────────────────────────────────── */
@@ -194,11 +197,14 @@
 .xp-bar>.track {
     -fx-background-color: color-hp-track;
     -fx-background-radius: 4;
+    -fx-background-insets: 0;
 }
 
 .xp-bar>.bar {
     -fx-background-color: color-xp;
     -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
 }
 
 /* ── Scrollbar ───────────────────────────────────────────── */
