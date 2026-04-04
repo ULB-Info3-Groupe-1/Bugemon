@@ -227,7 +227,7 @@ public class StaticDataRepository {
      * @param bugemon
      *            (CreateBugemonDTO) the Bugemon to be saved
      */
-    private void saveBugemon(CreateBugemonDTO bugemon) {
+    public void saveBugemon(CreateBugemonDTO bugemon) {
         String fileName = bugemon.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
 
         try {
