@@ -27,7 +27,7 @@ public class MainMenuView extends View {
 
     private Listener listener;
 
-    private final String FXML_PATH = "/fxml/MainMenu.fxml";
+    private final String fxmlPath = "/fxml/MainMenu.fxml";
 
     /**
      * Loads the main-menu FXML layout and wires the button actions to the registered callbacks.
@@ -69,7 +69,7 @@ public class MainMenuView extends View {
 
     @Override
     public String getPath() {
-        return this.FXML_PATH;
+        return this.fxmlPath;
     }
 
     @Override

@@ -22,7 +22,7 @@ import ulb.models.level_up.LevelUpSession;
  * </p>
  */
 public class LevelUpView extends View {
-    private final String FXML_PATH = "/fxml/LevelUp.fxml";
+    private final String fxmlPath = "/fxml/LevelUp.fxml";
 
     @FXML
     private Label levelUpText;
@@ -75,7 +75,7 @@ public class LevelUpView extends View {
 
     @Override
     public String getPath() {
-        return this.FXML_PATH;
+        return this.fxmlPath;
     }
 
     @Override

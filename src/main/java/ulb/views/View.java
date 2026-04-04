@@ -6,31 +6,23 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 /**
- * Base class for all JavaFX views.
- *
- * <p>
- * Each view owns its root {@link Parent} node loaded from FXML. Navigation is performed by swapping the root of the
- * application's single {@link javafx.scene.Scene} via {@link #show(Stage)}, which avoids the resize flash that occurs
- * when replacing the scene itself.
- * </p>
+ * Base class for all JavaFX views. Navigation swaps the root of the application's single {@link javafx.scene.Scene} via
+ * {@link #show(Stage)}, avoiding the resize flash that occurs when replacing the scene itself.
  */
 public abstract class View {
     private Parent root;
 
     /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
-    public void initRoot(Parent root) {
-        this.root = root;
+    public void initRoot(Parent newroot) {
+        this.root = newroot;
     }
 
+    /** Returns the FXML resource path used by {@link ViewLoader} to load this view. */
     public abstract String getPath();
 
     /**
-     * Reads the current state from the model and updates every UI component.
-     *
-     * <p>
-     * Called by the controller after any model mutation. The view is responsible for pulling all data it needs directly
-     * from the model references it holds. The controller never pushes data into the view.
-     * </p>
+     * Reads the current state from the model and updates every UI component. Called by the controller after any model
+     * mutation; the controller never pushes data into the view.
      */
     public abstract void refresh();
 
@@ -40,6 +32,7 @@ public abstract class View {
         stage.show();
     }
 
+    /** Displays a warning dialog with the given title and message. */
     public void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle(title);

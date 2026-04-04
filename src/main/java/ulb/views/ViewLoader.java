@@ -5,8 +5,16 @@ import java.util.function.Supplier;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
+/** Utility that loads a {@link View} from its FXML path and injects the loaded root back into the view instance. */
 public class ViewLoader {
 
+    /**
+     * Loads the FXML declared by the view's {@link View#getPath()}, sets the view as its own controller, and returns
+     * the fully initialised view.
+     *
+     * @param viewClass
+     *            supplier called twice: once to resolve the FXML path, once as the controller factory
+     */
     public static <V extends View> V load(Supplier<V> viewClass) {
         String fxmlPath = viewClass.get().getPath();
         try {

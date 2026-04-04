@@ -12,13 +12,9 @@ import ulb.services.CombatService;
 import ulb.views.components.ComponentView;
 
 /**
- * Action menu displaying the attacks available to the player's active Bugemon.
- *
- * <p>
- * Presents up to three attack buttons in a fixed 2×2 grid (mirroring {@link ActionMenuView}), plus a back button.
- * Button labels and type-coloured styles are applied via {@link #show(List, Trainer)} at display time. Attack
- * selections are dispatched through {@link #setOnAttack(Consumer)}; the back action through {@link #setOnBack(Runnable)}.
- * </p>
+ * Action menu displaying the attacks available to the player's active Bugemon. Presents up to three attack buttons in a
+ * fixed 2×2 grid (mirroring {@link ActionMenuView}), plus a back button. Button labels and type-coloured styles are
+ * applied via {@link #show(List, Trainer)} at display time.
  */
 public class AttackMenuView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/AttackMenu.fxml";
@@ -34,17 +30,14 @@ public class AttackMenuView extends ComponentView {
     private Consumer<Attack> onAttack;
     private Runnable onBack;
 
-    /** Creates the attack menu component. */
     public AttackMenuView() {
         super(FXML_PATH);
     }
 
-    /** Sets the callback invoked when the user selects an attack. */
     public void setOnAttack(Consumer<Attack> callback) {
         this.onAttack = callback;
     }
 
-    /** Sets the callback invoked when the user clicks the back button. */
     public void setOnBack(Runnable callback) {
         this.onBack = callback;
     }

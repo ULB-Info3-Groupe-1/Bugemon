@@ -2,26 +2,18 @@ package ulb.views;
 
 import javafx.fxml.FXML;
 
-/**
- * View for the combat victory screen.
- *
- * <p>
- * Dispatches user interactions through the callback registered via {@link #setOnContinue(Runnable)}. Holds no reference
- * to any concrete controller class.
- * </p>
- */
+/** View for the combat victory screen, dispatching actions through the {@link Listener} interface. */
 public class CombatVictoryView extends View {
-    private final String FXML_PATH = "/fxml/CombatVictory.fxml";
+    private final String fxmlPath = "/fxml/CombatVictory.fxml";
 
     private Listener listener;
 
-    /** Creates the victory screen view. */
     public CombatVictoryView() {
     }
 
     @Override
     public String getPath() {
-        return this.FXML_PATH;
+        return this.fxmlPath;
     }
 
     public void setListener(Listener listener) {

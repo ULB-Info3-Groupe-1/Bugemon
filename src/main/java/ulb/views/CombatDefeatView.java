@@ -2,25 +2,17 @@ package ulb.views;
 
 import javafx.fxml.FXML;
 
-/**
- * View for the combat defeat screen.
- *
- * <p>
- * Dispatches user interactions through the callbacks registered via {@link #setOnRetry(Runnable)} and
- * {@link #setOnBackToMainMenu(Runnable)}. Holds no reference to any concrete controller class.
- * </p>
- */
+/** View for the combat defeat screen, dispatching actions through the {@link Listener} interface. */
 public class CombatDefeatView extends View {
-    private final String FXML_PATH = "/fxml/CombatDefeat.fxml";
+    private final String fxmlPath = "/fxml/CombatDefeat.fxml";
     private Listener listener;
 
-    /** Creates the defeat screen view. */
     public CombatDefeatView() {
     }
 
     @Override
     public String getPath() {
-        return this.FXML_PATH;
+        return this.fxmlPath;
     }
 
     public void setListener(Listener listener) {
