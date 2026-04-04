@@ -15,8 +15,7 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CreateTeamView" prefWidth="900"
-    prefHeight="600" styleClass="create-team-root"
-    stylesheets="@../css/create-team-menu.css">
+    prefHeight="600" styleClass="create-team-root">
     <padding>
         <Insets top="24" right="32" bottom="24" left="32" />
     </padding>
@@ -63,22 +62,22 @@
                     <Insets top="26" />
                 </VBox.margin>
                 <Label text="Mes équipes" styleClass="section-label" />
-                <ListView fx:id="teamListView" styleClass="team-list-view"
-                    prefHeight="150" maxWidth="260" minWidth="260"
+                <ListView fx:id="teamListView"
+                    styleClass="team-list-view,btn-panel" prefHeight="150"
                     onMouseClicked="#onTeamSelected" />
 
                 <Button text="Sauvegarder" onAction="#onSaveClicked"
-                    styleClass="btn,btn-success" maxWidth="260" minWidth="260" />
+                    styleClass="btn,btn-success,btn-panel" />
                 <Button text="Renommer" onAction="#onRenameClicked"
-                    styleClass="btn,btn-success" maxWidth="260" minWidth="260" />
+                    styleClass="btn,btn-success,btn-panel" />
                 <Button text="Nouvelle équipe +"
-                    onAction="#onAddNewTeamClicked" styleClass="btn,btn-success"
-                    maxWidth="260" minWidth="260" />
+                    onAction="#onAddNewTeamClicked"
+                    styleClass="btn,btn-success,btn-panel" />
                 <Button text="Supprimer" onAction="#onDeleteClicked"
-                    styleClass="btn,btn-danger" maxWidth="260" minWidth="260" />
+                    styleClass="btn,btn-danger,btn-panel" />
                 <Button text="Retour au menu principal"
-                    onAction="#onReturnMainMenuClicked" styleClass="btn,btn-secondary"
-                    maxWidth="260" minWidth="260" />
+                    onAction="#onReturnMainMenuClicked"
+                    styleClass="btn,btn-secondary,btn-panel" />
             </VBox>
         </HBox>
     </center>

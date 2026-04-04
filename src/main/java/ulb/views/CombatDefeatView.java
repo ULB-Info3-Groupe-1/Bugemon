@@ -1,8 +1,6 @@
 package ulb.views;
 
-import java.io.IOException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
 /**
  * View for the combat defeat screen.
@@ -14,19 +12,9 @@ import javafx.scene.control.Button;
  */
 public class CombatDefeatView extends View {
     private final String FXML_PATH = "/fxml/CombatDefeat.fxml";
-    @FXML
-    private Button retryButton;
-    @FXML
-    private Button backToMainMenuButton;
+    private Listener listener;
 
-    Listener listener;
-
-    /**
-     * Loads the defeat-screen FXML layout and wires the retry and back-to-menu buttons.
-     *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
-     */
+    /** Creates the defeat screen view. */
     public CombatDefeatView() {
     }
 
@@ -37,6 +25,16 @@ public class CombatDefeatView extends View {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    @FXML
+    private void onRetryClicked() {
+        this.listener.onRetry();
+    }
+
+    @FXML
+    private void onBackToMainMenuClicked() {
+        this.listener.onBackToMainMenu();
     }
 
     @Override

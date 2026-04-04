@@ -1,6 +1,0 @@
-/* ── Level up screen ───────────────────────────────────── */
-.level-up-title,
-.level-up-subtitle {
-    -fx-font-weight: bold;
-    -fx-text-fill: color-gold;
-}

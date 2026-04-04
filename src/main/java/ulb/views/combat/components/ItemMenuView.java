@@ -38,7 +38,7 @@ public class ItemMenuView extends ComponentView {
         }
 
         Button back = new Button("Retour");
-        back.getStyleClass().add("action-button");
+        back.getStyleClass().addAll("btn", "btn-secondary");
         back.setMinWidth(MIN_BUTTON_WIDTH);
         back.setOnAction(e -> {
             if (this.onBack != null) {
@@ -50,7 +50,7 @@ public class ItemMenuView extends ComponentView {
 
     private Button createItemButton(Item item, int quantity) {
         Button btn = new Button(item.name() + " ×" + quantity);
-        btn.getStyleClass().add("switch-menu-button");
+        btn.getStyleClass().addAll("btn", "btn-warning");
         btn.setMinWidth(MIN_BUTTON_WIDTH);
         btn.setOnAction(e -> {
             if (this.onItemSelected != null) {

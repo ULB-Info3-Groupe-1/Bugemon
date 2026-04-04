@@ -20,7 +20,6 @@ public class BugemonTeamView extends ComponentView {
 
     public BugemonTeamView() {
         super(FXML_PATH);
-        this.getStylesheets().add(this.getClass().getResource("/css/bugemon-team.css").toExternalForm());
     }
 
     /** Clears and repopulates the grid with the alive members of the given team. */

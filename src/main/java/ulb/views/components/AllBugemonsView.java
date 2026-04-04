@@ -21,7 +21,6 @@ public class AllBugemonsView extends ComponentView {
 
     public AllBugemonsView() {
         super(FXML_PATH);
-        this.getStylesheets().add(this.getClass().getResource("/css/all-bugemons.css").toExternalForm());
     }
 
     /** Sets the predicate used to determine whether a given Bugemon should appear selected. */
