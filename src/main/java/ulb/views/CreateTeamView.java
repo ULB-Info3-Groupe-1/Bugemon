@@ -4,10 +4,8 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.text.Text;
 
 import ulb.models.bugemon.Bugemon;
@@ -25,10 +23,6 @@ import ulb.views.components.BugemonTeamView;
  */
 public class CreateTeamView extends View {
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
-    /**
-     * Number of team slots always visible in the list; matches {@code size-team-list-height / size-team-slot-height}.
-     */
-    private static final int VISIBLE_TEAM_SLOTS = 3;
 
     private final String fxmlPath = "/fxml/CreateTeam.fxml";
 
@@ -54,28 +48,6 @@ public class CreateTeamView extends View {
             if (this.listener != null) {
                 this.listener.onBugemonSelected(b);
             }
-        });
-        this.teamListView.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null) {
-                this.initTeamListScrollBehavior();
-            }
-        });
-    }
-
-    private void initTeamListScrollBehavior() {
-        ScrollBar sb = (ScrollBar) this.teamListView.lookup(".scroll-bar:vertical");
-        if (sb == null) {
-            return;
-        }
-        this.teamListView.addEventFilter(ScrollEvent.SCROLL, event -> {
-            int items = this.teamListView.getItems().size();
-            int scrollable = items - VISIBLE_TEAM_SLOTS;
-            if (scrollable > 0) {
-                double step = 1.0 / scrollable;
-                double newVal = sb.getValue() + (event.getDeltaY() < 0 ? step : -step);
-                sb.setValue(Math.max(0.0, Math.min(1.0, newVal)));
-            }
-            event.consume();
         });
     }
 

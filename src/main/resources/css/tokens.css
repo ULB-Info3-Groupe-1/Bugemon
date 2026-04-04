@@ -9,11 +9,11 @@
    ══════════════════════════════════════════════════════════════ */
 .root {
     -fx-font-family: 'Pixels';
-    -fx-font-size: 20px;
+    -fx-font-size: 16px;
 
     /* ── Color palette ──────────────────────────────────────── */
     color-primary: #4682B4;
-    color-primary-hover: #b8b8b8;
+    color-primary-hover: #336699;
 
     color-danger: #c0392b;
     color-danger-hover: #a93226;
@@ -49,8 +49,8 @@
     color-pyro-hover: #a93226;
     color-aqua: #2980b9;
     color-aqua-hover: #1f6691;
-    color-litho: #8B7355;
-    color-litho-hover: #6d5a43;
+    color-litho: #95a5a6;
+    color-litho-hover: #717d7e;
 
     color-xp: #8e44ad;
 
@@ -59,18 +59,9 @@
     size-hp-bar-width: 200;
     size-xp-bar-height: 6;
     size-xp-bar-width: 160;
-    size-btn-height: 65;
-    size-btn-wide: 380;
-    size-btn-outcome: 256;
-    size-btn-panel: 260;
-    size-action-menu-width: 500;
-    size-team-slot-height: 30;
-    /* one list cell: 18px font + 6+6 padding */
-    size-team-list-height: 90;
-    /* 3 visible slots: 3 × size-team-slot-height */
-    size-bugemon-card: 96;
+    size-bugemon-card: 80;
     /* matches .bugemon-card-pane min/max-height */
-    size-bugemon-cell-width: 112;
+    size-bugemon-cell-width: 96;
     /* card width in the all-bugemons grid (wider than image for label room) */
     size-bugemon-grid-vgap: 10;
     /* matches .all-bugemons -fx-vgap */

@@ -17,14 +17,14 @@
     fx:controller="ulb.views.CreateTeamView" prefWidth="900"
     prefHeight="600">
     <padding>
-        <Insets top="24" right="32" bottom="24" left="32" />
+        <Insets top="8" right="20" bottom="8" left="20" />
     </padding>
 
     <!-- Title -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="25">
             <BorderPane.margin>
-                <Insets top="20" left="30" right="30" bottom="15" />
+                <Insets top="8" left="16" right="16" bottom="8" />
             </BorderPane.margin>
 
             <Label text="Sélection de ton équipe"
@@ -44,7 +44,7 @@
     <center>
         <HBox spacing="24" alignment="TOP_LEFT">
             <HBox.margin>
-                <Insets left="24" top="8" right="24" bottom="8" />
+                <Insets left="16" top="4" right="16" bottom="4" />
             </HBox.margin>
 
             <VBox spacing="10">
@@ -57,25 +57,32 @@
 
             <VBox spacing="10" alignment="BOTTOM_RIGHT" HBox.hgrow="ALWAYS">
                 <VBox.margin>
-                    <Insets top="26" />
+                    <Insets top="8" />
                 </VBox.margin>
                 <Label text="Mes équipes" styleClass="section-label" />
                 <ListView fx:id="teamListView"
-                    styleClass="team-list-view,btn-panel"
+                    styleClass="team-list-view"
+                    minWidth="220" maxWidth="220"
+                    prefHeight="120" minHeight="60"
                     onMouseClicked="#onTeamSelected" />
 
                 <Button text="Sauvegarder" onAction="#onSaveClicked"
-                    styleClass="btn,btn-success,btn-panel" />
+                    styleClass="btn,btn-success"
+                    minWidth="220" maxWidth="220" />
                 <Button text="Renommer" onAction="#onRenameClicked"
-                    styleClass="btn,btn-success,btn-panel" />
+                    styleClass="btn,btn-success"
+                    minWidth="220" maxWidth="220" />
                 <Button text="Nouvelle équipe +"
                     onAction="#onAddNewTeamClicked"
-                    styleClass="btn,btn-success,btn-panel" />
+                    styleClass="btn,btn-success"
+                    minWidth="220" maxWidth="220" />
                 <Button text="Supprimer" onAction="#onDeleteClicked"
-                    styleClass="btn,btn-danger,btn-panel" />
+                    styleClass="btn,btn-danger"
+                    minWidth="220" maxWidth="220" />
                 <Button text="Retour au menu principal"
                     onAction="#onReturnMainMenuClicked"
-                    styleClass="btn,btn-secondary,btn-panel" />
+                    styleClass="btn,btn-secondary"
+                    minWidth="220" maxWidth="220" />
             </VBox>
         </HBox>
     </center>
@@ -84,7 +91,7 @@
     <bottom>
         <VBox spacing="8">
             <VBox.margin>
-                <Insets left="20" right="20" bottom="16" top="4" />
+                <Insets left="16" right="16" bottom="8" top="4" />
             </VBox.margin>
             <Label text="Bugémons disponibles" styleClass="section-label" />
             <AllBugemonsView fx:id="allBugemonsGridView" />
