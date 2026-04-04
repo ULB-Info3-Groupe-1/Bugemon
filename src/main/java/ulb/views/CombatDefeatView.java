@@ -24,7 +24,8 @@ public class CombatDefeatView extends View {
     /**
      * Loads the defeat-screen FXML layout and wires the retry and back-to-menu buttons.
      *
-     * @throws IOException if the FXML resource cannot be loaded.
+     * @throws IOException
+     *             if the FXML resource cannot be loaded.
      */
     public CombatDefeatView() {
     }

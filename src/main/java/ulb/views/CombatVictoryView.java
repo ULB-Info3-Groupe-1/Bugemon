@@ -23,7 +23,8 @@ public class CombatVictoryView extends View {
     /**
      * Loads the victory-screen FXML layout and wires the continue button.
      *
-     * @throws IOException if the FXML resource cannot be loaded.
+     * @throws IOException
+     *             if the FXML resource cannot be loaded.
      */
     public CombatVictoryView() {
     }
