@@ -9,8 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -58,7 +60,7 @@ import ulb.models.bugemon.effect.EffectTarget;
  * @see ulb.models.bugemon.Attack
  */
 public class Parser {
-    private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
     // Constants for the paths to the JSON data files within the resources directory
     private static final String JSON_ATTACK_PATH = "/json/attaques.json";
@@ -81,6 +83,8 @@ public class Parser {
      * </p>
      */
     public void parse() {
+        LOG.info("Parsing data");
+
         InputStream attacksStream;
         InputStream bugemonsStream;
         InputStream itemsStream;
@@ -92,7 +96,7 @@ public class Parser {
                 throw new IOException("JSON files not found in resources: ");
             }
         } catch (IOException e) {
-            LOGGER.severe("Error loading JSON files: " + e.getMessage());
+            LOG.error("Error loading JSON files: {}", e.getMessage());
             return;
         }
 
@@ -102,6 +106,8 @@ public class Parser {
         parseAttacks(attacksReader);
         parseBugemons(bugemonsReader);
         parseItemsAndInventory(itemsReader);
+
+        LOG.info("Finished parsing data");
     }
 
     public final List<Bugemon> getBugemons() {
@@ -173,6 +179,7 @@ public class Parser {
     }
 
     private static void parseAttacks(Reader reader) {
+        LOG.debug("Parsing Attacks");
         Gson gson = new GsonBuilder().registerTypeAdapter(BugemonType.class, new TypeDeserializer())
                 .registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
                 .registerTypeAdapter(Effect.class, new EffectDeserializer()).create();
@@ -181,7 +188,7 @@ public class Parser {
         try {
             reader.close();
         } catch (IOException e) {
-            LOGGER.severe("Error when parsing attacks: " + e.getMessage());
+            LOG.error("Error when parsing attacks: {}", e.getMessage());
         }
 
         JsonArray attacksArray = root.getAsJsonArray("attaques");
@@ -195,6 +202,7 @@ public class Parser {
     }
 
     private static void parseBugemons(Reader reader) {
+        LOG.debug("Parsing Bugemon");
         Gson gson = new GsonBuilder().registerTypeAdapter(Bugemon.class, new BugemonDeserializer(attacks))
                 .registerTypeAdapter(BugemonType.class, new TypeDeserializer()).create();
 
@@ -202,7 +210,7 @@ public class Parser {
         try {
             reader.close();
         } catch (IOException e) {
-            LOGGER.severe("Error when parsing bugemons: " + e.getMessage());
+            LOG.error("Error when parsing bugemons:  {}", e.getMessage());
         }
 
         JsonArray bugemonsArray = root.getAsJsonArray("bugemons");
@@ -214,6 +222,7 @@ public class Parser {
     }
 
     static void parseItemsAndInventory(Reader reader) {
+        LOG.debug("Parsing Items and inventory");
         Gson gson = new GsonBuilder().registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
                 .registerTypeAdapter(Effect.class, new EffectDeserializer()).create();
 
@@ -243,7 +252,7 @@ public class Parser {
             }
             reader.close();
         } catch (Exception e) {
-            LOGGER.severe("Error when parsing Items and inventory: " + e.getMessage());
+            LOG.error("Error when parsing Items and inventory: {}", e.getMessage());
         }
     }
 }

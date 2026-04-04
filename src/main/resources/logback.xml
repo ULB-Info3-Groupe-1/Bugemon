@@ -7,9 +7,11 @@
   Tip: set level="DEBUG" on a logger without recompiling.
 -->
 <configuration scan="true" scanPeriod="60 seconds">
+  <conversionRule conversionWord="colorLevel" class="ulb.utils.LevelColorConverter"/>
+
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} %colorLevel(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
     </encoder>
   </appender>
 
@@ -25,8 +27,7 @@
     </encoder>
   </appender>
 
-  <logger name="ulb.models" level="DEBUG" />
-  <logger name="ulb.utils"  level="DEBUG" />
+  <logger name="ulb" level="DEBUG" />
 
   <root level="WARN">
     <appender-ref ref="CONSOLE" />

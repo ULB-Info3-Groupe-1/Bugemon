@@ -24,7 +24,7 @@ import ulb.services.CombatService;
  * to change.
  */
 public class Combat {
-    private static final Logger log = LoggerFactory.getLogger(Combat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
 
     private final Trainer allyTrainer;
     private final Trainer adversaryTrainer;
@@ -37,7 +37,7 @@ public class Combat {
     public Combat(Trainer allyTrainer, Trainer adversaryTrainer) {
         this.allyTrainer = allyTrainer;
         this.adversaryTrainer = adversaryTrainer;
-        log.info("Combat started — ally: {} vs adversary: {}", allyTrainer.getCurrentBugemonName(),
+        LOG.info("Combat started — ally: {} vs adversary: {}", allyTrainer.getCurrentBugemonName(),
                 adversaryTrainer.getCurrentBugemonName());
     }
 
@@ -49,7 +49,7 @@ public class Combat {
      * initiative order → increment turn counter.
      */
     public TurnResult turn() {
-        log.debug("Turn {} — ally: {} ({}hp) vs adversary: {} ({}hp)", this.turn,
+        LOG.debug("Turn {} — ally: {} ({}hp) vs adversary: {} ({}hp)", this.turn,
                 this.allyTrainer.getCurrentBugemonName(), this.allyTrainer.getCurrentBugemonHp(),
                 this.adversaryTrainer.getCurrentBugemonName(), this.adversaryTrainer.getCurrentBugemonHp());
 
@@ -68,7 +68,7 @@ public class Combat {
         }
 
         if (this.checkForForfeit(allyAction, adversaryAction) || !this.allyTrainer.isCurrentBugemonAlive()) {
-            log.info("Turn {} ended by forfeit or KO", this.turn);
+            LOG.info("Turn {} ended by forfeit or KO", this.turn);
             this.lastTurnResult = this.emptyResult();
             return this.lastTurnResult;
         }
@@ -87,12 +87,12 @@ public class Combat {
     /** @return empty if combat is still ongoing */
     public Optional<Trainer> getWinner() {
         if (this.allyTrainer.isDefeated()) {
-            log.info("Combat finished after {} turn(s) — adversary wins", this.turn);
+            LOG.info("Combat finished after {} turn(s) — adversary wins", this.turn);
             return Optional.of(this.adversaryTrainer);
         }
 
         if (this.adversaryTrainer.isDefeated()) {
-            log.info("Combat finished after {} turn(s) — ally wins", this.turn);
+            LOG.info("Combat finished after {} turn(s) — ally wins", this.turn);
             return Optional.of(this.allyTrainer);
         }
 
@@ -133,7 +133,7 @@ public class Combat {
     }
 
     private void applyPassiveAction(Trainer trainer, TurnAction action) {
-        log.debug("Passive action — {}: {}", trainer.getCurrentBugemonName(), action);
+        LOG.debug("Passive action — {}: {}", trainer.getCurrentBugemonName(), action);
         trainer.applyPassiveAction(action);
     }
 
@@ -195,11 +195,11 @@ public class Combat {
 
         Efficiency efficiency = CombatService.compareBugemonType(attack.type(), defender.getCurrentBugemonType());
 
-        log.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
+        LOG.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
                 defender.getCurrentBugemonName(), damage, efficiency);
 
         if (!defender.isCurrentBugemonAlive() && !defender.isDefeated()) {
-            log.info("{} fainted", defender.getCurrentBugemonName());
+            LOG.info("{} fainted", defender.getCurrentBugemonName());
             defender.reactToKo();
         }
         return new TurnResult.AttackResult(attacker, defender, Optional.of(attack), efficiency);
