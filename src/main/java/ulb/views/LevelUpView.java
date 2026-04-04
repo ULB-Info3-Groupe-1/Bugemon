@@ -1,5 +1,6 @@
 package ulb.views;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 import javafx.fxml.FXML;
@@ -86,7 +87,8 @@ public class LevelUpView extends View {
         LevelUpDTO levelUp = this.session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
-        this.bugemonImage.setImage(new Image(bugemon.getSpriteURL(), 256, 256, true, false));
+        File file = new File("resources/sprites/" + bugemon.getSpriteURL());
+        this.bugemonImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau " + bugemon.getLevel() + " !");
 
         this.choice1Button.setText(levelUp.get(0).toString());

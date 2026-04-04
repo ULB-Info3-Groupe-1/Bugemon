@@ -1,5 +1,6 @@
 package ulb.views.combat;
 
+import java.io.File;
 import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -137,14 +138,16 @@ public abstract class CombatView extends View {
     // ── Bugemon display ───────────────────────────────────────────────────────
 
     protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
+        File file = new File("resources/sprites/" + trainerBugemon.getSpriteURL());
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
-        this.bugemonTrainerImage.setImage(new Image(trainerBugemon.getSpriteURL(), 256, 256, true, false));
+        this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.makeTrainerBugemonReappear();
     }
 
     protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
+        File file = new File("resources/sprites/" + opponentBugemon.getSpriteURL());
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
-        this.bugemonOpponentImage.setImage(new Image(opponentBugemon.getSpriteURL(), 256, 256, true, false));
+        this.bugemonOpponentImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.makeOpponentBugemonReappear();
     }
 
