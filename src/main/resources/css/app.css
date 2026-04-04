@@ -1,0 +1,343 @@
+/* ══════════════════════════════════════════════════════════════
+   app.css — all visual styles, loaded at scene level in Main.java
+   Color and layout tokens are in tokens.css (loaded first).
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 10 16;
+}
+
+.btn-wide    { -fx-pref-width: size-btn-wide; }
+.btn-lg      { -fx-pref-height: size-btn-height; }
+.btn-outcome { -fx-pref-width: size-btn-outcome; -fx-pref-height: size-btn-height; }
+.btn-panel   { -fx-min-width: size-btn-panel; -fx-max-width: size-btn-panel; }
+
+.btn-primary { -fx-background-color: color-primary; }
+.btn-primary:hover,
+.btn-primary:active  { -fx-background-color: color-primary-hover; }
+
+.btn-success { -fx-background-color: color-success; }
+.btn-success:hover,
+.btn-success:active  { -fx-background-color: color-success-hover; }
+.btn-success:disabled {
+    -fx-background-color: #a0c8b0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.btn-danger { -fx-background-color: color-danger; }
+.btn-danger:hover,
+.btn-danger:active   { -fx-background-color: color-danger-hover; }
+.btn-danger:disabled {
+    -fx-background-color: #d9a19c;
+    -fx-text-fill: #f3e6e4;
+}
+
+.btn-warning { -fx-background-color: color-warning; }
+.btn-warning:hover,
+.btn-warning:active  { -fx-background-color: color-warning-hover; }
+
+.btn-secondary { -fx-background-color: color-secondary; }
+.btn-secondary:hover,
+.btn-secondary:active { -fx-background-color: color-secondary-hover; }
+
+.btn-action-blue { -fx-background-color: color-action-blue; }
+.btn-action-blue:hover,
+.btn-action-blue:active { -fx-background-color: color-action-blue-hover; }
+
+/* ── Attack-type buttons ─────────────────────────────────── */
+.attack-FLORA { -fx-background-color: color-flora; }
+.attack-FLORA:hover,
+.attack-FLORA:active { -fx-background-color: color-flora-hover; }
+
+.attack-PYRO  { -fx-background-color: color-pyro; }
+.attack-PYRO:hover,
+.attack-PYRO:active  { -fx-background-color: color-pyro-hover; }
+
+.attack-AQUA  { -fx-background-color: color-aqua; }
+.attack-AQUA:hover,
+.attack-AQUA:active  { -fx-background-color: color-aqua-hover; }
+
+.attack-LITHO { -fx-background-color: color-litho; }
+.attack-LITHO:hover,
+.attack-LITHO:active { -fx-background-color: color-litho-hover; }
+
+/* ── Type-coloured labels ────────────────────────────────── */
+.FLORA { -fx-text-fill: color-flora;  -fx-font-weight: bold; }
+.PYRO  { -fx-text-fill: color-pyro;   -fx-font-weight: bold; }
+.AQUA  { -fx-text-fill: color-aqua;   -fx-font-weight: bold; }
+.LITHO { -fx-text-fill: color-litho;  -fx-font-weight: bold; }
+
+/* ── HP progress bar ─────────────────────────────────────── */
+.hp-bar {
+    -fx-pref-width: 200;
+    -fx-pref-height: size-hp-bar-height;
+}
+
+.progress-bar > .track {
+    -fx-background-color: color-hp-track;
+    -fx-background-radius: 4;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: color-hp-bar;
+    -fx-background-radius: 4;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+.scroll-bar {
+    -fx-background-color: color-surface;
+    -fx-background-radius: 0;
+}
+
+.scroll-bar .track {
+    -fx-background-color: color-surface;
+    -fx-background-radius: 0;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 1;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: color-secondary;
+    -fx-background-radius: 0;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: color-secondary-hover;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: color-secondary;
+    -fx-background-radius: 0;
+    -fx-padding: 5;
+}
+
+.scroll-bar .increment-button:hover,
+.scroll-bar .decrement-button:hover {
+    -fx-background-color: color-secondary-hover;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: white;
+}
+
+/* ── Bugemon grid cell ───────────────────────────────────── */
+.bugemon-card-pane {
+    -fx-min-width: 96;
+    -fx-max-width: 96;
+    -fx-min-height: 96;
+    -fx-max-height: 96;
+}
+
+.bugemon-cell {
+    -fx-border-color: rgb(88, 88, 88);
+    -fx-border-width: 2;
+    -fx-border-radius: 4;
+    -fx-padding: 3;
+}
+
+.bugemon-cell-name {
+    -fx-font-weight: bold;
+}
+
+.bugemon-cell-selected {
+    -fx-border-color: red;
+    -fx-border-width: 3;
+    -fx-border-radius: 4;
+    -fx-padding: 2;
+    -fx-background-color: lightcoral;
+    -fx-background-radius: 4;
+}
+
+.bugemon-image-selected {
+    -fx-effect: dropshadow(three-pass-box, red, 5, 0.9, 0, 0);
+}
+
+/* ── Bugemon info panel ──────────────────────────────────── */
+.bugemon-name {
+    -fx-font-weight: bold;
+    -fx-font-size: 32px;
+    -fx-text-fill: color-text-dark;
+}
+
+.bugemon-type {
+    -fx-font-style: italic;
+    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
+}
+
+.hp-label {
+    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
+}
+
+/* ── Bugemon team grid ───────────────────────────────────── */
+.bugemon-team-grid {
+    -fx-padding: 10;
+}
+
+/* ── All bugemons scroll panel ───────────────────────────── */
+.all-bugemons {
+    -fx-padding: 10 30 10 10;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+.all-bugemons-scroll {
+    -fx-pref-height: 275;
+}
+
+/* ── Action menu panel ───────────────────────────────────── */
+.action-menu {
+    -fx-background-color: color-surface;
+    -fx-padding: 16;
+    -fx-border-color: color-surface-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-pref-width: size-action-menu-width;
+}
+
+/* ── Dialog zone ─────────────────────────────────────────── */
+.dialog-zone {
+    -fx-background-color: color-surface-dialog;
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-border-color: color-surface-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 2;
+    -fx-alignment: center;
+    -fx-pref-width: 400;
+    -fx-max-width: 400;
+}
+
+.dialog-text {
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.additional-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: color-text-muted;
+}
+
+.next-button {
+    -fx-background-color: color-success;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-border-color: color-success-hover;
+    -fx-text-fill: color-white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* ── Main menu ───────────────────────────────────────────── */
+.main-menu {
+    -fx-background-color: transparent;
+    -fx-padding: 40 40 60 40;
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+.main-title {
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+/* ── Create team ─────────────────────────────────────────── */
+.create-team-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.section-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.team-input-label {
+    -fx-text-fill: color-text-dark;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+.text-field {
+    -fx-background-color: color-white;
+    -fx-text-fill: color-text-dark;
+    -fx-prompt-text-fill: color-text-light;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+}
+
+.text-field:focus {
+    -fx-border-color: color-success;
+    -fx-background-color: #f4fff9;
+}
+
+.team-list-view {
+    -fx-background-color: color-surface-border, color-white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 4, 3;
+}
+
+.team-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: color-text-dark;
+    -fx-padding: 6 10;
+    -fx-font-size: 18px;
+}
+
+.team-list-view .list-cell:selected {
+    -fx-background-color: color-primary;
+    -fx-text-fill: white;
+}
+
+.team-list-view .list-cell:hover:!selected {
+    -fx-background-color: color-surface;
+}
+
+/* ── Combat ──────────────────────────────────────────────── */
+.combat-team-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+/* ── Combat victory ──────────────────────────────────────── */
+.victory-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+}
+
+/* ── Combat defeat ───────────────────────────────────────── */
+.defeat-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-danger;
+}
+
+/* ── Level up ────────────────────────────────────────────── */
+.level-up-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+}
+
+.level-up-subtitle {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+}

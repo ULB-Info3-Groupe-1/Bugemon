@@ -14,7 +14,7 @@ public class ViewLoader {
             loader.setControllerFactory(cls -> viewClass.get());
             Parent root = loader.load();
             V view = loader.getController();
-            view.initScene(root);
+            view.initRoot(root);
             return view;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load FXML: " + fxmlPath, e);

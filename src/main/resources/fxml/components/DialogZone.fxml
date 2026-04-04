@@ -9,10 +9,9 @@
 <?import javafx.scene.control.Button?>
 
 <fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
-    spacing="20" alignment="CENTER" stylesheets="@../css/dialog-zone.css">
+    spacing="20" alignment="CENTER">
 
-    <VBox styleClass="dialog-zone" spacing="20" prefWidth="400"
-        maxWidth="400" alignment="CENTER">
+    <VBox styleClass="dialog-zone" spacing="20" alignment="CENTER">
         <TextFlow styleClass="dialog-text">
             <Text fx:id="dialogText" text="Dialog text goes here" />
         </TextFlow>

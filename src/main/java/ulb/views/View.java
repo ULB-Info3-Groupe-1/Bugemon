@@ -1,22 +1,25 @@
 package ulb.views;
 
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
-/** Base class for all JavaFX views. Loads an FXML layout and manages its associated scene. */
+/**
+ * Base class for all JavaFX views.
+ *
+ * <p>
+ * Each view owns its root {@link Parent} node loaded from FXML. Navigation is performed by swapping the root of the
+ * application's single {@link javafx.scene.Scene} via {@link #show(Stage)}, which avoids the resize flash that occurs
+ * when replacing the scene itself.
+ * </p>
+ */
 public abstract class View {
-    protected Scene scene;
+    private Parent root;
 
-    public void initScene(Parent root) {
-        this.scene = new Scene(root);
-        this.scene.getStylesheets().add(View.class.getResource("/css/theme.css").toExternalForm());
-        Region region = (Region) root;
-        region.prefWidthProperty().bind(this.scene.widthProperty());
-        region.prefHeightProperty().bind(this.scene.heightProperty());
+    /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
+    public void initRoot(Parent root) {
+        this.root = root;
     }
 
     public abstract String getPath();
@@ -31,8 +34,9 @@ public abstract class View {
      */
     public abstract void refresh();
 
+    /** Replaces the scene's root with this view's root, keeping the stage size stable. */
     public void show(Stage stage) {
-        stage.setScene(this.scene);
+        stage.getScene().setRoot(this.root);
         stage.show();
     }
 

@@ -9,8 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.LevelUpView"
-    stylesheets="@../css/level-up.css">
+    fx:controller="ulb.views.LevelUpView">
 
     <center>
         <VBox alignment="CENTER" spacing="20">
@@ -18,10 +17,9 @@
                 <Insets top="40" right="40" bottom="20" left="40" />
             </padding>
 
-            <Label fx:id="levelUpText" styleClass="level-up-title"
-                style="-fx-font-size: 48px;" />
+            <Label fx:id="levelUpText" styleClass="level-up-title" />
             <Label text="Choisis ton amélioration"
-                styleClass="level-up-subtitle" style="-fx-font-size: 32px;" />
+                styleClass="level-up-subtitle" />
             <ImageView fx:id="bugemonImage" fitHeight="200"
                 preserveRatio="true" />
         </VBox>
@@ -32,12 +30,12 @@
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20" />
             </padding>
-            <Button fx:id="choice1Button" prefHeight="65.0"
-                prefWidth="380.0" styleClass="btn,btn-success" />
-            <Button fx:id="choice2Button" prefHeight="65.0"
-                prefWidth="380.0" styleClass="btn,btn-warning" />
-            <Button fx:id="choice3Button" prefHeight="65.0"
-                prefWidth="380.0" styleClass="btn,btn-primary" />
+            <Button fx:id="choice1Button"
+                styleClass="btn,btn-success,btn-wide,btn-lg" />
+            <Button fx:id="choice2Button"
+                styleClass="btn,btn-warning,btn-wide,btn-lg" />
+            <Button fx:id="choice3Button"
+                styleClass="btn,btn-primary,btn-wide,btn-lg" />
         </HBox>
     </bottom>
 

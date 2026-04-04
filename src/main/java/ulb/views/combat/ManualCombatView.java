@@ -53,7 +53,6 @@ public class ManualCombatView extends CombatView {
         this.player = newPlayer;
         this.opponent = newOpponent;
         this.combat = newCombat;
-        this.attackMenu.setOpponent(this.opponent);
     }
 
     @Override
@@ -126,7 +125,7 @@ public class ManualCombatView extends CombatView {
 
     private void showAttackMenu() {
         List<Attack> attacks = this.player.getCurrentBugemonAttackList();
-        this.attackMenu.show(attacks);
+        this.attackMenu.show(attacks, this.opponent);
         this.setActionMenuContent(this.attackMenu);
     }
 

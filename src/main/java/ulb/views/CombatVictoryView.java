@@ -1,8 +1,6 @@
 package ulb.views;
 
-import java.io.IOException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
 /**
  * View for the combat victory screen.
@@ -15,17 +13,9 @@ import javafx.scene.control.Button;
 public class CombatVictoryView extends View {
     private final String FXML_PATH = "/fxml/CombatVictory.fxml";
 
-    @FXML
-    private Button continueButton;
+    private Listener listener;
 
-    Listener listener;
-
-    /**
-     * Loads the victory-screen FXML layout and wires the continue button.
-     *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
-     */
+    /** Creates the victory screen view. */
     public CombatVictoryView() {
     }
 
@@ -36,6 +26,11 @@ public class CombatVictoryView extends View {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    @FXML
+    private void onContinueClicked() {
+        this.listener.onContinue();
     }
 
     @Override

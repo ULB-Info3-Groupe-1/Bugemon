@@ -1,9 +1,0 @@
-/* ── Action menu panel ─────────────────────────────────── */
-.action-menu {
-    -fx-background-color: color-surface;
-    -fx-padding: 16;
-    -fx-border-color: color-surface-border;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-border-width: 1;
-}
