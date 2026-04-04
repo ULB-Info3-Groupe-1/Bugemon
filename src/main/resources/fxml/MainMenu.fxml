@@ -11,8 +11,8 @@
     <Label text="BUGÉMON" styleClass="main-title" />
 
     <Button fx:id="createTeamButton" onAction="#onCreateTeamClicked"
-        text="Gérer mes équipes" styleClass="btn,btn-primary"
-        minWidth="240" maxWidth="240" />
+        text="Gérer mes équipes" styleClass="btn,btn-primary" minWidth="240"
+        maxWidth="240" />
     <Button fx:id="startAutomaticCombatButton"
         onAction="#onStartAutomaticCombatClicked"
         text="Lancer combat automatique" styleClass="btn,btn-primary"
@@ -21,10 +21,10 @@
         onAction="#onStartManualCombatClicked" text="Lancer combat manuel"
         styleClass="btn,btn-primary" minWidth="240" maxWidth="240" />
     <Button fx:id="noTowerButton" onAction="#onNoTowerClicked"
-        text="Lancer la NO Tower" styleClass="btn,btn-primary"
-        minWidth="240" maxWidth="240" />
+        text="Lancer la NO Tower" styleClass="btn,btn-primary" minWidth="240"
+        maxWidth="240" />
     <Button fx:id="quitButton" onAction="#onQuitClicked"
-        text="Quitter" styleClass="btn,btn-danger"
-        minWidth="240" maxWidth="240" />
+        text="Quitter" styleClass="btn,btn-danger" minWidth="240"
+        maxWidth="240" />
 
 </VBox>
