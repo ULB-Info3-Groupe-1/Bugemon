@@ -35,9 +35,9 @@ import ulb.utils.test.TestUtilsBugemons;
 public class TestCombatService {
     @Test
     public void testPriority() {
-        Bugemon slowBugemon = new BugemonBuilder().id(1).initiative(0).build();
+        Bugemon slowBugemon = new BugemonBuilder().name("1").initiative(0).build();
 
-        Bugemon fastBugemon = new BugemonBuilder().id(2).initiative(1000).build();
+        Bugemon fastBugemon = new BugemonBuilder().name("2").initiative(1000).build();
 
         BugemonTeam slowTeam = new BugemonTeam();
         slowTeam.add(slowBugemon);
@@ -55,9 +55,9 @@ public class TestCombatService {
     public void testDamageApplied() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker = new BugemonBuilder().id(1).attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder().id(2).attack(20).defense(20).addAttack(attack).type(BugemonType.PYRO)
-                .build();
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack)
+                .type(BugemonType.PYRO).build();
 
         double expectedDamage = attack.power() * ((100.0 + striker.getAttack()) / 100.0)
                 * (100.0 / (100.0 + defender.getDefense()))
@@ -72,13 +72,14 @@ public class TestCombatService {
     public void testDamageMultiplicatorHigh() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker = new BugemonBuilder().id(1).attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder().id(2).attack(20).defense(20).addAttack(attack).type(BugemonType.PYRO)
-                .build();
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack)
+                .type(BugemonType.PYRO).build();
 
         double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new BugemonBuilder().id(2).attack(20).defense(20).addAttack(attack).type(BugemonType.AQUA).build();
+        defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack).type(BugemonType.AQUA)
+                .build();
 
         double highDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
@@ -89,13 +90,14 @@ public class TestCombatService {
     public void testDamageMultiplicatorLow() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker = new BugemonBuilder().id(1).attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder().id(2).attack(20).defense(20).addAttack(attack).type(BugemonType.PYRO)
-                .build();
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).addAttack(attack).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack)
+                .type(BugemonType.PYRO).build();
 
         double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new BugemonBuilder().id(2).attack(20).defense(20).addAttack(attack).type(BugemonType.LITHO).build();
+        defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack).type(BugemonType.LITHO)
+                .build();
 
         double lowDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
@@ -137,7 +139,7 @@ public class TestCombatService {
     public void testRandomTeamNumber() {
         List<Bugemon> bugemons = new ArrayList<>();
         for (int i = 1; i <= 6; i++) {
-            bugemons.add(TestUtilsBugemons.createDefaultBugemon(i));
+            bugemons.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
         }
         BugemonTeam teamOfSix = CombatService.createRandomTeam(bugemons, 6);
         assertEquals(6, teamOfSix.size());

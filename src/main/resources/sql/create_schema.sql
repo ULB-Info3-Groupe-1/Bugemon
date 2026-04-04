@@ -21,8 +21,7 @@ CREATE TABLE IF NOT EXISTS "attack_effects" (
 );
 
 CREATE TABLE IF NOT EXISTS "bugemons" (
-  "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "name" varchar,
+  "name" varchar PRIMARY KEY,
   "type" varchar,
   "sprite" varchar,
   "base_defense" integer,
@@ -42,14 +41,14 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE TABLE IF NOT EXISTS "user_bugemons" (
   "user_id" integer,
-  "bugemon_id" integer,
+  "bugemon_name" varchar,
   "current_defense" integer,
   "current_attack" integer,
   "current_initiative" integer,
   "current_max_hp" integer,
   "current_xp" integer DEFAULT 0,
   "current_level" integer DEFAULT 1,
-  PRIMARY KEY ("user_id", "bugemon_id")
+  PRIMARY KEY ("user_id", "bugemon_name")
 );
 
 CREATE TABLE IF NOT EXISTS "teams" (
@@ -61,7 +60,7 @@ CREATE TABLE IF NOT EXISTS "teams" (
 CREATE TABLE IF NOT EXISTS "team_members" (
   "user_id" integer,
   "team_name" varchar,
-  "bugemon_id" integer,
+  "bugemon_name" varchar,
   "slot_position" integer,
   PRIMARY KEY ("user_id", "team_name", "slot_position")
 );
@@ -96,17 +95,47 @@ CREATE TABLE IF NOT EXISTS "item_user" (
 )
 
 
-CREATE UNIQUE INDEX ON "team_members" ("user_id", "team_name", "bugemon_id");
+
+CREATE TABLE IF NOT EXISTS "items" (
+  "item_id" varchar,
+  "name" varchar,
+  "description" varchar,
+  "category" varchar,
+  "sprite" varchar, 
+  PRIMARY KEY ("item_id")
+);
+
+CREATE TABLE IF NOT EXISTS "item_effect" (
+  "item_id" varchar REFERENCES "items"("item_id") ON DELETE CASCADE,
+  "type" varchar,
+  "target" varchar,
+  "value" integer,
+  "stat" varchar,
+  "modifier" integer,
+  "duration" integer,
+  PRIMARY KEY ("item_id")
+
+)
+
+CREATE TABLE IF NOT EXISTS "item_user" (
+  "user_id" integer REFERENCES "users"("id") ON DELETE CASCADE, 
+  "item_id" varchar REFERENCES "items"("item_id") ON DELETE CASCADE,
+  "amount" integer,
+  PRIMARY KEY ("user_id", "item_id")
+)
+
+
+CREATE UNIQUE INDEX ON "team_members" ("user_id", "team_name", "bugemon_name");
 
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_1_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_2_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_3_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "attack_effects" ADD FOREIGN KEY ("attack_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("bugemon_id") REFERENCES "bugemons" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("bugemon_name") REFERENCES "bugemons" ("name") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "teams" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "team_name") REFERENCES "teams" ("user_id", "name") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "bugemon_id") REFERENCES "user_bugemons" ("user_id", "bugemon_id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "bugemon_name") REFERENCES "user_bugemons" ("user_id", "bugemon_name") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "item" ADD FOREIGN KEY ("item_id") REFERENCES "item_effect" ("item_id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "item_user" ADD FOREIGN KEY ("user_id") REFERENCES "users"("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "item_user" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_id") DEFERRABLE INITIALLY IMMEDIATE;

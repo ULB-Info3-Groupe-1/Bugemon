@@ -119,12 +119,12 @@ public class PlayerService {
         this.databaseRepository.deleteTeamMembers(this.userId, teamName);
         List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(this.userId);
         for (Bugemon bugemon : team) {
-            if (userBugemonDTOs.stream().noneMatch(dto -> dto.bugemonId() == bugemon.getId())) {
+            if (userBugemonDTOs.stream().noneMatch(dto -> dto.bugemonName().equals(bugemon.getName()))) {
                 this.databaseRepository.saveUserBugemon(
-                        new UserBugemonDTO(this.userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                        new UserBugemonDTO(this.userId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                                 bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
             }
-            TeamMemberDTO memberDTO = new TeamMemberDTO(this.userId, teamName, bugemon.getId(),
+            TeamMemberDTO memberDTO = new TeamMemberDTO(this.userId, teamName, bugemon.getName(),
                     team.getSlotPosition(bugemon));
             this.databaseRepository.addTeamMember(memberDTO);
         }
@@ -142,12 +142,12 @@ public class PlayerService {
         this.databaseRepository.createTeam(this.userId, teamName);
         List<UserBugemonDTO> userBugemonDTOs = this.databaseRepository.getUserBugemons(this.userId);
         for (Bugemon bugemon : team) {
-            if (userBugemonDTOs.stream().noneMatch(dto -> dto.bugemonId() == bugemon.getId())) {
+            if (userBugemonDTOs.stream().noneMatch(dto -> dto.bugemonName().equals(bugemon.getName()))) {
                 this.databaseRepository.saveUserBugemon(
-                        new UserBugemonDTO(this.userId, bugemon.getId(), bugemon.getDefense(), bugemon.getAttack(),
+                        new UserBugemonDTO(this.userId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                                 bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
             }
-            TeamMemberDTO memberDTO = new TeamMemberDTO(this.userId, teamName, bugemon.getId(),
+            TeamMemberDTO memberDTO = new TeamMemberDTO(this.userId, teamName, bugemon.getName(),
                     team.getSlotPosition(bugemon));
             this.databaseRepository.addTeamMember(memberDTO);
         }
@@ -170,9 +170,9 @@ public class PlayerService {
         this.activeTeam.setName(teamName);
 
         for (TeamMemberDTO member : teamMembers) {
-            UserBugemonDTO userBugemon = userBugemons.stream().filter(b -> b.bugemonId() == member.bugemonId())
+            UserBugemonDTO userBugemon = userBugemons.stream().filter(b -> b.bugemonName().equals(member.bugemonName()))
                     .findFirst().orElseThrow(() -> new RuntimeException(
-                            "User Bugemon with ID " + member.bugemonId() + (" not found. Cannot load team.")));
+                            "User Bugemon with ID " + member.bugemonName() + (" not found. Cannot load team.")));
 
             this.activeTeam.add(this.buildUserBugemon(userBugemon));
         }
@@ -191,8 +191,9 @@ public class PlayerService {
             throw new IllegalArgumentException("Cannot save state of a Bugemon that is not in the active team.");
         }
 
-        this.databaseRepository.updateUserBugemon(new UserBugemonDTO(this.userId, bugemon.getId(), bugemon.getDefense(),
-                bugemon.getAttack(), bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+        this.databaseRepository.updateUserBugemon(
+                new UserBugemonDTO(this.userId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
+                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
 
     public void restoreHpActiveTeam() {
@@ -200,12 +201,12 @@ public class PlayerService {
     }
 
     private Bugemon buildUserBugemon(UserBugemonDTO userBugemon) {
-        Bugemon defaultBugemon = this.allDefaultBugemonsCache.stream().filter(b -> b.getId() == userBugemon.bugemonId())
-                .findFirst().orElseThrow(() -> new RuntimeException(
-                        "Default Bugemon with ID " + userBugemon.bugemonId() + " not found."));
+        Bugemon defaultBugemon = this.allDefaultBugemonsCache.stream()
+                .filter(b -> b.getName().equals(userBugemon.bugemonName())).findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        "Default Bugemon with ID " + userBugemon.bugemonName() + " not found."));
 
         BugemonBuilder builder = new BugemonBuilder();
-        builder.id(userBugemon.bugemonId());
         builder.name(defaultBugemon.getName());
         builder.type(defaultBugemon.getType());
         builder.sprite(defaultBugemon.getSpriteURL());

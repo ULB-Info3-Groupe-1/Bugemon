@@ -172,7 +172,7 @@ public class StaticDataRepository {
                 Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
                 Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
                 BugemonBuilder builder = new BugemonBuilder();
-                builder.id(rs.getInt(DatabaseColumns.COL_ID)).name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
+                builder.name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
                         .sprite(rs.getString(DatabaseColumns.COL_SPRITE))
                         .defense(rs.getInt(DatabaseColumns.COL_BASE_DEFENSE))
                         .attack(rs.getInt(DatabaseColumns.COL_BASE_ATTACK_POWER))

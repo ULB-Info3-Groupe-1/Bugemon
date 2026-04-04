@@ -1,7 +1,7 @@
 -- Query
 -- SaveBugemon
 INSERT INTO bugemons (name, type, sprite, base_defense, base_attack, base_initiative, base_max_hp, is_starter, attack_1_id, attack_2_id, attack_3_id)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 
 -- Query
 -- SaveAttack

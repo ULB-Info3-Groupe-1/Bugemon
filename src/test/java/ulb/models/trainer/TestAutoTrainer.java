@@ -24,10 +24,10 @@ public class TestAutoTrainer {
     public void testSelectRandomBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         AutoTrainer trainer = new AutoTrainer(team);
-        TestUtilsBugemons.killBugemon(team, 1);
+        TestUtilsBugemons.killBugemon(team, "1");
         trainer.selectRandomBugemon();
         assertTrue(trainer.isCurrentBugemonAlive());
-        Bugemon killed = team.stream().filter(b -> b.getId() == 1).findFirst().get();
+        Bugemon killed = team.stream().filter(b -> b.getName().equals("1")).findFirst().get();
         assertNotEquals(killed, trainer.getCurrentBugemon());
     }
 }

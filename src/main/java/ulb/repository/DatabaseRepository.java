@@ -230,8 +230,21 @@ public class DatabaseRepository {
         this.userRepository.renameTeam(userId, oldTeamName, newTeamName);
     }
 
-    public void removeTeamMember(int userId, String teamName, String bugemonId) {
-        this.userRepository.removeTeamMember(userId, teamName, bugemonId);
+    /**
+     * Remove a member from a team in the database. This method takes the user ID, team name, and bugemon ID of the team
+     * member to be removed, and deletes the corresponding entry from the database to reflect that this team member is
+     * no longer part of the specified team.
+     *
+     * @param userId
+     *            the ID of the user who is a member of the team from which to remove the member
+     * @param teamName
+     *            the name of the team from which to remove the member
+     * @param bugemonName
+     *            the name of the bugemon that represents the team member to be removed from the specified team in the
+     *            database
+     */
+    public void removeTeamMember(int userId, String teamName, String bugemonName) {
+        this.userRepository.removeTeamMember(userId, teamName, bugemonName);
     }
 
     public void deleteTeam(int userId, String teamName) {

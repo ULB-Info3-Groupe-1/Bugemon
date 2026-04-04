@@ -18,7 +18,6 @@ public class UserRepository {
     private static final Logger LOG = LoggerFactory.getLogger(UserRepository.class);
 
     private final DatabaseRepository dbRepository;
-
     private final DatabaseConnection dbConnection;
 
     public UserRepository(DatabaseRepository dbRepository, DatabaseConnection dbConnection) {
@@ -63,7 +62,7 @@ public class UserRepository {
 
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveUserBugemon"))) {
             ps.setInt(1, dto.userId());
-            ps.setInt(2, dto.bugemonId());
+            ps.setString(2, dto.bugemonName());
             ps.setInt(3, dto.currentDefense());
             ps.setInt(4, dto.currentAttackPower());
             ps.setInt(5, dto.currentInitiative());
@@ -87,7 +86,7 @@ public class UserRepository {
             ps.setInt(5, dto.currentXp());
             ps.setInt(6, dto.currentLevel());
             ps.setInt(7, dto.userId());
-            ps.setInt(8, dto.bugemonId());
+            ps.setString(8, dto.bugemonName());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("updateUserBugemon failed", e);
@@ -103,7 +102,7 @@ public class UserRepository {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result.add(new UserBugemonDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
-                        rs.getInt(DatabaseColumns.COL_BUGEMON_ID), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
+                        rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
                         rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK_POWER),
                         rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
                         rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
@@ -172,6 +171,85 @@ public class UserRepository {
             }
         } catch (SQLException e) {
             throw new IllegalStateException("getUserTeams failed", e);
+        }
+        return result;
+    }
+
+    // ─── TEAM MEMBERS ─────────────────────────────────────────────────────────
+
+    /**
+     * Add a member to a team in the database. This method takes a TeamMemberDTO object containing the details of the
+     * team member to be added, including the user ID, team name, Bugemon ID, and slot position. It executes an SQL
+     * statement to insert a new record into the database representing this team member, associating it with the
+     * specified team and user. The method ensures that the new team member is correctly linked to the appropriate team
+     * and user in the database. If an error occurs during the database operation, an IllegalStateException is thrown.
+     *
+     * @param dto
+     *            the TeamMemberDTO object containing the details of the team member to be added
+     */
+    public void addTeamMember(TeamMemberDTO dto) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("AddTeamMember"))) {
+            ps.setInt(1, dto.userId());
+            ps.setString(2, dto.teamName());
+            ps.setString(3, dto.bugemonName());
+            ps.setInt(4, dto.slotPosition());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("addTeamMember failed", e);
+        }
+    }
+
+    /**
+     * Remove a member from a team in the database. This method takes the user ID, team name, and Bugemon ID as
+     * parameters to identify the specific team member to be removed. It executes an SQL statement to delete the
+     * corresponding record from the database, effectively removing the specified team member from the team. The method
+     * ensures that only the team member matching the provided user ID, team name, and Bugemon ID is removed from the
+     * database. If an error occurs during the database operation, an IllegalStateException is thrown.
+     *
+     * @param userId
+     *            the ID of the user whose team member is to be removed
+     * @param teamName
+     *            the name of the team from which to remove the member
+     * @param bugemonName
+     *            the name of the Bugemon to be removed from the team
+     */
+    public void removeTeamMember(int userId, String teamName, String bugemonName) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("RemoveTeamMember"))) {
+            ps.setInt(1, userId);
+            ps.setString(2, teamName);
+            ps.setString(3, bugemonName);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("removeTeamMember failed", e);
+        }
+    }
+
+    /**
+     * Retrieve a list of TeamMemberDTO objects representing the members of a specific team for a user from the
+     * database. This method executes an SQL query to search for all team member records associated with the given user
+     * ID and team name, and constructs a list of TeamMemberDTO objects containing the details of each team member
+     * found. The details include the user ID, team name, Bugemon ID, and slot position of each team member. If an error
+     * occurs during the database query, an IllegalStateException is thrown.
+     *
+     * @param userId
+     *            the ID of the user for whom to retrieve team members
+     * @param teamName
+     *            the name of the team for which to retrieve members
+     * @return a list of TeamMemberDTO objects representing the members of the specified team for the user
+     */
+    public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
+        List<TeamMemberDTO> result = new ArrayList<>();
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetTeamMembers"))) {
+            ps.setInt(1, userId);
+            ps.setString(2, teamName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                result.add(new TeamMemberDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
+                        rs.getString(DatabaseColumns.COL_TEAM_NAME), rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
+                        rs.getInt(DatabaseColumns.COL_SLOT_POSITION)));
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("getTeamMembers failed", e);
         }
         return result;
     }

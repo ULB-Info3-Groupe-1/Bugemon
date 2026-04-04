@@ -74,15 +74,29 @@ public class BugemonTeam implements Iterable<Bugemon> {
         if (!this.contains(bugemon)) {
             throw new BugemonNotInTeamException("This Bugemon is not in the team!");
         }
-        this.team.removeIf(member -> member.getId() == bugemon.getId());
+        this.team.removeIf(member -> member.getName().equals(bugemon.getName()));
     }
 
-    public Optional<Bugemon> get(String id) {
-        return this.team.stream().filter(b -> id.equals(b.getId())).findFirst();
+    /**
+     * Returns the select Bugemon with the given name if it's in the team.
+     *
+     * @param name
+     *            (String) the ID of the Bugemon to be returned
+     * @return (Bugemon) the Bugemon with the given name
+     */
+    public Optional<Bugemon> get(String bugemonName) {
+        return this.team.stream().filter(b -> bugemonName.equals(b.getName())).findFirst();
     }
 
+    /**
+     * Checks if a Bugemon with the same name is already in the team
+     *
+     * @param bugemon
+     *            (Bugemon) the Bugemon to search for
+     * @return (boolean) true if a Bugemon with the same name is already in the team, false otherwise
+     */
     public boolean contains(Bugemon bugemon) {
-        return this.team.stream().anyMatch(member -> member.getId() == bugemon.getId());
+        return this.team.stream().anyMatch(member -> member.getName().equals(bugemon.getName()));
     }
 
     @Override
