@@ -159,6 +159,11 @@ public class Bugemon implements BugemonDTO {
         return this.levelComponent.getXp();
     }
 
+    @Override
+    public double getXpProgress() {
+        return this.levelComponent.getXpProgress();
+    }
+
     /**
      * Adds XP and returns the number of levels crossed.
      *

@@ -62,6 +62,7 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
             this.metaController.switchTo(Window.LEVEL_UP);
             this.view.refresh();
         } else {
+            this.playerService.saveActiveTeamState();
             this.metaController.switchTo(Window.COMBAT_VICTORY);
         }
     }
@@ -72,6 +73,7 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
             this.session.advance();
             this.view.refresh();
         } else {
+            this.playerService.saveActiveTeamState();
             this.metaController.switchTo(Window.COMBAT_VICTORY);
         }
     }

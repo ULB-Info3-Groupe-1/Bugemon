@@ -43,6 +43,11 @@ public class LevelComponent {
         return numLevelUps;
     }
 
+    /** Returns XP progress toward the next level as a value in {@code [0.0, 1.0]}. */
+    public double getXpProgress() {
+        return (double) this.xp / this.getXpRequiredForNextLevel(this.level);
+    }
+
     private int getXpRequiredForNextLevel(int targetLevel) {
         return 50 + 100 * (targetLevel - 1);
     }

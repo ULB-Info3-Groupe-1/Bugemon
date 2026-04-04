@@ -13,4 +13,5 @@
             preserveRatio="true" />
     </StackPane>
     <Label fx:id="nameLabel" styleClass="bugemon-cell-name" />
+    <Label fx:id="levelLabel" styleClass="bugemon-level-card" />
 </fx:root>

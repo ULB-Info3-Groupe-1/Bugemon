@@ -9,8 +9,9 @@
 
     <children>
 
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
-            styleClass="all-bugemons-scroll" VBox.vgrow="NEVER">
+        <ScrollPane fx:id="scrollPane" fitToWidth="true"
+            hbarPolicy="NEVER" styleClass="all-bugemons-scroll"
+            VBox.vgrow="NEVER">
 
             <content>
                 <FlowPane fx:id="flowPane" styleClass="all-bugemons" />
