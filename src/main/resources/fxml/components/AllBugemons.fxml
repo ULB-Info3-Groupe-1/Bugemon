@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
+    spacing="0">
+
+    <children>
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+            styleClass="all-bugemons-scroll" VBox.vgrow="NEVER">
+
+            <content>
+                <FlowPane fx:id="flowPane" styleClass="all-bugemons" />
+            </content>
+
+        </ScrollPane>
+
+    </children>
+
+</fx:root>

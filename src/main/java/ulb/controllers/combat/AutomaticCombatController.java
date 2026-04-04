@@ -10,6 +10,7 @@ import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.PlayerService;
+import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
 
 /**
@@ -32,7 +33,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *             if the view fails to load its FXML resource.
      */
     public AutomaticCombatController(MetaController metaController, PlayerService playerService) throws IOException {
-        super(metaController, playerService, new AutomaticCombatView());
+        super(metaController, playerService, ViewLoader.load(AutomaticCombatView::new));
     }
 
     /** Starts a complete automatic combat session and drives it to completion. */
@@ -46,7 +47,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         }
 
         AutoTrainer playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
-        AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
+        AutoTrainer opponentTrainer = this.createRandomOpponent(playerTrainer.getTeamSize());
         Combat combat = new Combat(playerTrainer, opponentTrainer);
 
         this.view.setModel(playerTrainer, opponentTrainer, combat);
@@ -71,12 +72,12 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             TurnResult turnResult = combat.turn();
 
-            playTurnAnimations(turnResult, playerTrainer, () -> {
+            this.playTurnAnimations(turnResult, playerTrainer, () -> {
                 this.view.refresh();
 
                 if (combat.getWinner().isPresent()) {
                     this.turnTimeline.stop();
-                    handleCombatResult(combat.getWinner().orElseThrow(), playerTrainer);
+                    this.handleCombatResult(combat.getWinner().orElseThrow(), playerTrainer);
                     return;
                 }
 

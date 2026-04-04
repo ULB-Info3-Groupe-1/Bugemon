@@ -10,57 +10,74 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.text.Text?>
 
-<?import ulb.views.AllBugemonsView?>
-<?import ulb.views.BugemonTeamView?>
+<?import ulb.views.components.AllBugemonsView?>
+<?import ulb.views.components.BugemonTeamView?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            prefWidth="900" prefHeight="600"
-            styleClass="create-team-root"
-            stylesheets="@../css/create-team-menu.css">
-    <padding><Insets top="24" right="32" bottom="24" left="32"/></padding>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.CreateTeamView" prefWidth="900"
+    prefHeight="600" styleClass="create-team-root">
+    <padding>
+        <Insets top="24" right="32" bottom="24" left="32" />
+    </padding>
 
     <!-- Title -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="25">
             <BorderPane.margin>
-                <Insets top="20" left="30" right="30" bottom="15"/>
+                <Insets top="20" left="30" right="30" bottom="15" />
             </BorderPane.margin>
 
-            <Label text="Sélection de ton équipe" styleClass="create-team-title"/>
+            <Label text="Sélection de ton équipe"
+                styleClass="create-team-title" />
 
             <VBox spacing="4" alignment="CENTER_LEFT">
-                <Label text="Nom de l'équipe à sauvegarder :" styleClass="team-input-label"/>
-                <TextField fx:id="saveTeamNameInput"
-                           prefWidth="220"
-                           styleClass="text-field"
-                           promptText="Nouveau nom..."/>
+                <Label text="Nom de l'équipe à sauvegarder :"
+                    styleClass="team-input-label" />
+                <TextField fx:id="saveTeamNameInput" prefWidth="220"
+                    styleClass="text-field" promptText="Nouveau nom..."
+                    onAction="#onSaveClicked" />
             </VBox>
         </HBox>
     </top>
 
     <!-- Team slots (left) + launch buttons (right) -->
     <center>
-        <HBox spacing="24" alignment="TOP_LEFT" styleClass="create-team-center">
-            <HBox.margin><Insets left="24" top="8" right="24" bottom="8"/></HBox.margin>
+        <HBox spacing="24" alignment="TOP_LEFT"
+            styleClass="create-team-center">
+            <HBox.margin>
+                <Insets left="24" top="8" right="24" bottom="8" />
+            </HBox.margin>
 
             <VBox spacing="10" styleClass="team-selection-panel">
                 <HBox spacing="10">
-                    <Label text="Ton Équipe: "/>
-                    <Text fx:id="selectedTeamName" styleClass="selected-team-name"/>
+                    <Label text="Ton Équipe: " />
+                    <Text fx:id="selectedTeamName" styleClass="selected-team-name" />
                 </HBox>
-                <BugemonTeamView fx:id="bugemonsTeamView"/>
+                <BugemonTeamView fx:id="bugemonsTeamView" />
             </VBox>
 
-            <VBox spacing="10" alignment="BOTTOM_RIGHT" styleClass="team-actions-panel" HBox.hgrow="ALWAYS">
-                <VBox.margin><Insets top="26"/></VBox.margin>
-                <Label text="Mes équipes" styleClass="section-label"/>
-                <ListView fx:id="teamListView" styleClass="team-list-view" prefHeight="150" maxWidth="260" minWidth="260"/>
+            <VBox spacing="10" alignment="BOTTOM_RIGHT"
+                styleClass="team-actions-panel" HBox.hgrow="ALWAYS">
+                <VBox.margin>
+                    <Insets top="26" />
+                </VBox.margin>
+                <Label text="Mes équipes" styleClass="section-label" />
+                <ListView fx:id="teamListView"
+                    styleClass="team-list-view,btn-panel" prefHeight="150"
+                    onMouseClicked="#onTeamSelected" />
 
-                <Button fx:id="saveTeamBtn"      text="Sauvegarder"            styleClass="btn,btn-success"   maxWidth="260" minWidth="260"/>
-                <Button fx:id="renameTeamBtn"    text="Renommer"               styleClass="btn,btn-success"   maxWidth="260" minWidth="260"/>
-                <Button fx:id="addNewTeamBtn"    text="Nouvelle équipe +"      styleClass="btn,btn-success"   maxWidth="260" minWidth="260"/>
-                <Button fx:id="deleteTeamBtn"    text="Supprimer"              styleClass="btn,btn-danger"    maxWidth="260" minWidth="260"/>
-                <Button fx:id="returnMainMenuBtn" text="Retour au menu principal" styleClass="btn,btn-secondary" maxWidth="260" minWidth="260"/>
+                <Button text="Sauvegarder" onAction="#onSaveClicked"
+                    styleClass="btn,btn-success,btn-panel" />
+                <Button text="Renommer" onAction="#onRenameClicked"
+                    styleClass="btn,btn-success,btn-panel" />
+                <Button text="Nouvelle équipe +"
+                    onAction="#onAddNewTeamClicked"
+                    styleClass="btn,btn-success,btn-panel" />
+                <Button text="Supprimer" onAction="#onDeleteClicked"
+                    styleClass="btn,btn-danger,btn-panel" />
+                <Button text="Retour au menu principal"
+                    onAction="#onReturnMainMenuClicked"
+                    styleClass="btn,btn-secondary,btn-panel" />
             </VBox>
         </HBox>
     </center>
@@ -68,9 +85,13 @@
     <!-- Available Bugemons (bottom) -->
     <bottom>
         <VBox spacing="8" styleClass="available-bugemons-section">
-            <VBox.margin><Insets left="20" right="20" bottom="16" top="4"/></VBox.margin>
-            <Label text="Bugémons disponibles" styleClass="section-label"/>
-            <AllBugemonsView fx:id="allBugemonsGridView" styleClass="all-bugemons-selection" maxWidth="1.7976931348623157E308"/>
+            <VBox.margin>
+                <Insets left="20" right="20" bottom="16" top="4" />
+            </VBox.margin>
+            <Label text="Bugémons disponibles" styleClass="section-label" />
+            <AllBugemonsView fx:id="allBugemonsGridView"
+                styleClass="all-bugemons-selection"
+                maxWidth="1.7976931348623157E308" />
         </VBox>
     </bottom>
 

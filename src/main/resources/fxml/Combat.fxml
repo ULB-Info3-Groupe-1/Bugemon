@@ -3,48 +3,38 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import ulb.views.combat.BugemonInfoView?>
-<?import ulb.views.combat.ActionMenuView?>
-<?import ulb.views.DialogZoneView?>
+<?import javafx.scene.layout.VBox?>
+<?import ulb.views.combat.components.BugemonInfoView?>
+<?import ulb.views.components.DialogZoneView?>
 
-<StackPane
-    xmlns="http://javafx.com/javafx/21"
-    xmlns:fx="http://javafx.com/fxml/1"
-    stylesheets="@../css/combat.css"
->
+<StackPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.combat.CombatView">
     <AnchorPane>
 
         <!-- Trainer (bottom-left): sprite + info side by side -->
         <HBox alignment="TOP_LEFT" spacing="50"
-              AnchorPane.bottomAnchor="80" AnchorPane.leftAnchor="80">
-            <ImageView fx:id="bugemonTrainerImage"
-                       smooth="false" fitHeight="250" fitWidth="250"
-                       preserveRatio="true"/>
-            <BugemonInfoView fx:id="bugemonTrainerInfo"/>
+            AnchorPane.bottomAnchor="80" AnchorPane.leftAnchor="80">
+            <ImageView fx:id="bugemonTrainerImage" smooth="false"
+                fitHeight="250" fitWidth="250" preserveRatio="true" />
+            <BugemonInfoView fx:id="bugemonTrainerInfo" />
         </HBox>
 
         <!-- Opponent (top-right): info + sprite side by side -->
         <HBox alignment="TOP_RIGHT" spacing="50"
-              AnchorPane.topAnchor="80" AnchorPane.rightAnchor="80">
-            <BugemonInfoView fx:id="bugemonOpponentInfo"/>
-            <ImageView fx:id="bugemonOpponentImage"
-                       smooth="false" fitHeight="250" fitWidth="250"
-                       preserveRatio="true"/>
+            AnchorPane.topAnchor="80" AnchorPane.rightAnchor="80">
+            <BugemonInfoView fx:id="bugemonOpponentInfo" />
+            <ImageView fx:id="bugemonOpponentImage" smooth="false"
+                fitHeight="250" fitWidth="250" preserveRatio="true" />
         </HBox>
 
-        <!-- Action menu (bottom-right) -->
-        <ActionMenuView fx:id="actionMenuView"
-                        AnchorPane.bottomAnchor="80" AnchorPane.rightAnchor="80"/>
+        <!-- Action menu slot (bottom-right) -->
+        <VBox fx:id="actionMenuSlot" AnchorPane.bottomAnchor="80"
+            AnchorPane.rightAnchor="80" />
 
     </AnchorPane>
 
     <!-- Dialog overlay (shown after each turn) -->
-    <DialogZoneView
-        fx:id="dialogZoneView"
-        visible="false"
-        managed="false"
-        maxWidth="460"
-        StackPane.alignment="CENTER"
-    />
+    <DialogZoneView fx:id="dialogZoneView" visible="false"
+        managed="false" maxWidth="460" StackPane.alignment="CENTER" />
 
 </StackPane>

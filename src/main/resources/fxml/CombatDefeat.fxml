@@ -7,17 +7,21 @@
 <?import javafx.scene.control.Button?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      alignment="CENTER"
-      spacing="20"
-      stylesheets="@../css/combat-defeat.css">
-    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+    fx:controller="ulb.views.CombatDefeatView" alignment="CENTER"
+    spacing="20">
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40" />
+    </padding>
 
     <Label text="DÉFAITE..." styleClass="defeat-title" />
 
     <HBox spacing="50.0" alignment="CENTER">
         <children>
-            <Button fx:id="retryButton"          text="Réessayer"                prefHeight="65.0" prefWidth="256.0" styleClass="btn,btn-danger" />
-            <Button fx:id="backToMainMenuButton" text="Retour au menu principal" prefHeight="65.0" prefWidth="256.0" styleClass="btn,btn-secondary" />
+            <Button onAction="#onRetryClicked" text="Réessayer"
+                styleClass="btn,btn-danger,btn-outcome" />
+            <Button onAction="#onBackToMainMenuClicked"
+                text="Retour au menu principal"
+                styleClass="btn,btn-secondary,btn-outcome" />
         </children>
     </HBox>
 

@@ -1,38 +1,28 @@
 package ulb.views;
 
-import java.io.IOException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
-/**
- * View for the combat victory screen.
- *
- * <p>
- * Dispatches user interactions through the callback registered via {@link #setOnContinue(Runnable)}. Holds no reference
- * to any concrete controller class.
- * </p>
- */
+/** View for the combat victory screen, dispatching actions through the {@link Listener} interface. */
 public class CombatVictoryView extends View {
-    @FXML
-    private Button continueButton;
+    private final String fxmlPath = "/fxml/CombatVictory.fxml";
 
-    Listener listener;
+    private Listener listener;
 
-    /**
-     * Loads the victory-screen FXML layout and wires the continue button.
-     *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
-     */
-    public CombatVictoryView() throws IOException {
-        super("/fxml/CombatVictory.fxml");
-        this.continueButton.setOnAction(e -> {
-            this.listener.onContinue();
-        });
+    public CombatVictoryView() {
+    }
+
+    @Override
+    public String getPath() {
+        return this.fxmlPath;
     }
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    @FXML
+    private void onContinueClicked() {
+        this.listener.onContinue();
     }
 
     @Override

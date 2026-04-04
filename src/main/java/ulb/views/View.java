@@ -1,56 +1,38 @@
 package ulb.views;
 
-import java.io.IOException;
-import java.net.URL;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-/** Base class for all JavaFX views. Loads an FXML layout and manages its associated scene. */
+/**
+ * Base class for all JavaFX views. Navigation swaps the root of the application's single {@link javafx.scene.Scene} via
+ * {@link #show(Stage)}, avoiding the resize flash that occurs when replacing the scene itself.
+ */
 public abstract class View {
-    protected final Pane root;
-    protected final Scene scene;
+    private Parent root;
 
-    /**
-     * Loads the FXML file and initializes the scene.
-     *
-     * @param fxmlPath
-     *            path to the FXML resource
-     * @throws IOException
-     *             if the FXML file cannot be loaded
-     */
-    protected View(String fxmlPath) throws IOException {
-        URL url = View.class.getResource(fxmlPath);
-        FXMLLoader loader = new FXMLLoader(url);
-        loader.setController(this);
-
-        this.root = loader.load();
-        this.scene = new Scene(this.root);
-        this.scene.getStylesheets().add(0, View.class.getResource("/css/theme.css").toExternalForm());
-        // Ensure Modena label lookup can always resolve on this scene tree.
-        this.root.setStyle("-fx-text-background-color: -fx-text-inner-color;");
-        this.root.prefWidthProperty().bind(this.scene.widthProperty());
-        this.root.prefHeightProperty().bind(this.scene.heightProperty());
+    /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
+    public void initRoot(Parent newroot) {
+        this.root = newroot;
     }
 
+    /** Returns the FXML resource path used by {@link ViewLoader} to load this view. */
+    public abstract String getPath();
+
     /**
-     * Reads the current state from the model and updates every UI component.
-     *
-     * <p>
-     * Called by the controller after any model mutation. The view is responsible for pulling all data it needs directly
-     * from the model references it holds. The controller never pushes data into the view.
-     * </p>
+     * Reads the current state from the model and updates every UI component. Called by the controller after any model
+     * mutation; the controller never pushes data into the view.
      */
     public abstract void refresh();
 
+    /** Replaces the scene's root with this view's root, keeping the stage size stable. */
     public void show(Stage stage) {
-        stage.setScene(this.scene);
+        stage.getScene().setRoot(this.root);
         stage.show();
     }
 
+    /** Displays a warning dialog with the given title and message. */
     public void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle(title);

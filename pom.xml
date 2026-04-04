@@ -180,6 +180,25 @@
                   <endWithNewline/>
                   <trimTrailingWhitespace/>
               </java>
+              <formats>
+                  <format>
+                      <includes>
+                          <include>src/main/resources/fxml/**/*.fxml</include>
+                      </includes>
+                      <eclipseWtp>
+                          <type>XML</type>
+                          <files>
+                              <file>${project.basedir}/.eclipse-wtp-xml-formatter.prefs</file>
+                          </files>
+                      </eclipseWtp>
+                      <trimTrailingWhitespace/>
+                      <endWithNewline/>
+                      <indent>
+                          <spaces>true</spaces>
+                          <spacesPerTab>4</spacesPerTab>
+                      </indent>
+                  </format>
+              </formats>
           </configuration>
       </plugin>
       <plugin>
