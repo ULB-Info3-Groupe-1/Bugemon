@@ -36,7 +36,6 @@ public class BugemonTeamView extends ComponentView {
         }
     }
 
-    /** Sets the callback invoked when the user clicks a Bugemon card in the team grid. */
     public void setOnClick(Consumer<Bugemon> callback) {
         this.onBugemonClicked = callback;
     }

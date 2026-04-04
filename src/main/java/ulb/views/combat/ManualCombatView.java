@@ -15,13 +15,8 @@ import ulb.views.combat.components.ItemMenuView;
 import ulb.views.combat.components.SwitchMenuView;
 
 /**
- * View for the manual combat screen.
- *
- * <p>
- * Holds references to the {@link ManualTrainer}, the opponent {@link Trainer}, and {@link Combat} models. All sub-menu
- * navigation (attack menu, switch panel, inventory) is managed internally; the controller never calls any show/hide
- * method. User actions are dispatched through the {@link Listener} registered via {@link #setListener(Listener)}.
- * </p>
+ * View for the manual combat screen. All sub-menu navigation (attack, switch, inventory) is managed internally; the
+ * controller only calls {@link #setModel(ManualTrainer, Trainer, Combat)} and {@link #setListener(Listener)}.
  */
 public class ManualCombatView extends CombatView {
     private ManualTrainer player;
@@ -43,7 +38,6 @@ public class ManualCombatView extends CombatView {
         this.itemMenuView = new ItemMenuView();
     }
 
-    /** Registers the listener that receives all user combat action events. */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -119,6 +113,7 @@ public class ManualCombatView extends CombatView {
         });
     }
 
+    /** Restores the main action menu, called after a forced switch completes. */
     public void showMainActionMenu() {
         this.setActionMenuContent(this.actionMenu);
     }

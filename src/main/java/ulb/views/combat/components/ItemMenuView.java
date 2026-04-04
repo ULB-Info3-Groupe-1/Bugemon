@@ -19,12 +19,10 @@ public class ItemMenuView extends ComponentView {
         super(FXML_PATH);
     }
 
-    /** Sets the callback invoked when the user clicks an item button. */
     public void setOnItemSelected(Consumer<Item> callback) {
         this.onItemSelected = callback;
     }
 
-    /** Sets the callback invoked when the user clicks the back button. */
     public void setOnBack(Runnable callback) {
         this.onBack = callback;
     }

@@ -23,12 +23,10 @@ public class AllBugemonsView extends ComponentView {
         super(FXML_PATH);
     }
 
-    /** Sets the predicate used to determine whether a given Bugemon should appear selected. */
     public void setSelectionChecker(Function<Bugemon, Boolean> checker) {
         this.selectionChecker = checker;
     }
 
-    /** Sets the callback invoked when the user clicks a Bugemon card. */
     public void setOnClick(Consumer<Bugemon> callback) {
         this.onBugemonClicked = callback;
     }

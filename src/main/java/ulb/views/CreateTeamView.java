@@ -24,7 +24,7 @@ import ulb.views.components.BugemonTeamView;
 public class CreateTeamView extends View {
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
 
-    private final String FXML_PATH = "/fxml/CreateTeam.fxml";
+    private final String fxmlPath = "/fxml/CreateTeam.fxml";
 
     @FXML
     private AllBugemonsView allBugemonsGridView;
@@ -53,7 +53,7 @@ public class CreateTeamView extends View {
 
     @Override
     public String getPath() {
-        return this.FXML_PATH;
+        return this.fxmlPath;
     }
 
     /** Registers the listener that receives all user interaction events from this view. */
