@@ -1,6 +1,7 @@
 package ulb.utils;
 
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +41,11 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 
-        if (sprite != null && !sprite.startsWith("png/")) {
-            sprite = "png/" + sprite;
+        String resourcePath = "/png/" + sprite; 
+        URL spriteUrl = getClass().getResource(resourcePath);
+
+        if (spriteUrl == null) {
+            throw new JsonParseException("The sprite file could not be found at : " + resourcePath);
         }
 
         Map<String, Integer> statsMap = new HashMap<>();
@@ -61,7 +65,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
             }
         }
 
-        return new CreateBugemonDTO(name, type, sprite, statsMap.get("defense"), statsMap.get("attaque"),
+        return new CreateBugemonDTO(name, type, spriteUrl, statsMap.get("defense"), statsMap.get("attaque"),
                 statsMap.get("initiative"), statsMap.get("pv"), starter, attackList.get(0), attackList.get(1),
                 attackList.get(2));
     }
