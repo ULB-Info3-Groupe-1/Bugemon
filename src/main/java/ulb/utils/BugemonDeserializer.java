@@ -41,7 +41,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
         String sprite = obj.get("sprite").getAsString();
         boolean starter = obj.get("starter").getAsBoolean();
 
-        String resourcePath = "/png/" + sprite; 
+        String resourcePath = "/png/" + sprite;
         URL spriteUrl = getClass().getResource(resourcePath);
 
         if (spriteUrl == null) {

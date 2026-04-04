@@ -221,9 +221,11 @@ public class StaticDataRepository {
     }
 
     /**
-     * Save a Bugemon to the database. It also saves the sprite file for the Bugemon. It set the sprite file name to
-     * the name of the Bugemon in lowercase and replacing non-alphanumeric characters with underscores.
-     * @param bugemon (CreateBugemonDTO) the Bugemon to be saved
+     * Save a Bugemon to the database. It also saves the sprite file for the Bugemon. It set the sprite file name to the
+     * name of the Bugemon in lowercase and replacing non-alphanumeric characters with underscores.
+     *
+     * @param bugemon
+     *            (CreateBugemonDTO) the Bugemon to be saved
      */
     private void saveBugemon(CreateBugemonDTO bugemon) {
         String fileName = bugemon.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
@@ -257,9 +259,13 @@ public class StaticDataRepository {
 
     /**
      * Save the sprite file for a Bugemon.
-     * @param currentSpriteUrl the URL of the sprite file to be saved (to get access to the file)
-     * @param spriteFileName the name of the sprite file to be saved
-     * @throws IOException if the sprite file cannot be saved
+     *
+     * @param currentSpriteUrl
+     *            the URL of the sprite file to be saved (to get access to the file)
+     * @param spriteFileName
+     *            the name of the sprite file to be saved
+     * @throws IOException
+     *             if the sprite file cannot be saved
      */
     private void saveSpriteFile(URL currentSpriteUrl, String spriteFileName) throws IOException {
         Path dirDestination = Paths.get(SPRITE_DIRECTORY_PATH);
