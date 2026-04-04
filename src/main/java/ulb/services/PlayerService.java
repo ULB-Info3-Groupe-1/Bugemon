@@ -166,7 +166,7 @@ public class PlayerService {
         }
     }
 
-    public boolean teamNameExists(String teamName) {
+    private boolean teamNameExists(String teamName) {
         return this.userTeams.stream().anyMatch(team -> team.name().equals(teamName));
     }
 
