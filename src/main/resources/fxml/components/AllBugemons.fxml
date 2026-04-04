@@ -9,9 +9,10 @@
 
     <children>
 
+        <!-- prefHeight: 2 rows = 2×139 (card) + 10 (gap) + 20 (flowpane padding) -->
         <ScrollPane fx:id="scrollPane" fitToWidth="true"
             hbarPolicy="NEVER" styleClass="all-bugemons-scroll"
-            VBox.vgrow="NEVER">
+            prefHeight="310" VBox.vgrow="NEVER">
 
             <content>
                 <FlowPane fx:id="flowPane" styleClass="all-bugemons" />

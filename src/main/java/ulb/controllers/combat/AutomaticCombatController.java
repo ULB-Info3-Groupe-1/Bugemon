@@ -73,8 +73,8 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
             this.animationController.playSecondAction(this.pendingResult, this.playerTrainer, () -> {
                 this.view.refresh();
                 this.view.showSecondAttackResult(second);
-                this.secondShown = true;
             });
+            this.secondShown = true;
             return;
         }
 

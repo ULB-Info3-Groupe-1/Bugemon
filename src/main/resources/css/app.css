@@ -203,20 +203,19 @@
 
 /* ── Scrollbar ───────────────────────────────────────────── */
 .scroll-bar {
-    -fx-background-color: color-surface;
-    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-padding: 0 2 0 2;
 }
 
 .scroll-bar .track {
-    -fx-background-color: color-surface;
-    -fx-background-radius: 0;
-    -fx-border-color: color-surface-border;
-    -fx-border-width: 1;
+    -fx-background-color: color-surface-border;
+    -fx-background-radius: 4;
+    -fx-border-width: 0;
 }
 
 .scroll-bar .thumb {
     -fx-background-color: color-secondary;
-    -fx-background-radius: 0;
+    -fx-background-radius: 4;
 }
 
 .scroll-bar .thumb:hover {
@@ -225,19 +224,16 @@
 
 .scroll-bar .increment-button,
 .scroll-bar .decrement-button {
-    -fx-background-color: color-secondary;
-    -fx-background-radius: 0;
-    -fx-padding: 5;
-}
-
-.scroll-bar .increment-button:hover,
-.scroll-bar .decrement-button:hover {
-    -fx-background-color: color-secondary-hover;
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
 }
 
 .scroll-bar .increment-arrow,
 .scroll-bar .decrement-arrow {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
 /* ── Bugemon grid cell ───────────────────────────────────── */
@@ -308,8 +304,8 @@
     -fx-vgap: size-bugemon-grid-vgap;
 }
 
-.all-bugemons-scroll {
-    -fx-pref-height: 275;
+.all-bugemons > .bugemon-cell {
+    -fx-pref-width: size-bugemon-cell-width;
 }
 
 /* ── Action menu panel ───────────────────────────────────── */
@@ -401,7 +397,9 @@
     -fx-background-color: color-surface-border, color-white;
     -fx-background-insets: 0, 2;
     -fx-background-radius: 4, 3;
-    -fx-min-height: size-team-list-min-height;
+    -fx-min-height: size-team-list-height;
+    -fx-pref-height: size-team-list-height;
+    -fx-max-height: size-team-list-height;
 }
 
 .team-list-view .list-cell {
@@ -438,6 +436,16 @@
     -fx-font-size: 48px;
     -fx-font-weight: bold;
     -fx-text-fill: color-danger;
+}
+
+/* ── Switch & item menus ─────────────────────────────────── */
+.switch-row {
+    -fx-spacing: size-switch-row-spacing;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.menu-btn-min {
+    -fx-min-width: size-menu-btn-min;
 }
 
 /* ── Level up ────────────────────────────────────────────── */
