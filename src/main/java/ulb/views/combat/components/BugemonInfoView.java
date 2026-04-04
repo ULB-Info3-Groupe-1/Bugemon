@@ -19,7 +19,7 @@ public class BugemonInfoView extends ComponentView {
     @FXML
     private ProgressBar bugemonHPBar;
     @FXML
-    private ProgressBar bugemonXpBar;
+    private ProgressBar bugemonXpBar;;
     @FXML
     private Label bugemonHpLabel;
 
