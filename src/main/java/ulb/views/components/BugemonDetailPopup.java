@@ -18,11 +18,12 @@ import ulb.models.bugemon.Bugemon;
 /** Utility class that shows a read-only floating detail popup for a {@link Bugemon} on right-click. */
 public final class BugemonDetailPopup {
 
-    private BugemonDetailPopup() {}
+    private BugemonDetailPopup() {
+    }
 
     /**
-     * Displays a styled popup with the Bugemon's stats and attacks near the cursor.
-     * Closes automatically when it loses focus.
+     * Displays a styled popup with the Bugemon's stats and attacks near the cursor. Closes automatically when it loses
+     * focus.
      *
      * @param bugemon
      *            the Bugemon whose details are displayed
@@ -57,11 +58,7 @@ public final class BugemonDetailPopup {
         VBox root = new VBox(8);
         root.getStyleClass().add("bugemon-popup");
 
-        root.getChildren().addAll(
-                buildHeader(bugemon),
-                buildStats(bugemon),
-                buildAttacks(bugemon)
-        );
+        root.getChildren().addAll(buildHeader(bugemon), buildStats(bugemon), buildAttacks(bugemon));
 
         return root;
     }
@@ -90,13 +87,10 @@ public final class BugemonDetailPopup {
         Label title = new Label("Stats");
         title.getStyleClass().add("bugemon-popup-section");
 
-        return new VBox(4,
-                title,
-                statRow("PV",         bugemon.getHp() + " / " + bugemon.getMaxHp()),
-                statRow("Attaque",    String.valueOf(bugemon.getAttack())),
-                statRow("Défense",    String.valueOf(bugemon.getDefense())),
-                statRow("Initiative", String.valueOf(bugemon.getInitiative()))
-        );
+        return new VBox(4, title, statRow("PV", bugemon.getHp() + " / " + bugemon.getMaxHp()),
+                statRow("Attaque", String.valueOf(bugemon.getAttack())),
+                statRow("Défense", String.valueOf(bugemon.getDefense())),
+                statRow("Initiative", String.valueOf(bugemon.getInitiative())));
     }
 
     private static VBox buildAttacks(Bugemon bugemon) {
@@ -105,9 +99,7 @@ public final class BugemonDetailPopup {
 
         VBox section = new VBox(4, title);
         for (Attack attack : bugemon.getAttackList()) {
-            Label row = new Label("• " + attack.name()
-                    + "  (" + attack.type() + ")"
-                    + "  [" + attack.power() + "]");
+            Label row = new Label("• " + attack.name() + "  (" + attack.type() + ")" + "  [" + attack.power() + "]");
             row.getStyleClass().add("bugemon-popup-attack");
             section.getChildren().add(row);
         }

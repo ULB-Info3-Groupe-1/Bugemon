@@ -60,28 +60,21 @@
                     <Insets top="8" />
                 </VBox.margin>
                 <Label text="Mes équipes" styleClass="section-label" />
-                <ListView fx:id="teamListView"
-                    styleClass="team-list-view"
-                    minWidth="220" maxWidth="220"
-                    prefHeight="120" minHeight="60"
+                <ListView fx:id="teamListView" styleClass="team-list-view"
+                    minWidth="220" maxWidth="220" prefHeight="120" minHeight="60"
                     onMouseClicked="#onTeamSelected" />
 
                 <Button text="Sauvegarder" onAction="#onSaveClicked"
-                    styleClass="btn,btn-success"
-                    minWidth="220" maxWidth="220" />
+                    styleClass="btn,btn-success" minWidth="220" maxWidth="220" />
                 <Button text="Renommer" onAction="#onRenameClicked"
-                    styleClass="btn,btn-success"
-                    minWidth="220" maxWidth="220" />
+                    styleClass="btn,btn-success" minWidth="220" maxWidth="220" />
                 <Button text="Nouvelle équipe +"
-                    onAction="#onAddNewTeamClicked"
-                    styleClass="btn,btn-success"
+                    onAction="#onAddNewTeamClicked" styleClass="btn,btn-success"
                     minWidth="220" maxWidth="220" />
                 <Button text="Supprimer" onAction="#onDeleteClicked"
-                    styleClass="btn,btn-danger"
-                    minWidth="220" maxWidth="220" />
+                    styleClass="btn,btn-danger" minWidth="220" maxWidth="220" />
                 <Button text="Retour au menu principal"
-                    onAction="#onReturnMainMenuClicked"
-                    styleClass="btn,btn-secondary"
+                    onAction="#onReturnMainMenuClicked" styleClass="btn,btn-secondary"
                     minWidth="220" maxWidth="220" />
             </VBox>
         </HBox>

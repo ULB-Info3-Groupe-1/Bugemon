@@ -18,11 +18,9 @@
     <HBox spacing="50.0" alignment="CENTER">
         <children>
             <Button onAction="#onRetryClicked" text="Réessayer"
-                styleClass="btn,btn-danger"
-                minWidth="200" maxWidth="200" />
+                styleClass="btn,btn-danger" minWidth="200" maxWidth="200" />
             <Button onAction="#onBackToMainMenuClicked"
-                text="Retour au menu principal"
-                styleClass="btn,btn-secondary"
+                text="Retour au menu principal" styleClass="btn,btn-secondary"
                 minWidth="200" maxWidth="200" />
         </children>
     </HBox>
