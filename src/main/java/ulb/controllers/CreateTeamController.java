@@ -8,6 +8,7 @@ import ulb.services.PlayerService;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
 import ulb.views.CreateTeamView;
+import ulb.views.ViewLoader;
 
 /**
  * Controller responsible for the team creation screen.
@@ -17,7 +18,7 @@ import ulb.views.CreateTeamView;
  * pull the updated state from the model directly. The controller never pushes data into the view.
  * </p>
  */
-public class CreateTeamController extends Controller<CreateTeamView> {
+public class CreateTeamController extends Controller<CreateTeamView> implements CreateTeamView.Listener {
     private static final String STR_TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";
 
     private final PlayerService playerService;
@@ -27,35 +28,23 @@ public class CreateTeamController extends Controller<CreateTeamView> {
      * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
      * {@link ulb.views.CreateTeamView#refresh()} to populate the Bugemon grid.
      *
-     * @param metaController
-     *            the application-level controller used for navigation.
-     * @param playerService
-     *            the service used to access and mutate player data.
      * @throws IOException
      *             if the view fails to load its FXML resource.
      */
     public CreateTeamController(MetaController metaController, PlayerService playerService) throws IOException {
-        super(metaController, new CreateTeamView());
+        super(metaController, ViewLoader.load(CreateTeamView::new));
         this.playerService = playerService;
         this.selectedTeam = new BugemonTeam();
 
+        this.view.setListener(this);
         this.view.setModel(this.selectedTeam);
-        this.view.setValidate(this::returnToMainMenu);
-        this.view.setLoad(this::loadTeam);
-        this.view.setSave(this::saveTeam);
-        this.view.setDelete(this::deleteTeam);
-        this.view.setRename(this::renameTeam);
-        this.view.setAddNewTeam(this::addNewTeam);
         this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
-        this.view.setOnGridBugemonClicked(this::toggleBugemonSelection);
         this.view.updateTeamList(this.playerService.getTeamNames());
         this.view.refresh();
     }
 
-    /**
-     * Toggles {@code bugemon} in the player's selected team.
-     */
-    public void toggleBugemonSelection(Bugemon bugemon) {
+    @Override
+    public void onBugemonSelected(Bugemon bugemon) {
         if (this.selectedTeam.contains(bugemon)) {
             this.selectedTeam.remove(bugemon);
         } else if (!this.selectedTeam.isFull()) {
@@ -64,20 +53,13 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         this.view.refreshTeam(this.selectedTeam);
     }
 
-    /**
-     * Returns the user to the main menu by switching the current view in the MetaController.
-     */
-    public void returnToMainMenu() {
+    @Override
+    public void onReturnToMainMenu() {
         this.metaController.switchTo(MetaController.Window.MAIN_MENU);
     }
 
-    /**
-     * Saves the player's currently selected team under the name specified in the view's saveTeamNameInput field. If the
-     * team name is valid (not null, not empty), the team is saved to the database through the PlayerService and set as
-     * the active team. If the team name is empty or already used by another team owned by the user, an appropriate
-     * alert is shown to the user and no changes are made to the active team or the view.
-     */
-    public void saveTeam() {
+    @Override
+    public void onSave() {
         if (this.teamNameIsEmpty(this.view.getTeamNameToSave())) {
             this.showEmptyNameAlert();
             return;
@@ -92,13 +74,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         }
     }
 
-    /**
-     * Loads the team with the name specified in the view's loadTeamNameInput field, sets it as the active team in the
-     * PlayerService, and updates the view to display the loaded team. If the team name is empty or does not correspond
-     * to an existing team, an appropriate alert is shown to the user and no changes are made to the active team or the
-     * view.
-     */
-    public void loadTeam() {
+    @Override
+    public void onLoad() {
         if (this.teamNameIsEmpty(this.view.getTeamNameToLoad())) {
             this.showEmptyNameAlert();
             return;
@@ -114,7 +91,8 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         }
     }
 
-    public void deleteTeam(String teamName) {
+    @Override
+    public void onDelete(String teamName) {
         try {
             this.playerService.deleteTeam(teamName);
             this.view.updateTeamList(this.playerService.getTeamNames());
@@ -127,17 +105,18 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         }
     }
 
-    public void renameTeam(String oldTeamName, String newTeamName) {
-        if (this.teamNameIsEmpty(newTeamName)) {
+    @Override
+    public void onRename(String oldName, String newName) {
+        if (this.teamNameIsEmpty(newName)) {
             this.showEmptyNameAlert();
             return;
         }
 
         try {
-            this.playerService.renameTeam(oldTeamName, newTeamName);
+            this.playerService.renameTeam(oldName, newName);
             this.view.updateTeamList(this.playerService.getTeamNames());
-            if (this.selectedTeam != null && oldTeamName.equals(this.selectedTeam.getName())) {
-                this.selectedTeam.setName(newTeamName);
+            if (this.selectedTeam != null && oldName.equals(this.selectedTeam.getName())) {
+                this.selectedTeam.setName(newName);
             }
         } catch (TeamNotFoundException e) {
             this.view.showAlert(STR_TEAM_NAME_NOT_FOUND, "L'équipe que vous souhaitez renommer n'existe pas");
@@ -147,16 +126,17 @@ public class CreateTeamController extends Controller<CreateTeamView> {
         }
     }
 
-    public void addNewTeam() {
+    @Override
+    public void onAddNewTeam() {
         this.selectedTeam = new BugemonTeam();
         this.view.refreshTeam(this.selectedTeam);
     }
 
-    public void showEmptyNameAlert() {
+    private void showEmptyNameAlert() {
         this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
     }
 
-    public boolean teamNameIsEmpty(String name) {
+    private boolean teamNameIsEmpty(String name) {
         return name.trim().isEmpty();
     }
 }

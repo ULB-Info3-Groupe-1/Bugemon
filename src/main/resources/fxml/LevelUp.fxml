@@ -8,26 +8,36 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/level-up.css">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.LevelUpView"
+    stylesheets="@../css/level-up.css">
 
     <center>
         <VBox alignment="CENTER" spacing="20">
-            <padding><Insets top="40" right="40" bottom="20" left="40"/></padding>
+            <padding>
+                <Insets top="40" right="40" bottom="20" left="40" />
+            </padding>
 
             <Label fx:id="levelUpText" styleClass="level-up-title"
-                   style="-fx-font-size: 48px;" />
-            <Label text="Choisis ton amélioration" styleClass="level-up-subtitle"
-                   style="-fx-font-size: 32px;" />
-            <ImageView fx:id="bugemonImage" fitHeight="200" preserveRatio="true"/>
+                style="-fx-font-size: 48px;" />
+            <Label text="Choisis ton amélioration"
+                styleClass="level-up-subtitle" style="-fx-font-size: 32px;" />
+            <ImageView fx:id="bugemonImage" fitHeight="200"
+                preserveRatio="true" />
         </VBox>
     </center>
 
     <bottom>
         <HBox alignment="CENTER" spacing="40">
-            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
-            <Button fx:id="choice1Button" prefHeight="65.0" prefWidth="380.0" styleClass="btn,btn-success"/>
-            <Button fx:id="choice2Button" prefHeight="65.0" prefWidth="380.0" styleClass="btn,btn-warning"/>
-            <Button fx:id="choice3Button" prefHeight="65.0" prefWidth="380.0" styleClass="btn,btn-primary"/>
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20" />
+            </padding>
+            <Button fx:id="choice1Button" prefHeight="65.0"
+                prefWidth="380.0" styleClass="btn,btn-success" />
+            <Button fx:id="choice2Button" prefHeight="65.0"
+                prefWidth="380.0" styleClass="btn,btn-warning" />
+            <Button fx:id="choice3Button" prefHeight="65.0"
+                prefWidth="380.0" styleClass="btn,btn-primary" />
         </HBox>
     </bottom>
 

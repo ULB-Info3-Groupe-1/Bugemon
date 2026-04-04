@@ -1,15 +1,11 @@
-package ulb.views.combat;
+package ulb.views.combat.components;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.VBox;
 
 import ulb.common.dto.BugemonDTO;
+import ulb.views.components.ComponentView;
 
 /**
  * Reusable custom JavaFX component that displays the key information of a single {@link BugemonDTO} in the combat HUD.
@@ -18,8 +14,8 @@ import ulb.common.dto.BugemonDTO;
  * Shows the Bugemon's name (coloured by type), type label, HP bar, and numeric HP counter.
  * </p>
  */
-public class BugemonInfoView extends VBox {
-    private static final String FXML_PATH = "/fxml/BugemonInfo.fxml";
+public class BugemonInfoView extends ComponentView {
+    private static final String FXML_PATH = "/fxml/components/BugemonInfo.fxml";
 
     @FXML
     private Label bugemonName;
@@ -31,19 +27,10 @@ public class BugemonInfoView extends VBox {
     private Label bugemonHpLabel;
 
     public BugemonInfoView() {
-        URL url = getClass().getResource(FXML_PATH);
-        FXMLLoader loader = new FXMLLoader(url);
-
-        loader.setRoot(this);
-        loader.setController(this);
-
-        try {
-            loader.load();
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to load BugemonInfo.fxml", e);
-        }
+        super(FXML_PATH);
     }
 
+    /** Updates all displayed fields from the given {@link BugemonDTO}. */
     public void setBugemonInfo(BugemonDTO bugemon) {
         this.bugemonName.getStyleClass().clear();
         this.bugemonName.getStyleClass().add(bugemon.getType().toString());

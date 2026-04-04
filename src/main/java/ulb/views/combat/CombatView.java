@@ -1,24 +1,25 @@
 package ulb.views.combat;
 
-import java.io.IOException;
 import java.util.Optional;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.combat.TurnResult;
-import ulb.views.DialogZoneView;
 import ulb.views.View;
+import ulb.views.combat.components.BugemonInfoView;
+import ulb.views.components.DialogZoneView;
 
 /**
  * Abstract base view for all combat screens.
  *
  * <p>
  * {@code CombatView} loads the shared {@code Combat.fxml} layout and exposes the FXML-injected components that are
- * common to every combat mode: Bugemon info panels, sprite images, the action menu container, the team switcher pane
- * and the dialog zone.
+ * common to every combat mode: Bugemon info panels, sprite images, the action menu container, and the dialog zone.
  * </p>
  *
  * <p>
@@ -35,45 +36,57 @@ import ulb.views.View;
  * @see ManualCombatView
  */
 public abstract class CombatView extends View {
-    private final CombatAnimationView attackAnimationView;
+    private static final String FXML_PATH = "/fxml/Combat.fxml";
 
-    // ── FXML-injected components ──────────────────────────────────────────────
-
-    @FXML
-    protected BugemonInfoView bugemonTrainerInfo;
+    private CombatAnimationView attackAnimationView;
 
     @FXML
-    protected BugemonInfoView bugemonOpponentInfo;
-
+    private BugemonInfoView bugemonTrainerInfo;
     @FXML
-    protected ImageView bugemonTrainerImage;
-
+    private BugemonInfoView bugemonOpponentInfo;
     @FXML
-    protected ImageView bugemonOpponentImage;
-
+    private ImageView bugemonTrainerImage;
     @FXML
-    protected ActionMenuView actionMenuView;
-
+    private ImageView bugemonOpponentImage;
     @FXML
-    protected DialogZoneView dialogZoneView;
+    private VBox actionMenuSlot;
+    @FXML
+    private DialogZoneView dialogZoneView;
 
-    // ── Constructor ───────────────────────────────────────────────────────────
+    protected CombatView() {
+    }
 
-    /**
-     * @throws IOException
-     *             if the {@code Combat.fxml} resource cannot be found or parsed.
-     */
-    protected CombatView() throws IOException {
-        super("/fxml/Combat.fxml");
+    /** Called by the FXMLLoader after all {@code @FXML} fields are injected. */
+    @FXML
+    protected void initialize() {
         this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
+        this.initCombatMode();
+    }
+
+    @Override
+    public String getPath() {
+        return FXML_PATH;
     }
 
     // ── Abstract contract ─────────────────────────────────────────────────────
 
     /**
-     * Shows/hides regions specific to the combat mode. Called once by the subclass constructor after FXML injection.
+     * Configures UI regions specific to this combat mode. Called once after FXML injection via {@link #initialize()}.
      */
     protected abstract void initCombatMode();
+
+    // ── Action menu ───────────────────────────────────────────────────────────
+
+    /** Replaces the content of the action menu slot with the given node. */
+    protected void setActionMenuContent(Node content) {
+        this.actionMenuSlot.getChildren().setAll(content);
+    }
+
+    /** Hides the action menu slot from the layout. */
+    protected void hideActionMenu() {
+        this.actionMenuSlot.setVisible(false);
+        this.actionMenuSlot.setManaged(false);
+    }
 
     // ── Dialog zone ───────────────────────────────────────────────────────────
 
@@ -115,6 +128,7 @@ public abstract class CombatView extends View {
         }
     }
 
+    /** Hides the dialog overlay. */
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);

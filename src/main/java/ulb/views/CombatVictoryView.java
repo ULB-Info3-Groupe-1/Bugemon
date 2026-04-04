@@ -13,6 +13,8 @@ import javafx.scene.control.Button;
  * </p>
  */
 public class CombatVictoryView extends View {
+    private final String FXML_PATH = "/fxml/CombatVictory.fxml";
+
     @FXML
     private Button continueButton;
 
@@ -21,14 +23,14 @@ public class CombatVictoryView extends View {
     /**
      * Loads the victory-screen FXML layout and wires the continue button.
      *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
+     * @throws IOException if the FXML resource cannot be loaded.
      */
-    public CombatVictoryView() throws IOException {
-        super("/fxml/CombatVictory.fxml");
-        this.continueButton.setOnAction(e -> {
-            this.listener.onContinue();
-        });
+    public CombatVictoryView() {
+    }
+
+    @Override
+    public String getPath() {
+        return this.FXML_PATH;
     }
 
     public void setListener(Listener listener) {

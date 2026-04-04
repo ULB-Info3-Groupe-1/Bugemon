@@ -8,22 +8,19 @@
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.control.Button?>
 
-<fx:root type="VBox"
-         xmlns:fx="http://javafx.com/fxml"
-         xmlns="http://javafx.com/javafx"
-         spacing="20"
-         alignment="CENTER"
-         stylesheets="@../css/dialog-zone.css"
-         >
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
+    spacing="20" alignment="CENTER" stylesheets="@../css/dialog-zone.css">
 
-    <VBox styleClass="dialog-zone" spacing="20" prefWidth="400" maxWidth="400" alignment="CENTER">
+    <VBox styleClass="dialog-zone" spacing="20" prefWidth="400"
+        maxWidth="400" alignment="CENTER">
         <TextFlow styleClass="dialog-text">
             <Text fx:id="dialogText" text="Dialog text goes here" />
         </TextFlow>
         <HBox>
             <Text fx:id="additionalInfo" styleClass="additional-info" />
         </HBox>
-        <Button fx:id="nextButton" />
+        <Button fx:id="nextButton" text="Next"
+            onAction="#onNextButtonClicked" styleClass="btn, btn-success" />
     </VBox>
 
 </fx:root>

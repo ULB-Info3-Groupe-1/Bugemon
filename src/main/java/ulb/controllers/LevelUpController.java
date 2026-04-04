@@ -9,6 +9,7 @@ import ulb.models.level_up.LevelUpSession;
 import ulb.models.level_up.Upgrade;
 import ulb.services.PlayerService;
 import ulb.views.LevelUpView;
+import ulb.views.ViewLoader;
 
 /**
  * Controller responsible for the level-up screen.
@@ -18,7 +19,7 @@ import ulb.views.LevelUpView;
  * calls {@code view.refresh()} so the view pulls the updated event data directly from the session.
  * </p>
  */
-public class LevelUpController extends Controller<LevelUpView> {
+public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
     private final LevelUpSession session = new LevelUpSession();
     private final PlayerService playerService;
 
@@ -31,10 +32,15 @@ public class LevelUpController extends Controller<LevelUpView> {
      *             if the view fails to load its FXML resource.
      */
     public LevelUpController(MetaController metaController, PlayerService playerService) throws IOException {
-        super(metaController, new LevelUpView());
+        super(metaController, ViewLoader.load(LevelUpView::new));
         this.playerService = playerService;
+        this.view.setListener(this);
         this.view.setSession(this.session);
-        this.view.setOnUpgradeChosen(this::chooseOption);
+    }
+
+    @Override
+    public void onUpgradeChosen(int optionIdx) {
+        this.chooseOption(optionIdx);
     }
 
     /** Applies the chosen stat bonus and advances to the next level-up event. */

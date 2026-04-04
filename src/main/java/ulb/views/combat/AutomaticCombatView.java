@@ -1,7 +1,5 @@
 package ulb.views.combat;
 
-import java.io.IOException;
-
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
@@ -20,15 +18,8 @@ public class AutomaticCombatView extends CombatView {
     private AutoTrainer opponent;
     private Combat combat;
 
-    /**
-     * Loads the shared combat FXML layout and configures it for automatic mode (hides the action menu and team pane).
-     *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
-     */
-    public AutomaticCombatView() throws IOException {
+    public AutomaticCombatView() {
         super();
-        this.initCombatMode();
     }
 
     /** Gives the view the model objects it needs to read from in {@link #refresh()}. */
@@ -40,8 +31,7 @@ public class AutomaticCombatView extends CombatView {
 
     @Override
     protected void initCombatMode() {
-        this.actionMenuView.setVisible(false);
-        this.actionMenuView.setManaged(false);
+        this.hideActionMenu();
     }
 
     @Override
@@ -49,14 +39,14 @@ public class AutomaticCombatView extends CombatView {
         if (this.player == null) {
             return;
         }
-        updateTrainerBugemon(this.player.getCurrentBugemon());
-        updateOpponentBugemon(this.opponent.getCurrentBugemon());
+        this.updateTrainerBugemon(this.player.getCurrentBugemon());
+        this.updateOpponentBugemon(this.opponent.getCurrentBugemon());
 
         TurnResult last = this.combat.getLastTurnResult();
         if (last != null && last.first().wasAttack()) {
-            showCombatDialog(last.first(), last.second());
+            this.showCombatDialog(last.first(), last.second());
         } else {
-            hideDialog();
+            this.hideDialog();
         }
     }
 }
