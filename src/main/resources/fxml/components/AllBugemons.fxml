@@ -10,11 +10,11 @@
     <children>
 
         <!-- prefHeight: 2 rows = 2×139 (card) + 10 (gap) + 20 (flowpane padding) -->
-        <!-- prefWidth: 11×112 (cards) + 10×10 (hgap) + 10+30 (flowpane padding) = 1372 -->
+        <!-- prefWidth: 11×112 (cards) + 10×10 (hgap) + 10+30 (flowpane padding)
+            = 1372 -->
         <ScrollPane fx:id="scrollPane" fitToWidth="true"
-            hbarPolicy="NEVER" vbarPolicy="NEVER"
-            prefHeight="310" prefWidth="1372" maxWidth="1372"
-            VBox.vgrow="NEVER">
+            hbarPolicy="NEVER" vbarPolicy="NEVER" prefHeight="310"
+            prefWidth="1372" maxWidth="1372" VBox.vgrow="NEVER">
 
             <content>
                 <FlowPane fx:id="flowPane" styleClass="all-bugemons" />

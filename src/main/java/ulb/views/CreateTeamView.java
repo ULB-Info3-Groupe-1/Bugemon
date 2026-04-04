@@ -25,7 +25,9 @@ import ulb.views.components.BugemonTeamView;
  */
 public class CreateTeamView extends View {
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
-    /** Number of team slots always visible in the list; matches {@code size-team-list-height / size-team-slot-height}. */
+    /**
+     * Number of team slots always visible in the list; matches {@code size-team-list-height / size-team-slot-height}.
+     */
     private static final int VISIBLE_TEAM_SLOTS = 3;
 
     private final String fxmlPath = "/fxml/CreateTeam.fxml";
