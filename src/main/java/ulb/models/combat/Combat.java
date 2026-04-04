@@ -187,9 +187,10 @@ public class Combat {
     }
 
     private TurnResult emptyResult() {
-        return new TurnResult(new TurnResult.AttackResult(this.allyTrainer, this.adversaryTrainer, 
-            Optional.empty(), null),
-                Optional.of(new TurnResult.AttackResult(this.adversaryTrainer, this.allyTrainer, 
-                    Optional.empty(), null)), true);
+        return new TurnResult(
+                new TurnResult.AttackResult(this.allyTrainer, this.adversaryTrainer, Optional.empty(), null),
+                Optional.of(
+                        new TurnResult.AttackResult(this.adversaryTrainer, this.allyTrainer, Optional.empty(), null)),
+                true);
     }
 }
