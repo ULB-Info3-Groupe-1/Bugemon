@@ -292,7 +292,7 @@ public class StaticDataRepository {
      */
     public StaticBugemonDataDTO getBugemonByName(String name) {
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetBugemonByName"))) {
-            ps.setString(1, name.toLowerCase());
+            ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return this.getBugemonFromResultSet(rs);

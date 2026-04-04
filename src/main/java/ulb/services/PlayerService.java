@@ -160,7 +160,7 @@ public class PlayerService {
         for (TeamMemberDTO member : teamMembers) {
             UserBugemonDTO userBugemon = userBugemons.stream().filter(b -> b.bugemonName().equals(member.bugemonName()))
                     .findFirst().orElseThrow(() -> new RuntimeException(
-                            "User Bugemon with ID " + member.bugemonName() + (" not found. Cannot load team.")));
+                            "User Bugemon with name " + member.bugemonName() + (" not found. Cannot load team.")));
 
             this.activeTeam.add(this.buildUserBugemon(userBugemon));
         }
