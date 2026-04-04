@@ -15,7 +15,7 @@
         <HBox alignment="TOP_LEFT" spacing="50"
             AnchorPane.bottomAnchor="80" AnchorPane.leftAnchor="80">
             <ImageView fx:id="bugemonTrainerImage" smooth="false"
-                fitHeight="250" fitWidth="250" preserveRatio="true" />
+                fitHeight="120" fitWidth="120" preserveRatio="true" />
             <BugemonInfoView fx:id="bugemonTrainerInfo" />
         </HBox>
 
@@ -24,7 +24,7 @@
             AnchorPane.topAnchor="80" AnchorPane.rightAnchor="80">
             <BugemonInfoView fx:id="bugemonOpponentInfo" />
             <ImageView fx:id="bugemonOpponentImage" smooth="false"
-                fitHeight="250" fitWidth="250" preserveRatio="true" />
+                fitHeight="120" fitWidth="120" preserveRatio="true" />
         </HBox>
 
         <!-- Action menu slot (bottom-right) -->

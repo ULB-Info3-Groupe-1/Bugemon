@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import ulb.models.bugemon.Bugemon;
@@ -47,10 +49,14 @@ public class BugemonCardView extends ComponentView {
         this.imageView.setImage(
                 bugemonData.map(d -> new Image(new File("resources/sprites/" + d.getSpriteURL()).toURI().toString()))
                         .orElse(EMPTY_IMAGE));
+        bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopup.show(b, e)));
     }
 
     @FXML
-    private void onSelected() {
+    private void onSelected(MouseEvent event) {
+        if (event.getButton() != MouseButton.PRIMARY) {
+            return;
+        }
         this.bugemonData.ifPresent(b -> {
             if (this.onClickCallback != null) {
                 this.onClickCallback.accept(b);

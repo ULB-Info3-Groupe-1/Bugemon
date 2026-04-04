@@ -31,13 +31,16 @@
                 <Insets top="20" right="20" bottom="20" left="20" />
             </padding>
             <Button fx:id="choice1Button"
-                styleClass="btn,btn-success,btn-wide,btn-lg"
+                styleClass="btn,btn-success"
+                minWidth="200" maxWidth="200"
                 onAction="#onChoice1Clicked" />
             <Button fx:id="choice2Button"
-                styleClass="btn,btn-warning,btn-wide,btn-lg"
+                styleClass="btn,btn-warning"
+                minWidth="200" maxWidth="200"
                 onAction="#onChoice2Clicked" />
             <Button fx:id="choice3Button"
-                styleClass="btn,btn-primary,btn-wide,btn-lg"
+                styleClass="btn,btn-primary"
+                minWidth="200" maxWidth="200"
                 onAction="#onChoice3Clicked" />
         </HBox>
     </bottom>
