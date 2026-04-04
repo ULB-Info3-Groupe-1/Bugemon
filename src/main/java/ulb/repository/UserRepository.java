@@ -103,7 +103,7 @@ public class UserRepository {
             while (rs.next()) {
                 result.add(new UserBugemonDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
                         rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK_POWER),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
                         rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
                         rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
                         rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)));
