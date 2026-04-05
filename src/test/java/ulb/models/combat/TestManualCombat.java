@@ -67,10 +67,10 @@ public class TestManualCombat {
     @Test
     public void turn_firstAttackStep_shouldBelongToHigherInitiativeTrainer() {
         // Initiative ordering only applies via resolveDualAttack, triggered when playerTrainer is ManualTrainer
-        Bugemon slowBugemon = bugemonWithHp("slow", 100, 1);
-        Bugemon fastBugemon = bugemonWithHp("fast", 100, 1000);
-        ManualTrainer slowPlayer = manualOf(slowBugemon);
-        AutoTrainer fastOpponent = autoOf(fastBugemon);
+        Bugemon slowBugemon = this.bugemonWithHp("slow", 100, 1);
+        Bugemon fastBugemon = this.bugemonWithHp("fast", 100, 1000);
+        ManualTrainer slowPlayer = this.manualOf(slowBugemon);
+        AutoTrainer fastOpponent = this.autoOf(fastBugemon);
         Combat combat = new Combat(slowPlayer, fastOpponent);
 
         slowPlayer.registerAttack(this.defaultAttack);
@@ -87,7 +87,7 @@ public class TestManualCombat {
     public void turn_shouldContainSwitchStep_whenManualTrainerSwitches() {
         Bugemon b1 = TestUtilsBugemons.createDefaultBugemon("1");
         Bugemon b2 = TestUtilsBugemons.createDefaultBugemon("2");
-        ManualTrainer player = manualOf(b1, b2);
+        ManualTrainer player = this.manualOf(b1, b2);
         AutoTrainer opponent = TestUtilsTrainer.createDefaultAutoTrainer();
         Combat combat = new Combat(player, opponent);
 
@@ -105,7 +105,7 @@ public class TestManualCombat {
     public void turn_shouldContainOnlyOneAttackStep_whenManualTrainerSwitches() {
         Bugemon b1 = TestUtilsBugemons.createDefaultBugemon("1");
         Bugemon b2 = TestUtilsBugemons.createDefaultBugemon("2");
-        ManualTrainer player = manualOf(b1, b2);
+        ManualTrainer player = this.manualOf(b1, b2);
         AutoTrainer opponent = TestUtilsTrainer.createDefaultAutoTrainer();
         Combat combat = new Combat(player, opponent);
 
@@ -145,7 +145,7 @@ public class TestManualCombat {
 
     @Test
     public void turn_shouldContainForfeitStep_whenManualTrainerForfeits() {
-        ManualTrainer player = manualOf(TestUtilsBugemons.createDefaultBugemon("1"));
+        ManualTrainer player = this.manualOf(TestUtilsBugemons.createDefaultBugemon("1"));
         AutoTrainer opponent = TestUtilsTrainer.createDefaultAutoTrainer();
         Combat combat = new Combat(player, opponent);
 
@@ -160,7 +160,7 @@ public class TestManualCombat {
 
     @Test
     public void turn_forfeit_shouldAlsoProduceTrainerKoStep() {
-        ManualTrainer player = manualOf(TestUtilsBugemons.createDefaultBugemon("1"));
+        ManualTrainer player = this.manualOf(TestUtilsBugemons.createDefaultBugemon("1"));
         AutoTrainer opponent = TestUtilsTrainer.createDefaultAutoTrainer();
         Combat combat = new Combat(player, opponent);
 
@@ -175,7 +175,7 @@ public class TestManualCombat {
 
     @Test
     public void turn_forfeit_shouldNotRunOtherActions() {
-        ManualTrainer player = manualOf(TestUtilsBugemons.createDefaultBugemon("1"));
+        ManualTrainer player = this.manualOf(TestUtilsBugemons.createDefaultBugemon("1"));
         AutoTrainer opponent = TestUtilsTrainer.createDefaultAutoTrainer();
         Combat combat = new Combat(player, opponent);
 
