@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
+    styleClass="hover-info-panel">
+
+    <Label fx:id="titleLabel" styleClass="hover-info-title"
+        wrapText="true" maxWidth="Infinity" />
+    <VBox fx:id="contentBox" styleClass="hover-info-content"
+        spacing="4" />
+    <Label fx:id="efficiencyLabel" wrapText="true"
+        maxWidth="Infinity" visible="false" managed="false" />
+
+</fx:root>

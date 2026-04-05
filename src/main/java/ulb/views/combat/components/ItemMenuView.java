@@ -12,6 +12,8 @@ public class ItemMenuView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/ItemMenu.fxml";
 
     private Consumer<Item> onItemSelected;
+    private Consumer<Item> onItemHovered;
+    private Runnable onItemLeft;
     private Runnable onBack;
 
     public ItemMenuView() {
@@ -20,6 +22,14 @@ public class ItemMenuView extends ComponentView {
 
     public void setOnItemSelected(Consumer<Item> callback) {
         this.onItemSelected = callback;
+    }
+
+    public void setOnItemHovered(Consumer<Item> callback) {
+        this.onItemHovered = callback;
+    }
+
+    public void setOnItemLeft(Runnable callback) {
+        this.onItemLeft = callback;
     }
 
     public void setOnBack(Runnable callback) {
@@ -36,6 +46,8 @@ public class ItemMenuView extends ComponentView {
 
         Button back = new Button("Retour");
         back.getStyleClass().addAll("btn", "btn-secondary", "menu-btn-min");
+        back.setMaxWidth(Double.MAX_VALUE);
+        back.setWrapText(true);
         back.setOnAction(e -> {
             if (this.onBack != null) {
                 this.onBack.run();
@@ -47,9 +59,21 @@ public class ItemMenuView extends ComponentView {
     private Button createItemButton(Item item, int quantity) {
         Button btn = new Button(item.name() + " ×" + quantity);
         btn.getStyleClass().addAll("btn", "btn-warning", "menu-btn-min");
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setWrapText(true);
         btn.setOnAction(e -> {
             if (this.onItemSelected != null) {
                 this.onItemSelected.accept(item);
+            }
+        });
+        btn.setOnMouseEntered(e -> {
+            if (this.onItemHovered != null) {
+                this.onItemHovered.accept(item);
+            }
+        });
+        btn.setOnMouseExited(e -> {
+            if (this.onItemLeft != null) {
+                this.onItemLeft.run();
             }
         });
         return btn;

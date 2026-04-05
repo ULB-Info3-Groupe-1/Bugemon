@@ -2,11 +2,14 @@ package ulb.views.combat;
 
 import java.util.List;
 
+import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
+import ulb.models.combat.TurnStep;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.CombatService;
 import ulb.views.combat.components.ActionMenuView;
 import ulb.views.combat.components.AttackMenuView;
 import ulb.views.combat.components.ItemMenuView;
@@ -85,12 +88,23 @@ public class ManualCombatView extends CombatView {
             }
         });
 
-        this.attackMenu.setOnBack(this::showMainActionMenu);
+        this.attackMenu.setOnBack(() -> {
+            this.hideHoverInfo();
+            this.showMainActionMenu();
+        });
         this.attackMenu.setOnAttack(attack -> {
             if (this.listener != null) {
                 this.listener.onAttack(attack);
             }
         });
+        this.attackMenu.setOnAttackHovered(attack -> {
+            Efficiency eff = CombatService.compareBugemonType(attack.type(), this.opponent.getCurrentBugemonType());
+            this.showHoverInfo(attack.name(), "Type : " + attack.type(), "Puissance : " + attack.power(),
+                    attack.description().isBlank() ? null : attack.description());
+            this.setHoverType(attack.type());
+            this.setHoverEfficiency(eff);
+        });
+        this.attackMenu.setOnAttackLeft(this::hideHoverInfo);
 
         this.switchMenu.setOnBack(this::showMainActionMenu);
         this.switchMenu.setOnSwitch(bugemon -> {
@@ -99,12 +113,18 @@ public class ManualCombatView extends CombatView {
             }
         });
 
-        this.itemMenuView.setOnBack(this::showMainActionMenu);
+        this.itemMenuView.setOnBack(() -> {
+            this.hideHoverInfo();
+            this.showMainActionMenu();
+        });
         this.itemMenuView.setOnItemSelected(item -> {
             if (this.listener != null) {
                 this.listener.onItemSelected(item);
             }
         });
+        this.itemMenuView.setOnItemHovered(item -> this.showHoverInfo(item.name(), "Catégorie : " + item.type(),
+                item.description().isBlank() ? null : item.description()));
+        this.itemMenuView.setOnItemLeft(this::hideHoverInfo);
     }
 
     /** Restores the main action menu, called after a forced switch completes. */
@@ -128,6 +148,19 @@ public class ManualCombatView extends CombatView {
     private void showInventory() {
         this.itemMenuView.show(this.player.getInventoryMap());
         this.setActionMenuContent(this.itemMenuView);
+    }
+
+    @Override
+    public void showStepDialog(TurnStep step, Trainer playerTrainer) {
+        this.hideHoverInfo();
+        this.hideActionMenu();
+        super.showStepDialog(step, playerTrainer);
+    }
+
+    @Override
+    public void hideDialog() {
+        super.hideDialog();
+        this.showActionMenu();
     }
 
     /** Callback interface for all user combat actions dispatched by this view. */

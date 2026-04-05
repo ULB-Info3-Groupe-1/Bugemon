@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import ulb.views.combat.components.BugemonInfoView?>
 <?import ulb.views.components.DialogZoneView?>
+<?import ulb.views.components.HoverInfoView?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.combat.CombatView">
@@ -27,9 +28,13 @@
                 fitHeight="160" fitWidth="160" preserveRatio="true" />
         </HBox>
 
-        <!-- Action menu slot (bottom-right) -->
-        <VBox fx:id="actionMenuSlot" AnchorPane.bottomAnchor="100"
-            AnchorPane.rightAnchor="100" />
+        <!-- Bottom-right: hover info panel (left) + action menu slot (right) -->
+        <HBox AnchorPane.bottomAnchor="100" AnchorPane.rightAnchor="100"
+            spacing="20" alignment="BOTTOM_RIGHT">
+            <HoverInfoView fx:id="hoverInfoView" visible="false"
+                managed="false" />
+            <VBox fx:id="actionMenuSlot" />
+        </HBox>
 
     </AnchorPane>
 

@@ -142,7 +142,8 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected void handleCombatResult(Trainer winner) {
         if (winner == this.playerTrainer) {
-            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner, this.playerTrainer);
+            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner,
+                    this.combat.getOpponentTrainer());
             this.onVictory.accept(levelUps);
         } else {
             this.metaController.switchTo(Window.COMBAT_DEFEAT);

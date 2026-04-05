@@ -324,7 +324,86 @@
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-border-width: 1;
+}
 
+.action-menu .button {
+    -fx-font-size: 16px;
+}
+
+.main-action-menu .button {
+    -fx-font-size: 20px;
+}
+
+/* ── Hover info panel ────────────────────────────────────── */
+.hover-info-panel {
+    -fx-background-color: color-surface;
+    -fx-padding: 16;
+    -fx-border-color: color-surface-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-pref-width: 220;
+    -fx-max-width: 220;
+    -fx-spacing: 8;
+}
+
+.hover-info-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+    -fx-wrap-text: true;
+}
+
+.hover-info-meta {
+    -fx-font-size: 14px;
+    -fx-text-fill: color-text-muted;
+    -fx-wrap-text: true;
+}
+
+/* Type-based background colours (rgba for reduced opacity) */
+.hover-info-panel.hover-type-FLORA {
+    -fx-background-color: color-hover-flora;
+    -fx-border-color: color-flora-hover;
+}
+
+.hover-info-panel.hover-type-PYRO {
+    -fx-background-color: color-hover-pyro;
+    -fx-border-color: color-pyro-hover;
+}
+
+.hover-info-panel.hover-type-AQUA {
+    -fx-background-color: color-hover-aqua;
+    -fx-border-color: color-aqua-hover;
+}
+
+.hover-info-panel.hover-type-LITHO {
+    -fx-background-color: color-hover-litho;
+    -fx-border-color: color-litho-hover;
+}
+
+/* White text on typed backgrounds */
+.hover-info-panel.hover-typed .hover-info-title,
+.hover-info-panel.hover-typed .hover-info-meta {
+    -fx-text-fill: white;
+}
+
+/* Efficiency badges — background badge so they're visible on any type colour */
+.hover-info-efficiency-high {
+    -fx-background-color: color-efficiency-high;
+    -fx-text-fill: color-efficiency-high-text;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 4;
+    -fx-padding: 4 10;
+}
+
+.hover-info-efficiency-low {
+    -fx-background-color: color-efficiency-low;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 4;
+    -fx-padding: 4 10;
 }
 
 /* ── Dialog zone ─────────────────────────────────────────── */

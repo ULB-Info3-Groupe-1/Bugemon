@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <fx:root type="VBox" xmlns:fx="http://javafx.com/fxml">
@@ -15,20 +16,28 @@
             <ColumnConstraints percentWidth="50"
                 fillWidth="true" />
         </columnConstraints>
+        <rowConstraints>
+            <RowConstraints fillHeight="true" vgrow="ALWAYS" />
+            <RowConstraints fillHeight="true" vgrow="ALWAYS" />
+        </rowConstraints>
 
         <Button fx:id="topLeft" wrapText="true" maxWidth="Infinity"
-            GridPane.columnIndex="0" GridPane.rowIndex="0"
-            GridPane.hgrow="ALWAYS" onAction="#onAttack1Clicked" />
+            maxHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"
+            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onAttack1Clicked" />
         <Button fx:id="topRight" wrapText="true" maxWidth="Infinity"
-            GridPane.columnIndex="1" GridPane.rowIndex="0"
-            GridPane.hgrow="ALWAYS" onAction="#onAttack2Clicked" />
+            maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"
+            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onAttack2Clicked" />
         <Button fx:id="bottomLeft" wrapText="true" maxWidth="Infinity"
-            GridPane.columnIndex="0" GridPane.rowIndex="1"
-            GridPane.hgrow="ALWAYS" onAction="#onAttack3Clicked" />
-        <Button fx:id="bottomRight" text="Retour"
+            maxHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"
+            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onAttack3Clicked" />
+        <Button fx:id="bottomRight" text="Retour" wrapText="true"
             styleClass="btn,btn-secondary" maxWidth="Infinity"
-            GridPane.columnIndex="1" GridPane.rowIndex="1"
-            GridPane.hgrow="ALWAYS" onAction="#onBackClicked" />
+            maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"
+            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onBackClicked" />
     </GridPane>
 
 </fx:root>
