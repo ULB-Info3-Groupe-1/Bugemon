@@ -1,7 +1,6 @@
 package ulb.views.components;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
@@ -15,19 +14,20 @@ public class AllBugemonsView extends ComponentView {
     @FXML
     private FlowPane flowPane;
 
+    Listener listener;
+
     private Function<Bugemon, Boolean> selectionChecker;
-    private Consumer<Bugemon> onBugemonClicked;
 
     public AllBugemonsView() {
         super(FXML_PATH);
     }
 
-    public void setSelectionChecker(Function<Bugemon, Boolean> checker) {
-        this.selectionChecker = checker;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
-    public void setOnClick(Consumer<Bugemon> callback) {
-        this.onBugemonClicked = callback;
+    public void setSelectionChecker(Function<Bugemon, Boolean> checker) {
+        this.selectionChecker = checker;
     }
 
     /** Clears and repopulates the grid with the given list of Bugemons. */
@@ -51,17 +51,21 @@ public class AllBugemonsView extends ComponentView {
             card.setSelected(this.selectionChecker.apply(bugemon));
         }
 
-        if (this.onBugemonClicked != null) {
-            card.setListener(new BugemonCardView.Listener() {
+        card.setListener(new BugemonCardView.Listener() {
 
-                @Override
-                public void onClick(Bugemon bugemon) {
-                    AllBugemonsView.this.onBugemonClicked.accept(bugemon);
-                }
+            @Override
+            public void onClick(Bugemon bugemon) {
+                AllBugemonsView.this.listener.onBugemonClicked(bugemon);
+            }
 
-            });
-        }
+        });
 
         return card;
+    }
+
+    public interface Listener {
+
+        void onBugemonClicked(Bugemon bugemon);
+
     }
 }
