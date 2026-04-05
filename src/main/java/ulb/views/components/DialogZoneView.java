@@ -13,22 +13,19 @@ public class DialogZoneView extends ComponentView {
     @FXML
     private Button nextButton;
 
-    private Runnable onNext;
+    Listener listener;
 
     public DialogZoneView() {
         super(FXML_PATH);
     }
 
-    /** Sets the callback invoked when the user clicks the next button. */
-    public void setOnNext(Runnable callback) {
-        this.onNext = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @FXML
     private void onNextButtonClicked() {
-        if (this.onNext != null) {
-            this.onNext.run();
-        }
+        this.listener.onNext();
     }
 
     public void setDialogText(String text) {
@@ -41,5 +38,11 @@ public class DialogZoneView extends ComponentView {
 
     public void setButtonText(String text) {
         this.nextButton.setText(text);
+    }
+
+    public interface Listener {
+
+        void onNext();
+
     }
 }
