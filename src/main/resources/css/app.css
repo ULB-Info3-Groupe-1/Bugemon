@@ -299,8 +299,25 @@
     -fx-pref-width: size-bugemon-cell-width;
 }
 
+/* ── Fixed-width button families ─────────────────────────── */
+.btn-nav {
+    -fx-min-width: size-btn-nav;
+    -fx-max-width: size-btn-nav;
+}
+
+.btn-team {
+    -fx-min-width: size-btn-team;
+    -fx-max-width: size-btn-team;
+}
+
+.btn-choice {
+    -fx-min-width: size-btn-choice;
+    -fx-max-width: size-btn-choice;
+}
+
 /* ── Action menu panel ───────────────────────────────────── */
 .action-menu {
+    -fx-pref-width: size-action-menu;
     -fx-background-color: color-surface;
     -fx-padding: 20;
     -fx-border-color: color-surface-border;

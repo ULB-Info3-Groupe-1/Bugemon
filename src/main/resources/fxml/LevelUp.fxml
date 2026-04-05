@@ -30,12 +30,12 @@
             <padding>
                 <Insets top="28" right="28" bottom="28" left="28" />
             </padding>
-            <Button fx:id="choice1Button" styleClass="btn,btn-success"
-                minWidth="260" maxWidth="260" onAction="#onChoice1Clicked" />
-            <Button fx:id="choice2Button" styleClass="btn,btn-warning"
-                minWidth="260" maxWidth="260" onAction="#onChoice2Clicked" />
-            <Button fx:id="choice3Button" styleClass="btn,btn-primary"
-                minWidth="260" maxWidth="260" onAction="#onChoice3Clicked" />
+            <Button fx:id="choice1Button" styleClass="btn,btn-success,btn-choice"
+                onAction="#onChoice1Clicked" />
+            <Button fx:id="choice2Button" styleClass="btn,btn-warning,btn-choice"
+                onAction="#onChoice2Clicked" />
+            <Button fx:id="choice3Button" styleClass="btn,btn-primary,btn-choice"
+                onAction="#onChoice3Clicked" />
         </HBox>
     </bottom>
 
