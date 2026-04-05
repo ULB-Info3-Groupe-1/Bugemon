@@ -52,7 +52,14 @@ public class AllBugemonsView extends ComponentView {
         }
 
         if (this.onBugemonClicked != null) {
-            card.setOnClick(this.onBugemonClicked);
+            card.setListener(new BugemonCardView.Listener() {
+
+                @Override
+                public void onClick() {
+                    AllBugemonsView.this.onBugemonClicked.accept(bugemon);
+                }
+
+            });
         }
 
         return card;

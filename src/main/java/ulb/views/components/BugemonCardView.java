@@ -2,7 +2,6 @@ package ulb.views.components;
 
 import java.io.File;
 import java.util.Optional;
-import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -28,9 +27,10 @@ public class BugemonCardView extends ComponentView {
     @FXML
     private Label levelLabel;
 
+    Listener listener;
+
     private final Optional<Bugemon> bugemonData;
     private boolean selected = false;
-    private Consumer<Bugemon> onClickCallback;
 
     /** Constructs an empty placeholder card with a default image and {@code "?"} as name. */
     public BugemonCardView() {
@@ -64,17 +64,12 @@ public class BugemonCardView extends ComponentView {
         }
 
         this.bugemonData.ifPresent(b -> {
-            if (this.onClickCallback != null) {
-                this.onClickCallback.accept(b);
-            }
+            this.listener.onClick();
         });
     }
 
-    /**
-     * Registers the callback invoked when this card is clicked. Does not fire if the card is empty (no Bugemon data).
-     */
-    public void setOnClick(Consumer<Bugemon> callback) {
-        this.onClickCallback = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /** Applies or removes the selected visual style. */
@@ -102,5 +97,11 @@ public class BugemonCardView extends ComponentView {
             this.getStyleClass().remove("bugemon-cell-selected");
             this.getStyleClass().add("bugemon-cell");
         }
+    }
+
+    public interface Listener {
+
+        void onClick();
+
     }
 }

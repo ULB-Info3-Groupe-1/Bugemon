@@ -28,11 +28,20 @@ public class BugemonTeamView extends ComponentView {
 
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
-            BugemonCardView cell = new BugemonCardView(aliveBugemons.get(i));
+            Bugemon bugemon = aliveBugemons.get(i);
+            BugemonCardView card = new BugemonCardView(bugemon);
             if (this.onBugemonClicked != null) {
-                cell.setOnClick(this.onBugemonClicked);
+                card.setListener(new BugemonCardView.Listener() {
+
+                    @Override
+                    public void onClick() {
+                        BugemonTeamView.this.onBugemonClicked.accept(bugemon);
+                    }
+
+                });
+
             }
-            this.gridPane.add(cell, i % GRID_COLUMNS, i / GRID_COLUMNS);
+            this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
         }
     }
 
