@@ -8,20 +8,20 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CombatDefeatView" alignment="CENTER"
-    spacing="20">
+    spacing="28">
     <padding>
-        <Insets top="40" right="40" bottom="40" left="40" />
+        <Insets top="56" right="56" bottom="56" left="56" />
     </padding>
 
     <Label text="DÉFAITE..." styleClass="defeat-title" />
 
-    <HBox spacing="50.0" alignment="CENTER">
+    <HBox spacing="70" alignment="CENTER">
         <children>
             <Button onAction="#onRetryClicked" text="Réessayer"
-                styleClass="btn,btn-danger" minWidth="200" maxWidth="200" />
+                styleClass="btn,btn-danger" minWidth="260" maxWidth="260" />
             <Button onAction="#onBackToMainMenuClicked"
                 text="Retour au menu principal" styleClass="btn,btn-secondary"
-                minWidth="200" maxWidth="200" />
+                minWidth="260" maxWidth="260" />
         </children>
     </HBox>
 

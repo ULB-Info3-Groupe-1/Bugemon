@@ -9,7 +9,7 @@
    ══════════════════════════════════════════════════════════════ */
 .root {
     -fx-font-family: 'Pixels';
-    -fx-font-size: 16px;
+    -fx-font-size: 20px;
 
     /* ── Color palette ──────────────────────────────────────── */
     color-primary: #4682B4;
@@ -55,18 +55,18 @@
     color-xp: #8e44ad;
 
     /* ── Layout sizes (Double — safe for pref/min/max-width/height) */
-    size-hp-bar-height: 16;
-    size-hp-bar-width: 200;
-    size-xp-bar-height: 6;
-    size-xp-bar-width: 160;
-    size-bugemon-card: 80;
+    size-hp-bar-height: 22;
+    size-hp-bar-width: 280;
+    size-xp-bar-height: 9;
+    size-xp-bar-width: 220;
+    size-bugemon-card: 110;
     /* matches .bugemon-card-pane min/max-height */
-    size-bugemon-cell-width: 96;
+    size-bugemon-cell-width: 130;
     /* card width in the all-bugemons grid (wider than image for label room) */
-    size-bugemon-grid-vgap: 10;
+    size-bugemon-grid-vgap: 14;
     /* matches .all-bugemons -fx-vgap */
-    size-switch-row-spacing: 10;
+    size-switch-row-spacing: 14;
     /* spacing between sprite and button inside a switch-menu row */
-    size-menu-btn-min: 200;
+    size-menu-btn-min: 280;
     /* min-width for switch/item menu buttons */
 }
