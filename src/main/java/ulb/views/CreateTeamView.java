@@ -49,6 +49,13 @@ public class CreateTeamView extends View {
                         CreateTeamView.this.listener.onBugemonSelected(bugemon);
                     }
 
+                    @Override
+                    public boolean isSelected(Bugemon bugemon) {
+                        // WARN: this is not correct now, but will be when we get rid of IDs.
+                        // TODO: this is business logic that should be moved to the controller
+                        return CreateTeamView.this.bugemonTeam.contains(bugemon);
+                    }
+
                 }
 
         );
@@ -102,8 +109,6 @@ public class CreateTeamView extends View {
 
     public void setModel(BugemonTeam newBugemonTeam) {
         this.bugemonTeam = newBugemonTeam;
-        this.allBugemonsGridView
-                .setSelectionChecker(b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getName().equals(b.getName())));
     }
 
     /**
