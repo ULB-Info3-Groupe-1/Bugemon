@@ -40,25 +40,12 @@ import ulb.models.bugemon.effect.EffectTarget;
 import ulb.repository.dto.CreateBugemonDTO;
 
 /**
- * Provides static utility methods for parsing the JSON data files that describe the Bugemon game's content (attacks and
- * Bugemons).
- *
- * <p>
- * The main entry point is {@link #parse()}, which reads the three bundled JSON resource files (attacks, Bugemons,
- * Items/inventory) in order, building an ID-to-{@link Attack} map first so that Bugemon deserialization can resolve
- * attack references. Parsed data is stored in static fields and exposed via {@link #getBugemons()},
- * {@link #getAttacks()}, {@link #getItems()}, and {@link #getInventory()}.
- * </p>
- *
- * <p>
- * Internally, parsing is delegated to three private static helpers — {@link #parseAttacks(java.io.Reader)},
- * {@link #parseBugemons(java.io.Reader)}, and {@link #parseItemsAndInventory(java.io.Reader)} — each of which uses a
- * customised {@link com.google.gson.Gson} instance with the appropriate type adapters.
- * </p>
+ * Parses the three bundled JSON resource files (attacks, Bugemons, items/inventory). The main entry point is
+ * {@link #parse()}, which builds an ID-to-{@link Attack} map first so that Bugemon deserialisation can resolve attack
+ * references. Results are exposed via {@link #getBugemons()}, {@link #getAttacks()}, {@link #getItems()}, and
+ * {@link #getInventory()}.
  *
  * @see BugemonDeserializer
- * @see ulb.models.bugemon.Bugemon
- * @see ulb.models.bugemon.Attack
  */
 public class Parser {
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
@@ -75,13 +62,8 @@ public class Parser {
     private static Inventory inventory;
 
     /**
-     * Parses the three bundled JSON resource files (attacks, Bugemons, Items/inventory) and populates the static data
-     * fields.
-     *
-     * <p>
-     * Must be called once before any {@code get*()} accessor. Silently returns without populating any data if a
-     * resource file cannot be opened.
-     * </p>
+     * Parses all JSON resource files and populates the static data fields. Must be called once before any
+     * {@code get*()} accessor. Silently returns without populating any data if a resource file cannot be opened.
      */
     public void parse() {
         LOG.info("Parsing data");
@@ -129,14 +111,8 @@ public class Parser {
 
     /**
      * Custom Gson type adapter that deserialises a JSON string into a {@link BugemonType} enum constant.
-     *
-     * <p>
-     * The adapter converts the raw JSON string to upper-case before calling {@link BugemonType#valueOf(String)}, making
-     * the matching case-insensitive with respect to the data file (e.g., {@code "flora"} and {@code "FLORA"} both
-     * resolve to {@link BugemonType#FLORA}).
-     * </p>
-     *
-     * @see BugemonType
+     * Converts the raw value to upper-case before calling {@link BugemonType#valueOf(String)}, so {@code "flora"} and
+     * {@code "FLORA"} both resolve to {@link BugemonType#FLORA}.
      */
     private static class TypeDeserializer implements JsonDeserializer<BugemonType> {
         @Override

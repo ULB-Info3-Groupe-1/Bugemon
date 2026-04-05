@@ -11,14 +11,10 @@ import ulb.models.bugemon.components.InitiativeComponent;
 import ulb.models.bugemon.components.LevelComponent;
 
 /**
- * Fluent builder for {@link Bugemon}. All fields except {@code id} have defaults.
+ * Fluent builder for {@link Bugemon}. All fields except {@code id} have defaults (name={@value #DEFAULT_NAME},
+ * type=FLORA, hp={@value #DEFAULT_HP}, attack={@value #DEFAULT_ATTACK}, defense={@value #DEFAULT_DEFENSE},
+ * initiative={@value #DEFAULT_INITIATIVE}, xp=0, level=1, isStarter=false, attackList=empty).
  *
- * <p>
- * Defaults: name={@value #DEFAULT_NAME}, type=FLORA, sprite={@value #DEFAULT_SPRITE}, hp={@value #DEFAULT_HP},
- * attack={@value #DEFAULT_ATTACK}, defense={@value #DEFAULT_DEFENSE}, initiative={@value #DEFAULT_INITIATIVE}, xp=0,
- * level=1, isStarter=false, attackList=empty.
- *
- * <p>
  * Usage: {@code new BugemonBuilder().id("001").name("Florasect").hp(120).build()}
  */
 @SuppressWarnings("checkstyle:HiddenField")

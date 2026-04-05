@@ -12,16 +12,12 @@ import ulb.models.trainer.TurnAction;
 import ulb.services.CombatService;
 
 /**
- * Orchestrates a turn-based combat between two {@link Trainer}s.
+ * Orchestrates a turn-based combat between two {@link Trainer}s. Each call to {@link #turn()} asks both trainers for
+ * their {@link TurnAction}, applies passive actions (switches, …), then resolves attacks in initiative order. The
+ * combat ends when {@link #isFinished()} returns {@code true}; {@link #getWinner()} then identifies the survivor.
  *
- * <p>
- * Each call to {@link #turn()} asks both trainers for their {@link TurnAction}, applies passive actions (switches, …),
- * then resolves attacks in initiative order. The combat ends when {@link #isFinished()} returns {@code true};
- * {@link #getWinner()} then identifies the survivor.
- *
- * <p>
- * To add a new passive action: add a branch in {@link #applyPassiveAction(Trainer, TurnAction)} — no other method needs
- * to change.
+ * To add a new passive action: add a branch in {@link #applyPassiveAction(Trainer, TurnAction)} — no other method
+ * needs to change.
  */
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
@@ -42,11 +38,9 @@ public class Combat {
     }
 
     /**
-     * Resolves one full round and returns a {@link TurnResult} describing every hit.
-     *
-     * <p>
-     * Sequence: mark participation → get actions → handle forfeit → apply passive actions → resolve attacks in
-     * initiative order → increment turn counter.
+     * Resolves one full round and returns a {@link TurnResult} describing every hit. Sequence: mark participation →
+     * get actions → handle forfeit → apply passive actions → resolve attacks in initiative order → increment turn
+     * counter.
      */
     public TurnResult turn() {
         LOG.debug("Turn {} — ally: {} ({}hp) vs adversary: {} ({}hp)", this.turn,

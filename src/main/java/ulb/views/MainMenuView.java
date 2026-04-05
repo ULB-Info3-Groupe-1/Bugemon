@@ -1,17 +1,11 @@
 package ulb.views;
 
-import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 /**
- * View for the main menu screen.
- *
- * <p>
- * Dispatches user interactions to the controller exclusively through callbacks registered via
- * {@link #setOnCreateTeam(Runnable)} and {@link #setOnQuit(Runnable)}. The view holds no reference to any concrete
- * controller class.
- * </p>
+ * View for the main menu screen. Dispatches user interactions to the controller exclusively through callbacks
+ * registered via setters. The view holds no reference to any concrete controller class.
  */
 public class MainMenuView extends View {
     @FXML
@@ -29,12 +23,6 @@ public class MainMenuView extends View {
 
     private final String fxmlPath = "/fxml/MainMenu.fxml";
 
-    /**
-     * Loads the main-menu FXML layout and wires the button actions to the registered callbacks.
-     *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
-     */
     public MainMenuView() {
     }
 

@@ -14,12 +14,9 @@ import ulb.views.components.AllBugemonsView;
 import ulb.views.components.BugemonTeamView;
 
 /**
- * View for the team creation screen.
- *
- * <p>
- * Holds a reference to the {@link BugemonTeam} model and reads from it directly in {@link #refresh()}. Dispatches user
- * interactions through a {@link Listener}; holds no reference to any concrete controller class.
- * </p>
+ * View for the team creation screen. Holds a reference to the {@link BugemonTeam} model and reads from it directly in
+ * {@link #refresh()}. Dispatches user interactions through a {@link Listener}; holds no reference to any concrete
+ * controller class.
  */
 public class CreateTeamView extends View {
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
@@ -56,7 +53,6 @@ public class CreateTeamView extends View {
         return this.fxmlPath;
     }
 
-    /** Registers the listener that receives all user interaction events from this view. */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -98,7 +94,6 @@ public class CreateTeamView extends View {
         }
     }
 
-    /** Gives the view a reference to the team model it should read from. */
     public void setModel(BugemonTeam newBugemonTeam) {
         this.bugemonTeam = newBugemonTeam;
         this.allBugemonsGridView
@@ -113,7 +108,6 @@ public class CreateTeamView extends View {
         this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
     }
 
-    /** Updates the model reference and refreshes the view. */
     public void refreshTeam(BugemonTeam team) {
         this.bugemonTeam = team;
         this.refresh();
@@ -125,7 +119,6 @@ public class CreateTeamView extends View {
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
-    /** Replaces the team list displayed in the ListView. */
     public void updateTeamList(List<String> teamNames) {
         this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
     }
