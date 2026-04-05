@@ -13,6 +13,8 @@ public class MainMenuView extends View {
     @FXML
     private Button createTeamButton;
     @FXML
+    private Button createBugemonButton;
+    @FXML
     private Button noTowerButton;
     @FXML
     private Button quitButton;
@@ -35,6 +37,11 @@ public class MainMenuView extends View {
     @FXML
     private void onEditTeamClicked() {
         this.listener.onEditTeam();
+    }
+
+    @FXML
+    private void onCreateBugemonClicked() {
+        this.listener.onCreateBugemon();
     }
 
     @FXML
@@ -69,6 +76,8 @@ public class MainMenuView extends View {
 
     public interface Listener {
         void onCreateTeam();
+        
+        void onCreateBugemon();
 
         void onNoTower();
 
