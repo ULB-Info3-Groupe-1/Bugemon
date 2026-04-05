@@ -64,7 +64,7 @@ public class BugemonCardView extends ComponentView {
         }
 
         this.bugemonData.ifPresent(b -> {
-            this.listener.onClick();
+            this.listener.onClick(b);
         });
     }
 
@@ -101,7 +101,7 @@ public class BugemonCardView extends ComponentView {
 
     public interface Listener {
 
-        void onClick();
+        void onClick(Bugemon bugemon);
 
     }
 }

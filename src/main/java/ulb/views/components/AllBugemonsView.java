@@ -55,7 +55,7 @@ public class AllBugemonsView extends ComponentView {
             card.setListener(new BugemonCardView.Listener() {
 
                 @Override
-                public void onClick() {
+                public void onClick(Bugemon bugemon) {
                     AllBugemonsView.this.onBugemonClicked.accept(bugemon);
                 }
 
