@@ -25,69 +25,65 @@
             <BugemonCardView fx:id="bugemonCardView" />
             <Button text="Charger sprite" />
             <Button text="Supprimer sprite" />
-        </VBox> 
+        </VBox>
         <VBox alignment="CENTER" spacing="20">
             <padding>
                 <Insets top="40" right="40" bottom="40" left="40" />
             </padding>
-            <TextField fx:id="bugemonNameTextField" 
-                        promptText="Nom de votre Bugemon..." />
-                        <!-- onAction="#onSaveClicked" /> -->
+            <TextField fx:id="bugemonNameTextField"
+                promptText="Nom de votre Bugemon..." />
+            <!-- onAction="#onSaveClicked" /> -->
             <Label text="Choisir le type du Bugemon" />
             <HBox alignment="CENTER" spacing="20">
-                <Button text="FLORA" 
-                        onAction="#onTypeClicked"
-                        styleClass="btn, attack-FLORA" />
-                <Button text="AQUA"
-                        onAction="#onTypeClicked"
-                        styleClass="btn, attack-AQUA" />
-                <Button text="PYRO"
-                        onAction="#onTypeClicked"
-                        styleClass="btn, attack-PYRO" />
-                <Button text="LITHO" 
-                        onAction="#onTypeClicked"
-                        styleClass="btn, attack-LITHO" />
+                <Button text="FLORA" onAction="#onTypeClicked"
+                    styleClass="btn, attack-FLORA" />
+                <Button text="AQUA" onAction="#onTypeClicked"
+                    styleClass="btn, attack-AQUA" />
+                <Button text="PYRO" onAction="#onTypeClicked"
+                    styleClass="btn, attack-PYRO" />
+                <Button text="LITHO" onAction="#onTypeClicked"
+                    styleClass="btn, attack-LITHO" />
             </HBox>
             <Label text="Sélectionner les statistiques" />
             <Label text="Vie (0)" fx:id="healthLabel" />
-            <Slider fx:id="healthSlider" blockIncrement="1" majorTickUnit="50" max="100"
-                    showTickLabels="true" showTickMarks="true"
-                    onMouseReleased="#onSliderChanged">
+            <Slider fx:id="healthSlider" blockIncrement="1"
+                majorTickUnit="50" max="100" showTickLabels="true"
+                showTickMarks="true" onMouseReleased="#onSliderChanged">
                 <userData>
-                    <EffectStat fx:constant="HP"/>
+                    <EffectStat fx:constant="HP" />
                 </userData>
             </Slider>
 
             <Label text="Attaque (0)" fx:id="attackLabel" />
-            <Slider fx:id="attackSlider" blockIncrement="1" majorTickUnit="50" max="100"
-                    showTickLabels="true" showTickMarks="true"
-                    onMouseReleased="#onSliderChanged">
+            <Slider fx:id="attackSlider" blockIncrement="1"
+                majorTickUnit="50" max="100" showTickLabels="true"
+                showTickMarks="true" onMouseReleased="#onSliderChanged">
                 <userData>
-                    <EffectStat fx:constant="ATTACK"/>
+                    <EffectStat fx:constant="ATTACK" />
                 </userData>
             </Slider>
 
             <Label text="Défense (0)" fx:id="defenseLabel" />
-            <Slider fx:id="defenseSlider" blockIncrement="1" majorTickUnit="50" max="100"
-                    showTickLabels="true" showTickMarks="true"
-                    onMouseReleased="#onSliderChanged">
+            <Slider fx:id="defenseSlider" blockIncrement="1"
+                majorTickUnit="50" max="100" showTickLabels="true"
+                showTickMarks="true" onMouseReleased="#onSliderChanged">
                 <userData>
-                    <EffectStat fx:constant="DEFENSE"/>
+                    <EffectStat fx:constant="DEFENSE" />
                 </userData>
             </Slider>
 
             <Label text="Initiative (0)" fx:id="initiativeLabel" />
-            <Slider fx:id="initiativeSlider" blockIncrement="1" majorTickUnit="50" max="100"
-                    showTickLabels="true" showTickMarks="true"
-                    onMouseReleased="#onSliderChanged">
+            <Slider fx:id="initiativeSlider" blockIncrement="1"
+                majorTickUnit="50" max="100" showTickLabels="true"
+                showTickMarks="true" onMouseReleased="#onSliderChanged">
                 <userData>
-                    <EffectStat fx:constant="INITIATIVE"/>
+                    <EffectStat fx:constant="INITIATIVE" />
                 </userData>
             </Slider>
 
             <Label text="Sélectionner attaques" />
             <ListView fx:id="attackListView" />
-        </VBox> 
+        </VBox>
     </HBox>
     <Button text="Sauvegarder" onAction="#onSaveClicked" />
 </VBox>

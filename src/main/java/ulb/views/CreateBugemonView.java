@@ -1,19 +1,17 @@
 package ulb.views;
 
-import java.io.IOException;
-
-import ch.qos.logback.core.joran.action.Action;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.views.components.BugemonCardView;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 
 public class CreateBugemonView extends View {
 
@@ -77,40 +75,42 @@ public class CreateBugemonView extends View {
 
     @FXML
     private void onSaveClicked() {
-        String bugemonName = bugemonNameTextField.getText();
-        double healthValue = healthSlider.getValue();
-        double attackValue = attackSlider.getValue();
-        double defenseValue = defenseSlider.getValue();
-        double initiativeValue = initiativeSlider.getValue();
+        String bugemonName = this.bugemonNameTextField.getText();
+        double healthValue = this.healthSlider.getValue();
+        double attackValue = this.attackSlider.getValue();
+        double defenseValue = this.defenseSlider.getValue();
+        double initiativeValue = this.initiativeSlider.getValue();
 
         this.listener.onSave(bugemonName, healthValue, attackValue, defenseValue, initiativeValue);
     }
 
     @FXML
-    private void onSliderChanged(MouseEvent event) {
+    private void onSliderChanged(MouseEvent event) throws IllegalArgumentException {
         Slider slider = (Slider) event.getSource();
         EffectStat stat = (EffectStat) slider.getUserData();
         double value = slider.getValue();
 
         switch (stat) {
             case HP -> {
-                healthLabel.setText(String.format("Vie (%.0f)", value));
+                this.healthLabel.setText(String.format("Vie (%.0f)", value));
             }
             case ATTACK -> {
-                attackLabel.setText(String.format("Attaque (%.0f)", value));
+                this.attackLabel.setText(String.format("Attaque (%.0f)", value));
             }
             case DEFENSE -> {
-                defenseLabel.setText(String.format("Défense (%.0f)", value));
+                this.defenseLabel.setText(String.format("Défense (%.0f)", value));
             }
             case INITIATIVE -> {
-                initiativeLabel.setText(String.format("Initiative (%.0f)", value));
+                this.initiativeLabel.setText(String.format("Initiative (%.0f)", value));
+            }
+            default -> {
+                throw new IllegalArgumentException();
             }
         }
     }
 
     /**
-     * Registers the listener that receives all user interaction events from this
-     * view.
+     * Registers the listener that receives all user interaction events from this view.
      */
     public void setListener(Listener listener) {
         this.listener = listener;

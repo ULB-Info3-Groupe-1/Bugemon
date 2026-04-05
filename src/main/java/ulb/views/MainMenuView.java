@@ -76,7 +76,7 @@ public class MainMenuView extends View {
 
     public interface Listener {
         void onCreateTeam();
-        
+
         void onCreateBugemon();
 
         void onNoTower();
