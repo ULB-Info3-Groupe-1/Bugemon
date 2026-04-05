@@ -28,13 +28,12 @@ public class BugemonTeamView extends ComponentView {
 
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
-            Bugemon bugemon = aliveBugemons.get(i);
-            BugemonCardView card = new BugemonCardView(bugemon);
+            BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
             if (this.onBugemonClicked != null) {
                 card.setListener(new BugemonCardView.Listener() {
 
                     @Override
-                    public void onClick() {
+                    public void onClick(Bugemon bugemon) {
                         BugemonTeamView.this.onBugemonClicked.accept(bugemon);
                     }
 
