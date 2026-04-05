@@ -5,26 +5,26 @@
 <?import javafx.scene.control.Label?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="30"
+    fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="40"
     styleClass="main-menu">
 
     <Label text="BUGÉMON" styleClass="main-title" />
 
     <Button fx:id="createTeamButton" onAction="#onCreateTeamClicked"
-        text="Gérer mes équipes" styleClass="btn,btn-primary" minWidth="240"
-        maxWidth="240" />
+        text="Gérer mes équipes" styleClass="btn,btn-primary" minWidth="300"
+        maxWidth="300" />
     <Button fx:id="startAutomaticCombatButton"
         onAction="#onStartAutomaticCombatClicked"
         text="Lancer combat automatique" styleClass="btn,btn-primary"
-        minWidth="240" maxWidth="240" />
+        minWidth="300" maxWidth="300" />
     <Button fx:id="startManualCombatButton"
         onAction="#onStartManualCombatClicked" text="Lancer combat manuel"
-        styleClass="btn,btn-primary" minWidth="240" maxWidth="240" />
+        styleClass="btn,btn-primary" minWidth="300" maxWidth="300" />
     <Button fx:id="noTowerButton" onAction="#onNoTowerClicked"
-        text="Lancer la NO Tower" styleClass="btn,btn-primary" minWidth="240"
-        maxWidth="240" />
+        text="Lancer la NO Tower" styleClass="btn,btn-primary" minWidth="300"
+        maxWidth="300" />
     <Button fx:id="quitButton" onAction="#onQuitClicked"
-        text="Quitter" styleClass="btn,btn-danger" minWidth="240"
-        maxWidth="240" />
+        text="Quitter" styleClass="btn,btn-danger" minWidth="300"
+        maxWidth="300" />
 
 </VBox>

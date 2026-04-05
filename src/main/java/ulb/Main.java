@@ -31,9 +31,7 @@ public class Main extends Application {
         }
 
         stage.setTitle(STAGE_TITLE);
-        stage.setResizable(false);
-        stage.setWidth(1280);
-        stage.setHeight(800);
+        stage.setMaximized(true);
 
         Scene scene = new Scene(new StackPane());
         scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
@@ -44,6 +42,5 @@ public class Main extends Application {
         PlayerService playerService = new PlayerService("default_user");
         MetaController controller = new MetaController(stage, playerService);
         controller.switchTo(Window.MAIN_MENU);
-        stage.centerOnScreen();
     }
 }

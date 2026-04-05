@@ -9,7 +9,7 @@
     -fx-font-weight: bold;
     -fx-background-radius: 6;
     -fx-cursor: hand;
-    -fx-padding: 10 16;
+    -fx-padding: 14 22;
     -fx-wrap-text: true;
     -fx-text-alignment: center;
 }
@@ -247,7 +247,7 @@
 }
 
 .bugemon-level-card {
-    -fx-font-size: 13px;
+    -fx-font-size: 17px;
     -fx-text-fill: color-text-muted;
 }
 
@@ -267,16 +267,16 @@
 /* ── Bugemon info panel ──────────────────────────────────── */
 .bugemon-name {
     -fx-font-weight: bold;
-    -fx-font-size: 16px;
+    -fx-font-size: 20px;
 }
 
 .bugemon-level {
-    -fx-font-size: 13px;
+    -fx-font-size: 17px;
     -fx-font-weight: bold;
 }
 
 .hp-label {
-    -fx-font-size: 13px;
+    -fx-font-size: 17px;
     -fx-text-fill: color-text-muted;
     -fx-alignment: center;
     -fx-max-width: Infinity;
@@ -302,7 +302,7 @@
 /* ── Action menu panel ───────────────────────────────────── */
 .action-menu {
     -fx-background-color: color-surface;
-    -fx-padding: 16;
+    -fx-padding: 20;
     -fx-border-color: color-surface-border;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
@@ -313,15 +313,15 @@
 /* ── Dialog zone ─────────────────────────────────────────── */
 .dialog-zone {
     -fx-background-color: color-surface-dialog;
-    -fx-padding: 20;
-    -fx-spacing: 20;
+    -fx-padding: 28;
+    -fx-spacing: 28;
     -fx-border-color: color-surface-border;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
     -fx-border-width: 2;
     -fx-alignment: center;
-    -fx-pref-width: 400;
-    -fx-max-width: 400;
+    -fx-pref-width: 560;
+    -fx-max-width: 560;
 }
 
 .dialog-text {
@@ -330,7 +330,7 @@
 }
 
 .additional-info {
-    -fx-font-size: 14px;
+    -fx-font-size: 18px;
     -fx-text-fill: color-text-muted;
 }
 
@@ -338,26 +338,26 @@
 /* ── Main menu ───────────────────────────────────────────── */
 .main-menu {
     -fx-background-color: transparent;
-    -fx-padding: 40 40 60 40;
+    -fx-padding: 60 60 80 60;
     -fx-alignment: center;
-    -fx-spacing: 20;
+    -fx-spacing: 30;
 }
 
 .main-title {
-    -fx-font-size: 28px;
+    -fx-font-size: 38px;
     -fx-font-weight: bold;
     -fx-text-fill: color-text-dark;
 }
 
 /* ── Create team ─────────────────────────────────────────── */
 .create-team-title {
-    -fx-font-size: 28px;
+    -fx-font-size: 38px;
     -fx-font-weight: bold;
     -fx-text-fill: color-text-dark;
 }
 
 .section-label {
-    -fx-font-size: 16px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: color-text-dark;
 }
@@ -365,7 +365,7 @@
 .team-input-label {
     -fx-text-fill: color-text-dark;
     -fx-font-weight: bold;
-    -fx-font-size: 16px;
+    -fx-font-size: 20px;
 }
 
 .text-field {
@@ -376,7 +376,7 @@
     -fx-border-width: 2;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
-    -fx-padding: 10 12;
+    -fx-padding: 14 16;
 }
 
 .text-field:focus {
@@ -393,8 +393,8 @@
 .team-list-view .list-cell {
     -fx-background-color: transparent;
     -fx-text-fill: color-text-dark;
-    -fx-padding: 6 10;
-    -fx-font-size: 14px;
+    -fx-padding: 8 14;
+    -fx-font-size: 18px;
 }
 
 .team-list-view .list-cell:selected {
@@ -408,14 +408,14 @@
 
 /* ── Combat victory ──────────────────────────────────────── */
 .victory-title {
-    -fx-font-size: 28px;
+    -fx-font-size: 38px;
     -fx-font-weight: bold;
     -fx-text-fill: color-gold;
 }
 
 /* ── Combat defeat ───────────────────────────────────────── */
 .defeat-title {
-    -fx-font-size: 28px;
+    -fx-font-size: 38px;
     -fx-font-weight: bold;
     -fx-text-fill: color-danger;
 }
@@ -427,21 +427,21 @@
     -fx-border-width: 1;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
-    -fx-padding: 12;
+    -fx-padding: 16;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 12, 0, 2, 3);
-    -fx-min-width: 220;
+    -fx-min-width: 280;
 }
 
 .bugemon-popup-section {
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 18px;
     -fx-text-fill: color-text-dark;
     -fx-padding: 4 0 2 0;
 }
 
 .bugemon-popup-key {
     -fx-text-fill: color-text-muted;
-    -fx-min-width: 80;
+    -fx-min-width: 100;
 }
 
 .bugemon-popup-value {
@@ -451,7 +451,7 @@
 
 .bugemon-popup-attack {
     -fx-text-fill: color-text-dark;
-    -fx-font-size: 13px;
+    -fx-font-size: 17px;
 }
 
 /* ── Switch & item menus ─────────────────────────────────── */
@@ -466,13 +466,13 @@
 
 /* ── Level up ────────────────────────────────────────────── */
 .level-up-title {
-    -fx-font-size: 28px;
+    -fx-font-size: 38px;
     -fx-font-weight: bold;
     -fx-text-fill: color-gold;
 }
 
 .level-up-subtitle {
-    -fx-font-size: 22px;
+    -fx-font-size: 30px;
     -fx-font-weight: bold;
     -fx-text-fill: color-gold;
 }
