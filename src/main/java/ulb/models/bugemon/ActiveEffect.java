@@ -4,19 +4,9 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 
 /**
- * Represents an {@link Effect} that is currently active on a {@link Bugemon}, tracking the number of turns remaining
- * before it expires.
- *
- * <p>
- * An {@code ActiveEffect} wraps an {@link Effect} and pairs it with a duration counter. Each turn,
- * {@link #decrementDuration()} should be called to advance the counter. When {@link #isExpired()} returns {@code true},
- * the effect should be removed and its stat modification reversed.
- * </p>
- *
- * <p>
- * A {@code durationLeft} value of {@code -1} indicates an infinite duration; {@link #decrementDuration()} will not
- * decrement below zero, and {@link #isExpired()} will never return {@code true} for such effects.
- * </p>
+ * An {@link Effect} that is currently active on a {@link Bugemon}, paired with a remaining-turns counter. Call
+ * {@link #decrementDuration()} each turn; remove the effect when {@link #isExpired()} is true. A
+ * {@code durationLeft} of {@code -1} means infinite duration.
  *
  * @see Effect
  * @see EffectStat
@@ -53,12 +43,8 @@ public class ActiveEffect {
     }
 
     /**
-     * Decrements the remaining duration by one turn, if the effect has not yet expired and is not infinite (i.e.,
-     * {@code durationLeft > 0}).
-     *
-     * <p>
-     * Calling this method when {@code durationLeft} is {@code 0} or {@code -1} has no effect.
-     * </p>
+     * Decrements the remaining duration by one turn. No-op when {@code durationLeft} is {@code 0} (expired) or
+     * {@code -1} (infinite).
      */
     public void decrementDuration() {
         if (this.durationLeft > 0) {
@@ -67,28 +53,13 @@ public class ActiveEffect {
     }
 
     /**
-     * Returns the number of turns remaining for this effect.
-     *
-     * <p>
-     * A return value of {@code -1} indicates the effect is infinite. A return value of {@code 0} indicates the effect
-     * has expired and should be removed.
-     * </p>
-     *
-     * @return the number of turns remaining, or {@code -1} for infinite duration.
+     * Returns the turns remaining, {@code -1} for infinite duration, {@code 0} if expired and should be removed.
      */
     public int getDuration() {
         return this.durationLeft;
     }
 
-    /**
-     * Returns {@code true} if this effect has expired, i.e., its remaining duration has reached zero.
-     *
-     * <p>
-     * An effect with a duration of {@code -1} (infinite) will never be considered expired.
-     * </p>
-     *
-     * @return {@code true} if {@code durationLeft == 0}, {@code false} otherwise.
-     */
+    /** Returns {@code true} when {@code durationLeft == 0}; always {@code false} for infinite effects. */
     public boolean isExpired() {
         return this.durationLeft == 0;
     }

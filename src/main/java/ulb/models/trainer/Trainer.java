@@ -10,12 +10,9 @@ import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * Abstract base for any combat participant.
- *
- * <p>
- * Holds the {@link BugemonTeam} and tracks {@code currentBugemon} (the Bugemon on the field). Subclasses implement
- * {@link #getAction()} (decision strategy) and {@link #reactToKo()} (switch logic after a KO). All resolution lives in
- * {@link ulb.models.combat.Combat}.
+ * Abstract base for any combat participant. Holds the {@link BugemonTeam} and tracks {@code currentBugemon}. Subclasses
+ * implement {@link #getAction()} (decision strategy) and {@link #reactToKo()} (switch logic after a KO). All
+ * resolution lives in {@link ulb.models.combat.Combat}.
  *
  * @see AutoTrainer
  * @see ManualTrainer

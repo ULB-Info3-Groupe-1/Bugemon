@@ -13,12 +13,9 @@ import ulb.models.bugemon.Bugemon;
 import ulb.views.components.ComponentView;
 
 /**
- * Action menu listing the Bugemons available for the player to switch into.
- *
- * <p>
- * Dispatches switch selections through the callback registered via {@link #setOnSwitch(Consumer)}. When not a forced
- * switch, a back button is shown and dispatches through the callback registered via {@link #setOnBack(Runnable)}.
- * </p>
+ * Action menu listing the Bugemons available for the player to switch into. Dispatches switch selections through the
+ * callback registered via {@link #setOnSwitch(Consumer)}. When not a forced switch, a back button is shown and
+ * dispatches through the callback registered via {@link #setOnBack(Runnable)}.
  */
 public class SwitchMenuView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/SwitchMenu.fxml";
@@ -40,7 +37,6 @@ public class SwitchMenuView extends ComponentView {
         this.onBack = callback;
     }
 
-    /** Clears and repopulates the menu with the available Bugemons. */
     public void show(List<Bugemon> available, boolean forced) {
         this.getChildren().clear();
 

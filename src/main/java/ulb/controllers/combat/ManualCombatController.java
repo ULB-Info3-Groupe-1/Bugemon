@@ -19,13 +19,9 @@ import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
 
 /**
- * Controller for the manual combat screen.
- *
- * <p>
- * Implements {@link ManualCombatView.Listener} to receive user combat actions. Each action mutates the model, then
- * calls {@code view.refresh()} so the view pulls the updated state itself. The controller never calls any show/hide
- * method on the view, and holds no knowledge of view layout.
- * </p>
+ * Controller for the manual combat screen. Implements {@link ManualCombatView.Listener} to receive user combat
+ * actions. Each action mutates the model, then calls {@code view.refresh()} so the view pulls the updated state
+ * itself. The controller never calls any show/hide method on the view, and holds no knowledge of view layout.
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
     private Combat combat;

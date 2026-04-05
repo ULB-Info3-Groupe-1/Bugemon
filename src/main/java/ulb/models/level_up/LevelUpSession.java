@@ -3,12 +3,9 @@ package ulb.models.level_up;
 import java.util.List;
 
 /**
- * Holds the state of an ongoing level-up sequence.
- *
- * <p>
- * The controller populates this object via {@link #start(List)} and advances it via {@link #advance()}. The view reads
- * {@link #getCurrent()} in its {@code refresh()} method — it never receives data pushed by the controller.
- * </p>
+ * Holds the state of an ongoing level-up sequence. The controller populates it via {@link #start(List)} and advances
+ * it via {@link #advance()}. The view reads {@link #getCurrent()} in its {@code refresh()} — it never receives data
+ * pushed by the controller.
  */
 public class LevelUpSession {
     private List<LevelUp> levelUps;
