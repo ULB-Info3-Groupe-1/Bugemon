@@ -1,31 +1,21 @@
 package ulb.models.combat;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import ulb.common.Efficiency;
-import ulb.models.bugemon.Attack;
-import ulb.models.trainer.Trainer;
+public class TurnResult {
+    private final List<TurnStep> steps;
 
-/**
- * Immutable snapshot of a single combat turn produced by {@link Combat#turn()}. Check {@link AttackResult#wasAttack()}
- * before reading attack-specific fields on {@code first} or {@code second}.
- *
- * @param allyIsKo
- *            {@code true} if the ally's active Bugemon fainted this turn (triggers forced-switch).
- */
-public record TurnResult(AttackResult first, Optional<AttackResult> second, boolean allyIsKo) {
-    /**
-     * Snapshot of one side's action within a turn. When {@link #attack()} is empty the trainer switched or used an
-     * item; {@link #efficiency()} is {@code null}.
-     */
-    public record AttackResult(Trainer attacker, Trainer defender, Optional<Attack> attack, Efficiency efficiency) {
-        /** Returns {@code true} if an attack was performed ({@link #attack()} is present). */
-        public boolean wasAttack() {
-            return this.attack.isPresent();
-        }
+    public TurnResult() {
+        this.steps = new ArrayList<>();
+    }
 
-        public String getAttackName() {
-            return this.attack.orElseThrow().name();
-        }
+    public void addStep(TurnStep step) {
+        this.steps.add(step);
+    }
+
+    public Iterator<TurnStep> steps() {
+        return this.steps.iterator();
     }
 }
