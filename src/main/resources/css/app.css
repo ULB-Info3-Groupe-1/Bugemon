@@ -406,12 +406,6 @@
     -fx-background-color: color-surface;
 }
 
-/* ── Combat ──────────────────────────────────────────────── */
-.combat-team-title {
-    -fx-font-weight: bold;
-    -fx-text-fill: color-text-dark;
-}
-
 /* ── Combat victory ──────────────────────────────────────── */
 .victory-title {
     -fx-font-size: 28px;
