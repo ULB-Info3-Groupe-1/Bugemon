@@ -5,8 +5,6 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
-import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.components.ActionMenuView;
@@ -16,12 +14,11 @@ import ulb.views.combat.components.SwitchMenuView;
 
 /**
  * View for the manual combat screen. All sub-menu navigation (attack, switch, inventory) is managed internally; the
- * controller only calls {@link #setModel(ManualTrainer, Trainer, Combat)} and {@link #setListener(Listener)}.
+ * controller only calls {@link #setModel(ManualTrainer, Trainer)} and {@link #setListener(Listener)}.
  */
 public class ManualCombatView extends CombatView {
     private ManualTrainer player;
     private Trainer opponent;
-    private Combat combat;
 
     private final ActionMenuView actionMenu;
     private final AttackMenuView attackMenu;
@@ -43,15 +40,19 @@ public class ManualCombatView extends CombatView {
     }
 
     /** Gives the view the model objects it reads from in {@link #refresh()}. */
-    public void setModel(ManualTrainer newPlayer, Trainer newOpponent, Combat newCombat) {
+    public void setModel(ManualTrainer newPlayer, Trainer newOpponent) {
         this.player = newPlayer;
         this.opponent = newOpponent;
-        this.combat = newCombat;
     }
 
     @Override
     protected void initCombatMode() {
         this.initMenuCallbacks();
+        this.setDialogNextCallback(() -> {
+            if (this.listener != null) {
+                this.listener.onNext();
+            }
+        });
         this.showMainActionMenu();
     }
 
@@ -63,13 +64,6 @@ public class ManualCombatView extends CombatView {
 
         this.updateTrainerBugemon(this.player.getCurrentBugemon());
         this.updateOpponentBugemon(this.opponent.getCurrentBugemon());
-
-        TurnResult last = this.combat.getLastTurnResult();
-        if (last != null && last.first().wasAttack()) {
-            this.showCombatDialog(last.first(), last.second());
-        } else {
-            this.hideDialog();
-        }
 
         if (this.player.isForcedToSwitch()) {
             this.showSwitchMenu(true);
@@ -145,5 +139,7 @@ public class ManualCombatView extends CombatView {
         void onSurrender();
 
         void onItemSelected(Item item);
+
+        void onNext();
     }
 }

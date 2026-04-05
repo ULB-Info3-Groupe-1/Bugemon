@@ -1,7 +1,6 @@
 package ulb.views.combat;
 
 import java.io.File;
-import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -10,7 +9,8 @@ import javafx.scene.layout.VBox;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
-import ulb.models.combat.TurnResult;
+import ulb.models.combat.TurnStep;
+import ulb.models.trainer.Trainer;
 import ulb.views.View;
 import ulb.views.combat.components.BugemonInfoView;
 import ulb.views.components.DialogZoneView;
@@ -86,33 +86,31 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
-    /**
-     * Builds and displays the turn-summary dialog. Only attacks that happened are shown; second is empty when one
-     * trainer did not attack.
-     */
-    public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
-            Optional<TurnResult.AttackResult> secondAttackResult) {
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName() + " à utilisé l'attaque \""
-                + firstAttackResult.getAttackName() + "\" " + this.formatEfficiency(firstAttackResult.efficiency())
-                + "\n";
-
-        if (secondAttackResult.isPresent()) {
-            message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
-                    + " à utilisé l'attaque \"" + secondAttackResult.orElseThrow().getAttackName() + "\" "
-                    + this.formatEfficiency(secondAttackResult.orElseThrow().efficiency());
-        }
+    /** Builds and displays a dialog describing the given {@code step}. */
+    public void showStepDialog(TurnStep step, Trainer playerTrainer) {
+        String message = switch (step) {
+            case TurnStep.AttackStep s -> s.attacker().getCurrentBugemonName() + " utilise " + s.getAttackName() + " !"
+                    + this.formatEfficiency(s.efficiency());
+            case TurnStep.SwitchStep s -> (s.trainer() == playerTrainer ? "Vous envoyez " : "L'adversaire envoie ")
+                    + s.getBugemon().getName() + " !";
+            case TurnStep.ItemStep s ->
+                (s.trainer() == playerTrainer ? "Vous utilisez " : "L'adversaire utilise ") + s.getItemName() + " !";
+            case TurnStep.BugemonKoStep s ->
+                s.trainer() == playerTrainer ? "Votre Bugémon est K.O. !" : "Le Bugémon adverse est K.O. !";
+            case TurnStep.TrainerKoStep s ->
+                s.trainerKo() == playerTrainer ? "Vous êtes vaincu !" : "L'adversaire est vaincu !";
+            case TurnStep.ForfeitStep s ->
+                s.trainer() == playerTrainer ? "Vous abandonnez..." : "L'adversaire abandonne.";
+        };
         this.showDialog(message, "");
     }
 
-    protected String formatEfficiency(Efficiency efficiency) {
-        switch (efficiency) {
-            case HIGH :
-                return "C'est super efficace !";
-            case LOW :
-                return "Ce n'est pas très efficace";
-            default :
-                return "";
-        }
+    private String formatEfficiency(Efficiency efficiency) {
+        return switch (efficiency) {
+            case HIGH -> " C'est super efficace !";
+            case LOW -> " Ce n'est pas très efficace.";
+            default -> "";
+        };
     }
 
     public void hideDialog() {

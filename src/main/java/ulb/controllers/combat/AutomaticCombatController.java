@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
@@ -14,21 +14,12 @@ import ulb.views.combat.AutomaticCombatView;
 /**
  * Controller for the automatic combat screen.
  *
- * Drives the {@link Combat} loop one action at a time, gated by the player's "Next" clicks. Each action triggers its
- * animation and dialog before the next one is unlocked; implements {@link AutomaticCombatView.Listener} to receive
+ * Drives the {@link Combat} loop one step at a time, gated by the player's "Next" clicks. Each step triggers its
+ * animation and dialog before the next one is unlocked. Implements {@link AutomaticCombatView.Listener} to receive
  * those events.
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView>
         implements AutomaticCombatView.Listener {
-
-    private Combat combat;
-    private AutoTrainer playerTrainer;
-
-    /** The turn result currently awaiting full display; {@code null} when idle. */
-    private TurnResult pendingResult;
-
-    /** {@code true} once the second action of {@link #pendingResult} has been shown. */
-    private boolean secondShown;
 
     /**
      * Constructs an {@code AutomaticCombatController} and initialises its {@link AutomaticCombatView}.
@@ -47,66 +38,33 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     @Override
     public void startCombat(boolean shouldRestoreHp) {
         this.restoreHpAfterCombat = shouldRestoreHp;
-        this.pendingResult = null;
-        this.secondShown = false;
 
-        this.playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
-        AutoTrainer opponentTrainer = this.createRandomOpponent(this.playerTrainer.getTeamSize());
+        AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam());
+        this.playerTrainer = autoPlayer;
+        AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
         this.combat = new Combat(this.playerTrainer, opponentTrainer);
 
-        this.view.setModel(this.playerTrainer, opponentTrainer);
+        this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
-        this.runNextTurn();
+        this.startTurn();
     }
+
+    // ── AutomaticCombatView.Listener ──────────────────────────────────────────
 
     @Override
     public void onNext() {
-        if (this.pendingResult == null) {
-            return;
-        }
-
-        boolean hasSecond = this.pendingResult.second().isPresent()
-                && this.pendingResult.second().orElseThrow().wasAttack();
-
-        if (hasSecond && !this.secondShown) {
-            TurnResult.AttackResult second = this.pendingResult.second().orElseThrow();
-            this.animationController.playSecondAction(this.pendingResult, this.playerTrainer, () -> {
-                this.view.refresh();
-                this.view.showSecondAttackResult(second);
-            });
-            this.secondShown = true;
-            return;
-        }
-
-        this.pendingResult = null;
-        this.secondShown = false;
-
-        if (this.combat.getWinner().isPresent()) {
-            this.handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
-            return;
-        }
-
-        this.runNextTurn();
+        this.advanceStep();
     }
 
-    private void runNextTurn() {
-        TurnResult result = this.combat.turn();
-        this.pendingResult = result;
-        this.secondShown = false;
+    // ── CombatController hooks ────────────────────────────────────────────────
 
-        this.animationController.playFirstAction(result, this.playerTrainer, () -> {
-            this.view.refresh();
+    @Override
+    protected void onStepsExhausted() {
+        this.startTurn();
+    }
 
-            if (!result.first().wasAttack()) {
-                if (this.combat.getWinner().isPresent()) {
-                    this.handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
-                } else {
-                    this.runNextTurn();
-                }
-                return;
-            }
-
-            this.view.showFirstAttackResult(result.first());
-        });
+    @Override
+    protected void onCombatEnded(Trainer winner) {
+        this.handleCombatResult(winner);
     }
 }

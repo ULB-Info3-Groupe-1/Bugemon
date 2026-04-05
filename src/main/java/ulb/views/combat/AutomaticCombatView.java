@@ -1,13 +1,12 @@
 package ulb.views.combat;
 
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 
 /**
  * View for the automatic combat screen.
  *
- * Dialog steps are driven explicitly by the controller via {@link #showFirstAttackResult} and
- * {@link #showSecondAttackResult}; all user interaction is dispatched through the {@link Listener} interface.
+ * Dialog steps are driven step by step by the controller via {@link CombatView#showStepDialog}; all user interaction is
+ * dispatched through the {@link Listener} interface.
  */
 public class AutomaticCombatView extends CombatView {
     private AutoTrainer player;
@@ -37,16 +36,6 @@ public class AutomaticCombatView extends CombatView {
                 this.listener.onNext();
             }
         });
-    }
-
-    /** Displays the first attack result in the dialog zone and shows the Next button. */
-    public void showFirstAttackResult(TurnResult.AttackResult first) {
-        this.showCombatDialog(first, java.util.Optional.empty());
-    }
-
-    /** Displays the second attack result in the dialog zone and shows the Next button. */
-    public void showSecondAttackResult(TurnResult.AttackResult second) {
-        this.showCombatDialog(second, java.util.Optional.empty());
     }
 
     @Override
