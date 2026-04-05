@@ -41,11 +41,17 @@ public class CreateTeamView extends View {
     @FXML
     private void initialize() {
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        this.allBugemonsGridView.setOnClick(b -> {
-            if (this.listener != null) {
-                this.listener.onBugemonSelected(b);
-            }
-        });
+        this.allBugemonsGridView.setListener(
+                new AllBugemonsView.Listener() {
+
+                    @Override
+                    public void onBugemonClicked(Bugemon bugemon) {
+                        CreateTeamView.this.listener.onBugemonSelected(bugemon);
+                    }
+
+                }
+
+        );
     }
 
     @Override
