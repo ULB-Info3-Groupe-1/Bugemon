@@ -60,9 +60,8 @@
                 </VBox.margin>
                 <Label text="Mes équipes" styleClass="section-label" />
                 <ListView fx:id="teamListView"
-                    styleClass="team-list-view,btn-team"
-                    prefHeight="160" minHeight="80"
-                    onMouseClicked="#onTeamSelected" />
+                    styleClass="team-list-view,btn-team" prefHeight="160"
+                    minHeight="80" onMouseClicked="#onTeamSelected" />
 
                 <Button text="Sauvegarder" onAction="#onSaveClicked"
                     styleClass="btn,btn-success,btn-team" />
