@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
+    styleClass="bugemon-popup" spacing="8">
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <ImageView fx:id="sprite" fitWidth="72" fitHeight="72"
+            preserveRatio="true" />
+        <VBox spacing="4" alignment="CENTER_LEFT">
+            <Label fx:id="nameLabel" />
+            <Label fx:id="typeLabel" />
+            <Label fx:id="levelLabel" styleClass="bugemon-popup-key" />
+        </VBox>
+    </HBox>
+
+    <VBox spacing="4">
+        <Label text="Stats" styleClass="bugemon-popup-section" />
+        <HBox spacing="8">
+            <Label text="PV" styleClass="bugemon-popup-key" />
+            <Label fx:id="hpValue" styleClass="bugemon-popup-value" />
+        </HBox>
+        <HBox spacing="8">
+            <Label text="Attaque" styleClass="bugemon-popup-key" />
+            <Label fx:id="attackValue" styleClass="bugemon-popup-value" />
+        </HBox>
+        <HBox spacing="8">
+            <Label text="Défense" styleClass="bugemon-popup-key" />
+            <Label fx:id="defenseValue" styleClass="bugemon-popup-value" />
+        </HBox>
+        <HBox spacing="8">
+            <Label text="Initiative" styleClass="bugemon-popup-key" />
+            <Label fx:id="initiativeValue" styleClass="bugemon-popup-value" />
+        </HBox>
+    </VBox>
+
+    <VBox fx:id="attacksContainer" spacing="4">
+        <Label text="Attaques" styleClass="bugemon-popup-section" />
+    </VBox>
+
+</fx:root>

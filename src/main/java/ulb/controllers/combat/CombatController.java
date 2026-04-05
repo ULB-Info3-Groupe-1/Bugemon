@@ -18,8 +18,8 @@ import ulb.views.combat.CombatView;
 
 /**
  * Abstract base controller for all combat screens. Provides the shared {@link #handleCombatResult(Trainer, Trainer)}
- * method that distributes XP and navigates to the correct outcome screen. Concrete subclasses drive the combat loop
- * and call {@code view.refresh()} after each model mutation; they never push data into the view directly.
+ * method that distributes XP and navigates to the correct outcome screen. Concrete subclasses drive the combat loop and
+ * call {@code view.refresh()} after each model mutation; they never push data into the view directly.
  *
  * @param <V>
  *            the concrete {@link CombatView} subtype managed by this controller.

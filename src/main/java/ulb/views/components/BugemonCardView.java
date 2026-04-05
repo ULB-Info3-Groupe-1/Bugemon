@@ -49,7 +49,7 @@ public class BugemonCardView extends ComponentView {
         this.imageView.setImage(
                 bugemonData.map(d -> new Image(new File("resources/sprites/" + d.getSpriteURL()).toURI().toString()))
                         .orElse(EMPTY_IMAGE));
-        bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopup.show(b, e)));
+        bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopupView.show(b, e)));
     }
 
     @FXML

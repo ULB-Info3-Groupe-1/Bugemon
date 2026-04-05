@@ -14,7 +14,8 @@ import ulb.models.trainer.Trainer;
 
 /**
  * Stateless utility for combat calculations: attack priority, damage formula, and type effectiveness. Types follow a
- * fixed cycle defined by the {@link BugemonType} enum order — see {@link #compareBugemonType(BugemonType, BugemonType)}.
+ * fixed cycle defined by the {@link BugemonType} enum order — see
+ * {@link #compareBugemonType(BugemonType, BugemonType)}.
  */
 public class CombatService {
     private static final String BOSS_NAME = "FinalBoss";
@@ -112,8 +113,8 @@ public class CombatService {
      * defined by the {@link BugemonType} enum declaration order: each type is strong against the type immediately
      * before it (wrapping around) and weak against the type immediately after it.
      *
-     * Given {@code delta = (offensiveIdx - defensiveIdx) mod cycleSize}: delta 1 → {@link Efficiency#LOW} (weak);
-     * delta {@code cycleSize - 1} → {@link Efficiency#HIGH} (strong); any other → {@link Efficiency#NEUTRAL}.
+     * Given {@code delta = (offensiveIdx - defensiveIdx) mod cycleSize}: delta 1 → {@link Efficiency#LOW} (weak); delta
+     * {@code cycleSize - 1} → {@link Efficiency#HIGH} (strong); any other → {@link Efficiency#NEUTRAL}.
      *
      * @param offensiveType
      *            the type of the attacking Bugemon or attack
