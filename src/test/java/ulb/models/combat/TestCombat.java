@@ -111,10 +111,10 @@ public class TestCombat {
 
     @Test
     public void turn_shouldContainBugemonKoStep_whenBugemonFaintsButTrainerHasOthers() {
-        Bugemon weak = bugemonWithHp("weak", 1, 0);
-        Bugemon survivor = bugemonWithHp("survivor", 100, 0);
-        AutoTrainer victim = autoOf(weak, survivor);
-        AutoTrainer attacker = autoOf(strongAttacker("str"));
+        Bugemon weak = this.bugemonWithHp("weak", 1, 0);
+        Bugemon survivor = this.bugemonWithHp("survivor", 100, 0);
+        AutoTrainer victim = this.autoOf(weak, survivor);
+        AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
         Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
@@ -125,10 +125,10 @@ public class TestCombat {
 
     @Test
     public void turn_bugemonKoStep_shouldReferenceVictimTrainer() {
-        Bugemon weak = bugemonWithHp("weak", 1, 0);
-        Bugemon survivor = bugemonWithHp("survivor", 100, 0);
-        AutoTrainer victim = autoOf(weak, survivor);
-        AutoTrainer attacker = autoOf(strongAttacker("str"));
+        Bugemon weak = this.bugemonWithHp("weak", 1, 0);
+        Bugemon survivor = this.bugemonWithHp("survivor", 100, 0);
+        AutoTrainer victim = this.autoOf(weak, survivor);
+        AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
         Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
@@ -140,9 +140,9 @@ public class TestCombat {
 
     @Test
     public void turn_shouldContainTrainerKoStep_whenLastBugemonFaints() {
-        Bugemon weak = bugemonWithHp("weak", 1, 0);
-        AutoTrainer victim = autoOf(weak);
-        AutoTrainer attacker = autoOf(strongAttacker("str"));
+        Bugemon weak = this.bugemonWithHp("weak", 1, 0);
+        AutoTrainer victim = this.autoOf(weak);
+        AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
         Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
@@ -155,11 +155,11 @@ public class TestCombat {
 
     @Test
     public void turn_shouldNotContainSecondAttackStep_whenFirstAttackKillsOpponent() {
-        Bugemon weak = bugemonWithHp("weak", 1, 0);
-        Bugemon survivor = bugemonWithHp("survivor", 100, 0);
+        Bugemon weak = this.bugemonWithHp("weak", 1, 0);
+        Bugemon survivor = this.bugemonWithHp("survivor", 100, 0);
         // strong attacker has initiative=9999 so goes first, kills weak before it attacks
-        AutoTrainer victim = autoOf(weak, survivor);
-        AutoTrainer attacker = autoOf(strongAttacker("str"));
+        AutoTrainer victim = this.autoOf(weak, survivor);
+        AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
         Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
@@ -219,9 +219,9 @@ public class TestCombat {
 
     @Test
     public void combat_withOneHitKiller_shouldEndInOneTurn() {
-        Bugemon weak = bugemonWithHp("weak", 1, 0);
-        AutoTrainer victim = autoOf(weak);
-        AutoTrainer killer = autoOf(strongAttacker("str"));
+        Bugemon weak = this.bugemonWithHp("weak", 1, 0);
+        AutoTrainer victim = this.autoOf(weak);
+        AutoTrainer killer = this.autoOf(this.strongAttacker("str"));
         Combat combat = new Combat(killer, victim);
 
         TurnResult result = combat.turn();
