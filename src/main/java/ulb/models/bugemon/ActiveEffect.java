@@ -5,8 +5,8 @@ import ulb.models.bugemon.effect.EffectStat;
 
 /**
  * An {@link Effect} that is currently active on a {@link Bugemon}, paired with a remaining-turns counter. Call
- * {@link #decrementDuration()} each turn; remove the effect when {@link #isExpired()} is true. A
- * {@code durationLeft} of {@code -1} means infinite duration.
+ * {@link #decrementDuration()} each turn; remove the effect when {@link #isExpired()} is true. A {@code durationLeft}
+ * of {@code -1} means infinite duration.
  *
  * @see Effect
  * @see EffectStat

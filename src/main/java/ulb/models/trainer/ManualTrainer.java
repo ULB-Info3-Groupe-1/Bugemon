@@ -11,9 +11,8 @@ import ulb.models.bugemon_team.BugemonTeam;
 
 /**
  * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
- * action via {@link #registerAttack}, {@link #registerSwitch}, {@link #registerForfeit}, or
- * {@link #registerUseItem}. The action is consumed by {@link #getAction()} and cleared; a new one must be queued
- * every turn.
+ * action via {@link #registerAttack}, {@link #registerSwitch}, {@link #registerForfeit}, or {@link #registerUseItem}.
+ * The action is consumed by {@link #getAction()} and cleared; a new one must be queued every turn.
  *
  * Post-KO switches bypass the turn queue: use {@link #switchAfterKO} (immediate) or {@link #registerSwitchAfterKO}
  * (deferred, picked up by {@link #reactToKo}).

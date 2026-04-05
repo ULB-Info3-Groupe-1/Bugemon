@@ -110,8 +110,8 @@ public class Parser {
     }
 
     /**
-     * Custom Gson type adapter that deserialises a JSON string into a {@link BugemonType} enum constant.
-     * Converts the raw value to upper-case before calling {@link BugemonType#valueOf(String)}, so {@code "flora"} and
+     * Custom Gson type adapter that deserialises a JSON string into a {@link BugemonType} enum constant. Converts the
+     * raw value to upper-case before calling {@link BugemonType#valueOf(String)}, so {@code "flora"} and
      * {@code "FLORA"} both resolve to {@link BugemonType#FLORA}.
      */
     private static class TypeDeserializer implements JsonDeserializer<BugemonType> {

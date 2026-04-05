@@ -13,8 +13,8 @@ import ulb.views.ViewLoader;
 
 /**
  * Controller responsible for the level-up screen. Manages a {@link LevelUpSession} model. After each user choice or
- * advance, the controller mutates the session and calls {@code view.refresh()} so the view pulls the updated event
- * data directly from the session.
+ * advance, the controller mutates the session and calls {@code view.refresh()} so the view pulls the updated event data
+ * directly from the session.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
     private final LevelUpSession session = new LevelUpSession();
