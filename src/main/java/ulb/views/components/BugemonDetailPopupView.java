@@ -1,5 +1,6 @@
 package ulb.views.components;
 
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -44,7 +45,8 @@ public class BugemonDetailPopupView extends ComponentView {
 
     private BugemonDetailPopupView(Bugemon bugemon) {
         super(FXML_PATH);
-        this.sprite.setImage(new Image(bugemon.getSpriteURL(), 72, 72, true, false));
+        File spriteFile = new File("resources/sprites/" + bugemon.getSpriteURL());
+        this.sprite.setImage(new Image(spriteFile.toURI().toString(), 72, 72, true, false));
         this.nameLabel.setText(bugemon.getName());
         this.nameLabel.getStyleClass().addAll("bugemon-name", bugemon.getType().toString());
         this.typeLabel.setText(bugemon.getType().toString());

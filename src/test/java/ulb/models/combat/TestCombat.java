@@ -49,14 +49,14 @@ public class TestCombat {
     }
 
     private Bugemon bugemonWithHp(String id, int hp, int initiative) {
-        return new BugemonBuilder().id(id).hp(hp).attack(0).defense(0).initiative(initiative)
+        return new BugemonBuilder().id(id).name(id).hp(hp).attack(0).defense(0).initiative(initiative)
                 .addAttack(this.defaultAttack).build();
     }
 
     private Bugemon strongAttacker(String id) {
         Attack powerAttack = new Attack("power", "PowerAttack", BugemonType.FLORA, "", 9999, new ArrayList<>());
-        return new BugemonBuilder().id(id).hp(100).attack(9999).defense(0).initiative(9999).addAttack(powerAttack)
-                .build();
+        return new BugemonBuilder().id(id).name(id).hp(100).attack(9999).defense(0).initiative(9999)
+                .addAttack(powerAttack).build();
     }
 
     private AutoTrainer autoOf(Bugemon... bugemons) {

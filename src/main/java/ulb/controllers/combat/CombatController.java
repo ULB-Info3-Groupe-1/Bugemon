@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
@@ -30,6 +33,8 @@ import ulb.views.combat.CombatView;
  *            the concrete {@link CombatView} subtype managed by this controller.
  */
 public abstract class CombatController<V extends CombatView> extends Controller<V> {
+    private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
+
     private Consumer<List<LevelUp>> onVictory;
     protected final CombatAnimationController animationController;
     protected final PlayerService playerService;
@@ -88,15 +93,18 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * should delegate here.
      */
     protected void advanceStep() {
+        LOG.debug("Advancing step: {}", this.currentStep);
         if (this.currentStep instanceof TurnStep.TrainerKoStep koStep) {
             Trainer winner = koStep.trainerKo() == this.playerTrainer ? this.combat.getOpponentTrainer()
                     : this.playerTrainer;
+            LOG.info("Combat ended — winner: {}", winner.getCurrentBugemonName());
             this.onCombatEnded(winner);
             return;
         }
         if (this.currentStep instanceof TurnStep.ForfeitStep forfeitStep) {
             Trainer winner = forfeitStep.trainer() == this.playerTrainer ? this.combat.getOpponentTrainer()
                     : this.playerTrainer;
+            LOG.info("Combat ended by forfeit — winner: {}", winner.getCurrentBugemonName());
             this.onCombatEnded(winner);
             return;
         }

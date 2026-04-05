@@ -52,6 +52,11 @@ public class BugemonCardView extends ComponentView {
         bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopupView.show(b, e)));
     }
 
+    public void hideLevelLabel() {
+        this.levelLabel.setVisible(false);
+        this.levelLabel.setManaged(false);
+    }
+
     @FXML
     private void onSelected(MouseEvent event) {
         if (event.getButton() != MouseButton.PRIMARY) {

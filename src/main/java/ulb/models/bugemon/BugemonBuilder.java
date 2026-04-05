@@ -30,6 +30,8 @@ public final class BugemonBuilder {
     private static final int DEFAULT_XP = 0;
     private static final int DEFAULT_LEVEL = 1;
 
+    private Optional<String> id = Optional.empty();
+
     /** The unique name to assign to the bugemon. */
     private Optional<String> name = Optional.empty();
 
@@ -44,6 +46,11 @@ public final class BugemonBuilder {
     private int level = DEFAULT_LEVEL;
     private boolean isStarter = DEFAULT_IS_STARTER;
     private List<Attack> attackList = new ArrayList<>();
+
+    public BugemonBuilder id(String id) {
+        this.id = Optional.of(id);
+        return this;
+    }
 
     /**
      * Sets the display name for the bugemon under construction.
@@ -123,6 +130,7 @@ public final class BugemonBuilder {
 
         // NOTE: name has no default value
         bugemon.name = this.name.orElseThrow(() -> new IllegalStateException("Bugemon name must be provided"));
+        bugemon.id = this.id.orElse(bugemon.name);
 
         bugemon.type = this.type;
         bugemon.sprite = this.sprite;

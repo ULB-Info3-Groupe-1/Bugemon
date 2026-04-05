@@ -42,7 +42,7 @@ public class TestManualCombat {
     }
 
     private Bugemon bugemonWithHp(String id, int hp, int initiative) {
-        return new BugemonBuilder().id(id).hp(hp).attack(0).defense(0).initiative(initiative)
+        return new BugemonBuilder().id(id).name(id).hp(hp).attack(0).defense(0).initiative(initiative)
                 .addAttack(this.defaultAttack).build();
     }
 

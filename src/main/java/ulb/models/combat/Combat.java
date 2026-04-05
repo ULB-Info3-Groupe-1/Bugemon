@@ -1,5 +1,8 @@
 package ulb.models.combat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -17,6 +20,8 @@ import ulb.services.CombatService;
  * end of combat and identifies the loser.
  */
 public class Combat {
+    private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
+
     private final Trainer playerTrainer;
     private final Trainer opponentTrainer;
 
@@ -25,6 +30,8 @@ public class Combat {
     public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
+        LOG.info("Combat started — player: {} vs opponent: {}", playerTrainer.getCurrentBugemonName(),
+                opponentTrainer.getCurrentBugemonName());
     }
 
     /**
@@ -34,6 +41,9 @@ public class Combat {
      */
     public TurnResult turn() {
         this.turnResult = new TurnResult();
+        LOG.debug("New turn — player: {} ({}hp) vs opponent: {} ({}hp)", this.playerTrainer.getCurrentBugemonName(),
+                this.playerTrainer.getCurrentBugemonHp(), this.opponentTrainer.getCurrentBugemonName(),
+                this.opponentTrainer.getCurrentBugemonHp());
 
         this.markParticipation();
 
@@ -126,14 +136,17 @@ public class Combat {
     }
 
     private void handleForfeit(Trainer trainer) {
+        LOG.info("{} forfeited", trainer.getCurrentBugemonName());
         trainer.killTeam(); // TODO: Better way to handle forfeit with new implementation ?
     }
 
     private void updateTrainerStatus(Trainer trainer) {
         if (!trainer.isCurrentBugemonAlive()) {
             if (!trainer.isDefeated()) {
+                LOG.info("{} fainted", trainer.getCurrentBugemonName());
                 this.turnResult.addStep(new TurnStep.BugemonKoStep(trainer));
             } else {
+                LOG.info("{} is defeated", trainer.getCurrentBugemonName());
                 this.turnResult.addStep(new TurnStep.TrainerKoStep(trainer));
             }
         }
@@ -182,6 +195,8 @@ public class Combat {
         defender.takeDamage(damage);
 
         Efficiency efficiency = CombatService.compareBugemonType(attack.type(), defender.getCurrentBugemonType());
+        LOG.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
+                defender.getCurrentBugemonName(), damage, efficiency);
 
         this.turnResult.addStep(new TurnStep.AttackStep(attacker, attack, efficiency));
     }

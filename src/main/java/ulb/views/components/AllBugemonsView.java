@@ -45,6 +45,7 @@ public class AllBugemonsView extends ComponentView {
 
     private BugemonCardView createBugemonCard(Bugemon bugemon) {
         BugemonCardView card = new BugemonCardView(bugemon);
+        card.hideLevelLabel();
 
         if (this.selectionChecker != null) {
             card.setSelected(this.selectionChecker.apply(bugemon));
