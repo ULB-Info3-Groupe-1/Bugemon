@@ -69,4 +69,16 @@
     /* spacing between sprite and button inside a switch-menu row */
     size-menu-btn-min: 280;
     /* min-width for switch/item menu buttons */
+
+    /* ── Fixed button widths ────────────────────────────────── */
+    size-btn-nav: 300;
+    /* main-menu navigation buttons */
+    size-btn-team: 280;
+    /* team-management buttons and inputs */
+    size-btn-choice: 260;
+    /* combat / level-up choice buttons */
+
+    /* ── Action menu grid ───────────────────────────────────── */
+    size-action-menu: 380;
+    /* pref-width shared by ActionMenu and AttackMenu grids */
 }

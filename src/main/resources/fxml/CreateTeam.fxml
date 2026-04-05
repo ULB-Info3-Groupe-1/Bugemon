@@ -32,8 +32,8 @@
             <VBox spacing="4" alignment="CENTER_LEFT">
                 <Label text="Nom de l'équipe à sauvegarder :"
                     styleClass="team-input-label" />
-                <TextField fx:id="saveTeamNameInput" prefWidth="280"
-                    styleClass="text-field" promptText="Nouveau nom..."
+                <TextField fx:id="saveTeamNameInput"
+                    styleClass="text-field,btn-team" promptText="Nouveau nom..."
                     onAction="#onSaveClicked" />
             </VBox>
         </HBox>
@@ -59,22 +59,23 @@
                     <Insets top="8" />
                 </VBox.margin>
                 <Label text="Mes équipes" styleClass="section-label" />
-                <ListView fx:id="teamListView" styleClass="team-list-view"
-                    minWidth="280" maxWidth="280" prefHeight="160" minHeight="80"
+                <ListView fx:id="teamListView"
+                    styleClass="team-list-view,btn-team"
+                    prefHeight="160" minHeight="80"
                     onMouseClicked="#onTeamSelected" />
 
                 <Button text="Sauvegarder" onAction="#onSaveClicked"
-                    styleClass="btn,btn-success" minWidth="280" maxWidth="280" />
+                    styleClass="btn,btn-success,btn-team" />
                 <Button text="Renommer" onAction="#onRenameClicked"
-                    styleClass="btn,btn-success" minWidth="280" maxWidth="280" />
+                    styleClass="btn,btn-success,btn-team" />
                 <Button text="Nouvelle équipe +"
-                    onAction="#onAddNewTeamClicked" styleClass="btn,btn-success"
-                    minWidth="280" maxWidth="280" />
+                    onAction="#onAddNewTeamClicked"
+                    styleClass="btn,btn-success,btn-team" />
                 <Button text="Supprimer" onAction="#onDeleteClicked"
-                    styleClass="btn,btn-danger" minWidth="280" maxWidth="280" />
+                    styleClass="btn,btn-danger,btn-team" />
                 <Button text="Retour au menu principal"
-                    onAction="#onReturnMainMenuClicked" styleClass="btn,btn-secondary"
-                    minWidth="280" maxWidth="280" />
+                    onAction="#onReturnMainMenuClicked"
+                    styleClass="btn,btn-secondary,btn-team" />
             </VBox>
         </HBox>
     </center>

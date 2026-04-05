@@ -14,6 +14,6 @@
 
     <Label text="VICTOIRE !" styleClass="victory-title" />
     <Button onAction="#onContinueClicked" text="Continuer"
-        styleClass="btn,btn-success" minWidth="260" maxWidth="260" />
+        styleClass="btn,btn-success,btn-choice" />
 
 </VBox>
