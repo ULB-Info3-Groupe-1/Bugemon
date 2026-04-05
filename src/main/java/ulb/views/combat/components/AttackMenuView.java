@@ -5,10 +5,8 @@ import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.trainer.Trainer;
-import ulb.services.CombatService;
 import ulb.views.components.ComponentView;
 
 /**
@@ -28,6 +26,8 @@ public class AttackMenuView extends ComponentView {
 
     private final Attack[] attacks = new Attack[3];
     private Consumer<Attack> onAttack;
+    private Consumer<Attack> onAttackHovered;
+    private Runnable onAttackLeft;
     private Runnable onBack;
 
     public AttackMenuView() {
@@ -36,6 +36,14 @@ public class AttackMenuView extends ComponentView {
 
     public void setOnAttack(Consumer<Attack> callback) {
         this.onAttack = callback;
+    }
+
+    public void setOnAttackHovered(Consumer<Attack> callback) {
+        this.onAttackHovered = callback;
+    }
+
+    public void setOnAttackLeft(Runnable callback) {
+        this.onAttackLeft = callback;
     }
 
     public void setOnBack(Runnable callback) {
@@ -56,11 +64,20 @@ public class AttackMenuView extends ComponentView {
             if (i < attackList.size()) {
                 Attack attack = attackList.get(i);
                 this.attacks[i] = attack;
-                Efficiency eff = CombatService.compareBugemonType(attack.type(), opponent.getCurrentBugemonType());
-                buttons[i].setText(attack.name() + "\n" + eff.toString());
+                buttons[i].setText(attack.name());
                 buttons[i].getStyleClass().setAll("btn", "attack-" + attack.type().toString());
                 buttons[i].setVisible(true);
                 buttons[i].setManaged(true);
+                buttons[i].setOnMouseEntered(e -> {
+                    if (this.onAttackHovered != null) {
+                        this.onAttackHovered.accept(attack);
+                    }
+                });
+                buttons[i].setOnMouseExited(e -> {
+                    if (this.onAttackLeft != null) {
+                        this.onAttackLeft.run();
+                    }
+                });
             } else {
                 this.attacks[i] = null;
                 buttons[i].setVisible(false);

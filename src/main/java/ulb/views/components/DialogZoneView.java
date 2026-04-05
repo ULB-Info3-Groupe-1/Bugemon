@@ -11,8 +11,6 @@ public class DialogZoneView extends ComponentView {
     @FXML
     private Text dialogText;
     @FXML
-    private Text additionalInfo;
-    @FXML
     private Button nextButton;
 
     private Runnable onNext;
@@ -39,10 +37,6 @@ public class DialogZoneView extends ComponentView {
 
     public void clearDialog() {
         this.dialogText.setText("");
-    }
-
-    public void setAdditionalInfo(String text) {
-        this.additionalInfo.setText(text);
     }
 
     public void setButtonText(String text) {

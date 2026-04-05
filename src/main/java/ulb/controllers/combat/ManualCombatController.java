@@ -1,6 +1,7 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.function.Consumer;
 import javafx.stage.Stage;
 
@@ -52,6 +53,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.combat = new Combat(this.playerTrainer, opponentTrainer);
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
+        this.pendingSteps = Collections.emptyIterator();
+        this.currentStep = null;
+        this.view.hideDialog();
         this.view.refresh();
     }
 

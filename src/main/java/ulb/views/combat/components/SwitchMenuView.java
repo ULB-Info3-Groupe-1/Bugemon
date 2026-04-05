@@ -47,6 +47,8 @@ public class SwitchMenuView extends ComponentView {
         if (!forced) {
             Button back = new Button("Retour");
             back.getStyleClass().addAll("btn", "btn-secondary", "menu-btn-min");
+            back.setMaxWidth(Double.MAX_VALUE);
+            back.setWrapText(true);
             back.setOnAction(e -> {
                 if (this.onBack != null) {
                     this.onBack.run();
@@ -69,6 +71,7 @@ public class SwitchMenuView extends ComponentView {
         Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/" + b.getMaxHp() + " PV");
         btn.getStyleClass().addAll("btn", "btn-action-blue");
         btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setWrapText(true);
         HBox.setHgrow(btn, Priority.ALWAYS);
         btn.setOnAction(e -> {
             if (this.onSwitch != null) {

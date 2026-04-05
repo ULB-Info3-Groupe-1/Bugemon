@@ -15,9 +15,6 @@
         <TextFlow styleClass="dialog-text">
             <Text fx:id="dialogText" text="Dialog text goes here" />
         </TextFlow>
-        <HBox>
-            <Text fx:id="additionalInfo" styleClass="additional-info" />
-        </HBox>
         <Button fx:id="nextButton" text="Next"
             onAction="#onNextButtonClicked" styleClass="btn, btn-success" />
     </VBox>

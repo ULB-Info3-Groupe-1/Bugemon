@@ -54,6 +54,16 @@
 
     color-xp: #8e44ad;
 
+    /* ── Hover info panel ───────────────────────────────────── */
+    color-hover-flora: rgba(39, 174, 96, 0.65);
+    color-hover-pyro: rgba(231, 76, 60, 0.65);
+    color-hover-aqua: rgba(41, 128, 185, 0.65);
+    color-hover-litho: rgba(149, 165, 166, 0.65);
+
+    color-efficiency-high: #39e87a;
+    color-efficiency-high-text: #0a2e18;
+    color-efficiency-low: #ff7043;
+
     /* ── Layout sizes (Double — safe for pref/min/max-width/height) */
     size-hp-bar-height: 22;
     size-hp-bar-width: 280;

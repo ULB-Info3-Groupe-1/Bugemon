@@ -9,11 +9,13 @@ import javafx.scene.layout.VBox;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.BugemonType;
 import ulb.models.combat.TurnStep;
 import ulb.models.trainer.Trainer;
 import ulb.views.View;
 import ulb.views.combat.components.BugemonInfoView;
 import ulb.views.components.DialogZoneView;
+import ulb.views.components.HoverInfoView;
 
 /**
  * Abstract base view for all combat screens, loaded from the shared {@code Combat.fxml} layout. Subclasses implement
@@ -34,6 +36,8 @@ public abstract class CombatView extends View {
     private ImageView bugemonOpponentImage;
     @FXML
     private VBox actionMenuSlot;
+    @FXML
+    private HoverInfoView hoverInfoView;
     @FXML
     private DialogZoneView dialogZoneView;
 
@@ -66,10 +70,40 @@ public abstract class CombatView extends View {
         this.actionMenuSlot.getChildren().setAll(content);
     }
 
+    // ── Hover info panel ──────────────────────────────────────────────────────
+
+    /** Populates and shows the hover info panel with the given title and lines. */
+    public void showHoverInfo(String title, String... lines) {
+        this.hoverInfoView.show(title, lines);
+    }
+
+    /** Applies a type-based background colour to the hover info panel. */
+    public void setHoverType(BugemonType type) {
+        this.hoverInfoView.setType(type);
+    }
+
+    /** Shows or hides the efficiency badge on the hover info panel. */
+    public void setHoverEfficiency(Efficiency eff) {
+        this.hoverInfoView.setEfficiency(eff);
+    }
+
+    /** Hides the hover info panel. */
+    public void hideHoverInfo() {
+        this.hoverInfoView.hide();
+    }
+
+    // ── Action menu ───────────────────────────────────────────────────────────
+
     /** Hides the action menu slot from the layout. */
     protected void hideActionMenu() {
         this.actionMenuSlot.setVisible(false);
         this.actionMenuSlot.setManaged(false);
+    }
+
+    /** Restores the action menu slot in the layout. */
+    protected void showActionMenu() {
+        this.actionMenuSlot.setVisible(true);
+        this.actionMenuSlot.setManaged(true);
     }
 
     // ── Dialog zone ───────────────────────────────────────────────────────────
@@ -79,9 +113,8 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setOnNext(callback);
     }
 
-    private void showDialog(String dialog, String additionalInfo) {
+    private void showDialog(String dialog) {
         this.dialogZoneView.setDialogText(dialog);
-        this.dialogZoneView.setAdditionalInfo(additionalInfo);
         this.dialogZoneView.setVisible(true);
         this.dialogZoneView.setManaged(true);
     }
@@ -102,7 +135,7 @@ public abstract class CombatView extends View {
             case TurnStep.ForfeitStep s ->
                 s.trainer() == playerTrainer ? "Vous abandonnez..." : "L'adversaire abandonne.";
         };
-        this.showDialog(message, "");
+        this.showDialog(message);
     }
 
     private String formatEfficiency(Efficiency efficiency) {

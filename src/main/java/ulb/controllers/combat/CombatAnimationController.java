@@ -37,6 +37,10 @@ public class CombatAnimationController {
                 boolean isPlayerSide = s.trainerKo() == playerTrainer;
                 this.playDeathAnimation(isPlayerSide, onFinished);
             }
+            case TurnStep.ForfeitStep s -> {
+                boolean isPlayerForfeiting = s.trainer() == playerTrainer;
+                this.playDeathAnimation(isPlayerForfeiting, onFinished);
+            }
             case TurnStep.SwitchStep s -> {
                 boolean forPlayer = s.trainer() == playerTrainer;
                 this.makeBugemonReappear(forPlayer);
