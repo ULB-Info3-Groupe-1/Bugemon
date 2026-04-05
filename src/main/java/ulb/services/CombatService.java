@@ -21,7 +21,7 @@ import ulb.models.trainer.Trainer;
  * </p>
  */
 public class CombatService {
-    private static final String BOSS_ID = "finalboss";
+    private static final String BOSS_NAME = "FinalBoss";
 
     private CombatService() {
         // Private constructor to prevent instantiation
@@ -177,12 +177,12 @@ public class CombatService {
     }
 
     public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
-        final Optional<Bugemon> bossBugemon = bugemonList.stream().filter(obj -> obj.getId().equals(BOSS_ID))
+        final Optional<Bugemon> bossBugemon = bugemonList.stream().filter(obj -> obj.getName().equals(BOSS_NAME))
                 .findFirst();
         BugemonTeam bossTeam = new BugemonTeam();
 
         bossTeam.add(bossBugemon.orElseThrow(
-                () -> new RuntimeException("Boss Bugemon with ID '" + BOSS_ID + "' not found in the list.")));
+                () -> new RuntimeException("Boss Bugemon with name '" + BOSS_NAME + "' not found in the list.")));
 
         return bossTeam;
     }

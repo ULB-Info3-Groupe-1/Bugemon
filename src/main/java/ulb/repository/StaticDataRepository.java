@@ -1,5 +1,13 @@
 package ulb.repository;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,12 +27,15 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repository.dto.StaticBugemonDataDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
 public class StaticDataRepository {
-    private final DatabaseRepository dbRepository;
 
+    private static final String SPRITE_DIRECTORY_PATH = "resources/sprites";
+    private final DatabaseRepository dbRepository;
     private final DatabaseConnection dbConnection;
 
     public StaticDataRepository(DatabaseRepository dbRepository, DatabaseConnection dbConnection) {
@@ -36,7 +47,9 @@ public class StaticDataRepository {
         Parser parser = new Parser();
         parser.parse();
         this.saveGameDataAttacks(parser.getAttacks());
-        this.saveGameDataBugemon(parser.getBugemons());
+        for (CreateBugemonDTO bugemon : parser.getBugemons()) {
+            this.saveBugemon(bugemon);
+        }
     }
 
     private void saveGameDataAttacks(Map<String, Attack> attacks) {
@@ -124,31 +137,6 @@ public class StaticDataRepository {
         psEffect.setNull(7, Types.INTEGER);
     }
 
-    private void saveGameDataBugemon(List<Bugemon> bugemons) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
-            for (Bugemon bugemon : bugemons) {
-                ps.setString(1, bugemon.getId());
-                ps.setString(2, bugemon.getName());
-                ps.setString(3, bugemon.getType().name());
-                ps.setString(4, bugemon.getSpriteURL());
-                ps.setInt(5, bugemon.getDefense());
-                ps.setInt(6, bugemon.getAttack());
-                ps.setInt(7, bugemon.getInitiative());
-                ps.setInt(8, bugemon.getMaxHp());
-                ps.setBoolean(9, bugemon.isStarter());
-                // Assuming each Bugemon has exactly 3 attacks, we insert them in the order they
-                // appear in the list
-                ps.setString(10, bugemon.getListAttacksId().get(0));
-                ps.setString(11, bugemon.getListAttacksId().get(1));
-                ps.setString(12, bugemon.getListAttacksId().get(2));
-                ps.addBatch();
-            }
-            ps.executeBatch();
-        } catch (SQLException e) {
-            throw new IllegalStateException("saveGameDataBugemon failed", e);
-        }
-    }
-
     // ─── UTILS FOR CLASS USING THIS REPO ──
 
     public List<Bugemon> getAllDefaultBugemons() {
@@ -162,10 +150,10 @@ public class StaticDataRepository {
                 Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
                 Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
                 BugemonBuilder builder = new BugemonBuilder();
-                builder.id(rs.getString(DatabaseColumns.COL_ID)).name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
+                builder.name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
                         .sprite(rs.getString(DatabaseColumns.COL_SPRITE))
                         .defense(rs.getInt(DatabaseColumns.COL_BASE_DEFENSE))
-                        .attack(rs.getInt(DatabaseColumns.COL_BASE_ATTACK_POWER))
+                        .attack(rs.getInt(DatabaseColumns.COL_BASE_ATTACK))
                         .initiative(rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE))
                         .hp(rs.getInt(DatabaseColumns.COL_BASE_MAX_HP)).addAttack(attack1).addAttack(attack2)
                         .addAttack(attack3).isStarter(rs.getBoolean(DatabaseColumns.COL_IS_STARTER));
@@ -231,5 +219,113 @@ public class StaticDataRepository {
             throw new IllegalStateException("getEffectByAttackId failed for attack id: " + attackId, e);
         }
         return effects;
+    }
+
+    /**
+     * Save a Bugemon to the database. It also saves the sprite file for the Bugemon. It set the sprite file name to the
+     * name of the Bugemon in lowercase and replacing non-alphanumeric characters with underscores.
+     *
+     * @param bugemon
+     *            (CreateBugemonDTO) the Bugemon to be saved
+     */
+    public void saveBugemon(CreateBugemonDTO bugemon) {
+        String fileName = bugemon.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
+
+        try {
+            this.saveSpriteFile(bugemon.spriteUrl(), fileName);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error occurred while saving the sprite for bugemon: " + bugemon.name(), e);
+        }
+
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
+            ps.setString(1, bugemon.name());
+            ps.setString(2, bugemon.type().name());
+            ps.setString(3, fileName);
+            ps.setInt(4, bugemon.defense());
+            ps.setInt(5, bugemon.attack());
+            ps.setInt(6, bugemon.initiative());
+            ps.setInt(7, bugemon.maxHp());
+            ps.setBoolean(8, bugemon.isStarter());
+            // Assuming each Bugemon has exactly 3 attacks, we insert them in the order they
+            // appear in the list
+            ps.setString(9, bugemon.attack1().id());
+            ps.setString(10, bugemon.attack2().id());
+            ps.setString(11, bugemon.attack3().id());
+            ps.addBatch();
+            ps.executeBatch();
+        } catch (SQLException e) {
+            throw new IllegalStateException("saveGameDataBugemon failed", e);
+        }
+    }
+
+    /**
+     * Save the sprite file for a Bugemon.
+     *
+     * @param currentSpriteUrl
+     *            the URL of the sprite file to be saved (to get access to the file)
+     * @param spriteFileName
+     *            the name of the sprite file to be saved
+     * @throws IOException
+     *             if the sprite file cannot be saved
+     */
+    private void saveSpriteFile(URL currentSpriteUrl, String spriteFileName) throws IOException {
+        Path dirDestination = Paths.get(SPRITE_DIRECTORY_PATH);
+
+        if (!Files.exists(dirDestination)) {
+            Files.createDirectories(dirDestination);
+        }
+
+        Path fileTarget = dirDestination.resolve(spriteFileName);
+        try (InputStream in = currentSpriteUrl.openStream()) {
+            Files.copy(in, fileTarget, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new IOException("Impossible to save sprite file: " + fileTarget, e);
+        }
+    }
+
+    /**
+     * Get a Bugemon by its name. It return a StaticBugemonDataDTO with just the static data info of the bugemon.
+     *
+     * @param name
+     *            (String) the name of the bugemon
+     * @return (StaticBugemonDataDTO) the bugemon
+     */
+    public StaticBugemonDataDTO getBugemonByName(String name) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetBugemonByName"))) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return this.getBugemonFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("getBugemonByName failed for name: " + name, e);
+        }
+        return null;
+    }
+
+    /**
+     * Get a Bugemon from a ResultSet.
+     *
+     * @param rs
+     *            (ResultSet) the ResultSet
+     * @return (StaticBugemonDataDTO) the Bugemon
+     * @throws SQLException
+     *             if the ResultSet is not valid
+     */
+    private StaticBugemonDataDTO getBugemonFromResultSet(ResultSet rs) throws SQLException {
+        String name = rs.getString(DatabaseColumns.COL_NAME);
+        String type = rs.getString(DatabaseColumns.COL_TYPE);
+        String spriteFileName = rs.getString(DatabaseColumns.COL_SPRITE);
+        boolean isStarter = rs.getBoolean(DatabaseColumns.COL_IS_STARTER);
+
+        Attack attack1 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
+        Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
+        Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
+        List<Attack> attacks = new ArrayList<>();
+        attacks.add(attack1);
+        attacks.add(attack2);
+        attacks.add(attack3);
+
+        return new StaticBugemonDataDTO(name, type, spriteFileName, attacks, isStarter);
     }
 }

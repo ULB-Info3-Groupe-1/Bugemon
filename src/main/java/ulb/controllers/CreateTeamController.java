@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
@@ -22,6 +23,7 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
     private static final String STR_TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";
 
     private final PlayerService playerService;
+    private final BugemonService bugemonService;
     private BugemonTeam selectedTeam;
 
     /**
@@ -31,14 +33,16 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
      * @throws IOException
      *             if the view fails to load its FXML resource.
      */
-    public CreateTeamController(MetaController metaController, PlayerService playerService) throws IOException {
+    public CreateTeamController(MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService) throws IOException {
         super(metaController, ViewLoader.load(CreateTeamView::new));
         this.playerService = playerService;
+        this.bugemonService = bugemonService;
         this.selectedTeam = new BugemonTeam();
 
         this.view.setListener(this);
         this.view.setModel(this.selectedTeam);
-        this.view.setAllBugemonsAvailable(this.playerService.getAllDefaultBugemons());
+        this.view.setAllBugemonsAvailable(this.bugemonService.getAllDefaultBugemons());
         this.view.updateTeamList(this.playerService.getTeamNames());
         this.view.refresh();
     }

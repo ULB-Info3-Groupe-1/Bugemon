@@ -102,7 +102,7 @@ public class CreateTeamView extends View {
     public void setModel(BugemonTeam newBugemonTeam) {
         this.bugemonTeam = newBugemonTeam;
         this.allBugemonsGridView
-                .setSelectionChecker(b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getId().equals(b.getId())));
+                .setSelectionChecker(b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getName().equals(b.getName())));
     }
 
     /**

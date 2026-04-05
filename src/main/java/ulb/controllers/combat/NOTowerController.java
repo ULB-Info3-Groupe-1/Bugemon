@@ -11,19 +11,23 @@ import ulb.models.no_tower.NOTower;
 import ulb.models.no_tower.room.CombatRoom;
 import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.combat.ManualCombatView;
 
 public class NOTowerController extends Controller<ManualCombatView> {
     private NOTower noTower;
     private final PlayerService playerService;
+    private final BugemonService bugemonService;
     private boolean runEnded;
     private Stage stage;
 
-    public NOTowerController(MetaController metaController, PlayerService playerService) throws IOException {
+    public NOTowerController(MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService) {
         super(metaController, new ManualCombatView());
         this.noTower = null;
         this.playerService = playerService;
+        this.bugemonService = bugemonService;
     }
 
     /**
@@ -54,7 +58,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
         }
 
         if (this.noTower == null || this.runEnded) {
-            this.noTower = new NOTower(this.playerService.getActiveTeam(), this.playerService);
+            this.noTower = new NOTower(this.playerService.getActiveTeam(), this.playerService, this.bugemonService);
             this.runEnded = false;
         }
 
@@ -88,7 +92,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
         if (room instanceof CombatRoom combatRoom) {
             try {
                 ManualCombatController manualCombatController = new ManualCombatController(this.metaController,
-                        this.playerService);
+                        this.playerService, this.bugemonService);
                 manualCombatController.setOnCombatFinished(playerWon -> this.handleCombatResult(playerWon, floor));
                 manualCombatController.startCombat(combatRoom.getCombat());
                 manualCombatController.display(this.stage);

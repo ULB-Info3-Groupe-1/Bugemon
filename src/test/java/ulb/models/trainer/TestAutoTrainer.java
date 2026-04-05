@@ -27,7 +27,7 @@ public class TestAutoTrainer {
         TestUtilsBugemons.killBugemon(team, "1");
         trainer.selectRandomBugemon();
         assertTrue(trainer.isCurrentBugemonAlive());
-        Bugemon killed = team.stream().filter(b -> b.getId().equals("1")).findFirst().get();
+        Bugemon killed = team.stream().filter(b -> b.getName().equals("1")).findFirst().get();
         assertNotEquals(killed, trainer.getCurrentBugemon());
     }
 }

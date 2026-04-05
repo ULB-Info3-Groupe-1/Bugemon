@@ -9,6 +9,7 @@ import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
@@ -32,8 +33,9 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @throws IOException
      *             if the view fails to load its FXML resource.
      */
-    public AutomaticCombatController(MetaController metaController, PlayerService playerService) throws IOException {
-        super(metaController, playerService, ViewLoader.load(AutomaticCombatView::new));
+    public AutomaticCombatController(MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService) throws IOException {
+        super(metaController, playerService, bugemonService, ViewLoader.load(AutomaticCombatView::new));
     }
 
     /** Starts a complete automatic combat session and drives it to completion. */

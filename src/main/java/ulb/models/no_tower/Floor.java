@@ -9,17 +9,17 @@ import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.PlayerService;
 
 public class Floor {
     private final Trainer playerTrainer;
-    private final PlayerService playerService;
+    private final BugemonService bugemonService;
     private Stack<Room> stages = new Stack<>();
 
-    public Floor(Trainer playerTrainer, PlayerService playerService) {
+    public Floor(Trainer playerTrainer, BugemonService bugemonService) {
         this.playerTrainer = playerTrainer;
-        this.playerService = playerService;
+        this.bugemonService = bugemonService;
 
         this.init();
     }
@@ -47,7 +47,7 @@ public class Floor {
 
     private CombatRoom initCombatRoom() {
         Trainer opponentTrainer = new AutoTrainer(CombatService
-                .createRandomTeam(this.playerService.getAllDefaultBugemons(), this.playerTrainer.getTeamSize()));
+                .createRandomTeam(this.bugemonService.getAllDefaultBugemons(), this.playerTrainer.getTeamSize()));
         Combat combat = new Combat(this.playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, false);
@@ -60,7 +60,7 @@ public class Floor {
 
     private CombatRoom initBossCombatRoom() {
         Trainer opponentTrainer = new AutoTrainer(
-                CombatService.createBossTeam(this.playerService.getAllDefaultBugemons()));
+                CombatService.createBossTeam(this.bugemonService.getAllDefaultBugemons()));
         Combat combat = new Combat(this.playerTrainer, opponentTrainer);
 
         return new CombatRoom(combat, true);

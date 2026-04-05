@@ -102,8 +102,8 @@ public class TestBugemonTeam {
 
     @Test
     public void testClearTeam() {
-        Bugemon expectedBugemon1 = new BugemonBuilder().id("1").hp(100).build();
-        Bugemon expectedBugemon2 = new BugemonBuilder().id("2").hp(100).build();
+        Bugemon expectedBugemon1 = new BugemonBuilder().name("1").hp(100).build();
+        Bugemon expectedBugemon2 = new BugemonBuilder().name("2").hp(100).build();
 
         BugemonTeam team = new BugemonTeam();
         team.add(expectedBugemon1);

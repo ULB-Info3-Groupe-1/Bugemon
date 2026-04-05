@@ -65,10 +65,10 @@ public class TestRepository {
     @Test
     public void shouldSaveAndRetrieveUserBugemons_whenValidDataProvided() {
         int userId = 2;
-        String bugemonId = "bug_test001";
+        String bugemonName = "1";
 
         // Create test data
-        UserBugemonDTO dto = new UserBugemonDTO(userId, bugemonId, 10, 20, 15, 100, 50, 5);
+        UserBugemonDTO dto = new UserBugemonDTO(userId, bugemonName, 10, 20, 15, 100, 50, 5);
         List<UserBugemonDTO> expectedBugemons = new ArrayList<>();
         expectedBugemons.add(dto);
 
@@ -84,7 +84,7 @@ public class TestRepository {
 
         UserBugemonDTO retrieved = bugemons.get(0);
         assertEquals(userId, retrieved.userId());
-        assertEquals(bugemonId, retrieved.bugemonId());
+        assertEquals(bugemonName, retrieved.bugemonName());
         assertEquals(10, retrieved.currentDefense());
         assertEquals(20, retrieved.currentAttackPower());
         assertEquals(15, retrieved.currentInitiative());
@@ -100,11 +100,11 @@ public class TestRepository {
     @Test
     public void shouldUpdateUserBugemon_whenDataIsModified() {
         int userId = 3;
-        String bugemonId = "bugU_test002";
+        String bugemonName = "2";
 
         // Initial data
-        UserBugemonDTO initial = new UserBugemonDTO(userId, bugemonId, 10, 10, 10, 50, 0, 1);
-        UserBugemonDTO updated = new UserBugemonDTO(userId, bugemonId, 15, 25, 20, 80, 100, 3);
+        UserBugemonDTO initial = new UserBugemonDTO(userId, bugemonName, 10, 10, 10, 50, 0, 1);
+        UserBugemonDTO updated = new UserBugemonDTO(userId, bugemonName, 15, 25, 20, 80, 100, 3);
 
         List<UserBugemonDTO> updatedList = new ArrayList<>();
         updatedList.add(updated);
@@ -197,10 +197,10 @@ public class TestRepository {
     public void shouldAddAndRetrieveTeamMembers_whenFillingRoster() {
         int userId = 6;
         String teamName = "Roster_team";
-        String bugemonId = "partner_001";
+        String bugemonName = "1";
 
         // Create test data
-        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
+        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonName, 1);
         List<TeamMemberDTO> expectedMembers = new ArrayList<>();
         expectedMembers.add(member);
 
@@ -209,14 +209,14 @@ public class TestRepository {
 
         // Execute
         this.repository.createTeam(userId, teamName);
-        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1);
+        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonName, 5, 5, 5, 50, 0, 1);
         this.repository.saveUserBugemon(bugemon);
         this.repository.addTeamMember(member);
         List<TeamMemberDTO> members = this.repository.getTeamMembers(userId, teamName);
 
         // Assert
         assertEquals("La liste des membres doit contenir 1 élément", 1, members.size());
-        assertEquals(bugemonId, members.get(0).bugemonId());
+        assertEquals(bugemonName, members.get(0).bugemonName());
         assertEquals(1, members.get(0).slotPosition());
 
         // Verify the mock was called
@@ -230,7 +230,7 @@ public class TestRepository {
     public void shouldRemoveTeamMember_whenRequested() {
         int userId = 7;
         String teamName = "EmptyMe_team";
-        String bugemonId = "leave_001";
+        String bugemonName = "1";
 
         // Configure mock behavior to return empty list after removal
         // Empty list after removal
@@ -238,11 +238,11 @@ public class TestRepository {
 
         // Execute
         this.repository.createTeam(userId, teamName);
-        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1);
+        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonName, 5, 5, 5, 50, 0, 1);
         this.repository.saveUserBugemon(bugemon);
-        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
+        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonName, 1);
         this.repository.addTeamMember(member);
-        this.repository.removeTeamMember(userId, teamName, bugemonId);
+        this.repository.removeTeamMember(userId, teamName, bugemonName);
         List<TeamMemberDTO> members = this.repository.getTeamMembers(userId, teamName);
 
         // Assert
@@ -252,7 +252,7 @@ public class TestRepository {
         verify(this.repository).createTeam(userId, teamName);
         verify(this.repository).saveUserBugemon(bugemon);
         verify(this.repository).addTeamMember(member);
-        verify(this.repository).removeTeamMember(userId, teamName, bugemonId);
+        verify(this.repository).removeTeamMember(userId, teamName, bugemonName);
         verify(this.repository).getTeamMembers(userId, teamName);
     }
 
@@ -284,16 +284,16 @@ public class TestRepository {
     public void shouldDeleteTeamMembers_whenRequested() {
         int userId = 9;
         String teamName = "ClearMembers_team";
-        String bugemonId = "clear_001";
+        String bugemonName = "1";
 
         // Configure mock behavior to return empty list after member deletion
         when(this.repository.getTeamMembers(userId, teamName)).thenReturn(new ArrayList<>());
 
         // Execute
         this.repository.createTeam(userId, teamName);
-        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonId, 5, 5, 5, 50, 0, 1);
+        UserBugemonDTO bugemon = new UserBugemonDTO(userId, bugemonName, 5, 5, 5, 50, 0, 1);
         this.repository.saveUserBugemon(bugemon);
-        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonId, 1);
+        TeamMemberDTO member = new TeamMemberDTO(userId, teamName, bugemonName, 1);
         this.repository.addTeamMember(member);
         this.repository.deleteTeamMembers(userId, teamName);
         List<TeamMemberDTO> members = this.repository.getTeamMembers(userId, teamName);

@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repository.dto.StaticBugemonDataDTO;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
@@ -32,6 +34,8 @@ import ulb.repository.dto.UserBugemonDTO;
 public class DatabaseRepository {
     // Number of tables of the critical schema
     private static final int CRITICAL_TABLES_COUNT = 7;
+
+    private static DatabaseRepository instance;
 
     private final DatabaseConnection dbConnection;
 
@@ -42,13 +46,20 @@ public class DatabaseRepository {
     private final Map<String, String> queries = new HashMap<>();
 
     /** Loads SQL queries, creates the schema if absent, and bootstraps static game data. */
-    public DatabaseRepository() {
+    private DatabaseRepository() {
         this.dbConnection = new DatabaseConnection();
         this.userRepository = new UserRepository(this, this.dbConnection);
         this.staticDataRepository = new StaticDataRepository(this, this.dbConnection);
 
         this.loadSQLQueries();
         this.prepareDatabase();
+    }
+
+    public static DatabaseRepository getInstance() {
+        if (instance == null) {
+            instance = new DatabaseRepository();
+        }
+        return instance;
     }
 
     private void loadSQLQueries() {
@@ -230,8 +241,21 @@ public class DatabaseRepository {
         this.userRepository.renameTeam(userId, oldTeamName, newTeamName);
     }
 
-    public void removeTeamMember(int userId, String teamName, String bugemonId) {
-        this.userRepository.removeTeamMember(userId, teamName, bugemonId);
+    /**
+     * Remove a member from a team in the database. This method takes the user ID, team name, and bugemon ID of the team
+     * member to be removed, and deletes the corresponding entry from the database to reflect that this team member is
+     * no longer part of the specified team.
+     *
+     * @param userId
+     *            the ID of the user who is a member of the team from which to remove the member
+     * @param teamName
+     *            the name of the team from which to remove the member
+     * @param bugemonName
+     *            the name of the bugemon that represents the team member to be removed from the specified team in the
+     *            database
+     */
+    public void removeTeamMember(int userId, String teamName, String bugemonName) {
+        this.userRepository.removeTeamMember(userId, teamName, bugemonName);
     }
 
     public void deleteTeam(int userId, String teamName) {
@@ -240,5 +264,27 @@ public class DatabaseRepository {
 
     public void deleteTeamMembers(int userId, String teamName) {
         this.userRepository.deleteTeamMembers(userId, teamName);
+    }
+
+    /**
+     * Save a new bugemon in the database. This method takes a CreateBugemonDTO object containing the details of the
+     * bugemon to be saved, and inserts a new entry in the database. It also save the sprite image file for the bugemon.
+     *
+     * @param bugemon
+     *            (CreateBugemonDTO) the bugemon to be saved
+     */
+    public void saveBugemon(CreateBugemonDTO bugemon) {
+        this.staticDataRepository.saveBugemon(bugemon);
+    }
+
+    /**
+     * Get a bugemon by its name and return it as a StaticBugemonDataDTO with just the static data info of the bugemon.
+     *
+     * @param bugemonName
+     *            (String) the name of the bugemon
+     * @return (StaticBugemonDataDTO) the bugemon
+     */
+    public StaticBugemonDataDTO getBugemonByName(String bugemonName) {
+        return this.staticDataRepository.getBugemonByName(bugemonName);
     }
 }

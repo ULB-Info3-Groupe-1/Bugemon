@@ -13,6 +13,7 @@ import ulb.controllers.combat.NOTowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 
 /**
@@ -37,7 +38,6 @@ public class MetaController {
     private final LevelUpController levelUpController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
-    private final PlayerService playerService;
     private boolean noTowerFlowActive;
 
     /**
@@ -50,16 +50,16 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
         this.stage = primaryStage;
-        this.playerService = playerService;
 
-        this.mainMenuController = new MainMenuController(this, this.playerService);
-        this.createTeamController = new CreateTeamController(this, this.playerService);
-        this.manualCombatController = new ManualCombatController(this, this.playerService);
-        this.automaticCombatController = new AutomaticCombatController(this, this.playerService);
-        this.noTowerController = new NOTowerController(this, this.playerService);
+        BugemonService bugemonService = new BugemonService();
+        this.mainMenuController = new MainMenuController(this, playerService);
+        this.createTeamController = new CreateTeamController(this, playerService, bugemonService);
+        this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);
+        this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService);
+        this.noTowerController = new NOTowerController(this, playerService, bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.levelUpController = new LevelUpController(this, this.playerService);
+        this.levelUpController = new LevelUpController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();

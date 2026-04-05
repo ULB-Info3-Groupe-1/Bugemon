@@ -37,6 +37,7 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.repository.dto.CreateBugemonDTO;
 
 /**
  * Provides static utility methods for parsing the JSON data files that describe the Bugemon game's content (attacks and
@@ -69,7 +70,7 @@ public class Parser {
 
     // Static fields to hold the parsed data, accessible via getter methods
     private static Map<String, Attack> attacks;
-    private static List<Bugemon> bugemons;
+    private static List<CreateBugemonDTO> bugemons;
     private static List<Item> items;
     private static Inventory inventory;
 
@@ -110,7 +111,7 @@ public class Parser {
         LOG.info("Finished parsing data");
     }
 
-    public final List<Bugemon> getBugemons() {
+    public final List<CreateBugemonDTO> getBugemons() {
         return bugemons;
     }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 
 public class NOTower {
@@ -15,8 +16,8 @@ public class NOTower {
     private ArrayList<Floor> floors = new ArrayList<>();
 
     // TODO: change to Player class when it will be implemented
-    public NOTower(BugemonTeam playerTeam, PlayerService playerService) {
-        this.generateFloors(playerTeam, playerService);
+    public NOTower(BugemonTeam playerTeam, PlayerService playerService, BugemonService bugemonService) {
+        this.generateFloors(playerTeam, playerService, bugemonService);
     }
 
     public int getCurrentFloorNumber() {
@@ -46,10 +47,10 @@ public class NOTower {
         return this.currentFloor < MAX_FLOORS - 1;
     }
 
-    private void generateFloors(BugemonTeam playerTeam, PlayerService playerService) {
+    private void generateFloors(BugemonTeam playerTeam, PlayerService playerService, BugemonService bugemonService) {
         Trainer playerTrainer = new ManualTrainer(playerTeam, playerService.getInventory());
         for (int i = 0; i < MAX_FLOORS; i++) {
-            this.floors.add(new Floor(playerTrainer, playerService));
+            this.floors.add(new Floor(playerTrainer, bugemonService));
         }
     }
 }
