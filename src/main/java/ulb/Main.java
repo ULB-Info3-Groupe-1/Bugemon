@@ -40,8 +40,8 @@ public class Main extends Application {
         scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
         stage.setScene(scene);
 
-        // TODO: remove hardcoded username once a login screen exists
-        PlayerService playerService = new PlayerService("default_user");
+        // TODO: remove hardcoded playername once a login screen exists
+        PlayerService playerService = new PlayerService("default_player");
         MetaController controller = new MetaController(stage, playerService);
         controller.switchTo(Window.MAIN_MENU);
     }

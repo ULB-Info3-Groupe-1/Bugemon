@@ -6,7 +6,7 @@ public class DatabaseColumns {
         // Private constructor to prevent instantiation
     }
 
-    public static final String COL_USER_ID = "user_id";
+    public static final String COL_PLAYER_ID = "player_id";
     public static final String COL_BUGEMON_NAME = "bugemon_name";
     public static final String COL_CURRENT_DEFENSE = "current_defense";
     public static final String COL_CURRENT_ATTACK = "current_attack";

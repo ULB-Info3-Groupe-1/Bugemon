@@ -10,58 +10,59 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.repository.dto.PlayerBugemonDTO;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
-import ulb.repository.dto.UserBugemonDTO;
 
-public class UserRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(UserRepository.class);
+public class PlayerRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
 
     private final DatabaseRepository dbRepository;
     private final DatabaseConnection dbConnection;
 
-    public UserRepository(DatabaseRepository dbRepository, DatabaseConnection dbConnection) {
+    public PlayerRepository(DatabaseRepository dbRepository, DatabaseConnection dbConnection) {
         this.dbRepository = dbRepository;
         this.dbConnection = dbConnection;
     }
 
-    // ─── USERS ────────────────────────────────────────────────────────────────
+    // ─── PLAYERS ────────────────────────────────────────────────────────────────
 
-    /** @return the generated user ID */
-    public int createUser(String username) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("CreateUser"))) {
-            ps.setString(1, username);
+    /** @return the generated player ID */
+    public int createPlayer(String playername) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("CreatePlayer"))) {
+            ps.setString(1, playername);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(DatabaseColumns.COL_ID);
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("createUser failed", e);
+            throw new IllegalStateException("createPlayer failed", e);
         }
-        throw new IllegalStateException("createUser returned no id");
+        throw new IllegalStateException("createPlayer returned no id");
     }
 
-    /** @return empty Optional if no user with that username exists */
-    public Optional<Integer> getUserIdByUsername(String username) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetUserByUsername"))) {
-            ps.setString(1, username);
+    /** @return empty Optional if no player with that playername exists */
+    public Optional<Integer> getPlayerIdByPlayername(String playername) {
+        try (PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("GetPlayerByPlayername"))) {
+            ps.setString(1, playername);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return Optional.of(rs.getInt(DatabaseColumns.COL_ID));
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("getUserIdByUsername failed", e);
+            throw new IllegalStateException("getPlayerIdByPlayername failed", e);
         }
         return Optional.empty();
     }
 
-    // ─── USER BUGEMONS ────────────────────────────────────────────────────────
+    // ─── PALYER BUGEMONS ────────────────────────────────────────────────────────
 
-    public void saveUserBugemon(UserBugemonDTO dto) {
-        LOG.debug("Saving user bugemon: {}", dto);
+    public void savePlayerBugemon(PlayerBugemonDTO dto) {
+        LOG.debug("Saving player bugemon: {}", dto);
 
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveUserBugemon"))) {
-            ps.setInt(1, dto.userId());
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SavePlayerBugemon"))) {
+            ps.setInt(1, dto.playerId());
             ps.setString(2, dto.bugemonName());
             ps.setInt(3, dto.currentDefense());
             ps.setInt(4, dto.currentAttackPower());
@@ -71,37 +72,38 @@ public class UserRepository {
             ps.setInt(8, dto.currentLevel());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new IllegalStateException("saveUserBugemon failed", e);
+            throw new IllegalStateException("savePlayerBugemon failed", e);
         }
     }
 
-    public void updateUserBugemon(UserBugemonDTO dto) {
-        LOG.debug("Updating user bugemon: {}", dto);
+    public void updatePlayerBugemon(PlayerBugemonDTO dto) {
+        LOG.debug("Updating player bugemon: {}", dto);
 
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("UpdateUserBugemon"))) {
+        try (PreparedStatement ps = this.dbConnection
+                .prepareStatement(this.dbRepository.getSql("UpdatePlayerBugemon"))) {
             ps.setInt(1, dto.currentDefense());
             ps.setInt(2, dto.currentAttackPower());
             ps.setInt(3, dto.currentInitiative());
             ps.setInt(4, dto.currentMaxHp());
             ps.setInt(5, dto.currentXp());
             ps.setInt(6, dto.currentLevel());
-            ps.setInt(7, dto.userId());
+            ps.setInt(7, dto.playerId());
             ps.setString(8, dto.bugemonName());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new IllegalStateException("updateUserBugemon failed", e);
+            throw new IllegalStateException("updatePlayerBugemon failed", e);
         }
     }
 
-    public List<UserBugemonDTO> getUserBugemons(int userId) {
-        LOG.debug("Getting bugemons for userId: {}", userId);
+    public List<PlayerBugemonDTO> getPlayerBugemons(int playerId) {
+        LOG.debug("Getting bugemons for playerId: {}", playerId);
 
-        List<UserBugemonDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetUserBugemons"))) {
-            ps.setInt(1, userId);
+        List<PlayerBugemonDTO> result = new ArrayList<>();
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetPlayerBugemons"))) {
+            ps.setInt(1, playerId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                result.add(new UserBugemonDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
+                result.add(new PlayerBugemonDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
                         rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
                         rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
                         rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
@@ -109,18 +111,18 @@ public class UserRepository {
                         rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)));
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("getUserBugemons failed", e);
+            throw new IllegalStateException("getPlayerBugemons failed", e);
         }
         return result;
     }
 
     // ─── TEAMS ────────────────────────────────────────────────────────────────
 
-    public void createTeam(int userId, String teamName) {
-        LOG.debug("Creating team '{}' for userId: {}", teamName, userId);
+    public void createTeam(int playerId, String teamName) {
+        LOG.debug("Creating team '{}' for playerId: {}", teamName, playerId);
 
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("CreateTeam"))) {
-            ps.setInt(1, userId);
+            ps.setInt(1, playerId);
             ps.setString(2, teamName);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -129,17 +131,17 @@ public class UserRepository {
     }
 
     /** Deletes all members of the team, then the team record itself. */
-    public void deleteTeam(int userId, String teamName) {
-        LOG.debug("Deleting team '{}' for userId: {}", teamName, userId);
+    public void deleteTeam(int playerId, String teamName) {
+        LOG.debug("Deleting team '{}' for playerId: {}", teamName, playerId);
 
         try (PreparedStatement psMembers = this.dbConnection
                 .prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"));
                 PreparedStatement psTeam = this.dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeam"))) {
-            psMembers.setInt(1, userId);
+            psMembers.setInt(1, playerId);
             psMembers.setString(2, teamName);
             psMembers.executeUpdate();
 
-            psTeam.setInt(1, userId);
+            psTeam.setInt(1, playerId);
             psTeam.setString(2, teamName);
             psTeam.executeUpdate();
         } catch (SQLException e) {
@@ -147,11 +149,11 @@ public class UserRepository {
         }
     }
 
-    public void deleteTeamMembers(int userId, String teamName) {
-        LOG.debug("Deleting team members for userId: {} and teamName: {}", userId, teamName);
+    public void deleteTeamMembers(int playerId, String teamName) {
+        LOG.debug("Deleting team members for playerId: {} and teamName: {}", playerId, teamName);
 
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("DeleteTeamMembers"))) {
-            ps.setInt(1, userId);
+            ps.setInt(1, playerId);
             ps.setString(2, teamName);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -159,18 +161,19 @@ public class UserRepository {
         }
     }
 
-    public List<TeamDTO> getUserTeams(int userId) {
-        LOG.debug("Getting teams for userId: {}", userId);
+    public List<TeamDTO> getPlayerTeams(int playerId) {
+        LOG.debug("Getting teams for playerId: {}", playerId);
 
         List<TeamDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetUserTeams"))) {
-            ps.setInt(1, userId);
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetPlayerTeams"))) {
+            ps.setInt(1, playerId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                result.add(new TeamDTO(rs.getInt(DatabaseColumns.COL_USER_ID), rs.getString(DatabaseColumns.COL_NAME)));
+                result.add(
+                        new TeamDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID), rs.getString(DatabaseColumns.COL_NAME)));
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("getUserTeams failed", e);
+            throw new IllegalStateException("getPlayerTeams failed", e);
         }
         return result;
     }
@@ -179,17 +182,18 @@ public class UserRepository {
 
     /**
      * Add a member to a team in the database. This method takes a TeamMemberDTO object containing the details of the
-     * team member to be added, including the user ID, team name, Bugemon ID, and slot position. It executes an SQL
+     * team member to be added, including the player ID, team name, Bugemon ID, and slot position. It executes an SQL
      * statement to insert a new record into the database representing this team member, associating it with the
-     * specified team and user. The method ensures that the new team member is correctly linked to the appropriate team
-     * and user in the database. If an error occurs during the database operation, an IllegalStateException is thrown.
+     * specified team and player. The method ensures that the new team member is correctly linked to the appropriate
+     * team and player in the database. If an error occurs during the database operation, an IllegalStateException is
+     * thrown.
      *
      * @param dto
      *            the TeamMemberDTO object containing the details of the team member to be added
      */
     public void addTeamMember(TeamMemberDTO dto) {
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("AddTeamMember"))) {
-            ps.setInt(1, dto.userId());
+            ps.setInt(1, dto.playerId());
             ps.setString(2, dto.teamName());
             ps.setString(3, dto.bugemonName());
             ps.setInt(4, dto.slotPosition());
@@ -200,22 +204,22 @@ public class UserRepository {
     }
 
     /**
-     * Remove a member from a team in the database. This method takes the user ID, team name, and Bugemon ID as
+     * Remove a member from a team in the database. This method takes the player ID, team name, and Bugemon ID as
      * parameters to identify the specific team member to be removed. It executes an SQL statement to delete the
      * corresponding record from the database, effectively removing the specified team member from the team. The method
-     * ensures that only the team member matching the provided user ID, team name, and Bugemon ID is removed from the
+     * ensures that only the team member matching the provided player ID, team name, and Bugemon ID is removed from the
      * database. If an error occurs during the database operation, an IllegalStateException is thrown.
      *
-     * @param userId
-     *            the ID of the user whose team member is to be removed
+     * @param playerId
+     *            the ID of the player whose team member is to be removed
      * @param teamName
      *            the name of the team from which to remove the member
      * @param bugemonName
      *            the name of the Bugemon to be removed from the team
      */
-    public void removeTeamMember(int userId, String teamName, String bugemonName) {
+    public void removeTeamMember(int playerId, String teamName, String bugemonName) {
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("RemoveTeamMember"))) {
-            ps.setInt(1, userId);
+            ps.setInt(1, playerId);
             ps.setString(2, teamName);
             ps.setString(3, bugemonName);
             ps.executeUpdate();
@@ -225,26 +229,26 @@ public class UserRepository {
     }
 
     /**
-     * Retrieve a list of TeamMemberDTO objects representing the members of a specific team for a user from the
-     * database. This method executes an SQL query to search for all team member records associated with the given user
-     * ID and team name, and constructs a list of TeamMemberDTO objects containing the details of each team member
-     * found. The details include the user ID, team name, Bugemon ID, and slot position of each team member. If an error
-     * occurs during the database query, an IllegalStateException is thrown.
+     * Retrieve a list of TeamMemberDTO objects representing the members of a specific team for a player from the
+     * database. This method executes an SQL query to search for all team member records associated with the given
+     * player ID and team name, and constructs a list of TeamMemberDTO objects containing the details of each team
+     * member found. The details include the player ID, team name, Bugemon ID, and slot position of each team member. If
+     * an error occurs during the database query, an IllegalStateException is thrown.
      *
-     * @param userId
-     *            the ID of the user for whom to retrieve team members
+     * @param playerId
+     *            the ID of the player for whom to retrieve team members
      * @param teamName
      *            the name of the team for which to retrieve members
-     * @return a list of TeamMemberDTO objects representing the members of the specified team for the user
+     * @return a list of TeamMemberDTO objects representing the members of the specified team for the player
      */
-    public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
+    public List<TeamMemberDTO> getTeamMembers(int playerId, String teamName) {
         List<TeamMemberDTO> result = new ArrayList<>();
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetTeamMembers"))) {
-            ps.setInt(1, userId);
+            ps.setInt(1, playerId);
             ps.setString(2, teamName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                result.add(new TeamMemberDTO(rs.getInt(DatabaseColumns.COL_USER_ID),
+                result.add(new TeamMemberDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
                         rs.getString(DatabaseColumns.COL_TEAM_NAME), rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
                         rs.getInt(DatabaseColumns.COL_SLOT_POSITION)));
             }
@@ -254,13 +258,13 @@ public class UserRepository {
         return result;
     }
 
-    public void renameTeam(int userId, String oldTeamName, String newTeamName) {
-        LOG.debug("Renaming team for userId: {} from '{}' to '{}'", userId, oldTeamName, newTeamName);
+    public void renameTeam(int playerId, String oldTeamName, String newTeamName) {
+        LOG.debug("Renaming team for playerId: {} from '{}' to '{}'", playerId, oldTeamName, newTeamName);
 
         try (PreparedStatement psRenameTeam = this.dbConnection
                 .prepareStatement(this.dbRepository.getSql("RenameTeam"))) {
             psRenameTeam.setString(1, newTeamName);
-            psRenameTeam.setInt(2, userId);
+            psRenameTeam.setInt(2, playerId);
             psRenameTeam.setString(3, oldTeamName);
             psRenameTeam.executeUpdate();
 

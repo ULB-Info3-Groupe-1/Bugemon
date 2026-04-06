@@ -14,7 +14,7 @@ import ulb.views.CreateTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to user
+ * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to player
  * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
  * controller never pushes data into the view.
  */

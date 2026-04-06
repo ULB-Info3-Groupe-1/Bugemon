@@ -158,7 +158,7 @@ public class ManualCombatView extends CombatView {
         this.showActionMenu();
     }
 
-    /** Callback interface for all user combat actions dispatched by this view. */
+    /** Callback interface for all player combat actions dispatched by this view. */
     public interface Listener {
         void onAttack(Attack attack);
 
