@@ -12,6 +12,7 @@ import ulb.repository.dto.StaticBugemonDataDTO;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 import ulb.repository.dto.UserBugemonDTO;
+import ulb.services.exceptions.TeamEmptyException;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
 
@@ -124,9 +125,13 @@ public class PlayerService {
      * @throws TeamNameAlreadyExistsException
      *             if a team with teamName already exists
      */
-    public void saveTeam(String teamName, BugemonTeam team) throws TeamNameAlreadyExistsException {
+    public void saveTeam(String teamName, BugemonTeam team) throws TeamNameAlreadyExistsException, TeamEmptyException {
         if (this.teamNameExists(teamName)) {
             throw new TeamNameAlreadyExistsException("A team is already saved with the name " + teamName);
+        }
+
+        if (this.activeTeam.size() == 0) {
+            throw new TeamEmptyException("Team is empty!");
         }
 
         this.dbRepository.createTeam(this.userId, teamName);
