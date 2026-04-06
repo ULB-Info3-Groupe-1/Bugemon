@@ -51,11 +51,6 @@ public class ManualCombatView extends CombatView {
     @Override
     protected void initCombatMode() {
         this.initMenuCallbacks();
-        this.setDialogNextCallback(() -> {
-            if (this.listener != null) {
-                this.listener.onNext();
-            }
-        });
         this.showMainActionMenu();
     }
 
@@ -172,7 +167,5 @@ public class ManualCombatView extends CombatView {
         void onSurrender();
 
         void onItemSelected(Item item);
-
-        void onNext();
     }
 }

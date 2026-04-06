@@ -18,9 +18,7 @@ import ulb.views.combat.AutomaticCombatView;
  * animation and dialog before the next one is unlocked. Implements {@link AutomaticCombatView.Listener} to receive
  * those events.
  */
-public class AutomaticCombatController extends CombatController<AutomaticCombatView>
-        implements AutomaticCombatView.Listener {
-
+public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
     /**
      * Constructs an {@code AutomaticCombatController} and initialises its {@link AutomaticCombatView}.
      *
@@ -32,7 +30,6 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     public AutomaticCombatController(MetaController metaController, PlayerService playerService,
             BugemonService bugemonService) throws IOException {
         super(metaController, playerService, bugemonService, ViewLoader.load(AutomaticCombatView::new));
-        this.view.setListener(this);
     }
 
     @Override
@@ -47,13 +44,6 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
         this.startTurn();
-    }
-
-    // ── AutomaticCombatView.Listener ──────────────────────────────────────────
-
-    @Override
-    public void onNext() {
-        this.advanceStep();
     }
 
     // ── CombatController hooks ────────────────────────────────────────────────

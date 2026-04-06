@@ -32,7 +32,7 @@ import ulb.views.combat.CombatView;
  * @param <V>
  *            the concrete {@link CombatView} subtype managed by this controller.
  */
-public abstract class CombatController<V extends CombatView> extends Controller<V> {
+public abstract class CombatController<V extends CombatView> extends Controller<V> implements CombatView.NextListener {
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
     private Consumer<List<LevelUp>> onVictory;
@@ -51,6 +51,8 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         this.animationController = new CombatAnimationController(view);
         this.playerService = playerService;
         this.bugemonService = bugemonService;
+
+        this.view.setNextListener(this);
     }
 
     public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
@@ -168,5 +170,10 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         if (this.restoreHpAfterCombat) {
             this.playerService.restoreHpActiveTeam();
         }
+    }
+
+    @Override
+    public void onNext() {
+        this.advanceStep();
     }
 }
