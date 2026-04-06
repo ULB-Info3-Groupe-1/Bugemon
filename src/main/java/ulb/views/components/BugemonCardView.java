@@ -72,16 +72,7 @@ public class BugemonCardView extends ComponentView {
         this.listener = listener;
     }
 
-    /** Applies or removes the selected visual style. */
-    public void setSelected(boolean selected) {
-        if (selected) {
-            this.select();
-        } else {
-            this.unselect();
-        }
-    }
-
-    private void select() {
+    public void select() {
         if (!this.selected) {
             this.selected = true;
             this.imageView.getStyleClass().add("bugemon-image-selected");
@@ -90,7 +81,7 @@ public class BugemonCardView extends ComponentView {
         }
     }
 
-    private void unselect() {
+    public void unselect() {
         if (this.selected) {
             this.selected = false;
             this.imageView.getStyleClass().remove("bugemon-image-selected");
