@@ -1,6 +1,8 @@
 package ulb.views;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -47,13 +49,6 @@ public class CreateTeamView extends View {
                     @Override
                     public void onBugemonClicked(Bugemon bugemon) {
                         CreateTeamView.this.listener.onBugemonSelected(bugemon);
-                    }
-
-                    @Override
-                    public boolean isSelected(Bugemon bugemon) {
-                        // WARN: this is not correct now, but will be when we get rid of IDs.
-                        // TODO: this is business logic that should be moved to the controller
-                        return CreateTeamView.this.bugemonTeam.contains(bugemon);
                     }
 
                 }
@@ -116,7 +111,11 @@ public class CreateTeamView extends View {
      */
     public void setAllBugemonsAvailable(List<Bugemon> allBugemons) {
         this.allBugemonsAvailable = allBugemons;
-        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
+
+        // TODO: ask this to the controller
+        Set<Bugemon> selectedBugemons = new HashSet<>();
+
+        this.allBugemonsGridView.showAll(this.allBugemonsAvailable, selectedBugemons);
     }
 
     public void refreshTeam(BugemonTeam team) {
@@ -126,7 +125,10 @@ public class CreateTeamView extends View {
 
     @Override
     public void refresh() {
-        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
+        // TODO: ask this to the controller
+        Set<Bugemon> selectedBugemons = new HashSet<>();
+
+        this.allBugemonsGridView.showAll(this.allBugemonsAvailable, selectedBugemons);
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
