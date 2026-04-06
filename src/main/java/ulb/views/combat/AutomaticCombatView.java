@@ -12,14 +12,8 @@ public class AutomaticCombatView extends CombatView {
     private AutoTrainer player;
     private AutoTrainer opponent;
 
-    private Listener listener;
-
     public AutomaticCombatView() {
         super();
-    }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
     }
 
     /** Gives the view the trainer references it needs to read from in {@link #refresh()}. */
@@ -31,11 +25,6 @@ public class AutomaticCombatView extends CombatView {
     @Override
     protected void initCombatMode() {
         this.hideActionMenu();
-        this.setDialogNextCallback(() -> {
-            if (this.listener != null) {
-                this.listener.onNext();
-            }
-        });
     }
 
     @Override
@@ -45,11 +34,5 @@ public class AutomaticCombatView extends CombatView {
         }
         this.updateTrainerBugemon(this.player.getCurrentBugemon());
         this.updateOpponentBugemon(this.opponent.getCurrentBugemon());
-    }
-
-    /** Callback interface dispatched when the player clicks the dialog's Next button. */
-    public interface Listener {
-        /** Called each time the player advances the combat dialog. */
-        void onNext();
     }
 }
