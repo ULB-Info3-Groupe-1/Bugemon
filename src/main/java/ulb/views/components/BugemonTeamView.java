@@ -1,7 +1,6 @@
 package ulb.views.components;
 
 import java.util.List;
-import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
@@ -16,10 +15,14 @@ public class BugemonTeamView extends ComponentView {
     @FXML
     private GridPane gridPane;
 
-    private Consumer<Bugemon> onBugemonClicked;
+    Listener listener;
 
     public BugemonTeamView() {
         super(FXML_PATH);
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /** Clears and repopulates the grid with the alive members of the given team. */
@@ -28,15 +31,23 @@ public class BugemonTeamView extends ComponentView {
 
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
-            BugemonCardView cell = new BugemonCardView(aliveBugemons.get(i));
-            if (this.onBugemonClicked != null) {
-                cell.setOnClick(this.onBugemonClicked);
-            }
-            this.gridPane.add(cell, i % GRID_COLUMNS, i / GRID_COLUMNS);
+            BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
+            card.setListener(new BugemonCardView.Listener() {
+
+                @Override
+                public void onClick(Bugemon bugemon) {
+                    BugemonTeamView.this.listener.onBugemonClicked(bugemon);
+                }
+
+            });
+
+            this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
         }
     }
 
-    public void setOnClick(Consumer<Bugemon> callback) {
-        this.onBugemonClicked = callback;
+    public interface Listener {
+
+        void onBugemonClicked(Bugemon bugemon);
+
     }
 }

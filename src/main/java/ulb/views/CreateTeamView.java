@@ -1,6 +1,8 @@
 package ulb.views;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -36,14 +38,26 @@ public class CreateTeamView extends View {
 
     private Listener listener;
     private BugemonTeam bugemonTeam;
-    private List<Bugemon> allBugemonsAvailable;
+    private List<Bugemon> availableBugemons;
 
     @FXML
     private void initialize() {
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        this.allBugemonsGridView.setOnClick(b -> {
-            if (this.listener != null) {
-                this.listener.onBugemonSelected(b);
+
+        // TODO: this looks like code duplication (see next listener)
+        this.allBugemonsGridView.setListener(new AllBugemonsView.Listener() {
+            @Override
+            public void onBugemonClicked(Bugemon bugemon) {
+                CreateTeamView.this.listener.onBugemonSelected(bugemon);
+            }
+        }
+
+        );
+
+        this.bugemonsTeamView.setListener(new BugemonTeamView.Listener() {
+            @Override
+            public void onBugemonClicked(Bugemon bugemon) {
+                CreateTeamView.this.listener.onBugemonSelected(bugemon);
             }
         });
     }
@@ -94,33 +108,29 @@ public class CreateTeamView extends View {
         }
     }
 
-    public void setModel(BugemonTeam newBugemonTeam) {
+    public void setTeam(BugemonTeam newBugemonTeam) {
         this.bugemonTeam = newBugemonTeam;
-        this.allBugemonsGridView
-                .setSelectionChecker(b -> this.bugemonTeam.stream().anyMatch(dto -> dto.getName().equals(b.getName())));
     }
 
     /**
      * Sets the full list of available Bugemons and displays them in the selection grid.
      */
-    public void setAllBugemonsAvailable(List<Bugemon> allBugemons) {
-        this.allBugemonsAvailable = allBugemons;
-        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
+    public void setAvailableBugemons(List<Bugemon> allBugemons) {
+        this.availableBugemons = allBugemons;
     }
 
-    public void refreshTeam(BugemonTeam team) {
-        this.bugemonTeam = team;
-        this.refresh();
+    public void setTeamList(List<String> teamNames) {
+        this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
     }
 
     @Override
     public void refresh() {
-        this.allBugemonsGridView.showAll(this.allBugemonsAvailable);
-        this.bugemonsTeamView.showTeam(this.bugemonTeam);
-    }
+        Set<Bugemon> selectedBugemons = this.bugemonTeam.stream().collect(Collectors.toSet());
 
-    public void updateTeamList(List<String> teamNames) {
-        this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
+        System.out.println(selectedBugemons);
+
+        this.allBugemonsGridView.showAll(this.availableBugemons, selectedBugemons);
+        this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
 
     public void setSaveTeamName(String name) {

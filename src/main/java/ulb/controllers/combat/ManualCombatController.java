@@ -133,12 +133,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.startTurn();
     }
 
-    /** Advances to the next step; handles KO reactions and end-of-combat detection. */
-    @Override
-    public void onNext() {
-        this.advanceStep();
-    }
-
     // ── CombatController hooks ────────────────────────────────────────────────
 
     @Override

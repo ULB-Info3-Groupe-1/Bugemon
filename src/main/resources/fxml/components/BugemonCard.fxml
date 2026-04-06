@@ -8,7 +8,7 @@
 <fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
     alignment="CENTER" spacing="2" styleClass="bugemon-cell">
     <StackPane fx:id="imagePane" styleClass="bugemon-card-pane"
-        onMouseClicked="#onSelected">
+        onMouseClicked="#onClick">
         <ImageView fx:id="imageView" fitWidth="110" fitHeight="110"
             preserveRatio="true" />
     </StackPane>

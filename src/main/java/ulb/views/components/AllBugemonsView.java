@@ -1,8 +1,7 @@
 package ulb.views.components;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 
@@ -15,31 +14,30 @@ public class AllBugemonsView extends ComponentView {
     @FXML
     private FlowPane flowPane;
 
-    private Function<Bugemon, Boolean> selectionChecker;
-    private Consumer<Bugemon> onBugemonClicked;
+    Listener listener;
 
     public AllBugemonsView() {
         super(FXML_PATH);
     }
 
-    public void setSelectionChecker(Function<Bugemon, Boolean> checker) {
-        this.selectionChecker = checker;
-    }
-
-    public void setOnClick(Consumer<Bugemon> callback) {
-        this.onBugemonClicked = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /** Clears and repopulates the grid with the given list of Bugemons. */
-    public void showAll(List<Bugemon> bugemonList) {
+    public void showAll(List<Bugemon> bugemonList, Set<Bugemon> selectedBugemons) {
         this.flowPane.getChildren().clear();
 
-        if (bugemonList.isEmpty()) {
-            return;
-        }
-
         for (Bugemon bugemon : bugemonList) {
-            this.flowPane.getChildren().add(this.createBugemonCard(bugemon));
+            BugemonCardView bugemonCard = this.createBugemonCard(bugemon);
+
+            if (selectedBugemons.contains(bugemon)) {
+                bugemonCard.select();
+            } else {
+                bugemonCard.unselect();
+            }
+
+            this.flowPane.getChildren().add(bugemonCard);
         }
     }
 
@@ -47,14 +45,21 @@ public class AllBugemonsView extends ComponentView {
         BugemonCardView card = new BugemonCardView(bugemon);
         card.hideLevelLabel();
 
-        if (this.selectionChecker != null) {
-            card.setSelected(this.selectionChecker.apply(bugemon));
-        }
+        card.setListener(new BugemonCardView.Listener() {
 
-        if (this.onBugemonClicked != null) {
-            card.setOnClick(this.onBugemonClicked);
-        }
+            @Override
+            public void onClick(Bugemon bugemon) {
+                AllBugemonsView.this.listener.onBugemonClicked(bugemon);
+            }
+
+        });
 
         return card;
+    }
+
+    public interface Listener {
+
+        void onBugemonClicked(Bugemon bugemon);
+
     }
 }

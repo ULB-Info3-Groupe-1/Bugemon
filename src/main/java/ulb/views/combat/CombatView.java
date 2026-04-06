@@ -41,6 +41,8 @@ public abstract class CombatView extends View {
     @FXML
     private DialogZoneView dialogZoneView;
 
+    NextListener nextListener;
+
     protected CombatView() {
     }
 
@@ -48,7 +50,21 @@ public abstract class CombatView extends View {
     @FXML
     protected void initialize() {
         this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
+
+        this.dialogZoneView.setListener(new DialogZoneView.Listener() {
+
+            @Override
+            public void onNext() {
+                CombatView.this.nextListener.onNext();
+            }
+
+        });
+
         this.initCombatMode();
+    }
+
+    public void setNextListener(NextListener listener) {
+        this.nextListener = listener;
     }
 
     @Override
@@ -107,11 +123,6 @@ public abstract class CombatView extends View {
     }
 
     // ── Dialog zone ───────────────────────────────────────────────────────────
-
-    /** Registers the callback invoked when the dialog's next button is clicked. */
-    protected void setDialogNextCallback(Runnable callback) {
-        this.dialogZoneView.setOnNext(callback);
-    }
 
     private void showDialog(String dialog) {
         this.dialogZoneView.setDialogText(dialog);
@@ -191,5 +202,11 @@ public abstract class CombatView extends View {
 
     public void makeOpponentBugemonReappear() {
         this.attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
+    }
+
+    public interface NextListener {
+
+        void onNext();
+
     }
 }

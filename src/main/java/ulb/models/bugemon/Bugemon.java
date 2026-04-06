@@ -86,7 +86,7 @@ public class Bugemon implements BugemonDTO {
             return false;
         }
         Bugemon other = (Bugemon) obj;
-        return this.name == other.name;
+        return this.name.equals(other.name);
     }
 
     @Override
