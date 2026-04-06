@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import ulb.models.bugemon.BugemonType;
 import ulb.services.BugemonService;
-import ulb.services.PlayerService;
 import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 

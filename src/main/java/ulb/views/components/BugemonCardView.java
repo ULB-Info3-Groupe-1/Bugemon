@@ -14,8 +14,7 @@ import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 
 /**
- * Reusable custom component representing a single Bugemon cell with an image
- * and name label.
+ * Reusable custom component representing a single Bugemon cell with an image and name label.
  */
 public class BugemonCardView extends ComponentView {
     private static final String EMPTY_NAME = "?";
@@ -35,8 +34,7 @@ public class BugemonCardView extends ComponentView {
     private final Optional<Bugemon> bugemonData;
 
     /**
-     * Constructs an empty placeholder card with a default image and {@code "?"} as
-     * name.
+     * Constructs an empty placeholder card with a default image and {@code "?"} as name.
      */
     public BugemonCardView() {
         this(Optional.empty());
@@ -89,7 +87,7 @@ public class BugemonCardView extends ComponentView {
         this.getStyleClass().remove("bugemon-cell");
         this.getStyleClass().add("bugemon-cell-selected");
     }
-
+    
     public void unselect() {
         this.imageView.getStyleClass().remove("bugemon-image-selected");
         this.getStyleClass().remove("bugemon-cell-selected");

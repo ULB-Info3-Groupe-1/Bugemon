@@ -1,7 +1,6 @@
 package ulb.views;
 
 import java.io.File;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.views.components.BugemonCardView;
@@ -64,14 +64,13 @@ public class CreateBugemonView extends View {
     private void onLoadButtonClicked() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choisir le sprite du Bugemon");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png"));
         Stage stage = (Stage) this.getRoot().getScene().getWindow();
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             this.bugemonCardView.setSprite(file);
-        }   
+        }
     }
 
     @FXML
@@ -143,8 +142,7 @@ public class CreateBugemonView extends View {
     }
 
     /**
-     * Registers the listener that receives all user interaction events from this
-     * view.
+     * Registers the listener that receives all user interaction events from this view.
      */
     public void setListener(Listener listener) {
         this.listener = listener;

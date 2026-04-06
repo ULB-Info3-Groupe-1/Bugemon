@@ -24,15 +24,15 @@
             </padding>
             <BugemonCardView fx:id="bugemonCardView" />
             <Button text="Charger sprite" onAction="#onLoadButtonClicked" />
-            <Button text="Supprimer sprite" onAction="#onRemoveButtonClicked" />
+            <Button text="Supprimer sprite"
+                onAction="#onRemoveButtonClicked" />
         </VBox>
         <VBox alignment="CENTER" spacing="20">
             <padding>
                 <Insets top="40" right="40" bottom="40" left="40" />
             </padding>
             <TextField fx:id="bugemonNameTextField"
-                promptText="Nom de votre Bugemon..." 
-                onKeyTyped="#onKeyTyped" />
+                promptText="Nom de votre Bugemon..." onKeyTyped="#onKeyTyped" />
             <!-- onAction="#onSaveClicked" /> -->
             <Label text="Choisir le type du Bugemon" />
             <HBox alignment="CENTER" spacing="20">
@@ -87,7 +87,8 @@
         </VBox>
     </HBox>
     <HBox alignment="CENTER" spacing="20">
-        <Button text="Retourner au menu principal" onAction="#onReturnClicked" />
+        <Button text="Retourner au menu principal"
+            onAction="#onReturnClicked" />
         <Button text="Sauvegarder" onAction="#onSaveClicked" />
     </HBox>
 </VBox>

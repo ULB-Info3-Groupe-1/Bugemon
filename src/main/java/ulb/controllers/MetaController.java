@@ -18,14 +18,12 @@ import ulb.services.PlayerService;
 import ulb.views.ManageTeamView;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is
- * the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
-     * transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -60,9 +58,9 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *                     main JavaFX stage of the application
+     *            main JavaFX stage of the application
      * @throws IOException
-     *                     if a controller or view fails to initialize
+     *             if a controller or view fails to initialize
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService)
             throws IOException {
@@ -140,9 +138,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *               target screen to display
+     *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
+     *             if the window is invalid
      */
     public final void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
