@@ -36,7 +36,6 @@ public class AllBugemonsView extends ComponentView {
         BugemonCardView card = new BugemonCardView(bugemon);
         card.hideLevelLabel();
 
-        // TODO: might want to add isSelected to the BugemonCardView.Listener interface ?
         card.setSelected(this.listener.isSelected(bugemon));
 
         card.setListener(new BugemonCardView.Listener() {
