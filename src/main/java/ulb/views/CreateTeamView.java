@@ -156,11 +156,11 @@ public class CreateTeamView extends View {
     }
 
     public void showTeamNameAlreadyExistsAlert(String teamName) {
-        this.showAlert(TEAM_NAME_ALREADY_USED, "Une équipe est déjà sauvée avec le nom " + teamName);
+        this.showAlert(TEAM_NAME_ALREADY_USED, "Une équipe est déjà sauvée avec le nom " + teamName + ".");
     }
 
     public void showTeamNotFoundAlert(String teamName) {
-        this.showAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName);
+        this.showAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
     }
 
     public interface Listener {
