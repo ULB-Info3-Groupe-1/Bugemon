@@ -2,6 +2,7 @@ package ulb.controllers;
 
 import java.io.IOException;
 
+import javafx.stage.Stage;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.BugemonService;
@@ -38,13 +39,27 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
         this.selectedTeam = new BugemonTeam();
 
         this.view.setListener(this);
+    }
 
-        // TODO: is this the right way to do things now that we have listeners ?
-        this.view.setModel(this.selectedTeam);
-        this.view.setAllBugemonsAvailable(this.bugemonService.getAllDefaultBugemons());
-        this.view.updateTeamList(this.playerService.getTeamNames());
+    @Override
+    protected void show(Stage stage) {
+        this.updateTeam();
+        this.udpateAvailableBugemons();
+        this.updateTeamList();
 
-        this.view.refresh();
+        super.show(stage);
+    }
+
+    public void updateTeamList() {
+        this.view.setTeamList(this.playerService.getTeamNames());
+    }
+
+    public void updateTeam() {
+        this.view.setTeam(this.selectedTeam);
+    }
+
+    private void udpateAvailableBugemons() {
+        this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
     }
 
     @Override
@@ -54,7 +69,8 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
         } else if (!this.selectedTeam.isFull()) {
             this.selectedTeam.add(new Bugemon(bugemon));
         }
-        this.view.refreshTeam(this.selectedTeam);
+
+        this.view.refresh();
     }
 
     @Override
@@ -71,7 +87,7 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
 
         try {
             this.playerService.saveTeam(this.view.getTeamNameToSave(), this.selectedTeam);
-            this.view.updateTeamList(this.playerService.getTeamNames());
+            this.view.setTeamList(this.playerService.getTeamNames());
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showAlert("Nom d'équipe déjà utilisé",
                     "Une équipe est déjà sauvée avec le nom " + this.view.getTeamNameToSave());
@@ -88,7 +104,8 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
         try {
             this.playerService.loadTeamAndSetActiveTeam(this.view.getTeamNameToLoad());
             this.selectedTeam = this.playerService.getActiveTeam();
-            this.view.refreshTeam(this.selectedTeam);
+            this.updateTeam();
+            this.view.refresh();
         } catch (TeamNotFoundException e) {
             this.view.showAlert(STR_TEAM_NAME_NOT_FOUND,
                     "Aucune équipe sauvée avec le nom " + this.view.getTeamNameToLoad());
@@ -99,10 +116,11 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
     public void onDelete(String teamName) {
         try {
             this.playerService.deleteTeam(teamName);
-            this.view.updateTeamList(this.playerService.getTeamNames());
+            this.view.setTeamList(this.playerService.getTeamNames());
             if (this.selectedTeam != null && teamName.equals(this.selectedTeam.getName())) {
                 this.selectedTeam = new BugemonTeam();
-                this.view.refreshTeam(this.selectedTeam);
+                this.updateTeam();
+                this.view.refresh();
             }
         } catch (TeamNotFoundException e) {
             this.view.showAlert(STR_TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
@@ -118,7 +136,7 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
 
         try {
             this.playerService.renameTeam(oldName, newName);
-            this.view.updateTeamList(this.playerService.getTeamNames());
+            this.view.setTeamList(this.playerService.getTeamNames());
             if (this.selectedTeam != null && oldName.equals(this.selectedTeam.getName())) {
                 this.selectedTeam.setName(newName);
             }
@@ -133,7 +151,8 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
     @Override
     public void onAddNewTeam() {
         this.selectedTeam = new BugemonTeam();
-        this.view.refreshTeam(this.selectedTeam);
+        this.updateTeam();
+        this.view.refresh();
     }
 
     private void showEmptyNameAlert() {
