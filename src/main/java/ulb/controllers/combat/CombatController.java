@@ -44,7 +44,6 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected Combat combat;
     protected Trainer playerTrainer;
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
-    protected TurnStep currentStep = null;
 
     protected CombatController(MetaController metaController, PlayerService playerService,
             BugemonService bugemonService, V view) {
@@ -66,21 +65,14 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected void startTurn() {
         TurnResult result = this.combat.turn();
         this.pendingSteps = result.steps();
-        this.currentStep = null;
-        this.showNextStep();
+        this.advanceStep();
     }
 
     /**
      * Displays the next step: plays its animation then shows the dialog. Calls {@link #onStepsExhausted()} when all
      * steps of the current turn have been shown.
      */
-    protected void showNextStep() {
-        if (!this.pendingSteps.hasNext()) {
-            this.onStepsExhausted();
-            return;
-        }
-        this.currentStep = this.pendingSteps.next();
-        TurnStep step = this.currentStep;
+    protected void showNextStep(TurnStep step) {
         this.animationController.playStepAnimation(step, this.playerTrainer, () -> {
             this.view.refresh();
             this.view.showStepDialog(step, this.playerTrainer);
@@ -93,26 +85,43 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * should delegate here.
      */
     protected void advanceStep() {
-        LOG.debug("Advancing step: {}", this.currentStep);
-        if (this.currentStep instanceof TurnStep.TrainerKoStep koStep) {
-            Trainer winner = koStep.trainerKo() == this.playerTrainer ? this.combat.getOpponentTrainer()
-                    : this.playerTrainer;
-            LOG.info("Combat ended — winner: {}", winner.getCurrentBugemonName());
-            this.onCombatEnded(winner);
+        if (!this.pendingSteps.hasNext()) {
+            this.onStepsExhausted();
             return;
         }
-        if (this.currentStep instanceof TurnStep.ForfeitStep forfeitStep) {
-            Trainer winner = forfeitStep.trainer() == this.playerTrainer ? this.combat.getOpponentTrainer()
-                    : this.playerTrainer;
-            LOG.info("Combat ended by forfeit — winner: {}", winner.getCurrentBugemonName());
-            this.onCombatEnded(winner);
-            return;
+
+        TurnStep step = this.pendingSteps.next();
+        LOG.debug("Advancing step: {}", step);
+
+        switch (step) {
+            case TurnStep.TrainerKoStep koStep -> {
+                Trainer winner = koStep.trainerKo() == this.playerTrainer ? this.combat.getOpponentTrainer()
+                        : this.playerTrainer;
+                LOG.info("Combat ended — winner: {}", winner.getCurrentBugemonName());
+                this.onCombatEnded(winner);
+                return;
+            }
+
+            case TurnStep.ForfeitStep forfeitStep -> {
+                Trainer winner = forfeitStep.trainer() == this.playerTrainer ? this.combat.getOpponentTrainer()
+                        : this.playerTrainer;
+                LOG.info("Combat ended by forfeit — winner: {}", winner.getCurrentBugemonName());
+                this.onCombatEnded(winner);
+                return;
+            }
+
+            case TurnStep.BugemonKoStep koStep -> {
+                if (!koStep.trainer().isDefeated()) {
+                    koStep.trainer().reactToKo();
+                    this.view.refresh();
+                }
+            }
+
+            default -> {
+            }
         }
-        if (this.currentStep instanceof TurnStep.BugemonKoStep koStep && !koStep.trainer().isDefeated()) {
-            koStep.trainer().reactToKo();
-            this.view.refresh();
-        }
-        this.showNextStep();
+
+        this.showNextStep(step);
     }
 
     /**
