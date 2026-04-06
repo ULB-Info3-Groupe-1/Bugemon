@@ -3,13 +3,13 @@ package ulb.views;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.components.AllBugemonsView;
@@ -45,23 +45,21 @@ public class CreateTeamView extends View {
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
 
         // TODO: this looks like code duplication (see next listener)
-        this.allBugemonsGridView.setListener(
-                new AllBugemonsView.Listener() {
-                    @Override
-                    public void onBugemonClicked(Bugemon bugemon) {
-                        CreateTeamView.this.listener.onBugemonSelected(bugemon);
-                    }
-                }
+        this.allBugemonsGridView.setListener(new AllBugemonsView.Listener() {
+            @Override
+            public void onBugemonClicked(Bugemon bugemon) {
+                CreateTeamView.this.listener.onBugemonSelected(bugemon);
+            }
+        }
 
         );
 
-        this.bugemonsTeamView.setListener(
-                new BugemonTeamView.Listener() {
-                    @Override
-                    public void onBugemonClicked(Bugemon bugemon) {
-                        CreateTeamView.this.listener.onBugemonSelected(bugemon);
-                    }
-                });
+        this.bugemonsTeamView.setListener(new BugemonTeamView.Listener() {
+            @Override
+            public void onBugemonClicked(Bugemon bugemon) {
+                CreateTeamView.this.listener.onBugemonSelected(bugemon);
+            }
+        });
     }
 
     @Override
