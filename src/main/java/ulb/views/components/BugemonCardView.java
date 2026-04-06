@@ -13,7 +13,10 @@ import javafx.scene.layout.StackPane;
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 
-/** Reusable custom component representing a single Bugemon cell with an image and name label. */
+/**
+ * Reusable custom component representing a single Bugemon cell with an image
+ * and name label.
+ */
 public class BugemonCardView extends ComponentView {
     private static final String EMPTY_NAME = "?";
     private static final Image EMPTY_IMAGE = new Image(Configuration.Paths.DEFAULT_SPRITE);
@@ -31,7 +34,10 @@ public class BugemonCardView extends ComponentView {
 
     private final Optional<Bugemon> bugemonData;
 
-    /** Constructs an empty placeholder card with a default image and {@code "?"} as name. */
+    /**
+     * Constructs an empty placeholder card with a default image and {@code "?"} as
+     * name.
+     */
     public BugemonCardView() {
         this(Optional.empty());
     }
@@ -65,8 +71,17 @@ public class BugemonCardView extends ComponentView {
         this.bugemonData.ifPresent(b -> this.listener.onClick(b));
     }
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
+    public void setSprite(File file) {
+        Image image = new Image(file.toURI().toString());
+        this.imageView.setImage(image);
+    }
+
+    public void removeSprite() {
+        this.imageView.setImage(EMPTY_IMAGE);
+    }
+
+    public void setName(String name) {
+        this.nameLabel.setText(name);
     }
 
     public void select() {

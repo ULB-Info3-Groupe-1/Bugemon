@@ -29,4 +29,9 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
             double initiativeValue) {
         return;
     }
+
+    @Override
+    public void onReturnToMainMenu() {
+        this.metaController.switchTo(MetaController.Window.MAIN_MENU);
+    }
 }

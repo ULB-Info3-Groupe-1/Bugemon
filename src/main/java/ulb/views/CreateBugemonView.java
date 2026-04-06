@@ -1,5 +1,7 @@
 package ulb.views;
 
+import java.io.File;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -8,7 +10,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.views.components.BugemonCardView;
@@ -58,6 +61,31 @@ public class CreateBugemonView extends View {
     }
 
     @FXML
+    private void onLoadButtonClicked() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir le sprite du Bugemon");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png"));
+        Stage stage = (Stage) this.getRoot().getScene().getWindow();
+
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            this.bugemonCardView.setSprite(file);
+        }   
+    }
+
+    @FXML
+    private void onRemoveButtonClicked() {
+        this.bugemonCardView.removeSprite();
+    }
+
+    @FXML
+    private void onKeyTyped() {
+        String text = this.bugemonNameTextField.getText();
+        this.bugemonCardView.setName(text);
+    }
+
+    @FXML
     private void onTypeClicked(ActionEvent event) throws IllegalArgumentException {
         Button button = (Button) event.getSource();
         BugemonType selectedType;
@@ -82,6 +110,11 @@ public class CreateBugemonView extends View {
         double initiativeValue = this.initiativeSlider.getValue();
 
         this.listener.onSave(bugemonName, healthValue, attackValue, defenseValue, initiativeValue);
+    }
+
+    @FXML
+    private void onReturnClicked() {
+        this.listener.onReturnToMainMenu();
     }
 
     @FXML
@@ -110,7 +143,8 @@ public class CreateBugemonView extends View {
     }
 
     /**
-     * Registers the listener that receives all user interaction events from this view.
+     * Registers the listener that receives all user interaction events from this
+     * view.
      */
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -133,6 +167,8 @@ public class CreateBugemonView extends View {
 
         void onSave(String bugemonName, double healthValue, double attackValue, double defenseValue,
                 double initiativeValue);
+
+        void onReturnToMainMenu();
     }
 
 }
