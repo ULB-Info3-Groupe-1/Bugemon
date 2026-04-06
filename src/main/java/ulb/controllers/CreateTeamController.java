@@ -38,9 +38,12 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
         this.selectedTeam = new BugemonTeam();
 
         this.view.setListener(this);
+
+        // TODO: is this the right way to do things now that we have listeners ?
         this.view.setModel(this.selectedTeam);
         this.view.setAllBugemonsAvailable(this.bugemonService.getAllDefaultBugemons());
         this.view.updateTeamList(this.playerService.getTeamNames());
+
         this.view.refresh();
     }
 
