@@ -22,6 +22,10 @@ import ulb.views.components.BugemonTeamView;
  */
 public class CreateTeamView extends View {
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
+    private static final String INVALID_NAME = "Nom d'équipe invalide";
+    private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
+    private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe déjà utilisé";
+    private static final String TEAM_EMPTY = "Équipe vide";
 
     private final String fxmlPath = "/fxml/CreateTeam.fxml";
 
@@ -145,7 +149,22 @@ public class CreateTeamView extends View {
         return this.selectedTeamName.getText();
     }
 
-    /** Callback interface for all player interactions on the team creation screen. */
+    public void showEmptyTeamNameAlert() {
+        this.showAlert(INVALID_NAME, "Le nom d'équipe ne peut pas être vide.");
+    }
+
+    public void showEmptyTeamAlert() {
+        this.showAlert(TEAM_EMPTY, "L'équipe ne peut pas être vide.");
+    }
+
+    public void showTeamNameAlreadyExistsAlert(String teamName) {
+        this.showAlert(TEAM_NAME_ALREADY_USED, "Une équipe est déjà sauvée avec le nom " + teamName);
+    }
+
+    public void showTeamNotFoundAlert(String teamName) {
+        this.showAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName);
+    }
+
     public interface Listener {
         void onReturnToMainMenu();
 
