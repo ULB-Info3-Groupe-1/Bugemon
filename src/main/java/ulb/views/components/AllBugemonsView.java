@@ -27,10 +27,6 @@ public class AllBugemonsView extends ComponentView {
     public void showAll(List<Bugemon> bugemonList) {
         this.flowPane.getChildren().clear();
 
-        if (bugemonList.isEmpty()) {
-            return;
-        }
-
         for (Bugemon bugemon : bugemonList) {
             this.flowPane.getChildren().add(this.createBugemonCard(bugemon));
         }
