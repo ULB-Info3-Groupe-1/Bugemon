@@ -54,7 +54,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
         this.pendingSteps = Collections.emptyIterator();
-        this.currentStep = null;
         this.view.hideDialog();
         this.view.refresh();
     }
