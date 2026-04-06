@@ -38,6 +38,11 @@ public abstract class View {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        if (this.root != null && this.root.getScene() != null) {
+            alert.initOwner(this.root.getScene().getWindow());
+        }
+
         alert.showAndWait();
     }
 }

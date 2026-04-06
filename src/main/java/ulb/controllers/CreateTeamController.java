@@ -7,6 +7,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
+import ulb.services.exceptions.TeamEmptyException;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
 import ulb.views.CreateTeamView;
@@ -91,6 +92,8 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showAlert("Nom d'équipe déjà utilisé",
                     "Une équipe est déjà sauvée avec le nom " + this.view.getTeamNameToSave());
+        } catch (TeamEmptyException e) {
+            this.view.showAlert("Nom d'équipe vide", "L'équipe que vous souhaitez sauvegarder est vide.");
         }
     }
 
