@@ -30,7 +30,6 @@ public class BugemonCardView extends ComponentView {
     Listener listener;
 
     private final Optional<Bugemon> bugemonData;
-    private boolean selected = false;
 
     /** Constructs an empty placeholder card with a default image and {@code "?"} as name. */
     public BugemonCardView() {
@@ -73,21 +72,15 @@ public class BugemonCardView extends ComponentView {
     }
 
     public void select() {
-        if (!this.selected) {
-            this.selected = true;
-            this.imageView.getStyleClass().add("bugemon-image-selected");
-            this.getStyleClass().remove("bugemon-cell");
-            this.getStyleClass().add("bugemon-cell-selected");
-        }
+        this.imageView.getStyleClass().add("bugemon-image-selected");
+        this.getStyleClass().remove("bugemon-cell");
+        this.getStyleClass().add("bugemon-cell-selected");
     }
 
     public void unselect() {
-        if (this.selected) {
-            this.selected = false;
-            this.imageView.getStyleClass().remove("bugemon-image-selected");
-            this.getStyleClass().remove("bugemon-cell-selected");
-            this.getStyleClass().add("bugemon-cell");
-        }
+        this.imageView.getStyleClass().remove("bugemon-image-selected");
+        this.getStyleClass().remove("bugemon-cell-selected");
+        this.getStyleClass().add("bugemon-cell");
     }
 
     public interface Listener {
