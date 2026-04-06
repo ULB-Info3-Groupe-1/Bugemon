@@ -1,8 +1,8 @@
 package ulb.controllers;
 
 import java.io.IOException;
-
 import javafx.stage.Stage;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.BugemonService;

@@ -29,7 +29,7 @@ public class AllBugemonsView extends ComponentView {
         this.flowPane.getChildren().clear();
 
         for (Bugemon bugemon : bugemonList) {
-            BugemonCardView bugemonCard  = this.createBugemonCard(bugemon);
+            BugemonCardView bugemonCard = this.createBugemonCard(bugemon);
 
             if (selectedBugemons.contains(bugemon)) {
                 bugemonCard.select();
