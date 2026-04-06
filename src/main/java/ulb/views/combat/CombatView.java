@@ -1,7 +1,6 @@
 package ulb.views.combat;
 
 import java.io.File;
-import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -10,31 +9,17 @@ import javafx.scene.layout.VBox;
 
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
-import ulb.models.combat.TurnResult;
+import ulb.models.bugemon.BugemonType;
+import ulb.models.combat.TurnStep;
+import ulb.models.trainer.Trainer;
 import ulb.views.View;
 import ulb.views.combat.components.BugemonInfoView;
 import ulb.views.components.DialogZoneView;
+import ulb.views.components.HoverInfoView;
 
 /**
- * Abstract base view for all combat screens.
- *
- * <p>
- * {@code CombatView} loads the shared {@code Combat.fxml} layout and exposes the FXML-injected components that are
- * common to every combat mode: Bugemon info panels, sprite images, the action menu container, and the dialog zone.
- * </p>
- *
- * <p>
- * Concrete subclasses ({@link AutomaticCombatView}, {@link ManualCombatView}) must implement {@link #initCombatMode()}
- * to configure which UI regions are visible and how they behave for their specific mode.
- * </p>
- *
- * <p>
- * The controller layer interacts with the combat UI exclusively through the public methods of this class, keeping all
- * JavaFX node manipulation out of the controller.
- * </p>
- *
- * @see AutomaticCombatView
- * @see ManualCombatView
+ * Abstract base view for all combat screens, loaded from the shared {@code Combat.fxml} layout. Subclasses implement
+ * {@link #initCombatMode()} to configure their specific UI behaviour.
  */
 public abstract class CombatView extends View {
     private static final String FXML_PATH = "/fxml/Combat.fxml";
@@ -51,6 +36,8 @@ public abstract class CombatView extends View {
     private ImageView bugemonOpponentImage;
     @FXML
     private VBox actionMenuSlot;
+    @FXML
+    private HoverInfoView hoverInfoView;
     @FXML
     private DialogZoneView dialogZoneView;
 
@@ -83,53 +70,82 @@ public abstract class CombatView extends View {
         this.actionMenuSlot.getChildren().setAll(content);
     }
 
+    // ── Hover info panel ──────────────────────────────────────────────────────
+
+    /** Populates and shows the hover info panel with the given title and lines. */
+    public void showHoverInfo(String title, String... lines) {
+        this.hoverInfoView.show(title, lines);
+    }
+
+    /** Applies a type-based background colour to the hover info panel. */
+    public void setHoverType(BugemonType type) {
+        this.hoverInfoView.setType(type);
+    }
+
+    /** Shows or hides the efficiency badge on the hover info panel. */
+    public void setHoverEfficiency(Efficiency eff) {
+        this.hoverInfoView.setEfficiency(eff);
+    }
+
+    /** Hides the hover info panel. */
+    public void hideHoverInfo() {
+        this.hoverInfoView.hide();
+    }
+
+    // ── Action menu ───────────────────────────────────────────────────────────
+
     /** Hides the action menu slot from the layout. */
     protected void hideActionMenu() {
         this.actionMenuSlot.setVisible(false);
         this.actionMenuSlot.setManaged(false);
     }
 
+    /** Restores the action menu slot in the layout. */
+    protected void showActionMenu() {
+        this.actionMenuSlot.setVisible(true);
+        this.actionMenuSlot.setManaged(true);
+    }
+
     // ── Dialog zone ───────────────────────────────────────────────────────────
 
-    private void showDialog(String dialog, String additionalInfo) {
+    /** Registers the callback invoked when the dialog's next button is clicked. */
+    protected void setDialogNextCallback(Runnable callback) {
+        this.dialogZoneView.setOnNext(callback);
+    }
+
+    private void showDialog(String dialog) {
         this.dialogZoneView.setDialogText(dialog);
-        this.dialogZoneView.setAdditionalInfo(additionalInfo);
         this.dialogZoneView.setVisible(true);
         this.dialogZoneView.setManaged(true);
     }
 
-    /**
-     * Builds and displays the turn-summary dialog. Only attacks that happened are shown; second is empty when one
-     * trainer did not attack.
-     */
-    public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
-            Optional<TurnResult.AttackResult> secondAttackResult) {
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName() + " à utilisé l'attaque "
-                + firstAttackResult.getAttackName() + "\n";
-        String efficiency = "1- " + this.formatEfficiency(firstAttackResult.efficiency()) + "\n";
-
-        if (secondAttackResult.isPresent()) {
-            message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
-                    + " à utilisé l'attaque " + secondAttackResult.orElseThrow().getAttackName();
-            efficiency += "2- " + this.formatEfficiency(secondAttackResult.orElseThrow().efficiency());
-        }
-        this.showDialog(message, efficiency);
+    /** Builds and displays a dialog describing the given {@code step}. */
+    public void showStepDialog(TurnStep step, Trainer playerTrainer) {
+        String message = switch (step) {
+            case TurnStep.AttackStep s -> s.attacker().getCurrentBugemonName() + " utilise " + s.getAttackName() + " !"
+                    + this.formatEfficiency(s.efficiency());
+            case TurnStep.SwitchStep s -> (s.trainer() == playerTrainer ? "Vous envoyez " : "L'adversaire envoie ")
+                    + s.getBugemon().getName() + " !";
+            case TurnStep.ItemStep s ->
+                (s.trainer() == playerTrainer ? "Vous utilisez " : "L'adversaire utilise ") + s.getItemName() + " !";
+            case TurnStep.BugemonKoStep s ->
+                s.trainer() == playerTrainer ? "Votre Bugémon est K.O. !" : "Le Bugémon adverse est K.O. !";
+            case TurnStep.TrainerKoStep s ->
+                s.trainerKo() == playerTrainer ? "Vous êtes vaincu !" : "L'adversaire est vaincu !";
+            case TurnStep.ForfeitStep s ->
+                s.trainer() == playerTrainer ? "Vous abandonnez..." : "L'adversaire abandonne.";
+        };
+        this.showDialog(message);
     }
 
-    /** Converts an {@link Efficiency} value to a human-readable French label. */
-    protected String formatEfficiency(Efficiency efficiency) {
-        switch (efficiency) {
-            case HIGH :
-                return "ATTAQUE EFFICACE: félicitation";
-            case LOW :
-                return "Peu d'effet ...";
-            case NEUTRAL :
-            default :
-                return "Dégats standards";
-        }
+    private String formatEfficiency(Efficiency efficiency) {
+        return switch (efficiency) {
+            case HIGH -> " C'est super efficace !";
+            case LOW -> " Ce n'est pas très efficace.";
+            default -> "";
+        };
     }
 
-    /** Hides the dialog overlay. */
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);

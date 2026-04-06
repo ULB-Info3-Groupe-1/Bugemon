@@ -3,7 +3,6 @@ package ulb.views.combat.components;
 import java.io.File;
 import java.util.List;
 import java.util.function.Consumer;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,18 +13,14 @@ import ulb.models.bugemon.Bugemon;
 import ulb.views.components.ComponentView;
 
 /**
- * Action menu listing the Bugemons available for the player to switch into.
- *
- * <p>
- * Dispatches switch selections through the callback registered via {@link #setOnSwitch(Consumer)}. When not a forced
- * switch, a back button is shown and dispatches through the callback registered via {@link #setOnBack(Runnable)}.
- * </p>
+ * Action menu listing the Bugemons available for the player to switch into. Dispatches switch selections through the
+ * callback registered via {@link #setOnSwitch(Consumer)}. When not a forced switch, a back button is shown and
+ * dispatches through the callback registered via {@link #setOnBack(Runnable)}.
  */
 public class SwitchMenuView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/SwitchMenu.fxml";
+    /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */
     private static final int SPRITE_SIZE = 40;
-    private static final int ROW_SPACING = 10;
-    private static final double MIN_BUTTON_WIDTH = 200;
 
     private Consumer<Bugemon> onSwitch;
     private Runnable onBack;
@@ -42,7 +37,6 @@ public class SwitchMenuView extends ComponentView {
         this.onBack = callback;
     }
 
-    /** Clears and repopulates the menu with the available Bugemons. */
     public void show(List<Bugemon> available, boolean forced) {
         this.getChildren().clear();
 
@@ -52,8 +46,9 @@ public class SwitchMenuView extends ComponentView {
 
         if (!forced) {
             Button back = new Button("Retour");
-            back.getStyleClass().addAll("btn", "btn-secondary");
-            back.setMinWidth(MIN_BUTTON_WIDTH);
+            back.getStyleClass().addAll("btn", "btn-secondary", "menu-btn-min");
+            back.setMaxWidth(Double.MAX_VALUE);
+            back.setWrapText(true);
             back.setOnAction(e -> {
                 if (this.onBack != null) {
                     this.onBack.run();
@@ -64,8 +59,8 @@ public class SwitchMenuView extends ComponentView {
     }
 
     private HBox createSwitchRow(Bugemon b) {
-        HBox row = new HBox(ROW_SPACING);
-        row.setAlignment(Pos.CENTER_LEFT);
+        HBox row = new HBox();
+        row.getStyleClass().add("switch-row");
 
         File file = new File("resources/sprites/" + b.getSpriteURL());
         ImageView sprite = new ImageView(new Image(file.toURI().toString(), SPRITE_SIZE, SPRITE_SIZE, true, false));
@@ -76,6 +71,7 @@ public class SwitchMenuView extends ComponentView {
         Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/" + b.getMaxHp() + " PV");
         btn.getStyleClass().addAll("btn", "btn-action-blue");
         btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setWrapText(true);
         HBox.setHgrow(btn, Priority.ALWAYS);
         btn.setOnAction(e -> {
             if (this.onSwitch != null) {

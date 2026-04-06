@@ -7,13 +7,13 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CombatVictoryView" alignment="CENTER"
-    spacing="20">
+    spacing="28">
     <padding>
-        <Insets top="40" right="40" bottom="40" left="40" />
+        <Insets top="56" right="56" bottom="56" left="56" />
     </padding>
 
     <Label text="VICTOIRE !" styleClass="victory-title" />
     <Button onAction="#onContinueClicked" text="Continuer"
-        styleClass="btn,btn-success,btn-outcome" />
+        styleClass="btn,btn-success,btn-choice" />
 
 </VBox>

@@ -8,10 +8,9 @@ import javafx.scene.layout.FlowPane;
 
 import ulb.models.bugemon.Bugemon;
 
-/** Reusable custom component displaying all the bugemons inside of a scrollable grid. */
+/** Reusable custom component displaying all the bugemons inside of a grid. */
 public class AllBugemonsView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/AllBugemons.fxml";
-    private static final double CELL_WIDTH = 112;
 
     @FXML
     private FlowPane flowPane;
@@ -46,7 +45,7 @@ public class AllBugemonsView extends ComponentView {
 
     private BugemonCardView createBugemonCard(Bugemon bugemon) {
         BugemonCardView card = new BugemonCardView(bugemon);
-        card.setPrefWidth(CELL_WIDTH);
+        card.hideLevelLabel();
 
         if (this.selectionChecker != null) {
             card.setSelected(this.selectionChecker.apply(bugemon));

@@ -1,37 +1,41 @@
 package ulb.views.combat;
 
-import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 
 /**
  * View for the automatic combat screen.
  *
- * <p>
- * Holds references to the player {@link AutoTrainer}, the opponent {@link AutoTrainer}, and the {@link Combat} model.
- * In {@link #refresh()} it reads their current state and updates the Bugemon panels and dialog zone. No controller
- * reference is held.
- * </p>
+ * Dialog steps are driven step by step by the controller via {@link CombatView#showStepDialog}; all user interaction is
+ * dispatched through the {@link Listener} interface.
  */
 public class AutomaticCombatView extends CombatView {
     private AutoTrainer player;
     private AutoTrainer opponent;
-    private Combat combat;
+
+    private Listener listener;
 
     public AutomaticCombatView() {
         super();
     }
 
-    /** Gives the view the model objects it needs to read from in {@link #refresh()}. */
-    public void setModel(AutoTrainer newPlayer, AutoTrainer newOpponent, Combat newCombat) {
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    /** Gives the view the trainer references it needs to read from in {@link #refresh()}. */
+    public void setModel(AutoTrainer newPlayer, AutoTrainer newOpponent) {
         this.player = newPlayer;
         this.opponent = newOpponent;
-        this.combat = newCombat;
     }
 
     @Override
     protected void initCombatMode() {
         this.hideActionMenu();
+        this.setDialogNextCallback(() -> {
+            if (this.listener != null) {
+                this.listener.onNext();
+            }
+        });
     }
 
     @Override
@@ -41,12 +45,11 @@ public class AutomaticCombatView extends CombatView {
         }
         this.updateTrainerBugemon(this.player.getCurrentBugemon());
         this.updateOpponentBugemon(this.opponent.getCurrentBugemon());
+    }
 
-        TurnResult last = this.combat.getLastTurnResult();
-        if (last != null && last.first().wasAttack()) {
-            this.showCombatDialog(last.first(), last.second());
-        } else {
-            this.hideDialog();
-        }
+    /** Callback interface dispatched when the player clicks the dialog's Next button. */
+    public interface Listener {
+        /** Called each time the player advances the combat dialog. */
+        void onNext();
     }
 }

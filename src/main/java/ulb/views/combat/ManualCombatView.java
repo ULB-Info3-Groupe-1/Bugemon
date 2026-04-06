@@ -2,13 +2,14 @@ package ulb.views.combat;
 
 import java.util.List;
 
+import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
-import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
+import ulb.models.combat.TurnStep;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.CombatService;
 import ulb.views.combat.components.ActionMenuView;
 import ulb.views.combat.components.AttackMenuView;
 import ulb.views.combat.components.ItemMenuView;
@@ -16,12 +17,11 @@ import ulb.views.combat.components.SwitchMenuView;
 
 /**
  * View for the manual combat screen. All sub-menu navigation (attack, switch, inventory) is managed internally; the
- * controller only calls {@link #setModel(ManualTrainer, Trainer, Combat)} and {@link #setListener(Listener)}.
+ * controller only calls {@link #setModel(ManualTrainer, Trainer)} and {@link #setListener(Listener)}.
  */
 public class ManualCombatView extends CombatView {
     private ManualTrainer player;
     private Trainer opponent;
-    private Combat combat;
 
     private final ActionMenuView actionMenu;
     private final AttackMenuView attackMenu;
@@ -43,15 +43,19 @@ public class ManualCombatView extends CombatView {
     }
 
     /** Gives the view the model objects it reads from in {@link #refresh()}. */
-    public void setModel(ManualTrainer newPlayer, Trainer newOpponent, Combat newCombat) {
+    public void setModel(ManualTrainer newPlayer, Trainer newOpponent) {
         this.player = newPlayer;
         this.opponent = newOpponent;
-        this.combat = newCombat;
     }
 
     @Override
     protected void initCombatMode() {
         this.initMenuCallbacks();
+        this.setDialogNextCallback(() -> {
+            if (this.listener != null) {
+                this.listener.onNext();
+            }
+        });
         this.showMainActionMenu();
     }
 
@@ -63,13 +67,6 @@ public class ManualCombatView extends CombatView {
 
         this.updateTrainerBugemon(this.player.getCurrentBugemon());
         this.updateOpponentBugemon(this.opponent.getCurrentBugemon());
-
-        TurnResult last = this.combat.getLastTurnResult();
-        if (last != null && last.first().wasAttack()) {
-            this.showCombatDialog(last.first(), last.second());
-        } else {
-            this.hideDialog();
-        }
 
         if (this.player.isForcedToSwitch()) {
             this.showSwitchMenu(true);
@@ -91,12 +88,23 @@ public class ManualCombatView extends CombatView {
             }
         });
 
-        this.attackMenu.setOnBack(this::showMainActionMenu);
+        this.attackMenu.setOnBack(() -> {
+            this.hideHoverInfo();
+            this.showMainActionMenu();
+        });
         this.attackMenu.setOnAttack(attack -> {
             if (this.listener != null) {
                 this.listener.onAttack(attack);
             }
         });
+        this.attackMenu.setOnAttackHovered(attack -> {
+            Efficiency eff = CombatService.compareBugemonType(attack.type(), this.opponent.getCurrentBugemonType());
+            this.showHoverInfo(attack.name(), "Type : " + attack.type(), "Puissance : " + attack.power(),
+                    attack.description().isBlank() ? null : attack.description());
+            this.setHoverType(attack.type());
+            this.setHoverEfficiency(eff);
+        });
+        this.attackMenu.setOnAttackLeft(this::hideHoverInfo);
 
         this.switchMenu.setOnBack(this::showMainActionMenu);
         this.switchMenu.setOnSwitch(bugemon -> {
@@ -105,12 +113,18 @@ public class ManualCombatView extends CombatView {
             }
         });
 
-        this.itemMenuView.setOnBack(this::showMainActionMenu);
+        this.itemMenuView.setOnBack(() -> {
+            this.hideHoverInfo();
+            this.showMainActionMenu();
+        });
         this.itemMenuView.setOnItemSelected(item -> {
             if (this.listener != null) {
                 this.listener.onItemSelected(item);
             }
         });
+        this.itemMenuView.setOnItemHovered(item -> this.showHoverInfo(item.name(), "Catégorie : " + item.type(),
+                item.description().isBlank() ? null : item.description()));
+        this.itemMenuView.setOnItemLeft(this::hideHoverInfo);
     }
 
     /** Restores the main action menu, called after a forced switch completes. */
@@ -136,6 +150,19 @@ public class ManualCombatView extends CombatView {
         this.setActionMenuContent(this.itemMenuView);
     }
 
+    @Override
+    public void showStepDialog(TurnStep step, Trainer playerTrainer) {
+        this.hideHoverInfo();
+        this.hideActionMenu();
+        super.showStepDialog(step, playerTrainer);
+    }
+
+    @Override
+    public void hideDialog() {
+        super.hideDialog();
+        this.showActionMenu();
+    }
+
     /** Callback interface for all user combat actions dispatched by this view. */
     public interface Listener {
         void onAttack(Attack attack);
@@ -145,5 +172,7 @@ public class ManualCombatView extends CombatView {
         void onSurrender();
 
         void onItemSelected(Item item);
+
+        void onNext();
     }
 }

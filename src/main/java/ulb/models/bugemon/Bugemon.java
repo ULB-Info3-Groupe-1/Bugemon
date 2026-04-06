@@ -23,6 +23,9 @@ import ulb.models.level_up.Upgrade;
  * {@link BugemonBuilder}; equality is based on {@link #id}.
  */
 public class Bugemon implements BugemonDTO {
+    @SerializedName("id")
+    String id;
+
     /** Display name of this bugemon. Serialised as {@code "nom"}. */
     @SerializedName("nom")
     String name;
@@ -52,6 +55,7 @@ public class Bugemon implements BugemonDTO {
     }
 
     public Bugemon(Bugemon copy) {
+        this.id = copy.getId();
         this.name = copy.getName();
         this.type = copy.getType();
         this.sprite = copy.getSpriteURL();
@@ -97,6 +101,11 @@ public class Bugemon implements BugemonDTO {
      *
      * @return (String) the name of the bugemon.
      */
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
     @Override
     public String getName() {
         return this.name;
@@ -157,6 +166,11 @@ public class Bugemon implements BugemonDTO {
 
     public int getXp() {
         return this.levelComponent.getXp();
+    }
+
+    @Override
+    public double getXpProgress() {
+        return this.levelComponent.getXpProgress();
     }
 
     /**

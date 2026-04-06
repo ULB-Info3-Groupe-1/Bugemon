@@ -10,14 +10,10 @@ import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
- * Human-controlled trainer. Actions are driven by the controller via a queue-based API.
+ * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
+ * action via {@link #registerAttack}, {@link #registerSwitch}, {@link #registerForfeit}, or {@link #registerUseItem}.
+ * The action is consumed by {@link #getAction()} and cleared; a new one must be queued every turn.
  *
- * <p>
- * Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one action:
- * {@link #registerAttack}, {@link #registerSwitch}, {@link #registerForfeit}, or {@link #registerUseItem}. The action
- * is consumed by {@link #getAction()} and cleared; a new one must be queued every turn.
- *
- * <p>
  * Post-KO switches bypass the turn queue: use {@link #switchAfterKO} (immediate) or {@link #registerSwitchAfterKO}
  * (deferred, picked up by {@link #reactToKo}).
  */

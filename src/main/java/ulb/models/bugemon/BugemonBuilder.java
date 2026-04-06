@@ -11,14 +11,10 @@ import ulb.models.bugemon.components.InitiativeComponent;
 import ulb.models.bugemon.components.LevelComponent;
 
 /**
- * Fluent builder for {@link Bugemon}. All fields except {@code id} have defaults.
+ * Fluent builder for {@link Bugemon}. All fields except {@code id} have defaults (name={@value #DEFAULT_NAME},
+ * type=FLORA, hp={@value #DEFAULT_HP}, attack={@value #DEFAULT_ATTACK}, defense={@value #DEFAULT_DEFENSE},
+ * initiative={@value #DEFAULT_INITIATIVE}, xp=0, level=1, isStarter=false, attackList=empty).
  *
- * <p>
- * Defaults: name={@value #DEFAULT_NAME}, type=FLORA, sprite={@value #DEFAULT_SPRITE}, hp={@value #DEFAULT_HP},
- * attack={@value #DEFAULT_ATTACK}, defense={@value #DEFAULT_DEFENSE}, initiative={@value #DEFAULT_INITIATIVE}, xp=0,
- * level=1, isStarter=false, attackList=empty.
- *
- * <p>
  * Usage: {@code new BugemonBuilder().id("001").name("Florasect").hp(120).build()}
  */
 @SuppressWarnings("checkstyle:HiddenField")
@@ -34,6 +30,8 @@ public final class BugemonBuilder {
     private static final int DEFAULT_XP = 0;
     private static final int DEFAULT_LEVEL = 1;
 
+    private Optional<String> id = Optional.empty();
+
     /** The unique name to assign to the bugemon. */
     private Optional<String> name = Optional.empty();
 
@@ -48,6 +46,11 @@ public final class BugemonBuilder {
     private int level = DEFAULT_LEVEL;
     private boolean isStarter = DEFAULT_IS_STARTER;
     private List<Attack> attackList = new ArrayList<>();
+
+    public BugemonBuilder id(String id) {
+        this.id = Optional.of(id);
+        return this;
+    }
 
     /**
      * Sets the display name for the bugemon under construction.
@@ -127,6 +130,7 @@ public final class BugemonBuilder {
 
         // NOTE: name has no default value
         bugemon.name = this.name.orElseThrow(() -> new IllegalStateException("Bugemon name must be provided"));
+        bugemon.id = this.id.orElse(bugemon.name);
 
         bugemon.type = this.type;
         bugemon.sprite = this.sprite;

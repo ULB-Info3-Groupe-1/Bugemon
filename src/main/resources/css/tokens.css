@@ -12,51 +12,83 @@
     -fx-font-size: 20px;
 
     /* ── Color palette ──────────────────────────────────────── */
-    color-primary:        #4682B4;
-    color-primary-hover:  #b8b8b8;
+    color-primary: #4682B4;
+    color-primary-hover: #336699;
 
-    color-danger:         #c0392b;
-    color-danger-hover:   #a93226;
+    color-danger: #c0392b;
+    color-danger-hover: #a93226;
 
-    color-success:        #3daa6e;
-    color-success-hover:  #2e8a57;
+    color-success: #3daa6e;
+    color-success-hover: #2e8a57;
 
-    color-warning:        #e67e22;
-    color-warning-hover:  #ca6f1e;
+    color-warning: #e67e22;
+    color-warning-hover: #ca6f1e;
 
-    color-secondary:      #5a6268;
+    color-secondary: #5a6268;
     color-secondary-hover: #626567;
 
-    color-action-blue:       #2980b9;
+    color-action-blue: #2980b9;
     color-action-blue-hover: #1f6691;
 
-    color-text-dark:  #1a1a1a;
+    color-text-dark: #1a1a1a;
     color-text-muted: #444444;
     color-text-light: #888888;
-    color-gold:       #FFD700;
+    color-gold: #FFD700;
 
-    color-surface:        #f5f5f5;
+    color-surface: #f5f5f5;
     color-surface-border: #cccccc;
     color-surface-dialog: #EDEBE0;
-    color-white:          #ffffff;
+    color-white: #ffffff;
 
-    color-hp-bar:   #2ecc71;
+    color-hp-bar: #2ecc71;
     color-hp-track: #dddddd;
 
-    color-flora:       #27ae60;
+    color-flora: #27ae60;
     color-flora-hover: #1e8449;
-    color-pyro:        #e74c3c;
-    color-pyro-hover:  #a93226;
-    color-aqua:        #2980b9;
-    color-aqua-hover:  #1f6691;
-    color-litho:       #8e44ad;
-    color-litho-hover: #6c3483;
+    color-pyro: #e74c3c;
+    color-pyro-hover: #a93226;
+    color-aqua: #2980b9;
+    color-aqua-hover: #1f6691;
+    color-litho: #95a5a6;
+    color-litho-hover: #717d7e;
+
+    color-xp: #8e44ad;
+
+    /* ── Hover info panel ───────────────────────────────────── */
+    color-hover-flora: rgba(39, 174, 96, 0.65);
+    color-hover-pyro: rgba(231, 76, 60, 0.65);
+    color-hover-aqua: rgba(41, 128, 185, 0.65);
+    color-hover-litho: rgba(149, 165, 166, 0.65);
+
+    color-efficiency-high: #39e87a;
+    color-efficiency-high-text: #0a2e18;
+    color-efficiency-low: #ff7043;
 
     /* ── Layout sizes (Double — safe for pref/min/max-width/height) */
-    size-hp-bar-height:      16;
-    size-btn-height:         65;
-    size-btn-wide:          380;
-    size-btn-outcome:       256;
-    size-btn-panel:         260;
-    size-action-menu-width: 500;
+    size-hp-bar-height: 22;
+    size-hp-bar-width: 280;
+    size-xp-bar-height: 9;
+    size-xp-bar-width: 220;
+    size-bugemon-card: 110;
+    /* matches .bugemon-card-pane min/max-height */
+    size-bugemon-cell-width: 130;
+    /* card width in the all-bugemons grid (wider than image for label room) */
+    size-bugemon-grid-vgap: 14;
+    /* matches .all-bugemons -fx-vgap */
+    size-switch-row-spacing: 14;
+    /* spacing between sprite and button inside a switch-menu row */
+    size-menu-btn-min: 280;
+    /* min-width for switch/item menu buttons */
+
+    /* ── Fixed button widths ────────────────────────────────── */
+    size-btn-nav: 300;
+    /* main-menu navigation buttons */
+    size-btn-team: 280;
+    /* team-management buttons and inputs */
+    size-btn-choice: 260;
+    /* combat / level-up choice buttons */
+
+    /* ── Action menu grid ───────────────────────────────────── */
+    size-action-menu: 380;
+    /* pref-width shared by ActionMenu and AttackMenu grids */
 }

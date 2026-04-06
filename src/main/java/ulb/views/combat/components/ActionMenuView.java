@@ -6,13 +6,9 @@ import javafx.scene.control.Button;
 import ulb.views.components.ComponentView;
 
 /**
- * The main action menu displayed at the start of each manual combat turn.
- *
- * <p>
- * Presents four choices: Attack, Switch, Item, Surrender. Each button dispatches its action through a callback
- * registered from the outside. The Switch button is disabled whenever a voluntary switch is not available, as signalled
- * by {@link #refresh(boolean)}.
- * </p>
+ * The main action menu displayed at the start of each manual combat turn. Presents four choices: Attack, Switch, Item,
+ * Surrender. Each button dispatches its action through a callback registered from the outside. The Switch button is
+ * disabled whenever a voluntary switch is not available, as signalled by {@link #refresh(boolean)}.
  */
 public class ActionMenuView extends ComponentView {
     private static final String FXML_PATH = "/fxml/components/ActionMenu.fxml";
@@ -35,7 +31,6 @@ public class ActionMenuView extends ComponentView {
         super(FXML_PATH);
     }
 
-    /** Enables or disables the Switch button based on whether a voluntary switch is allowed. */
     public void refresh(boolean canSwitch) {
         this.topRight.setDisable(!canSwitch);
     }

@@ -1,8 +1,6 @@
 package ulb.views;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,13 +12,8 @@ import ulb.common.dto.LevelUpDTO;
 import ulb.models.level_up.LevelUpSession;
 
 /**
- * View for the level-up screen.
- *
- * <p>
- * Holds a reference to a {@link LevelUpSession} and reads the current level-up event directly from it in
- * {@link #refresh()}. Dispatches the player's choice through the callback registered via
- * {@link #setOnUpgradeChosen(Consumer)}. Holds no reference to any concrete controller class.
- * </p>
+ * View for the level-up screen. Holds a reference to a {@link LevelUpSession} and reads the current level-up event
+ * directly from it in {@link #refresh()}. Holds no reference to any concrete controller class.
  */
 public class LevelUpView extends View {
     private final String fxmlPath = "/fxml/LevelUp.fxml";
@@ -40,17 +33,9 @@ public class LevelUpView extends View {
 
     private Listener listener;
 
-    /**
-     * Loads the level-up FXML layout and wires each choice button to fire the registered callback with its zero-based
-     * index (0, 1, or 2).
-     *
-     * @throws IOException
-     *             if the FXML resource cannot be loaded.
-     */
     public LevelUpView() {
     }
 
-    /** Gives the view a reference to the level-up session model it should read from. */
     public void setSession(LevelUpSession session) {
         this.session = session;
     }

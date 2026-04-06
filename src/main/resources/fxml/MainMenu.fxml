@@ -5,22 +5,22 @@
 <?import javafx.scene.control.Label?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="30"
+    fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="40"
     styleClass="main-menu">
 
     <Label text="BUGÉMON" styleClass="main-title" />
 
     <Button fx:id="createTeamButton" onAction="#onCreateTeamClicked"
-        text="Gérer mes équipes" styleClass="btn,btn-primary,btn-wide" />
+        text="Gérer mes équipes" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="startAutomaticCombatButton"
         onAction="#onStartAutomaticCombatClicked"
-        text="Lancer combat automatique" styleClass="btn,btn-primary,btn-wide" />
+        text="Lancer combat automatique" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="startManualCombatButton"
         onAction="#onStartManualCombatClicked" text="Lancer combat manuel"
-        styleClass="btn,btn-primary,btn-wide" />
+        styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="noTowerButton" onAction="#onNoTowerClicked"
-        text="Lancer la NO Tower" styleClass="btn,btn-primary,btn-wide" />
+        text="Lancer la NO Tower" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="quitButton" onAction="#onQuitClicked"
-        text="Quitter" styleClass="btn,btn-danger,btn-wide" />
+        text="Quitter" styleClass="btn,btn-danger,btn-nav" />
 
 </VBox>

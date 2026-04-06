@@ -2,11 +2,9 @@ package ulb;
 
 import java.io.InputStream;
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -32,11 +30,10 @@ public class Main extends Application {
             Font.loadFont(fontStream, 16);
         }
 
-        Rectangle2D screen = Screen.getPrimary().getVisualBounds();
         stage.setTitle(STAGE_TITLE);
-        stage.setMaximized(true);
-        stage.setMinWidth(screen.getWidth() * 0.6);
-        stage.setMinHeight(screen.getHeight() * 0.5);
+        stage.setResizable(false);
+        stage.setWidth(1600);
+        stage.setHeight(900);
 
         Scene scene = new Scene(new StackPane());
         scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
@@ -47,5 +44,6 @@ public class Main extends Application {
         PlayerService playerService = new PlayerService("default_user");
         MetaController controller = new MetaController(stage, playerService);
         controller.switchTo(Window.MAIN_MENU);
+        stage.centerOnScreen();
     }
 }

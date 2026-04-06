@@ -1,215 +1,211 @@
 package ulb.models.combat;
 
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Item;
+import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.models.trainer.TurnAction;
 import ulb.services.CombatService;
 
 /**
- * Orchestrates a turn-based combat between two {@link Trainer}s.
- *
- * <p>
- * Each call to {@link #turn()} asks both trainers for their {@link TurnAction}, applies passive actions (switches, …),
- * then resolves attacks in initiative order. The combat ends when {@link #isFinished()} returns {@code true};
- * {@link #getWinner()} then identifies the survivor.
- *
- * <p>
- * To add a new passive action: add a branch in {@link #applyPassiveAction(Trainer, TurnAction)} — no other method needs
- * to change.
+ * Orchestrates a turn-based combat between two {@link Trainer}s. Each call to {@link #turn()} asks both trainers for
+ * their {@link TurnAction} once, applies passive actions (switches, items), then resolves attacks in initiative order.
+ * The resulting {@link TurnResult} lists every {@link TurnStep} in order; a {@link TurnStep.TrainerKoStep} signals the
+ * end of combat and identifies the loser.
  */
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
 
-    private final Trainer allyTrainer;
-    private final Trainer adversaryTrainer;
+    private final Trainer playerTrainer;
+    private final Trainer opponentTrainer;
 
-    /** Zero-based, incremented after every non-forfeit turn. */
-    private int turn = 0;
+    private TurnResult turnResult;
 
-    private TurnResult lastTurnResult;
-
-    public Combat(Trainer allyTrainer, Trainer adversaryTrainer) {
-        this.allyTrainer = allyTrainer;
-        this.adversaryTrainer = adversaryTrainer;
-        LOG.info("Combat started — ally: {} vs adversary: {}", allyTrainer.getCurrentBugemonName(),
-                adversaryTrainer.getCurrentBugemonName());
+    public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
+        this.playerTrainer = playerTrainer;
+        this.opponentTrainer = opponentTrainer;
+        LOG.info("Combat started — player: {} vs opponent: {}", playerTrainer.getCurrentBugemonName(),
+                opponentTrainer.getCurrentBugemonName());
     }
 
     /**
-     * Resolves one full round and returns a {@link TurnResult} describing every hit.
-     *
-     * <p>
-     * Sequence: mark participation → get actions → handle forfeit → apply passive actions → resolve attacks in
-     * initiative order → increment turn counter.
+     * Resolves one full round and returns a {@link TurnResult} describing every step. Actions are fetched exactly once
+     * per trainer. Sequence: mark participation → get actions → handle forfeit → apply passive actions → resolve
+     * attacks in initiative order → update trainer status.
      */
     public TurnResult turn() {
-        LOG.debug("Turn {} — ally: {} ({}hp) vs adversary: {} ({}hp)", this.turn,
-                this.allyTrainer.getCurrentBugemonName(), this.allyTrainer.getCurrentBugemonHp(),
-                this.adversaryTrainer.getCurrentBugemonName(), this.adversaryTrainer.getCurrentBugemonHp());
+        this.turnResult = new TurnResult();
+        LOG.debug("New turn — player: {} ({}hp) vs opponent: {} ({}hp)", this.playerTrainer.getCurrentBugemonName(),
+                this.playerTrainer.getCurrentBugemonHp(), this.opponentTrainer.getCurrentBugemonName(),
+                this.opponentTrainer.getCurrentBugemonHp());
 
-        this.allyTrainer.markCurrentBugemonParticipation();
-        this.adversaryTrainer.markCurrentBugemonParticipation();
+        this.markParticipation();
 
-        TurnAction allyAction = null;
-        TurnAction adversaryAction = null;
+        TurnAction playerAction = this.playerTrainer.getAction();
+        TurnAction opponentAction = this.opponentTrainer.getAction();
 
-        if (this.allyTrainer.isCurrentBugemonAlive()) {
-            allyAction = this.allyTrainer.getAction();
+        if (!this.resolveForfeit(playerAction, opponentAction)) {
+            this.resolveTurn(playerAction, opponentAction);
         }
 
-        if (this.adversaryTrainer.isCurrentBugemonAlive()) {
-            adversaryAction = this.adversaryTrainer.getAction();
+        this.endTurn();
+
+        return this.turnResult;
+    }
+
+    private void markParticipation() {
+        this.playerTrainer.markCurrentBugemonParticipation();
+        this.opponentTrainer.markCurrentBugemonParticipation();
+    }
+
+    private boolean resolveForfeit(TurnAction playerAction, TurnAction opponentAction) {
+        boolean forfeit = false; // Both trainers can forfeit at the same time
+
+        if (playerAction instanceof TurnAction.ForfeitAction) {
+            this.handleForfeit(this.playerTrainer);
+            this.turnResult.addStep(new TurnStep.ForfeitStep(this.playerTrainer));
+            forfeit = true;
+        }
+        if (opponentAction instanceof TurnAction.ForfeitAction) {
+            this.handleForfeit(this.opponentTrainer);
+            this.turnResult.addStep(new TurnStep.ForfeitStep(this.opponentTrainer));
+            forfeit = true;
+        }
+        return forfeit;
+    }
+
+    private void resolveTurn(TurnAction playerAction, TurnAction opponentAction) {
+        this.resolveItem(playerAction, opponentAction);
+        this.resolveSwitch(playerAction, opponentAction);
+        this.resolveAttack(playerAction, opponentAction);
+    }
+
+    private void endTurn() {
+        this.updateTrainerStatus(this.playerTrainer);
+        this.updateTrainerStatus(this.opponentTrainer);
+    }
+
+    private void resolveItem(TurnAction playerAction, TurnAction opponentAction) {
+        if (playerAction instanceof TurnAction.UseItemAction useItemAction) {
+            this.handleItem((ManualTrainer) this.playerTrainer, useItemAction.item());
+            this.turnResult.addStep(new TurnStep.ItemStep(this.playerTrainer, useItemAction.item()));
+        }
+        if (opponentAction instanceof TurnAction.UseItemAction useItemAction) {
+            this.handleItem((ManualTrainer) this.opponentTrainer, useItemAction.item());
+            this.turnResult.addStep(new TurnStep.ItemStep(this.opponentTrainer, useItemAction.item()));
+        }
+    }
+
+    private void resolveSwitch(TurnAction playerAction, TurnAction opponentAction) {
+        if (playerAction instanceof TurnAction.SwitchAction switchAction) {
+            this.handleSwitch(this.playerTrainer, switchAction.target());
+            this.turnResult.addStep(new TurnStep.SwitchStep(this.playerTrainer, switchAction.target()));
+        }
+        if (opponentAction instanceof TurnAction.SwitchAction switchAction) {
+            this.handleSwitch(this.opponentTrainer, switchAction.target());
+            this.turnResult.addStep(new TurnStep.SwitchStep(this.opponentTrainer, switchAction.target()));
+        }
+    }
+
+    private void resolveAttack(TurnAction playerAction, TurnAction opponentAction) {
+        // Automatic combat does not consider initiative
+        if (this.playerTrainer instanceof AutoTrainer) {
+            this.resolveAutoAttack(playerAction, opponentAction);
+            return;
         }
 
-        if (this.checkForForfeit(allyAction, adversaryAction) || !this.allyTrainer.isCurrentBugemonAlive()) {
-            LOG.info("Turn {} ended by forfeit or KO", this.turn);
-            this.lastTurnResult = this.emptyResult();
-            return this.lastTurnResult;
+        if (playerAction instanceof TurnAction.AttackAction playerAttackAction) {
+            if (opponentAction instanceof TurnAction.AttackAction opponentAttackAction) {
+                this.resolveDualAttack(playerAttackAction.attack(), opponentAttackAction.attack());
+                return;
+            }
+            // Only the player trainer attacked
+            this.resolveSoloAttack(this.playerTrainer, playerAttackAction.attack(), this.opponentTrainer);
+            return;
         }
-
-        this.applyPassiveAction(this.allyTrainer, allyAction);
-        this.applyPassiveAction(this.adversaryTrainer, adversaryAction);
-
-        Optional<Attack> allyAttack = this.extractAttack(allyAction);
-        Optional<Attack> adversaryAttack = this.extractAttack(adversaryAction);
-
-        this.turn++;
-        this.lastTurnResult = this.resolveAttacks(allyAttack, adversaryAttack);
-        return this.lastTurnResult;
-    }
-
-    /** @return empty if combat is still ongoing */
-    public Optional<Trainer> getWinner() {
-        if (this.allyTrainer.isDefeated()) {
-            LOG.info("Combat finished after {} turn(s) — adversary wins", this.turn);
-            return Optional.of(this.adversaryTrainer);
+        // Only the opponent trainer attacked
+        if (opponentAction instanceof TurnAction.AttackAction opponentAttackAction) {
+            this.resolveSoloAttack(this.opponentTrainer, opponentAttackAction.attack(), this.playerTrainer);
         }
+    }
 
-        if (this.adversaryTrainer.isDefeated()) {
-            LOG.info("Combat finished after {} turn(s) — ally wins", this.turn);
-            return Optional.of(this.allyTrainer);
+    private void handleForfeit(Trainer trainer) {
+        LOG.info("{} forfeited", trainer.getCurrentBugemonName());
+        trainer.killTeam(); // TODO: Better way to handle forfeit with new implementation ?
+    }
+
+    private void updateTrainerStatus(Trainer trainer) {
+        if (!trainer.isCurrentBugemonAlive()) {
+            if (!trainer.isDefeated()) {
+                LOG.info("{} fainted", trainer.getCurrentBugemonName());
+                this.turnResult.addStep(new TurnStep.BugemonKoStep(trainer));
+            } else {
+                LOG.info("{} is defeated", trainer.getCurrentBugemonName());
+                this.turnResult.addStep(new TurnStep.TrainerKoStep(trainer));
+            }
         }
-
-        return Optional.empty();
     }
 
-    public boolean isFinished() {
-        return this.allyTrainer.isDefeated() || this.adversaryTrainer.isDefeated();
+    private void handleItem(ManualTrainer trainer, Item item) {
+        trainer.useItem(item);
     }
 
-    public Trainer getAllyTrainer() {
-        return this.allyTrainer;
+    private void handleSwitch(Trainer trainer, Bugemon bugemon) {
+        trainer.setCurrentBugemon(bugemon);
     }
 
-    public Trainer getAdversaryTrainer() {
-        return this.adversaryTrainer;
+    private void resolveAutoAttack(TurnAction playerAction, TurnAction opponentAction) {
+        Attack playerAttack = ((TurnAction.AttackAction) playerAction).attack();
+        Attack opponentAttack = ((TurnAction.AttackAction) opponentAction).attack();
+        this.applyDualAttack(this.playerTrainer, this.opponentTrainer, playerAttack, opponentAttack);
     }
 
-    /** @return {@code null} before the first turn */
-    public TurnResult getLastTurnResult() {
-        return this.lastTurnResult;
+    private void resolveDualAttack(Attack playerAttack, Attack opponentAttack) {
+        Trainer firstAttacker = CombatService.attackPriority(this.playerTrainer, this.opponentTrainer);
+        Trainer secondAttacker = firstAttacker == this.playerTrainer ? this.opponentTrainer : this.playerTrainer;
+
+        Attack firstAttack = firstAttacker == this.playerTrainer ? playerAttack : opponentAttack;
+        Attack secondAttack = secondAttacker == this.playerTrainer ? playerAttack : opponentAttack;
+
+        this.applyDualAttack(firstAttacker, secondAttacker, firstAttack, secondAttack);
     }
 
-    public int getTurn() {
-        return this.turn;
+    private void resolveSoloAttack(Trainer attacker, Attack attack, Trainer defender) {
+        this.applyAttack(attacker, defender, attack);
     }
 
-    private boolean checkForForfeit(TurnAction allyAction, TurnAction adversaryAction) {
-        if (allyAction instanceof TurnAction.ForfeitAction) {
-            this.allyTrainer.killTeam();
-            return true;
+    private void applyDualAttack(Trainer firstAttacker, Trainer secondAttacker, Attack firstAttack,
+            Attack secondAttack) {
+        this.applyAttack(firstAttacker, secondAttacker, firstAttack);
+
+        // No second attack if Bugemon is KO from first attack
+        if (secondAttacker.isCurrentBugemonAlive()) {
+            this.applyAttack(secondAttacker, firstAttacker, secondAttack);
         }
-        if (adversaryAction instanceof TurnAction.ForfeitAction) {
-            this.adversaryTrainer.killTeam();
-            return true;
-        }
-        return false;
     }
 
-    private void applyPassiveAction(Trainer trainer, TurnAction action) {
-        LOG.debug("Passive action — {}: {}", trainer.getCurrentBugemonName(), action);
-        trainer.applyPassiveAction(action);
-    }
-
-    private Optional<Attack> extractAttack(TurnAction action) {
-        if (action instanceof TurnAction.AttackAction(Attack a)) {
-            return Optional.of(a);
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Handles all three cases: both attack (initiative order), only one attacks, neither attacks. The second hit is
-     * skipped if the combat is already finished after the first.
-     */
-    private TurnResult resolveAttacks(Optional<Attack> allyAttack, Optional<Attack> adversaryAttack) {
-        if (allyAttack.isPresent() && adversaryAttack.isPresent()) {
-            Trainer first = CombatService.attackPriority(this.allyTrainer, this.adversaryTrainer);
-            Trainer second = first == this.allyTrainer ? this.adversaryTrainer : this.allyTrainer;
-            Attack firstAttack = first == this.allyTrainer ? allyAttack.get() : adversaryAttack.get();
-            Attack secondAttack = second == this.allyTrainer ? allyAttack.get() : adversaryAttack.get();
-
-            TurnResult.AttackResult firstResult = this.applyAttack(first, second, firstAttack);
-            Optional<TurnResult.AttackResult> secondResult = this.isFinished() ? Optional.empty()
-                    : Optional.of(this.applyAttack(second, first, secondAttack));
-
-            boolean allyKO = this.isAllyKo(firstResult, secondResult);
-            return new TurnResult(firstResult, secondResult, allyKO);
-        }
-
-        if (allyAttack.isPresent()) {
-            TurnResult.AttackResult hit = this.applyAttack(this.allyTrainer, this.adversaryTrainer, allyAttack.get());
-            return new TurnResult(hit, Optional.empty(), false);
-        }
-
-        if (adversaryAttack.isPresent()) {
-            TurnResult.AttackResult hit = this.applyAttack(this.adversaryTrainer, this.allyTrainer,
-                    adversaryAttack.get());
-            boolean allyKO = !this.allyTrainer.isCurrentBugemonAlive() && !this.allyTrainer.isDefeated();
-            return new TurnResult(hit, Optional.empty(), allyKO);
-        }
-
-        return this.emptyResult();
-    }
-
-    private boolean isAllyKo(TurnResult.AttackResult first, Optional<TurnResult.AttackResult> second) {
-        boolean koByFirst = first.defender() == this.allyTrainer && !this.allyTrainer.isCurrentBugemonAlive();
-        boolean koBySecond = second.isPresent() && second.get().defender() == this.allyTrainer
-                && !this.allyTrainer.isCurrentBugemonAlive();
-        return koByFirst || koBySecond;
-    }
-
-    /**
-     * Applies damage, computes type efficiency, triggers KO reaction if the defender faints. Effects are NOT applied on
-     * KO (the Bugemon is switched out before they could take effect).
-     */
-    private TurnResult.AttackResult applyAttack(Trainer attacker, Trainer defender, Attack attack) {
+    private void applyAttack(Trainer attacker, Trainer defender, Attack attack) {
         int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
         Efficiency efficiency = CombatService.compareBugemonType(attack.type(), defender.getCurrentBugemonType());
-
         LOG.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
                 defender.getCurrentBugemonName(), damage, efficiency);
 
-        if (!defender.isCurrentBugemonAlive() && !defender.isDefeated()) {
-            LOG.info("{} fainted", defender.getCurrentBugemonName());
-            defender.reactToKo();
-        }
-        return new TurnResult.AttackResult(attacker, defender, Optional.of(attack), efficiency);
+        this.turnResult.addStep(new TurnStep.AttackStep(attacker, attack, efficiency));
     }
 
-    private TurnResult emptyResult() {
-        return new TurnResult(
-                new TurnResult.AttackResult(this.allyTrainer, this.adversaryTrainer, Optional.empty(), null),
-                Optional.of(
-                        new TurnResult.AttackResult(this.adversaryTrainer, this.allyTrainer, Optional.empty(), null)),
-                true);
+    public Trainer getPlayerTrainer() {
+        return this.playerTrainer;
+    }
+
+    public Trainer getOpponentTrainer() {
+        return this.opponentTrainer;
     }
 }

@@ -9,8 +9,9 @@
     alignment="CENTER" spacing="2" styleClass="bugemon-cell">
     <StackPane fx:id="imagePane" styleClass="bugemon-card-pane"
         onMouseClicked="#onSelected">
-        <ImageView fx:id="imageView" fitWidth="96" fitHeight="96"
+        <ImageView fx:id="imageView" fitWidth="110" fitHeight="110"
             preserveRatio="true" />
     </StackPane>
     <Label fx:id="nameLabel" styleClass="bugemon-cell-name" />
+    <Label fx:id="levelLabel" styleClass="bugemon-level-card" />
 </fx:root>

@@ -12,12 +12,9 @@ import ulb.views.CreateTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen.
- *
- * <p>
- * Mutates the {@link BugemonTeam} model in response to user actions, then calls {@code view.refresh()} so the view can
- * pull the updated state from the model directly. The controller never pushes data into the view.
- * </p>
+ * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to user
+ * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
+ * controller never pushes data into the view.
  */
 public class CreateTeamController extends Controller<CreateTeamView> implements CreateTeamView.Listener {
     private static final String STR_TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";

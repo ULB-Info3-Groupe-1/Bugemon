@@ -13,12 +13,9 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 
 /**
- * Stateless utility for combat calculations: attack priority, damage formula, and type effectiveness.
- *
- * <p>
- * Types follow a fixed cycle defined by the {@link BugemonType} enum order — see
+ * Stateless utility for combat calculations: attack priority, damage formula, and type effectiveness. Types follow a
+ * fixed cycle defined by the {@link BugemonType} enum order — see
  * {@link #compareBugemonType(BugemonType, BugemonType)}.
- * </p>
  */
 public class CombatService {
     private static final String BOSS_NAME = "FinalBoss";
@@ -52,13 +49,8 @@ public class CombatService {
 
     /**
      * Calculates the damage dealt by an attack using an explicit critical hit factor, factoring in the offender's
-     * attack stat, the defender's defense stat, and type effectiveness.
-     *
-     * <p>
-     * The damage formula is:
-     * {@code power * ((100 + offenderAttack) / 100) * (100 / (defenderDefense + 100)) * typeFactor
-     * * criticFactor}
-     * </p>
+     * attack stat, the defender's defense stat, and type effectiveness. Formula:
+     * {@code power * ((100 + offenderAttack) / 100) * (100 / (defenderDefense + 100)) * typeFactor * criticFactor}
      *
      * @param attack
      *            the attack being used
@@ -94,12 +86,8 @@ public class CombatService {
     }
 
     /**
-     * Returns the damage multiplier corresponding to the effectiveness of an attack's type against the defender's type.
-     *
-     * <p>
-     * The multiplier is derived from {@link #compareBugemonType(BugemonType, BugemonType)} using the attack's type and
-     * the defender's type.
-     * </p>
+     * Returns the damage multiplier corresponding to the effectiveness of an attack's type against the defender's type,
+     * derived from {@link #compareBugemonType(BugemonType, BugemonType)}.
      *
      * @param attack
      *            the attack being used
@@ -121,24 +109,12 @@ public class CombatService {
     }
 
     /**
-     * Determines the type effectiveness of an offensive type against a defensive type.
+     * Determines the type effectiveness of an offensive type against a defensive type. Types follow a fixed cycle
+     * defined by the {@link BugemonType} enum declaration order: each type is strong against the type immediately
+     * before it (wrapping around) and weak against the type immediately after it.
      *
-     * <p>
-     * The types follow a fixed cycle defined by the {@link BugemonType} enum declaration order. In this cycle, each
-     * type is strong against the type immediately before it (wrapping around) and weak against the type immediately
-     * after it (wrapping around).
-     * </p>
-     *
-     * <p>
-     * Specifically, given the cycle index difference {@code (offensiveIdx - defensiveIdx) mod cycleSize}:
-     * </p>
-     * <ul>
-     * <li>A difference of {@code 1} means the offensive type is one step ahead of the defensive type in the cycle →
-     * {@link Efficiency#LOW} (offensive is weak).</li>
-     * <li>A difference of {@code cycleSize - 1} means the offensive type is one step behind the defensive type in the
-     * cycle → {@link Efficiency#HIGH} (offensive is strong).</li>
-     * <li>Any other difference → {@link Efficiency#NEUTRAL}.</li>
-     * </ul>
+     * Given {@code delta = (offensiveIdx - defensiveIdx) mod cycleSize}: delta 1 → {@link Efficiency#LOW} (weak); delta
+     * {@code cycleSize - 1} → {@link Efficiency#HIGH} (strong); any other → {@link Efficiency#NEUTRAL}.
      *
      * @param offensiveType
      *            the type of the attacking Bugemon or attack

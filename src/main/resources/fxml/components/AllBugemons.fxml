@@ -7,17 +7,9 @@
 <fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
     spacing="0">
 
-    <children>
-
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
-            styleClass="all-bugemons-scroll" VBox.vgrow="NEVER">
-
-            <content>
-                <FlowPane fx:id="flowPane" styleClass="all-bugemons" />
-            </content>
-
-        </ScrollPane>
-
-    </children>
+    <ScrollPane fx:id="scrollPane" fitToWidth="true"
+        hbarPolicy="NEVER" prefHeight="260" maxWidth="Infinity">
+        <FlowPane fx:id="flowPane" styleClass="all-bugemons" />
+    </ScrollPane>
 
 </fx:root>

@@ -1,104 +1,52 @@
 package ulb.controllers.combat;
 
-import ulb.models.combat.TurnResult;
+import ulb.models.combat.TurnStep;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.CombatView;
 
 /** Encapsulates all animation logic for combat so the main combat controller stays focused on game logic. */
 public class CombatAnimationController {
-    // Attributes
-
     private final CombatView view;
-
-    // Constructor
 
     public CombatAnimationController(CombatView view) {
         this.view = view;
     }
 
-    // Methods
-
     /**
-     * Plays attack animations sequentially for the turn. Executes {@code onFinished} immediately if {@code result} is
-     * {@code null} or contains no attacks.
+     * Plays the animation corresponding to {@code step}, then invokes {@code onFinished}. Steps without a visual
+     * animation (item use, forfeit) invoke {@code onFinished} immediately.
+     *
+     * @param step
+     *            the step to animate.
+     * @param playerTrainer
+     *            used to determine animation direction (player side vs opponent side).
+     * @param onFinished
+     *            callback executed after the animation completes.
      */
-    public void playTurnAnimations(TurnResult result, Trainer playerTrainer, Runnable onFinished) {
-        if (result == null) {
-            onFinished.run();
-            return;
-        }
-
-        Runnable afterAttackAnimations = () -> {
-            Boolean koOnTrainerSide = this.findKoDefenderSide(result, playerTrainer);
-            if (koOnTrainerSide == null) {
-                onFinished.run();
-                return;
+    public void playStepAnimation(TurnStep step, Trainer playerTrainer, Runnable onFinished) {
+        switch (step) {
+            case TurnStep.AttackStep s -> {
+                boolean fromPlayer = s.attacker() == playerTrainer;
+                this.playAttackAnimation(fromPlayer, onFinished);
             }
-            this.playDeathAnimation(koOnTrainerSide, onFinished);
-        };
-
-        if (result.first().wasAttack()) {
-            boolean firstFromPlayer = result.first().attacker() == playerTrainer;
-            this.playAttackAnimation(firstFromPlayer,
-                    () -> this.playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations));
-            return;
-        }
-
-        this.playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations);
-    }
-
-    private void playSecondAttackIfPresent(TurnResult result, Trainer playerTrainer, Runnable onFinished) {
-        if (result.second().isPresent() && result.second().orElseThrow().wasAttack()) {
-            boolean secondFromPlayer = result.second().orElseThrow().attacker() == playerTrainer;
-            this.playAttackAnimation(secondFromPlayer, onFinished);
-            return;
-        }
-        onFinished.run();
-    }
-
-    /** Returns {@code true} if the player's side was KO'd, {@code false} for opponent, {@code null} if no KO. */
-    private Boolean findKoDefenderSide(TurnResult result, Trainer playerTrainer) {
-        if (result.second().isPresent() && result.second().orElseThrow().wasAttack()
-                && result.second().orElseThrow().defender().getCurrentBugemon().getHp() <= 0) {
-            return result.second().orElseThrow().defender() == playerTrainer;
-        }
-
-        if (result.first().wasAttack() && result.first().defender().getCurrentBugemon().getHp() <= 0) {
-            return result.first().defender() == playerTrainer;
-        }
-
-        return null;
-    }
-
-    private void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
-        if (trainerAttacks) {
-            this.playTrainerAttackAnimation(onFinished);
-        } else {
-            this.playOpponentAttackAnimation(onFinished);
-        }
-    }
-
-    private void playTrainerAttackAnimation(Runnable onFinished) {
-        this.view.playTrainerAttackAnimation(onFinished);
-    }
-
-    private void playOpponentAttackAnimation(Runnable onFinished) {
-        this.view.playOpponentAttackAnimation(onFinished);
-    }
-
-    private void playDeathAnimationForTrainer(Runnable onFinished) {
-        this.view.playDeathAnimationForTrainer(onFinished);
-    }
-
-    private void playDeathAnimationForOpponent(Runnable onFinished) {
-        this.view.playDeathAnimationForOpponent(onFinished);
-    }
-
-    private void playDeathAnimation(boolean forTrainer, Runnable onFinished) {
-        if (forTrainer) {
-            this.playDeathAnimationForTrainer(onFinished);
-        } else {
-            this.playDeathAnimationForOpponent(onFinished);
+            case TurnStep.BugemonKoStep s -> {
+                boolean isPlayerSide = s.trainer() == playerTrainer;
+                this.playDeathAnimation(isPlayerSide, onFinished);
+            }
+            case TurnStep.TrainerKoStep s -> {
+                boolean isPlayerSide = s.trainerKo() == playerTrainer;
+                this.playDeathAnimation(isPlayerSide, onFinished);
+            }
+            case TurnStep.ForfeitStep s -> {
+                boolean isPlayerForfeiting = s.trainer() == playerTrainer;
+                this.playDeathAnimation(isPlayerForfeiting, onFinished);
+            }
+            case TurnStep.SwitchStep s -> {
+                boolean forPlayer = s.trainer() == playerTrainer;
+                this.makeBugemonReappear(forPlayer);
+                onFinished.run();
+            }
+            default -> onFinished.run();
         }
     }
 
@@ -107,6 +55,22 @@ public class CombatAnimationController {
             this.view.makeTrainerBugemonReappear();
         } else {
             this.view.makeOpponentBugemonReappear();
+        }
+    }
+
+    private void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
+        if (trainerAttacks) {
+            this.view.playTrainerAttackAnimation(onFinished);
+        } else {
+            this.view.playOpponentAttackAnimation(onFinished);
+        }
+    }
+
+    private void playDeathAnimation(boolean forTrainer, Runnable onFinished) {
+        if (forTrainer) {
+            this.view.playDeathAnimationForTrainer(onFinished);
+        } else {
+            this.view.playDeathAnimationForOpponent(onFinished);
         }
     }
 }
