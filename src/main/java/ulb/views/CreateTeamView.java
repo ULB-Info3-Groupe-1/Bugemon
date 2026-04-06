@@ -131,8 +131,6 @@ public class CreateTeamView extends View {
     public void refresh() {
         Set<Bugemon> selectedBugemons = this.bugemonTeam.stream().collect(Collectors.toSet());
 
-        System.out.println(selectedBugemons);
-
         this.allBugemonsGridView.showAll(this.availableBugemons, selectedBugemons);
         this.bugemonsTeamView.showTeam(this.bugemonTeam);
     }
