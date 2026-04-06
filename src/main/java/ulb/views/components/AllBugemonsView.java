@@ -1,6 +1,7 @@
 package ulb.views.components;
 
 import java.util.List;
+import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 
@@ -24,19 +25,19 @@ public class AllBugemonsView extends ComponentView {
     }
 
     /** Clears and repopulates the grid with the given list of Bugemons. */
-    public void showAll(List<Bugemon> bugemonList) {
+    public void showAll(List<Bugemon> bugemonList, Set<Bugemon> selectedBugemons) {
         this.flowPane.getChildren().clear();
 
         for (Bugemon bugemon : bugemonList) {
-            this.flowPane.getChildren().add(this.createBugemonCard(bugemon));
+            BugemonCardView bugemonCard  = this.createBugemonCard(bugemon);
+            bugemonCard.setSelected(bugemonList.contains(bugemon));
+            this.flowPane.getChildren().add(bugemonCard);
         }
     }
 
     private BugemonCardView createBugemonCard(Bugemon bugemon) {
         BugemonCardView card = new BugemonCardView(bugemon);
         card.hideLevelLabel();
-
-        card.setSelected(this.listener.isSelected(bugemon));
 
         card.setListener(new BugemonCardView.Listener() {
 
@@ -53,8 +54,6 @@ public class AllBugemonsView extends ComponentView {
     public interface Listener {
 
         void onBugemonClicked(Bugemon bugemon);
-
-        boolean isSelected(Bugemon bugemon);
 
     }
 }
