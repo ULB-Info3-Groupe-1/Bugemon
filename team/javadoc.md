@@ -127,7 +127,7 @@ Ne pas documenter un paramètre dont le nom est déjà explicite.
 
 ```java
 // Inutile
-@return the user id
+@return the player id
 
 // Utile
 @return damage dealt, always >= 1

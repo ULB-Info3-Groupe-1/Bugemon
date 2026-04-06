@@ -79,7 +79,7 @@ SELECT ...
 ```sql
 -- Query to create a team member
 -- InsertTeamMember
-INSERT INTO team_members (user_id, team_name, bugemon_id, slot_position) VALUES (?, ?, ?, ?);
+INSERT INTO team_members (player_id, team_name, bugemon_id, slot_position) VALUES (?, ?, ?, ?);
 ```
 
 ## Issues
@@ -198,7 +198,7 @@ Elle est **inutile** sur :
 
 ```java
 // Inutile — le nom dit tout
-public int getUserId() { ... }
+public int getPlayerId() { ... }
 
 // Utile — contrainte implicite + logique métier
 /**
@@ -225,9 +225,9 @@ public int calculateDamage(Bugemon attacker, Bugemon defender) { ... }
 
 ### Naming
 
-- Classes : PascalCase → `UserService`
-- Méthodes : camelCase → `getUserById`
-- Variables : camelCase → `userName`
+- Classes : PascalCase → `PlayerService`
+- Méthodes : camelCase → `getPlayerById`
+- Variables : camelCase → `playerName`
 - Constantes : UPPER_CASE → `MAX_SIZE`
 - Packages : lowercase → `com.project.app`
 

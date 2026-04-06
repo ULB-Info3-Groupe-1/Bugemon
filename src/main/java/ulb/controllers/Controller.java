@@ -6,7 +6,7 @@ import ulb.views.View;
 
 /**
  * Abstract base class for all screen controllers. Binds a {@link MetaController} to a typed {@link View}; subclasses
- * implement screen-specific logic and expose callbacks that the view invokes on user interaction.
+ * implement screen-specific logic and expose callbacks that the view invokes on player interaction.
  *
  * @param <T>
  *            the concrete {@link View} type managed by this controller.

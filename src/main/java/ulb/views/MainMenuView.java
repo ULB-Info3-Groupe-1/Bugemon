@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 /**
- * View for the main menu screen. Dispatches user interactions to the controller exclusively through callbacks
+ * View for the main menu screen. Dispatches player interactions to the controller exclusively through callbacks
  * registered via setters. The view holds no reference to any concrete controller class.
  */
 public class MainMenuView extends View {

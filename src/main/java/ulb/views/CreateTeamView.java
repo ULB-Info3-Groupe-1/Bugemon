@@ -17,7 +17,7 @@ import ulb.views.components.BugemonTeamView;
 
 /**
  * View for the team creation screen. Holds a reference to the {@link BugemonTeam} model and reads from it directly in
- * {@link #refresh()}. Dispatches user interactions through a {@link Listener}; holds no reference to any concrete
+ * {@link #refresh()}. Dispatches player interactions through a {@link Listener}; holds no reference to any concrete
  * controller class.
  */
 public class CreateTeamView extends View {
@@ -145,7 +145,7 @@ public class CreateTeamView extends View {
         return this.selectedTeamName.getText();
     }
 
-    /** Callback interface for all user interactions on the team creation screen. */
+    /** Callback interface for all player interactions on the team creation screen. */
     public interface Listener {
         void onReturnToMainMenu();
 
