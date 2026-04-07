@@ -130,7 +130,7 @@ public class PlayerService {
             throw new TeamNameAlreadyExistsException("A team is already saved with the name " + teamName);
         }
 
-        if (this.activeTeam.size() == 0) {
+        if (team.isEmpty()) {
             throw new TeamEmptyException("Team is empty!");
         }
 
