@@ -20,9 +20,9 @@ import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestRepository {
+public class TestPlayerRepository {
     @Mock
-    private DatabaseRepository repository;
+    private PlayerRepository repository;
 
     @Test
     public void shouldCreateAndRetrievePlayer_whenValidPlayernameProvided() {

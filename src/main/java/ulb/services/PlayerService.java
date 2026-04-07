@@ -2,12 +2,13 @@ package ulb.services;
 
 import java.util.List;
 
+import ulb.factory.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.repository.DatabaseRepository;
+import ulb.repository.PlayerRepository;
 import ulb.repository.dto.PlayerBugemonDTO;
 import ulb.repository.dto.StaticBugemonDataDTO;
 import ulb.repository.dto.TeamDTO;
@@ -29,15 +30,17 @@ public class PlayerService {
     // Player Inventory
     private Inventory inventory;
 
-    private final DatabaseRepository dbRepository;
+    private final BugemonService bugemonService;
+    private final PlayerRepository playerRepository;
 
     /** Retrieves or creates the player by playername, then loads their teams and starter inventory. */
-    public PlayerService(String playername) {
-        this.dbRepository = DatabaseRepository.getInstance();
+    public PlayerService(BugemonService bugemonService, PlayerRepository playerRepository, String playername) {
+        this.bugemonService = bugemonService;
+        this.playerRepository = playerRepository;
         this.activeTeam = new BugemonTeam();
-        this.playerId = this.dbRepository.getPlayerIdByPlayername(playername)
-                .orElseGet(() -> this.dbRepository.createPlayer(playername));
-        this.playerTeams = this.dbRepository.getPlayerTeams(this.playerId);
+        this.playerId = this.playerRepository.getPlayerIdByPlayername(playername)
+                .orElseGet(() -> this.playerRepository.createPlayer(playername));
+        this.playerTeams = this.playerRepository.getPlayerTeams(this.playerId);
 
         // TODO: probably connect to db
         this.inventory = InventoryService.addStarterItem(new Inventory());
@@ -75,8 +78,8 @@ public class PlayerService {
             throw new TeamNameAlreadyExistsException("A team is already saved with the name " + newName);
         }
 
-        this.dbRepository.renameTeam(this.playerId, oldName, newName);
-        this.playerTeams = this.dbRepository.getPlayerTeams(this.playerId);
+        this.playerRepository.renameTeam(this.playerId, oldName, newName);
+        this.playerTeams = this.playerRepository.getPlayerTeams(this.playerId);
 
         if (this.activeTeam.getName().equals(oldName)) {
             this.activeTeam.setName(newName);
@@ -92,7 +95,7 @@ public class PlayerService {
             throw new TeamNotFoundException("No team saved with the name " + teamName);
         }
 
-        this.dbRepository.deleteTeam(this.playerId, teamName);
+        this.playerRepository.deleteTeam(this.playerId, teamName);
         this.playerTeams.removeIf(t -> t.name().equals(teamName));
 
         if (this.activeTeam.getName().equals(teamName)) {
@@ -107,17 +110,17 @@ public class PlayerService {
      *             if teamName already exists
      */
     public void updateTeamMembers(String teamName, BugemonTeam team) {
-        this.dbRepository.deleteTeamMembers(this.playerId, teamName);
-        List<PlayerBugemonDTO> playerBugemonDTOs = this.dbRepository.getPlayerBugemons(this.playerId);
+        this.playerRepository.deleteTeamMembers(this.playerId, teamName);
+        List<PlayerBugemonDTO> playerBugemonDTOs = this.playerRepository.getPlayerBugemons(this.playerId);
         for (Bugemon bugemon : team) {
             if (playerBugemonDTOs.stream().noneMatch(dto -> dto.bugemonName().equals(bugemon.getName()))) {
-                this.dbRepository.savePlayerBugemon(new PlayerBugemonDTO(this.playerId, bugemon.getName(),
+                this.playerRepository.savePlayerBugemon(new PlayerBugemonDTO(this.playerId, bugemon.getName(),
                         bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(), bugemon.getMaxHp(),
                         bugemon.getXp(), bugemon.getLevel()));
             }
             TeamMemberDTO memberDTO = new TeamMemberDTO(this.playerId, teamName, bugemon.getName(),
                     team.getSlotPosition(bugemon));
-            this.dbRepository.addTeamMember(memberDTO);
+            this.playerRepository.addTeamMember(memberDTO);
         }
     }
 
@@ -134,17 +137,17 @@ public class PlayerService {
             throw new TeamEmptyException("Team is empty!");
         }
 
-        this.dbRepository.createTeam(this.playerId, teamName);
-        List<PlayerBugemonDTO> playerBugemonDTOs = this.dbRepository.getPlayerBugemons(this.playerId);
+        this.playerRepository.createTeam(this.playerId, teamName);
+        List<PlayerBugemonDTO> playerBugemonDTOs = this.playerRepository.getPlayerBugemons(this.playerId);
         for (Bugemon bugemon : team) {
             if (playerBugemonDTOs.stream().noneMatch(dto -> dto.bugemonName().equals(bugemon.getName()))) {
-                this.dbRepository.savePlayerBugemon(new PlayerBugemonDTO(this.playerId, bugemon.getName(),
+                this.playerRepository.savePlayerBugemon(new PlayerBugemonDTO(this.playerId, bugemon.getName(),
                         bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(), bugemon.getMaxHp(),
                         bugemon.getXp(), bugemon.getLevel()));
             }
             TeamMemberDTO memberDTO = new TeamMemberDTO(this.playerId, teamName, bugemon.getName(),
                     team.getSlotPosition(bugemon));
-            this.dbRepository.addTeamMember(memberDTO);
+            this.playerRepository.addTeamMember(memberDTO);
         }
         this.playerTeams.add(new TeamDTO(this.playerId, teamName));
     }
@@ -158,8 +161,8 @@ public class PlayerService {
             throw new TeamNotFoundException("No team saved with the name " + teamName);
         }
 
-        List<TeamMemberDTO> teamMembers = this.dbRepository.getTeamMembers(this.playerId, teamName);
-        List<PlayerBugemonDTO> playerBugemons = this.dbRepository.getPlayerBugemons(this.playerId);
+        List<TeamMemberDTO> teamMembers = this.playerRepository.getTeamMembers(this.playerId, teamName);
+        List<PlayerBugemonDTO> playerBugemons = this.playerRepository.getPlayerBugemons(this.playerId);
 
         this.activeTeam = new BugemonTeam();
         this.activeTeam.setName(teamName);
@@ -187,7 +190,7 @@ public class PlayerService {
             throw new IllegalArgumentException("Cannot save state of a Bugemon that is not in the active team.");
         }
 
-        this.dbRepository.updatePlayerBugemon(
+        this.playerRepository.updatePlayerBugemon(
                 new PlayerBugemonDTO(this.playerId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
@@ -195,7 +198,7 @@ public class PlayerService {
     /** Persists the current state (XP, level, stats) of every Bugemon in the active team. */
     public void saveActiveTeamState() {
         for (Bugemon bugemon : this.activeTeam) {
-            this.dbRepository.updatePlayerBugemon(
+            this.playerRepository.updatePlayerBugemon(
                     new PlayerBugemonDTO(this.playerId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                             bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
         }
@@ -206,7 +209,8 @@ public class PlayerService {
     }
 
     private Bugemon buildPlayerBugemon(PlayerBugemonDTO playerBugemon) {
-        StaticBugemonDataDTO defaultBugemon = this.dbRepository.getBugemonByName(playerBugemon.bugemonName());
+        StaticBugemonDataDTO defaultBugemon = BugemonFactory
+                .createStaticBugemonData(this.bugemonService.getBugemonByName(playerBugemon.bugemonName()));
 
         BugemonBuilder builder = new BugemonBuilder();
         builder.name(defaultBugemon.name());
