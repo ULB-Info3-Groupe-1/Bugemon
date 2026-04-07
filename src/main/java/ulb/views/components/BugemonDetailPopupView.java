@@ -45,7 +45,7 @@ public class BugemonDetailPopupView extends ComponentView {
 
     private BugemonDetailPopupView(Bugemon bugemon) {
         super(FXML_PATH);
-        File spriteFile = new File("resources/sprites/" + bugemon.getSpriteURL());
+        File spriteFile = new File("assets/sprites/" + bugemon.getSpriteURL());
         this.sprite.setImage(new Image(spriteFile.toURI().toString(), 72, 72, true, false));
         this.nameLabel.setText(bugemon.getName());
         this.nameLabel.getStyleClass().addAll("bugemon-name", bugemon.getType().toString());

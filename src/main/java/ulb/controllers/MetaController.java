@@ -15,6 +15,7 @@ import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
+import ulb.views.ManageTeamView;
 
 /**
  * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
@@ -25,6 +26,7 @@ public class MetaController {
     public enum Window {
         MAIN_MENU,
         CREATE_TEAM,
+        EDIT_TEAM,
         MANUAL_COMBAT,
         AUTOMATIC_COMBAT,
         NOTOWER,
@@ -36,7 +38,8 @@ public class MetaController {
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final MainMenuController mainMenuController;
-    private final ManageTeamController manageTeamController;
+    private final ManageTeamController createTeamController;
+    private final ManageTeamController editTeamController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
     private final NOTowerController noTowerController;
@@ -60,7 +63,10 @@ public class MetaController {
         this.stage = primaryStage;
 
         this.mainMenuController = new MainMenuController(this, playerService);
-        this.manageTeamController = new ManageTeamController(this, playerService, bugemonService);
+        this.createTeamController = new ManageTeamController(ManageTeamView.TeamFormMode.CREATE, this, playerService,
+                bugemonService);
+        this.editTeamController = new ManageTeamController(ManageTeamView.TeamFormMode.EDIT, this, playerService,
+                bugemonService);
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService);
         this.noTowerController = new NOTowerController(this, playerService, bugemonService);
@@ -87,7 +93,11 @@ public class MetaController {
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
-            this.manageTeamController.show(this.stage);
+            this.createTeamController.show(this.stage);
+        });
+        this.transitions.put(Window.EDIT_TEAM, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
+            this.editTeamController.show(this.stage);
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);

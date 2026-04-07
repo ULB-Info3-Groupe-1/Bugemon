@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -22,7 +23,7 @@ import ulb.views.components.BugemonTeamView;
  */
 public class ManageTeamView extends View {
 
-    enum TeamFormMode {
+    public enum TeamFormMode {
         EDIT,
         CREATE
     }
@@ -45,6 +46,25 @@ public class ManageTeamView extends View {
     private ListView<String> teamListView;
     @FXML
     private Text selectedTeamName;
+
+    @FXML
+    private Button saveTeamButton;
+    @FXML
+    private Button returnMainMenuButton;
+    @FXML
+    private Button addNewTeamButton;
+    @FXML
+    private Button modifyTeamButton;
+    @FXML
+    private Button deleteTeamButton;
+    @FXML
+    private Button renameTeamButton;
+    @FXML
+    private Button launchAutomaticCombatButton;
+    @FXML
+    private Button launchManualCombatButton;
+    @FXML
+    private Button launchNOTowerCombatButton;
 
     private Listener listener;
     private BugemonTeam bugemonTeam;
@@ -123,6 +143,21 @@ public class ManageTeamView extends View {
         }
     }
 
+    @FXML
+    private void onLaunchAutomaticCombatClicked() {
+        this.listener.onLaunchAutomaticCombat();
+    }
+
+    @FXML
+    private void onLaunchManualCombatClicked() {
+        this.listener.onLaunchManualCombat();
+    }
+
+    @FXML
+    private void onLaunchNOTowerCombatClicked() {
+        this.listener.onLaunchNOTowerCombat();
+    }
+
     public void setTeam(BugemonTeam newBugemonTeam) {
         this.bugemonTeam = newBugemonTeam;
     }
@@ -190,5 +225,33 @@ public class ManageTeamView extends View {
         void onBugemonSelected(Bugemon bugemon);
 
         void onModifyTeam();
+
+        void onLaunchAutomaticCombat();
+
+        void onLaunchManualCombat();
+
+        void onLaunchNOTowerCombat();
+    }
+
+    public void setMode(TeamFormMode mode) {
+        if (mode == TeamFormMode.CREATE) {
+            this.modifyTeamButton.setVisible(false);
+            this.modifyTeamButton.setManaged(false);
+
+            this.renameTeamButton.setVisible(false);
+            this.renameTeamButton.setManaged(false);
+
+            this.deleteTeamButton.setVisible(false);
+            this.deleteTeamButton.setManaged(false);
+
+            this.launchAutomaticCombatButton.setVisible(false);
+            this.launchAutomaticCombatButton.setManaged(false);
+
+            this.launchManualCombatButton.setVisible(false);
+            this.launchManualCombatButton.setManaged(false);
+
+            this.launchNOTowerCombatButton.setVisible(false);
+            this.launchNOTowerCombatButton.setManaged(false);
+        }
     }
 }

@@ -3,6 +3,7 @@ package ulb.controllers;
 import java.io.IOException;
 import javafx.stage.Stage;
 
+import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.BugemonService;
@@ -22,6 +23,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     private final PlayerService playerService;
     private final BugemonService bugemonService;
     private BugemonTeam selectedTeam;
+    private final ManageTeamView.TeamFormMode mode;
 
     /**
      * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
@@ -30,9 +32,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
      * @throws IOException
      *             if the view fails to load its FXML resource.
      */
-    public ManageTeamController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) throws IOException {
+    public ManageTeamController(ManageTeamView.TeamFormMode mode, MetaController metaController,
+            PlayerService playerService, BugemonService bugemonService) throws IOException {
         super(metaController, ViewLoader.load(ManageTeamView::new));
+        this.mode = mode;
         this.playerService = playerService;
         this.bugemonService = bugemonService;
         this.selectedTeam = new BugemonTeam();
@@ -45,6 +48,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.updateTeam();
         this.udpateAvailableBugemons();
         this.updateTeamList();
+        this.view.setMode(this.mode);
 
         super.show(stage);
     }
@@ -164,5 +168,34 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
         }
+    }
+
+    @Override
+    public void onLaunchAutomaticCombat() {
+        if (!this.isActiveTeamEmpty()) {
+            this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
+        }
+    }
+
+    @Override
+    public void onLaunchManualCombat() {
+        if (!this.isActiveTeamEmpty()) {
+            this.metaController.switchTo(Window.MANUAL_COMBAT);
+        }
+    }
+
+    @Override
+    public void onLaunchNOTowerCombat() {
+        if (!this.isActiveTeamEmpty()) {
+            this.metaController.switchTo(Window.NOTOWER);
+        }
+    }
+
+    private boolean isActiveTeamEmpty() {
+        if (this.playerService.isActiveTeamEmpty()) {
+            this.view.showNoTeamAlert();
+            return true;
+        }
+        return false;
     }
 }

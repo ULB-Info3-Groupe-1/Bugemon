@@ -24,7 +24,9 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
 
     @Override
     public void onNoTower() {
-        this.metaController.switchTo(Window.NOTOWER);
+        if (!this.isActiveTeamEmpty()) {
+            this.metaController.switchTo(Window.NOTOWER);
+        }
     }
 
     @Override
@@ -35,9 +37,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     /** Launches an automatic combat session. */
     @Override
     public void onStartAutomaticCombat() {
-        if (this.playerService.isActiveTeamEmpty()) {
-            this.view.showNoTeamAlert();
-        } else {
+        if (!this.isActiveTeamEmpty()) {
             this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
         }
     }
@@ -45,10 +45,21 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     /** Launches a manual combat session. */
     @Override
     public void onStartManualCombat() {
-        if (this.playerService.isActiveTeamEmpty()) {
-            this.view.showNoTeamAlert();
-        } else {
+        if (!this.isActiveTeamEmpty()) {
             this.metaController.switchTo(Window.MANUAL_COMBAT);
         }
+    }
+
+    @Override
+    public void onEditTeam() {
+        this.metaController.switchTo(Window.EDIT_TEAM);
+    }
+
+    private boolean isActiveTeamEmpty() {
+        if (this.playerService.isActiveTeamEmpty()) {
+            this.view.showNoTeamAlert();
+            return true;
+        }
+        return false;
     }
 }

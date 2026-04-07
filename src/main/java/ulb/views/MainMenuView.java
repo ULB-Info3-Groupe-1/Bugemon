@@ -21,10 +21,7 @@ public class MainMenuView extends View {
 
     private Listener listener;
 
-    private final String fxmlPath = "/fxml/MainMenu.fxml";
-
-    public MainMenuView() {
-    }
+    private static final String FXML_PATH = "/fxml/MainMenu.fxml";
 
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -33,6 +30,11 @@ public class MainMenuView extends View {
     @FXML
     private void onCreateTeamClicked() {
         this.listener.onCreateTeam();
+    }
+
+    @FXML
+    private void onEditTeamClicked() {
+        this.listener.onEditTeam();
     }
 
     @FXML
@@ -57,7 +59,7 @@ public class MainMenuView extends View {
 
     @Override
     public String getPath() {
-        return this.fxmlPath;
+        return FXML_PATH;
     }
 
     @Override
@@ -75,9 +77,7 @@ public class MainMenuView extends View {
         void onStartManualCombat();
 
         void onStartAutomaticCombat();
-    }
 
-    public void showNoTeamAlert() {
-        this.showAlert("Aucune équipe active", "Veuillez créer ou charger une équipe avant de lancer un combat.");
+        void onEditTeam();
     }
 }
