@@ -2,8 +2,8 @@ package ulb.factory;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
-import ulb.repository.dto.CreateBugemonDTO;
-import ulb.repository.dto.StaticBugemonDataDTO;
+import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.dto.StaticBugemonDataDTO;
 
 /**
  * Factory to create {@link ulb.models.bugemon.Bugemon} instances.

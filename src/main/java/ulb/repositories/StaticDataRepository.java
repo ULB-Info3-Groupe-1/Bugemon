@@ -1,4 +1,4 @@
-package ulb.repository;
+package ulb.repositories;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +27,8 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
-import ulb.repository.dto.CreateBugemonDTO;
-import ulb.repository.dto.StaticBugemonDataDTO;
+import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 

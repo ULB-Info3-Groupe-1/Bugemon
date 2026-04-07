@@ -1,4 +1,4 @@
-package ulb.repository;
+package ulb.repositories;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,9 +15,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ulb.repository.dto.PlayerBugemonDTO;
-import ulb.repository.dto.TeamDTO;
-import ulb.repository.dto.TeamMemberDTO;
+import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.repositories.dto.TeamDTO;
+import ulb.repositories.dto.TeamMemberDTO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestPlayerRepository {

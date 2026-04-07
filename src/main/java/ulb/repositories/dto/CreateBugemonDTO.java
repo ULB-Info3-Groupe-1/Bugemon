@@ -1,4 +1,4 @@
-package ulb.repository.dto;
+package ulb.repositories.dto;
 
 import java.net.URL;
 import java.util.Objects;
