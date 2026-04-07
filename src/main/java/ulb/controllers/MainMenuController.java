@@ -36,7 +36,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     @Override
     public void onStartAutomaticCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
-            this.showNoTeamAlert();
+            this.view.showNoTeamAlert();
         } else {
             this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
         }
@@ -46,13 +46,9 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     @Override
     public void onStartManualCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
-            this.showNoTeamAlert();
+            this.view.showNoTeamAlert();
         } else {
             this.metaController.switchTo(Window.MANUAL_COMBAT);
         }
-    }
-
-    private void showNoTeamAlert() {
-        view.showAlert("Aucune équipe active", "Veuillez créer ou charger une équipe avant de lancer un combat.");
     }
 }

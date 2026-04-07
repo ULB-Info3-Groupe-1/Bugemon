@@ -19,8 +19,6 @@ import ulb.views.ViewLoader;
  * controller never pushes data into the view.
  */
 public class CreateTeamController extends Controller<CreateTeamView> implements CreateTeamView.Listener {
-    private static final String STR_TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";
-
     private final PlayerService playerService;
     private final BugemonService bugemonService;
     private BugemonTeam selectedTeam;
@@ -82,7 +80,7 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
     @Override
     public void onSave(String teamName) {
         if (this.teamNameIsEmpty(teamName)) {
-            this.showEmptyNameAlert();
+            this.view.showEmptyTeamNameAlert();
             return;
         }
 
@@ -90,16 +88,16 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
             this.playerService.saveTeam(teamName, this.selectedTeam);
             this.view.setTeamList(this.playerService.getTeamNames());
         } catch (TeamNameAlreadyExistsException e) {
-            this.view.showAlert("Nom d'équipe déjà utilisé", "Une équipe est déjà sauvée avec le nom " + teamName);
+            this.view.showTeamNameAlreadyExistsAlert(teamName);
         } catch (TeamEmptyException e) {
-            this.view.showAlert("Nom d'équipe vide", "L'équipe que vous souhaitez sauvegarder est vide.");
+            this.view.showEmptyTeamAlert();
         }
     }
 
     @Override
     public void onLoad(String teamName) {
         if (this.teamNameIsEmpty(teamName)) {
-            this.showEmptyNameAlert();
+            this.view.showEmptyTeamNameAlert();
             return;
         }
 
@@ -109,7 +107,7 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
             this.updateTeam();
             this.view.refresh();
         } catch (TeamNotFoundException e) {
-            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND, "Aucune équipe sauvée avec le nom " + teamName);
+            this.view.showTeamNotFoundAlert(teamName);
         }
     }
 
@@ -124,14 +122,14 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
                 this.view.refresh();
             }
         } catch (TeamNotFoundException e) {
-            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec ce nom n'a été trouvée.");
+            this.view.showTeamNotFoundAlert(teamName);
         }
     }
 
     @Override
     public void onRename(String oldName, String newName) {
         if (this.teamNameIsEmpty(newName)) {
-            this.showEmptyNameAlert();
+            this.view.showEmptyTeamNameAlert();
             return;
         }
 
@@ -142,10 +140,9 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
                 this.selectedTeam.setName(newName);
             }
         } catch (TeamNotFoundException e) {
-            this.view.showAlert(STR_TEAM_NAME_NOT_FOUND, "L'équipe que vous souhaitez renommer n'existe pas");
+            this.view.showTeamNotFoundAlert(oldName);
         } catch (TeamNameAlreadyExistsException e) {
-            this.view.showAlert("Nom d'équipe déjà utilisé",
-                    "Vous avez déjà une équipe avec ce nom. Veuillez en choisir un autre.");
+            this.view.showTeamNameAlreadyExistsAlert(newName);
         }
     }
 
@@ -154,10 +151,6 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
         this.selectedTeam = new BugemonTeam();
         this.updateTeam();
         this.view.refresh();
-    }
-
-    private void showEmptyNameAlert() {
-        this.view.showAlert("Nom d'équipe invalide", "Le nom d'équipe ne peut pas être vide.");
     }
 
     private boolean teamNameIsEmpty(String name) {

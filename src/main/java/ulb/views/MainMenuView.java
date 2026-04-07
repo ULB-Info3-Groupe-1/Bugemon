@@ -76,4 +76,8 @@ public class MainMenuView extends View {
 
         void onStartAutomaticCombat();
     }
+
+    public void showNoTeamAlert() {
+        this.showAlert("Aucune équipe active", "Veuillez créer ou charger une équipe avant de lancer un combat.");
+    }
 }
