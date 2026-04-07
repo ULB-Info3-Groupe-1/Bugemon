@@ -17,7 +17,10 @@ public class LevelUp implements LevelUpDTO {
     private List<Upgrade> upgrades;
 
     enum Stat {
-        HP, ATTACK, DEFENSE, INITIATIVE,
+        HP,
+        ATTACK,
+        DEFENSE,
+        INITIATIVE,
     }
 
     public LevelUp(Bugemon bugemon) {
