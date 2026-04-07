@@ -8,7 +8,8 @@ public record Item(String id, @SerializedName("nom") String name, String descrip
         @SerializedName("categorie") ItemType type, @SerializedName("effet") Effect effect) {
     public enum ItemType {
         @SerializedName("soin")
-        HEALING, @SerializedName("boost")
+        HEALING,
+        @SerializedName("boost")
         BOOST
     }
 }

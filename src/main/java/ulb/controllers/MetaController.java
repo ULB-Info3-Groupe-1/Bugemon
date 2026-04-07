@@ -23,7 +23,14 @@ import ulb.services.PlayerService;
 public class MetaController {
     /** All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition. */
     public enum Window {
-        MAIN_MENU, CREATE_TEAM, MANUAL_COMBAT, AUTOMATIC_COMBAT, NOTOWER, COMBAT_VICTORY, COMBAT_DEFEAT, LEVEL_UP,
+        MAIN_MENU,
+        CREATE_TEAM,
+        MANUAL_COMBAT,
+        AUTOMATIC_COMBAT,
+        NOTOWER,
+        COMBAT_VICTORY,
+        COMBAT_DEFEAT,
+        LEVEL_UP,
     }
 
     private final Stage stage;

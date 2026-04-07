@@ -1,7 +1,8 @@
 package ulb.models.bugemon.effect;
 
 public enum EffectDuration {
-    ONE_TURN("1_tour"), PERMANENT("permanent");
+    ONE_TURN("1_tour"),
+    PERMANENT("permanent");
 
     private final String label;
 
