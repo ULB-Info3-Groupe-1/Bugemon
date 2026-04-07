@@ -5,19 +5,19 @@ import java.util.List;
 import ulb.factory.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
-import ulb.repository.DatabaseRepository;
+import ulb.repository.StaticDataRepository;
 import ulb.repository.dto.CreateBugemonDTO;
 import ulb.services.exceptions.BugemonNameIsEmptyException;
 
 public class BugemonService {
 
-    private final DatabaseRepository dbRepository;
+    private final StaticDataRepository staticDataRepository;
 
     // Cache for all default Bugemons to avoid multiple database calls
     private List<Bugemon> allDefaultBugemonsCache;
 
-    public BugemonService() {
-        this.dbRepository = DatabaseRepository.getInstance();
+    public BugemonService(StaticDataRepository staticDataRepository) {
+        this.staticDataRepository = staticDataRepository;
     }
 
     /**
@@ -27,7 +27,7 @@ public class BugemonService {
      */
     public List<Bugemon> getAllDefaultBugemons() {
         if (this.allDefaultBugemonsCache == null) {
-            this.allDefaultBugemonsCache = this.dbRepository.getAllDefaultBugemons();
+            this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
         }
         return this.allDefaultBugemonsCache;
     }
@@ -48,8 +48,12 @@ public class BugemonService {
         if (this.getAllDefaultBugemons().stream().anyMatch(b -> b.getName().equals(bugemon.name()))) {
             throw new BugemonAlreadyExistsException("There cannot be multiple bugemons with the same name");
         }
-        this.dbRepository.saveBugemon(bugemon);
-        this.allDefaultBugemonsCache.add(BugemonFactory.create(bugemon));
+        this.staticDataRepository.saveBugemon(bugemon);
+        this.allDefaultBugemonsCache.add(BugemonFactory.createBugemon(bugemon));
+    }
+
+    public Bugemon getBugemonByName(String name) {
+        return this.getAllDefaultBugemons().stream().filter(b -> b.getName().equals(name)).findFirst().orElse(null);
     }
 
 }

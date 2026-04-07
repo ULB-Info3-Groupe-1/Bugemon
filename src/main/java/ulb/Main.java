@@ -11,6 +11,11 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
+import ulb.repository.DatabaseConnection;
+import ulb.repository.PlayerRepository;
+import ulb.repository.QueryLoader;
+import ulb.repository.StaticDataRepository;
+import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 
 /** JavaFX entry point — bootstraps the Bugemon game. */
@@ -41,8 +46,14 @@ public class Main extends Application {
         stage.setScene(scene);
 
         // TODO: remove hardcoded playername once a login screen exists
-        PlayerService playerService = new PlayerService("default_player");
-        MetaController controller = new MetaController(stage, playerService);
+        QueryLoader loader = new QueryLoader();
+        DatabaseConnection dbConnection = new DatabaseConnection();
+        StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, loader.getQueries());
+
+        BugemonService bugemonService = new BugemonService(staticDataRepository);
+        PlayerService playerService = new PlayerService(bugemonService, playerRepository, "default_player");
+        MetaController controller = new MetaController(stage, bugemonService, playerService);
         controller.switchTo(Window.MAIN_MENU);
     }
 }
