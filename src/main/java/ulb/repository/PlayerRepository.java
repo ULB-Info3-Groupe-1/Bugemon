@@ -20,27 +20,10 @@ public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
 
     private final DatabaseConnection dbConnection;
-    private final Map<String, String> queries;
 
     public PlayerRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         super(queries);
         this.dbConnection = dbConnection;
-        this.queries = queries;
-    }
-
-    // TODO: remove duplication code here and in StaticDataRepository
-    /**
-     * Returns the SQL string for the given query name.
-     *
-     * @throws IllegalArgumentException
-     *             if the query name is not found
-     */
-    public String getSql(String queryName) {
-        String sql = this.queries.get(queryName);
-        if (sql == null) {
-            throw new IllegalArgumentException("SQL query not found in Map : " + queryName);
-        }
-        return sql;
     }
 
     // ─── PLAYERS ────────────────────────────────────────────────────────────────
