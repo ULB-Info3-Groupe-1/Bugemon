@@ -19,10 +19,10 @@ import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
 
 /**
- * Controller for the manual combat screen. Implements {@link ManualCombatView.Listener} to receive user combat actions.
- * Each action mutates the model, then iterates the resulting {@link ulb.models.combat.TurnResult} steps one by one via
- * the dialog zone. The controller never calls any show/hide method on the view directly, and holds no knowledge of view
- * layout.
+ * Controller for the manual combat screen. Implements {@link ManualCombatView.Listener} to receive player combat
+ * actions. Each action mutates the model, then iterates the resulting {@link ulb.models.combat.TurnResult} steps one by
+ * one via the dialog zone. The controller never calls any show/hide method on the view directly, and holds no knowledge
+ * of view layout.
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
     private ManualTrainer manualPlayerTrainer;

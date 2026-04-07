@@ -62,6 +62,8 @@ public class BugemonDeserializer implements JsonDeserializer<CreateBugemonDTO> {
 
             if (attack != null) {
                 attackList.add(attack);
+            } else {
+                throw new JsonParseException("The attack with id " + attackId + " could not be found");
             }
         }
 

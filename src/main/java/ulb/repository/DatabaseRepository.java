@@ -26,10 +26,10 @@ import java.util.stream.Stream;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repository.dto.PlayerBugemonDTO;
 import ulb.repository.dto.StaticBugemonDataDTO;
 import ulb.repository.dto.TeamDTO;
 import ulb.repository.dto.TeamMemberDTO;
-import ulb.repository.dto.UserBugemonDTO;
 
 public class DatabaseRepository {
     // Number of tables of the critical schema
@@ -39,7 +39,7 @@ public class DatabaseRepository {
 
     private final DatabaseConnection dbConnection;
 
-    private final UserRepository userRepository;
+    private final PlayerRepository playerRepository;
     private final StaticDataRepository staticDataRepository;
 
     // Queries Map (Request Name -> SQL Code)
@@ -48,7 +48,7 @@ public class DatabaseRepository {
     /** Loads SQL queries, creates the schema if absent, and bootstraps static game data. */
     private DatabaseRepository() {
         this.dbConnection = new DatabaseConnection();
-        this.userRepository = new UserRepository(this, this.dbConnection);
+        this.playerRepository = new PlayerRepository(this, this.dbConnection);
         this.staticDataRepository = new StaticDataRepository(this, this.dbConnection);
 
         this.loadSQLQueries();
@@ -198,72 +198,72 @@ public class DatabaseRepository {
         return this.staticDataRepository.getAllDefaultBugemons();
     }
 
-    public List<UserBugemonDTO> getUserBugemons(int userId) {
-        return this.userRepository.getUserBugemons(userId);
+    public List<PlayerBugemonDTO> getPlayerBugemons(int playerId) {
+        return this.playerRepository.getPlayerBugemons(playerId);
     }
 
-    /** @return empty Optional if no user with that username exists */
-    public Optional<Integer> getUserIdByUsername(String username) {
-        return this.userRepository.getUserIdByUsername(username);
+    /** @return empty Optional if no player with that playername exists */
+    public Optional<Integer> getPlayerIdByPlayername(String playername) {
+        return this.playerRepository.getPlayerIdByPlayername(playername);
     }
 
-    public List<TeamDTO> getUserTeams(int userId) {
-        return this.userRepository.getUserTeams(userId);
+    public List<TeamDTO> getPlayerTeams(int playerId) {
+        return this.playerRepository.getPlayerTeams(playerId);
     }
 
-    public List<TeamMemberDTO> getTeamMembers(int userId, String teamName) {
-        return this.userRepository.getTeamMembers(userId, teamName);
+    public List<TeamMemberDTO> getTeamMembers(int playerId, String teamName) {
+        return this.playerRepository.getTeamMembers(playerId, teamName);
     }
 
     // ─── ACTIONS ───
 
-    public int createUser(String username) {
-        return this.userRepository.createUser(username);
+    public int createPlayer(String playername) {
+        return this.playerRepository.createPlayer(playername);
     }
 
-    public void createTeam(int userId, String teamName) {
-        this.userRepository.createTeam(userId, teamName);
+    public void createTeam(int playerId, String teamName) {
+        this.playerRepository.createTeam(playerId, teamName);
     }
 
-    public void saveUserBugemon(UserBugemonDTO dto) {
-        this.userRepository.saveUserBugemon(dto);
+    public void savePlayerBugemon(PlayerBugemonDTO dto) {
+        this.playerRepository.savePlayerBugemon(dto);
     }
 
-    public void updateUserBugemon(UserBugemonDTO dto) {
-        this.userRepository.updateUserBugemon(dto);
+    public void updatePlayerBugemon(PlayerBugemonDTO dto) {
+        this.playerRepository.updatePlayerBugemon(dto);
     }
 
     public void addTeamMember(TeamMemberDTO dto) {
-        this.userRepository.addTeamMember(dto);
+        this.playerRepository.addTeamMember(dto);
     }
 
-    public void renameTeam(int userId, String oldTeamName, String newTeamName) {
-        this.userRepository.renameTeam(userId, oldTeamName, newTeamName);
+    public void renameTeam(int playerId, String oldTeamName, String newTeamName) {
+        this.playerRepository.renameTeam(playerId, oldTeamName, newTeamName);
     }
 
     /**
-     * Remove a member from a team in the database. This method takes the user ID, team name, and bugemon ID of the team
-     * member to be removed, and deletes the corresponding entry from the database to reflect that this team member is
-     * no longer part of the specified team.
+     * Remove a member from a team in the database. This method takes the player ID, team name, and bugemon ID of the
+     * team member to be removed, and deletes the corresponding entry from the database to reflect that this team member
+     * is no longer part of the specified team.
      *
-     * @param userId
-     *            the ID of the user who is a member of the team from which to remove the member
+     * @param playerId
+     *            the ID of the player who is a member of the team from which to remove the member
      * @param teamName
      *            the name of the team from which to remove the member
      * @param bugemonName
      *            the name of the bugemon that represents the team member to be removed from the specified team in the
      *            database
      */
-    public void removeTeamMember(int userId, String teamName, String bugemonName) {
-        this.userRepository.removeTeamMember(userId, teamName, bugemonName);
+    public void removeTeamMember(int playerId, String teamName, String bugemonName) {
+        this.playerRepository.removeTeamMember(playerId, teamName, bugemonName);
     }
 
-    public void deleteTeam(int userId, String teamName) {
-        this.userRepository.deleteTeam(userId, teamName);
+    public void deleteTeam(int playerId, String teamName) {
+        this.playerRepository.deleteTeam(playerId, teamName);
     }
 
-    public void deleteTeamMembers(int userId, String teamName) {
-        this.userRepository.deleteTeamMembers(userId, teamName);
+    public void deleteTeamMembers(int playerId, String teamName) {
+        this.playerRepository.deleteTeamMembers(playerId, teamName);
     }
 
     /**

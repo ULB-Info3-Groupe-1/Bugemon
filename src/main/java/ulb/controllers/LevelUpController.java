@@ -12,7 +12,7 @@ import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the level-up screen. Manages a {@link LevelUpSession} model. After each user choice or
+ * Controller responsible for the level-up screen. Manages a {@link LevelUpSession} model. After each player choice or
  * advance, the controller mutates the session and calls {@code view.refresh()} so the view pulls the updated event data
  * directly from the session.
  */
