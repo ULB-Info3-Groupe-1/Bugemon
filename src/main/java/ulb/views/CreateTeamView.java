@@ -73,7 +73,7 @@ public class CreateTeamView extends View {
 
     @FXML
     private void onSaveClicked() {
-        this.listener.onSave();
+        this.listener.onSave(this.getTeamNameToSave());
     }
 
     @FXML
@@ -102,7 +102,7 @@ public class CreateTeamView extends View {
         String selected = this.teamListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             this.selectedTeamName.setText(selected);
-            this.listener.onLoad();
+            this.listener.onLoad(this.getTeamNameToLoad());
         } else {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
         }
@@ -137,11 +137,11 @@ public class CreateTeamView extends View {
         this.saveTeamNameInput.setText(name);
     }
 
-    public String getTeamNameToSave() {
+    private String getTeamNameToSave() {
         return this.saveTeamNameInput.getText();
     }
 
-    public String getTeamNameToLoad() {
+    private String getTeamNameToLoad() {
         return this.selectedTeamName.getText();
     }
 
@@ -149,9 +149,9 @@ public class CreateTeamView extends View {
     public interface Listener {
         void onReturnToMainMenu();
 
-        void onSave();
+        void onSave(String teamName);
 
-        void onLoad();
+        void onLoad(String teamName);
 
         void onDelete(String teamName);
 
