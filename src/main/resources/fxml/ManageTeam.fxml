@@ -63,19 +63,31 @@
                     styleClass="team-list-view,btn-team" prefHeight="160"
                     minHeight="80" onMouseClicked="#onTeamSelected" />
 
-                <Button text="Sauvegarder" onAction="#onSaveClicked"
+                <Button fx:id="saveTeamButton" text="Sauvegarder"
+                    onAction="#onSaveClicked" styleClass="btn,btn-success,btn-team" />
+                <Button fx:id="renameTeamButton" text="Renommer"
+                    onAction="#onRenameClicked" styleClass="btn,btn-success,btn-team" />
+                <Button fx:id="modifyTeamButton" text="Modifier l'équipe"
+                    onAction="#onModifyTeamClicked"
                     styleClass="btn,btn-success,btn-team" />
-                <Button text="Renommer" onAction="#onRenameClicked"
-                    styleClass="btn,btn-success,btn-team" />
-                    <Button text="Modifier l'équipe" onAction="#onModifyTeamClicked"
-                    styleClass="btn,btn-success,btn-team" />
-                <Button text="Nouvelle équipe +"
+                <Button fx:id="addNewTeamButton" text="Nouvelle équipe +"
                     onAction="#onAddNewTeamClicked"
                     styleClass="btn,btn-success,btn-team" />
-                <Button text="Supprimer" onAction="#onDeleteClicked"
-                    styleClass="btn,btn-danger,btn-team" />
-                <Button text="Retour au menu principal"
-                    onAction="#onReturnMainMenuClicked"
+                <Button fx:id="launchAutomaticCombatButton"
+                    text="Lancer combat automatique"
+                    onAction="#onLaunchAutomaticCombatClicked"
+                    styleClass="btn,btn-success,btn-team" />
+                <Button fx:id="launchManualCombatButton"
+                    text="Lancer combat manuel" onAction="#onLaunchManualCombatClicked"
+                    styleClass="btn,btn-success,btn-team" />
+                <Button fx:id="launchNOTowerCombatButton"
+                    text="Lancer combat de la Tour NO"
+                    onAction="#onLaunchNOTowerCombatClicked"
+                    styleClass="btn,btn-success,btn-team" />
+                <Button fx:id="deleteTeamButton" text="Supprimer"
+                    onAction="#onDeleteClicked" styleClass="btn,btn-danger,btn-team" />
+                <Button fx:id="returnMainMenuButton"
+                    text="Retour au menu principal" onAction="#onReturnMainMenuClicked"
                     styleClass="btn,btn-secondary,btn-team" />
             </VBox>
         </HBox>

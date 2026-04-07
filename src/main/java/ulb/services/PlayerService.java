@@ -246,8 +246,8 @@ public class PlayerService {
                         bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(), bugemon.getMaxHp(),
                         bugemon.getXp(), bugemon.getLevel()));
             }
-            teamMembers.add(new TeamMemberDTO(this.playerId, team.getName(), bugemon.getName(),
-                    team.getSlotPosition(bugemon)));
+            teamMembers.add(
+                    new TeamMemberDTO(this.playerId, team.getName(), bugemon.getName(), team.getSlotPosition(bugemon)));
         }
         this.playerRepository.modifyTeam(this.playerId, team.getName(), teamMembers);
     }

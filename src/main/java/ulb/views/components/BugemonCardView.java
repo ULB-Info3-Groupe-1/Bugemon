@@ -46,7 +46,7 @@ public class BugemonCardView extends ComponentView {
         this.nameLabel.setText(bugemonData.map(Bugemon::getName).orElse(EMPTY_NAME));
         this.levelLabel.setText(bugemonData.map(b -> "Lv." + b.getLevel()).orElse(""));
         this.imageView.setImage(
-                bugemonData.map(d -> new Image(new File("resources/sprites/" + d.getSpriteURL()).toURI().toString()))
+                bugemonData.map(d -> new Image(new File("assets/sprites/" + d.getSpriteURL()).toURI().toString()))
                         .orElse(EMPTY_IMAGE));
         bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopupView.show(b, e)));
     }
