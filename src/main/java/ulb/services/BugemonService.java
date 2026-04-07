@@ -5,8 +5,8 @@ import java.util.List;
 import ulb.factory.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
-import ulb.repository.StaticDataRepository;
-import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repositories.StaticDataRepository;
+import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.services.exceptions.BugemonNameIsEmptyException;
 
 public class BugemonService {

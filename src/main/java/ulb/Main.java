@@ -11,10 +11,10 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.repository.DatabaseConnection;
-import ulb.repository.PlayerRepository;
-import ulb.repository.QueryLoader;
-import ulb.repository.StaticDataRepository;
+import ulb.repositories.DatabaseConnection;
+import ulb.repositories.PlayerRepository;
+import ulb.repositories.QueryLoader;
+import ulb.repositories.StaticDataRepository;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 

@@ -18,7 +18,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
-import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repositories.dto.CreateBugemonDTO;
 
 public class TestParser {
     @Test

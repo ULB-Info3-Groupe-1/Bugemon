@@ -1,4 +1,4 @@
-package ulb.repository;
+package ulb.repositories;
 
 import java.util.Map;
 

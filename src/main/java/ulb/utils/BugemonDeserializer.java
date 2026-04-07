@@ -17,7 +17,7 @@ import com.google.gson.JsonParseException;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repositories.dto.CreateBugemonDTO;
 
 /**
  * Custom Gson deserializer for {@link Bugemon}; resolves attack IDs via a pre-loaded map. Sprite paths are normalised

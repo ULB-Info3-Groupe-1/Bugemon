@@ -1,4 +1,4 @@
-package ulb.repository;
+package ulb.repositories;
 
 /** Centralised database column name constants. */
 public class DatabaseColumns {
