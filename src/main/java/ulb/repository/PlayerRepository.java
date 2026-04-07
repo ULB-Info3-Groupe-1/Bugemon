@@ -268,4 +268,18 @@ public class PlayerRepository extends AbstractRepository {
             throw new IllegalStateException("renameTeam failed", e);
         }
     }
+
+    public void modifyTeam(int playerId, String teamName, List<TeamMemberDTO> members) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("RemoveTeamComposition"))) {
+            ps.setInt(1, playerId);
+            ps.setString(2, teamName);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Remove team members failed", e);
+        }
+
+        for (TeamMemberDTO member : members) {
+            this.addTeamMember(member);
+        }
+    }
 }

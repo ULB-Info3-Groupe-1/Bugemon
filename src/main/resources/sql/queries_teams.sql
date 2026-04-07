@@ -38,3 +38,8 @@ UPDATE teams SET name = ? WHERE player_id = ? AND name = ?;
 -- Query
 -- RenameTeamMembers
 UPDATE team_members SET team_name = ? WHERE player_id = ? AND team_name = ?;
+
+-- Query
+-- RemoveTeamComposition
+DELETE FROM team_members 
+WHERE player_id = ? AND team_name = ?;

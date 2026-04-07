@@ -10,7 +10,7 @@ import ulb.services.PlayerService;
 import ulb.services.exceptions.TeamEmptyException;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
-import ulb.views.CreateTeamView;
+import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
 /**
@@ -18,21 +18,21 @@ import ulb.views.ViewLoader;
  * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
  * controller never pushes data into the view.
  */
-public class CreateTeamController extends Controller<CreateTeamView> implements CreateTeamView.Listener {
+public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
     private final PlayerService playerService;
     private final BugemonService bugemonService;
     private BugemonTeam selectedTeam;
 
     /**
      * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
-     * {@link ulb.views.CreateTeamView#refresh()} to populate the Bugemon grid.
+     * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
      *
      * @throws IOException
      *             if the view fails to load its FXML resource.
      */
-    public CreateTeamController(MetaController metaController, PlayerService playerService,
+    public ManageTeamController(MetaController metaController, PlayerService playerService,
             BugemonService bugemonService) throws IOException {
-        super(metaController, ViewLoader.load(CreateTeamView::new));
+        super(metaController, ViewLoader.load(ManageTeamView::new));
         this.playerService = playerService;
         this.bugemonService = bugemonService;
         this.selectedTeam = new BugemonTeam();
@@ -155,5 +155,14 @@ public class CreateTeamController extends Controller<CreateTeamView> implements 
 
     private boolean teamNameIsEmpty(String name) {
         return name.trim().isEmpty();
+    }
+
+    @Override
+    public void onModifyTeam() {
+        try {
+            this.playerService.modifyTeam(this.selectedTeam);
+        } catch (TeamEmptyException e) {
+            this.view.showEmptyTeamAlert();
+        }
     }
 }

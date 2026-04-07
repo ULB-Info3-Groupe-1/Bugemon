@@ -14,7 +14,7 @@
 <?import ulb.views.components.BugemonTeamView?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.CreateTeamView">
+    fx:controller="ulb.views.ManageTeamView">
     <padding>
         <Insets top="8" right="20" bottom="8" left="20" />
     </padding>
@@ -66,6 +66,8 @@
                 <Button text="Sauvegarder" onAction="#onSaveClicked"
                     styleClass="btn,btn-success,btn-team" />
                 <Button text="Renommer" onAction="#onRenameClicked"
+                    styleClass="btn,btn-success,btn-team" />
+                    <Button text="Modifier l'équipe" onAction="#onModifyTeamClicked"
                     styleClass="btn,btn-success,btn-team" />
                 <Button text="Nouvelle équipe +"
                     onAction="#onAddNewTeamClicked"
