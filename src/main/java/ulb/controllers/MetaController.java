@@ -48,10 +48,10 @@ public class MetaController {
      * @throws IOException
      *             if a controller or view fails to initialize
      */
-    public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
+    public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService)
+            throws IOException {
         this.stage = primaryStage;
 
-        BugemonService bugemonService = new BugemonService();
         this.mainMenuController = new MainMenuController(this, playerService);
         this.createTeamController = new CreateTeamController(this, playerService, bugemonService);
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);

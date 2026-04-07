@@ -33,14 +33,65 @@ import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
 public class StaticDataRepository {
-
+    private static final int CRITICAL_TABLES_COUNT = 7;
     private static final String SPRITE_DIRECTORY_PATH = "resources/sprites";
-    private final DatabaseRepository dbRepository;
-    private final DatabaseConnection dbConnection;
 
-    public StaticDataRepository(DatabaseRepository dbRepository, DatabaseConnection dbConnection) {
-        this.dbRepository = dbRepository;
+    private final DatabaseConnection dbConnection;
+    private final Map<String, String> queries;
+
+    public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         this.dbConnection = dbConnection;
+        this.queries = queries;
+        this.prepareDatabase();
+    }
+
+    // TODO: remove duplication code here and in PlayerRepository
+    /**
+     * Returns the SQL string for the given query name.
+     *
+     * @throws IllegalArgumentException
+     *             if the query name is not found
+     */
+    public String getSql(String queryName) {
+        String sql = this.queries.get(queryName);
+        if (sql == null) {
+            throw new IllegalArgumentException("SQL query not found in Map : " + queryName);
+        }
+        return sql;
+    }
+
+    private void prepareDatabase() {
+        // Verify if the critical tables exist in the database. If not, we create the schema and add
+        // the default game data
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.queries.get("isTablesPresent"))) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
+                this.createSchema();
+                this.addDefaultGameData();
+                return;
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("isTablesPresent failed", e);
+        }
+
+        // If the tables exist, we check if they contain the static game data. If not, we add the
+        // static game data
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("IsDataEmpty"))) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next() && rs.getInt("total_rows") == 0) {
+                this.addDefaultGameData();
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("IsDataEmpty failed", e);
+        }
+    }
+
+    private void createSchema() {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("CreateSchema"))) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("createSchema failed", e);
+        }
     }
 
     public void addDefaultGameData() {
@@ -65,7 +116,7 @@ public class StaticDataRepository {
     }
 
     private void saveAttack(Attack attack) throws SQLException {
-        try (PreparedStatement psAttack = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveAttack"))) {
+        try (PreparedStatement psAttack = this.dbConnection.prepareStatement(this.queries.get("SaveAttack"))) {
             psAttack.setString(1, attack.id());
             psAttack.setString(2, attack.name());
             psAttack.setObject(3, attack.type() != null ? attack.type().name() : null, Types.VARCHAR);
@@ -80,7 +131,7 @@ public class StaticDataRepository {
             return;
         }
 
-        try (PreparedStatement psEffect = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveEffect"))) {
+        try (PreparedStatement psEffect = this.dbConnection.prepareStatement(this.queries.get("SaveEffect"))) {
             for (Effect effect : attack.effects()) {
                 psEffect.setString(1, attack.id()); // Foreign key to the attack
                 this.setEffectParameters(psEffect, effect);
@@ -141,8 +192,7 @@ public class StaticDataRepository {
 
     public List<Bugemon> getAllDefaultBugemons() {
         List<Bugemon> bugemons = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection
-                .prepareStatement(this.dbRepository.getSql("GetAllDefaultBugemons"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.queries.get("GetAllDefaultBugemons"))) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 BugemonType type = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TYPE, BugemonType.class);
@@ -167,7 +217,7 @@ public class StaticDataRepository {
     }
 
     public Attack getAttackById(String attackId) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetAttackById"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.queries.get("GetAttackById"))) {
             ps.setString(1, attackId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -184,8 +234,7 @@ public class StaticDataRepository {
 
     public List<Effect> getEffectByAttackId(String attackId) {
         List<Effect> effects = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection
-                .prepareStatement(this.dbRepository.getSql("GetEffectByAttackId"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.queries.get("GetEffectByAttackId"))) {
             ps.setString(1, attackId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -237,7 +286,7 @@ public class StaticDataRepository {
             throw new UncheckedIOException("Error occurred while saving the sprite for bugemon: " + bugemon.name(), e);
         }
 
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("SaveBugemon"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.queries.get("SaveBugemon"))) {
             ps.setString(1, bugemon.name());
             ps.setString(2, bugemon.type().name());
             ps.setString(3, fileName);
@@ -291,7 +340,7 @@ public class StaticDataRepository {
      * @return (StaticBugemonDataDTO) the bugemon
      */
     public StaticBugemonDataDTO getBugemonByName(String name) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.dbRepository.getSql("GetBugemonByName"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.queries.get("GetBugemonByName"))) {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
