@@ -36,7 +36,7 @@ public class MetaController {
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final MainMenuController mainMenuController;
-    private final CreateTeamController createTeamController;
+    private final ManageTeamController manageTeamController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
     private final NOTowerController noTowerController;
@@ -60,7 +60,7 @@ public class MetaController {
         this.stage = primaryStage;
 
         this.mainMenuController = new MainMenuController(this, playerService);
-        this.createTeamController = new CreateTeamController(this, playerService, bugemonService);
+        this.manageTeamController = new ManageTeamController(this, playerService, bugemonService);
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService);
         this.noTowerController = new NOTowerController(this, playerService, bugemonService);
@@ -87,7 +87,7 @@ public class MetaController {
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
-            this.createTeamController.show(this.stage);
+            this.manageTeamController.show(this.stage);
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);

@@ -20,14 +20,20 @@ import ulb.views.components.BugemonTeamView;
  * {@link #refresh()}. Dispatches player interactions through a {@link Listener}; holds no reference to any concrete
  * controller class.
  */
-public class CreateTeamView extends View {
+public class ManageTeamView extends View {
+
+    enum TeamFormMode {
+        EDIT,
+        CREATE
+    }
+
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
     private static final String INVALID_NAME = "Nom d'équipe invalide";
     private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
     private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe déjà utilisé";
     private static final String TEAM_EMPTY = "Équipe vide";
 
-    private final String fxmlPath = "/fxml/CreateTeam.fxml";
+    private static final String FXML_PATH = "/fxml/ManageTeam.fxml";
 
     @FXML
     private AllBugemonsView allBugemonsGridView;
@@ -52,7 +58,7 @@ public class CreateTeamView extends View {
         this.allBugemonsGridView.setListener(new AllBugemonsView.Listener() {
             @Override
             public void onBugemonClicked(Bugemon bugemon) {
-                CreateTeamView.this.listener.onBugemonSelected(bugemon);
+                ManageTeamView.this.listener.onBugemonSelected(bugemon);
             }
         }
 
@@ -61,14 +67,14 @@ public class CreateTeamView extends View {
         this.bugemonsTeamView.setListener(new BugemonTeamView.Listener() {
             @Override
             public void onBugemonClicked(Bugemon bugemon) {
-                CreateTeamView.this.listener.onBugemonSelected(bugemon);
+                ManageTeamView.this.listener.onBugemonSelected(bugemon);
             }
         });
     }
 
     @Override
     public String getPath() {
-        return this.fxmlPath;
+        return FXML_PATH;
     }
 
     public void setListener(Listener listener) {
@@ -99,6 +105,11 @@ public class CreateTeamView extends View {
     @FXML
     private void onAddNewTeamClicked() {
         this.listener.onAddNewTeam();
+    }
+
+    @FXML
+    private void onModifyTeamClicked() {
+        this.listener.onModifyTeam();
     }
 
     @FXML
@@ -177,5 +188,7 @@ public class CreateTeamView extends View {
         void onAddNewTeam();
 
         void onBugemonSelected(Bugemon bugemon);
+
+        void onModifyTeam();
     }
 }
