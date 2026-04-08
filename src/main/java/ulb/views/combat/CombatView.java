@@ -181,19 +181,43 @@ public abstract class CombatView extends View {
     // ── Attack animations ─────────────────────────────────────────────────────
 
     public void playTrainerAttackAnimation(Runnable onFinished) {
-        this.attackAnimationView.playTrainerAttackAnimation(onFinished);
+        this.setInputLocked(true);
+        this.attackAnimationView.playTrainerAttackAnimation(() -> {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+            this.setInputLocked(false);
+        });
     }
 
     public void playOpponentAttackAnimation(Runnable onFinished) {
-        this.attackAnimationView.playOpponentAttackAnimation(onFinished);
+        this.setInputLocked(true);
+        this.attackAnimationView.playOpponentAttackAnimation(() -> {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+            this.setInputLocked(false);
+        });
     }
 
     public void playDeathAnimationForTrainer(Runnable onFinished) {
-        this.attackAnimationView.playDeathAnimationForTrainer(onFinished);
+        this.setInputLocked(true);
+        this.attackAnimationView.playDeathAnimationForTrainer(() -> {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+            this.setInputLocked(false);
+        });
     }
 
     public void playDeathAnimationForOpponent(Runnable onFinished) {
-        this.attackAnimationView.playDeathAnimationForOpponent(onFinished);
+        this.setInputLocked(true);
+        this.attackAnimationView.playDeathAnimationForOpponent(() -> {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+            this.setInputLocked(false);
+        });
     }
 
     public void makeTrainerBugemonReappear() {

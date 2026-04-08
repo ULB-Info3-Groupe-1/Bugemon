@@ -13,12 +13,12 @@ public abstract class View {
     private Parent root;
 
     /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
-    public void initRoot(Parent newroot) {
+    protected void initRoot(Parent newroot) {
         this.root = newroot;
     }
 
     /** Returns the FXML resource path used by {@link ViewLoader} to load this view. */
-    public abstract String getPath();
+    protected abstract String getPath();
 
     /**
      * Reads the current state from the model and updates every UI component. Called by the controller after any model
@@ -33,7 +33,7 @@ public abstract class View {
     }
 
     /** Displays a warning dialog with the given title and message. */
-    public void showAlert(String title, String message) {
+    protected void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -49,4 +49,20 @@ public abstract class View {
     public void showNoTeamAlert() {
         this.showAlert("Aucune équipe active", "Veuillez créer ou charger une équipe avant de lancer un combat.");
     }
+
+    /**
+     * Lock the player's input.
+     * @param locked (boolean) true to lock, false to unlock
+     */
+    protected void setInputLocked(boolean locked) {
+        this.root.setMouseTransparent(locked);
+        if (this.root.getScene() != null) {
+            if (locked) {
+                this.root.getScene().setCursor(javafx.scene.Cursor.WAIT);
+            } else {
+                this.root.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+            }
+        }
+    }
+
 }
