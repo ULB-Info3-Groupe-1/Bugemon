@@ -35,8 +35,6 @@ public class Main extends Application {
         }
 
         stage.setTitle(Configuration.UI.STAGE_TITLE);
-        stage.setResizable(false);
-        stage.setFullScreenExitHint("");
         stage.setMaximized(true);
 
         Scene scene = new Scene(new StackPane());
