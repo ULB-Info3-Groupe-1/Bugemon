@@ -20,7 +20,6 @@ import ulb.services.PlayerService;
 
 /** JavaFX entry point — bootstraps the Bugemon game. */
 public class Main extends Application {
-    private static final String STAGE_TITLE = "Bugemon";
 
     public static void main(String[] args) {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
@@ -35,7 +34,8 @@ public class Main extends Application {
             Font.loadFont(fontStream, 16);
         }
 
-        stage.setTitle(STAGE_TITLE);
+        stage.setTitle(Configuration.UI.STAGE_TITLE);
+        stage.setResizable(false);
         stage.setFullScreenExitHint("");
         stage.setMaximized(true);
 

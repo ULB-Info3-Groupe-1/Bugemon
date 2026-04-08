@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.views.components.ComponentView;
 
@@ -62,7 +63,7 @@ public class SwitchMenuView extends ComponentView {
         HBox row = new HBox();
         row.getStyleClass().add("switch-row");
 
-        File file = new File("assets/sprites/" + b.getSpriteURL());
+        File file = new File(Configuration.Paths.SPRITES + b.getSpriteURL());
         ImageView sprite = new ImageView(new Image(file.toURI().toString(), SPRITE_SIZE, SPRITE_SIZE, true, false));
         sprite.setFitWidth(SPRITE_SIZE);
         sprite.setFitHeight(SPRITE_SIZE);

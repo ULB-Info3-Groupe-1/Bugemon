@@ -1,7 +1,5 @@
 package ulb.controllers;
 
-import java.io.IOException;
-
 import ulb.controllers.MetaController.Window;
 import ulb.services.PlayerService;
 import ulb.views.MainMenuView;
@@ -11,7 +9,7 @@ import ulb.views.ViewLoader;
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
     private final PlayerService playerService;
 
-    public MainMenuController(MetaController metaController, PlayerService playerService) throws IOException {
+    public MainMenuController(MetaController metaController, PlayerService playerService) {
         super(metaController, ViewLoader.load(MainMenuView::new));
         this.playerService = playerService;
         this.view.setListener(this);

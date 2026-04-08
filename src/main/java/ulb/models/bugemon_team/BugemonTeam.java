@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
@@ -17,14 +18,12 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
  * {@link Iterable} for use in enhanced for-loops.
  */
 public class BugemonTeam implements Iterable<Bugemon> {
-    private static final String DEFAULT_NAME = "Unnamed Team";
 
-    public static final int MAX_SIZE = 6;
     private final ArrayList<Bugemon> team = new ArrayList<>();
     private String name;
 
     public BugemonTeam() {
-        this.name = DEFAULT_NAME;
+        this.name = Configuration.Game.DEFAULT_TEAM_NAME;
     }
 
     public BugemonTeam(String name) {
@@ -36,7 +35,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     public boolean isFull() {
-        return this.size() == MAX_SIZE;
+        return this.size() == Configuration.Game.MAX_TEAM_SIZE;
     }
 
     public boolean isEmpty() {
