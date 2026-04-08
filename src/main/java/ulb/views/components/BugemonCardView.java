@@ -69,6 +69,19 @@ public class BugemonCardView extends ComponentView {
         this.listener = listener;
     }
 
+    public void setSprite(File file) {
+        Image image = new Image(file.toURI().toString());
+        this.imageView.setImage(image);
+    }
+
+    public void removeSprite() {
+        this.imageView.setImage(EMPTY_IMAGE);
+    }
+
+    public void setName(String name) {
+        this.nameLabel.setText(name);
+    }
+
     public void select() {
         this.imageView.getStyleClass().add("bugemon-image-selected");
         this.getStyleClass().remove("bugemon-cell");

@@ -21,6 +21,11 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     @Override
+    public void onCreateBugemon() {
+        this.metaController.switchTo(Window.CREATE_BUGEMON);
+    }
+
+    @Override
     public void onNoTower() {
         if (!this.isActiveTeamEmpty()) {
             this.metaController.switchTo(Window.NOTOWER);

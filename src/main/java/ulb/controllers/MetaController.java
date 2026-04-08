@@ -27,6 +27,7 @@ public class MetaController {
         MAIN_MENU,
         CREATE_TEAM,
         EDIT_TEAM,
+        CREATE_BUGEMON,
         MANUAL_COMBAT,
         AUTOMATIC_COMBAT,
         NOTOWER,
@@ -40,6 +41,7 @@ public class MetaController {
     private final MainMenuController mainMenuController;
     private final ManageTeamController createTeamController;
     private final ManageTeamController editTeamController;
+    private final CreateBugemonController createBugemonController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
     private final NOTowerController noTowerController;
@@ -67,6 +69,7 @@ public class MetaController {
                 bugemonService);
         this.editTeamController = new ManageTeamController(ManageTeamView.TeamFormMode.EDIT, this, playerService,
                 bugemonService);
+        this.createBugemonController = new CreateBugemonController(this, bugemonService);
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService);
         this.noTowerController = new NOTowerController(this, playerService, bugemonService);
@@ -98,6 +101,10 @@ public class MetaController {
         this.transitions.put(Window.EDIT_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
             this.editTeamController.show(this.stage);
+        });
+        this.transitions.put(Window.CREATE_BUGEMON, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
+            this.createBugemonController.show(this.stage);
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
