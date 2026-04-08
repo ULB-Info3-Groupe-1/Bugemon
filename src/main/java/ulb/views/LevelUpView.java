@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import ulb.Configuration;
 import ulb.common.dto.BugemonDTO;
 import ulb.common.dto.LevelUpDTO;
 import ulb.models.level_up.LevelUpSession;
@@ -16,7 +17,7 @@ import ulb.models.level_up.LevelUpSession;
  * directly from it in {@link #refresh()}. Holds no reference to any concrete controller class.
  */
 public class LevelUpView extends View {
-    private final String fxmlPath = "/fxml/LevelUp.fxml";
+    private static final String FXML_PATH = "/fxml/LevelUp.fxml";
 
     @FXML
     private Label levelUpText;
@@ -32,9 +33,6 @@ public class LevelUpView extends View {
     private LevelUpSession session;
 
     private Listener listener;
-
-    public LevelUpView() {
-    }
 
     public void setSession(LevelUpSession session) {
         this.session = session;
@@ -61,7 +59,7 @@ public class LevelUpView extends View {
 
     @Override
     public String getPath() {
-        return this.fxmlPath;
+        return FXML_PATH;
     }
 
     @Override
@@ -72,7 +70,7 @@ public class LevelUpView extends View {
         LevelUpDTO levelUp = this.session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
-        File file = new File("assets/sprites/" + bugemon.getSpriteURL());
+        File file = new File(Configuration.Paths.SPRITES + bugemon.getSpriteURL());
         this.bugemonImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau " + bugemon.getLevel() + " !");
 

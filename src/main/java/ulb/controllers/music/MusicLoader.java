@@ -15,12 +15,11 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.Configuration;
+
 /** Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR). */
 public class MusicLoader {
     private static final Logger LOG = LoggerFactory.getLogger(MusicLoader.class);
-
-    private static final String MUSIC_DIR = "/musics/";
-    private static final String SOUND_EFFECTS_DIR = "/sound_effects/";
 
     /**
      * Loads all music files from the given resource directory and assigns them the given ambiance.
@@ -83,11 +82,14 @@ public class MusicLoader {
      *             if any resource directory cannot be accessed
      */
     public void loadAllResources(MusicPlayer musicPlayer) throws IOException {
-        this.loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_COMBAT, Ambiance.COMBAT).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_MENU, Ambiance.MENU).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_CREATE_TEAM, Ambiance.CREATE_TEAM)
+                .forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_VICTORY, Ambiance.VICTORY)
+                .forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_DEFEAT, Ambiance.DEFEAT)
+                .forEach(musicPlayer::addMusic);
     }
 
     private Optional<Music> loadMusic(Path path, Ambiance ambiance) {

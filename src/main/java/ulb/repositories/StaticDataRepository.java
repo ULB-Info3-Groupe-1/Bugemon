@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
@@ -34,7 +35,6 @@ import ulb.utils.Parser;
 
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 7;
-    private static final String SPRITE_DIRECTORY_PATH = "assets/sprites";
 
     private final DatabaseConnection dbConnection;
 
@@ -302,7 +302,7 @@ public class StaticDataRepository extends AbstractRepository {
      *             if the sprite file cannot be saved
      */
     private void saveSpriteFile(URL currentSpriteUrl, String spriteFileName) throws IOException {
-        Path dirDestination = Paths.get(SPRITE_DIRECTORY_PATH);
+        Path dirDestination = Paths.get(Configuration.Paths.SPRITES);
 
         if (!Files.exists(dirDestination)) {
             Files.createDirectories(dirDestination);

@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 
@@ -45,7 +46,7 @@ public class BugemonDetailPopupView extends ComponentView {
 
     private BugemonDetailPopupView(Bugemon bugemon) {
         super(FXML_PATH);
-        File spriteFile = new File("assets/sprites/" + bugemon.getSpriteURL());
+        File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.getSpriteURL());
         this.sprite.setImage(new Image(spriteFile.toURI().toString(), 72, 72, true, false));
         this.nameLabel.setText(bugemon.getName());
         this.nameLabel.getStyleClass().addAll("bugemon-name", bugemon.getType().toString());

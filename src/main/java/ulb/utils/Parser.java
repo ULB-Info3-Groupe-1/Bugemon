@@ -25,6 +25,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
@@ -51,9 +52,9 @@ public class Parser {
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
     // Constants for the paths to the JSON data files within the resources directory
-    private static final String JSON_ATTACK_PATH = "/json/attaques.json";
-    private static final String JSON_BUGEMON_PATH = "/json/bugemons.json";
-    private static final String JSON_ITEMS_PATH = "/json/objets.json";
+    private static final String JSON_ATTACK_PATH = Configuration.Json.ATTACK_PATH;
+    private static final String JSON_BUGEMON_PATH = Configuration.Json.BUGEMON_PATH;
+    private static final String JSON_ITEMS_PATH = Configuration.Json.ITEMS_PATH;
 
     // Static fields to hold the parsed data, accessible via getter methods
     private static Map<String, Attack> attacks;

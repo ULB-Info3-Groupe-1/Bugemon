@@ -4,15 +4,12 @@ import javafx.fxml.FXML;
 
 /** View for the combat defeat screen, dispatching actions through the {@link Listener} interface. */
 public class CombatDefeatView extends View {
-    private final String fxmlPath = "/fxml/CombatDefeat.fxml";
+    private static final String FXML_PATH = "/fxml/CombatDefeat.fxml";
     private Listener listener;
-
-    public CombatDefeatView() {
-    }
 
     @Override
     public String getPath() {
-        return this.fxmlPath;
+        return FXML_PATH;
     }
 
     public void setListener(Listener listener) {

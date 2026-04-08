@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.Configuration;
 import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -18,7 +19,6 @@ import ulb.models.trainer.Trainer;
  * {@link #compareBugemonType(BugemonType, BugemonType)}.
  */
 public class CombatService {
-    private static final String BOSS_NAME = "FinalBoss";
 
     private CombatService() {
         // Private constructor to prevent instantiation
@@ -153,12 +153,12 @@ public class CombatService {
     }
 
     public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
-        final Optional<Bugemon> bossBugemon = bugemonList.stream().filter(obj -> obj.getName().equals(BOSS_NAME))
-                .findFirst();
+        final Optional<Bugemon> bossBugemon = bugemonList.stream()
+                .filter(obj -> obj.getName().equals(Configuration.Game.BOSS_NAME)).findFirst();
         BugemonTeam bossTeam = new BugemonTeam();
 
-        bossTeam.add(bossBugemon.orElseThrow(
-                () -> new RuntimeException("Boss Bugemon with name '" + BOSS_NAME + "' not found in the list.")));
+        bossTeam.add(bossBugemon.orElseThrow(() -> new RuntimeException(
+                "Boss Bugemon with name '" + Configuration.Game.BOSS_NAME + "' not found in the list.")));
 
         return bossTeam;
     }
