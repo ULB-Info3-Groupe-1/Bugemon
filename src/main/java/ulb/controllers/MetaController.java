@@ -22,9 +22,7 @@ import ulb.views.ManageTeamView;
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
-    /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
-     */
+    /** All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition. */
     public enum Window {
         MAIN_MENU,
         CREATE_TEAM,
