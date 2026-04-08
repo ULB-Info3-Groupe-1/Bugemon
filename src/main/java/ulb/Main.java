@@ -36,9 +36,8 @@ public class Main extends Application {
         }
 
         stage.setTitle(STAGE_TITLE);
-        stage.setResizable(false);
         stage.setFullScreenExitHint("");
-        stage.setFullScreen(true);
+        stage.setMaximized(true);
 
         Scene scene = new Scene(new StackPane());
         scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
@@ -55,5 +54,6 @@ public class Main extends Application {
         PlayerService playerService = new PlayerService(bugemonService, playerRepository, "default_player");
         MetaController controller = new MetaController(stage, bugemonService, playerService);
         controller.switchTo(Window.MAIN_MENU);
+        stage.setResizable(false);
     }
 }
