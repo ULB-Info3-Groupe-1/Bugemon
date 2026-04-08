@@ -1,7 +1,5 @@
 package ulb.controllers;
 
-import java.io.IOException;
-
 import ulb.models.bugemon.BugemonType;
 import ulb.services.BugemonService;
 import ulb.views.CreateBugemonView;
@@ -11,7 +9,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
     private final BugemonService bugemonService;
 
-    public CreateBugemonController(MetaController metaController, BugemonService bugemonService) throws IOException {
+    public CreateBugemonController(MetaController metaController, BugemonService bugemonService) {
         super(metaController, ViewLoader.load(CreateBugemonView::new));
         this.bugemonService = bugemonService;
         this.view.setListener(this);
