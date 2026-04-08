@@ -33,7 +33,7 @@ public abstract class View {
     }
 
     /** Displays a warning dialog with the given title and message. */
-    public void showAlert(String title, String message) {
+    protected void showAlert(String title, String message) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle(title);
         alert.setHeaderText(null);
