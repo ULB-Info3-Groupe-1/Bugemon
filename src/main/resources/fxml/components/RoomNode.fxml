@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
+
+<fx:root type="javafx.scene.layout.StackPane"
+    xmlns:fx="http://javafx.com/fxml" styleClass="room-node" prefWidth="80"
+    prefHeight="80" onMouseClicked="#onClick">
+
+    <Rectangle fx:id="background" arcWidth="10" arcHeight="10"
+        width="75" height="75" styleClass="room-background" />
+
+    <ImageView fx:id="roomIcon" fitWidth="50" fitHeight="50"
+        preserveRatio="true" />
+
+    <StackPane fx:id="stateOverlay" styleClass="room-overlay"
+        mouseTransparent="true">
+        <Label fx:id="stateLabel" styleClass="state-label" />
+    </StackPane>
+</fx:root>
