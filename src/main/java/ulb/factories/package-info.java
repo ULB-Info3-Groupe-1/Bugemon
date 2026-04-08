@@ -1,4 +1,4 @@
 /**
  * Factory classes for creating model objects.
  */
-package ulb.factory;
+package ulb.factories;

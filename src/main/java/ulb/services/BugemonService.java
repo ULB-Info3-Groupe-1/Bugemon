@@ -2,7 +2,7 @@ package ulb.services;
 
 import java.util.List;
 
-import ulb.factory.BugemonFactory;
+import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.repositories.StaticDataRepository;
