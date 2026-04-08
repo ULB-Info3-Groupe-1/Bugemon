@@ -13,11 +13,11 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
         super(metaController, ViewLoader.load(CreateBugemonView::new));
         this.bugemonService = bugemonService;
         this.view.setListener(this);
-
     }
 
     @Override
     public void onTypeSelected(BugemonType selectedType) {
+        // need to update the attack list view with the attacks of the selected type
         return;
     }
 
