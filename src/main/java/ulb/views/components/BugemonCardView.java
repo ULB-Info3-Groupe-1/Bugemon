@@ -87,7 +87,7 @@ public class BugemonCardView extends ComponentView {
         this.getStyleClass().remove("bugemon-cell");
         this.getStyleClass().add("bugemon-cell-selected");
     }
-    
+
     public void unselect() {
         this.imageView.getStyleClass().remove("bugemon-image-selected");
         this.getStyleClass().remove("bugemon-cell-selected");
