@@ -21,11 +21,11 @@ public class LevelUpView extends View {
     @FXML
     private Label levelUpText;
     @FXML
+    private Button choice0Button;
+    @FXML
     private Button choice1Button;
     @FXML
     private Button choice2Button;
-    @FXML
-    private Button choice3Button;
     @FXML
     private ImageView bugemonImage;
 
