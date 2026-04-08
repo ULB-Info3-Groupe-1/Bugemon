@@ -14,7 +14,7 @@ public class AllBugemonsView extends ComponentView {
     @FXML
     private FlowPane flowPane;
 
-    Listener listener;
+    private Listener listener;
 
     public AllBugemonsView() {
         super(FXML_PATH);

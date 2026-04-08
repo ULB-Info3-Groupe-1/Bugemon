@@ -15,7 +15,7 @@ public class BugemonTeamView extends ComponentView {
     @FXML
     private GridPane gridPane;
 
-    Listener listener;
+    private Listener listener;
 
     public BugemonTeamView() {
         super(FXML_PATH);
