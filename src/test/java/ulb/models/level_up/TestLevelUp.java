@@ -9,6 +9,7 @@
 package ulb.models.level_up;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -42,5 +43,15 @@ public class TestLevelUp {
             assertTrue(
                     upgrade.hp() >= 0 && upgrade.attack() >= 0 && upgrade.defense() >= 0 && upgrade.initiative() >= 0);
         }
+    }
+
+    @Test
+    public void testGetOutOfBoundsThrows() {
+        this.bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+        LevelUp levelUp = new LevelUp(this.bugemon);
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            levelUp.get(levelUp.numUpgrades());
+        });
     }
 }
