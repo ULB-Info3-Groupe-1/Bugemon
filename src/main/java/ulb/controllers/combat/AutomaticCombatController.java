@@ -5,7 +5,6 @@ import java.io.IOException;
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
 import ulb.models.trainer.AutoTrainer;
-import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
@@ -51,10 +50,5 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     @Override
     protected void onStepsExhausted() {
         this.startTurn();
-    }
-
-    @Override
-    protected void onCombatEnded(Trainer winner) {
-        this.handleCombatResult(winner);
     }
 }

@@ -80,8 +80,8 @@ public class LevelUpView extends View {
 
     public interface Listener {
 
-     // TODO: might be better to just pass the LevelUp instance as a param instead of the index
-     void onUpgradeChosen(int optionIdx);
+        // TODO: might be better to just pass the LevelUp instance as a param instead of the index
+        void onUpgradeChosen(int optionIdx);
 
     }
 }

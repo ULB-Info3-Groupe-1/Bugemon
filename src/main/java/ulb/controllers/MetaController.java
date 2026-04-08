@@ -1,9 +1,14 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.CombatDefeatController;
@@ -13,6 +18,7 @@ import ulb.controllers.combat.NOTowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import ulb.models.level_up.LevelUp;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.ManageTeamView;
@@ -22,6 +28,8 @@ import ulb.views.ManageTeamView;
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
+    private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
+
     /** All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition. */
     public enum Window {
         MAIN_MENU,
@@ -35,6 +43,9 @@ public class MetaController {
         COMBAT_DEFEAT,
         LEVEL_UP,
     }
+
+    // TODO: prob not the best place to store this
+    private List<LevelUp> pendingLevelUps = new ArrayList<>();
 
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
@@ -79,10 +90,37 @@ public class MetaController {
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
-        this.manualCombatController.setOnVictory(this.levelUpController::setLevelUp);
-        this.automaticCombatController.setOnVictory(this.levelUpController::setLevelUp);
-
         this.initTransitions();
+    }
+
+    public void onCombatFinished(List<LevelUp> levelUps, boolean won) {
+        LOG.info(String.format("onCombatFinished, won: %b, levelUps, numLevelUps %d", won, levelUps.size()));
+
+        this.pendingLevelUps = levelUps; // store level-ups for later
+
+        this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
+    }
+
+    public void onCombatVictoryFinished() {
+        if (this.pendingLevelUps.size() > 0) {
+            this.levelUpController.setLevelUps(this.pendingLevelUps);
+            this.switchTo(Window.LEVEL_UP);
+        } else {
+            this.switchTo(Window.MAIN_MENU);
+        }
+    }
+
+    public void onCombatDefeatRetry() {
+        // TODO: correct impl
+        this.switchTo(Window.MAIN_MENU);
+    }
+
+    public void onCombatDefeatBackToMainMenu() {
+        this.switchTo(Window.MAIN_MENU);
+    }
+
+    public void onLevelUpfinished() {
+        this.switchTo(Window.MAIN_MENU);
     }
 
     private void initializeMusicResources() throws IOException {

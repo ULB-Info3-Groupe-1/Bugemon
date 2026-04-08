@@ -5,10 +5,8 @@ import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
-import ulb.controllers.MetaController.Window;
 import ulb.models.level_up.LevelUp;
 import ulb.models.level_up.LevelUpSession;
-import ulb.models.level_up.Upgrade;
 import ulb.services.PlayerService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
@@ -37,33 +35,34 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
     }
 
     @Override
-    public void onUpgradeChosen(int optionIdx) {
+    public void onUpgradeChosen(int upgradeIdx) {
         LevelUp levelUp = this.levelUps.remove();
-        Upgrade upgrade = levelUp.get(optionIdx);
-        levelUp.getBugemon().applyUpgrade(upgrade);
+        levelUp.apply(upgradeIdx);
+
         this.playerService.saveBugemonState(levelUp.getBugemon());
 
-
         if (this.levelUps.isEmpty()) {
-            this.playerService.saveActiveTeamState();
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
+            this.metaController.onLevelUpfinished();
         } else {
-            this.view.refresh();
+            this.updateDisplayedLevelUp();
         }
+    }
+
+    public void updateDisplayedLevelUp() {
+        this.view.setLevelUp(this.levelUps.peek());
+        this.view.refresh();
     }
 
     /**
      * Initialises the session with the given list and navigates to the level-up screen, or goes directly to victory if
      * the list is empty.
      */
-    public void setLevelUp(List<LevelUp> lvlsUp) {
-        if (!lvlsUp.isEmpty()) {
-            this.levelUps = new ArrayDeque<>(lvlsUp);
-            this.metaController.switchTo(Window.LEVEL_UP);
-            this.view.refresh();
-        } else {
-            this.playerService.saveActiveTeamState();
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
+    public void setLevelUps(List<LevelUp> levelUps) {
+        if (levelUps.isEmpty()) {
+            throw new IllegalArgumentException("level-ups list cannot be empty");
         }
+
+        this.levelUps = new ArrayDeque<>(levelUps);
+        this.updateDisplayedLevelUp();
     }
 }

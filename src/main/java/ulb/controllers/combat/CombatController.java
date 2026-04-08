@@ -3,14 +3,12 @@ package ulb.controllers.combat;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
-import ulb.controllers.MetaController.Window;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.combat.TurnStep;
@@ -35,7 +33,6 @@ import ulb.views.combat.CombatView;
 public abstract class CombatController<V extends CombatView> extends Controller<V> implements CombatView.NextListener {
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
-    private Consumer<List<LevelUp>> onVictory;
     protected final CombatAnimationController animationController;
     protected final PlayerService playerService;
     protected final BugemonService bugemonService;
@@ -53,10 +50,6 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         this.bugemonService = bugemonService;
 
         this.view.setNextListener(this);
-    }
-
-    public void setOnVictory(Consumer<List<LevelUp>> onVictory) {
-        this.onVictory = onVictory;
     }
 
     public abstract void startCombat(boolean shouldRestoreHp);
@@ -136,7 +129,16 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * @param winner
      *            the trainer who won the combat.
      */
-    protected abstract void onCombatEnded(Trainer winner);
+    protected void onCombatEnded(Trainer winner) {
+        // FIXME: this should obv not be done here
+        this.playerService.restoreHpActiveTeam();
+
+        List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner, this.combat.getOpponentTrainer());
+        this.playerService.saveActiveTeamState();
+
+        boolean won = winner == this.playerTrainer;
+        this.metaController.onCombatFinished(levelUps, won);
+    }
 
     // ── Shared utilities ──────────────────────────────────────────────────────
 
@@ -149,25 +151,6 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
         return new AutoTrainer(
                 CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTeamSize));
-    }
-
-    /**
-     * Distributes XP on victory and navigates to the correct outcome screen.
-     *
-     * @param winner
-     *            the winning trainer.
-     */
-    protected void handleCombatResult(Trainer winner) {
-        if (winner == this.playerTrainer) {
-            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner,
-                    this.combat.getOpponentTrainer());
-            this.onVictory.accept(levelUps);
-        } else {
-            this.metaController.switchTo(Window.COMBAT_DEFEAT);
-        }
-        if (this.restoreHpAfterCombat) {
-            this.playerService.restoreHpActiveTeam();
-        }
     }
 
     @Override
