@@ -32,20 +32,15 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
         super(metaController, ViewLoader.load(LevelUpView::new));
         this.playerService = playerService;
         this.view.setListener(this);
-        this.view.setSession(this.session);
     }
 
     @Override
     public void onUpgradeChosen(int optionIdx) {
-        this.chooseOption(optionIdx);
-    }
-
-    /** Applies the chosen stat bonus and advances to the next level-up event. */
-    public void chooseOption(int optionIdx) {
         LevelUp levelUp = this.session.getCurrent();
         Upgrade upgrade = levelUp.get(optionIdx);
         levelUp.getBugemon().applyUpgrade(upgrade);
         this.playerService.saveBugemonState(levelUp.getBugemon());
+
         this.cont();
     }
 
