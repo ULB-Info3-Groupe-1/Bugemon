@@ -27,7 +27,7 @@ public class BugemonCardView extends ComponentView {
     @FXML
     private Label levelLabel;
 
-    Listener listener;
+    private Listener listener;
 
     private final Optional<Bugemon> bugemonData;
 
