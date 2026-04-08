@@ -1,7 +1,5 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
-
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
@@ -10,7 +8,7 @@ import ulb.views.ViewLoader;
 
 /** Controller for the defeat screen; offers retry (→ CREATE_TEAM) or back to main menu. */
 public class CombatDefeatController extends Controller<CombatDefeatView> implements CombatDefeatView.Listener {
-    public CombatDefeatController(MetaController metaController) throws IOException {
+    public CombatDefeatController(MetaController metaController) {
         super(metaController, ViewLoader.load(CombatDefeatView::new));
         this.view.setListener(this);
     }

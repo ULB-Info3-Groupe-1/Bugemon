@@ -19,7 +19,6 @@ import ulb.views.components.ComponentView;
  * dispatches through the callback registered via {@link #setOnBack(Runnable)}.
  */
 public class SwitchMenuView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/SwitchMenu.fxml";
     /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */
     private static final int SPRITE_SIZE = 40;
 
@@ -27,7 +26,7 @@ public class SwitchMenuView extends ComponentView {
     private Runnable onBack;
 
     public SwitchMenuView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_SWITCH_MENU);
     }
 
     public void setOnSwitch(Consumer<Bugemon> callback) {

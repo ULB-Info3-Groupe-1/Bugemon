@@ -2,15 +2,16 @@ package ulb.views;
 
 import javafx.fxml.FXML;
 
+import ulb.Configuration;
+
 /** View for the combat victory screen, dispatching actions through the {@link Listener} interface. */
 public class CombatVictoryView extends View {
-    private static final String FXML_PATH = "/fxml/CombatVictory.fxml";
 
     private Listener listener;
 
     @Override
     public String getPath() {
-        return FXML_PATH;
+        return Configuration.Paths.FXML.COMBAT_VICTORY_VIEW;
     }
 
     public void setListener(Listener listener) {

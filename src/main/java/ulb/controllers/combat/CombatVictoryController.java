@@ -1,7 +1,5 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
-
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
@@ -10,7 +8,7 @@ import ulb.views.ViewLoader;
 
 /** Controller for the victory screen; navigates to NO Tower or main menu on continue. */
 public class CombatVictoryController extends Controller<CombatVictoryView> implements CombatVictoryView.Listener {
-    public CombatVictoryController(MetaController metaController) throws IOException {
+    public CombatVictoryController(MetaController metaController) {
         super(metaController, ViewLoader.load(CombatVictoryView::new));
         this.view.setListener(this);
     }

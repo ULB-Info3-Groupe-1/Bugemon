@@ -1,7 +1,8 @@
 package ulb.models.no_tower;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.EmptyStackException;
-import java.util.Stack;
 
 import ulb.models.combat.Combat;
 import ulb.models.no_tower.room.CombatRoom;
@@ -15,7 +16,7 @@ import ulb.services.CombatService;
 public class Floor {
     private final Trainer playerTrainer;
     private final BugemonService bugemonService;
-    private Stack<Room> stages = new Stack<>();
+    private final Deque<Room> stages = new ArrayDeque<>();
 
     public Floor(Trainer playerTrainer, BugemonService bugemonService) {
         this.playerTrainer = playerTrainer;

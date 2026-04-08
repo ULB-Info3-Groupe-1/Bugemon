@@ -1,5 +1,8 @@
 package ulb.controllers.combat;
 
+import ulb.common.Efficiency;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.TurnStep;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.CombatView;
@@ -25,27 +28,32 @@ public class CombatAnimationController {
      */
     public void playStepAnimation(TurnStep step, Trainer playerTrainer, Runnable onFinished) {
         switch (step) {
-            case TurnStep.AttackStep s -> {
-                boolean fromPlayer = s.attacker() == playerTrainer;
+            case TurnStep.AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) -> {
+                boolean fromPlayer = attacker == playerTrainer;
                 this.playAttackAnimation(fromPlayer, onFinished);
             }
-            case TurnStep.BugemonKoStep s -> {
-                boolean isPlayerSide = s.trainer() == playerTrainer;
+
+            case TurnStep.BugemonKoStep(Trainer trainer) -> {
+                boolean isPlayerSide = trainer == playerTrainer;
                 this.playDeathAnimation(isPlayerSide, onFinished);
             }
-            case TurnStep.TrainerKoStep s -> {
-                boolean isPlayerSide = s.trainerKo() == playerTrainer;
+
+            case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
+                boolean isPlayerSide = trainerKo == playerTrainer;
                 this.playDeathAnimation(isPlayerSide, onFinished);
             }
-            case TurnStep.ForfeitStep s -> {
-                boolean isPlayerForfeiting = s.trainer() == playerTrainer;
+
+            case TurnStep.ForfeitStep(Trainer trainer) -> {
+                boolean isPlayerForfeiting = trainer == playerTrainer;
                 this.playDeathAnimation(isPlayerForfeiting, onFinished);
             }
-            case TurnStep.SwitchStep s -> {
-                boolean forPlayer = s.trainer() == playerTrainer;
+
+            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) -> {
+                boolean forPlayer = trainer == playerTrainer;
                 this.makeBugemonReappear(forPlayer);
                 onFinished.run();
             }
+
             default -> onFinished.run();
         }
     }

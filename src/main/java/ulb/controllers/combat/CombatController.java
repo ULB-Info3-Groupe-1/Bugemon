@@ -96,30 +96,28 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         LOG.debug("Advancing step: {}", step);
 
         switch (step) {
-            case TurnStep.TrainerKoStep koStep -> {
-                Trainer winner = koStep.trainerKo() == this.playerTrainer ? this.combat.getOpponentTrainer()
+            case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
+                Trainer winner = trainerKo == this.playerTrainer ? this.combat.getOpponentTrainer()
                         : this.playerTrainer;
-                LOG.info("Combat ended — winner: {}", winner.getCurrentBugemonName());
+                LOG.info("Combat ended – winner: {}", winner.getCurrentBugemonName());
                 this.onCombatEnded(winner);
                 return;
             }
 
-            case TurnStep.ForfeitStep forfeitStep -> {
-                Trainer winner = forfeitStep.trainer() == this.playerTrainer ? this.combat.getOpponentTrainer()
-                        : this.playerTrainer;
-                LOG.info("Combat ended by forfeit — winner: {}", winner.getCurrentBugemonName());
+            case TurnStep.ForfeitStep(Trainer trainer) -> {
+                Trainer winner = trainer == this.playerTrainer ? this.combat.getOpponentTrainer() : this.playerTrainer;
+                LOG.info("Combat ended by forfeit – winner: {}", winner.getCurrentBugemonName());
                 this.onCombatEnded(winner);
                 return;
             }
 
-            case TurnStep.BugemonKoStep koStep -> {
-                if (!koStep.trainer().isDefeated()) {
-                    koStep.trainer().reactToKo();
-                    this.view.refresh();
-                }
+            case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> {
+                trainer.reactToKo();
+                this.view.refresh();
             }
 
             default -> {
+                // No specific action required for other steps
             }
         }
 

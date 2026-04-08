@@ -17,7 +17,6 @@ import ulb.models.level_up.LevelUpSession;
  * directly from it in {@link #refresh()}. Holds no reference to any concrete controller class.
  */
 public class LevelUpView extends View {
-    private static final String FXML_PATH = "/fxml/LevelUp.fxml";
 
     @FXML
     private Label levelUpText;
@@ -59,7 +58,7 @@ public class LevelUpView extends View {
 
     @Override
     public String getPath() {
-        return FXML_PATH;
+        return Configuration.Paths.FXML.LEVEL_UP_VIEW;
     }
 
     @Override
