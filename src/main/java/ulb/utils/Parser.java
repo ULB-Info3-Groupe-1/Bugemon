@@ -37,7 +37,7 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
-import ulb.repository.dto.CreateBugemonDTO;
+import ulb.repositories.dto.CreateBugemonDTO;
 
 /**
  * Parses the three bundled JSON resource files (attacks, Bugemons, items/inventory). The main entry point is

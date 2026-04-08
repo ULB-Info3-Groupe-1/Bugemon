@@ -1,4 +1,4 @@
-package ulb.repository;
+package ulb.repositories;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,9 +11,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.repository.dto.PlayerBugemonDTO;
-import ulb.repository.dto.TeamDTO;
-import ulb.repository.dto.TeamMemberDTO;
+import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.repositories.dto.TeamDTO;
+import ulb.repositories.dto.TeamMemberDTO;
 
 public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
