@@ -186,7 +186,7 @@
               <lineEndings>UNIX</lineEndings>
               <java>
                   <eclipse>
-                      <version>4.26</version>
+                      <version>4.31</version>
                       <file>${project.basedir}/.eclipse-formatter.xml</file>
                   </eclipse>
                   <removeUnusedImports/>

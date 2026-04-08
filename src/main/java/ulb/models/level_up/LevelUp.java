@@ -48,7 +48,7 @@ public class LevelUp implements LevelUpDTO {
                 case ATTACK -> attack++;
                 case DEFENSE -> defense++;
                 case INITIATIVE -> initiative++;
-                default -> throw new RuntimeException("unknown stat");
+                default -> throw new IllegalStateException("unknown stat");
             }
         }
         return new Upgrade(hp * 2, attack, defense, initiative * 2);

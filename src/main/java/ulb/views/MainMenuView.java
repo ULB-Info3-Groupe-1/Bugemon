@@ -3,6 +3,8 @@ package ulb.views;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import ulb.Configuration;
+
 /**
  * View for the main menu screen. Dispatches player interactions to the controller exclusively through callbacks
  * registered via setters. The view holds no reference to any concrete controller class.
@@ -20,8 +22,6 @@ public class MainMenuView extends View {
     private Button startManualCombatButton;
 
     private Listener listener;
-
-    private static final String FXML_PATH = "/fxml/MainMenu.fxml";
 
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -59,7 +59,7 @@ public class MainMenuView extends View {
 
     @Override
     public String getPath() {
-        return FXML_PATH;
+        return Configuration.Paths.FXML.MAIN_MENU_VIEW;
     }
 
     @Override

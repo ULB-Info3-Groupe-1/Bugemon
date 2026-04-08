@@ -3,6 +3,7 @@ package ulb.views.combat.components;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import ulb.Configuration;
 import ulb.views.components.ComponentView;
 
 /**
@@ -11,7 +12,6 @@ import ulb.views.components.ComponentView;
  * disabled whenever a voluntary switch is not available, as signalled by {@link #refresh(boolean)}.
  */
 public class ActionMenuView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/ActionMenu.fxml";
 
     @FXML
     private Button topLeft;
@@ -28,7 +28,7 @@ public class ActionMenuView extends ComponentView {
     private Runnable onSurrender;
 
     public ActionMenuView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_ACTION_MENU);
     }
 
     public void refresh(boolean canSwitch) {

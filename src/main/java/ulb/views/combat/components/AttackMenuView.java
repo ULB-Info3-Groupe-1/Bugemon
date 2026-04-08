@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.trainer.Trainer;
 import ulb.views.components.ComponentView;
@@ -15,7 +16,6 @@ import ulb.views.components.ComponentView;
  * applied via {@link #show(List, Trainer)} at display time.
  */
 public class AttackMenuView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/AttackMenu.fxml";
 
     @FXML
     private Button topLeft;
@@ -31,7 +31,7 @@ public class AttackMenuView extends ComponentView {
     private Runnable onBack;
 
     public AttackMenuView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_ATTACK_MENU);
     }
 
     public void setOnAttack(Consumer<Attack> callback) {

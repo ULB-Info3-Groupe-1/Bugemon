@@ -92,24 +92,24 @@ public class Combat {
     }
 
     private void resolveItem(TurnAction playerAction, TurnAction opponentAction) {
-        if (playerAction instanceof TurnAction.UseItemAction useItemAction) {
-            this.handleItem((ManualTrainer) this.playerTrainer, useItemAction.item());
-            this.turnResult.addStep(new TurnStep.ItemStep(this.playerTrainer, useItemAction.item()));
+        if (playerAction instanceof TurnAction.UseItemAction(Item useItemAction)) {
+            this.handleItem((ManualTrainer) this.playerTrainer, useItemAction);
+            this.turnResult.addStep(new TurnStep.ItemStep(this.playerTrainer, useItemAction));
         }
-        if (opponentAction instanceof TurnAction.UseItemAction useItemAction) {
-            this.handleItem((ManualTrainer) this.opponentTrainer, useItemAction.item());
-            this.turnResult.addStep(new TurnStep.ItemStep(this.opponentTrainer, useItemAction.item()));
+        if (opponentAction instanceof TurnAction.UseItemAction(Item useItemAction)) {
+            this.handleItem((ManualTrainer) this.opponentTrainer, useItemAction);
+            this.turnResult.addStep(new TurnStep.ItemStep(this.opponentTrainer, useItemAction));
         }
     }
 
     private void resolveSwitch(TurnAction playerAction, TurnAction opponentAction) {
-        if (playerAction instanceof TurnAction.SwitchAction switchAction) {
-            this.handleSwitch(this.playerTrainer, switchAction.target());
-            this.turnResult.addStep(new TurnStep.SwitchStep(this.playerTrainer, switchAction.target()));
+        if (playerAction instanceof TurnAction.SwitchAction(Bugemon target)) {
+            this.handleSwitch(this.playerTrainer, target);
+            this.turnResult.addStep(new TurnStep.SwitchStep(this.playerTrainer, target));
         }
-        if (opponentAction instanceof TurnAction.SwitchAction switchAction) {
-            this.handleSwitch(this.opponentTrainer, switchAction.target());
-            this.turnResult.addStep(new TurnStep.SwitchStep(this.opponentTrainer, switchAction.target()));
+        if (opponentAction instanceof TurnAction.SwitchAction(Bugemon target)) {
+            this.handleSwitch(this.opponentTrainer, target);
+            this.turnResult.addStep(new TurnStep.SwitchStep(this.opponentTrainer, target));
         }
     }
 
@@ -120,18 +120,18 @@ public class Combat {
             return;
         }
 
-        if (playerAction instanceof TurnAction.AttackAction playerAttackAction) {
-            if (opponentAction instanceof TurnAction.AttackAction opponentAttackAction) {
-                this.resolveDualAttack(playerAttackAction.attack(), opponentAttackAction.attack());
+        if (playerAction instanceof TurnAction.AttackAction(Attack playerAttack)) {
+            if (opponentAction instanceof TurnAction.AttackAction(Attack opponentAttack)) {
+                this.resolveDualAttack(playerAttack, opponentAttack);
                 return;
             }
             // Only the player trainer attacked
-            this.resolveSoloAttack(this.playerTrainer, playerAttackAction.attack(), this.opponentTrainer);
+            this.resolveSoloAttack(this.playerTrainer, playerAttack, this.opponentTrainer);
             return;
         }
         // Only the opponent trainer attacked
-        if (opponentAction instanceof TurnAction.AttackAction opponentAttackAction) {
-            this.resolveSoloAttack(this.opponentTrainer, opponentAttackAction.attack(), this.playerTrainer);
+        if (opponentAction instanceof TurnAction.AttackAction(Attack opponentAttack)) {
+            this.resolveSoloAttack(this.opponentTrainer, opponentAttack, this.playerTrainer);
         }
     }
 

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+import ulb.Configuration;
 import ulb.common.Efficiency;
 import ulb.models.bugemon.BugemonType;
 
@@ -13,7 +14,6 @@ import ulb.models.bugemon.BugemonType;
  * efficiency badge can be layered on top via {@link #setType(BugemonType)} and {@link #setEfficiency(Efficiency)}.
  */
 public class HoverInfoView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/HoverInfoView.fxml";
 
     @FXML
     private Label titleLabel;
@@ -23,7 +23,7 @@ public class HoverInfoView extends ComponentView {
     private Label efficiencyLabel;
 
     public HoverInfoView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_HOVER_INFO);
     }
 
     /**

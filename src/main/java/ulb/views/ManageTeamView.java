@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.components.AllBugemonsView;
@@ -33,8 +34,6 @@ public class ManageTeamView extends View {
     private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
     private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe déjà utilisé";
     private static final String TEAM_EMPTY = "Équipe vide";
-
-    private static final String FXML_PATH = "/fxml/ManageTeam.fxml";
 
     @FXML
     private AllBugemonsView allBugemonsGridView;
@@ -73,32 +72,20 @@ public class ManageTeamView extends View {
     @FXML
     private void initialize() {
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
-
-        // TODO: this looks like code duplication (see next listener)
-        this.allBugemonsGridView.setListener(new AllBugemonsView.Listener() {
-            @Override
-            public void onBugemonClicked(Bugemon bugemon) {
-                ManageTeamView.this.listener.onBugemonSelected(bugemon);
-            }
-        }
-
-        );
-
-        this.bugemonsTeamView.setListener(new BugemonTeamView.Listener() {
-            @Override
-            public void onBugemonClicked(Bugemon bugemon) {
-                ManageTeamView.this.listener.onBugemonSelected(bugemon);
-            }
-        });
     }
 
     @Override
     public String getPath() {
-        return FXML_PATH;
+        return Configuration.Paths.FXML.MANAGE_TEAM_VIEW;
     }
 
     public void setListener(Listener listener) {
         this.listener = listener;
+
+        if (this.listener != null) {
+            this.allBugemonsGridView.setListener(this.listener::onBugemonSelected);
+            this.bugemonsTeamView.setListener(this.listener::onBugemonSelected);
+        }
     }
 
     @FXML

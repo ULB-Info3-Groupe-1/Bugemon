@@ -14,6 +14,32 @@ public abstract class Configuration {
 
         public static final String SPRITES = "assets/sprites/";
         public static final String DEFAULT_SPRITE = "/png/unknown.png";
+
+        public static final class FXML {
+
+            private FXML() {
+                // Private constructor to prevent instantiation
+            }
+
+            public static final String COMPONENT_ACTION_MENU = "/fxml/components/ActionMenu.fxml";
+            public static final String COMPONENT_ATTACK_MENU = "/fxml/components/AttackMenu.fxml";
+            public static final String COMPONENT_BUGEMON_INFO = "/fxml/components/BugemonInfo.fxml";
+            public static final String COMPONENT_ITEM_MENU = "/fxml/components/ItemMenu.fxml";
+            public static final String COMPONENT_SWITCH_MENU = "/fxml/components/SwitchMenu.fxml";
+            public static final String COMPONENT_ALL_BUGEMONS = "/fxml/components/AllBugemons.fxml";
+            public static final String COMPONENT_BUGEMON_CARD = "/fxml/components/BugemonCard.fxml";
+            public static final String COMPONENT_BUGEMON_DETAIL_POPUP = "/fxml/components/BugemonDetailPopup.fxml";
+            public static final String COMPONENT_BUGEMON_TEAM = "/fxml/components/BugemonTeam.fxml";
+            public static final String COMPONENT_DIALOG_ZONE = "/fxml/components/DialogZone.fxml";
+            public static final String COMPONENT_HOVER_INFO = "/fxml/components/HoverInfo.fxml";
+
+            public static final String COMBAT_VIEW = "/fxml/Combat.fxml";
+            public static final String COMBAT_VICTORY_VIEW = "/fxml/CombatVictory.fxml";
+            public static final String COMBAT_DEFEAT_VIEW = "/fxml/CombatDefeat.fxml";
+            public static final String LEVEL_UP_VIEW = "/fxml/LevelUp.fxml";
+            public static final String MAIN_MENU_VIEW = "/fxml/MainMenu.fxml";
+            public static final String MANAGE_TEAM_VIEW = "/fxml/ManageTeam.fxml";
+        }
     }
 
     public static final class UI {

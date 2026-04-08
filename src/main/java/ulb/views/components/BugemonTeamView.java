@@ -4,12 +4,12 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /** Reusable custom component displaying a Bugemon team in a grid. */
 public class BugemonTeamView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/BugemonTeam.fxml";
     private static final int GRID_COLUMNS = 3;
 
     @FXML
@@ -18,7 +18,7 @@ public class BugemonTeamView extends ComponentView {
     private Listener listener;
 
     public BugemonTeamView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_TEAM);
     }
 
     public void setListener(Listener listener) {
@@ -32,15 +32,7 @@ public class BugemonTeamView extends ComponentView {
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
             BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
-            card.setListener(new BugemonCardView.Listener() {
-
-                @Override
-                public void onClick(Bugemon bugemon) {
-                    BugemonTeamView.this.listener.onBugemonClicked(bugemon);
-                }
-
-            });
-
+            card.setListener(this.listener::onBugemonClicked);
             this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
         }
     }

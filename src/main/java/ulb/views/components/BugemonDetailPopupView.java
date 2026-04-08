@@ -23,7 +23,6 @@ import ulb.models.bugemon.Bugemon;
  * to open it as a floating popup centred over the owner window.
  */
 public class BugemonDetailPopupView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/BugemonDetailPopup.fxml";
 
     @FXML
     private ImageView sprite;
@@ -45,7 +44,7 @@ public class BugemonDetailPopupView extends ComponentView {
     private VBox attacksContainer;
 
     private BugemonDetailPopupView(Bugemon bugemon) {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_DETAIL_POPUP);
         File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.getSpriteURL());
         this.sprite.setImage(new Image(spriteFile.toURI().toString(), 72, 72, true, false));
         this.nameLabel.setText(bugemon.getName());
@@ -83,7 +82,7 @@ public class BugemonDetailPopupView extends ComponentView {
         popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
 
         popup.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-            if (!isFocused) {
+            if (isFocused == Boolean.FALSE) {
                 popup.close();
             }
         });
