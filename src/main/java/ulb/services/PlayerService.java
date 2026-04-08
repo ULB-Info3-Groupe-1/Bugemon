@@ -1,5 +1,6 @@
 package ulb.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.factory.BugemonFactory;
@@ -230,5 +231,24 @@ public class PlayerService {
 
     public boolean isActiveTeamEmpty() {
         return this.activeTeam.isEmpty();
+    }
+
+    public void modifyTeam(BugemonTeam team) throws TeamEmptyException {
+        if (team.isEmpty()) {
+            throw new TeamEmptyException("Team is empty!");
+        }
+
+        List<TeamMemberDTO> teamMembers = new ArrayList<>();
+        List<PlayerBugemonDTO> playerBugemonDTOs = this.playerRepository.getPlayerBugemons(this.playerId);
+        for (Bugemon bugemon : team) {
+            if (playerBugemonDTOs.stream().noneMatch(dto -> dto.bugemonName().equals(bugemon.getName()))) {
+                this.playerRepository.savePlayerBugemon(new PlayerBugemonDTO(this.playerId, bugemon.getName(),
+                        bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(), bugemon.getMaxHp(),
+                        bugemon.getXp(), bugemon.getLevel()));
+            }
+            teamMembers.add(
+                    new TeamMemberDTO(this.playerId, team.getName(), bugemon.getName(), team.getSlotPosition(bugemon)));
+        }
+        this.playerRepository.modifyTeam(this.playerId, team.getName(), teamMembers);
     }
 }

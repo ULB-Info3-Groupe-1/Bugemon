@@ -62,7 +62,7 @@ public class SwitchMenuView extends ComponentView {
         HBox row = new HBox();
         row.getStyleClass().add("switch-row");
 
-        File file = new File("resources/sprites/" + b.getSpriteURL());
+        File file = new File("assets/sprites/" + b.getSpriteURL());
         ImageView sprite = new ImageView(new Image(file.toURI().toString(), SPRITE_SIZE, SPRITE_SIZE, true, false));
         sprite.setFitWidth(SPRITE_SIZE);
         sprite.setFitHeight(SPRITE_SIZE);

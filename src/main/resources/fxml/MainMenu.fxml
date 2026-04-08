@@ -11,6 +11,8 @@
     <Label text="BUGÉMON" styleClass="main-title" />
 
     <Button fx:id="createTeamButton" onAction="#onCreateTeamClicked"
+        text="Créer une éqipe" styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="editTeamButton" onAction="#onEditTeamClicked"
         text="Gérer mes équipes" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="startAutomaticCombatButton"
         onAction="#onStartAutomaticCombatClicked"

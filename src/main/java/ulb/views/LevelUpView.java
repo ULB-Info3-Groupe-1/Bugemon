@@ -72,7 +72,7 @@ public class LevelUpView extends View {
         LevelUpDTO levelUp = this.session.getCurrent();
         BugemonDTO bugemon = levelUp.getBugemon();
 
-        File file = new File("resources/sprites/" + bugemon.getSpriteURL());
+        File file = new File("assets/sprites/" + bugemon.getSpriteURL());
         this.bugemonImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau " + bugemon.getLevel() + " !");
 

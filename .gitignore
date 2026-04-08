@@ -202,5 +202,5 @@ org.mockito.plugins.MockMaker
 # config file of Claude code
 CLAUDE.md
 
-# The resouces directory created by the program to save the data of the game
-resources
+# The assets directory created by the program to save the data of the game
+assets

@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -20,14 +21,20 @@ import ulb.views.components.BugemonTeamView;
  * {@link #refresh()}. Dispatches player interactions through a {@link Listener}; holds no reference to any concrete
  * controller class.
  */
-public class CreateTeamView extends View {
+public class ManageTeamView extends View {
+
+    public enum TeamFormMode {
+        EDIT,
+        CREATE
+    }
+
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
     private static final String INVALID_NAME = "Nom d'équipe invalide";
     private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
     private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe déjà utilisé";
     private static final String TEAM_EMPTY = "Équipe vide";
 
-    private final String fxmlPath = "/fxml/CreateTeam.fxml";
+    private static final String FXML_PATH = "/fxml/ManageTeam.fxml";
 
     @FXML
     private AllBugemonsView allBugemonsGridView;
@@ -39,6 +46,25 @@ public class CreateTeamView extends View {
     private ListView<String> teamListView;
     @FXML
     private Text selectedTeamName;
+
+    @FXML
+    private Button saveTeamButton;
+    @FXML
+    private Button returnMainMenuButton;
+    @FXML
+    private Button addNewTeamButton;
+    @FXML
+    private Button modifyTeamButton;
+    @FXML
+    private Button deleteTeamButton;
+    @FXML
+    private Button renameTeamButton;
+    @FXML
+    private Button launchAutomaticCombatButton;
+    @FXML
+    private Button launchManualCombatButton;
+    @FXML
+    private Button launchNOTowerCombatButton;
 
     private Listener listener;
     private BugemonTeam bugemonTeam;
@@ -52,7 +78,7 @@ public class CreateTeamView extends View {
         this.allBugemonsGridView.setListener(new AllBugemonsView.Listener() {
             @Override
             public void onBugemonClicked(Bugemon bugemon) {
-                CreateTeamView.this.listener.onBugemonSelected(bugemon);
+                ManageTeamView.this.listener.onBugemonSelected(bugemon);
             }
         }
 
@@ -61,14 +87,14 @@ public class CreateTeamView extends View {
         this.bugemonsTeamView.setListener(new BugemonTeamView.Listener() {
             @Override
             public void onBugemonClicked(Bugemon bugemon) {
-                CreateTeamView.this.listener.onBugemonSelected(bugemon);
+                ManageTeamView.this.listener.onBugemonSelected(bugemon);
             }
         });
     }
 
     @Override
     public String getPath() {
-        return this.fxmlPath;
+        return FXML_PATH;
     }
 
     public void setListener(Listener listener) {
@@ -102,6 +128,11 @@ public class CreateTeamView extends View {
     }
 
     @FXML
+    private void onModifyTeamClicked() {
+        this.listener.onModifyTeam();
+    }
+
+    @FXML
     private void onTeamSelected(MouseEvent event) {
         String selected = this.teamListView.getSelectionModel().getSelectedItem();
         if (selected != null) {
@@ -110,6 +141,21 @@ public class CreateTeamView extends View {
         } else {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
         }
+    }
+
+    @FXML
+    private void onLaunchAutomaticCombatClicked() {
+        this.listener.onLaunchAutomaticCombat();
+    }
+
+    @FXML
+    private void onLaunchManualCombatClicked() {
+        this.listener.onLaunchManualCombat();
+    }
+
+    @FXML
+    private void onLaunchNOTowerCombatClicked() {
+        this.listener.onLaunchNOTowerCombat();
     }
 
     public void setTeam(BugemonTeam newBugemonTeam) {
@@ -177,5 +223,35 @@ public class CreateTeamView extends View {
         void onAddNewTeam();
 
         void onBugemonSelected(Bugemon bugemon);
+
+        void onModifyTeam();
+
+        void onLaunchAutomaticCombat();
+
+        void onLaunchManualCombat();
+
+        void onLaunchNOTowerCombat();
+    }
+
+    public void setMode(TeamFormMode mode) {
+        if (mode == TeamFormMode.CREATE) {
+            this.modifyTeamButton.setVisible(false);
+            this.modifyTeamButton.setManaged(false);
+
+            this.renameTeamButton.setVisible(false);
+            this.renameTeamButton.setManaged(false);
+
+            this.deleteTeamButton.setVisible(false);
+            this.deleteTeamButton.setManaged(false);
+
+            this.launchAutomaticCombatButton.setVisible(false);
+            this.launchAutomaticCombatButton.setManaged(false);
+
+            this.launchManualCombatButton.setVisible(false);
+            this.launchManualCombatButton.setManaged(false);
+
+            this.launchNOTowerCombatButton.setVisible(false);
+            this.launchNOTowerCombatButton.setManaged(false);
+        }
     }
 }

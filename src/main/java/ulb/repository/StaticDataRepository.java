@@ -34,7 +34,7 @@ import ulb.utils.Parser;
 
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 7;
-    private static final String SPRITE_DIRECTORY_PATH = "resources/sprites";
+    private static final String SPRITE_DIRECTORY_PATH = "assets/sprites";
 
     private final DatabaseConnection dbConnection;
 
