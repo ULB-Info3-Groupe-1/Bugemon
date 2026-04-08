@@ -4,9 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 
+import ulb.Configuration;
+
 /** Reusable custom component displaying a dialog zone with text and a next button. */
 public class DialogZoneView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/DialogZone.fxml";
 
     @FXML
     private Text dialogText;
@@ -16,7 +17,7 @@ public class DialogZoneView extends ComponentView {
     private Listener listener;
 
     public DialogZoneView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_DIALOG_ZONE);
     }
 
     public void setListener(Listener listener) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.Configuration;
 import ulb.models.bugemon.components.AttackComponent;
 import ulb.models.bugemon.components.DefenseComponent;
 import ulb.models.bugemon.components.HealthComponent;
@@ -21,7 +22,7 @@ import ulb.models.bugemon.components.LevelComponent;
 public final class BugemonBuilder {
     /** Default elemental type applied when none is provided. */
     private static final BugemonType DEFAULT_TYPE = BugemonType.FLORA;
-    private static final String DEFAULT_SPRITE = "/png/unknown.png";
+    private static final String DEFAULT_SPRITE = Configuration.Paths.DEFAULT_SPRITE;
     private static final int DEFAULT_HP = 100;
     private static final boolean DEFAULT_IS_STARTER = false;
     private static final int DEFAULT_ATTACK = 10;

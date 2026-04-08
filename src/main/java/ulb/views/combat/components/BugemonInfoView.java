@@ -4,13 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
+import ulb.Configuration;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.BugemonType;
 import ulb.views.components.ComponentView;
 
 /** Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link BugemonDTO}. */
 public class BugemonInfoView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/BugemonInfo.fxml";
 
     @FXML
     private Label bugemonName;
@@ -24,7 +24,7 @@ public class BugemonInfoView extends ComponentView {
     private Label bugemonHpLabel;
 
     public BugemonInfoView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_INFO);
     }
 
     /** Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class. */

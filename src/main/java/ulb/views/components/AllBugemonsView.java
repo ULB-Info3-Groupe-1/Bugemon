@@ -5,11 +5,11 @@ import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 
 /** Reusable custom component displaying all the bugemons inside of a grid. */
 public class AllBugemonsView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/AllBugemons.fxml";
 
     @FXML
     private FlowPane flowPane;
@@ -17,7 +17,7 @@ public class AllBugemonsView extends ComponentView {
     private Listener listener;
 
     public AllBugemonsView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_ALL_BUGEMONS);
     }
 
     public void setListener(Listener listener) {
@@ -45,14 +45,7 @@ public class AllBugemonsView extends ComponentView {
         BugemonCardView card = new BugemonCardView(bugemon);
         card.hideLevelLabel();
 
-        card.setListener(new BugemonCardView.Listener() {
-
-            @Override
-            public void onClick(Bugemon bugemon) {
-                AllBugemonsView.this.listener.onBugemonClicked(bugemon);
-            }
-
-        });
+        card.setListener(this.listener::onBugemonClicked);
 
         return card;
     }

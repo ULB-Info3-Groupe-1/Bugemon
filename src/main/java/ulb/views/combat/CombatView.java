@@ -7,9 +7,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import ulb.Configuration;
 import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Item;
 import ulb.models.combat.TurnStep;
 import ulb.models.trainer.Trainer;
 import ulb.views.View;
@@ -22,7 +26,6 @@ import ulb.views.components.HoverInfoView;
  * {@link #initCombatMode()} to configure their specific UI behaviour.
  */
 public abstract class CombatView extends View {
-    private static final String FXML_PATH = "/fxml/Combat.fxml";
 
     private CombatAnimationView attackAnimationView;
 
@@ -50,16 +53,7 @@ public abstract class CombatView extends View {
     @FXML
     protected void initialize() {
         this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
-
-        this.dialogZoneView.setListener(new DialogZoneView.Listener() {
-
-            @Override
-            public void onNext() {
-                CombatView.this.nextListener.onNext();
-            }
-
-        });
-
+        this.dialogZoneView.setListener(() -> this.nextListener.onNext());
         this.initCombatMode();
     }
 
@@ -69,7 +63,7 @@ public abstract class CombatView extends View {
 
     @Override
     public String getPath() {
-        return FXML_PATH;
+        return Configuration.Paths.FXML.COMBAT_VIEW;
     }
 
     // ── Abstract contract ─────────────────────────────────────────────────────
@@ -133,19 +127,28 @@ public abstract class CombatView extends View {
     /** Builds and displays a dialog describing the given {@code step}. */
     public void showStepDialog(TurnStep step, Trainer playerTrainer) {
         String message = switch (step) {
-            case TurnStep.AttackStep s -> s.attacker().getCurrentBugemonName() + " utilise " + s.getAttackName() + " !"
-                    + this.formatEfficiency(s.efficiency());
-            case TurnStep.SwitchStep s -> (s.trainer() == playerTrainer ? "Vous envoyez " : "L'adversaire envoie ")
-                    + s.getBugemon().getName() + " !";
-            case TurnStep.ItemStep s ->
-                (s.trainer() == playerTrainer ? "Vous utilisez " : "L'adversaire utilise ") + s.getItemName() + " !";
-            case TurnStep.BugemonKoStep s ->
-                s.trainer() == playerTrainer ? "Votre Bugémon est K.O. !" : "Le Bugémon adverse est K.O. !";
-            case TurnStep.TrainerKoStep s ->
-                s.trainerKo() == playerTrainer ? "Vous êtes vaincu !" : "L'adversaire est vaincu !";
-            case TurnStep.ForfeitStep s ->
-                s.trainer() == playerTrainer ? "Vous abandonnez..." : "L'adversaire abandonne.";
+            case TurnStep.AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) ->
+                attacker.getCurrentBugemonName() + " utilise " + attack.name() + " !"
+                        + this.formatEfficiency(efficiency);
+
+            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) ->
+                (trainer == playerTrainer ? "Vous envoyez " : "L'adversaire envoie ") + bugemon.getName() + " !";
+
+            case TurnStep.ItemStep(Trainer trainer, Item item) ->
+                (trainer == playerTrainer ? "Vous utilisez " : "L'adversaire utilise ") + item.name() + " !";
+
+            case TurnStep.BugemonKoStep(Trainer trainer) ->
+                trainer == playerTrainer ? "Votre Bugémon est K.O. !" : "Le Bugémon adverse est K.O. !";
+
+            case TurnStep.TrainerKoStep(Trainer trainerKo) ->
+                trainerKo == playerTrainer ? "Vous êtes vaincu !" : "L'adversaire est vaincu !";
+
+            case TurnStep.ForfeitStep(Trainer trainer) ->
+                trainer == playerTrainer ? "Vous abandonnez..." : "L'adversaire abandonne.";
+
+            default -> "";
         };
+
         this.showDialog(message);
     }
 
@@ -165,14 +168,14 @@ public abstract class CombatView extends View {
     // ── Bugemon display ───────────────────────────────────────────────────────
 
     protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
-        File file = new File("assets/sprites/" + trainerBugemon.getSpriteURL());
+        File file = new File(Configuration.Paths.SPRITES + trainerBugemon.getSpriteURL());
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.makeTrainerBugemonReappear();
     }
 
     protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
-        File file = new File("assets/sprites/" + opponentBugemon.getSpriteURL());
+        File file = new File(Configuration.Paths.SPRITES + opponentBugemon.getSpriteURL());
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.makeOpponentBugemonReappear();

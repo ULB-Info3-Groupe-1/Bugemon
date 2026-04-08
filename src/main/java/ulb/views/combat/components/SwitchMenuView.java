@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.views.components.ComponentView;
 
@@ -18,7 +19,6 @@ import ulb.views.components.ComponentView;
  * dispatches through the callback registered via {@link #setOnBack(Runnable)}.
  */
 public class SwitchMenuView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/SwitchMenu.fxml";
     /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */
     private static final int SPRITE_SIZE = 40;
 
@@ -26,7 +26,7 @@ public class SwitchMenuView extends ComponentView {
     private Runnable onBack;
 
     public SwitchMenuView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_SWITCH_MENU);
     }
 
     public void setOnSwitch(Consumer<Bugemon> callback) {
@@ -62,7 +62,7 @@ public class SwitchMenuView extends ComponentView {
         HBox row = new HBox();
         row.getStyleClass().add("switch-row");
 
-        File file = new File("assets/sprites/" + b.getSpriteURL());
+        File file = new File(Configuration.Paths.SPRITES + b.getSpriteURL());
         ImageView sprite = new ImageView(new Image(file.toURI().toString(), SPRITE_SIZE, SPRITE_SIZE, true, false));
         sprite.setFitWidth(SPRITE_SIZE);
         sprite.setFitHeight(SPRITE_SIZE);

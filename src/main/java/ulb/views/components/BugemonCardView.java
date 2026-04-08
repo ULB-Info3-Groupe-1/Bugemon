@@ -10,13 +10,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 
 /** Reusable custom component representing a single Bugemon cell with an image and name label. */
 public class BugemonCardView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/BugemonCard.fxml";
     private static final String EMPTY_NAME = "?";
-    private static final Image EMPTY_IMAGE = new Image("/png/unknown.png");
+    private static final Image EMPTY_IMAGE = new Image(Configuration.Paths.DEFAULT_SPRITE);
 
     @FXML
     private StackPane imagePane;
@@ -41,13 +41,13 @@ public class BugemonCardView extends ComponentView {
     }
 
     private BugemonCardView(Optional<Bugemon> bugemonData) {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_CARD);
         this.bugemonData = bugemonData;
         this.nameLabel.setText(bugemonData.map(Bugemon::getName).orElse(EMPTY_NAME));
         this.levelLabel.setText(bugemonData.map(b -> "Lv." + b.getLevel()).orElse(""));
-        this.imageView.setImage(
-                bugemonData.map(d -> new Image(new File("assets/sprites/" + d.getSpriteURL()).toURI().toString()))
-                        .orElse(EMPTY_IMAGE));
+        this.imageView.setImage(bugemonData
+                .map(d -> new Image(new File(Configuration.Paths.SPRITES + d.getSpriteURL()).toURI().toString()))
+                .orElse(EMPTY_IMAGE));
         bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopupView.show(b, e)));
     }
 
@@ -62,9 +62,7 @@ public class BugemonCardView extends ComponentView {
             return;
         }
 
-        this.bugemonData.ifPresent(b -> {
-            this.listener.onClick(b);
-        });
+        this.bugemonData.ifPresent(b -> this.listener.onClick(b));
     }
 
     public void setListener(Listener listener) {

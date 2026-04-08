@@ -2,17 +2,15 @@ package ulb.views;
 
 import javafx.fxml.FXML;
 
+import ulb.Configuration;
+
 /** View for the combat defeat screen, dispatching actions through the {@link Listener} interface. */
 public class CombatDefeatView extends View {
-    private final String fxmlPath = "/fxml/CombatDefeat.fxml";
     private Listener listener;
-
-    public CombatDefeatView() {
-    }
 
     @Override
     public String getPath() {
-        return this.fxmlPath;
+        return Configuration.Paths.FXML.COMBAT_DEFEAT_VIEW;
     }
 
     public void setListener(Listener listener) {

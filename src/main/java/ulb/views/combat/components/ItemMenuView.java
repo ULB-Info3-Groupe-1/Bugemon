@@ -4,12 +4,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 import javafx.scene.control.Button;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Item;
 import ulb.views.components.ComponentView;
 
 /** Reusable component displaying the player's inventory as a list of clickable item buttons. */
 public class ItemMenuView extends ComponentView {
-    private static final String FXML_PATH = "/fxml/components/ItemMenu.fxml";
 
     private Consumer<Item> onItemSelected;
     private Consumer<Item> onItemHovered;
@@ -17,7 +17,7 @@ public class ItemMenuView extends ComponentView {
     private Runnable onBack;
 
     public ItemMenuView() {
-        super(FXML_PATH);
+        super(Configuration.Paths.FXML.COMPONENT_ITEM_MENU);
     }
 
     public void setOnItemSelected(Consumer<Item> callback) {

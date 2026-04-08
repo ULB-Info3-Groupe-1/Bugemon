@@ -20,7 +20,7 @@ public class TrainerWalk {
     private Vec2 pos;
     private float walkProgress; // 0 to 1
     private boolean isMoving = false;
-    private final float duration = 0.5f;
+    private static final float DURATION = 0.5f;
     private List<Vec2> plannedPath;
     private int nextWaypointIndex;
 
@@ -70,7 +70,7 @@ public class TrainerWalk {
             return;
         }
 
-        this.walkProgress += deltaTime / this.duration;
+        this.walkProgress += deltaTime / DURATION;
 
         if (this.walkProgress >= 1f) {
             this.pos = new Vec2(this.endPos.getX(), this.endPos.getY());
@@ -139,7 +139,7 @@ public class TrainerWalk {
      */
     private List<Vec2> findPath(Vec2 start, Vec2 end, int[][] matrix) {
         if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
-            return null;
+            return List.of();
         }
 
         int startX = Math.round(start.getX());
@@ -148,7 +148,7 @@ public class TrainerWalk {
         int endY = Math.round(end.getY());
 
         if (!this.isCellWalkable(startX, startY, matrix) || !this.isCellWalkable(endX, endY, matrix)) {
-            return null;
+            return List.of();
         }
 
         if (startX == endX && startY == endY) {
@@ -189,7 +189,7 @@ public class TrainerWalk {
             }
         }
 
-        return null;
+        return List.of();
     }
 
     /**
@@ -218,7 +218,7 @@ public class TrainerWalk {
 
         if (reversed.isEmpty() || !key(Math.round(reversed.get(reversed.size() - 1).getX()),
                 Math.round(reversed.get(reversed.size() - 1).getY())).equals(startKey)) {
-            return null;
+            return List.of();
         }
 
         Collections.reverse(reversed);
