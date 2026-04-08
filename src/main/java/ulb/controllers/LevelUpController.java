@@ -1,7 +1,9 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.List;
+import java.util.Queue;
 
 import ulb.controllers.MetaController.Window;
 import ulb.models.level_up.LevelUp;
@@ -17,7 +19,7 @@ import ulb.views.ViewLoader;
  * directly from the session.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
-    private final LevelUpSession session = new LevelUpSession();
+    private Queue<LevelUp> levelUps = new ArrayDeque<>();
     private final PlayerService playerService;
 
     /**
@@ -36,12 +38,18 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
 
     @Override
     public void onUpgradeChosen(int optionIdx) {
-        LevelUp levelUp = this.session.getCurrent();
+        LevelUp levelUp = this.levelUps.remove();
         Upgrade upgrade = levelUp.get(optionIdx);
         levelUp.getBugemon().applyUpgrade(upgrade);
         this.playerService.saveBugemonState(levelUp.getBugemon());
 
-        this.cont();
+
+        if (this.levelUps.isEmpty()) {
+            this.playerService.saveActiveTeamState();
+            this.metaController.switchTo(Window.COMBAT_VICTORY);
+        } else {
+            this.view.refresh();
+        }
     }
 
     /**
@@ -50,19 +58,8 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
      */
     public void setLevelUp(List<LevelUp> lvlsUp) {
         if (!lvlsUp.isEmpty()) {
-            this.session.start(lvlsUp);
+            this.levelUps = new ArrayDeque<>(lvlsUp);
             this.metaController.switchTo(Window.LEVEL_UP);
-            this.view.refresh();
-        } else {
-            this.playerService.saveActiveTeamState();
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
-        }
-    }
-
-    /** Advances to the next pending level-up event, or navigates to victory if done. */
-    public void cont() {
-        if (this.session.hasNext()) {
-            this.session.advance();
             this.view.refresh();
         } else {
             this.playerService.saveActiveTeamState();
