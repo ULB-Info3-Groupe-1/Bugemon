@@ -105,7 +105,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
 
         if (room instanceof RewardRoom rewardRoom) {
             this.handleRewardRoom(rewardRoom);
-            floor.getNextRoom();
+            floor.getNextRooms();
             return;
         }
 
@@ -121,7 +121,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
             return;
         }
 
-        floor.getNextRoom();
+        floor.getNextRooms();
         this.continueRun();
     }
 

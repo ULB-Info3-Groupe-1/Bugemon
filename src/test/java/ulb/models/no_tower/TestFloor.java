@@ -1,7 +1,6 @@
 package ulb.models.no_tower;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,8 +13,6 @@ import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.no_tower.room.CombatRoom;
-import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
@@ -54,26 +51,7 @@ public class TestFloor {
 
         Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK);
 
-        Room firstRoom = floor.getNextRoom();
-        assertTrue(firstRoom instanceof CombatRoom);
-
-        Room secondRoom = floor.getNextRoom();
-        assertTrue(secondRoom instanceof RewardRoom);
-
-        Room thirdRoom = floor.getNextRoom();
-        assertTrue(thirdRoom instanceof CombatRoom);
-
-        Room fourthRoom = floor.getNextRoom();
-        assertTrue(fourthRoom instanceof CombatRoom);
-
-        Room fifthRoom = floor.getNextRoom();
-        assertTrue(fifthRoom instanceof RewardRoom);
-
-        Room sixthRoom = floor.getNextRoom();
-        assertTrue(sixthRoom instanceof CombatRoom);
-        CombatRoom bossRoom = (CombatRoom) sixthRoom;
-        assertTrue(bossRoom.isBoss());
-
-        assertTrue(floor.isComplete());
+        List<Room> rooms = floor.getNextRooms();
+        assertFalse(rooms.isEmpty());
     }
 }

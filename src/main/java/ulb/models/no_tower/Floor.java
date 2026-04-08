@@ -1,73 +1,56 @@
 package ulb.models.no_tower;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.List;
 
-import ulb.models.combat.Combat;
-import ulb.models.no_tower.room.CombatRoom;
-import ulb.models.no_tower.room.RewardRoom;
 import ulb.models.no_tower.room.Room;
-import ulb.models.trainer.AutoTrainer;
+import ulb.models.no_tower.utils.FloorGenerator;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 
 public class Floor {
     private final Trainer playerTrainer;
     private final BugemonService bugemonService;
-    private final Deque<Room> stages = new ArrayDeque<>();
+
+    private final FloorGenerator floorGenerator = new FloorGenerator();
+    private FloorNode currentPosition;
 
     public Floor(Trainer playerTrainer, BugemonService bugemonService) {
         this.playerTrainer = playerTrainer;
         this.bugemonService = bugemonService;
-
-        this.init();
+        this.currentPosition = this.floorGenerator.getRoot();
     }
 
     public boolean isComplete() {
-        return this.stages.isEmpty();
+        return this.currentPosition.equals(this.floorGenerator.getBossNode());
     }
 
-    public Room getNextRoom() throws EmptyStackException {
-        return this.stages.pop();
+    public List<Room> getNextRooms() throws EmptyStackException {
+        List<Room> nextRooms = new ArrayList<>();
+        for (FloorNode child : this.currentPosition.getChildren()) {
+            nextRooms.add(child.getRoom());
+        }
+        this.currentPosition.getParent().ifPresent(parent -> nextRooms.add(parent.getRoom()));
+        return nextRooms;
     }
 
-    public Room getCurrentRoom() throws EmptyStackException {
-        return this.stages.peek();
+    public void moveTo(FloorNode node) {
+        // check the movement before, if in childeren of parent of current pos
+        // should probably set also logic like event depending on the node where
+        // the player move...
+        boolean isChild = this.currentPosition.getChildren().contains(node);
+        boolean isParent = this.currentPosition.getParent().map(parent -> parent.equals(node)).orElse(false);
+        if (isChild || isParent) {
+            this.currentPosition = node;
+        }
     }
 
-    private void init() {
-        this.stages.push(this.initBossCombatRoom());
-        this.stages.push(this.initRewardRoom());
-        this.stages.push(this.initCombatRoom());
-        this.stages.push(this.initCombatRoom());
-        this.stages.push(this.initRewardRoom());
-        this.stages.push(this.initCombatRoom());
+    public FloorNode getCurrentPosition() {
+        return this.currentPosition;
     }
 
-    private CombatRoom initCombatRoom() {
-        Trainer opponentTrainer = new AutoTrainer(CombatService
-                .createRandomTeam(this.bugemonService.getAllDefaultBugemons(), this.playerTrainer.getTeamSize()));
-        Combat combat = new Combat(this.playerTrainer, opponentTrainer);
-
-        return new CombatRoom(combat, false);
-    }
-
-    private RewardRoom initRewardRoom() {
-        // TODO: histoire 11
-        return new RewardRoom();
-    }
-
-    private CombatRoom initBossCombatRoom() {
-        Trainer opponentTrainer = new AutoTrainer(
-                CombatService.createBossTeam(this.bugemonService.getAllDefaultBugemons()));
-        Combat combat = new Combat(this.playerTrainer, opponentTrainer);
-
-        return new CombatRoom(combat, true);
-    }
-
-    void advance() throws EmptyStackException {
-        this.stages.pop();
+    public Room getCurrentRoom() {
+        return this.currentPosition.getRoom();
     }
 }

@@ -1,7 +1,10 @@
-package ulb.models.no_tower.room;
+package ulb.models.no_tower;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import ulb.models.no_tower.room.Room;
 
 public class FloorNode {
     private final int x;
@@ -49,10 +52,6 @@ public class FloorNode {
         this.children.add(child);
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
     public int getBranchCount() {
         FloorNode n = this;
         while (n.getDepth() > 1 && n.getParent().isPresent()) {
@@ -61,11 +60,37 @@ public class FloorNode {
         return this.countSubtree(n);
     }
 
+    // Setters
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    // Private
+
     private int countSubtree(FloorNode n) {
         int count = 1;
         for (FloorNode child : n.getChildren()) {
             count += this.countSubtree(child);
         }
         return count;
+    }
+
+    // Overrides
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FloorNode other)) {
+            return false;
+        }
+        return this.x == other.x && this.y == other.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.x, this.y);
     }
 }

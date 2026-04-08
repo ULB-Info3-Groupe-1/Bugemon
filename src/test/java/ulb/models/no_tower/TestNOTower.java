@@ -35,10 +35,23 @@ public class TestNOTower {
     }
 
     private void completeCurrentFloor(NOTower noTower) {
-        Floor currentFloor = noTower.getCurrentFloor();
-        while (!currentFloor.isComplete()) {
-            currentFloor.getNextRoom();
+        Floor floor = noTower.getCurrentFloor();
+        this.navigateToBoss(floor);
+    }
+
+    private boolean navigateToBoss(Floor floor) {
+        if (floor.isComplete()) {
+            return true;
         }
+        FloorNode current = floor.getCurrentPosition();
+        for (FloorNode child : current.getChildren()) {
+            floor.moveTo(child);
+            if (this.navigateToBoss(floor)) {
+                return true;
+            }
+            floor.moveTo(current);
+        }
+        return false;
     }
 
     @Test
