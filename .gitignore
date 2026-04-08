@@ -188,7 +188,9 @@ buildNumber.properties
 
 Todo.md
 
+# Test pipeline tool
 .gitlab-ci-local/
+.github
 
 # Personal settings file
 .settings/*
