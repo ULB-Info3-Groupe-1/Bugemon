@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,6 @@ import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
@@ -174,15 +174,25 @@ public class StaticDataRepository extends AbstractRepository {
 
     // ─── UTILS FOR CLASS USING THIS REPO ──
 
+    /**
+     * Retrieves all default Bugemons. Uses optimized bulk loading: one query for bugemons, one for all attacks with
+     * effects. This avoids the N+1 query problem.
+     *
+     * @return List of all default Bugemons
+     */
     public List<Bugemon> getAllDefaultBugemons() {
+        Map<String, Attack> attackMap = this.loadAllAttacks();
+
         List<Bugemon> bugemons = new ArrayList<>();
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetAllDefaultBugemons"))) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 BugemonType type = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TYPE, BugemonType.class);
-                Attack attack1 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
-                Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
-                Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
+
+                Attack attack1 = attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
+                Attack attack2 = attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
+                Attack attack3 = attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
+
                 BugemonBuilder builder = new BugemonBuilder();
                 builder.name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
                         .sprite(rs.getString(DatabaseColumns.COL_SPRITE))
@@ -200,58 +210,79 @@ public class StaticDataRepository extends AbstractRepository {
         return bugemons;
     }
 
-    public Attack getAttackById(String attackId) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetAttackById"))) {
-            ps.setString(1, attackId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                List<Effect> effects = this.getEffectByAttackId(attackId);
-                BugemonType type = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TYPE, BugemonType.class);
-                return new Attack(rs.getString(DatabaseColumns.COL_ID), rs.getString(DatabaseColumns.COL_NAME), type,
-                        rs.getString(DatabaseColumns.COL_DESCRIPTION), rs.getInt(DatabaseColumns.COL_POWER), effects);
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getAttackById failed for id: " + attackId, e);
-        }
-        throw new IllegalStateException("Attack not found for id: " + attackId);
-    }
+    /**
+     * Loads all attacks with their effects in a single optimized query.
+     *
+     * @return Map of attack ID to Attack object
+     */
+    private Map<String, Attack> loadAllAttacks() {
+        Map<String, List<Effect>> effectsMap = new HashMap<>();
+        Map<String, AttackInfo> attackInfoMap = new HashMap<>();
 
-    public List<Effect> getEffectByAttackId(String attackId) {
-        List<Effect> effects = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetEffectByAttackId"))) {
-            ps.setString(1, attackId);
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetAllAttacksWithEffects"))) {
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                switch (rs.getString(DatabaseColumns.COL_TYPE)) {
-                    case "EffectStatModifier" :
-                        EffectTarget target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TARGET,
-                                EffectTarget.class);
-                        EffectStat stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_STAT, EffectStat.class);
-                        String duration = (rs.getString(DatabaseColumns.COL_DURATION) != null)
-                                ? rs.getString(DatabaseColumns.COL_DURATION)
-                                : "0_tour";
-                        effects.add(new EffectStatModifier(target, stat, rs.getInt(DatabaseColumns.COL_MODIFIER),
-                                EffectDuration.fromLabel(duration)));
-                        break;
+                String attackId = rs.getString("attack_id");
 
-                    case "EffectHeal" :
-                        target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TARGET, EffectTarget.class);
-                        effects.add(new EffectHeal(target, rs.getInt(DatabaseColumns.COL_AMOUNT)));
-                        break;
+                if (!attackInfoMap.containsKey(attackId)) {
+                    AttackInfo info = new AttackInfo();
+                    info.name = rs.getString("attack_name");
+                    info.type = DatabaseHelper.getEnumOrNull(rs, "attack_type", BugemonType.class);
+                    info.description = rs.getString("attack_description");
+                    info.power = rs.getInt("attack_power");
+                    attackInfoMap.put(attackId, info);
+                    effectsMap.put(attackId, new ArrayList<>());
+                }
 
-                    case "EffectResetMalus" :
-                        target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TARGET, EffectTarget.class);
-                        effects.add(new EffectResetMalus(target));
-                        break;
-
-                    default :
-                        throw new IllegalStateException("Unknown effect type for attack id: " + attackId);
+                String effectType = rs.getString("effect_type");
+                if (effectType != null) {
+                    Effect effect = this.buildEffect(rs, effectType);
+                    effectsMap.get(attackId).add(effect);
                 }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("getEffectByAttackId failed for attack id: " + attackId, e);
+            throw new IllegalStateException("loadAllAttacks failed", e);
         }
-        return effects;
+
+        Map<String, Attack> attackMap = new HashMap<>();
+        for (String attackId : attackInfoMap.keySet()) {
+            AttackInfo info = attackInfoMap.get(attackId);
+            List<Effect> effects = effectsMap.get(attackId);
+            attackMap.put(attackId, new Attack(attackId, info.name, info.type, info.description, info.power, effects));
+        }
+        return attackMap;
+    }
+
+    private static class AttackInfo {
+        String name;
+        BugemonType type;
+        String description;
+        int power;
+    }
+
+    private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
+        EffectTarget target;
+        switch (effectType) {
+            case "EffectStatModifier" :
+                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "effect_stat", EffectStat.class);
+                String duration = (rs.getString("effect_duration") != null) ? rs.getString("effect_duration")
+                        : "0_tour";
+                return new EffectStatModifier(target, stat, rs.getInt("effect_modifier"),
+                        EffectDuration.fromLabel(duration));
+
+            case "EffectHeal" :
+                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                return new EffectHeal(target, rs.getInt("effect_amount"));
+
+            case "EffectResetMalus" :
+                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                return new EffectResetMalus(target);
+
+            default :
+                throw new IllegalStateException("Unknown effect type: " + effectType);
+        }
     }
 
     /**
@@ -314,51 +345,5 @@ public class StaticDataRepository extends AbstractRepository {
         } catch (IOException e) {
             throw new IOException("Impossible to save sprite file: " + fileTarget, e);
         }
-    }
-
-    /**
-     * Get a Bugemon by its name. It return a StaticBugemonDataDTO with just the static data info of the bugemon.
-     *
-     * @param name
-     *            (String) the name of the bugemon
-     * @return (StaticBugemonDataDTO) the bugemon
-     */
-    public StaticBugemonDataDTO getBugemonByName(String name) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetBugemonByName"))) {
-            ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return this.getBugemonFromResultSet(rs);
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getBugemonByName failed for name: " + name, e);
-        }
-        return null;
-    }
-
-    /**
-     * Get a Bugemon from a ResultSet.
-     *
-     * @param rs
-     *            (ResultSet) the ResultSet
-     * @return (StaticBugemonDataDTO) the Bugemon
-     * @throws SQLException
-     *             if the ResultSet is not valid
-     */
-    private StaticBugemonDataDTO getBugemonFromResultSet(ResultSet rs) throws SQLException {
-        String name = rs.getString(DatabaseColumns.COL_NAME);
-        String type = rs.getString(DatabaseColumns.COL_TYPE);
-        String spriteFileName = rs.getString(DatabaseColumns.COL_SPRITE);
-        boolean isStarter = rs.getBoolean(DatabaseColumns.COL_IS_STARTER);
-
-        Attack attack1 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
-        Attack attack2 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
-        Attack attack3 = this.getAttackById(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
-        List<Attack> attacks = new ArrayList<>();
-        attacks.add(attack1);
-        attacks.add(attack2);
-        attacks.add(attack3);
-
-        return new StaticBugemonDataDTO(name, type, spriteFileName, attacks, isStarter);
     }
 }
