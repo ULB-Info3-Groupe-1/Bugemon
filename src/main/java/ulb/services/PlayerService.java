@@ -3,7 +3,7 @@ package ulb.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulb.factory.BugemonFactory;
+import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;

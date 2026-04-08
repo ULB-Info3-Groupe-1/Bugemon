@@ -1,4 +1,4 @@
-package ulb.factory;
+package ulb.factories;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
