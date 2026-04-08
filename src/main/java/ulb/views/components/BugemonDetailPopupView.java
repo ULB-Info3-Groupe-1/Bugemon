@@ -82,7 +82,7 @@ public class BugemonDetailPopupView extends ComponentView {
         popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
 
         popup.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-            if (isFocused == Boolean.FALSE) {
+            if (Boolean.FALSE.equals(isFocused)) {
                 popup.close();
             }
         });
