@@ -52,7 +52,9 @@ public abstract class View {
 
     /**
      * Lock the player's input.
-     * @param locked (boolean) true to lock, false to unlock
+     *
+     * @param locked
+     *            (boolean) true to lock, false to unlock
      */
     protected void setInputLocked(boolean locked) {
         this.root.setMouseTransparent(locked);
