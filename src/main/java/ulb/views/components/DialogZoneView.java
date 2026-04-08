@@ -13,7 +13,7 @@ public class DialogZoneView extends ComponentView {
     @FXML
     private Button nextButton;
 
-    Listener listener;
+    private Listener listener;
 
     public DialogZoneView() {
         super(FXML_PATH);
