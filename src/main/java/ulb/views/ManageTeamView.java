@@ -88,6 +88,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onReturnMainMenuClicked() {
+        this.resetView();
         this.listener.onReturnToMainMenu();
     }
 
@@ -187,6 +188,13 @@ public class ManageTeamView extends View {
 
     public void showTeamNotFoundAlert(String teamName) {
         this.showAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
+    }
+
+    private void resetView() {
+        this.bugemonsTeamView.clearBugemons();
+        this.saveTeamNameInput.setText("");
+        this.selectedTeamName.setText("");
+        this.bugemonTeam.clear();
     }
 
     public interface Listener {

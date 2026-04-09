@@ -37,6 +37,13 @@ public class BugemonTeamView extends ComponentView {
         }
     }
 
+    /**
+     * Clears the grid of the current Bugemons selected.
+     */
+    public void clearBugemons() {
+        this.gridPane.getChildren().clear();
+    }
+
     public interface Listener {
 
         void onBugemonClicked(Bugemon bugemon);
