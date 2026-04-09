@@ -149,6 +149,16 @@
     -fx-background-color: rgba(200, 200, 200, 0.2);
 }
 
+.attack-count-incomplete {
+    -fx-text-fill: color-danger;
+    -fx-font-weight: bold;
+}
+
+.attack-count-complete {
+    -fx-text-fill: color-success;
+    -fx-font-weight: bold;
+}
+
 /* ── Type-coloured labels ────────────────────────────────── */
 .FLORA {
     -fx-text-fill: color-flora;

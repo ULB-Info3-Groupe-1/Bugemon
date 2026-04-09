@@ -52,7 +52,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
         Attack attack3 = this.view.getSelectedAttack3();
 
         if (attack1 == null || attack2 == null || attack3 == null) {
-            this.view.showInvalidFormAlert("Select three attacks for the Bugemon.");
+            this.view.showInvalidFormAlert("Need to select three attacks for the Bugemon.");
             return;
         }
 

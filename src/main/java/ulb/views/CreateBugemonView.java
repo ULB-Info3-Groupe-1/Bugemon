@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Slider;
@@ -64,6 +66,9 @@ public class CreateBugemonView extends View {
     private Label initiativeLabel;
 
     @FXML
+    private Label attackCountLabel;
+
+    @FXML
     private Button floraTypeButton;
 
     @FXML
@@ -82,6 +87,53 @@ public class CreateBugemonView extends View {
     @FXML
     private void initialize() {
         this.attackListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Permet le toggle au clic simple (sans Cmd/Ctrl) et bloque au-delà de 3 sélections.
+        this.attackListView.setCellFactory(listView -> {
+            ListCell<String> cell = new ListCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    this.setText(empty ? null : item);
+                }
+            };
+
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                if (cell.isEmpty()) {
+                    return;
+                }
+
+                int index = cell.getIndex();
+                var selectionModel = this.attackListView.getSelectionModel();
+
+                if (selectionModel.isSelected(index)) {
+                    selectionModel.clearSelection(index);
+                } else if (selectionModel.getSelectedItems().size() < 3) {
+                    selectionModel.select(index);
+                }
+
+                this.updateAttackCountLabel();
+                event.consume();
+            });
+
+            return cell;
+        });
+
+        this.attackListView.getSelectionModel().getSelectedItems()
+                .addListener((ListChangeListener<String>) change -> this.updateAttackCountLabel());
+    }
+
+    private void updateAttackCountLabel() {
+        int selectedCount = this.attackListView.getSelectionModel().getSelectedItems().size();
+        this.attackCountLabel.setText("Selected attacks: " + selectedCount + "/3");
+        
+        if (selectedCount == 3) {
+            this.attackCountLabel.getStyleClass().removeAll("attack-count-incomplete");
+            this.attackCountLabel.getStyleClass().add("attack-count-complete");
+        } else {
+            this.attackCountLabel.getStyleClass().removeAll("attack-count-complete");
+            this.attackCountLabel.getStyleClass().add("attack-count-incomplete");
+        }
     }
 
     @FXML
@@ -216,6 +268,7 @@ public class CreateBugemonView extends View {
 
         this.attackListView.setItems(FXCollections.observableArrayList(this.attacksByName.keySet()));
         this.attackListView.getSelectionModel().clearSelection();
+        this.updateAttackCountLabel();
     }
 
     public Attack getSelectedAttack1() {
