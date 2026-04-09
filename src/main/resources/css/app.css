@@ -620,3 +620,22 @@
     -fx-font-weight: bold;
     -fx-text-fill: color-gold;
 }
+
+/* ── Bugemon type selection ──────────────────────────────────────── */
+.attack-FLORA, .attack-AQUA, .attack-PYRO, .attack-LITHO {
+    -fx-border-width: 0; 
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 14 22;
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}
+
+.attack-FLORA:selected, .attack-AQUA:selected, .attack-PYRO:selected, .attack-LITHO:selected {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 8, 0, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-border-width: 0; 
+}

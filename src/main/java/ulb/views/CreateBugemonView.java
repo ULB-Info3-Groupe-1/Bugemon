@@ -204,7 +204,20 @@ public class CreateBugemonView extends View {
 
     @FXML
     private void onReturnClicked() {
+        this.resetView();
         this.listener.onReturnToMainMenu();
+    }
+
+    private void resetView() {
+        this.bugemonNameTextField.setText("");
+        this.healthSlider.setValue(0);
+        this.attackSlider.setValue(0);
+        this.defenseSlider.setValue(0);
+        this.initiativeSlider.setValue(0);
+        this.bugemonCardView.removeSprite();
+        this.selectedSpriteUrl = null;
+        this.attackListView.getSelectionModel().clearSelection();
+        this.selectedType = null;
     }
 
     @FXML

@@ -9,6 +9,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Slider?>
 <?import ulb.views.components.BugemonCardView?>
+<?import ulb.models.bugemon.BugemonType?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CreateBugemonView" alignment="CENTER"
@@ -59,14 +62,39 @@
                 <Label text="Choisir le type du Bugemon"
                     styleClass="section-label" />
                 <HBox spacing="10" alignment="CENTER">
-                    <Button text="FLORA" onAction="#onTypeClicked"
-                        styleClass="btn, attack-FLORA" />
-                    <Button text="AQUA" onAction="#onTypeClicked"
-                        styleClass="btn, attack-AQUA" />
-                    <Button text="PYRO" onAction="#onTypeClicked"
-                        styleClass="btn, attack-PYRO" />
-                    <Button text="LITHO" onAction="#onTypeClicked"
-                        styleClass="btn, attack-LITHO" />
+
+                    <fx:define>
+                        <ToggleGroup fx:id="typeToggleGroup" />
+                    </fx:define>
+
+                    <ToggleButton text="FLORA"
+                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                        styleClass="btn, attack-FLORA">
+                        <userData>
+                            <BugemonType fx:constant="FLORA" />
+                        </userData>
+                    </ToggleButton>
+                    <ToggleButton text="AQUA"
+                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                        styleClass="btn, attack-AQUA">
+                        <userData>
+                            <BugemonType fx:constant="AQUA" />
+                        </userData>
+                    </ToggleButton>
+                    <ToggleButton text="PYRO"
+                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                        styleClass="btn, attack-PYRO">
+                        <userData>
+                            <BugemonType fx:constant="PYRO" />
+                        </userData>
+                    </ToggleButton>
+                    <ToggleButton text="LITHO"
+                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                        styleClass="btn, attack-LITHO">
+                        <userData>
+                            <BugemonType fx:constant="LITHO" />
+                        </userData>
+                    </ToggleButton>
                 </HBox>
             </VBox>
 
