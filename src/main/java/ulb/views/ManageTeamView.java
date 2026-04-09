@@ -158,10 +158,11 @@ public class ManageTeamView extends View {
 
     @Override
     public void refresh() {
+        Set<Bugemon> selectedBugemons = this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet())).orElse(new HashSet<>());
+        this.allBugemonsGridView.showAll(this.availableBugemons, this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet())).orElse(new HashSet<>()));
+
         this.bugemonTeam.ifPresentOrElse(
                 (team) -> {
-                    Set<Bugemon> selectedBugemons = team.stream().collect(Collectors.toSet());
-                    this.allBugemonsGridView.showAll(this.availableBugemons, selectedBugemons);
                     this.bugemonsTeamView.showTeam(team);
                     if (team.isEmpty()) {
                         this.selectedTeamName.setText(NO_TEAM_SELECTED);
@@ -176,7 +177,6 @@ public class ManageTeamView extends View {
                     }
                 },
                 () -> {
-                    this.allBugemonsGridView.showAll(this.availableBugemons, new HashSet<>());
                     this.bugemonsTeamView.clearBugemons();
                 });
     }
