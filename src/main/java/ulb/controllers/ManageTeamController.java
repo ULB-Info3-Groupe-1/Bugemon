@@ -107,7 +107,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
 
         try {
-            this.playerService.loadTeamAndSetActiveTeam(teamName);
+            this.playerService.setActiveTeam(teamName);
             this.refresh();
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);

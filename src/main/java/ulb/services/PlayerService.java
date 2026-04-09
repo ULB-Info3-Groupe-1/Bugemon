@@ -28,7 +28,7 @@ public class PlayerService {
     private Optional<BugemonTeam> activeTeam = Optional.empty();
 
     // List of all teams owned by the player
-    private List<TeamDTO> playerTeams;
+    private List<BugemonTeam> playerTeams;
 
     // Player Inventory
     private Inventory inventory;
@@ -42,7 +42,7 @@ public class PlayerService {
         this.playerRepository = playerRepository;
         this.playerId = this.playerRepository.getPlayerIdByPlayername(playername)
                 .orElseGet(() -> this.playerRepository.createPlayer(playername));
-        this.playerTeams = this.playerRepository.getPlayerTeams(this.playerId);
+        this.loadTeams(this.playerRepository.getPlayerTeams(this.playerId));
 
         // TODO: probably connect to db
         this.inventory = InventoryService.addStarterItem(new Inventory());
@@ -61,7 +61,7 @@ public class PlayerService {
     }
 
     public List<String> getTeamNames() {
-        return this.playerTeams.stream().map(TeamDTO::teamName).toList();
+        return this.playerTeams.stream().map(BugemonTeam::getName).toList();
     }
 
     /**
@@ -85,8 +85,7 @@ public class PlayerService {
         }
 
         this.playerRepository.renameTeam(this.playerId, oldName, newName);
-        this.playerTeams.removeIf(t -> t.teamName().equals(oldName));
-        this.playerTeams.add(new TeamDTO(this.playerId, newName));
+        this.playerTeams.stream().filter(t -> t.getName().equals(oldName)).forEach(t -> t.setName(newName));
         this.activeTeam.get().setName(newName);
     }
 
@@ -100,7 +99,7 @@ public class PlayerService {
         }
 
         this.playerRepository.deleteTeam(this.playerId, teamName);
-        this.playerTeams.removeIf(t -> t.teamName().equals(teamName));
+        this.playerTeams.removeIf(t -> t.getName().equals(teamName));
 
         if (this.activeTeam.isPresent() && this.activeTeam.get().getName().equals(teamName)) {
             this.activeTeam = Optional.empty();
@@ -167,42 +166,37 @@ public class PlayerService {
                     this.activeTeam.get().getSlotPosition(bugemon));
             this.playerRepository.addTeamMember(memberDTO);
         }
-        this.playerTeams.add(new TeamDTO(this.playerId, teamName));
+        this.playerTeams.add(this.activeTeam.get());
     }
 
     /**
-     * Loads a team and sets it as the active team.
+     * Loads the teams of the player from the database.
      *
-     * @param teamName
-     *            the name of the team to load
-     * @throws TeamNotFoundException
-     *             if teamName does not exist
+     * @param teams
+     *            (List<TeamDTO>) the teams of the player to be loaded
      */
-    public void loadTeamAndSetActiveTeam(String teamName) throws TeamNotFoundException {
-        if (!this.teamNameExists(teamName)) {
-            throw new TeamNotFoundException("No team saved with the name " + teamName);
+    private void loadTeams(List<TeamDTO> teams) {
+        this.playerTeams = new ArrayList<>();
+        for (TeamDTO team : teams) {
+            List<TeamMemberDTO> teamMembers = this.playerRepository.getTeamMembers(this.playerId, team.teamName());
+            List<PlayerBugemonDTO> playerBugemons = this.playerRepository.getPlayerBugemons(this.playerId);
+
+            BugemonTeam loadTeam = new BugemonTeam();
+            loadTeam.setName(team.teamName());
+            for (TeamMemberDTO member : teamMembers) {
+                PlayerBugemonDTO playerBugemon = playerBugemons.stream()
+                        .filter(b -> b.bugemonName().equals(member.bugemonName())).findFirst()
+                        .orElseThrow(() -> new RuntimeException("Player Bugemon with name " + member.bugemonName()
+                                + (" not found. Cannot load team.")));
+
+                loadTeam.add(this.buildPlayerBugemon(playerBugemon));
+            }
+            this.playerTeams.add(loadTeam);
         }
-
-        List<TeamMemberDTO> teamMembers = this.playerRepository.getTeamMembers(this.playerId, teamName);
-        List<PlayerBugemonDTO> playerBugemons = this.playerRepository.getPlayerBugemons(this.playerId);
-
-        BugemonTeam loadTeam = new BugemonTeam();
-        loadTeam.setName(teamName);
-
-        for (TeamMemberDTO member : teamMembers) {
-            PlayerBugemonDTO playerBugemon = playerBugemons.stream()
-                    .filter(b -> b.bugemonName().equals(member.bugemonName())).findFirst()
-                    .orElseThrow(() -> new RuntimeException(
-                            "Player Bugemon with name " + member.bugemonName() + (" not found. Cannot load team.")));
-
-            loadTeam.add(this.buildPlayerBugemon(playerBugemon));
-        }
-
-        this.activeTeam = Optional.of(loadTeam);
     }
 
     private boolean teamNameExists(String teamName) {
-        return this.playerTeams.stream().anyMatch(team -> team.teamName().equals(teamName));
+        return this.playerTeams.stream().anyMatch(team -> team.getName().equals(teamName));
     }
 
     /**
@@ -319,8 +313,13 @@ public class PlayerService {
      */
     public boolean isActiveTeamSaved() {
         return this.activeTeam
-                .map(team -> this.playerTeams.stream()
-                        .anyMatch(pt -> pt.teamName().equals(team.getName()) && pt.playerId() == this.playerId))
+                .map(team -> this.playerTeams.stream().anyMatch(pt -> pt.getName().equals(team.getName())))
                 .orElse(false);
+    }
+
+    public void setActiveTeam(String teamName) throws TeamNotFoundException {
+        this.activeTeam = Optional.of(this.playerTeams.stream().filter(pt -> pt.getName().equals(teamName)).findFirst()
+                .orElseThrow(() -> new TeamNotFoundException(
+                        "Cannot active team " + teamName + " because not found in player teams.")));
     }
 }
