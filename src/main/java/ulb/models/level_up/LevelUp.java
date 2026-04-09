@@ -60,7 +60,7 @@ public class LevelUp implements LevelUpDTO {
 
     @Override
     public Upgrade get(int idx) {
-        if (idx > this.numUpgrades()) {
+        if (idx >= this.numUpgrades()) {
             throw new IndexOutOfBoundsException("attempted to get an upgrade out of bounds");
         }
 
