@@ -358,6 +358,11 @@
     -fx-max-width: size-btn-choice;
 }
 
+.btn-create-bugemon {
+    -fx-min-width: size-btn-create-bugemon;
+    -fx-max-width: size-btn-create-bugemon;
+}
+
 /* ── Action menu panel ───────────────────────────────────── */
 .action-menu {
     -fx-pref-width: size-action-menu;
