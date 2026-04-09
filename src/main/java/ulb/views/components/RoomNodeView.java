@@ -2,6 +2,7 @@ package ulb.views.components;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -12,17 +13,23 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 
+import ulb.controllers.combat.NOTowerController.RoomType;
+
 /**
  * Reusable component representing a single room node in the floor map. Configurable to represent different room types
  */
 public class RoomNodeView extends StackPane {
     private static final String FXML_PATH = "/fxml/components/RoomNode.fxml";
+    private static final String ROOM_BASE_PATH = "/png/rooms/";
 
     @FXML
     private Rectangle background;
 
     @FXML
-    private ImageView roomIcon;
+    private ImageView roomToken;
+
+    @FXML
+    private ImageView roomTypeIcon;
 
     @FXML
     private StackPane stateOverlay;
@@ -45,26 +52,29 @@ public class RoomNodeView extends StackPane {
         }
     }
 
+    @FXML
+    private void initialize() {
+        this.roomToken.setImage(this.loadRequiredImage(ROOM_BASE_PATH + "base.png"));
+    }
+
     /**
-     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS", "BONUS", "EMPTY"). Updates the visual
+     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY"). Updates the
+     * visual
      *
      * @param roomType
-     *            The type of room (e.g., "START", "COMBAT", "BOSS", "BONUS", "EMPTY")
+     *            The type of room (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY")
      */
-    public void setRoomType(String roomType) {
-        this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-bonus", "room-empty");
+    // TODO: enum RoomType in controller
+    public void setRoomType(RoomType roomType) {
+        this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-reward", "room-empty");
 
-        String styleClass = "room-" + roomType.toLowerCase();
+        String normalizedRoomType = roomType.toString().toLowerCase();
+
+        String styleClass = "room-" + normalizedRoomType;
         this.getStyleClass().add(styleClass);
 
-        String iconPath = "/images/rooms/" + roomType.toLowerCase() + ".png";
-        try {
-            Image icon = new Image(getClass().getResourceAsStream(iconPath));
-            this.roomIcon.setImage(icon);
-        } catch (Exception e) {
-            // Fallback: ne pas afficher d'image si elle n'existe pas
-            this.roomIcon.setImage(null);
-        }
+        String iconPath = ROOM_BASE_PATH + normalizedRoomType + ".png";
+        this.roomTypeIcon.setImage(this.loadOptionalImage(iconPath));
     }
 
     /**
@@ -192,5 +202,21 @@ public class RoomNodeView extends StackPane {
         AVAILABLE,
         VISITED,
         LOCKED
+    }
+
+    private Image loadRequiredImage(String imagePath) {
+        URL imageUrl = this.getClass().getResource(imagePath);
+        if (imageUrl == null) {
+            throw new IllegalStateException("Missing required image resource: " + imagePath);
+        }
+        return new Image(imageUrl.toExternalForm());
+    }
+
+    private Image loadOptionalImage(String imagePath) {
+        URL imageUrl = this.getClass().getResource(imagePath);
+        if (imageUrl == null) {
+            return null;
+        }
+        return new Image(imageUrl.toExternalForm());
     }
 }

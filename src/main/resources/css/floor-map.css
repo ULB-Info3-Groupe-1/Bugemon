@@ -29,40 +29,64 @@
 }
 
 .room-background {
-    -fx-fill: #2c3e50;
+    -fx-fill: rgba(18, 25, 32, 0.35);
     -fx-stroke: #34495e;
     -fx-stroke-width: 2;
+}
+
+.room-token {
+    -fx-translate-y: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.65), 8, 0.2, 0, 2);
+}
+
+.room-type-icon {
+    -fx-translate-y: 0;
+    -fx-opacity: 0.95;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 6, 0.2, 0, 1);
 }
 
 /* ========================================
    ROOM TYPES - COLORS & ICONS
    ======================================== */
 .room-node.room-start .room-background {
-    -fx-fill: #3498db;
-    -fx-stroke: #2980b9;
-    -fx-stroke-width: 3;
+    -fx-stroke: #3498db;
+}
+
+.room-node.room-start .room-type-icon {
+    -fx-effect: dropshadow(gaussian, #3498db, 10, 0.45, 0, 0);
 }
 
 .room-node.room-combat .room-background {
-    -fx-fill: #e74c3c;
-    -fx-stroke: #c0392b;
+    -fx-stroke: #e74c3c;
+}
+
+.room-node.room-combat .room-type-icon {
+    -fx-effect: dropshadow(gaussian, #e74c3c, 10, 0.45, 0, 0);
 }
 
 .room-node.room-boss .room-background {
-    -fx-fill: #8e44ad;
-    -fx-stroke: #6c3483;
+    -fx-stroke: #8e44ad;
     -fx-stroke-width: 4;
-    -fx-effect: dropshadow(gaussian, #8e44ad, 15, 0.7, 0, 0);
 }
 
-.room-node.room-bonus .room-background {
-    -fx-fill: #f39c12;
-    -fx-stroke: #d68910;
+.room-node.room-boss .room-type-icon {
+    -fx-effect: dropshadow(gaussian, #8e44ad, 14, 0.6, 0, 0);
+}
+
+.room-node.room-reward .room-background {
+    -fx-stroke: #f39c12;
+}
+
+.room-node.room-reward .room-type-icon {
+    -fx-effect: dropshadow(gaussian, #f39c12, 10, 0.5, 0, 0);
 }
 
 .room-node.room-empty .room-background {
-    -fx-fill: #7f8c8d;
     -fx-stroke: #95a5a6;
+    -fx-opacity: 0.7;
+}
+
+.room-node.room-empty .room-type-icon {
     -fx-opacity: 0.5;
 }
 
@@ -77,6 +101,11 @@
     -fx-effect: dropshadow(gaussian, #f1c40f, 25, 0.9, 0, 0);
 }
 
+.room-node.current .room-token {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
 /* Available room: interactive */
 .room-node.available {
     -fx-cursor: hand;
@@ -84,19 +113,22 @@
 }
 
 .room-node.available:hover {
-    -fx-scale-x: 1.15;
-    -fx-scale-y: 1.15;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
     -fx-effect: dropshadow(gaussian, #ecf0f1, 15, 0.6, 0, 0);
 }
 
 /* Visited room: grayed out */
 .room-node.visited {
-    -fx-opacity: 0.4;
+    -fx-opacity: 0.5;
 }
 
 .room-node.visited .room-background {
-    -fx-fill: #95a5a6;
     -fx-stroke: #7f8c8d;
+}
+
+.room-node.visited .room-type-icon {
+    -fx-opacity: 0.6;
 }
 
 /* Locked room: disabled */

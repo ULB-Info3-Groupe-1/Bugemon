@@ -76,27 +76,27 @@ public class NOTowerController extends Controller<FloorMapView> implements Floor
         // Create a simple test layout using only row/col
         // TODO:
         RoomNodeView startRoom = new RoomNodeView();
-        startRoom.setRoomType("START");
+        startRoom.setRoomType(RoomType.START);
         startRoom.setRoomState(RoomState.CURRENT);
-        startRoom.setPosition(0, 2); // Row 0, Column 2
+        startRoom.setPosition(2, 1); // Row 1, Column 1
         this.view.addRoomNode(startRoom);
 
         RoomNodeView combatRoom = new RoomNodeView();
-        combatRoom.setRoomType("COMBAT");
+        combatRoom.setRoomType(RoomType.COMBAT);
         combatRoom.setRoomState(RoomState.AVAILABLE);
-        combatRoom.setPosition(1, 2); // Row 1, Column 2
+        combatRoom.setPosition(2, 2); // Row 1, Column 2
         this.view.addRoomNode(combatRoom);
 
         RoomNodeView rewardRoom = new RoomNodeView();
-        rewardRoom.setRoomType("REWARD");
+        rewardRoom.setRoomType(RoomType.REWARD);
         rewardRoom.setRoomState(RoomState.VISITED);
-        rewardRoom.setPosition(2, 1); // Row 2, Column 1
+        rewardRoom.setPosition(1, 3); // Row 2, Column 1
         this.view.addRoomNode(rewardRoom);
 
         RoomNodeView bossRoom = new RoomNodeView();
-        bossRoom.setRoomType("BOSS");
-        bossRoom.setRoomState(RoomState.LOCKED);
-        bossRoom.setPosition(2, 3); // Row 2, Column 3
+        bossRoom.setRoomType(RoomType.BOSS);
+        bossRoom.setRoomState(RoomState.AVAILABLE);
+        bossRoom.setPosition(3, 3); // Row 2, Column 3
         this.view.addRoomNode(bossRoom);
 
         // Center the map and generate connections
@@ -208,5 +208,13 @@ public class NOTowerController extends Controller<FloorMapView> implements Floor
 
     public boolean hasActiveRun() {
         return this.noTower != null && !this.runEnded;
+    }
+
+    public enum RoomType {
+        START,
+        COMBAT,
+        BOSS,
+        REWARD,
+        EMPTY
     }
 }

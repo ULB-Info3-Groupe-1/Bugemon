@@ -166,8 +166,9 @@ public class FloorMapView extends View {
     }
 
     /**
-     * Automatically generates all connections between adjacent rooms. A room is adjacent if it is in the next row (row
-     * + 1) and in an adjacent column (col-1, col, or col+1). Should be called after centerMap() for proper positioning.
+     * Automatically generates all connections between adjacent rooms. A room is adjacent if it is in the next column
+     * (col + 1) and in an adjacent row (row-1, row, or row+1). Should be called after centerMap() for proper
+     * positioning.
      */
     public void generateConnections() {
         this.clearConnections();
@@ -176,13 +177,13 @@ public class FloorMapView extends View {
             int sourceRow = sourceRoom.getRow();
             int sourceCol = sourceRoom.getCol();
 
-            // Look for rooms in the next row (row + 1)
+            // Look for rooms in the next column (col + 1)
             for (RoomNodeView targetRoom : this.roomNodes) {
                 int targetRow = targetRoom.getRow();
                 int targetCol = targetRoom.getCol();
 
-                // Connection to next row (row + 1) with adjacent columns (-1, 0, +1)
-                if (targetRow == sourceRow + 1 && Math.abs(targetCol - sourceCol) <= 1) {
+                // Connection to next column (col + 1) with adjacent rows (-1, 0, +1)
+                if (targetCol == sourceCol + 1 && Math.abs(targetRow - sourceRow) <= 1) {
                     this.addConnectionBetweenRooms(sourceRoom, targetRoom);
                 }
             }
