@@ -50,7 +50,11 @@ public class StaticDataRepository extends AbstractRepository {
         try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("isTablesPresent"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
+                System.err.println("ici");
+                System.out.println("ici");
                 this.createSchema();
+                System.err.println("ici");
+                System.out.println("ici");
                 this.addDefaultGameData();
                 return;
             }

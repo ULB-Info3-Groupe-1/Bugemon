@@ -13,4 +13,4 @@ SELECT
 SELECT COUNT(*) as existing_critical_tables
 FROM pg_tables
 WHERE schemaname = 'public'
-AND tablename IN ('bugemons', 'attacks', 'attack_effects', 'players', 'player_bugemons', 'teams', 'team_members', 'items', 'item_effect', 'item_user');
+AND tablename IN ('bugemons', 'attacks', 'attack_effects', 'players', 'player_bugemons', 'teams', 'team_members', 'items', 'item_effect', 'item_player');

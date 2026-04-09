@@ -85,14 +85,14 @@ CREATE TABLE IF NOT EXISTS "item_effect" (
   "duration" integer,
   PRIMARY KEY ("item_id")
 
-)
+);
 
 CREATE TABLE IF NOT EXISTS "item_player" (
   "player_id" integer REFERENCES "players"("id") ON DELETE CASCADE, 
   "item_id" varchar REFERENCES "items"("item_id") ON DELETE CASCADE,
   "amount" integer,
   PRIMARY KEY ("player_id", "item_id")
-)
+);
 
 CREATE UNIQUE INDEX ON "team_members" ("player_id", "team_name", "bugemon_name");
 
@@ -100,7 +100,6 @@ CREATE UNIQUE INDEX ON "team_members" ("player_id", "team_name", "bugemon_name")
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_1_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_2_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_3_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-<<<<<<< HEAD
 ALTER TABLE "attack_effects" ADD FOREIGN KEY ("attack_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "player_bugemons" ADD FOREIGN KEY ("player_id") REFERENCES "players" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "player_bugemons" ADD FOREIGN KEY ("bugemon_name") REFERENCES "bugemons" ("name") DEFERRABLE INITIALLY IMMEDIATE;
@@ -108,30 +107,6 @@ ALTER TABLE "teams" ADD FOREIGN KEY ("player_id") REFERENCES "players" ("id") DE
 ALTER TABLE "team_members" ADD FOREIGN KEY ("player_id", "team_name") REFERENCES "teams" ("player_id", "name") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "team_members" ADD FOREIGN KEY ("player_id", "bugemon_name") REFERENCES "player_bugemons" ("player_id", "bugemon_name") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "item" ADD FOREIGN KEY ("item_id") REFERENCES "item_effect" ("item_id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "item_user" ADD FOREIGN KEY ("user_id") REFERENCES "users"("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "item_user" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "item_player" ADD FOREIGN KEY ("player_id") REFERENCES "players"("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "item_player" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_id") DEFERRABLE INITIALLY IMMEDIATE;
 
-=======
-<<<<<<< HEAD
-ALTER TABLE "effects" ADD FOREIGN KEY ("attack_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "player_bugemons" ADD FOREIGN KEY ("player_id") REFERENCES "players" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "player_bugemons" ADD FOREIGN KEY ("bugemon_name") REFERENCES "bugemons" ("name") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "teams" ADD FOREIGN KEY ("player_id") REFERENCES "players" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("player_id", "team_name") REFERENCES "teams" ("player_id", "name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("player_id", "bugemon_name") REFERENCES "player_bugemons" ("player_id", "bugemon_name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
-=======
-ALTER TABLE "attack_effects" ADD FOREIGN KEY ("attack_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "user_bugemons" ADD FOREIGN KEY ("bugemon_id") REFERENCES "bugemons" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "teams" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "team_name") REFERENCES "teams" ("user_id", "name") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("user_id", "bugemon_id") REFERENCES "user_bugemons" ("user_id", "bugemon_id") DEFERRABLE INITIALLY IMMEDIATE;
-<<<<<<< HEAD
->>>>>>> 697f697 (Update Name Table Effect)
-=======
-ALTER TABLE "item" ADD FOREIGN KEY ("item_id") REFERENCES "item_effect" ("item_id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "item_user" ADD FOREIGN KEY ("user_id") REFERENCES "users"("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "item_user" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_id") DEFERRABLE INITIALLY IMMEDIATE;
-
->>>>>>> 4c6d443 (feat(itemDB): database items and queries)
->>>>>>> 3498135 (Update Name Table Effect)
