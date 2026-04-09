@@ -10,11 +10,9 @@ import javafx.scene.image.ImageView;
 import ulb.Configuration;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.level_up.LevelUp;
-import ulb.models.level_up.LevelUpSession;
 
 /**
- * View for the level-up screen. Holds a reference to a {@link LevelUpSession} and reads the current level-up event
- * directly from it in {@link #refresh()}. Holds no reference to any concrete controller class.
+ * View for the level-up screen. Holds a reference to the displayed LevelUp.
  */
 public class LevelUpView extends View {
 

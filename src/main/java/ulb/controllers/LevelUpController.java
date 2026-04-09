@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Queue;
 
 import ulb.models.level_up.LevelUp;
-import ulb.models.level_up.LevelUpSession;
 import ulb.services.PlayerService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the level-up screen. Manages a {@link LevelUpSession} model. After each player choice or
- * advance, the controller mutates the session and calls {@code view.refresh()} so the view pulls the updated event data
- * directly from the session.
+ * Controller responsible for the level-up screen.
+ *
+ * The {@link LevelUp} instances ares stored in a queue. The {@link LevelUp} at the head of the queue is always the one
+ * being displayed. When an {@link Upgrade} is chosen, the head is popped.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
     private Queue<LevelUp> levelUps = new ArrayDeque<>();
