@@ -20,6 +20,8 @@ import ulb.services.exceptions.TeamEmptyException;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
 
+// TODO: problem to see that the activeTeam has changed when removing a bugemon
+
 public class PlayerService {
     // Unique identifier for the player.
     private final int playerId;
@@ -57,16 +59,6 @@ public class PlayerService {
     }
 
     /**
-     * Sets the active team of the player
-     *
-     * @param team
-     *            the team to set
-     */
-    public void setActiveTeam(BugemonTeam team) {
-        this.activeTeam = Optional.of(team);
-    }
-
-    /**
      * Sets the active team of the player by filtering the list of player teams by name and setting the active team
      *
      * @param teamName
@@ -75,9 +67,10 @@ public class PlayerService {
      *             if the team does not exist
      */
     public void setActiveTeam(String teamName) throws TeamNotFoundException {
-        this.activeTeam = Optional.of(this.playerTeams.stream().filter(pt -> pt.getName().equals(teamName)).findFirst()
+        BugemonTeam original = this.playerTeams.stream().filter(pt -> pt.getName().equals(teamName)).findFirst()
                 .orElseThrow(() -> new TeamNotFoundException(
-                        "Cannot active team " + teamName + " because not found in player teams.")));
+                        "Cannot active team " + teamName + " because not found in player teams."));
+        this.activeTeam = Optional.of(new BugemonTeam(original));
     }
 
     public List<String> getTeamNames() {
@@ -301,6 +294,9 @@ public class PlayerService {
                     this.activeTeam.get().getSlotPosition(bugemon)));
         }
         this.playerRepository.modifyTeam(this.playerId, this.activeTeam.get().getName(), teamMembers);
+
+        this.playerTeams.removeIf(t -> t.getName().equals(this.activeTeam.get().getName()));
+        this.playerTeams.add(this.activeTeam.get());
     }
 
     public void clearActiveTeam() {
@@ -309,7 +305,8 @@ public class PlayerService {
 
     /**
      * Adds or removes a bugemon from the active team depending on whether it is already in the team. Creates a new team
-     * if the player does not have an active team.
+     * if the player does not have an active team. This method don't save the active team to the database. It just adds
+     * or removes the bugemon from the active team.
      *
      * @param bugemon
      *            the bugemon to add or remove
@@ -317,6 +314,8 @@ public class PlayerService {
     public void addOrRemoveBugemonOfActiveTeam(Bugemon bugemon) {
         if (this.activeTeam.isEmpty()) {
             this.activeTeam = Optional.of(new BugemonTeam());
+            this.activeTeam.get().add(new Bugemon(bugemon));
+            return;
         }
 
         if (this.activeTeam.get().contains(bugemon)) {
@@ -324,16 +323,19 @@ public class PlayerService {
         } else if (!this.activeTeam.get().isFull()) {
             this.activeTeam.get().add(new Bugemon(bugemon));
         }
+
     }
 
     /**
-     * Checks if the active team of the player has been saved to the database.
+     * Checks if the active team of the player has been saved to the database. If the active team is empty, it is
+     * considered as saved because there is nothing to save (we cannot s).
      *
      * @return (boolean) true if the active team has been saved, false otherwise
      */
     public boolean isActiveTeamSaved() {
-        return this.activeTeam
-                .map(team -> this.playerTeams.stream().anyMatch(pt -> pt.getName().equals(team.getName())))
-                .orElse(false);
+        if (this.activeTeam.isEmpty() || this.activeTeam.get().isEmpty()) {
+            return true;
+        }
+        return this.activeTeam.map(team -> this.playerTeams.stream().anyMatch(pt -> pt.equals(team))).orElse(false);
     }
 }

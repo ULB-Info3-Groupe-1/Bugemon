@@ -6,7 +6,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -33,7 +36,7 @@ public class ManageTeamView extends View {
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
     private static final String INVALID_NAME = "Nom d'équipe invalide";
     private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
-    private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe déjà utilisé";
+    private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";
     private static final String TEAM_EMPTY = "Équipe vide";
 
     @FXML
@@ -90,7 +93,6 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onReturnMainMenuClicked() {
-        this.resetView();
         this.listener.onReturnToMainMenu();
     }
 
@@ -170,12 +172,13 @@ public class ManageTeamView extends View {
                 this.selectedTeamName.setText(team.getName());
                 this.teamListView.getSelectionModel().select(team.getName());
             } else {
-                this.selectedTeamName
-                        .setText("Nouvelle équipe chargée mais non sauvegardée. Donnez lui un nom et sauvegardez la.");
+                this.selectedTeamName.setText("Cette équipe (nouvelle ou modifiée) n'a pas encore été enregistrée. "
+                        + "Veuillez lui donner un nom et la sauvegarder pour conserver vos modifications.");
             }
         }, () -> {
             this.bugemonsTeamView.clearBugemons();
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
+            this.teamListView.getSelectionModel().clearSelection();
         });
     }
 
@@ -209,12 +212,6 @@ public class ManageTeamView extends View {
 
     public void showRenameTeamNoActiveTeamAlert() {
         this.showAlert("Aucune équipe active", "Sélectionnez l'équipe que vous souhaitez renommer.");
-    }
-
-    private void resetView() {
-        this.bugemonsTeamView.clearBugemons();
-        this.saveTeamNameInput.setText("");
-        this.selectedTeamName.setText("");
     }
 
     /**
@@ -276,5 +273,30 @@ public class ManageTeamView extends View {
 
     public void showAlertChooseTeamToModify() {
         this.showNoActiveTeamAlert("Veuillez choisir une equipe à modifier.");
+    }
+
+    /**
+     * Displays a warning dialog to warn the user that there are unsaved changes. He can choose to continue or go back.
+     *
+     * @return (boolean) true if the user wants to continue, false if he wants to go back
+     */
+    public boolean showAlertTeamChangesNotSave() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Equipe non sauvegardée");
+        alert.setHeaderText(null);
+        alert.setContentText(
+                "Nouvelle équipe ou équipe existante modifiée non sauvegardée. Donnez lui un nom et sauvegardez la.");
+
+        if (this.root != null && this.root.getScene() != null) {
+            alert.initOwner(this.root.getScene().getWindow());
+        }
+
+        ButtonType continueBtn = new ButtonType("Continuer"); // L'utilisateur accepte de perdre les modifs
+        ButtonType backBtn = new ButtonType("Retour", ButtonBar.ButtonData.CANCEL_CLOSE); // L'utilisateur reste ici
+
+        alert.getButtonTypes().setAll(continueBtn, backBtn);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == continueBtn;
     }
 }

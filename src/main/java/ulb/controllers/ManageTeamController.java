@@ -74,11 +74,6 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public void onReturnToMainMenu() {
-        this.metaController.switchTo(MetaController.Window.MAIN_MENU);
-    }
-
-    @Override
     public void onSave(String teamName) {
         if (this.teamNameIsEmpty(teamName)) {
             this.view.showEmptyTeamNameAlert();
@@ -160,6 +155,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     public void onModifyTeam() {
         try {
             this.playerService.modifyActiveTeam();
+            this.refresh();
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
         } catch (NoActiveTeamException e) {
@@ -168,22 +164,29 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public void onStartAutomaticCombat() {
-        if (!this.isActiveTeamEmpty()) {
+    public void onReturnToMainMenu() {
+        if (this.canLeaveScreen()) {
+            this.metaController.switchTo(MetaController.Window.MAIN_MENU);
+        }
+    }
+
+    @Override
+    public void onLaunchAutomaticCombat() {
+        if (!this.isActiveTeamEmpty() && this.canLeaveScreen()) {
             this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
         }
     }
 
     @Override
-    public void onStartManualCombat() {
-        if (!this.isActiveTeamEmpty()) {
+    public void onLaunchManualCombat() {
+        if (!this.isActiveTeamEmpty() && this.canLeaveScreen()) {
             this.metaController.switchTo(Window.MANUAL_COMBAT);
         }
     }
 
     @Override
-    public void onStartNOTowerCombat() {
-        if (!this.isActiveTeamEmpty()) {
+    public void onLaunchNOTowerCombat() {
+        if (!this.isActiveTeamEmpty() && this.canLeaveScreen()) {
             this.metaController.switchTo(Window.NOTOWER);
         }
     }
@@ -193,6 +196,19 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showAlertChooseTeamToLaunchCombat();
             return true;
         }
+        return false;
+    }
+
+    private boolean canLeaveScreen() {
+        if (this.playerService.isActiveTeamSaved()) {
+            return true;
+        }
+
+        if (this.view.showAlertTeamChangesNotSave()) {
+            this.playerService.clearActiveTeam();
+            return true;
+        }
+
         return false;
     }
 }

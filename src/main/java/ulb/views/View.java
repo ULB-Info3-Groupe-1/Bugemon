@@ -10,7 +10,7 @@ import javafx.stage.Stage;
  * {@link #show(Stage)}, avoiding the resize flash that occurs when replacing the scene itself.
  */
 public abstract class View {
-    private Parent root;
+    protected Parent root;
 
     /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
     public void initRoot(Parent newroot) {
