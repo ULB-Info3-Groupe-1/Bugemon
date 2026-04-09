@@ -42,7 +42,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     public void startCombat(boolean shouldRestoreHp) {
         this.restoreHpAfterCombat = shouldRestoreHp;
 
-        this.manualPlayerTrainer = new ManualTrainer(this.playerService.getActiveTeam(),
+        this.manualPlayerTrainer = new ManualTrainer(
+                this.playerService.getActiveTeam().orElseThrow(
+                        () -> new IllegalStateException("No active team for player when starting Manual combat")),
                 this.playerService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 

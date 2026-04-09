@@ -8,6 +8,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
+import ulb.services.exceptions.NoActiveTeamException;
 import ulb.services.exceptions.TeamEmptyException;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
@@ -22,7 +23,6 @@ import ulb.views.ViewLoader;
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
     private final PlayerService playerService;
     private final BugemonService bugemonService;
-    private BugemonTeam selectedTeam;
     private final ManageTeamView.TeamFormMode mode;
 
     /**
@@ -38,27 +38,27 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.mode = mode;
         this.playerService = playerService;
         this.bugemonService = bugemonService;
-        this.selectedTeam = new BugemonTeam();
 
+        this.view.setTeam(playerService.getActiveTeam());
         this.view.setListener(this);
+
     }
 
     @Override
     protected void show(Stage stage) {
-        this.updateTeam();
         this.udpateAvailableBugemons();
         this.updateTeamList();
         this.view.setMode(this.mode);
-
         super.show(stage);
+    }
+
+    private void refresh() {
+        this.view.setTeam(this.playerService.getActiveTeam());
+        this.view.refresh();
     }
 
     public void updateTeamList() {
         this.view.setTeamList(this.playerService.getTeamNames());
-    }
-
-    public void updateTeam() {
-        this.view.setTeam(this.selectedTeam);
     }
 
     private void udpateAvailableBugemons() {
@@ -67,13 +67,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onBugemonSelected(Bugemon bugemon) {
-        if (this.selectedTeam.contains(bugemon)) {
-            this.selectedTeam.remove(bugemon);
-        } else if (!this.selectedTeam.isFull()) {
-            this.selectedTeam.add(new Bugemon(bugemon));
-        }
-
-        this.view.refresh();
+        this.playerService.addOrRemoveBugemonOfActiveTeam(bugemon);
+        this.refresh();
     }
 
     @Override
@@ -89,12 +84,16 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
 
         try {
-            this.playerService.saveTeam(teamName, this.selectedTeam);
+            this.playerService.saveTeam(teamName);
             this.view.setTeamList(this.playerService.getTeamNames());
+            this.refresh();
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
+        } catch (NoActiveTeamException e) {
+            throw new IllegalStateException(
+                    "The player team to save doesn't exist. The active team should exist now and be modified.");
         }
     }
 
@@ -107,9 +106,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
         try {
             this.playerService.loadTeamAndSetActiveTeam(teamName);
-            this.selectedTeam = this.playerService.getActiveTeam();
-            this.updateTeam();
-            this.view.refresh();
+            this.refresh();
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
@@ -120,11 +117,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         try {
             this.playerService.deleteTeam(teamName);
             this.view.setTeamList(this.playerService.getTeamNames());
-            if (this.selectedTeam != null && teamName.equals(this.selectedTeam.getName())) {
-                this.selectedTeam = new BugemonTeam();
-                this.updateTeam();
-                this.view.refresh();
-            }
+            this.refresh();
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
@@ -140,21 +133,21 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         try {
             this.playerService.renameTeam(oldName, newName);
             this.view.setTeamList(this.playerService.getTeamNames());
-            if (this.selectedTeam != null && oldName.equals(this.selectedTeam.getName())) {
-                this.selectedTeam.setName(newName);
-            }
+            this.refresh();
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(oldName);
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showTeamNameAlreadyExistsAlert(newName);
+        } catch (NoActiveTeamException e) {
+            this.view.showRenameTeamNoActiveTeamAlert();
         }
     }
 
     @Override
     public void onAddNewTeam() {
-        this.selectedTeam = new BugemonTeam();
-        this.updateTeam();
-        this.view.refresh();
+        this.playerService.clearActiveTeam();
+        this.view.clearTeamNameToSave();
+        this.refresh();
     }
 
     private boolean teamNameIsEmpty(String name) {
@@ -164,9 +157,11 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     @Override
     public void onModifyTeam() {
         try {
-            this.playerService.modifyTeam(this.selectedTeam);
+            this.playerService.modifyActiveTeam();
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
+        } catch (NoActiveTeamException e) {
+            this.view.showNoActiveTeamAlert("Veuillez choisir une equipe à modifier.");
         }
     }
 
@@ -193,7 +188,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     private boolean isActiveTeamEmpty() {
         if (this.playerService.isActiveTeamEmpty()) {
-            this.view.showNoTeamAlert();
+            this.view.showNoActiveTeamAlert("Veuillez choisir une equipe pour lancer un combat.");
             return true;
         }
         return false;

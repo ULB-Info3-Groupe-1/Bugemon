@@ -48,7 +48,7 @@
 
             <VBox spacing="12">
                 <HBox spacing="10">
-                    <Label text="Ton Équipe: " />
+                    <Label text="Ton équipe actuellement chargée : " />
                     <Text fx:id="selectedTeamName" />
                 </HBox>
                 <BugemonTeamView fx:id="bugemonsTeamView" />

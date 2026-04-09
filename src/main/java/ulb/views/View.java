@@ -46,8 +46,8 @@ public abstract class View {
         alert.showAndWait();
     }
 
-    public void showNoTeamAlert() {
-        this.showAlert("Aucune équipe active", "Veuillez créer ou charger une équipe avant de lancer un combat.");
+    public void showNoActiveTeamAlert(String message) {
+        this.showAlert("Aucune équipe active", message);
     }
 
     public Parent getRoot() {
