@@ -158,23 +158,27 @@ public class ManageTeamView extends View {
 
     @Override
     public void refresh() {
-        if (this.bugemonTeam.isPresent()) {
-            Set<Bugemon> selectedBugemons = this.bugemonTeam.get().stream().collect(Collectors.toSet());
-            this.allBugemonsGridView.showAll(this.availableBugemons, selectedBugemons);
-            this.bugemonsTeamView.showTeam(this.bugemonTeam.get());
-            if (this.bugemonTeam.get().size() == 0) {
-                this.selectedTeamName.setText(NO_TEAM_SELECTED);
-            } else if (this.bugemonTeam.get().getName().equals(Configuration.Game.DEFAULT_TEAM_NAME)) {
-                this.selectedTeamName
-                        .setText("Nouvelle équipe chargée mais non sauvegardée. Donnez lui un nom et sauvegardez la.");
-            } else {
-                this.selectedTeamName.setText(this.bugemonTeam.get().getName());
-            }
+        this.bugemonTeam.ifPresentOrElse(
+                (team) -> {
+                    Set<Bugemon> selectedBugemons = team.stream().collect(Collectors.toSet());
+                    this.allBugemonsGridView.showAll(this.availableBugemons, selectedBugemons);
+                    this.bugemonsTeamView.showTeam(team);
+                    if (team.isEmpty()) {
+                        this.selectedTeamName.setText(NO_TEAM_SELECTED);
 
-        } else {
-            this.allBugemonsGridView.showAll(this.availableBugemons, new HashSet<>());
-            this.bugemonsTeamView.clearBugemons();
-        }
+                    // FIXME: this is pretty ugly
+                    } else if (team.getName().equals(Configuration.Game.DEFAULT_TEAM_NAME)) {
+                        this.selectedTeamName
+                                .setText(
+                                        "Nouvelle équipe chargée mais non sauvegardée. Donnez lui un nom et sauvegardez la.");
+                    } else {
+                        this.selectedTeamName.setText(team.getName());
+                    }
+                },
+                () -> {
+                    this.allBugemonsGridView.showAll(this.availableBugemons, new HashSet<>());
+                    this.bugemonsTeamView.clearBugemons();
+                });
     }
 
     public void setSaveTeamName(String name) {
