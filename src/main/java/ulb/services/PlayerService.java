@@ -311,4 +311,16 @@ public class PlayerService {
             this.activeTeam.get().add(new Bugemon(bugemon));
         }
     }
+
+    /**
+     * Checks if the active team of the player has been saved to the database.
+     *
+     * @return (boolean) true if the active team has been saved, false otherwise
+     */
+    public boolean isActiveTeamSaved() {
+        return this.activeTeam
+                .map(team -> this.playerTeams.stream()
+                        .anyMatch(pt -> pt.teamName().equals(team.getName()) && pt.playerId() == this.playerId))
+                .orElse(false);
+    }
 }

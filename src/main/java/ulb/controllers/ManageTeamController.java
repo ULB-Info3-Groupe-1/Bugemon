@@ -49,11 +49,13 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.udpateAvailableBugemons();
         this.updateTeamList();
         this.view.setMode(this.mode);
+        this.refresh();
         super.show(stage);
     }
 
     private void refresh() {
         this.view.setTeam(this.playerService.getActiveTeam());
+        this.view.setIsActiveTeamSaved(this.playerService.isActiveTeamSaved());
         this.view.refresh();
     }
 

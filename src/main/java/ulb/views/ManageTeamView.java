@@ -3,7 +3,6 @@ package ulb.views;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -62,6 +61,7 @@ public class ManageTeamView extends View {
 
     private Listener listener;
     private Optional<BugemonTeam> bugemonTeam;
+    private boolean isBugemonTeamSaved;
     private List<Bugemon> availableBugemons;
 
     @FXML
@@ -158,25 +158,24 @@ public class ManageTeamView extends View {
 
     @Override
     public void refresh() {
-        Set<Bugemon> selectedBugemons = this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet()))
-                .orElse(new HashSet<>());
         this.allBugemonsGridView.showAll(this.availableBugemons,
                 this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet())).orElse(new HashSet<>()));
 
-        this.bugemonTeam.ifPresentOrElse((team) -> {
+        this.bugemonTeam.ifPresentOrElse(team -> {
             this.bugemonsTeamView.showTeam(team);
             if (team.isEmpty()) {
                 this.selectedTeamName.setText(NO_TEAM_SELECTED);
 
-                // FIXME: this is pretty ugly
-            } else if (team.getName().equals(Configuration.Game.DEFAULT_TEAM_NAME)) {
+            } else if (this.isBugemonTeamSaved) {
+                this.selectedTeamName.setText(team.getName());
+                this.teamListView.getSelectionModel().select(team.getName());
+            } else {
                 this.selectedTeamName
                         .setText("Nouvelle équipe chargée mais non sauvegardée. Donnez lui un nom et sauvegardez la.");
-            } else {
-                this.selectedTeamName.setText(team.getName());
             }
         }, () -> {
             this.bugemonsTeamView.clearBugemons();
+            this.selectedTeamName.setText(NO_TEAM_SELECTED);
         });
     }
 
@@ -223,6 +222,10 @@ public class ManageTeamView extends View {
      */
     public void clearTeamNameToSave() {
         this.saveTeamNameInput.setText("");
+    }
+
+    public void setIsActiveTeamSaved(boolean isActiveTeamSaved) {
+        this.isBugemonTeamSaved = isActiveTeamSaved;
     }
 
     public interface Listener {
