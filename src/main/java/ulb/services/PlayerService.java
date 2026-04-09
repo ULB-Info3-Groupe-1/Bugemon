@@ -56,8 +56,23 @@ public class PlayerService {
         return this.inventory;
     }
 
+    /**
+     * Sets the active team of the player
+     * @param team the team to set
+     */
     public void setActiveTeam(BugemonTeam team) {
         this.activeTeam = Optional.of(team);
+    }
+
+    /**
+     * Sets the active team of the player by filtering the list of player teams by name and setting the active team
+     * @param teamName the name of the team
+     * @throws TeamNotFoundException if the team does not exist
+     */
+    public void setActiveTeam(String teamName) throws TeamNotFoundException {
+        this.activeTeam = Optional.of(this.playerTeams.stream().filter(pt -> pt.getName().equals(teamName)).findFirst()
+                .orElseThrow(() -> new TeamNotFoundException(
+                        "Cannot active team " + teamName + " because not found in player teams.")));
     }
 
     public List<String> getTeamNames() {
@@ -315,11 +330,5 @@ public class PlayerService {
         return this.activeTeam
                 .map(team -> this.playerTeams.stream().anyMatch(pt -> pt.getName().equals(team.getName())))
                 .orElse(false);
-    }
-
-    public void setActiveTeam(String teamName) throws TeamNotFoundException {
-        this.activeTeam = Optional.of(this.playerTeams.stream().filter(pt -> pt.getName().equals(teamName)).findFirst()
-                .orElseThrow(() -> new TeamNotFoundException(
-                        "Cannot active team " + teamName + " because not found in player teams.")));
     }
 }
