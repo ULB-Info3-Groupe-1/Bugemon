@@ -158,27 +158,26 @@ public class ManageTeamView extends View {
 
     @Override
     public void refresh() {
-        Set<Bugemon> selectedBugemons = this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet())).orElse(new HashSet<>());
-        this.allBugemonsGridView.showAll(this.availableBugemons, this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet())).orElse(new HashSet<>()));
+        Set<Bugemon> selectedBugemons = this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet()))
+                .orElse(new HashSet<>());
+        this.allBugemonsGridView.showAll(this.availableBugemons,
+                this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet())).orElse(new HashSet<>()));
 
-        this.bugemonTeam.ifPresentOrElse(
-                (team) -> {
-                    this.bugemonsTeamView.showTeam(team);
-                    if (team.isEmpty()) {
-                        this.selectedTeamName.setText(NO_TEAM_SELECTED);
+        this.bugemonTeam.ifPresentOrElse((team) -> {
+            this.bugemonsTeamView.showTeam(team);
+            if (team.isEmpty()) {
+                this.selectedTeamName.setText(NO_TEAM_SELECTED);
 
-                    // FIXME: this is pretty ugly
-                    } else if (team.getName().equals(Configuration.Game.DEFAULT_TEAM_NAME)) {
-                        this.selectedTeamName
-                                .setText(
-                                        "Nouvelle équipe chargée mais non sauvegardée. Donnez lui un nom et sauvegardez la.");
-                    } else {
-                        this.selectedTeamName.setText(team.getName());
-                    }
-                },
-                () -> {
-                    this.bugemonsTeamView.clearBugemons();
-                });
+                // FIXME: this is pretty ugly
+            } else if (team.getName().equals(Configuration.Game.DEFAULT_TEAM_NAME)) {
+                this.selectedTeamName
+                        .setText("Nouvelle équipe chargée mais non sauvegardée. Donnez lui un nom et sauvegardez la.");
+            } else {
+                this.selectedTeamName.setText(team.getName());
+            }
+        }, () -> {
+            this.bugemonsTeamView.clearBugemons();
+        });
     }
 
     public void setSaveTeamName(String name) {
