@@ -18,7 +18,7 @@ public abstract class View {
     }
 
     /** Returns the FXML resource path used by {@link ViewLoader} to load this view. */
-    public abstract String getPath();
+    protected abstract String getPath();
 
     /**
      * Reads the current state from the model and updates every UI component. Called by the controller after any model
@@ -46,11 +46,15 @@ public abstract class View {
         alert.showAndWait();
     }
 
-    public void showNoActiveTeamAlert(String message) {
+    protected void showNoActiveTeamAlert(String message) {
         this.showAlert("Aucune équipe active", message);
     }
 
-    public Parent getRoot() {
+    public void showAlertChooseTeamToLaunchCombat() {
+        this.showNoActiveTeamAlert("Veuillez choisir une equipe pour lancer un combat.");
+    }
+
+    protected Parent getRoot() {
         return this.root;
     }
 }

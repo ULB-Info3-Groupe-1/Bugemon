@@ -158,8 +158,8 @@ public class TestPlayerRepository {
         // Assert
         assertEquals("Il devrait y avoir deux équipes", 2, teams.size());
 
-        boolean foundTeam1 = teams.stream().anyMatch(t -> t.name().equals(team1));
-        boolean foundTeam2 = teams.stream().anyMatch(t -> t.name().equals(team2));
+        boolean foundTeam1 = teams.stream().anyMatch(t -> t.teamName().equals(team1));
+        boolean foundTeam2 = teams.stream().anyMatch(t -> t.teamName().equals(team2));
 
         assertTrue("L'équipe Alpha doit être trouvée", foundTeam1);
         assertTrue("L'équipe Beta doit être trouvée", foundTeam2);
@@ -272,7 +272,7 @@ public class TestPlayerRepository {
 
         // Assert
         assertEquals("L'équipe renommée doit être présente", 1, teams.size());
-        assertEquals("Le nouveau nom doit être présent", newTeamName, teams.get(0).name());
+        assertEquals("Le nouveau nom doit être présent", newTeamName, teams.get(0).teamName());
 
         // Verify the mock was called
         verify(this.repository).createTeam(playerId, oldTeamName);

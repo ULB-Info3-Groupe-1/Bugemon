@@ -163,7 +163,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
         } catch (NoActiveTeamException e) {
-            this.view.showNoActiveTeamAlert("Veuillez choisir une equipe à modifier.");
+            this.view.showAlertChooseTeamToModify();
         }
     }
 
@@ -190,7 +190,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     private boolean isActiveTeamEmpty() {
         if (this.playerService.isActiveTeamEmpty()) {
-            this.view.showNoActiveTeamAlert("Veuillez choisir une equipe pour lancer un combat.");
+            this.view.showAlertChooseTeamToLaunchCombat();
             return true;
         }
         return false;

@@ -273,4 +273,8 @@ public class ManageTeamView extends View {
             this.startTowerCombatButton.setManaged(false);
         }
     }
+
+    public void showAlertChooseTeamToModify() {
+        this.showNoActiveTeamAlert("Veuillez choisir une equipe à modifier.");
+    }
 }
