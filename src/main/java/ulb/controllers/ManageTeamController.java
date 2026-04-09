@@ -172,31 +172,29 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onLaunchAutomaticCombat() {
-        if (!this.isActiveTeamEmpty() && this.canLeaveScreen()) {
+        if (this.playerService.isActiveTeamEmpty()) {
+            this.view.showAlertChooseTeamToLaunchCombat();
+        } else {
             this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
         }
     }
 
     @Override
     public void onLaunchManualCombat() {
-        if (!this.isActiveTeamEmpty() && this.canLeaveScreen()) {
+        if (this.playerService.isActiveTeamEmpty()) {
+            this.view.showAlertChooseTeamToLaunchCombat();
+        } else {
             this.metaController.switchTo(Window.MANUAL_COMBAT);
         }
     }
 
     @Override
     public void onLaunchNOTowerCombat() {
-        if (!this.isActiveTeamEmpty() && this.canLeaveScreen()) {
-            this.metaController.switchTo(Window.NOTOWER);
-        }
-    }
-
-    private boolean isActiveTeamEmpty() {
         if (this.playerService.isActiveTeamEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
-            return true;
+        } else {
+            this.metaController.switchTo(Window.NOTOWER);
         }
-        return false;
     }
 
     private boolean canLeaveScreen() {
