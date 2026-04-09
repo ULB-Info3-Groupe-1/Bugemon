@@ -58,7 +58,9 @@ public class PlayerService {
 
     /**
      * Sets the active team of the player
-     * @param team the team to set
+     *
+     * @param team
+     *            the team to set
      */
     public void setActiveTeam(BugemonTeam team) {
         this.activeTeam = Optional.of(team);
@@ -66,8 +68,11 @@ public class PlayerService {
 
     /**
      * Sets the active team of the player by filtering the list of player teams by name and setting the active team
-     * @param teamName the name of the team
-     * @throws TeamNotFoundException if the team does not exist
+     *
+     * @param teamName
+     *            the name of the team
+     * @throws TeamNotFoundException
+     *             if the team does not exist
      */
     public void setActiveTeam(String teamName) throws TeamNotFoundException {
         this.activeTeam = Optional.of(this.playerTeams.stream().filter(pt -> pt.getName().equals(teamName)).findFirst()
