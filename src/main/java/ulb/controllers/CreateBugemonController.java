@@ -1,7 +1,14 @@
 package ulb.controllers;
 
+import java.net.URL;
+import java.util.List;
+
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.services.BugemonService;
+import ulb.services.exceptions.BugemonNameIsEmptyException;
 import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 
@@ -17,14 +24,47 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
     @Override
     public void onTypeSelected(BugemonType selectedType) {
-        // need to update the attack list view with the attacks of the selected type
-        return;
+        List<Attack> attacks = this.bugemonService.getAttacksByType(selectedType);
+        this.view.setAvailableAttacks(attacks);
     }
 
     @Override
     public void onSave(String bugemonName, double healthValue, double attackValue, double defenseValue,
             double initiativeValue) {
-        return;
+        BugemonType selectedType = this.view.getSelectedType();
+        URL spriteUrl = this.view.getSelectedSpriteUrl();
+
+        if (selectedType == null) {
+            this.view.showInvalidFormAlert("Choose a type for the Bugemon.");
+            return;
+        }
+        if (spriteUrl == null) {
+            this.view.showInvalidFormAlert("Choose a sprite for the Bugemon.");
+            return;
+        }
+
+        int hp = (int) Math.round(healthValue);
+        int attack = (int) Math.round(attackValue);
+        int defense = (int) Math.round(defenseValue);
+        int initiative = (int) Math.round(initiativeValue);
+        Attack attack1 = this.view.getSelectedAttack1();
+        Attack attack2 = this.view.getSelectedAttack2();
+        Attack attack3 = this.view.getSelectedAttack3();
+
+        if (attack1 == null || attack2 == null || attack3 == null) {
+            this.view.showInvalidFormAlert("Select three attacks for the Bugemon.");
+            return;
+        }
+
+        CreateBugemonDTO bugemonToCreate = new CreateBugemonDTO(bugemonName, selectedType, spriteUrl, defense, attack,
+                initiative, hp, false, attack1, attack2, attack3);
+
+        try {
+            this.bugemonService.saveBugemon(bugemonToCreate);
+            this.view.showSaveSuccessAlert(bugemonName);
+        } catch (BugemonNameIsEmptyException | BugemonAlreadyExistsException | IllegalArgumentException e) {
+            this.view.showSaveErrorAlert(e.getMessage());
+        }
     }
 
     @Override

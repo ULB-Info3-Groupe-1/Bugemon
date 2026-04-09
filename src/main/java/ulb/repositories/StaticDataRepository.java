@@ -211,6 +211,15 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     /**
+     * Retrieves all attacks indexed by their ID.
+     *
+     * @return Map of attack ID to Attack
+     */
+    public Map<String, Attack> getAllAttacks() {
+        return this.loadAllAttacks();
+    }
+
+    /**
      * Loads all attacks with their effects in a single optimized query.
      *
      * @return Map of attack ID to Attack object

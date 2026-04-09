@@ -1,17 +1,25 @@
 package ulb.views;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.views.components.BugemonCardView;
@@ -56,26 +64,48 @@ public class CreateBugemonView extends View {
     private Label initiativeLabel;
 
     @FXML
+    private Button floraTypeButton;
+
+    @FXML
+    private Button aquaTypeButton;
+
+    @FXML
+    private Button pyroTypeButton;
+
+    @FXML
+    private Button lithoTypeButton;
+
+    private BugemonType selectedType;
+    private URL selectedSpriteUrl;
+    private final Map<String, Attack> attacksByName = new HashMap<>();
+
+    @FXML
     private void initialize() {
-        // TODO: add bugemon, add bugemoncard (sprite)
+        this.attackListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     @FXML
     private void onLoadButtonClicked() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir le sprite du Bugemon");
+        fileChooser.setTitle("Select Bugemon Sprite");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png"));
         Stage stage = (Stage) this.getRoot().getScene().getWindow();
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             this.bugemonCardView.setSprite(file);
+            try {
+                this.selectedSpriteUrl = file.toURI().toURL();
+            } catch (MalformedURLException e) {
+                this.selectedSpriteUrl = null;
+            }
         }
     }
 
     @FXML
     private void onRemoveButtonClicked() {
         this.bugemonCardView.removeSprite();
+        this.selectedSpriteUrl = null;
     }
 
     @FXML
@@ -87,8 +117,27 @@ public class CreateBugemonView extends View {
     @FXML
     private void onTypeClicked(ActionEvent event) throws IllegalArgumentException {
         Button button = (Button) event.getSource();
-        BugemonType selectedType = (BugemonType) button.getUserData();
+        BugemonType selectedType;
+
+        switch (button.getText()) {
+            case "FLORA" -> selectedType = BugemonType.FLORA;
+            case "AQUA" -> selectedType = BugemonType.AQUA;
+            case "PYRO" -> selectedType = BugemonType.PYRO;
+            case "LITHO" -> selectedType = BugemonType.LITHO;
+            default -> throw new IllegalArgumentException();
+        }
+
+        this.selectedType = selectedType;
+        this.updateTypeSelectionState(button, selectedType);
         this.listener.onTypeSelected(selectedType);
+    }
+
+    private void updateTypeSelectionState(Button selectedButton, BugemonType selectedBugemonType) {
+        this.floraTypeButton.getStyleClass().remove("type-selected");
+        this.aquaTypeButton.getStyleClass().remove("type-selected");
+        this.pyroTypeButton.getStyleClass().remove("type-selected");
+        this.lithoTypeButton.getStyleClass().remove("type-selected");
+        selectedButton.getStyleClass().add("type-selected");
     }
 
     @FXML
@@ -133,7 +182,8 @@ public class CreateBugemonView extends View {
     }
 
     /**
-     * Registers the listener that receives all user interaction events from this view.
+     * Registers the listener that receives all user interaction events from this
+     * view.
      */
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -147,6 +197,61 @@ public class CreateBugemonView extends View {
     @Override
     public void refresh() {
         //
+    }
+
+    public BugemonType getSelectedType() {
+        return this.selectedType;
+    }
+
+    public URL getSelectedSpriteUrl() {
+        return this.selectedSpriteUrl;
+    }
+
+    public void setAvailableAttacks(List<Attack> attacks) {
+        this.attacksByName.clear();
+
+        for (Attack attack : attacks) {
+            this.attacksByName.put(attack.name(), attack);
+        }
+
+        this.attackListView.setItems(FXCollections.observableArrayList(this.attacksByName.keySet()));
+        this.attackListView.getSelectionModel().clearSelection();
+    }
+
+    public Attack getSelectedAttack1() {
+        List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
+        if (selectedNames.size() < 1) {
+            return null;
+        }
+        return this.attacksByName.get(selectedNames.get(0));
+    }
+
+    public Attack getSelectedAttack2() {
+        List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
+        if (selectedNames.size() < 2) {
+            return null;
+        }
+        return this.attacksByName.get(selectedNames.get(1));
+    }
+
+    public Attack getSelectedAttack3() {
+        List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
+        if (selectedNames.size() < 3) {
+            return null;
+        }
+        return this.attacksByName.get(selectedNames.get(2));
+    }
+
+    public void showInvalidFormAlert(String message) {
+        this.showAlert("Invalid Form", message);
+    }
+
+    public void showSaveSuccessAlert(String name) {
+        this.showAlert("Bugemon Saved", "The Bugemon " + name + " has been saved successfully.");
+    }
+
+    public void showSaveErrorAlert(String message) {
+        this.showAlert("Save Error", message);
     }
 
     // public void setModel()
