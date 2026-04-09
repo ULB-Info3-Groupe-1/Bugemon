@@ -87,16 +87,7 @@ public class CreateBugemonView extends View {
     @FXML
     private void onTypeClicked(ActionEvent event) throws IllegalArgumentException {
         Button button = (Button) event.getSource();
-        BugemonType selectedType;
-
-        switch (button.getText()) {
-            case "FLORA" -> selectedType = BugemonType.FLORA;
-            case "AQUA" -> selectedType = BugemonType.AQUA;
-            case "PYRO" -> selectedType = BugemonType.PYRO;
-            case "LITHO" -> selectedType = BugemonType.LITHO;
-            default -> throw new IllegalArgumentException();
-        }
-
+        BugemonType selectedType = (BugemonType) button.getUserData();
         this.listener.onTypeSelected(selectedType);
     }
 

@@ -13,6 +13,7 @@
 
 <?import ulb.views.components.BugemonCardView?>
 <?import ulb.models.bugemon.effect.EffectStat?>
+<?import ulb.models.bugemon.BugemonType?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CreateBugemonView" alignment="CENTER"
@@ -37,13 +38,29 @@
             <Label text="Choisir le type du Bugemon" />
             <HBox alignment="CENTER" spacing="20">
                 <Button text="FLORA" onAction="#onTypeClicked"
-                    styleClass="btn, attack-FLORA" />
+                    styleClass="btn, attack-FLORA">
+                    <userData>
+                        <BugemonType fx:constant="FLORA" />
+                    </userData>
+                </Button>
                 <Button text="AQUA" onAction="#onTypeClicked"
-                    styleClass="btn, attack-AQUA" />
+                    styleClass="btn, attack-AQUA">
+                    <userData>
+                        <BugemonType fx:constant="AQUA" />
+                    </userData>
+                </Button>
                 <Button text="PYRO" onAction="#onTypeClicked"
-                    styleClass="btn, attack-PYRO" />
+                    styleClass="btn, attack-PYRO">
+                    <userData>
+                        <BugemonType fx:constant="PYRO" />
+                    </userData>
+                </Button>
                 <Button text="LITHO" onAction="#onTypeClicked"
-                    styleClass="btn, attack-LITHO" />
+                    styleClass="btn, attack-LITHO">
+                    <userData>
+                        <BugemonType fx:constant="LITHO" />
+                    </userData>
+                </Button>
             </HBox>
             <Label text="Sélectionner les statistiques" />
             <Label text="Vie (0)" fx:id="healthLabel" />
