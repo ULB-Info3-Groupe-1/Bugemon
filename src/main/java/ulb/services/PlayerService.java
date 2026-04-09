@@ -20,8 +20,6 @@ import ulb.services.exceptions.TeamEmptyException;
 import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
 
-// TODO: problem to see that the activeTeam has changed when removing a bugemon
-
 public class PlayerService {
     // Unique identifier for the player.
     private final int playerId;
@@ -296,7 +294,7 @@ public class PlayerService {
         this.playerRepository.modifyTeam(this.playerId, this.activeTeam.get().getName(), teamMembers);
 
         this.playerTeams.removeIf(t -> t.getName().equals(this.activeTeam.get().getName()));
-        this.playerTeams.add(this.activeTeam.get());
+        this.playerTeams.add(new BugemonTeam(this.activeTeam.get()));
     }
 
     public void clearActiveTeam() {
