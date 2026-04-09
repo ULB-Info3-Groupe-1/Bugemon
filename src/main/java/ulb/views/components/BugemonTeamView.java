@@ -27,7 +27,7 @@ public class BugemonTeamView extends ComponentView {
 
     /** Clears and repopulates the grid with the alive members of the given team. */
     public void showTeam(BugemonTeam bugemonTeam) {
-        this.gridPane.getChildren().clear();
+        this.clearBugemons();
 
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
