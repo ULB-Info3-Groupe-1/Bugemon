@@ -69,7 +69,7 @@ public class ManageTeamView extends View {
 
     @Override
     public String getPath() {
-        return Configuration.Paths.FXML.MANAGE_TEAM_VIEW;
+        return Configuration.Paths.Fxml.MANAGE_TEAM_VIEW;
     }
 
     public void setListener(Listener listener) {

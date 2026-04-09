@@ -63,7 +63,7 @@ public abstract class CombatView extends View {
 
     @Override
     public String getPath() {
-        return Configuration.Paths.FXML.COMBAT_VIEW;
+        return Configuration.Paths.Fxml.COMBAT_VIEW;
     }
 
     // ── Abstract contract ─────────────────────────────────────────────────────

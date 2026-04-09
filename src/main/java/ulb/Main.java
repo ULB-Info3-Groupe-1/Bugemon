@@ -34,7 +34,8 @@ public class Main extends Application {
             Font.loadFont(fontStream, 16);
         }
 
-        stage.setTitle(Configuration.UI.STAGE_TITLE);
+        stage.setTitle(Configuration.Ui.STAGE_TITLE);
+        stage.setMaximized(true);
 
         Scene scene = new Scene(new StackPane());
         scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());

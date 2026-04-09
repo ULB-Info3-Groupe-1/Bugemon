@@ -29,7 +29,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
     }
 
     @Override
-    public void onSave(String bugemonName, double healthValue, double attackValue, double defenseValue,
+    public void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
             double initiativeValue) {
         BugemonType selectedType = this.view.getSelectedType();
         URL spriteUrl = this.view.getSelectedSpriteUrl();

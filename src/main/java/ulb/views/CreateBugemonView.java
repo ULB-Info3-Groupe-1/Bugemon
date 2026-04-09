@@ -22,13 +22,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import ulb.models.bugemon.Attack;
+import ulb.Configuration;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.views.components.BugemonCardView;
 
 public class CreateBugemonView extends View {
 
-    private static final String FXML_PATH = "/fxml/CreateBugemon.fxml";
     private static final String TYPE_SELECTED = "type-selected";
     private Listener listener;
 
@@ -192,14 +192,14 @@ public class CreateBugemonView extends View {
     }
 
     @FXML
-    private void onSaveClicked() {
+    private void onAddClicked() {
         String bugemonName = this.bugemonNameTextField.getText();
         double healthValue = this.healthSlider.getValue();
         double attackValue = this.attackSlider.getValue();
         double defenseValue = this.defenseSlider.getValue();
         double initiativeValue = this.initiativeSlider.getValue();
 
-        this.listener.onSave(bugemonName, healthValue, attackValue, defenseValue, initiativeValue);
+        this.listener.onAdd(bugemonName, healthValue, attackValue, defenseValue, initiativeValue);
     }
 
     @FXML
@@ -231,7 +231,7 @@ public class CreateBugemonView extends View {
 
     @Override
     public String getPath() {
-        return FXML_PATH;
+        return Configuration.Paths.Fxml.CREATE_BUGEMON_VIEW;
     }
 
     @Override
@@ -300,7 +300,7 @@ public class CreateBugemonView extends View {
     public interface Listener {
         void onTypeSelected(BugemonType selectedType);
 
-        void onSave(String bugemonName, double healthValue, double attackValue, double defenseValue,
+        void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
                 double initiativeValue);
 
         void onReturnToMainMenu();

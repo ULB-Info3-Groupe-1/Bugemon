@@ -17,7 +17,7 @@ public class AllBugemonsView extends ComponentView {
     private Listener listener;
 
     public AllBugemonsView() {
-        super(Configuration.Paths.FXML.COMPONENT_ALL_BUGEMONS);
+        super(Configuration.Paths.Fxml.COMPONENT_ALL_BUGEMONS);
     }
 
     public void setListener(Listener listener) {

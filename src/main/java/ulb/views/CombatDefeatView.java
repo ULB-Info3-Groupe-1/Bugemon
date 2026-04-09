@@ -10,7 +10,7 @@ public class CombatDefeatView extends View {
 
     @Override
     public String getPath() {
-        return Configuration.Paths.FXML.COMBAT_DEFEAT_VIEW;
+        return Configuration.Paths.Fxml.COMBAT_DEFEAT_VIEW;
     }
 
     public void setListener(Listener listener) {

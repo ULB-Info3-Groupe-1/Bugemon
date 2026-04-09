@@ -18,7 +18,7 @@ public class BugemonTeamView extends ComponentView {
     private Listener listener;
 
     public BugemonTeamView() {
-        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_TEAM);
+        super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_TEAM);
     }
 
     public void setListener(Listener listener) {

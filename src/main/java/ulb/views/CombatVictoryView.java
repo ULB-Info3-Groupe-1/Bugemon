@@ -11,7 +11,7 @@ public class CombatVictoryView extends View {
 
     @Override
     public String getPath() {
-        return Configuration.Paths.FXML.COMBAT_VICTORY_VIEW;
+        return Configuration.Paths.Fxml.COMBAT_VICTORY_VIEW;
     }
 
     public void setListener(Listener listener) {

@@ -23,7 +23,7 @@ public class HoverInfoView extends ComponentView {
     private Label efficiencyLabel;
 
     public HoverInfoView() {
-        super(Configuration.Paths.FXML.COMPONENT_HOVER_INFO);
+        super(Configuration.Paths.Fxml.COMPONENT_HOVER_INFO);
     }
 
     /**

@@ -19,7 +19,7 @@ public class ActionMenuView extends ComponentView {
     private Listener listener;
 
     public ActionMenuView() {
-        super(Configuration.Paths.FXML.COMPONENT_ACTION_MENU);
+        super(Configuration.Paths.Fxml.COMPONENT_ACTION_MENU);
     }
 
     public void setListener(Listener listener) {

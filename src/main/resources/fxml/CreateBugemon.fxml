@@ -24,7 +24,7 @@
                 <Insets top="40" right="40" bottom="40" left="40" />
             </padding>
             <BugemonCardView fx:id="bugemonCardView" />
-            <Button text="Charger sprite" onAction="#onLoadButtonClicked" />
+            <Button text="Charger sprite" onAction="#onLoadButtonClicked" styleClass="btn,btn-secondary"     />
             <Button text="Supprimer sprite"
                 onAction="#onRemoveButtonClicked" />
             <Button text="Retourner au menu principal"
