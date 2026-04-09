@@ -15,10 +15,12 @@ public class CombatVictoryController extends Controller<CombatVictoryView> imple
 
     @Override
     public void onContinue() {
+        // TODO: wtf ?
         if (this.metaController.isNOTowerFlowActive()) {
             this.metaController.switchTo(Window.NOTOWER);
             return;
         }
-        this.metaController.switchTo(Window.MAIN_MENU);
+
+        this.metaController.onCombatVictoryFinished();
     }
 }

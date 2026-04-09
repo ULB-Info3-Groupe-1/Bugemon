@@ -2,7 +2,6 @@ package ulb.controllers.combat;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.function.Consumer;
 import javafx.stage.Stage;
 
 import ulb.controllers.MetaController;
@@ -26,7 +25,6 @@ import ulb.views.combat.ManualCombatView;
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
     private ManualTrainer manualPlayerTrainer;
-    private Consumer<Boolean> onCombatFinished;
 
     /**
      * Constructs a {@code ManualCombatController} and wires itself as the view listener.
@@ -80,16 +78,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.view.refresh();
     }
 
-    /**
-     * Registers a callback invoked when the combat ends.
-     *
-     * @param callback
-     *            receives {@code true} when the player wins, {@code false} otherwise.
-     */
-    public void setOnCombatFinished(Consumer<Boolean> callback) {
-        this.onCombatFinished = callback;
-    }
-
     /** Public bridge used by other controllers to display this combat controller. */
     public void display(Stage stage) {
         this.show(stage);
@@ -137,31 +125,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
     @Override
     protected void onStepsExhausted() {
-        this.handlePostTurn();
-    }
-
-    @Override
-    protected void onCombatEnded(Trainer winner) {
-        this.handleCombatEnd(winner);
-    }
-
-    // ── Private helpers ───────────────────────────────────────────────────────
-
-    private void handlePostTurn() {
         if (!this.manualPlayerTrainer.isCurrentBugemonAlive()) {
             this.manualPlayerTrainer.setForcedSwitch(true);
         }
         this.manualPlayerTrainer.setHasSwitchedThisTurn(false);
         this.view.hideDialog();
         this.view.refresh();
-    }
-
-    private void handleCombatEnd(Trainer winner) {
-        boolean playerWon = winner == this.manualPlayerTrainer;
-        if (this.onCombatFinished != null) {
-            this.onCombatFinished.accept(playerWon);
-        } else {
-            this.handleCombatResult(winner);
-        }
     }
 }

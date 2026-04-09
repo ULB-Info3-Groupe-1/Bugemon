@@ -2,7 +2,6 @@ package ulb.controllers.combat;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
-import ulb.controllers.MetaController.Window;
 import ulb.views.CombatDefeatView;
 import ulb.views.ViewLoader;
 
@@ -15,11 +14,11 @@ public class CombatDefeatController extends Controller<CombatDefeatView> impleme
 
     @Override
     public void onRetry() {
-        this.metaController.switchTo(Window.CREATE_TEAM);
+        this.metaController.onCombatDefeatRetry();
     }
 
     @Override
     public void onBackToMainMenu() {
-        this.metaController.switchTo(Window.MAIN_MENU);
+        this.metaController.onCombatDefeatBackToMainMenu();
     }
 }

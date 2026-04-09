@@ -9,32 +9,30 @@ import javafx.scene.image.ImageView;
 
 import ulb.Configuration;
 import ulb.common.dto.BugemonDTO;
-import ulb.common.dto.LevelUpDTO;
-import ulb.models.level_up.LevelUpSession;
+import ulb.models.level_up.LevelUp;
 
 /**
- * View for the level-up screen. Holds a reference to a {@link LevelUpSession} and reads the current level-up event
- * directly from it in {@link #refresh()}. Holds no reference to any concrete controller class.
+ * View for the level-up screen. Holds a reference to the displayed LevelUp.
  */
 public class LevelUpView extends View {
 
     @FXML
     private Label levelUpText;
     @FXML
+    private Button choice0Button;
+    @FXML
     private Button choice1Button;
     @FXML
     private Button choice2Button;
     @FXML
-    private Button choice3Button;
-    @FXML
     private ImageView bugemonImage;
 
-    private LevelUpSession session;
+    private LevelUp levelUp;
 
     private Listener listener;
 
-    public void setSession(LevelUpSession session) {
-        this.session = session;
+    public void setLevelUp(LevelUp levelUp) {
+        this.levelUp = levelUp;
     }
 
     public void setListener(Listener listener) {
@@ -42,17 +40,17 @@ public class LevelUpView extends View {
     }
 
     @FXML
-    private void onChoice1Clicked() {
+    private void onChoice0Clicked() {
         this.listener.onUpgradeChosen(0);
     }
 
     @FXML
-    private void onChoice2Clicked() {
+    private void onChoice1Clicked() {
         this.listener.onUpgradeChosen(1);
     }
 
     @FXML
-    private void onChoice3Clicked() {
+    private void onChoice2Clicked() {
         this.listener.onUpgradeChosen(2);
     }
 
@@ -63,22 +61,25 @@ public class LevelUpView extends View {
 
     @Override
     public void refresh() {
-        if (this.session == null || !this.session.isStarted()) {
+        if (this.levelUp == null) {
             return;
         }
-        LevelUpDTO levelUp = this.session.getCurrent();
-        BugemonDTO bugemon = levelUp.getBugemon();
+
+        BugemonDTO bugemon = this.levelUp.getBugemon();
 
         File file = new File(Configuration.Paths.SPRITES + bugemon.getSpriteURL());
         this.bugemonImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.levelUpText.setText(bugemon.getName() + " vient juste de passer au niveau " + bugemon.getLevel() + " !");
 
-        this.choice1Button.setText(levelUp.get(0).toString());
-        this.choice2Button.setText(levelUp.get(1).toString());
-        this.choice3Button.setText(levelUp.get(2).toString());
+        this.choice0Button.setText(this.levelUp.get(0).toString());
+        this.choice1Button.setText(this.levelUp.get(1).toString());
+        this.choice2Button.setText(this.levelUp.get(2).toString());
     }
 
     public interface Listener {
+
+        // TODO: might be better to just pass the LevelUp instance as a param instead of the index
         void onUpgradeChosen(int optionIdx);
+
     }
 }

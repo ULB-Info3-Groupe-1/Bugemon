@@ -1,23 +1,23 @@
 package ulb.controllers;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.List;
+import java.util.Queue;
 
-import ulb.controllers.MetaController.Window;
 import ulb.models.level_up.LevelUp;
-import ulb.models.level_up.LevelUpSession;
-import ulb.models.level_up.Upgrade;
 import ulb.services.PlayerService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the level-up screen. Manages a {@link LevelUpSession} model. After each player choice or
- * advance, the controller mutates the session and calls {@code view.refresh()} so the view pulls the updated event data
- * directly from the session.
+ * Controller responsible for the level-up screen.
+ *
+ * The {@link LevelUp} instances ares stored in a queue. The {@link LevelUp} at the head of the queue is always the one
+ * being displayed. When an {@link Upgrade} is chosen, the head is popped.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
-    private final LevelUpSession session = new LevelUpSession();
+    private Queue<LevelUp> levelUps = new ArrayDeque<>();
     private final PlayerService playerService;
 
     /**
@@ -32,46 +32,37 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
         super(metaController, ViewLoader.load(LevelUpView::new));
         this.playerService = playerService;
         this.view.setListener(this);
-        this.view.setSession(this.session);
     }
 
     @Override
-    public void onUpgradeChosen(int optionIdx) {
-        this.chooseOption(optionIdx);
+    public void onUpgradeChosen(int upgradeIdx) {
+        LevelUp levelUp = this.levelUps.remove();
+        levelUp.apply(upgradeIdx);
+
+        this.playerService.saveBugemonState(levelUp.getBugemon());
+
+        if (this.levelUps.isEmpty()) {
+            this.metaController.onLevelUpfinished();
+        } else {
+            this.updateDisplayedLevelUp();
+        }
     }
 
-    /** Applies the chosen stat bonus and advances to the next level-up event. */
-    public void chooseOption(int optionIdx) {
-        LevelUp levelUp = this.session.getCurrent();
-        Upgrade upgrade = levelUp.get(optionIdx);
-        levelUp.getBugemon().applyUpgrade(upgrade);
-        this.playerService.saveBugemonState(levelUp.getBugemon());
-        this.cont();
+    public void updateDisplayedLevelUp() {
+        this.view.setLevelUp(this.levelUps.peek());
+        this.view.refresh();
     }
 
     /**
      * Initialises the session with the given list and navigates to the level-up screen, or goes directly to victory if
      * the list is empty.
      */
-    public void setLevelUp(List<LevelUp> lvlsUp) {
-        if (!lvlsUp.isEmpty()) {
-            this.session.start(lvlsUp);
-            this.metaController.switchTo(Window.LEVEL_UP);
-            this.view.refresh();
-        } else {
-            this.playerService.saveActiveTeamState();
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
+    public void setLevelUps(List<LevelUp> levelUps) {
+        if (levelUps.isEmpty()) {
+            throw new IllegalArgumentException("level-ups list cannot be empty");
         }
-    }
 
-    /** Advances to the next pending level-up event, or navigates to victory if done. */
-    public void cont() {
-        if (this.session.hasNext()) {
-            this.session.advance();
-            this.view.refresh();
-        } else {
-            this.playerService.saveActiveTeamState();
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
-        }
+        this.levelUps = new ArrayDeque<>(levelUps);
+        this.updateDisplayedLevelUp();
     }
 }

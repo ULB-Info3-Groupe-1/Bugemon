@@ -72,6 +72,10 @@ public class LevelUp implements LevelUpDTO {
         return this.bugemon;
     }
 
+    public void apply(int idx) {
+        this.bugemon.applyUpgrade(this.get(idx));
+    }
+
     public Iterable<Upgrade> upgrades() {
         return this.upgrades;
     }

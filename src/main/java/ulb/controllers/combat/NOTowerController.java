@@ -93,7 +93,8 @@ public class NOTowerController extends Controller<ManualCombatView> {
             try {
                 ManualCombatController manualCombatController = new ManualCombatController(this.metaController,
                         this.playerService, this.bugemonService);
-                manualCombatController.setOnCombatFinished(playerWon -> this.handleCombatResult(playerWon, floor));
+                // FIXME: manualCombatController.setOnCombatFinished(playerWon -> this.handleCombatResult(playerWon,
+                // floor));
                 manualCombatController.startCombat(combatRoom.getCombat());
                 manualCombatController.display(this.stage);
             } catch (IOException e) {
