@@ -30,10 +30,7 @@ public class ManualCombatView extends CombatView {
 
     private Listener listener;
 
-    public ManualCombatView() {
-        super();
-
-        this.actionMenu = new ActionMenuView();
+    private void initActionMenuViewListener() {
         this.actionMenu.setListener(new ActionMenuView.Listener() {
 
             @Override
@@ -57,8 +54,9 @@ public class ManualCombatView extends CombatView {
             }
 
         });
+    }
 
-        this.attackMenu = new AttackMenuView();
+    private void initAttackMenuListener() {
         this.attackMenu.setListener(new AttackMenuView.Listener() {
 
             @Override
@@ -86,9 +84,11 @@ public class ManualCombatView extends CombatView {
                 ManualCombatView.this.hideHoverInfo();
                 ManualCombatView.this.showMainActionMenu();
             }
-        });
 
-        this.switchMenu = new SwitchMenuView();
+        });
+    }
+
+    private void initSwitchMenuListener() {
         this.switchMenu.setListener(new SwitchMenuView.Listener() {
 
             @Override
@@ -102,8 +102,9 @@ public class ManualCombatView extends CombatView {
             }
 
         });
+    }
 
-        this.itemMenuView = new ItemMenuView();
+    private void initItemMenuListener() {
         this.itemMenuView.setListener(new ItemMenuView.Listener() {
 
             @Override
@@ -129,6 +130,20 @@ public class ManualCombatView extends CombatView {
             }
 
         });
+    }
+
+    public ManualCombatView() {
+        super();
+
+        this.actionMenu = new ActionMenuView();
+        this.attackMenu = new AttackMenuView();
+        this.switchMenu = new SwitchMenuView();
+        this.itemMenuView = new ItemMenuView();
+
+        this.initActionMenuViewListener();
+        this.initAttackMenuListener();
+        this.initSwitchMenuListener();
+        this.initItemMenuListener();
     }
 
     public void setListener(Listener listener) {
