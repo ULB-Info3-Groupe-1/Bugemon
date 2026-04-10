@@ -1,10 +1,9 @@
 package ulb.views.combat.components;
 
 import java.util.List;
-import java.util.function.Consumer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.trainer.Trainer;
@@ -25,29 +24,14 @@ public class AttackMenuView extends ComponentView {
     private Button bottomLeft;
 
     private final Attack[] attacks = new Attack[3];
-    private Consumer<Attack> onAttack;
-    private Consumer<Attack> onAttackHovered;
-    private Runnable onAttackLeft;
-    private Runnable onBack;
+    private Listener listener;
 
     public AttackMenuView() {
         super(Configuration.Paths.FXML.COMPONENT_ATTACK_MENU);
     }
 
-    public void setOnAttack(Consumer<Attack> callback) {
-        this.onAttack = callback;
-    }
-
-    public void setOnAttackHovered(Consumer<Attack> callback) {
-        this.onAttackHovered = callback;
-    }
-
-    public void setOnAttackLeft(Runnable callback) {
-        this.onAttackLeft = callback;
-    }
-
-    public void setOnBack(Runnable callback) {
-        this.onBack = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /**
@@ -69,14 +53,10 @@ public class AttackMenuView extends ComponentView {
                 buttons[i].setVisible(true);
                 buttons[i].setManaged(true);
                 buttons[i].setOnMouseEntered(e -> {
-                    if (this.onAttackHovered != null) {
-                        this.onAttackHovered.accept(attack);
-                    }
+                    this.listener.onAttackHovered(attack);
                 });
                 buttons[i].setOnMouseExited(e -> {
-                    if (this.onAttackLeft != null) {
-                        this.onAttackLeft.run();
-                    }
+                    this.listener.onAttackLeft();
                 });
             } else {
                 this.attacks[i] = null;
@@ -88,29 +68,39 @@ public class AttackMenuView extends ComponentView {
 
     @FXML
     private void onAttack1Clicked() {
-        if (this.attacks[0] != null && this.onAttack != null) {
-            this.onAttack.accept(this.attacks[0]);
+        if (this.attacks[0] != null) {
+            this.listener.onAttack(this.attacks[0]);
         }
+
     }
 
     @FXML
     private void onAttack2Clicked() {
-        if (this.attacks[1] != null && this.onAttack != null) {
-            this.onAttack.accept(this.attacks[1]);
+        if (this.attacks[1] != null) {
+            this.listener.onAttack(this.attacks[1]);
         }
     }
 
     @FXML
     private void onAttack3Clicked() {
-        if (this.attacks[2] != null && this.onAttack != null) {
-            this.onAttack.accept(this.attacks[2]);
+        if (this.attacks[2] != null) {
+            this.listener.onAttack(this.attacks[2]);
         }
     }
 
     @FXML
     private void onBackClicked() {
-        if (this.onBack != null) {
-            this.onBack.run();
-        }
+        this.listener.onBack();
+    }
+
+    public interface Listener {
+
+        void onAttack(Attack attack);
+
+        void onAttackHovered(Attack attack);
+
+        void onAttackLeft();
+
+        void onBack();
     }
 }

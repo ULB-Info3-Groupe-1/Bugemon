@@ -60,6 +60,35 @@ public class ManualCombatView extends CombatView {
 
 
         this.attackMenu = new AttackMenuView();
+        this.attackMenu.setListener(new AttackMenuView.Listener() {
+
+            @Override
+            public void onAttack(Attack attack) {
+                ManualCombatView.this.listener.onAttack(attack);
+            }
+
+            @Override
+            public void onAttackHovered(Attack attack) {
+                Efficiency eff = CombatService.compareBugemonType(attack.type(),
+                        ManualCombatView.this.opponent.getCurrentBugemonType());
+                ManualCombatView.this.showHoverInfo(attack.name(), "Type : " + attack.type(),
+                        "Puissance : " + attack.power(),
+                        attack.description().isBlank() ? null : attack.description());
+                ManualCombatView.this.setHoverType(attack.type());
+                ManualCombatView.this.setHoverEfficiency(eff);
+            }
+
+            @Override
+            public void onAttackLeft() {
+                ManualCombatView.this.hideHoverInfo();
+            }
+
+            @Override
+            public void onBack() {
+                ManualCombatView.this.hideHoverInfo();
+                ManualCombatView.this.showMainActionMenu();
+            }
+        });
 
         this.switchMenu = new SwitchMenuView();
         this.switchMenu.setListener(new SwitchMenuView.Listener() {
@@ -115,24 +144,6 @@ public class ManualCombatView extends CombatView {
     // ── Sub-menu navigation ───────────────────────────────────────────────────
 
     private void initMenuCallbacks() {
-        this.attackMenu.setOnBack(() -> {
-            this.hideHoverInfo();
-            this.showMainActionMenu();
-        });
-        this.attackMenu.setOnAttack(attack -> {
-            if (this.listener != null) {
-                this.listener.onAttack(attack);
-            }
-        });
-        this.attackMenu.setOnAttackHovered(attack -> {
-            Efficiency eff = CombatService.compareBugemonType(attack.type(), this.opponent.getCurrentBugemonType());
-            this.showHoverInfo(attack.name(), "Type : " + attack.type(), "Puissance : " + attack.power(),
-                    attack.description().isBlank() ? null : attack.description());
-            this.setHoverType(attack.type());
-            this.setHoverEfficiency(eff);
-        });
-        this.attackMenu.setOnAttackLeft(this::hideHoverInfo);
-
         this.itemMenuView.setOnBack(() -> {
             this.hideHoverInfo();
             this.showMainActionMenu();
