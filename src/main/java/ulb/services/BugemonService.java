@@ -1,9 +1,12 @@
 package ulb.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ulb.factories.BugemonFactory;
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -56,4 +59,15 @@ public class BugemonService {
         return this.getAllDefaultBugemons().stream().filter(b -> b.getName().equals(name)).findFirst().orElse(null);
     }
 
+    /**
+     * Get all attacks matching a specific Bugemon type.
+     *
+     * @param type
+     *            type used to filter attacks
+     * @return attacks for the provided type
+     */
+    public List<Attack> getAttacksByType(BugemonType type) {
+        return this.staticDataRepository.getAllAttacks().values().stream().filter(a -> a.type() == type)
+                .collect(Collectors.toList());
+    }
 }

@@ -27,7 +27,7 @@ public class TrainerWalk {
     // Constructors
 
     public TrainerWalk(Vec2 startPos) {
-        this.pos = new Vec2(startPos.getX(), startPos.getY());
+        this.pos = new Vec2(startPos.x(), startPos.y());
     }
 
     /**
@@ -73,7 +73,7 @@ public class TrainerWalk {
         this.walkProgress += deltaTime / DURATION;
 
         if (this.walkProgress >= 1f) {
-            this.pos = new Vec2(this.endPos.getX(), this.endPos.getY());
+            this.pos = new Vec2(this.endPos.x(), this.endPos.y());
             if (this.hasNextWaypoint()) {
                 this.nextWaypointIndex++;
                 this.startSegment(this.plannedPath.get(this.nextWaypointIndex));
@@ -100,8 +100,8 @@ public class TrainerWalk {
      *            (Vec2) the next waypoint to reach.
      */
     private void startSegment(Vec2 target) {
-        this.initPos = new Vec2(this.pos.getX(), this.pos.getY());
-        this.endPos = new Vec2(target.getX(), target.getY());
+        this.initPos = new Vec2(this.pos.x(), this.pos.y());
+        this.endPos = new Vec2(target.x(), target.y());
         this.walkProgress = 0f;
         this.isMoving = true;
     }
@@ -142,10 +142,10 @@ public class TrainerWalk {
             return List.of();
         }
 
-        int startX = Math.round(start.getX());
-        int startY = Math.round(start.getY());
-        int endX = Math.round(end.getX());
-        int endY = Math.round(end.getY());
+        int startX = Math.round(start.x());
+        int startY = Math.round(start.y());
+        int endX = Math.round(end.x());
+        int endY = Math.round(end.y());
 
         if (!this.isCellWalkable(startX, startY, matrix) || !this.isCellWalkable(endX, endY, matrix)) {
             return List.of();
@@ -216,8 +216,8 @@ public class TrainerWalk {
             current = parent.get(current);
         }
 
-        if (reversed.isEmpty() || !key(Math.round(reversed.get(reversed.size() - 1).getX()),
-                Math.round(reversed.get(reversed.size() - 1).getY())).equals(startKey)) {
+        if (reversed.isEmpty() || !key(Math.round(reversed.get(reversed.size() - 1).x()),
+                Math.round(reversed.get(reversed.size() - 1).y())).equals(startKey)) {
             return List.of();
         }
 

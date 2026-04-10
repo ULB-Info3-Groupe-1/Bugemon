@@ -17,12 +17,4 @@ public record Vec2(float x, float y) {
     public static Vec2 linearInterpolation(Vec2 a, Vec2 b, float t) {
         return new Vec2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
     }
-
-    public float getX() {
-        return this.x;
-    }
-
-    public float getY() {
-        return this.y;
-    }
 }

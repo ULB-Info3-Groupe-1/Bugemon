@@ -116,6 +116,49 @@
     -fx-background-color: color-litho-hover;
 }
 
+.type-selected {
+    -fx-border-color: white;
+    -fx-border-width: 3;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.6), 8, 0.1, 0, 0);
+}
+
+.attack-list-view {
+    -fx-background-color: color-white;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 4;
+    -fx-padding: 4;
+    -fx-pref-height: 200;
+    -fx-min-height: 150;
+}
+
+.attack-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: color-text-dark;
+    -fx-padding: 8 12;
+    -fx-font-size: 14px;
+}
+
+.attack-list-view .list-cell:selected {
+    -fx-background-color: color-flora;
+    -fx-text-fill: white;
+}
+
+.attack-list-view .list-cell:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.2);
+}
+
+.attack-count-incomplete {
+    -fx-text-fill: color-danger;
+    -fx-font-weight: bold;
+}
+
+.attack-count-complete {
+    -fx-text-fill: color-success;
+    -fx-font-weight: bold;
+}
+
 /* ── Type-coloured labels ────────────────────────────────── */
 .FLORA {
     -fx-text-fill: color-flora;
