@@ -32,7 +32,33 @@ public class ManualCombatView extends CombatView {
 
     public ManualCombatView() {
         super();
+
         this.actionMenu = new ActionMenuView();
+        this.actionMenu.setListener(new ActionMenuView.Listener() {
+
+            @Override
+            public void onAttack() {
+                ManualCombatView.this.showAttackMenu();
+            }
+
+            @Override
+            public void onSwitch() {
+                ManualCombatView.this.showSwitchMenu(false);
+            }
+
+            @Override
+            public void onInventory() {
+                ManualCombatView.this.showInventory();
+            }
+
+            @Override
+            public void onSurrender() {
+                ManualCombatView.this.listener.onSurrender();
+            }
+
+        });
+
+
         this.attackMenu = new AttackMenuView();
 
         this.switchMenu = new SwitchMenuView();
@@ -89,15 +115,6 @@ public class ManualCombatView extends CombatView {
     // ── Sub-menu navigation ───────────────────────────────────────────────────
 
     private void initMenuCallbacks() {
-        this.actionMenu.setOnAttack(this::showAttackMenu);
-        this.actionMenu.setOnSwitch(() -> this.showSwitchMenu(false));
-        this.actionMenu.setOnInventory(this::showInventory);
-        this.actionMenu.setOnSurrender(() -> {
-            if (this.listener != null) {
-                this.listener.onSurrender();
-            }
-        });
-
         this.attackMenu.setOnBack(() -> {
             this.hideHoverInfo();
             this.showMainActionMenu();

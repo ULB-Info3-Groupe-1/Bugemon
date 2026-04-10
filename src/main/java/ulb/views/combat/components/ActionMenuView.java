@@ -22,60 +22,49 @@ public class ActionMenuView extends ComponentView {
     @FXML
     private Button bottomRight;
 
-    private Runnable onAttack;
-    private Runnable onSwitch;
-    private Runnable onInventory;
-    private Runnable onSurrender;
+    private Listener listener;
 
     public ActionMenuView() {
         super(Configuration.Paths.FXML.COMPONENT_ACTION_MENU);
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     public void refresh(boolean canSwitch) {
         this.topRight.setDisable(!canSwitch);
     }
 
-    public void setOnAttack(Runnable callback) {
-        this.onAttack = callback;
-    }
-
-    public void setOnSwitch(Runnable callback) {
-        this.onSwitch = callback;
-    }
-
-    public void setOnInventory(Runnable callback) {
-        this.onInventory = callback;
-    }
-
-    public void setOnSurrender(Runnable callback) {
-        this.onSurrender = callback;
-    }
-
     @FXML
     private void onAttackClicked() {
-        if (this.onAttack != null) {
-            this.onAttack.run();
-        }
+        this.listener.onAttack();
     }
 
     @FXML
     private void onSwitchClicked() {
-        if (this.onSwitch != null) {
-            this.onSwitch.run();
-        }
+        this.listener.onSwitch();
     }
 
     @FXML
     private void onInventoryClicked() {
-        if (this.onInventory != null) {
-            this.onInventory.run();
-        }
+        this.listener.onInventory();
     }
 
     @FXML
     private void onSurrenderClicked() {
-        if (this.onSurrender != null) {
-            this.onSurrender.run();
-        }
+        this.listener.onSurrender();
+    }
+    
+    public interface Listener {
+
+        void onAttack();
+
+        void onSwitch();
+
+        void onInventory();
+
+        void onSurrender();
+
     }
 }
