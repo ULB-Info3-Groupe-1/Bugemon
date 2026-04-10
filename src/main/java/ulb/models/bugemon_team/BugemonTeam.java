@@ -105,6 +105,20 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return this.team.stream().anyMatch(member -> member.getName().equals(bugemon.getName()));
     }
 
+    /**
+     * Adds or removes a bugemon from the team depending on whether it is already in the team.
+     *
+     * @param bugemon
+     *            the bugemon to add or remove
+     */
+    public void addOrRemoveBugemon(Bugemon bugemon) {
+        if (this.contains(bugemon)) {
+            this.remove(bugemon);
+        } else if (!this.isFull()) {
+            this.add(bugemon);
+        }
+    }
+
     @Override
     public Iterator<Bugemon> iterator() {
         return this.team.iterator();
