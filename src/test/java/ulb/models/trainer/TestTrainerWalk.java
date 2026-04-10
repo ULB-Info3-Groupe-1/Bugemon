@@ -29,8 +29,8 @@ public class TestTrainerWalk {
 
         assertFalse(started);
         assertFalse(trainerWalk.isMoving());
-        assertEquals(0f, trainerWalk.getPosition().getX(), 0.001);
-        assertEquals(0f, trainerWalk.getPosition().getY(), 0.001);
+        assertEquals(0f, trainerWalk.getPosition().x(), 0.001);
+        assertEquals(0f, trainerWalk.getPosition().y(), 0.001);
     }
 
     @Test
@@ -45,8 +45,8 @@ public class TestTrainerWalk {
             trainerWalk.update(0.1f);
         }
 
-        assertEquals(2f, trainerWalk.getPosition().getX(), 0.001);
-        assertEquals(0f, trainerWalk.getPosition().getY(), 0.001);
+        assertEquals(2f, trainerWalk.getPosition().x(), 0.001);
+        assertEquals(0f, trainerWalk.getPosition().y(), 0.001);
     }
 
     @Test
