@@ -22,19 +22,14 @@ public class SwitchMenuView extends ComponentView {
     /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */
     private static final int SPRITE_SIZE = 40;
 
-    private Consumer<Bugemon> onSwitch;
-    private Runnable onBack;
+    private Listener listener;
 
     public SwitchMenuView() {
         super(Configuration.Paths.FXML.COMPONENT_SWITCH_MENU);
     }
 
-    public void setOnSwitch(Consumer<Bugemon> callback) {
-        this.onSwitch = callback;
-    }
-
-    public void setOnBack(Runnable callback) {
-        this.onBack = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     public void show(List<Bugemon> available, boolean forced) {
@@ -50,9 +45,7 @@ public class SwitchMenuView extends ComponentView {
             back.setMaxWidth(Double.MAX_VALUE);
             back.setWrapText(true);
             back.setOnAction(e -> {
-                if (this.onBack != null) {
-                    this.onBack.run();
-                }
+                this.listener.onBack();
             });
             this.getChildren().add(back);
         }
@@ -74,12 +67,18 @@ public class SwitchMenuView extends ComponentView {
         btn.setWrapText(true);
         HBox.setHgrow(btn, Priority.ALWAYS);
         btn.setOnAction(e -> {
-            if (this.onSwitch != null) {
-                this.onSwitch.accept(b);
-            }
+            this.listener.onSwitch(b);
         });
 
         row.getChildren().addAll(sprite, btn);
         return row;
+    }
+
+    public interface Listener {
+
+        void onSwitch(Bugemon bugemon);
+
+        void onBack();
+
     }
 }

@@ -30,12 +30,124 @@ public class ManualCombatView extends CombatView {
 
     private Listener listener;
 
+    private void initActionMenuViewListener() {
+        this.actionMenu.setListener(new ActionMenuView.Listener() {
+
+            @Override
+            public void onAttack() {
+                ManualCombatView.this.showAttackMenu();
+            }
+
+            @Override
+            public void onSwitch() {
+                ManualCombatView.this.showSwitchMenu(false);
+            }
+
+            @Override
+            public void onInventory() {
+                ManualCombatView.this.showInventory();
+            }
+
+            @Override
+            public void onSurrender() {
+                ManualCombatView.this.listener.onSurrender();
+            }
+
+        });
+    }
+
+    private void initAttackMenuListener() {
+        this.attackMenu.setListener(new AttackMenuView.Listener() {
+
+            @Override
+            public void onAttack(Attack attack) {
+                ManualCombatView.this.listener.onAttack(attack);
+            }
+
+            @Override
+            public void onAttackHovered(Attack attack) {
+                Efficiency eff = CombatService.compareBugemonType(attack.type(),
+                        ManualCombatView.this.opponent.getCurrentBugemonType());
+                ManualCombatView.this.showHoverInfo(attack.name(), "Type : " + attack.type(),
+                        "Puissance : " + attack.power(), attack.description().isBlank() ? null : attack.description());
+                ManualCombatView.this.setHoverType(attack.type());
+                ManualCombatView.this.setHoverEfficiency(eff);
+            }
+
+            @Override
+            public void onAttackLeft() {
+                ManualCombatView.this.hideHoverInfo();
+            }
+
+            @Override
+            public void onBack() {
+                ManualCombatView.this.hideHoverInfo();
+                ManualCombatView.this.showMainActionMenu();
+            }
+
+        });
+    }
+
+    private void initSwitchMenuListener() {
+        this.switchMenu.setListener(new SwitchMenuView.Listener() {
+
+            @Override
+            public void onSwitch(Bugemon bugemon) {
+                ManualCombatView.this.listener.onSwitch(bugemon);
+            }
+
+            @Override
+            public void onBack() {
+                ManualCombatView.this.showMainActionMenu();
+            }
+
+        });
+    }
+
+    private void initItemMenuListener() {
+        this.itemMenuView.setListener(new ItemMenuView.Listener() {
+
+            @Override
+            public void onItemSelected(Item item) {
+                ManualCombatView.this.listener.onItemSelected(item);
+            }
+
+            @Override
+            public void onItemHovered(Item item) {
+                ManualCombatView.this.showHoverInfo(item.name(), "Catégorie : " + item.type(),
+                        item.description().isBlank() ? null : item.description());
+            }
+
+            @Override
+            public void onItemLeft() {
+                ManualCombatView.this.hideHoverInfo();
+            }
+
+            @Override
+            public void onBack() {
+                ManualCombatView.this.hideHoverInfo();
+                ManualCombatView.this.showMainActionMenu();
+            }
+
+        });
+    }
+
+    private void initListeners() {
+        this.initActionMenuViewListener();
+        this.initAttackMenuListener();
+        this.initSwitchMenuListener();
+        this.initItemMenuListener();
+    }
+
     public ManualCombatView() {
         super();
+
         this.actionMenu = new ActionMenuView();
         this.attackMenu = new AttackMenuView();
         this.switchMenu = new SwitchMenuView();
         this.itemMenuView = new ItemMenuView();
+
+        this.initListeners();
     }
 
     public void setListener(Listener listener) {
@@ -50,7 +162,6 @@ public class ManualCombatView extends CombatView {
 
     @Override
     protected void initCombatMode() {
-        this.initMenuCallbacks();
         this.showMainActionMenu();
     }
 
@@ -72,55 +183,6 @@ public class ManualCombatView extends CombatView {
     }
 
     // ── Sub-menu navigation ───────────────────────────────────────────────────
-
-    private void initMenuCallbacks() {
-        this.actionMenu.setOnAttack(this::showAttackMenu);
-        this.actionMenu.setOnSwitch(() -> this.showSwitchMenu(false));
-        this.actionMenu.setOnInventory(this::showInventory);
-        this.actionMenu.setOnSurrender(() -> {
-            if (this.listener != null) {
-                this.listener.onSurrender();
-            }
-        });
-
-        this.attackMenu.setOnBack(() -> {
-            this.hideHoverInfo();
-            this.showMainActionMenu();
-        });
-        this.attackMenu.setOnAttack(attack -> {
-            if (this.listener != null) {
-                this.listener.onAttack(attack);
-            }
-        });
-        this.attackMenu.setOnAttackHovered(attack -> {
-            Efficiency eff = CombatService.compareBugemonType(attack.type(), this.opponent.getCurrentBugemonType());
-            this.showHoverInfo(attack.name(), "Type : " + attack.type(), "Puissance : " + attack.power(),
-                    attack.description().isBlank() ? null : attack.description());
-            this.setHoverType(attack.type());
-            this.setHoverEfficiency(eff);
-        });
-        this.attackMenu.setOnAttackLeft(this::hideHoverInfo);
-
-        this.switchMenu.setOnBack(this::showMainActionMenu);
-        this.switchMenu.setOnSwitch(bugemon -> {
-            if (this.listener != null) {
-                this.listener.onSwitch(bugemon);
-            }
-        });
-
-        this.itemMenuView.setOnBack(() -> {
-            this.hideHoverInfo();
-            this.showMainActionMenu();
-        });
-        this.itemMenuView.setOnItemSelected(item -> {
-            if (this.listener != null) {
-                this.listener.onItemSelected(item);
-            }
-        });
-        this.itemMenuView.setOnItemHovered(item -> this.showHoverInfo(item.name(), "Catégorie : " + item.type(),
-                item.description().isBlank() ? null : item.description()));
-        this.itemMenuView.setOnItemLeft(this::hideHoverInfo);
-    }
 
     /** Restores the main action menu, called after a forced switch completes. */
     public void showMainActionMenu() {
