@@ -6,9 +6,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -28,7 +28,8 @@ import ulb.views.components.BugemonCardView;
 
 public class CreateBugemonView extends View {
 
-    private final String fxmlPath = "/fxml/CreateBugemon.fxml";
+    private static final String FXML_PATH = "/fxml/CreateBugemon.fxml";
+    private static final String TYPE_SELECTED = "type-selected";
     private Listener listener;
 
     // TODO: liste d'attaques ? comment gérer ? autre objet ?
@@ -126,7 +127,7 @@ public class CreateBugemonView extends View {
     private void updateAttackCountLabel() {
         int selectedCount = this.attackListView.getSelectionModel().getSelectedItems().size();
         this.attackCountLabel.setText("Selected attacks: " + selectedCount + "/3");
-        
+
         if (selectedCount == 3) {
             this.attackCountLabel.getStyleClass().removeAll("attack-count-incomplete");
             this.attackCountLabel.getStyleClass().add("attack-count-complete");
@@ -169,27 +170,25 @@ public class CreateBugemonView extends View {
     @FXML
     private void onTypeClicked(ActionEvent event) throws IllegalArgumentException {
         Button button = (Button) event.getSource();
-        BugemonType selectedType;
 
-        switch (button.getText()) {
-            case "FLORA" -> selectedType = BugemonType.FLORA;
-            case "AQUA" -> selectedType = BugemonType.AQUA;
-            case "PYRO" -> selectedType = BugemonType.PYRO;
-            case "LITHO" -> selectedType = BugemonType.LITHO;
-            default -> throw new IllegalArgumentException();
-        }
+        this.selectedType = switch (button.getText()) {
+            case "FLORA" -> BugemonType.FLORA;
+            case "AQUA" -> BugemonType.AQUA;
+            case "PYRO" -> BugemonType.PYRO;
+            case "LITHO" -> BugemonType.LITHO;
+            default -> throw new IllegalArgumentException("Unexpected type: " + button.getText());
+        };
 
-        this.selectedType = selectedType;
-        this.updateTypeSelectionState(button, selectedType);
-        this.listener.onTypeSelected(selectedType);
+        this.updateTypeSelectionState(button);
+        this.listener.onTypeSelected(this.selectedType);
     }
 
-    private void updateTypeSelectionState(Button selectedButton, BugemonType selectedBugemonType) {
-        this.floraTypeButton.getStyleClass().remove("type-selected");
-        this.aquaTypeButton.getStyleClass().remove("type-selected");
-        this.pyroTypeButton.getStyleClass().remove("type-selected");
-        this.lithoTypeButton.getStyleClass().remove("type-selected");
-        selectedButton.getStyleClass().add("type-selected");
+    private void updateTypeSelectionState(Button selectedButton) {
+        this.floraTypeButton.getStyleClass().remove(TYPE_SELECTED);
+        this.aquaTypeButton.getStyleClass().remove(TYPE_SELECTED);
+        this.pyroTypeButton.getStyleClass().remove(TYPE_SELECTED);
+        this.lithoTypeButton.getStyleClass().remove(TYPE_SELECTED);
+        selectedButton.getStyleClass().add(TYPE_SELECTED);
     }
 
     @FXML
@@ -215,27 +214,16 @@ public class CreateBugemonView extends View {
         double value = slider.getValue();
 
         switch (stat) {
-            case HP -> {
-                this.healthLabel.setText(String.format("Vie (%.0f)", value));
-            }
-            case ATTACK -> {
-                this.attackLabel.setText(String.format("Attaque (%.0f)", value));
-            }
-            case DEFENSE -> {
-                this.defenseLabel.setText(String.format("Défense (%.0f)", value));
-            }
-            case INITIATIVE -> {
-                this.initiativeLabel.setText(String.format("Initiative (%.0f)", value));
-            }
-            default -> {
-                throw new IllegalArgumentException();
-            }
+            case HP -> this.healthLabel.setText(String.format("Vie (%.0f)", value));
+            case ATTACK -> this.attackLabel.setText(String.format("Attaque (%.0f)", value));
+            case DEFENSE -> this.defenseLabel.setText(String.format("Défense (%.0f)", value));
+            case INITIATIVE -> this.initiativeLabel.setText(String.format("Initiative (%.0f)", value));
+            default -> throw new IllegalArgumentException();
         }
     }
 
     /**
-     * Registers the listener that receives all user interaction events from this
-     * view.
+     * Registers the listener that receives all user interaction events from this view.
      */
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -243,7 +231,7 @@ public class CreateBugemonView extends View {
 
     @Override
     public String getPath() {
-        return this.fxmlPath;
+        return FXML_PATH;
     }
 
     @Override
@@ -273,7 +261,7 @@ public class CreateBugemonView extends View {
 
     public Attack getSelectedAttack1() {
         List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
-        if (selectedNames.size() < 1) {
+        if (selectedNames.isEmpty()) {
             return null;
         }
         return this.attacksByName.get(selectedNames.get(0));

@@ -40,14 +40,14 @@
             <!-- onAction="#onSaveClicked" /> -->
             <Label text="Choisir le type du Bugemon" />
             <HBox alignment="CENTER" spacing="20">
-                <Button fx:id="floraTypeButton" text="FLORA" onAction="#onTypeClicked"
-                    styleClass="btn, attack-FLORA" />
-                <Button fx:id="aquaTypeButton" text="AQUA" onAction="#onTypeClicked"
-                    styleClass="btn, attack-AQUA" />
-                <Button fx:id="pyroTypeButton" text="PYRO" onAction="#onTypeClicked"
-                    styleClass="btn, attack-PYRO" />
-                <Button fx:id="lithoTypeButton" text="LITHO" onAction="#onTypeClicked"
-                    styleClass="btn, attack-LITHO" />
+                <Button fx:id="floraTypeButton" text="FLORA"
+                    onAction="#onTypeClicked" styleClass="btn, attack-FLORA" />
+                <Button fx:id="aquaTypeButton" text="AQUA"
+                    onAction="#onTypeClicked" styleClass="btn, attack-AQUA" />
+                <Button fx:id="pyroTypeButton" text="PYRO"
+                    onAction="#onTypeClicked" styleClass="btn, attack-PYRO" />
+                <Button fx:id="lithoTypeButton" text="LITHO"
+                    onAction="#onTypeClicked" styleClass="btn, attack-LITHO" />
             </HBox>
             <Label text="Sélectionner les statistiques" />
             <Label text="Vie (0)" fx:id="healthLabel" />
@@ -86,8 +86,10 @@
                 </userData>
             </Slider>
 
-            <Label fx:id="attackCountLabel" text="Attaques sélectionnées: 0/3" />
-            <ListView fx:id="attackListView" prefHeight="200" styleClass="attack-list-view" />
+            <Label fx:id="attackCountLabel"
+                text="Attaques sélectionnées: 0/3" />
+            <ListView fx:id="attackListView" prefHeight="200"
+                styleClass="attack-list-view" />
         </VBox>
     </HBox>
 </VBox>

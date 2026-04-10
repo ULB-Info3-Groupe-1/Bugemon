@@ -3,8 +3,8 @@ package ulb.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ulb.models.bugemon.Attack;
 import ulb.factories.BugemonFactory;
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
@@ -39,9 +39,9 @@ public class BugemonService {
      * Save a new bugemon in the database.
      *
      * @param bugemon
-     *                (CreateBugemonDTO) the bugemon to be saved
+     *            (CreateBugemonDTO) the bugemon to be saved
      * @throws BugemonNameIsEmptyException
-     *                                     if the name of the bugemon is empty
+     *             if the name of the bugemon is empty
      */
     public void saveBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
@@ -63,7 +63,7 @@ public class BugemonService {
      * Get all attacks matching a specific Bugemon type.
      *
      * @param type
-     *             type used to filter attacks
+     *            type used to filter attacks
      * @return attacks for the provided type
      */
     public List<Attack> getAttacksByType(BugemonType type) {
