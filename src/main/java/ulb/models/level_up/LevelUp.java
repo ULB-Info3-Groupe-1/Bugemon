@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import ulb.common.dto.LevelUpDTO;
 import ulb.models.bugemon.Bugemon;
 
-public class LevelUp implements LevelUpDTO {
+public class LevelUp {
     private static final Random RANDOM = new Random();
 
     static final int NUM_UPGRADES = 3;
@@ -58,7 +57,6 @@ public class LevelUp implements LevelUpDTO {
         return Stat.values()[RANDOM.nextInt(Stat.values().length)];
     }
 
-    @Override
     public Upgrade get(int idx) {
         if (idx >= this.numUpgrades()) {
             throw new IndexOutOfBoundsException("attempted to get an upgrade out of bounds");
@@ -67,7 +65,6 @@ public class LevelUp implements LevelUpDTO {
         return this.upgrades.get(idx);
     }
 
-    @Override
     public Bugemon getBugemon() {
         return this.bugemon;
     }
