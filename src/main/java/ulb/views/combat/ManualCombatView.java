@@ -34,7 +34,22 @@ public class ManualCombatView extends CombatView {
         super();
         this.actionMenu = new ActionMenuView();
         this.attackMenu = new AttackMenuView();
+
         this.switchMenu = new SwitchMenuView();
+        this.switchMenu.setListener(new SwitchMenuView.Listener() {
+
+            @Override
+            public void onSwitch(Bugemon bugemon) {
+                ManualCombatView.this.listener.onSwitch(bugemon);
+            }
+
+            @Override
+            public void onBack() {
+                ManualCombatView.this.showMainActionMenu();
+            }
+
+        });
+
         this.itemMenuView = new ItemMenuView();
     }
 
@@ -100,13 +115,6 @@ public class ManualCombatView extends CombatView {
             this.setHoverEfficiency(eff);
         });
         this.attackMenu.setOnAttackLeft(this::hideHoverInfo);
-
-        this.switchMenu.setOnBack(this::showMainActionMenu);
-        this.switchMenu.setOnSwitch(bugemon -> {
-            if (this.listener != null) {
-                this.listener.onSwitch(bugemon);
-            }
-        });
 
         this.itemMenuView.setOnBack(() -> {
             this.hideHoverInfo();
