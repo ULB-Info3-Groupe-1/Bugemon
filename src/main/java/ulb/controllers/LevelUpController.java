@@ -7,7 +7,6 @@ import java.util.Queue;
 
 import ulb.models.level_up.LevelUp;
 import ulb.services.PlayerService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 

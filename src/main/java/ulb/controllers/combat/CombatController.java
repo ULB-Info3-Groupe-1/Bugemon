@@ -173,13 +173,18 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected void onCombatEnded(Trainer winner) {
         // FIXME: this should obv not be done here
-        this.playerService.restoreHpActiveTeam();
+        try {
+            this.playerService.restoreHpActiveTeam();
 
-        List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner, this.combat.getOpponentTrainer());
-        this.playerService.saveActiveTeamState();
+            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner,
+                    this.combat.getOpponentTrainer());
+            this.playerService.saveBugemonStateOfActiveTeam();
 
-        boolean won = winner == this.playerTrainer;
-        this.metaController.onCombatFinished(levelUps, won);
+            boolean won = winner == this.playerTrainer;
+            this.metaController.onCombatFinished(levelUps, won);
+        } catch (NoActiveTeamException e) {
+            throw new IllegalStateException("No active team after a combat is not possible");
+        }
     }
 
     // ── Shared utilities ──────────────────────────────────────────────────────
