@@ -1,4 +1,4 @@
-package ulb.models.no_tower;
+package ulb.models.tower;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,7 +20,7 @@ import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.utils.test.TestUtilsBugemons;
 
-public class TestNOTower {
+public class TestTower {
 
     private static final PlayerService PLAYER_SERVICE_MOCK = mock(PlayerService.class);
     private static final BugemonService BUGEMON_SERVICE_MOCK = mock(BugemonService.class);
@@ -34,18 +34,31 @@ public class TestNOTower {
         when(PLAYER_SERVICE_MOCK.getInventory()).thenReturn(new Inventory());
     }
 
-    private void completeCurrentFloor(NOTower noTower) {
-        Floor currentFloor = noTower.getCurrentFloor();
-        while (!currentFloor.isComplete()) {
-            currentFloor.getNextRoom();
+    private void completeCurrentFloor(Tower noTower) {
+        Floor floor = noTower.getCurrentFloor();
+        this.navigateToBoss(floor);
+    }
+
+    private boolean navigateToBoss(Floor floor) {
+        if (floor.isComplete()) {
+            return true;
         }
+        FloorNode current = floor.getCurrentPosition();
+        for (FloorNode child : current.getChildren()) {
+            floor.moveTo(child);
+            if (this.navigateToBoss(floor)) {
+                return true;
+            }
+            floor.moveTo(current);
+        }
+        return false;
     }
 
     @Test
     public void testNOTowerInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        NOTower noTower = new NOTower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
 
         assertEquals(0, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFloorComplete());
@@ -67,7 +80,7 @@ public class TestNOTower {
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        NOTower noTower = new NOTower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
 
         assertFalse(noTower.isFloorComplete());
     }

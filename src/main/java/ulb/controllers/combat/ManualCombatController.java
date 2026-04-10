@@ -2,7 +2,6 @@ package ulb.controllers.combat;
 
 import java.io.IOException;
 import java.util.Collections;
-import javafx.stage.Stage;
 
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
@@ -75,12 +74,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         Trainer opponentTrainer = this.combat.getOpponentTrainer();
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
+        this.pendingSteps = Collections.emptyIterator();
+        this.view.hideDialog();
         this.view.refresh();
-    }
-
-    /** Public bridge used by other controllers to display this combat controller. */
-    public void display(Stage stage) {
-        this.show(stage);
     }
 
     // ── ManualCombatView.Listener ─────────────────────────────────────────────
