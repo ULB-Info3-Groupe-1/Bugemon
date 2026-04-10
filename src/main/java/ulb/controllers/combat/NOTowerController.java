@@ -95,7 +95,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
                         this.playerService, this.bugemonService);
                 // FIXME: manualCombatController.setOnCombatFinished(playerWon -> this.handleCombatResult(playerWon,
                 // floor));
-                manualCombatController.startCombat(combatRoom.getCombat());
+                manualCombatController.startCombat(combatRoom.combat());
                 manualCombatController.display(this.stage);
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to initialize manual combat", e);
