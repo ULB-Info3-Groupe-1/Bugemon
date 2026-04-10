@@ -1,9 +1,8 @@
 package ulb.views.combat.components;
 
 import java.util.Map;
-import java.util.function.Consumer;
-import javafx.scene.control.Button;
 
+import javafx.scene.control.Button;
 import ulb.Configuration;
 import ulb.models.bugemon.Item;
 import ulb.views.components.ComponentView;
@@ -11,29 +10,14 @@ import ulb.views.components.ComponentView;
 /** Reusable component displaying the player's inventory as a list of clickable item buttons. */
 public class ItemMenuView extends ComponentView {
 
-    private Consumer<Item> onItemSelected;
-    private Consumer<Item> onItemHovered;
-    private Runnable onItemLeft;
-    private Runnable onBack;
+    private Listener listener;
 
     public ItemMenuView() {
         super(Configuration.Paths.FXML.COMPONENT_ITEM_MENU);
     }
 
-    public void setOnItemSelected(Consumer<Item> callback) {
-        this.onItemSelected = callback;
-    }
-
-    public void setOnItemHovered(Consumer<Item> callback) {
-        this.onItemHovered = callback;
-    }
-
-    public void setOnItemLeft(Runnable callback) {
-        this.onItemLeft = callback;
-    }
-
-    public void setOnBack(Runnable callback) {
-        this.onBack = callback;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     /** Clears and repopulates the menu with the given inventory entries. */
@@ -49,9 +33,7 @@ public class ItemMenuView extends ComponentView {
         back.setMaxWidth(Double.MAX_VALUE);
         back.setWrapText(true);
         back.setOnAction(e -> {
-            if (this.onBack != null) {
-                this.onBack.run();
-            }
+            this.listener.onBack();
         });
         this.getChildren().add(back);
     }
@@ -62,20 +44,26 @@ public class ItemMenuView extends ComponentView {
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setWrapText(true);
         btn.setOnAction(e -> {
-            if (this.onItemSelected != null) {
-                this.onItemSelected.accept(item);
-            }
+            this.listener.onItemSelected(item);
         });
         btn.setOnMouseEntered(e -> {
-            if (this.onItemHovered != null) {
-                this.onItemHovered.accept(item);
-            }
+            this.listener.onItemHovered(item);
         });
         btn.setOnMouseExited(e -> {
-            if (this.onItemLeft != null) {
-                this.onItemLeft.run();
-            }
+            this.listener.onItemLeft();
         });
         return btn;
+    }
+
+    public interface Listener {
+
+        void onItemSelected(Item item);
+
+        void onItemHovered(Item item);
+
+        void onItemLeft();
+
+        void onBack();
+
     }
 }

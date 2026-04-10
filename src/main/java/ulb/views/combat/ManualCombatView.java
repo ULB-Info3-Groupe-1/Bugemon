@@ -106,6 +106,31 @@ public class ManualCombatView extends CombatView {
         });
 
         this.itemMenuView = new ItemMenuView();
+        this.itemMenuView.setListener(new ItemMenuView.Listener() {
+
+            @Override
+            public void onItemSelected(Item item) {
+                ManualCombatView.this.listener.onItemSelected(item);
+            }
+
+            @Override
+            public void onItemHovered(Item item) {
+                ManualCombatView.this.showHoverInfo(item.name(), "Catégorie : " + item.type(),
+                        item.description().isBlank() ? null : item.description());
+            }
+
+            @Override
+            public void onItemLeft() {
+                ManualCombatView.this.hideHoverInfo();
+            }
+
+            @Override
+            public void onBack() {
+                ManualCombatView.this.hideHoverInfo();
+                ManualCombatView.this.showMainActionMenu();
+            }
+
+        });
     }
 
     public void setListener(Listener listener) {
@@ -120,7 +145,6 @@ public class ManualCombatView extends CombatView {
 
     @Override
     protected void initCombatMode() {
-        this.initMenuCallbacks();
         this.showMainActionMenu();
     }
 
@@ -142,21 +166,6 @@ public class ManualCombatView extends CombatView {
     }
 
     // ── Sub-menu navigation ───────────────────────────────────────────────────
-
-    private void initMenuCallbacks() {
-        this.itemMenuView.setOnBack(() -> {
-            this.hideHoverInfo();
-            this.showMainActionMenu();
-        });
-        this.itemMenuView.setOnItemSelected(item -> {
-            if (this.listener != null) {
-                this.listener.onItemSelected(item);
-            }
-        });
-        this.itemMenuView.setOnItemHovered(item -> this.showHoverInfo(item.name(), "Catégorie : " + item.type(),
-                item.description().isBlank() ? null : item.description()));
-        this.itemMenuView.setOnItemLeft(this::hideHoverInfo);
-    }
 
     /** Restores the main action menu, called after a forced switch completes. */
     public void showMainActionMenu() {
