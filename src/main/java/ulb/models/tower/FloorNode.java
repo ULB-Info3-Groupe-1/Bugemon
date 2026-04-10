@@ -10,9 +10,9 @@ public class FloorNode {
     private final int x;
     private final int y;
     private final int depth;
-    private Room room;
     private final List<FloorNode> children;
     private final Optional<FloorNode> parent;
+    private Room room;
 
     public FloorNode(int x, int y, Room room, List<FloorNode> children, FloorNode parent, int depth) {
         this.x = x;

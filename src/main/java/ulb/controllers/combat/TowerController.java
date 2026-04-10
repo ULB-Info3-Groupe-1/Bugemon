@@ -1,151 +1,128 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
-import javafx.stage.Stage;
+import java.util.List;
 
-import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
+import ulb.models.combat.Combat;
 import ulb.models.tower.Floor;
+import ulb.models.tower.FloorNode;
 import ulb.models.tower.Tower;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
-import ulb.views.combat.ManualCombatView;
 
-public class TowerController extends Controller<ManualCombatView> {
-    private Tower tower;
+/**
+ * Coordinates the NO Tower run. Has no view of its own — delegates combat display to
+ * {@link MetaController#launchTowerCombat} and receives results via {@link #onTowerCombatFinished}.
+ *
+ * <p>
+ * Room navigation is automatic for now (first available child). When a TowerView is added, {@link #autoAdvance} is the
+ * only method that needs to change: present choices instead of picking index 0.
+ */
+public class TowerController {
+    private final MetaController metaController;
     private final PlayerService playerService;
     private final BugemonService bugemonService;
+
+    private Tower tower;
     private boolean runEnded;
-    private Stage stage;
 
     public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService) {
-        super(metaController, new ManualCombatView());
-        this.tower = null;
+        this.metaController = metaController;
         this.playerService = playerService;
         this.bugemonService = bugemonService;
     }
 
-    /**
-     * Runs the NO Tower flow until a combat starts, the run ends, or the tower is completed. Reward rooms are resolved
-     * immediately; combat rooms continue via callback.
-     */
-    public void runNOTower(Stage newStage) {
-        this.stage = newStage;
-
-        if (!this.ensureRunIsReady()) {
-            return;
-        }
-
-        this.continueRun();
-    }
-
-    /**
-     * Ensures that a NO Tower run can be started or continued. If the player has no active team, or if the current run
-     * has ended, a new run is initialised. If a new run cannot be started.
-     *
-     * @return
-     */
-    private boolean ensureRunIsReady() {
-        if (this.playerService.getActiveTeam().isEmpty()) {
-            this.runEnded = true;
-            this.metaController.switchTo(Window.CREATE_TEAM);
-            return false;
-        }
-
-        if (this.tower == null || this.runEnded) {
+    /** Entry point called by MetaController on Window.NOTOWER. Creates a fresh Tower if none is active. */
+    public void runTower() {
+        if (this.tower == null) {
             this.tower = new Tower(this.playerService.getActiveTeam(), this.playerService, this.bugemonService);
             this.runEnded = false;
         }
-
-        return true;
+        this.enterCurrentRoom();
     }
 
     /**
-     * Continues the current NO Tower run until a combat room is reached, the run ends, or the tower is completed.
+     * Called by MetaController when a tower combat ends.
+     *
+     * @param playerWon
+     *            true if the player won the combat
      */
-    private void continueRun() {
-        while (!this.runEnded) {
-            Floor currentFloor = this.tower.getCurrentFloor();
-
-            if (currentFloor.isComplete()) {
-                if (!this.advanceToNextFloorIfPossible()) {
-                    return;
-                }
-                continue;
-            }
-
-            Room currentRoom = currentFloor.getCurrentRoom();
-            this.handleRoom(currentFloor, currentRoom);
-
-            if (currentRoom instanceof CombatRoom) {
-                return;
-            }
+    public void onTowerCombatFinished(boolean playerWon) {
+        if (!playerWon) {
+            this.tower = null;
+            this.runEnded = true;
+            this.metaController.endTowerFlow();
+            this.metaController.switchTo(Window.COMBAT_DEFEAT);
+            return;
         }
+
+        Floor floor = this.tower.getCurrentFloor();
+        Room room = floor.getCurrentRoom();
+        if (room instanceof CombatRoom combatRoom) {
+            combatRoom.markCompleted();
+        }
+        this.autoAdvance(floor);
     }
 
-    private void handleRoom(Floor floor, Room room) {
+    public boolean hasActiveRun() {
+        return this.tower != null && !this.runEnded;
+    }
+
+    // ── Private ───────────────────────────────────────────────────────────────
+
+    private void enterCurrentRoom() {
+        Floor floor = this.tower.getCurrentFloor();
+        Room room = floor.getCurrentRoom();
+
         if (room instanceof CombatRoom combatRoom) {
-            try {
-                ManualCombatController manualCombatController = new ManualCombatController(this.metaController,
-                        this.playerService, this.bugemonService);
-                // FIXME: manualCombatController.setOnCombatFinished(playerWon -> this.handleCombatResult(playerWon,
-                // floor));
-                manualCombatController.startCombat(combatRoom.combat());
-                manualCombatController.display(this.stage);
-            } catch (IOException e) {
-                throw new IllegalStateException("Failed to initialize manual combat", e);
-            }
+            Combat combat = combatRoom.getCombat(this.tower.getPlayerTrainer());
+            this.metaController.launchTowerCombat(combat);
             return;
         }
 
         if (room instanceof RewardRoom rewardRoom) {
             this.handleRewardRoom(rewardRoom);
-            floor.getNextRooms();
-            return;
         }
 
-        throw new IllegalStateException("Unknown room type: " + room.getClass().getSimpleName());
+        // EmptyRoom or handled RewardRoom: move on immediately
+        this.autoAdvance(floor);
     }
 
-    private void handleCombatResult(boolean playerWon, Floor floor) {
-        if (!playerWon) {
-            this.runEnded = true;
-            this.metaController.endNOTowerFlow();
-            this.metaController.switchTo(Window.COMBAT_DEFEAT);
-            this.playerService.restoreHpActiveTeam();
+    /**
+     * Moves to the first available child room and recurses, or advances to the next floor when the boss is reached.
+     * TODO: when TowerView exists, replace index-0 pick with a player choice.
+     */
+    private void autoAdvance(Floor floor) {
+        List<FloorNode> children = floor.getCurrentPosition().getChildren();
+        if (!children.isEmpty()) {
+            floor.moveTo(children.get(0));
+            this.enterCurrentRoom();
             return;
         }
 
-        floor.getNextRooms();
-        this.continueRun();
+        if (floor.isComplete()) {
+            this.advanceToNextFloor();
+        }
+        // else: stuck on a dead-end leaf that isn't the boss — generation issue, nothing to do
+    }
+
+    private void advanceToNextFloor() {
+        if (this.tower.getCurrentFloorNumber() == 8) {
+            this.tower = null;
+            this.runEnded = true;
+            this.metaController.endTowerFlow();
+            this.metaController.switchTo(Window.COMBAT_VICTORY);
+            return;
+        }
+        this.tower.goToNextFloor();
+        this.enterCurrentRoom();
     }
 
     private void handleRewardRoom(RewardRoom rewardRoom) {
-        // TODO: apply player reward once RewardRoom exposes concrete reward choices.
-    }
-
-    private boolean advanceToNextFloorIfPossible() {
-        if (!this.tower.isFloorComplete()) {
-            throw new IllegalStateException("Current floor is not complete");
-        }
-
-        // Reaching the end of floor 9 means the NO Tower run is complete.
-        if (this.tower.getCurrentFloorNumber() == 8) {
-            this.runEnded = true;
-            this.metaController.endNOTowerFlow();
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
-            return false;
-        }
-
-        this.tower.goToNextFloor();
-        return true;
-    }
-
-    public boolean hasActiveRun() {
-        return this.tower != null && !this.runEnded;
+        // TODO: apply reward when RewardRoom exposes choices
     }
 }

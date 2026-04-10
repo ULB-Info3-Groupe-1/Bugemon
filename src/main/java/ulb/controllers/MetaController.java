@@ -18,6 +18,7 @@ import ulb.controllers.combat.TowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
@@ -55,13 +56,13 @@ public class MetaController {
     private final CreateBugemonController createBugemonController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
-    private final TowerController noTowerController;
+    private final TowerController towerController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
-    private boolean noTowerFlowActive;
+    private boolean isTowerActive;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -83,7 +84,7 @@ public class MetaController {
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService);
-        this.noTowerController = new TowerController(this, playerService, bugemonService);
+        this.towerController = new TowerController(this, playerService, bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.levelUpController = new LevelUpController(this, playerService);
@@ -94,10 +95,14 @@ public class MetaController {
     }
 
     public void onCombatFinished(List<LevelUp> levelUps, boolean won) {
-        LOG.info(String.format("onCombatFinished, won: %b, levelUps, numLevelUps %d", won, levelUps.size()));
+        LOG.info(String.format("onCombatFinished, won: %b, numLevelUps: %d", won, levelUps.size()));
 
-        this.pendingLevelUps = levelUps; // store level-ups for later
+        if (this.isTowerActive()) {
+            this.towerController.onTowerCombatFinished(won);
+            return;
+        }
 
+        this.pendingLevelUps = levelUps;
         this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
     }
 
@@ -155,9 +160,9 @@ public class MetaController {
             this.automaticCombatController.show(this.stage);
         });
         this.transitions.put(Window.NOTOWER, () -> {
-            this.noTowerFlowActive = true;
+            this.isTowerActive = true;
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.noTowerController.runNOTower(this.stage);
+            this.towerController.runTower();
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show(this.stage);
@@ -187,11 +192,16 @@ public class MetaController {
         transition.run();
     }
 
-    public boolean isNOTowerFlowActive() {
-        return this.noTowerFlowActive;
+    public boolean isTowerActive() {
+        return this.isTowerActive;
     }
 
-    public void endNOTowerFlow() {
-        this.noTowerFlowActive = false;
+    public void endTowerFlow() {
+        this.isTowerActive = false;
+    }
+
+    public void launchTowerCombat(Combat combat) {
+        this.manualCombatController.startCombat(combat);
+        this.manualCombatController.show(this.stage);
     }
 }

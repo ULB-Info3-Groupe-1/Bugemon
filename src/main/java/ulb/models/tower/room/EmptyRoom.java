@@ -1,4 +1,12 @@
 package ulb.models.tower.room;
 
-public record EmptyRoom() implements Room {
+public final class EmptyRoom implements Room {
+    public EmptyRoom() {
+
+    }
+
+    @Override
+    public boolean isCompleted() {
+        return false;
+    }
 }

@@ -1,4 +1,11 @@
 package ulb.models.tower.room;
 
-public record RewardRoom() implements Room {
+public final class RewardRoom implements Room {
+    public RewardRoom() {
+    }
+
+    @Override
+    public boolean isCompleted() {
+        return true;
+    }
 }

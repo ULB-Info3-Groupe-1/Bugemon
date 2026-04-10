@@ -27,6 +27,8 @@ public class Combat {
 
     private TurnResult turnResult;
 
+    private boolean isCompleted = false;
+
     public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
@@ -57,6 +59,10 @@ public class Combat {
         this.endTurn();
 
         return this.turnResult;
+    }
+
+    public boolean isCompleted() {
+        return this.isCompleted;
     }
 
     private void markParticipation() {
@@ -148,6 +154,7 @@ public class Combat {
             } else {
                 LOG.info("{} is defeated", trainer.getCurrentBugemonName());
                 this.turnResult.addStep(new TurnStep.TrainerKoStep(trainer));
+                this.isCompleted = true;
             }
         }
     }

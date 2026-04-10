@@ -34,6 +34,8 @@ public class FloorGenerator {
     private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final Random random;
+    private final CombatFactory combatFactory;
+    private final int floorLevel;
 
     private FloorNode root;
     private FloorNode bossNode;
@@ -45,7 +47,9 @@ public class FloorGenerator {
 
     private Set<FloorNode> visitedNode;
 
-    public FloorGenerator() {
+    public FloorGenerator(CombatFactory combatFactory, int floorLevel) {
+        this.combatFactory = combatFactory;
+        this.floorLevel = floorLevel;
         this.random = new Random();
         this.generateNewFloor();
     }
@@ -104,7 +108,7 @@ public class FloorGenerator {
             this.bossNode = node;
         }
 
-        // A bit weird but keep it need to ask to the cleint what he really wants
+        // A bit weird but keep it need to ask to the client what he really wants
         // Say what he really really wants really wants --> Spice Girls - Wannabe
         if (node.getDepth() >= MAX_DEPTH || node.getBranchCount() >= MAX_DEPTH) {
             return;
@@ -142,7 +146,7 @@ public class FloorGenerator {
     }
 
     private boolean placeInterestPoints() {
-        this.bossNode.setRoom(new CombatRoom(null, true));
+        this.bossNode.setRoom(new CombatRoom(this.combatFactory, this.floorLevel, true));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();
 
@@ -170,7 +174,7 @@ public class FloorGenerator {
         while (it.hasNext() && combatNodes.size() < this.combatCount) {
             FloorNode node = it.next();
             if (!node.equals(this.bossNode)) {
-                node.setRoom(new CombatRoom(null, false));
+                node.setRoom(new CombatRoom(this.combatFactory, this.floorLevel, false));
                 combatNodes.add(node);
                 it.remove();
             }
@@ -232,9 +236,4 @@ public class FloorGenerator {
         return stringBuilder.toString();
     }
 
-    public static void main(String[] args) {
-        FloorGenerator floorGenerator = new FloorGenerator();
-        System.out.println("The beautifull floor generated: ");
-        System.out.println(floorGenerator);
-    }
 }

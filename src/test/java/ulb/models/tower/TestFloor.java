@@ -39,7 +39,7 @@ public class TestFloor {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer playerTrainer = new ManualTrainer(playerTeam, PLAYER_SERVICE_MOCK.getInventory());
 
-        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK);
+        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK, 1);
 
         assertFalse(floor.isComplete());
     }
@@ -49,7 +49,7 @@ public class TestFloor {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer playerTrainer = new ManualTrainer(playerTeam, PLAYER_SERVICE_MOCK.getInventory());
 
-        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK);
+        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK, 1);
 
         List<Room> rooms = floor.getNextRooms();
         assertFalse(rooms.isEmpty());

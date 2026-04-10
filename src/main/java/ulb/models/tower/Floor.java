@@ -5,20 +5,20 @@ import java.util.EmptyStackException;
 import java.util.List;
 
 import ulb.models.tower.room.Room;
+import ulb.models.tower.utils.CombatFactory;
 import ulb.models.tower.utils.FloorGenerator;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 
 public class Floor {
     private final Trainer playerTrainer;
-    private final BugemonService bugemonService;
-
-    private final FloorGenerator floorGenerator = new FloorGenerator();
+    private final FloorGenerator floorGenerator;
     private FloorNode currentPosition;
 
-    public Floor(Trainer playerTrainer, BugemonService bugemonService) {
+    public Floor(Trainer playerTrainer, BugemonService bugemonService, int floorLevel) {
         this.playerTrainer = playerTrainer;
-        this.bugemonService = bugemonService;
+        CombatFactory combatFactory = new CombatFactory(bugemonService);
+        this.floorGenerator = new FloorGenerator(combatFactory, floorLevel);
         this.currentPosition = this.floorGenerator.getRoot();
     }
 
@@ -36,15 +36,11 @@ public class Floor {
     }
 
     public void moveTo(FloorNode node) {
-        // check the movement before, if in childeren of parent of current pos
-        // should probably set also logic like event depending on the node where
-        // the player move...
         boolean isChild = this.currentPosition.getChildren().contains(node);
         boolean isParent = this.currentPosition.getParent().map(parent -> parent.equals(node)).orElse(false);
         if (isChild || isParent) {
             this.currentPosition = node;
         }
-        // Probably should return something for success or idk...OR nothing happens on controller side...
     }
 
     public FloorNode getCurrentPosition() {
@@ -53,5 +49,9 @@ public class Floor {
 
     public Room getCurrentRoom() {
         return this.currentPosition.getRoom();
+    }
+
+    public Trainer getPlayerTrainer() {
+        return this.playerTrainer;
     }
 }

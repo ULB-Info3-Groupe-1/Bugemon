@@ -20,7 +20,7 @@ import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.utils.test.TestUtilsBugemons;
 
-public class TestNOTower {
+public class TestTower {
 
     private static final PlayerService PLAYER_SERVICE_MOCK = mock(PlayerService.class);
     private static final BugemonService BUGEMON_SERVICE_MOCK = mock(BugemonService.class);
