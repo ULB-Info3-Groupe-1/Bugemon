@@ -25,7 +25,7 @@ public class PlayerService {
     private final int playerId;
 
     // Player's active team
-    private Optional<BugemonTeam> activeTeam = Optional.empty();
+    private Optional<BugemonTeam> activeTeam;
 
     // List of all teams owned by the player
     private List<BugemonTeam> playerTeams;
@@ -42,6 +42,7 @@ public class PlayerService {
         this.playerRepository = playerRepository;
         this.playerId = this.playerRepository.getPlayerIdByPlayername(playername)
                 .orElseGet(() -> this.playerRepository.createPlayer(playername));
+        this.activeTeam = Optional.empty();
         this.loadTeams(this.playerRepository.getPlayerTeams(this.playerId));
 
         // TODO: probably connect to db
@@ -100,42 +101,14 @@ public class PlayerService {
         this.activeTeam.get().setName(newName);
     }
 
-    /**
-     * @throws TeamNotFoundException
-     *             if teamName does not exist
-     */
-    public void deleteTeam(String teamName) throws TeamNotFoundException {
-        if (!this.teamNameExists(teamName)) {
-            throw new TeamNotFoundException("No team saved with the name " + teamName);
+    public void deleteActiveTeam() throws NoActiveTeamException {
+        if (this.activeTeam.isEmpty()) {
+            throw new NoActiveTeamException("Player does not have an active team to delete.");
         }
 
-        this.playerRepository.deleteTeam(this.playerId, teamName);
-        this.playerTeams.removeIf(t -> t.getName().equals(teamName));
-
-        if (this.activeTeam.isPresent() && this.activeTeam.get().getName().equals(teamName)) {
-            this.activeTeam = Optional.empty();
-        }
-    }
-
-    /**
-     * Replaces all members of the stored team, registering any Bugemon not yet owned by this player.
-     *
-     * @throws TeamNameAlreadyExistsException
-     *             if teamName already exists
-     */
-    public void updateTeamMembers(String teamName, BugemonTeam team) {
-        this.playerRepository.deleteTeamMembers(this.playerId, teamName);
-        List<PlayerBugemonDTO> playerBugemonDTOs = this.playerRepository.getPlayerBugemons(this.playerId);
-        for (Bugemon bugemon : team) {
-            if (playerBugemonDTOs.stream().noneMatch(dto -> dto.bugemonName().equals(bugemon.getName()))) {
-                this.playerRepository.savePlayerBugemon(new PlayerBugemonDTO(this.playerId, bugemon.getName(),
-                        bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(), bugemon.getMaxHp(),
-                        bugemon.getXp(), bugemon.getLevel()));
-            }
-            TeamMemberDTO memberDTO = new TeamMemberDTO(this.playerId, teamName, bugemon.getName(),
-                    team.getSlotPosition(bugemon));
-            this.playerRepository.addTeamMember(memberDTO);
-        }
+        this.playerRepository.deleteTeam(this.playerId, this.activeTeam.get().getName());
+        this.playerTeams.removeIf(t -> t.equals(this.activeTeam.get()));
+        this.activeTeam = Optional.empty();
     }
 
     /**
@@ -177,7 +150,7 @@ public class PlayerService {
                     this.activeTeam.get().getSlotPosition(bugemon));
             this.playerRepository.addTeamMember(memberDTO);
         }
-        this.playerTeams.add(this.activeTeam.get());
+        this.playerTeams.add(new BugemonTeam(this.activeTeam.get()));
     }
 
     /**
@@ -218,10 +191,12 @@ public class PlayerService {
         this.playerRepository.updatePlayerBugemon(
                 new PlayerBugemonDTO(this.playerId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+
+        this.updatePlayerTeamsWithActiveTeam();
     }
 
     /** Persists the current state (XP, level, stats) of every Bugemon in the active team. */
-    public void saveActiveTeamState() throws NoActiveTeamException {
+    public void saveBugemonStateOfActiveTeam() throws NoActiveTeamException {
         if (this.activeTeam.isEmpty()) {
             throw new NoActiveTeamException("Player does not have an active team.");
         }
@@ -230,6 +205,7 @@ public class PlayerService {
                     new PlayerBugemonDTO(this.playerId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                             bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
         }
+        this.updatePlayerTeamsWithActiveTeam();
     }
 
     public void restoreHpActiveTeam() throws NoActiveTeamException {
@@ -293,8 +269,7 @@ public class PlayerService {
         }
         this.playerRepository.modifyTeam(this.playerId, this.activeTeam.get().getName(), teamMembers);
 
-        this.playerTeams.removeIf(t -> t.getName().equals(this.activeTeam.get().getName()));
-        this.playerTeams.add(new BugemonTeam(this.activeTeam.get()));
+        this.updatePlayerTeamsWithActiveTeam();
     }
 
     public void clearActiveTeam() {
@@ -321,7 +296,6 @@ public class PlayerService {
         } else if (!this.activeTeam.get().isFull()) {
             this.activeTeam.get().add(new Bugemon(bugemon));
         }
-
     }
 
     /**
@@ -335,5 +309,10 @@ public class PlayerService {
             return true;
         }
         return this.activeTeam.map(team -> this.playerTeams.stream().anyMatch(pt -> pt.equals(team))).orElse(false);
+    }
+
+    private void updatePlayerTeamsWithActiveTeam() {
+        this.playerTeams.removeIf(t -> !t.equals(this.activeTeam.get()));
+        this.playerTeams.add(new BugemonTeam(this.activeTeam.get()));
     }
 }

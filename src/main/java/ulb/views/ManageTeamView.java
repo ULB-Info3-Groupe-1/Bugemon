@@ -98,7 +98,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onDeleteClicked() {
-        this.listener.onDelete(this.getTeamNameToLoad());
+        this.listener.onDelete();
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
     }
 
@@ -210,6 +210,10 @@ public class ManageTeamView extends View {
         this.showAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
     }
 
+    public void showDeletTeamNoActiveTeamAlert() {
+        this.showAlert("Aucune équipe active", "Sélectionnez l'équipe que vous souhaitez supprimer.");
+    }
+
     public void showRenameTeamNoActiveTeamAlert() {
         this.showAlert("Aucune équipe active", "Sélectionnez l'équipe que vous souhaitez renommer.");
     }
@@ -232,7 +236,7 @@ public class ManageTeamView extends View {
 
         void onLoad(String teamName);
 
-        void onDelete(String teamName);
+        void onDelete();
 
         void onRename(String oldName, String newName);
 
