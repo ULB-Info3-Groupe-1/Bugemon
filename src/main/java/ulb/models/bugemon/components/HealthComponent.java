@@ -25,8 +25,12 @@ public class HealthComponent extends AbstractComponent {
         return this.maxHp;
     }
 
+    /**
+     * Increases the maximum hp value AND the current hp value by the given amount.
+     */
     public void increaseMaxHp(int amount) {
         this.maxHp += amount;
+        this.hp += amount;
     }
 
     public void decreaseHp(int amount) {
