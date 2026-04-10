@@ -1,4 +1,4 @@
-package ulb.models.no_tower.utils;
+package ulb.models.tower.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import ulb.models.no_tower.FloorNode;
-import ulb.models.no_tower.room.CombatRoom;
-import ulb.models.no_tower.room.EmptyRoom;
-import ulb.models.no_tower.room.RewardRoom;
+import ulb.models.tower.FloorNode;
+import ulb.models.tower.room.CombatRoom;
+import ulb.models.tower.room.EmptyRoom;
+import ulb.models.tower.room.RewardRoom;
 
 public class FloorGenerator {
 
@@ -31,7 +31,7 @@ public class FloorGenerator {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
-    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
 
     private final Random random;
 

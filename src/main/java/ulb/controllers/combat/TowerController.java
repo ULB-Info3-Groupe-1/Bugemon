@@ -6,26 +6,25 @@ import javafx.stage.Stage;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.models.no_tower.Floor;
-import ulb.models.no_tower.NOTower;
-import ulb.models.no_tower.room.CombatRoom;
-import ulb.models.no_tower.room.RewardRoom;
-import ulb.models.no_tower.room.Room;
+import ulb.models.tower.Floor;
+import ulb.models.tower.Tower;
+import ulb.models.tower.room.CombatRoom;
+import ulb.models.tower.room.RewardRoom;
+import ulb.models.tower.room.Room;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.combat.ManualCombatView;
 
-public class NOTowerController extends Controller<ManualCombatView> {
-    private NOTower noTower;
+public class TowerController extends Controller<ManualCombatView> {
+    private Tower tower;
     private final PlayerService playerService;
     private final BugemonService bugemonService;
     private boolean runEnded;
     private Stage stage;
 
-    public NOTowerController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) {
+    public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService) {
         super(metaController, new ManualCombatView());
-        this.noTower = null;
+        this.tower = null;
         this.playerService = playerService;
         this.bugemonService = bugemonService;
     }
@@ -57,8 +56,8 @@ public class NOTowerController extends Controller<ManualCombatView> {
             return false;
         }
 
-        if (this.noTower == null || this.runEnded) {
-            this.noTower = new NOTower(this.playerService.getActiveTeam(), this.playerService, this.bugemonService);
+        if (this.tower == null || this.runEnded) {
+            this.tower = new Tower(this.playerService.getActiveTeam(), this.playerService, this.bugemonService);
             this.runEnded = false;
         }
 
@@ -70,7 +69,7 @@ public class NOTowerController extends Controller<ManualCombatView> {
      */
     private void continueRun() {
         while (!this.runEnded) {
-            Floor currentFloor = this.noTower.getCurrentFloor();
+            Floor currentFloor = this.tower.getCurrentFloor();
 
             if (currentFloor.isComplete()) {
                 if (!this.advanceToNextFloorIfPossible()) {
@@ -130,23 +129,23 @@ public class NOTowerController extends Controller<ManualCombatView> {
     }
 
     private boolean advanceToNextFloorIfPossible() {
-        if (!this.noTower.isFloorComplete()) {
+        if (!this.tower.isFloorComplete()) {
             throw new IllegalStateException("Current floor is not complete");
         }
 
         // Reaching the end of floor 9 means the NO Tower run is complete.
-        if (this.noTower.getCurrentFloorNumber() == 8) {
+        if (this.tower.getCurrentFloorNumber() == 8) {
             this.runEnded = true;
             this.metaController.endNOTowerFlow();
             this.metaController.switchTo(Window.COMBAT_VICTORY);
             return false;
         }
 
-        this.noTower.goToNextFloor();
+        this.tower.goToNextFloor();
         return true;
     }
 
     public boolean hasActiveRun() {
-        return this.noTower != null && !this.runEnded;
+        return this.tower != null && !this.runEnded;
     }
 }

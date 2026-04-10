@@ -1,11 +1,11 @@
-package ulb.models.no_tower;
+package ulb.models.tower;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.List;
 
-import ulb.models.no_tower.room.Room;
-import ulb.models.no_tower.utils.FloorGenerator;
+import ulb.models.tower.room.Room;
+import ulb.models.tower.utils.FloorGenerator;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 
@@ -44,6 +44,7 @@ public class Floor {
         if (isChild || isParent) {
             this.currentPosition = node;
         }
+        // Probably should return something for success or idk...OR nothing happens on controller side...
     }
 
     public FloorNode getCurrentPosition() {

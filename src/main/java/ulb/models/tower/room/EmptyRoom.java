@@ -1,4 +1,4 @@
-package ulb.models.no_tower.room;
+package ulb.models.tower.room;
 
 public record EmptyRoom() implements Room {
 }

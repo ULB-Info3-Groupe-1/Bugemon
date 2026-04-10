@@ -14,7 +14,7 @@ import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
-import ulb.controllers.combat.NOTowerController;
+import ulb.controllers.combat.TowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
@@ -55,7 +55,7 @@ public class MetaController {
     private final CreateBugemonController createBugemonController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
-    private final NOTowerController noTowerController;
+    private final TowerController noTowerController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
@@ -66,10 +66,8 @@ public class MetaController {
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
-     * @param primaryStage
-     *            main JavaFX stage of the application
-     * @throws IOException
-     *             if a controller or view fails to initialize
+     * @param primaryStage main JavaFX stage of the application
+     * @throws IOException if a controller or view fails to initialize
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService)
             throws IOException {
@@ -83,7 +81,7 @@ public class MetaController {
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService);
-        this.noTowerController = new NOTowerController(this, playerService, bugemonService);
+        this.noTowerController = new TowerController(this, playerService, bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.levelUpController = new LevelUpController(this, playerService);
@@ -173,10 +171,8 @@ public class MetaController {
     /**
      * Switches the current screen to the specified window.
      *
-     * @param window
-     *            target screen to display
-     * @throws IllegalArgumentException
-     *             if the window is invalid
+     * @param window target screen to display
+     * @throws IllegalArgumentException if the window is invalid
      */
     public final void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);

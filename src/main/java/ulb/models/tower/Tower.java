@@ -1,4 +1,4 @@
-package ulb.models.no_tower;
+package ulb.models.tower;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 
-public class NOTower {
+public class Tower {
     //
 
     private static final int MAX_FLOORS = 9;
@@ -16,7 +16,7 @@ public class NOTower {
     private ArrayList<Floor> floors = new ArrayList<>();
 
     // TODO: change to Player class when it will be implemented
-    public NOTower(BugemonTeam playerTeam, PlayerService playerService, BugemonService bugemonService) {
+    public Tower(BugemonTeam playerTeam, PlayerService playerService, BugemonService bugemonService) {
         this.generateFloors(playerTeam, playerService, bugemonService);
     }
 

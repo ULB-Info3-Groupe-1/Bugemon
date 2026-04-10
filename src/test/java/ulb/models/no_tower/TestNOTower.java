@@ -34,7 +34,7 @@ public class TestNOTower {
         when(PLAYER_SERVICE_MOCK.getInventory()).thenReturn(new Inventory());
     }
 
-    private void completeCurrentFloor(NOTower noTower) {
+    private void completeCurrentFloor(Tower noTower) {
         Floor floor = noTower.getCurrentFloor();
         this.navigateToBoss(floor);
     }
@@ -58,7 +58,7 @@ public class TestNOTower {
     public void testNOTowerInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        NOTower noTower = new NOTower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
 
         assertEquals(0, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFloorComplete());
@@ -80,7 +80,7 @@ public class TestNOTower {
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        NOTower noTower = new NOTower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, PLAYER_SERVICE_MOCK, BUGEMON_SERVICE_MOCK);
 
         assertFalse(noTower.isFloorComplete());
     }

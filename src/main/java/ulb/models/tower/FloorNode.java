@@ -1,10 +1,10 @@
-package ulb.models.no_tower;
+package ulb.models.tower;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import ulb.models.no_tower.room.Room;
+import ulb.models.tower.room.Room;
 
 public class FloorNode {
     private final int x;
