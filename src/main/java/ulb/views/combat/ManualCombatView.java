@@ -132,6 +132,13 @@ public class ManualCombatView extends CombatView {
         });
     }
 
+    private void initListeners() {
+        this.initActionMenuViewListener();
+        this.initAttackMenuListener();
+        this.initSwitchMenuListener();
+        this.initItemMenuListener();
+    }
+
     public ManualCombatView() {
         super();
 
@@ -140,10 +147,7 @@ public class ManualCombatView extends CombatView {
         this.switchMenu = new SwitchMenuView();
         this.itemMenuView = new ItemMenuView();
 
-        this.initActionMenuViewListener();
-        this.initAttackMenuListener();
-        this.initSwitchMenuListener();
-        this.initItemMenuListener();
+        this.initListeners();
     }
 
     public void setListener(Listener listener) {
