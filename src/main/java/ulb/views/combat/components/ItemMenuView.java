@@ -1,8 +1,8 @@
 package ulb.views.combat.components;
 
 import java.util.Map;
-
 import javafx.scene.control.Button;
+
 import ulb.Configuration;
 import ulb.models.bugemon.Item;
 import ulb.views.components.ComponentView;

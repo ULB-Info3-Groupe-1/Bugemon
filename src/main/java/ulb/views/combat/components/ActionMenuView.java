@@ -55,7 +55,7 @@ public class ActionMenuView extends ComponentView {
     private void onSurrenderClicked() {
         this.listener.onSurrender();
     }
-    
+
     public interface Listener {
 
         void onAttack();

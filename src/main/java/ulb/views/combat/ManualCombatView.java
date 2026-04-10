@@ -58,7 +58,6 @@ public class ManualCombatView extends CombatView {
 
         });
 
-
         this.attackMenu = new AttackMenuView();
         this.attackMenu.setListener(new AttackMenuView.Listener() {
 
@@ -72,8 +71,7 @@ public class ManualCombatView extends CombatView {
                 Efficiency eff = CombatService.compareBugemonType(attack.type(),
                         ManualCombatView.this.opponent.getCurrentBugemonType());
                 ManualCombatView.this.showHoverInfo(attack.name(), "Type : " + attack.type(),
-                        "Puissance : " + attack.power(),
-                        attack.description().isBlank() ? null : attack.description());
+                        "Puissance : " + attack.power(), attack.description().isBlank() ? null : attack.description());
                 ManualCombatView.this.setHoverType(attack.type());
                 ManualCombatView.this.setHoverEfficiency(eff);
             }
