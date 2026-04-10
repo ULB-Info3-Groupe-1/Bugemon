@@ -1,4 +1,4 @@
-package ulb.models.no_tower;
+package ulb.models.tower;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -13,7 +13,7 @@ import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.no_tower.room.Room;
+import ulb.models.tower.room.Room;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;

@@ -1,4 +1,4 @@
-package ulb.models.no_tower;
+package ulb.models.tower;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

@@ -66,8 +66,10 @@ public class MetaController {
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
-     * @param primaryStage main JavaFX stage of the application
-     * @throws IOException if a controller or view fails to initialize
+     * @param primaryStage
+     *            main JavaFX stage of the application
+     * @throws IOException
+     *             if a controller or view fails to initialize
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService)
             throws IOException {
@@ -171,8 +173,10 @@ public class MetaController {
     /**
      * Switches the current screen to the specified window.
      *
-     * @param window target screen to display
-     * @throws IllegalArgumentException if the window is invalid
+     * @param window
+     *            target screen to display
+     * @throws IllegalArgumentException
+     *             if the window is invalid
      */
     public final void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
