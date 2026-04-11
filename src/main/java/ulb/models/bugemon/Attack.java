@@ -55,7 +55,7 @@ public record Attack(
         return Objects.hash(this.id);
     }
 
-    public Efficiency getEfficiencyAgainst(Bugemon opponent){
+    public Efficiency getEfficiencyAgainst(Bugemon opponent) {
         return this.type.getEfficiencyAgainst(opponent.getType());
     }
 }

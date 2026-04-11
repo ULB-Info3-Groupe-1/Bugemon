@@ -59,8 +59,7 @@ public class TestCombatService {
                 .type(BugemonType.PYRO).build();
 
         double expectedDamage = attack.power() * ((100.0 + striker.getAttack()) / 100.0)
-                * (100.0 / (100.0 + defender.getDefense()))
-                * CombatService.getEfficiencyFactor(attack, defender);
+                * (100.0 / (100.0 + defender.getDefense())) * CombatService.getEfficiencyFactor(attack, defender);
 
         int damage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
@@ -105,33 +104,33 @@ public class TestCombatService {
 
     // @Test
     // public void testEfficiencyNeutralSameType() {
-    //     BugemonType aquaType1 = BugemonType.AQUA;
-    //     BugemonType aquaType2 = BugemonType.AQUA;
-    //     assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType1, aquaType2));
+    // BugemonType aquaType1 = BugemonType.AQUA;
+    // BugemonType aquaType2 = BugemonType.AQUA;
+    // assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType1, aquaType2));
     // }
 
     // @Test
     // public void testEfficiencyNeutralDifferentType() {
-    //     BugemonType aquaType = BugemonType.AQUA;
-    //     BugemonType lithoType = BugemonType.LITHO;
+    // BugemonType aquaType = BugemonType.AQUA;
+    // BugemonType lithoType = BugemonType.LITHO;
 
-    //     assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType, lithoType));
+    // assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType, lithoType));
     // }
 
     // @Test
     // public void testEfficiencyLow() {
-    //     BugemonType aquaType = BugemonType.AQUA;
-    //     BugemonType floraType = BugemonType.FLORA;
+    // BugemonType aquaType = BugemonType.AQUA;
+    // BugemonType floraType = BugemonType.FLORA;
 
-    //     assertEquals(Efficiency.LOW, CombatService.compareBugemonType(aquaType, floraType));
+    // assertEquals(Efficiency.LOW, CombatService.compareBugemonType(aquaType, floraType));
     // }
 
     // @Test
     // public void testEfficiencyHigh() {
-    //     BugemonType aquaType = BugemonType.AQUA;
-    //     BugemonType pyroType = BugemonType.PYRO;
+    // BugemonType aquaType = BugemonType.AQUA;
+    // BugemonType pyroType = BugemonType.PYRO;
 
-    //     assertEquals(Efficiency.HIGH, CombatService.compareBugemonType(aquaType, pyroType));
+    // assertEquals(Efficiency.HIGH, CombatService.compareBugemonType(aquaType, pyroType));
     // }
 
     @Test

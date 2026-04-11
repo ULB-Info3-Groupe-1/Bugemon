@@ -13,37 +13,22 @@ public enum BugemonType {
 
     public Efficiency getEfficiencyAgainst(BugemonType opponentType) {
         return strongAgainst.get(this).get(opponentType);
-    };
+    }
 
     static {
-        strongAgainst = Map.of(
-            BugemonType.FLORA, Map.of(
-                BugemonType.FLORA, Efficiency.NEUTRAL,
-                BugemonType.AQUA, Efficiency.HIGH,
-                BugemonType.PYRO, Efficiency.NEUTRAL,
-                BugemonType.LITHO, Efficiency.LOW
-            ),
+        strongAgainst = Map.of(BugemonType.FLORA,
+                Map.of(BugemonType.FLORA, Efficiency.NEUTRAL, BugemonType.AQUA, Efficiency.HIGH, BugemonType.PYRO,
+                        Efficiency.NEUTRAL, BugemonType.LITHO, Efficiency.LOW),
 
-            BugemonType.AQUA, Map.of(
-                BugemonType.FLORA, Efficiency.LOW,
-                BugemonType.AQUA, Efficiency.NEUTRAL,
-                BugemonType.PYRO, Efficiency.HIGH,
-                BugemonType.LITHO, Efficiency.NEUTRAL
-            ),
+                BugemonType.AQUA,
+                Map.of(BugemonType.FLORA, Efficiency.LOW, BugemonType.AQUA, Efficiency.NEUTRAL, BugemonType.PYRO,
+                        Efficiency.HIGH, BugemonType.LITHO, Efficiency.NEUTRAL),
 
-            BugemonType.PYRO, Map.of(
-                BugemonType.FLORA, Efficiency.NEUTRAL,
-                BugemonType.AQUA, Efficiency.LOW,
-                BugemonType.PYRO, Efficiency.NEUTRAL,
-                BugemonType.LITHO, Efficiency.HIGH
-            ),
+                BugemonType.PYRO,
+                Map.of(BugemonType.FLORA, Efficiency.NEUTRAL, BugemonType.AQUA, Efficiency.LOW, BugemonType.PYRO,
+                        Efficiency.NEUTRAL, BugemonType.LITHO, Efficiency.HIGH),
 
-            BugemonType.LITHO, Map.of(
-                BugemonType.FLORA, Efficiency.HIGH,
-                BugemonType.AQUA, Efficiency.NEUTRAL,
-                BugemonType.PYRO, Efficiency.LOW,
-                BugemonType.LITHO, Efficiency.NEUTRAL
-            )
-        );
+                BugemonType.LITHO, Map.of(BugemonType.FLORA, Efficiency.HIGH, BugemonType.AQUA, Efficiency.NEUTRAL,
+                        BugemonType.PYRO, Efficiency.LOW, BugemonType.LITHO, Efficiency.NEUTRAL));
     }
 }
