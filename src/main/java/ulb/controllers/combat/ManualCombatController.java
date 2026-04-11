@@ -7,6 +7,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
+import ulb.models.combat.Combat.EndOfCombatAction;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
@@ -37,16 +38,18 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        this.restoreHpAfterCombat = shouldRestoreHp;
-
         this.manualPlayerTrainer = new ManualTrainer(
                 this.playerService.getActiveTeam().orElseThrow(
                         () -> new IllegalStateException("No active team for player when starting Manual combat")),
-                this.playerService.getInventory());
+        this.playerService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
-        this.combat = new Combat(this.playerTrainer, opponentTrainer);
+
+        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? () -> playerService.restoreHpActiveTeam()
+                : EndOfCombatAction.NO_OP;
+
+        this.combat = new Combat(this.playerTrainer, opponentTrainer, endOfCombatCb);
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
         this.pendingSteps = Collections.emptyIterator();

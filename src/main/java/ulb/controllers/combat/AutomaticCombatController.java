@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
+import ulb.models.combat.Combat.EndOfCombatAction;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
@@ -29,13 +30,15 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        this.restoreHpAfterCombat = shouldRestoreHp;
-
         AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam().orElseThrow(
                 () -> new IllegalStateException("No active team for player when starting Automatic combat")));
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
-        this.combat = new Combat(this.playerTrainer, opponentTrainer);
+
+        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? () -> playerService.restoreHpActiveTeam()
+                : EndOfCombatAction.NO_OP;
+
+        this.combat = new Combat(this.playerTrainer, opponentTrainer, endOfCombatCb);
 
         this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
