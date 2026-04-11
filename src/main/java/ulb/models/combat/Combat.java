@@ -3,9 +3,9 @@ package ulb.models.combat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
@@ -201,7 +201,7 @@ public class Combat {
         int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
-        Efficiency efficiency = CombatService.compareBugemonType(attack.type(), defender.getCurrentBugemonType());
+        Efficiency efficiency = attack.getEfficiencyAgainst(defender.getCurrentBugemon());
         LOG.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
                 defender.getCurrentBugemonName(), damage, efficiency);
 

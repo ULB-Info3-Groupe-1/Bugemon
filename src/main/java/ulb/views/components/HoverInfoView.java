@@ -5,8 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
-import ulb.common.Efficiency;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Efficiency;
 
 /**
  * Generic hover info panel that displays a title and a variable list of info lines. Callers build the content via

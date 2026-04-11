@@ -2,9 +2,9 @@ package ulb.models.combat;
 
 import java.util.List;
 
-import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.trainer.Trainer;

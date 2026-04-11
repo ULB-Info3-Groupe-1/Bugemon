@@ -226,4 +226,5 @@ public class Bugemon implements BugemonDTO {
     public List<String> getListAttacksId() {
         return this.attackList.stream().map(Attack::id).toList();
     }
+
 }
