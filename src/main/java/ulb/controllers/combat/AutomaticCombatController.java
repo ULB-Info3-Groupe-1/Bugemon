@@ -35,7 +35,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 
-        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? () -> playerService.restoreHpActiveTeam()
+        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? EndOfCombatAction.RESTORE_HP
                 : EndOfCombatAction.NO_OP;
 
         this.combat = new Combat(this.playerTrainer, opponentTrainer, endOfCombatCb);

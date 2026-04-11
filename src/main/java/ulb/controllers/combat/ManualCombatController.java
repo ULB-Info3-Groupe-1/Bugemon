@@ -46,7 +46,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
 
-        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? () -> playerService.restoreHpActiveTeam()
+        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? EndOfCombatAction.RESTORE_HP
                 : EndOfCombatAction.NO_OP;
 
         this.combat = new Combat(this.playerTrainer, opponentTrainer, endOfCombatCb);

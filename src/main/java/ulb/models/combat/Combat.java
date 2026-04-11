@@ -164,7 +164,7 @@ public class Combat {
                 this.isCompleted = true;
 
                 // run end-of-combat callback
-                this.endOfCombatAction.execute();
+                this.endOfCombatAction.execute(this.playerTrainer, this.opponentTrainer);
             }
         }
     }
@@ -228,12 +228,16 @@ public class Combat {
 
     @FunctionalInterface
     public interface EndOfCombatAction {
-        void execute();
+        void execute(Trainer playerTrainer, Trainer opponentTrainer);
 
         /**
          * No action (as in does nothing).
          */
-        EndOfCombatAction NO_OP = () -> {
+        EndOfCombatAction NO_OP = (Trainer playerTrainer, Trainer opponentTrainer) -> {};
+
+        EndOfCombatAction RESTORE_HP = (Trainer playerTrainer, Trainer opponentTrainer) -> {
+            playerTrainer.getTeam().restoreHp();
+            opponentTrainer.getTeam().restoreHp();
         };
     }
 }
