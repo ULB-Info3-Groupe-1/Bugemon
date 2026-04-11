@@ -35,6 +35,15 @@ public class Floor {
         return nextRooms;
     }
 
+    public List<FloorNode> getFloorNodes() throws EmptyStackException {
+        List<FloorNode> floorNodes = new ArrayList<>();
+        for (FloorNode child : this.currentPosition.getChildren()) {
+            floorNodes.add(child);
+        }
+        this.currentPosition.getParent().ifPresent(parent -> floorNodes.add(parent));
+        return floorNodes;
+    }
+
     public void moveTo(FloorNode node) {
         boolean isChild = this.currentPosition.getChildren().contains(node);
         boolean isParent = this.currentPosition.getParent().map(parent -> parent.equals(node)).orElse(false);

@@ -1,22 +1,27 @@
 package ulb.controllers.combat;
 
 import java.io.IOException;
+import java.util.List;
+
 import javafx.stage.Stage;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
+import ulb.models.combat.Combat;
 import ulb.models.tower.Floor;
+import ulb.models.tower.FloorNode;
 import ulb.models.tower.Tower;
 import ulb.models.tower.room.CombatRoom;
+import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
+import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.FloorMapView;
 import ulb.views.ViewLoader;
 import ulb.views.components.RoomNodeView;
-import ulb.views.components.RoomNodeView.RoomState;
 
 public class TowerController extends Controller<FloorMapView> implements FloorMapView.Listener {
     private Tower tower;
@@ -34,20 +39,43 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     @Override
-    public void onRoomClicked(int row, int col) {
-        System.out.println("Room clicked at (" + row + ", " + col + ")");
-        this.continueRun();
+    public void onRoomClicked(Room selectedRoom) {
+
+        if (selectedRoom instanceof CombatRoom) {
+            this.handleCombatRoom((CombatRoom) selectedRoom);
+
+        } else if (selectedRoom instanceof RewardRoom) {
+            // TODO: story 11
+        } else if (selectedRoom instanceof EmptyRoom) {
+            //
+        }
+    }
+
+    private void handleCombatRoom(CombatRoom combatRoom) {
+        Combat combat = combatRoom.getCombat(
+                new ManualTrainer(this.playerService.getActiveTeam(), this.playerService.getInventory()));
+        ManualCombatController manualCombatController = this.metaController.getCombatController();
+        manualCombatController.startCombat(combat);
+        
+    }
+
+    private void handleRewardRoom(RewardRoom rewardRoom) {
+        // TODO: Implement reward room handling
+    }
+
+    private void handleEmptyRoom(EmptyRoom emptyRoom) {
+        // No action needed for empty rooms, but method is here for clarity and future
+        // extensibility.
     }
 
     @Override
     public void onBackToMainMenu() {
-        this.runEnded = true;
-        this.metaController.endTowerFlow();
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 
     /**
-     * Runs the Tower flow until a combat starts, the run ends, or the tower is completed. Reward rooms are resolved
+     * Runs the Tower flow until a combat starts, the run ends, or the tower is
+     * completed. Reward rooms are resolved
      * immediately; combat rooms continue via callback.
      */
     public void runTower(Stage stage) {
@@ -68,50 +96,22 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
 
         // TODO: Populate the floor map with rooms from currentFloor
         // For now, show a simple test setup
-        this.setupTestFloorMap();
+        this.setupFloorView();
 
         // Show the view using the Controller's show() method
         this.show(stage);
     }
 
-    /**
-     * Temporary method to show a test floor map. TODO: Replace with actual floor data.
-     */
-    private void setupTestFloorMap() {
-        this.view.clearMap();
+    private void setupFloorView() {
+        Floor currentFloor = this.tower.getCurrentFloor();
+        List<FloorNode> floorNodes = currentFloor.getFloorNodes();
 
-        // Create a simple test layout using only row/col
-        RoomNodeView startRoom = new RoomNodeView();
-        startRoom.setRoomType(RoomType.START);
-        startRoom.setRoomState(RoomState.CURRENT);
-        startRoom.setPosition(2, 1); // Row 1, Column 1
-        this.view.addRoomNode(startRoom);
-
-        RoomNodeView combatRoom = new RoomNodeView();
-        combatRoom.setRoomType(RoomType.COMBAT);
-        combatRoom.setRoomState(RoomState.AVAILABLE);
-        combatRoom.setPosition(2, 2); // Row 1, Column 2
-        this.view.addRoomNode(combatRoom);
-
-        RoomNodeView rewardRoom = new RoomNodeView();
-        rewardRoom.setRoomType(RoomType.REWARD);
-        rewardRoom.setRoomState(RoomState.VISITED);
-        rewardRoom.setPosition(1, 3); // Row 2, Column 1
-        this.view.addRoomNode(rewardRoom);
-
-        RoomNodeView bossRoom = new RoomNodeView();
-        bossRoom.setRoomType(RoomType.BOSS);
-        bossRoom.setRoomState(RoomState.AVAILABLE);
-        bossRoom.setPosition(3, 3); // Row 2, Column 3
-        this.view.addRoomNode(bossRoom);
-
-        // Center the map and generate connections
-        this.view.centerMap();
-        this.view.generateConnections();
+        this.view.setupFloor(floorNodes);
     }
 
     /**
-     * Ensures that a Tower run can be started or continued. If the player has no active team, or if the current run has
+     * Ensures that a Tower run can be started or continued. If the player has no
+     * active team, or if the current run has
      * ended, a new run is initialised. If a new run cannot be started.
      *
      * @return
@@ -132,7 +132,8 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     /**
-     * Continues the current Tower run until a combat room is reached, the run ends, or the tower is completed.
+     * Continues the current Tower run until a combat room is reached, the run ends,
+     * or the tower is completed.
      */
     private void continueRun() {
         while (!this.runEnded) {
@@ -146,7 +147,6 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
             }
 
             Room currentRoom = currentFloor.getCurrentRoom();
-            this.handleRoom(currentFloor, currentRoom);
 
             if (currentRoom instanceof CombatRoom) {
                 return;
@@ -154,38 +154,14 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         }
     }
 
-    private void handleRoom(Floor floor, Room room) {
-        if (room instanceof CombatRoom combatRoom) {
-            try {
-                ManualCombatController manualCombatController = new ManualCombatController(this.metaController,
-                        this.playerService, this.bugemonService);
-            } catch (IOException e) {
-                throw new IllegalStateException("Failed to initialize manual combat", e);
-            }
-            return;
-        }
-
-        if (room instanceof RewardRoom rewardRoom) {
-            this.handleRewardRoom(rewardRoom);
-            return;
-        }
-
-        throw new IllegalStateException("Unknown room type: " + room.getClass().getSimpleName());
-    }
-
     private void handleCombatResult(boolean playerWon, Floor floor) {
         if (!playerWon) {
             this.runEnded = true;
-            this.metaController.endTowerFlow();
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
             this.playerService.restoreHpActiveTeam();
             return;
         }
         this.continueRun();
-    }
-
-    private void handleRewardRoom(RewardRoom rewardRoom) {
-        // TODO: apply player reward once RewardRoom exposes concrete reward choices.
     }
 
     private boolean advanceToNextFloorIfPossible() {
@@ -196,7 +172,6 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         // Reaching the end of floor 9 means the Tower run is complete.
         if (this.tower.getCurrentFloorNumber() == 8) {
             this.runEnded = true;
-            this.metaController.endTowerFlow();
             this.metaController.switchTo(Window.COMBAT_VICTORY);
             return false;
         }
@@ -207,13 +182,5 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
 
     public boolean hasActiveRun() {
         return this.tower != null && !this.runEnded;
-    }
-
-    public enum RoomType {
-        START,
-        COMBAT,
-        BOSS,
-        REWARD,
-        EMPTY
     }
 }

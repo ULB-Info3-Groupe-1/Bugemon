@@ -8,7 +8,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
-
+import ulb.models.tower.FloorNode;
+import ulb.models.tower.room.Room;
 import ulb.views.components.RoomNodeView;
 
 /**
@@ -110,7 +111,6 @@ public class FloorMapView extends View {
         // Register listener to propagate events to FloorMapView's listener
         roomNode.setListener((row, col) -> {
             if (this.listener != null) {
-                this.listener.onRoomClicked(row, col);
             }
         });
 
@@ -138,6 +138,10 @@ public class FloorMapView extends View {
      */
     private double calculateYPosition(int row) {
         return MAP_OFFSET_Y + (row * (ROOM_HEIGHT + VERTICAL_SPACING));
+    }
+
+    public void setupFloor(List<FloorNode> floorNodes) {
+
     }
 
     /**
@@ -264,15 +268,7 @@ public class FloorMapView extends View {
      * interface.
      */
     public interface Listener {
-        /**
-         * Called when a room node on the map is clicked by the player.
-         *
-         * @param row
-         *            The row position of the clicked room
-         * @param col
-         *            The column position of the clicked room
-         */
-        void onRoomClicked(int row, int col);
+        void onRoomClicked(Room selectedRoom);
 
         void onBackToMainMenu();
     }
