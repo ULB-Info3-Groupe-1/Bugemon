@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Queue;
 
 import ulb.models.level_up.LevelUp;
-import ulb.services.PlayerService;
+import ulb.services.BugemonService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 
@@ -16,8 +16,7 @@ import ulb.views.ViewLoader;
  * being displayed. When an {@link Upgrade} is chosen, the head is popped.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
-    private Queue<LevelUp> levelUps = new ArrayDeque<>();
-    private final PlayerService playerService;
+    private final BugemonService bugemonService;
 
     /**
      * Constructs a {@code LevelUpController}, initialises its {@link LevelUpView}, and registers the choice callback.
@@ -25,41 +24,25 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
      * @param metaController
      *            the application-level controller used for navigation.
      */
-    public LevelUpController(MetaController metaController, PlayerService playerService) {
+    public LevelUpController(MetaController metaController, BugemonService bugemonService) {
         super(metaController, ViewLoader.load(LevelUpView::new));
-        this.playerService = playerService;
+        this.bugemonService = bugemonService;
         this.view.setListener(this);
     }
 
     @Override
     public void onUpgradeChosen(int upgradeIdx) {
-        LevelUp levelUp = this.levelUps.remove();
-        levelUp.apply(upgradeIdx);
+        this.bugemonService.applyNextLevelUp(upgradeIdx);
 
-        this.playerService.saveBugemonState(levelUp.getBugemon());
-
-        if (this.levelUps.isEmpty()) {
-            this.metaController.onLevelUpfinished();
-        } else {
+        if (this.bugemonService.hasPendingLevelUps()) {
             this.updateDisplayedLevelUp();
+        } else {
+            this.metaController.onLevelUpfinished();
         }
     }
 
     public void updateDisplayedLevelUp() {
-        this.view.setLevelUp(this.levelUps.peek());
+        this.view.setLevelUp(this.bugemonService.peekNextLevelUp());
         this.view.refresh();
-    }
-
-    /**
-     * Initialises the session with the given list and navigates to the level-up screen, or goes directly to victory if
-     * the list is empty.
-     */
-    public void setLevelUps(List<LevelUp> levelUps) {
-        if (levelUps.isEmpty()) {
-            throw new IllegalArgumentException("level-ups list cannot be empty");
-        }
-
-        this.levelUps = new ArrayDeque<>(levelUps);
-        this.updateDisplayedLevelUp();
     }
 }

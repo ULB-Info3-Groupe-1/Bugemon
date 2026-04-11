@@ -3,6 +3,7 @@ package ulb.controllers.combat;
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
 import ulb.models.combat.Combat.EndOfCombatAction;
+import ulb.models.combat.CombatXpDistributor;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
@@ -35,10 +36,11 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 
-        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? EndOfCombatAction.RESTORE_HP
-                : EndOfCombatAction.NO_OP;
+        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? EndOfCombatAction.RESTORE_HP : EndOfCombatAction.NO_OP;
 
-        this.combat = new Combat(this.playerTrainer, opponentTrainer, endOfCombatCb);
+        // TODO: move the CombatXpDistributor creation
+        CombatXpDistributor combatxpDistributor = new CombatXpDistributor(this.bugemonService);
+        this.combat = new Combat(combatxpDistributor, this.playerTrainer, opponentTrainer, endOfCombatCb);
 
         this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
