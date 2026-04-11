@@ -18,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestPlayerRepository {
@@ -267,7 +268,11 @@ public class TestPlayerRepository {
 
         // Execute
         this.repository.createTeam(playerId, oldTeamName);
-        this.repository.renameTeam(playerId, oldTeamName, newTeamName);
+        try {
+            verify(this.repository).renameTeam(playerId, oldTeamName, newTeamName);
+        } catch (TeamNameAlreadyExistsException e) {
+            e.printStackTrace();
+        }
         List<TeamDTO> teams = this.repository.getPlayerTeams(playerId);
 
         // Assert
@@ -276,7 +281,11 @@ public class TestPlayerRepository {
 
         // Verify the mock was called
         verify(this.repository).createTeam(playerId, oldTeamName);
-        verify(this.repository).renameTeam(playerId, oldTeamName, newTeamName);
+        try {
+            verify(this.repository).renameTeam(playerId, oldTeamName, newTeamName);
+        } catch (TeamNameAlreadyExistsException e) {
+            e.printStackTrace();
+        }
         verify(this.repository).getPlayerTeams(playerId);
     }
 

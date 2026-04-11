@@ -138,12 +138,7 @@ public class PlayerService {
             throw new TeamNotFoundException("No team saved with the name " + oldName);
         }
 
-        try {
-            this.playerRepository.renameTeam(this.playerId, oldName, newName);
-        } catch (TeamNameAlreadyExistsException e) {
-            throw new TeamNameAlreadyExistsException("Team name already exists: " + newName);
-        }
-
+        this.playerRepository.renameTeam(this.playerId, oldName, newName);
         this.playerTeams.stream().filter(t -> t.getName().equals(oldName)).forEach(t -> t.setName(newName));
         this.activeTeam.get().setName(newName);
     }
