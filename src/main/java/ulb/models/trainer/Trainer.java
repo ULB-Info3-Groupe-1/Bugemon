@@ -132,8 +132,4 @@ public abstract class Trainer {
     public Set<Bugemon> getParticipatingBugemons() {
         return this.participatedBugemons;
     }
-
-    public List<Bugemon> getBugemons() {
-        return this.team.getAll();
-    }
 }

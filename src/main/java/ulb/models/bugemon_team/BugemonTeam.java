@@ -2,7 +2,6 @@ package ulb.models.bugemon_team;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -125,10 +124,6 @@ public class BugemonTeam implements Iterable<Bugemon> {
      */
     public Bugemon getFirst() {
         return this.team.getFirst();
-    }
-
-    public List<Bugemon> getAll() {
-        return this.team;
     }
 
     public void killAll() {
