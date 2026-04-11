@@ -269,7 +269,7 @@ public class TestPlayerRepository {
         // Execute
         this.repository.createTeam(playerId, oldTeamName);
         try {
-            verify(this.repository).renameTeam(playerId, oldTeamName, newTeamName);
+            this.repository.renameTeam(playerId, oldTeamName, newTeamName);
         } catch (TeamNameAlreadyExistsException e) {
             e.printStackTrace();
         }
