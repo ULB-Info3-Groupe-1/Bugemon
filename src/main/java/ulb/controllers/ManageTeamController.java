@@ -5,12 +5,13 @@ import javafx.stage.Stage;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
+import ulb.repositories.exceptions.TeamNameEmptyException;
+import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.services.exceptions.NoActiveTeamException;
-import ulb.services.exceptions.TeamEmptyException;
-import ulb.services.exceptions.TeamNotFoundException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
@@ -64,30 +65,28 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onSave(String teamName) {
-        if (this.isValidName(teamName)) {
-            try {
-                this.playerService.saveTeam(teamName);
-                this.refresh();
-            } catch (TeamNameAlreadyExistsException e) {
-                this.view.showTeamNameAlreadyExistsAlert(teamName);
-            } catch (TeamEmptyException e) {
-                this.view.showEmptyTeamAlert();
-            } catch (NoActiveTeamException e) {
-                throw new IllegalStateException(
-                        "The player team to save doesn't exist. The active team should exist now and be modified.");
-            }
+        try {
+            this.playerService.saveTeam(teamName);
+            this.refresh();
+        } catch (TeamNameAlreadyExistsException e) {
+            this.view.showTeamNameAlreadyExistsAlert(teamName);
+        } catch (TeamEmptyException e) {
+            this.view.showEmptyTeamAlert();
+        } catch (NoActiveTeamException e) {
+            throw new IllegalStateException(
+                    "The player team to save doesn't exist. The active team should exist now and be modified.");
+        } catch (TeamNameEmptyException e) {
+            this.view.showEmptyTeamNameAlert();
         }
     }
 
     @Override
     public void onLoad(String teamName) {
-        if (this.isValidName(teamName)) {
-            try {
-                this.playerService.setActiveTeam(teamName);
-                this.refresh();
-            } catch (TeamNotFoundException e) {
-                this.view.showTeamNotFoundAlert(teamName);
-            }
+        try {
+            this.playerService.setActiveTeam(teamName);
+            this.refresh();
+        } catch (TeamNotFoundException e) {
+            this.view.showTeamNotFoundAlert(teamName);
         }
     }
 
@@ -98,15 +97,16 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.refresh();
         } catch (NoActiveTeamException e) {
             this.view.showDeletTeamNoActiveTeamAlert();
+        } catch (TeamNotFoundException e) {
+            this.playerService.getActiveTeam().ifPresentOrElse(team -> this.view.showTeamNotFoundAlert(team.getName()),
+                    this.view::showDeletTeamNoActiveTeamAlert);
+        } catch (TeamNameEmptyException e) {
+            this.view.showEmptyTeamAlert();
         }
     }
 
     @Override
     public void onRename(String oldName, String newName) {
-        if (!this.isValidName(newName)) {
-            return;
-        }
-
         try {
             this.playerService.renameTeam(oldName, newName);
             this.refresh();
@@ -116,6 +116,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showTeamNameAlreadyExistsAlert(newName);
         } catch (NoActiveTeamException e) {
             this.view.showRenameTeamNoActiveTeamAlert();
+        } catch (TeamNameEmptyException e) {
+            this.view.showEmptyTeamNameAlert();
         }
     }
 
@@ -135,15 +137,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showEmptyTeamAlert();
         } catch (NoActiveTeamException e) {
             this.view.showAlertChooseTeamToModify();
+        } catch (TeamNotFoundException e) {
+            this.playerService.getActiveTeam().ifPresentOrElse(team -> this.view.showTeamNotFoundAlert(team.getName()),
+                    this.view::showAlertChooseTeamToModify);
         }
-    }
-
-    private boolean isValidName(String name) {
-        if (name == null || name.isBlank()) {
-            this.view.showEmptyTeamNameAlert();
-            return false;
-        }
-        return true;
     }
 
     private void launchCombat(Window window) {

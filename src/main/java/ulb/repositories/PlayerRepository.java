@@ -1,301 +1,227 @@
 package ulb.repositories;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.factories.BugemonFactory;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.repositories.exceptions.PlayernameIsEmptyException;
+import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
+import ulb.repositories.exceptions.TeamNameEmptyException;
+import ulb.repositories.exceptions.TeamNotFoundException;
 
 public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
+    private final StaticDataRepository staticDataRepository;
 
-    private final DatabaseConnection dbConnection;
-
-    public PlayerRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
-        super(queries);
-        this.dbConnection = dbConnection;
+    public PlayerRepository(DatabaseConnection dbConnection, StaticDataRepository staticDataRepository,
+            Map<String, String> queries) {
+        super(dbConnection, queries);
+        this.staticDataRepository = staticDataRepository;
     }
 
-    // ─── PLAYERS ────────────────────────────────────────────────────────────────
+    // --- PLAYERS ---
 
-    /** @return the generated player ID */
-    public int createPlayer(String playername) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("CreatePlayer"))) {
-            ps.setString(1, playername);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(DatabaseColumns.COL_ID);
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("createPlayer failed", e);
+    /**
+     * Returns the player id or creates a new player and returns its id
+     *
+     * @param playername
+     *            the player name to create or retrieve
+     * @return (int) the player id
+     * @throws PlayernameIsEmptyException
+     *             if the playername is null or empty
+     */
+    public int getPlayerIdOrCreatePlayer(String playername) throws PlayernameIsEmptyException {
+        if (playername == null || playername.isEmpty()) {
+            throw new PlayernameIsEmptyException("Playername cannot be null or empty");
         }
-        throw new IllegalStateException("createPlayer returned no id");
+        Optional<Integer> playerId = executeQuery("GetPlayerByPlayername", rs -> rs.getInt(DatabaseColumns.COL_ID),
+                playername).stream().findFirst();
+        if (playerId.isEmpty()) {
+            return this.createPlayer(playername);
+        }
+        return playerId.get();
     }
 
-    /** @return empty Optional if no player with that playername exists */
-    public Optional<Integer> getPlayerIdByPlayername(String playername) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetPlayerByPlayername"))) {
-            ps.setString(1, playername);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return Optional.of(rs.getInt(DatabaseColumns.COL_ID));
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getPlayerIdByPlayername failed", e);
-        }
-        return Optional.empty();
+    private int createPlayer(String playername) {
+        return executeQuery("CreatePlayer", rs -> rs.getInt(DatabaseColumns.COL_ID), playername).stream().findFirst()
+                .orElseThrow(() -> new IllegalStateException("No ID returned"));
     }
 
-    // ─── PALYER BUGEMONS ────────────────────────────────────────────────────────
+    // --- BUGEMONS ---
 
-    public void savePlayerBugemon(PlayerBugemonDTO dto) {
-        LOG.debug("Saving player bugemon: {}", dto);
-
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("SavePlayerBugemon"))) {
-            ps.setInt(1, dto.playerId());
-            ps.setString(2, dto.bugemonName());
-            ps.setInt(3, dto.currentDefense());
-            ps.setInt(4, dto.currentAttackPower());
-            ps.setInt(5, dto.currentInitiative());
-            ps.setInt(6, dto.currentMaxHp());
-            ps.setInt(7, dto.currentXp());
-            ps.setInt(8, dto.currentLevel());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("savePlayerBugemon failed", e);
-        }
+    public void savePlayerBugemon(PlayerBugemonDTO d) {
+        LOG.debug("Saving player bugemon: {}", d);
+        executeUpdate("SavePlayerBugemon", d.playerId(), d.bugemonName(), d.currentDefense(), d.currentAttackPower(),
+                d.currentInitiative(), d.currentMaxHp(), d.currentXp(), d.currentLevel());
     }
 
-    public void updatePlayerBugemon(PlayerBugemonDTO dto) {
-        LOG.debug("Updating player bugemon: {}", dto);
-
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("UpdatePlayerBugemon"))) {
-            ps.setInt(1, dto.currentDefense());
-            ps.setInt(2, dto.currentAttackPower());
-            ps.setInt(3, dto.currentInitiative());
-            ps.setInt(4, dto.currentMaxHp());
-            ps.setInt(5, dto.currentXp());
-            ps.setInt(6, dto.currentLevel());
-            ps.setInt(7, dto.playerId());
-            ps.setString(8, dto.bugemonName());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("updatePlayerBugemon failed", e);
-        }
+    public void updatePlayerBugemon(PlayerBugemonDTO d) {
+        LOG.debug("Updating player bugemon: {}", d);
+        executeUpdate("UpdatePlayerBugemon", d.currentDefense(), d.currentAttackPower(), d.currentInitiative(),
+                d.currentMaxHp(), d.currentXp(), d.currentLevel(), d.playerId(), d.bugemonName());
     }
 
     public List<PlayerBugemonDTO> getPlayerBugemons(int playerId) {
         LOG.debug("Getting bugemons for playerId: {}", playerId);
-
-        List<PlayerBugemonDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetPlayerBugemons"))) {
-            ps.setInt(1, playerId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(new PlayerBugemonDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
-                        rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)));
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getPlayerBugemons failed", e);
-        }
-        return result;
+        return executeQuery("GetPlayerBugemons", rs -> new PlayerBugemonDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
+                rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
+                rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK), rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
+                rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
+                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)), playerId);
     }
 
-    // ─── TEAMS ────────────────────────────────────────────────────────────────
+    // --- TEAMS ---
 
-    public void createTeam(int playerId, String teamName) {
+    public void createTeam(int playerId, String teamName)
+            throws TeamNameAlreadyExistsException, TeamNameEmptyException {
         LOG.debug("Creating team '{}' for playerId: {}", teamName, playerId);
-
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("CreateTeam"))) {
-            ps.setInt(1, playerId);
-            ps.setString(2, teamName);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("createTeam failed", e);
+        this.checkValidName(teamName);
+        if (this.teamNameAlreadyExists(playerId, teamName)) {
+            throw new TeamNameAlreadyExistsException(" Team name already exists: " + teamName);
         }
+        executeUpdate("CreateTeam", playerId, teamName);
     }
 
-    /** Deletes all members of the team, then the team record itself. */
-    public void deleteTeam(int playerId, String teamName) {
+    /**
+     * Delete a team and its members
+     *
+     * @param playerId
+     *            the player's ID who owns the team
+     * @param teamName
+     *            the team's name to delete
+     */
+    public void deleteTeam(int playerId, String teamName) throws TeamNotFoundException, TeamNameEmptyException {
         LOG.debug("Deleting team '{}' for playerId: {}", teamName, playerId);
-
-        try (PreparedStatement psMembers = this.dbConnection.prepareStatement(this.getSql("DeleteTeamMembers"));
-                PreparedStatement psTeam = this.dbConnection.prepareStatement(this.getSql("DeleteTeam"))) {
-            psMembers.setInt(1, playerId);
-            psMembers.setString(2, teamName);
-            psMembers.executeUpdate();
-
-            psTeam.setInt(1, playerId);
-            psTeam.setString(2, teamName);
-            psTeam.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("deleteTeam failed", e);
-        }
-    }
-
-    public void deleteTeamMembers(int playerId, String teamName) {
-        LOG.debug("Deleting team members for playerId: {} and teamName: {}", playerId, teamName);
-
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("DeleteTeamMembers"))) {
-            ps.setInt(1, playerId);
-            ps.setString(2, teamName);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("deleteTeamMembers failed", e);
-        }
-    }
-
-    public List<TeamDTO> getPlayerTeams(int playerId) {
-        LOG.debug("Getting teams for playerId: {}", playerId);
-
-        List<TeamDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetPlayerTeams"))) {
-            ps.setInt(1, playerId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(
-                        new TeamDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID), rs.getString(DatabaseColumns.COL_NAME)));
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getPlayerTeams failed", e);
-        }
-        return result;
-    }
-
-    // ─── TEAM MEMBERS ─────────────────────────────────────────────────────────
-
-    /**
-     * Add a member to a team in the database. This method takes a TeamMemberDTO object containing the details of the
-     * team member to be added, including the player ID, team name, Bugemon ID, and slot position. It executes an SQL
-     * statement to insert a new record into the database representing this team member, associating it with the
-     * specified team and player. The method ensures that the new team member is correctly linked to the appropriate
-     * team and player in the database. If an error occurs during the database operation, an IllegalStateException is
-     * thrown.
-     *
-     * @param dto
-     *            the TeamMemberDTO object containing the details of the team member to be added
-     */
-    public void addTeamMember(TeamMemberDTO dto) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("AddTeamMember"))) {
-            ps.setInt(1, dto.playerId());
-            ps.setString(2, dto.teamName());
-            ps.setString(3, dto.bugemonName());
-            ps.setInt(4, dto.slotPosition());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("addTeamMember failed", e);
-        }
+        this.checkValidName(teamName);
+        this.checkTeamExists(playerId, teamName);
+        executeUpdate("DeleteTeamMembers", playerId, teamName);
+        executeUpdate("DeleteTeam", playerId, teamName);
     }
 
     /**
-     * Remove a member from a team in the database. This method takes the player ID, team name, and Bugemon ID as
-     * parameters to identify the specific team member to be removed. It executes an SQL statement to delete the
-     * corresponding record from the database, effectively removing the specified team member from the team. The method
-     * ensures that only the team member matching the provided player ID, team name, and Bugemon ID is removed from the
-     * database. If an error occurs during the database operation, an IllegalStateException is thrown.
+     * Rename a team
      *
      * @param playerId
-     *            the ID of the player whose team member is to be removed
-     * @param teamName
-     *            the name of the team from which to remove the member
-     * @param bugemonName
-     *            the name of the Bugemon to be removed from the team
+     *            the player's ID who owns the team to rename
+     * @param oldTeamName
+     *            the team's name to rename
+     * @param newTeamName
+     *            the team's new name
+     * @throws TeamNameAlreadyExistsException
+     *             if the new team name already exists
+     * @throws TeamNotFoundException
+     *             if the old team name does not exist
      */
-    public void removeTeamMember(int playerId, String teamName, String bugemonName) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("RemoveTeamMember"))) {
-            ps.setInt(1, playerId);
-            ps.setString(2, teamName);
-            ps.setString(3, bugemonName);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("removeTeamMember failed", e);
-        }
-    }
-
-    /**
-     * Retrieve a list of TeamMemberDTO objects representing the members of a specific team for a player from the
-     * database. This method executes an SQL query to search for all team member records associated with the given
-     * player ID and team name, and constructs a list of TeamMemberDTO objects containing the details of each team
-     * member found. The details include the player ID, team name, Bugemon ID, and slot position of each team member. If
-     * an error occurs during the database query, an IllegalStateException is thrown.
-     *
-     * @param playerId
-     *            the ID of the player for whom to retrieve team members
-     * @param teamName
-     *            the name of the team for which to retrieve members
-     * @return a list of TeamMemberDTO objects representing the members of the specified team for the player
-     */
-    public List<TeamMemberDTO> getTeamMembers(int playerId, String teamName) {
-        List<TeamMemberDTO> result = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetTeamMembers"))) {
-            ps.setInt(1, playerId);
-            ps.setString(2, teamName);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                result.add(new TeamMemberDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
-                        rs.getString(DatabaseColumns.COL_TEAM_NAME), rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
-                        rs.getInt(DatabaseColumns.COL_SLOT_POSITION)));
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getTeamMembers failed", e);
-        }
-        return result;
-    }
-
-    public void renameTeam(int playerId, String oldTeamName, String newTeamName) throws TeamNameAlreadyExistsException {
+    public void renameTeam(int playerId, String oldTeamName, String newTeamName)
+            throws TeamNameAlreadyExistsException, TeamNotFoundException, TeamNameEmptyException {
         LOG.debug("Renaming team for playerId: {} from '{}' to '{}'", playerId, oldTeamName, newTeamName);
-
         if (this.teamNameAlreadyExists(playerId, newTeamName)) {
             throw new TeamNameAlreadyExistsException(" Team name already exists: " + newTeamName);
         }
-
-        try (PreparedStatement psRenameTeam = this.dbConnection.prepareStatement(this.getSql("RenameTeam"))) {
-            psRenameTeam.setString(1, newTeamName);
-            psRenameTeam.setInt(2, playerId);
-            psRenameTeam.setString(3, oldTeamName);
-            psRenameTeam.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("renameTeam failed", e);
-        }
+        this.checkTeamExists(playerId, oldTeamName);
+        this.checkValidName(newTeamName);
+        executeUpdate("RenameTeam", newTeamName, playerId, oldTeamName);
     }
+
+    public void modifyTeam(int playerId, String teamName, List<TeamMemberDTO> members)
+            throws TeamEmptyException, TeamNotFoundException {
+        if (members.isEmpty()) {
+            throw new TeamEmptyException("Team is empty");
+        }
+        this.checkTeamExists(playerId, teamName);
+        executeUpdate("RemoveTeamComposition", playerId, teamName);
+        members.forEach(this::addTeamMember);
+    }
+
+    /**
+     * Load all teams for a player
+     *
+     * @param playerId
+     *            the player's ID who owns the teams
+     * @return (List<BugemonTeam>) the teams of the player to be loaded
+     * @throws TeamNotFoundException
+     *             if the player has no teams
+     */
+    public List<BugemonTeam> loadTeams(int playerId) {
+        List<BugemonTeam> playerTeams = new ArrayList<>();
+
+        List<PlayerBugemonDTO> allPlayerBugemons = this.getPlayerBugemons(playerId);
+
+        Map<String, Bugemon> defaultBugemonsMap = this.staticDataRepository.getAllDefaultBugemons().stream()
+                .collect(Collectors.toMap(Bugemon::getName, b -> b));
+
+        for (TeamDTO teamDto : this.getPlayerTeams(playerId)) {
+            BugemonTeam team = new BugemonTeam();
+            team.setName(teamDto.teamName());
+
+            this.getTeamMembers(playerId, teamDto.teamName()).forEach(member -> allPlayerBugemons.stream()
+                    .filter(pb -> pb.bugemonName().equals(member.bugemonName())).findFirst().ifPresent(pb -> {
+                        Bugemon base = defaultBugemonsMap.get(pb.bugemonName());
+                        if (base != null) {
+                            StaticBugemonDataDTO staticDto = new StaticBugemonDataDTO(base.getName(),
+                                    base.getType().name(), base.getSpriteURL(), base.getAttackList(), base.isStarter());
+                            team.add(BugemonFactory.createBugemon(staticDto, pb));
+                        }
+                    }));
+            playerTeams.add(team);
+        }
+        return playerTeams;
+    }
+
+    private List<TeamDTO> getPlayerTeams(int playerId) {
+        LOG.debug("Getting teams for playerId: {}", playerId);
+        return executeQuery("GetPlayerTeams",
+                rs -> new TeamDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID), rs.getString(DatabaseColumns.COL_NAME)),
+                playerId);
+    }
+
+    // --- TEAM MEMBERS ---
+
+    public void addTeamMember(TeamMemberDTO dto) {
+        executeUpdate("AddTeamMember", dto.playerId(), dto.teamName(), dto.bugemonName(), dto.slotPosition());
+    }
+
+    public void removeTeamMember(int playerId, String teamName, String bugemonName) throws TeamNotFoundException {
+        this.checkTeamExists(playerId, teamName);
+        executeUpdate("RemoveTeamMember", playerId, teamName, bugemonName);
+    }
+
+    public List<TeamMemberDTO> getTeamMembers(int playerId, String teamName) {
+        return executeQuery("GetTeamMembers",
+                rs -> new TeamMemberDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
+                        rs.getString(DatabaseColumns.COL_TEAM_NAME), rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
+                        rs.getInt(DatabaseColumns.COL_SLOT_POSITION)),
+                playerId, teamName);
+    }
+
+    // --- Utils ---
 
     private boolean teamNameAlreadyExists(int playerId, String teamName) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("TeamNameAlreadyExists"))) {
-            ps.setInt(1, playerId);
-            ps.setString(2, teamName);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
-        } catch (SQLException e) {
-            throw new IllegalStateException("TeamNameAlreadyExists failed", e);
+        return !executeQuery("TeamNameAlreadyExists", rs -> true, playerId, teamName).isEmpty();
+    }
+
+    private void checkTeamExists(int playerId, String teamName) throws TeamNotFoundException {
+        if (this.getPlayerTeams(playerId).stream().noneMatch(team -> team.teamName().equals(teamName))) {
+            throw new TeamNotFoundException(" Team name does not exist: " + teamName);
         }
     }
 
-    public void modifyTeam(int playerId, String teamName, List<TeamMemberDTO> members) {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("RemoveTeamComposition"))) {
-            ps.setInt(1, playerId);
-            ps.setString(2, teamName);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("Remove team members failed", e);
-        }
-
-        for (TeamMemberDTO member : members) {
-            this.addTeamMember(member);
+    private void checkValidName(String name) throws TeamNameEmptyException {
+        if (name == null || name.isBlank()) {
+            throw new TeamNameEmptyException(name);
         }
     }
 }

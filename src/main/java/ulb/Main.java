@@ -45,14 +45,11 @@ public class Main extends Application {
         QueryLoader loader = new QueryLoader();
         DatabaseConnection dbConnection = new DatabaseConnection();
         StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, loader.getQueries());
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, staticDataRepository,
+                loader.getQueries());
 
         BugemonService bugemonService = new BugemonService(staticDataRepository);
-        PlayerService playerService = new PlayerService(bugemonService, playerRepository, "default_player");
-        stage.show();
-        stage.setMaximized(true);
-        stage.setResizable(false);
-
+        PlayerService playerService = new PlayerService(playerRepository, "default_player");
         MetaController controller = new MetaController(stage, bugemonService, playerService);
         controller.switchTo(Window.MAIN_MENU);
     }
