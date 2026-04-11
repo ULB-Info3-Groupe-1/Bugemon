@@ -102,37 +102,6 @@ public class TestCombatService {
         assertTrue(lowDamage < neutralDamage);
     }
 
-    // @Test
-    // public void testEfficiencyNeutralSameType() {
-    // BugemonType aquaType1 = BugemonType.AQUA;
-    // BugemonType aquaType2 = BugemonType.AQUA;
-    // assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType1, aquaType2));
-    // }
-
-    // @Test
-    // public void testEfficiencyNeutralDifferentType() {
-    // BugemonType aquaType = BugemonType.AQUA;
-    // BugemonType lithoType = BugemonType.LITHO;
-
-    // assertEquals(Efficiency.NEUTRAL, CombatService.compareBugemonType(aquaType, lithoType));
-    // }
-
-    // @Test
-    // public void testEfficiencyLow() {
-    // BugemonType aquaType = BugemonType.AQUA;
-    // BugemonType floraType = BugemonType.FLORA;
-
-    // assertEquals(Efficiency.LOW, CombatService.compareBugemonType(aquaType, floraType));
-    // }
-
-    // @Test
-    // public void testEfficiencyHigh() {
-    // BugemonType aquaType = BugemonType.AQUA;
-    // BugemonType pyroType = BugemonType.PYRO;
-
-    // assertEquals(Efficiency.HIGH, CombatService.compareBugemonType(aquaType, pyroType));
-    // }
-
     @Test
     public void testRandomTeamNumber() {
         List<Bugemon> bugemons = new ArrayList<>();
