@@ -227,7 +227,7 @@ public class Bugemon implements BugemonDTO {
         return this.attackList.stream().map(Attack::id).toList();
     }
 
-    public Efficiency getEfficiencyAgainst(Bugemon opponent) {
-        return this.type.getEfficiencyAgainst(opponent.type);
+    public Efficiency getEfficiencyAgainst(BugemonType attackType, Bugemon opponent) {
+        return attackType.getEfficiencyAgainst(opponent.type);
     }
 }

@@ -201,7 +201,7 @@ public class Combat {
         int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
-        Efficiency efficiency = attacker.getCurrentBugemon().getEfficiencyAgainst(defender.getCurrentBugemon());
+        Efficiency efficiency = attacker.getCurrentBugemon().getEfficiencyAgainst(attack.type(), defender.getCurrentBugemon());
         LOG.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
                 defender.getCurrentBugemonName(), damage, efficiency);
 
