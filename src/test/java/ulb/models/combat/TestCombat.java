@@ -48,15 +48,15 @@ public class TestCombat {
         return stepsAsList(result).stream().anyMatch(s -> s instanceof TurnStep.TrainerKoStep);
     }
 
-    private Bugemon bugemonWithHp(String id, int hp, int initiative) {
-        return new BugemonBuilder().id(id).name(id).hp(hp).attack(0).defense(0).initiative(initiative)
+    private Bugemon bugemonWithHp(String name, int hp, int initiative) {
+        return new BugemonBuilder().name(name).hp(hp).attack(0).defense(0).initiative(initiative)
                 .addAttack(this.defaultAttack).build();
     }
 
-    private Bugemon strongAttacker(String id) {
+    private Bugemon strongAttacker(String name) {
         Attack powerAttack = new Attack("power", "PowerAttack", BugemonType.FLORA, "", 9999, new ArrayList<>());
-        return new BugemonBuilder().id(id).name(id).hp(100).attack(9999).defense(0).initiative(9999)
-                .addAttack(powerAttack).build();
+        return new BugemonBuilder().name(name).hp(100).attack(9999).defense(0).initiative(9999).addAttack(powerAttack)
+                .build();
     }
 
     private AutoTrainer autoOf(Bugemon... bugemons) {

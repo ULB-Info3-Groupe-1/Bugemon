@@ -12,11 +12,9 @@ import ulb.models.bugemon.components.InitiativeComponent;
 import ulb.models.bugemon.components.LevelComponent;
 
 /**
- * Fluent builder for {@link Bugemon}. All fields except {@code id} have defaults (name={@value #DEFAULT_NAME},
- * type=FLORA, hp={@value #DEFAULT_HP}, attack={@value #DEFAULT_ATTACK}, defense={@value #DEFAULT_DEFENSE},
- * initiative={@value #DEFAULT_INITIATIVE}, xp=0, level=1, isStarter=false, attackList=empty).
+ * Fluent builder for {@link Bugemon}. All fields except {@code name} have defaults.
  *
- * Usage: {@code new BugemonBuilder().id("001").name("Florasect").hp(120).build()}
+ * Usage: {@code new BugemonBuilder().name("Florasect").hp(120).build()}
  */
 @SuppressWarnings("checkstyle:HiddenField")
 public final class BugemonBuilder {
@@ -31,12 +29,9 @@ public final class BugemonBuilder {
     private static final int DEFAULT_XP = 0;
     private static final int DEFAULT_LEVEL = 1;
 
-    private Optional<String> id = Optional.empty();
-
     /** The unique name to assign to the bugemon. */
     private Optional<String> name = Optional.empty();
 
-    /** The elemental type to assign to the bugemon. */
     private BugemonType type = DEFAULT_TYPE;
     private String sprite = DEFAULT_SPRITE;
     private int hp = DEFAULT_HP;
@@ -48,18 +43,6 @@ public final class BugemonBuilder {
     private boolean isStarter = DEFAULT_IS_STARTER;
     private List<Attack> attackList = new ArrayList<>();
 
-    public BugemonBuilder id(String id) {
-        this.id = Optional.of(id);
-        return this;
-    }
-
-    /**
-     * Sets the display name for the bugemon under construction.
-     *
-     * @param name
-     *            the non-null display name.
-     * @return this {@code BugemonBuilder} instance for method chaining.
-     */
     public BugemonBuilder name(String name) {
         this.name = Optional.of(name);
         return this;
@@ -124,14 +107,13 @@ public final class BugemonBuilder {
 
     /**
      * @throws IllegalStateException
-     *             if no {@code id} was provided
+     *             if no {@code name} was provided
      */
     public Bugemon build() {
         Bugemon bugemon = new Bugemon();
 
         // NOTE: name has no default value
         bugemon.name = this.name.orElseThrow(() -> new IllegalStateException("Bugemon name must be provided"));
-        bugemon.id = this.id.orElse(bugemon.name);
 
         bugemon.type = this.type;
         bugemon.sprite = this.sprite;
