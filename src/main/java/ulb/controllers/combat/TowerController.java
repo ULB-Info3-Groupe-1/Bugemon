@@ -57,6 +57,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
             return;
         }
 
+        this.view.animatePlayerTo(roomNodeView);
         Room selectedRoom = selectedNode.getRoom();
         if (selectedRoom instanceof CombatRoom) {
             this.handleCombatRoom((CombatRoom) selectedRoom);
@@ -138,6 +139,10 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
             this.floorNodesByRoomNode.put(roomNodeView, node);
             roomNodeByFloorNode.put(node, roomNodeView);
             this.view.addRoomNode(roomNodeView);
+        }
+        RoomNodeView currentRoomView = roomNodeByFloorNode.get(currentNode);
+        if (currentRoomView != null) {
+            this.view.setupPlayer(currentRoomView, "/png/Trainer.png");
         }
 
         this.view.centerMap();

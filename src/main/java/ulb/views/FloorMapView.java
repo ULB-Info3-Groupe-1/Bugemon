@@ -2,12 +2,18 @@ package ulb.views;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 
 import ulb.views.components.RoomNodeView;
 
@@ -25,7 +31,8 @@ public class FloorMapView extends View {
     private static final double VERTICAL_SPACING = 70.0;
     private static final double MAP_OFFSET_X = 0.0;
     private static final double MAP_OFFSET_Y = 0.0;
-
+    private static final double PLAYER_OFFSET_X = 12;
+    private static final double PLAYER_OFFSET_Y = -7.0;
     @FXML
     private Label floorNumberLabel;
 
@@ -41,6 +48,10 @@ public class FloorMapView extends View {
     @FXML
     private VBox actionButtonsContainer;
 
+    @FXML
+    private ImageView playerIcon;
+
+    private RoomNodeView currentRoom;
     private Listener listener;
     private List<RoomNodeView> roomNodes = new ArrayList<>();
 
@@ -91,6 +102,57 @@ public class FloorMapView extends View {
      */
     public void setInstructions(String instructions) {
         this.instructionsLabel.setText(instructions);
+    }
+
+    public void setupPlayer(RoomNodeView startRoom, String imagePath) {
+        if (this.playerIcon == null) {
+            Image img = new Image(getClass().getResourceAsStream(imagePath));
+            this.playerIcon = new ImageView(img);
+
+            this.playerIcon.setFitWidth(70);
+            this.playerIcon.setFitHeight(70);
+            this.playerIcon.setPreserveRatio(true);
+
+            this.innerMapPane.getChildren().add(this.playerIcon);
+        }
+
+        this.setPlayerPosition(startRoom);
+    }
+
+    public void setPlayerPosition(RoomNodeView room) {
+        this.currentRoom = room;
+
+        if (this.playerIcon == null || room == null) {
+            return;
+        }
+
+        double playerX = room.getLayoutX() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2) + PLAYER_OFFSET_X;
+        double playerY = room.getLayoutY() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2) + PLAYER_OFFSET_Y;
+
+        this.playerIcon.setLayoutX(playerX);
+        this.playerIcon.setLayoutY(playerY);
+
+        this.playerIcon.toFront();
+    }
+
+    public void animatePlayerTo(RoomNodeView room) {
+        if (this.playerIcon == null || room == null) {
+            return;
+        }
+        double targetX = room.getLayoutX() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2) + PLAYER_OFFSET_X;
+        double targetY = room.getLayoutY() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2) + PLAYER_OFFSET_Y;
+
+        this.playerIcon.toFront();
+
+        Timeline timeline = new Timeline();
+        KeyValue keyValueX = new KeyValue(this.playerIcon.layoutXProperty(), targetX);
+        KeyValue keyValueY = new KeyValue(this.playerIcon.layoutYProperty(), targetY);
+
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(400), keyValueX, keyValueY);
+        timeline.getKeyFrames().add(keyFrame);
+
+        timeline.setOnFinished(event -> this.currentRoom = room);
+        timeline.play();
     }
 
     /**
@@ -170,6 +232,12 @@ public class FloorMapView extends View {
         this.innerMapPane.setPrefSize(paneWidth, paneHeight);
         this.innerMapPane.setMinSize(paneWidth, paneHeight);
         this.innerMapPane.setMaxSize(paneWidth, paneHeight);
+        this.innerMapPane.setMaxSize(paneWidth, paneHeight);
+
+        if (this.currentRoom != null && this.playerIcon != null) {
+            this.setPlayerPosition(this.currentRoom);
+        }
+
     }
 
     /**
@@ -207,7 +275,7 @@ public class FloorMapView extends View {
      */
     public void clearMap() {
         this.roomNodes.clear();
-        this.innerMapPane.getChildren().clear();
+        this.innerMapPane.getChildren().removeIf(node -> node != this.playerIcon);
     }
 
     /**
