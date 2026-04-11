@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import ulb.common.dto.BugemonDTO;
+import ulb.common.Efficiency;
 import ulb.models.bugemon.components.AttackComponent;
 import ulb.models.bugemon.components.DefenseComponent;
 import ulb.models.bugemon.components.HealthComponent;
@@ -225,5 +226,9 @@ public class Bugemon implements BugemonDTO {
 
     public List<String> getListAttacksId() {
         return this.attackList.stream().map(Attack::id).toList();
+    }
+
+    public Efficiency getEfficiencyAgainst(Bugemon opponent) {
+        return this.type.getEfficiencyAgainst(opponent.type);
     }
 }
