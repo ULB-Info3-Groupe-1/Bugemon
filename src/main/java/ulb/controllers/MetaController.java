@@ -98,7 +98,7 @@ public class MetaController {
         LOG.info(String.format("onCombatFinished, won: %b, numLevelUps: %d", won, levelUps.size()));
 
         if (this.isTowerActive()) {
-            //this.towerController.onTowerCombatFinished(won);
+            // this.towerController.onTowerCombatFinished(won);
             return;
         }
 

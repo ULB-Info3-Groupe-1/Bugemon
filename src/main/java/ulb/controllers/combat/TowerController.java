@@ -111,8 +111,8 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     /**
-     * Ensures that a Tower run can be started or continued. If the player has no active team, or if the current run
-     * has ended, a new run is initialised. If a new run cannot be started.
+     * Ensures that a Tower run can be started or continued. If the player has no active team, or if the current run has
+     * ended, a new run is initialised. If a new run cannot be started.
      *
      * @return
      */

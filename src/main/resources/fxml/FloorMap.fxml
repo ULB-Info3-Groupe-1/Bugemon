@@ -44,8 +44,7 @@
                 <Insets top="10" bottom="20" />
             </padding>
             <Button onAction="#onBackToMainMenuClicked"
-                text="Retour au menu principal"
-                styleClass="btn,btn-danger,btn-nav" />
+                text="Retour au menu principal" styleClass="btn,btn-danger,btn-nav" />
         </VBox>
     </bottom>
 </BorderPane>
