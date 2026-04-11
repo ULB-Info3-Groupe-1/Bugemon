@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+
 import ulb.views.components.RoomNodeView;
 
 /**
@@ -170,6 +171,7 @@ public class FloorMapView extends View {
         this.innerMapPane.setMinSize(paneWidth, paneHeight);
         this.innerMapPane.setMaxSize(paneWidth, paneHeight);
     }
+
     /**
      * Adds a connection line between two RoomNodeViews.
      *

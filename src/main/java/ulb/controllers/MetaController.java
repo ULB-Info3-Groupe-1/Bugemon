@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.controllers.combat.AutomaticCombatController;
-import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
@@ -19,23 +18,20 @@ import ulb.controllers.combat.TowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
-import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.views.ManageTeamView;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is
- * the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
-     * transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -73,9 +69,9 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *                     main JavaFX stage of the application
+     *            main JavaFX stage of the application
      * @throws IOException
-     *                     if a controller or view fails to initialize
+     *             if a controller or view fails to initialize
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService)
             throws IOException {
@@ -184,9 +180,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *               target screen to display
+     *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
+     *             if the window is invalid
      */
     public final void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
@@ -207,6 +203,6 @@ public class MetaController {
 
     // TODO: when we implement rewards !! <3 uwu
     // public RewardController getRewardController() {
-        // return this.rewardController;
+    // return this.rewardController;
     // }
 }

@@ -12,12 +12,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
+
 import ulb.controllers.combat.TowerController.RoomState;
 import ulb.controllers.combat.TowerController.RoomType;
 
 /**
- * Reusable component representing a single room node in the floor map.
- * Configurable to represent different room types
+ * Reusable component representing a single room node in the floor map. Configurable to represent different room types
  */
 public class RoomNodeView extends StackPane {
     private static final String FXML_PATH = "/fxml/components/RoomNode.fxml";
@@ -59,13 +59,11 @@ public class RoomNodeView extends StackPane {
     }
 
     /**
-     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS",
-     * "REWARD", "EMPTY"). Updates the
+     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY"). Updates the
      * visual
      *
      * @param roomType
-     *                 The type of room (e.g., "START", "COMBAT", "BOSS", "REWARD",
-     *                 "EMPTY")
+     *            The type of room (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY")
      */
     public void setRoomType(RoomType roomType) {
         this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-reward", "room-empty");
@@ -80,13 +78,11 @@ public class RoomNodeView extends StackPane {
     }
 
     /**
-     * Configure the visual state of the room (CURRENT, AVAILABLE, VISITED, LOCKED).
-     * Applies the appropriate CSS styles
+     * Configure the visual state of the room (CURRENT, AVAILABLE, VISITED, LOCKED). Applies the appropriate CSS styles
      * and overlays.
      *
      * @param roomState
-     *                  The state of the room (e.g., "CURRENT", "AVAILABLE",
-     *                  "VISITED", "LOCKED")
+     *            The state of the room (e.g., "CURRENT", "AVAILABLE", "VISITED", "LOCKED")
      */
     public void setRoomState(RoomState roomState) {
         this.getStyleClass().removeAll("current", "available", "visited", "locked");
@@ -129,7 +125,7 @@ public class RoomNodeView extends StackPane {
      * Registers a listener to receive callbacks for room interactions.
      *
      * @param listener
-     *                 The listener to be notified of room events
+     *            The listener to be notified of room events
      */
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -147,14 +143,13 @@ public class RoomNodeView extends StackPane {
     }
 
     /**
-     * Sets the grid position of this room node. This is used for event callbacks to
-     * identify which room was interacted
+     * Sets the grid position of this room node. This is used for event callbacks to identify which room was interacted
      * with.
      *
      * @param rowPosition
-     *                    Case line
+     *            Case line
      * @param colPosition
-     *                    Case column
+     *            Case column
      */
     public void setPosition(int rowPosition, int colPosition) {
         this.row = rowPosition;
@@ -187,8 +182,7 @@ public class RoomNodeView extends StackPane {
     }
 
     /**
-     * Callback interface for room node interactions. Dispatches room events to the
-     * controller exclusively through this
+     * Callback interface for room node interactions. Dispatches room events to the controller exclusively through this
      * interface.
      */
     public interface Listener {

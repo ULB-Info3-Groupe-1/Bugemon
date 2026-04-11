@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javafx.stage.Stage;
 
 import ulb.controllers.Controller;
@@ -73,11 +72,11 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     private void handleCombatRoom(CombatRoom combatRoom) {
-        Combat combat = combatRoom.getCombat(
-                new ManualTrainer(this.playerService.getActiveTeam(), this.playerService.getInventory()));
+        Combat combat = combatRoom
+                .getCombat(new ManualTrainer(this.playerService.getActiveTeam(), this.playerService.getInventory()));
         ManualCombatController manualCombatController = this.metaController.getCombatController();
         manualCombatController.startCombat(combat);
-        
+
     }
 
     private void handleRewardRoom(RewardRoom rewardRoom) {
@@ -95,8 +94,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     /**
-     * Runs the Tower flow until a combat starts, the run ends, or the tower is
-     * completed. Reward rooms are resolved
+     * Runs the Tower flow until a combat starts, the run ends, or the tower is completed. Reward rooms are resolved
      * immediately; combat rooms continue via callback.
      */
     public void runTower(Stage stage) {
@@ -198,10 +196,8 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         return RoomState.LOCKED;
     }
 
-
     /**
-     * Ensures that a Tower run can be started or continued. If the player has no
-     * active team, or if the current run has
+     * Ensures that a Tower run can be started or continued. If the player has no active team, or if the current run has
      * ended, a new run is initialised. If a new run cannot be started.
      *
      * @return
@@ -222,8 +218,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     /**
-     * Continues the current Tower run until a combat room is reached, the run ends,
-     * or the tower is completed.
+     * Continues the current Tower run until a combat room is reached, the run ends, or the tower is completed.
      */
     private void continueRun() {
         while (!this.runEnded) {
@@ -275,10 +270,17 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     public enum RoomType {
-        START, COMBAT, BOSS, REWARD, EMPTY
+        START,
+        COMBAT,
+        BOSS,
+        REWARD,
+        EMPTY
     }
 
     public enum RoomState {
-        CURRENT, AVAILABLE, VISITED, LOCKED
+        CURRENT,
+        AVAILABLE,
+        VISITED,
+        LOCKED
     }
 }
