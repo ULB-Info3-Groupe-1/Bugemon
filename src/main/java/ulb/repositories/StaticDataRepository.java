@@ -29,7 +29,9 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
@@ -83,7 +85,15 @@ public class StaticDataRepository extends AbstractRepository {
         parser.parse();
         this.saveGameDataAttacks(parser.getAttacks());
         for (CreateBugemonDTO bugemon : parser.getBugemons()) {
-            this.saveBugemon(bugemon);
+            try {
+                this.saveBugemon(bugemon);
+            } catch (BugemonAlreadyExistsException e) {
+                throw new IllegalStateException(
+                        "Error occurred while saving the default game data for bugemon: " + bugemon.name(), e);
+            } catch (BugemonNameIsEmptyException e) {
+                throw new IllegalStateException(
+                        "Error occurred while saving the default game data for bugemon with no name", e);
+            }
         }
     }
 
@@ -274,7 +284,7 @@ public class StaticDataRepository extends AbstractRepository {
         EffectTarget target;
         switch (effectType) {
             case "EffectStatModifier" :
-                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
                 EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "effect_stat", EffectStat.class);
                 String duration = (rs.getString("effect_duration") != null) ? rs.getString("effect_duration")
                         : "0_tour";
@@ -282,11 +292,11 @@ public class StaticDataRepository extends AbstractRepository {
                         EffectDuration.fromLabel(duration));
 
             case "EffectHeal" :
-                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
                 return new EffectHeal(target, rs.getInt("effect_amount"));
 
             case "EffectResetMalus" :
-                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
                 return new EffectResetMalus(target);
 
             default :
@@ -301,8 +311,16 @@ public class StaticDataRepository extends AbstractRepository {
      * @param bugemon
      *            (CreateBugemonDTO) the Bugemon to be saved
      */
-    public void saveBugemon(CreateBugemonDTO bugemon) {
+    public void saveBugemon(CreateBugemonDTO bugemon)
+            throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
         String fileName = bugemon.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
+
+        if (bugemon.name().isBlank()) {
+            throw new BugemonNameIsEmptyException("The name cannot be blank");
+        }
+        if (this.getAllDefaultBugemons().stream().anyMatch(b -> b.getName().equals(bugemon.name()))) {
+            throw new BugemonAlreadyExistsException("There cannot be multiple bugemons with the same name");
+        }
 
         try {
             this.saveSpriteFile(bugemon.spriteUrl(), fileName);

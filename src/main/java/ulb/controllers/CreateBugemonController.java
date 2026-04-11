@@ -7,8 +7,8 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.BugemonService;
-import ulb.services.exceptions.BugemonNameIsEmptyException;
 import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 
