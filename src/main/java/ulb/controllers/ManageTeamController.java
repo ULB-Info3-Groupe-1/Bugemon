@@ -5,11 +5,11 @@ import javafx.stage.Stage;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.services.exceptions.NoActiveTeamException;
 import ulb.services.exceptions.TeamEmptyException;
-import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
@@ -64,7 +64,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onSave(String teamName) {
-        if (this.valideName(teamName)) {
+        if (this.isValidName(teamName)) {
             try {
                 this.playerService.saveTeam(teamName);
                 this.refresh();
@@ -81,7 +81,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onLoad(String teamName) {
-        if (this.valideName(teamName)) {
+        if (this.isValidName(teamName)) {
             try {
                 this.playerService.setActiveTeam(teamName);
                 this.refresh();
@@ -103,7 +103,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onRename(String oldName, String newName) {
-        if (!this.valideName(newName)) {
+        if (!this.isValidName(newName)) {
             return;
         }
 
@@ -138,7 +138,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
     }
 
-    private boolean valideName(String name) {
+    private boolean isValidName(String name) {
         if (name == null || name.isBlank()) {
             this.view.showEmptyTeamNameAlert();
             return false;

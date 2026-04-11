@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 
 public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
@@ -255,8 +256,12 @@ public class PlayerRepository extends AbstractRepository {
         return result;
     }
 
-    public void renameTeam(int playerId, String oldTeamName, String newTeamName) {
+    public void renameTeam(int playerId, String oldTeamName, String newTeamName) throws TeamNameAlreadyExistsException {
         LOG.debug("Renaming team for playerId: {} from '{}' to '{}'", playerId, oldTeamName, newTeamName);
+
+        if (this.teamNameAlreadyExists(playerId, newTeamName)) {
+            throw new TeamNameAlreadyExistsException(" Team name already exists: " + newTeamName);
+        }
 
         try (PreparedStatement psRenameTeam = this.dbConnection.prepareStatement(this.getSql("RenameTeam"))) {
             psRenameTeam.setString(1, newTeamName);
@@ -266,6 +271,17 @@ public class PlayerRepository extends AbstractRepository {
 
         } catch (SQLException e) {
             throw new IllegalStateException("renameTeam failed", e);
+        }
+    }
+
+    private boolean teamNameAlreadyExists(int playerId, String teamName) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("TeamNameAlreadyExists"))) {
+            ps.setInt(1, playerId);
+            ps.setString(2, teamName);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new IllegalStateException("TeamNameAlreadyExists failed", e);
         }
     }
 

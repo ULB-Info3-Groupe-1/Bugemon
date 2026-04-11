@@ -13,9 +13,9 @@ import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.NoActiveTeamException;
 import ulb.services.exceptions.TeamEmptyException;
-import ulb.services.exceptions.TeamNameAlreadyExistsException;
 import ulb.services.exceptions.TeamNotFoundException;
 
 public class PlayerService {
@@ -138,11 +138,12 @@ public class PlayerService {
             throw new TeamNotFoundException("No team saved with the name " + oldName);
         }
 
-        if (this.teamNameExists(newName)) {
-            throw new TeamNameAlreadyExistsException("A team is already saved with the name " + newName);
+        try {
+            this.playerRepository.renameTeam(this.playerId, oldName, newName);
+        } catch (TeamNameAlreadyExistsException e) {
+            throw new TeamNameAlreadyExistsException("Team name already exists: " + newName);
         }
 
-        this.playerRepository.renameTeam(this.playerId, oldName, newName);
         this.playerTeams.stream().filter(t -> t.getName().equals(oldName)).forEach(t -> t.setName(newName));
         this.activeTeam.get().setName(newName);
     }
