@@ -55,7 +55,8 @@ public class TestCombat {
 
     private Bugemon strongAttacker(String name) {
         Attack powerAttack = new Attack("power", "PowerAttack", BugemonType.FLORA, "", 9999, new ArrayList<>());
-        return new BugemonBuilder().name(name).hp(100).attack(9999).defense(0).initiative(9999).addAttack(powerAttack).build();
+        return new BugemonBuilder().name(name).hp(100).attack(9999).defense(0).initiative(9999).addAttack(powerAttack)
+                .build();
     }
 
     private AutoTrainer autoOf(Bugemon... bugemons) {
