@@ -136,4 +136,8 @@ public abstract class Trainer {
     public List<Bugemon> getBugemons() {
         return this.team.getAll();
     }
+
+    public void restoreTeamHp() {
+        this.team.restoreHp();
+    }
 }
