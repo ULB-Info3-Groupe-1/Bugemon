@@ -98,7 +98,7 @@ public class MetaController {
         LOG.info(String.format("onCombatFinished, won: %b, numLevelUps: %d", won, levelUps.size()));
 
         if (this.isTowerActive()) {
-            this.towerController.onTowerCombatFinished(won);
+            //this.towerController.onTowerCombatFinished(won);
             return;
         }
 
@@ -162,7 +162,7 @@ public class MetaController {
         this.transitions.put(Window.NOTOWER, () -> {
             this.isTowerActive = true;
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.towerController.runTower();
+            this.towerController.runTower(this.stage);
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show(this.stage);

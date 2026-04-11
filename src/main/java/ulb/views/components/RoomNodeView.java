@@ -13,7 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 
-import ulb.controllers.combat.NOTowerController.RoomType;
+import ulb.controllers.combat.TowerController.RoomType;
 
 /**
  * Reusable component representing a single room node in the floor map. Configurable to represent different room types
@@ -64,7 +64,6 @@ public class RoomNodeView extends StackPane {
      * @param roomType
      *            The type of room (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY")
      */
-    // TODO: enum RoomType in controller
     public void setRoomType(RoomType roomType) {
         this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-reward", "room-empty");
 

@@ -66,6 +66,13 @@ public class FloorMapView extends View {
         this.listener = listener;
     }
 
+    @FXML
+    private void onBackToMainMenuClicked() {
+        if (this.listener != null) {
+            this.listener.onBackToMainMenu();
+        }
+    }
+
     /**
      * Sets the floor number displayed in the header.
      *
@@ -266,5 +273,7 @@ public class FloorMapView extends View {
          *            The column position of the clicked room
          */
         void onRoomClicked(int row, int col);
+
+        void onBackToMainMenu();
     }
 }
