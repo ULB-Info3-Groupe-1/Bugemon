@@ -3,19 +3,16 @@ package ulb.views;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import ulb.Configuration;
+import ulb.controllers.ManageTeamController.TeamFormMode;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.components.AllBugemonsView;
@@ -28,16 +25,17 @@ import ulb.views.components.BugemonTeamView;
  */
 public class ManageTeamView extends View {
 
-    public enum TeamFormMode {
-        EDIT,
-        CREATE
-    }
-
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
+    private static final String NO_ACTIVE_TEAM = "Aucune équipe active";
     private static final String INVALID_NAME = "Nom d'équipe invalide";
     private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
     private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";
     private static final String TEAM_EMPTY = "Équipe vide";
+    private static final String TEAM_NOT_SAVED_MESSAGE = "Nouvelle équipe ou équipe existante modifiée non sauvegardée."
+            + " Donnez lui un nom et sauvegardez la pour l'enregistrer.";
+    private static final String GO_MAIN_MENU_WITHOUT_SAVING = "Aller au menu principal sans sauvegarder";
+    private static final String BACK = "Retour";
+    private static final String TEAM_NOT_SAVED = "Équipe non sauvegardée";
 
     @FXML
     private AllBugemonsView allBugemonsGridView;
@@ -62,15 +60,43 @@ public class ManageTeamView extends View {
     @FXML
     private Button startTowerCombatButton;
 
+    private final TeamFormMode mode;
     private Listener listener;
     private Optional<BugemonTeam> bugemonTeam;
     private boolean isBugemonTeamSaved;
     private List<Bugemon> availableBugemons;
 
+    public ManageTeamView(TeamFormMode mode) {
+        this.mode = mode;
+    }
+
+    // --- Initialization ---
+
     @FXML
     private void initialize() {
-        this.selectedTeamName.setText(NO_TEAM_SELECTED);
+        if (this.mode != null) {
+            this.setMode(this.mode);
+        }
     }
+
+    /**
+     * Sets the mode of the view and displays the appropriate buttons.
+     *
+     * @param mode
+     *            The mode of the view
+     */
+    public void setMode(TeamFormMode mode) {
+        boolean isCreate = (mode == TeamFormMode.CREATE);
+        List<Button> editButtons = List.of(this.modifyTeamButton, this.renameTeamButton, this.deleteTeamButton,
+                this.launchAutomaticCombatButton, this.launchManualCombatButton, this.launchNOTowerCombatButton);
+
+        editButtons.forEach(btn -> {
+            btn.setVisible(!isCreate);
+            btn.setManaged(!isCreate);
+        });
+    }
+
+    // --- View loading ---
 
     @Override
     public String getPath() {
@@ -85,6 +111,69 @@ public class ManageTeamView extends View {
             this.bugemonsTeamView.setListener(this.listener::onBugemonSelected);
         }
     }
+
+    public interface Listener {
+        void onReturnToMainMenu();
+
+        void onSave(String teamName);
+
+        void onLoad(String teamName);
+
+        void onDelete();
+
+        void onRename(String oldName, String newName);
+
+        void onAddNewTeam();
+
+        void onBugemonSelected(Bugemon bugemon);
+
+        void onModifyTeam();
+
+        void onLaunchAutomaticCombat();
+
+        void onLaunchManualCombat();
+
+        void onLaunchNOTowerCombat();
+    }
+
+    // --- View refresh ---
+
+    @Override
+    public void refresh() {
+        HashSet<Bugemon> activeSet = this.bugemonTeam.map(team -> new HashSet<>(team.getAll())).orElseGet(HashSet::new);
+        this.allBugemonsGridView.showAll(this.availableBugemons, activeSet);
+        this.bugemonTeam.ifPresentOrElse(this::updateActiveTeamUI, this::clearUI);
+    }
+
+    private void updateActiveTeamUI(BugemonTeam team) {
+        this.bugemonsTeamView.showTeam(team);
+        if (team.isEmpty()) {
+            this.selectedTeamName.setText(NO_TEAM_SELECTED);
+        } else if (this.isBugemonTeamSaved) {
+            this.selectedTeamName.setText(team.getName());
+            this.teamListView.getSelectionModel().select(team.getName());
+        } else {
+            this.selectedTeamName.setText(TEAM_NOT_SAVED_MESSAGE);
+        }
+    }
+
+    private void clearUI() {
+        this.bugemonsTeamView.clearBugemons();
+        this.selectedTeamName.setText(NO_TEAM_SELECTED);
+        this.teamListView.getSelectionModel().clearSelection();
+    }
+
+    // --- Utils ---
+
+    public void clearTeamNameToSave() {
+        this.saveTeamNameInput.setText("");
+    }
+
+    public void setIsActiveTeamSaved(boolean isActiveTeamSaved) {
+        this.isBugemonTeamSaved = isActiveTeamSaved;
+    }
+
+    // --- Actions to perform when clicked ---
 
     @FXML
     private void onSaveClicked() {
@@ -143,13 +232,12 @@ public class ManageTeamView extends View {
         this.listener.onStartNOTowerCombat();
     }
 
+    // --- Setters ---
+
     public void setTeam(Optional<BugemonTeam> team) {
         this.bugemonTeam = team;
     }
 
-    /**
-     * Sets the full list of available Bugemons and displays them in the selection grid.
-     */
     public void setAvailableBugemons(List<Bugemon> allBugemons) {
         this.availableBugemons = allBugemons;
     }
@@ -158,33 +246,11 @@ public class ManageTeamView extends View {
         this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
     }
 
-    @Override
-    public void refresh() {
-        this.allBugemonsGridView.showAll(this.availableBugemons,
-                this.bugemonTeam.map(team -> team.stream().collect(Collectors.toSet())).orElse(new HashSet<>()));
-
-        this.bugemonTeam.ifPresentOrElse(team -> {
-            this.bugemonsTeamView.showTeam(team);
-            if (team.isEmpty()) {
-                this.selectedTeamName.setText(NO_TEAM_SELECTED);
-
-            } else if (this.isBugemonTeamSaved) {
-                this.selectedTeamName.setText(team.getName());
-                this.teamListView.getSelectionModel().select(team.getName());
-            } else {
-                this.selectedTeamName.setText("Cette équipe (nouvelle ou modifiée) n'a pas encore été enregistrée. "
-                        + "Veuillez lui donner un nom et la sauvegarder pour conserver vos modifications.");
-            }
-        }, () -> {
-            this.bugemonsTeamView.clearBugemons();
-            this.selectedTeamName.setText(NO_TEAM_SELECTED);
-            this.teamListView.getSelectionModel().clearSelection();
-        });
-    }
-
     public void setSaveTeamName(String name) {
         this.saveTeamNameInput.setText(name);
     }
+
+    // --- Getters ---
 
     private String getTeamNameToSave() {
         return this.saveTeamNameInput.getText();
@@ -194,85 +260,30 @@ public class ManageTeamView extends View {
         return this.selectedTeamName.getText();
     }
 
+    // --- Alerts ---
+
     public void showEmptyTeamNameAlert() {
-        this.showAlert(INVALID_NAME, "Le nom d'équipe ne peut pas être vide.");
+        this.showWarningAlert(INVALID_NAME, "Le nom d'équipe ne peut pas être vide.");
     }
 
     public void showEmptyTeamAlert() {
-        this.showAlert(TEAM_EMPTY, "L'équipe ne peut pas être vide.");
+        this.showWarningAlert(TEAM_EMPTY, "L'équipe ne peut pas être vide.");
     }
 
     public void showTeamNameAlreadyExistsAlert(String teamName) {
-        this.showAlert(TEAM_NAME_ALREADY_USED, "Une équipe est déjà sauvée avec le nom " + teamName + ".");
+        this.showWarningAlert(TEAM_NAME_ALREADY_USED, "Une équipe est déjà sauvée avec le nom " + teamName + ".");
     }
 
     public void showTeamNotFoundAlert(String teamName) {
-        this.showAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
+        this.showWarningAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
     }
 
     public void showDeletTeamNoActiveTeamAlert() {
-        this.showAlert("Aucune équipe active", "Sélectionnez l'équipe que vous souhaitez supprimer.");
+        this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez supprimer.");
     }
 
     public void showRenameTeamNoActiveTeamAlert() {
-        this.showAlert("Aucune équipe active", "Sélectionnez l'équipe que vous souhaitez renommer.");
-    }
-
-    /**
-     * Clears the save team name input.
-     */
-    public void clearTeamNameToSave() {
-        this.saveTeamNameInput.setText("");
-    }
-
-    public void setIsActiveTeamSaved(boolean isActiveTeamSaved) {
-        this.isBugemonTeamSaved = isActiveTeamSaved;
-    }
-
-    public interface Listener {
-        void onReturnToMainMenu();
-
-        void onSave(String teamName);
-
-        void onLoad(String teamName);
-
-        void onDelete();
-
-        void onRename(String oldName, String newName);
-
-        void onAddNewTeam();
-
-        void onBugemonSelected(Bugemon bugemon);
-
-        void onModifyTeam();
-
-        void onStartAutomaticCombat();
-
-        void onStartManualCombat();
-
-        void onStartNOTowerCombat();
-    }
-
-    public void setMode(TeamFormMode mode) {
-        if (mode == TeamFormMode.CREATE) {
-            this.modifyTeamButton.setVisible(false);
-            this.modifyTeamButton.setManaged(false);
-
-            this.renameTeamButton.setVisible(false);
-            this.renameTeamButton.setManaged(false);
-
-            this.deleteTeamButton.setVisible(false);
-            this.deleteTeamButton.setManaged(false);
-
-            this.startAutomaticCombatButton.setVisible(false);
-            this.startAutomaticCombatButton.setManaged(false);
-
-            this.startManualCombatButton.setVisible(false);
-            this.startManualCombatButton.setManaged(false);
-
-            this.startTowerCombatButton.setVisible(false);
-            this.startTowerCombatButton.setManaged(false);
-        }
+        this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez renommer.");
     }
 
     public void showAlertChooseTeamToModify() {
@@ -285,22 +296,7 @@ public class ManageTeamView extends View {
      * @return (boolean) true if the user wants to continue, false if he wants to go back
      */
     public boolean showAlertTeamChangesNotSave() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Equipe non sauvegardée");
-        alert.setHeaderText(null);
-        alert.setContentText(
-                "Nouvelle équipe ou équipe existante modifiée non sauvegardée. Donnez lui un nom et sauvegardez la.");
-
-        if (this.root != null && this.root.getScene() != null) {
-            alert.initOwner(this.root.getScene().getWindow());
-        }
-
-        ButtonType continueBtn = new ButtonType("Continuer"); // L'utilisateur accepte de perdre les modifs
-        ButtonType backBtn = new ButtonType("Retour", ButtonBar.ButtonData.CANCEL_CLOSE); // L'utilisateur reste ici
-
-        alert.getButtonTypes().setAll(continueBtn, backBtn);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.isPresent() && result.get() == continueBtn;
+        return this.showAlertWithTwoButtons(TEAM_NOT_SAVED, TEAM_NOT_SAVED_MESSAGE, GO_MAIN_MENU_WITHOUT_SAVING, BACK)
+                .equals(GO_MAIN_MENU_WITHOUT_SAVING);
     }
 }

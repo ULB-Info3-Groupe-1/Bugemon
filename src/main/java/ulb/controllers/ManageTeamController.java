@@ -22,17 +22,20 @@ import ulb.views.ViewLoader;
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
     private final PlayerService playerService;
     private final BugemonService bugemonService;
-    private final ManageTeamView.TeamFormMode mode;
+
+    public enum TeamFormMode {
+        EDIT,
+        CREATE
+    }
 
     /**
      * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
      * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
      *
      */
-    public ManageTeamController(ManageTeamView.TeamFormMode mode, MetaController metaController,
-            PlayerService playerService, BugemonService bugemonService) {
-        super(metaController, ViewLoader.load(ManageTeamView::new));
-        this.mode = mode;
+    public ManageTeamController(TeamFormMode mode, MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService) {
+        super(metaController, ViewLoader.load(() -> new ManageTeamView(mode)));
         this.playerService = playerService;
         this.bugemonService = bugemonService;
 
@@ -42,7 +45,6 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     @Override
     protected void show(Stage stage) {
         this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
-        this.view.setMode(this.mode);
         this.refresh();
         super.show(stage);
     }

@@ -1,7 +1,5 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
-
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
 import ulb.models.trainer.AutoTrainer;
@@ -23,11 +21,9 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *
      * @param metaController
      *            the application-level controller used for navigation.
-     * @throws IOException
-     *             if the view fails to load its FXML resource.
      */
     public AutomaticCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) throws IOException {
+            BugemonService bugemonService) {
         super(metaController, playerService, bugemonService, ViewLoader.load(AutomaticCombatView::new));
     }
 

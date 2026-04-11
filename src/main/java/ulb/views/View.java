@@ -1,8 +1,10 @@
 package ulb.views;
 
+import java.util.Optional;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 /**
@@ -33,21 +35,49 @@ public abstract class View {
     }
 
     /** Displays a warning dialog with the given title and message. */
-    protected void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.WARNING);
+    protected void showWarningAlert(String title, String message) {
+        this.createAlert(title, message, AlertType.WARNING).showAndWait();
+    }
+
+    /**
+     * Displays a warning dialog with the given title and message. It has two buttons. If the user clicks on the first
+     * button, the first button text is returned, otherwise the second button text is returned.
+     *
+     * @param title
+     *            the title of the dialog
+     * @param message
+     *            the message of the dialog
+     * @param button1Text
+     *            the text of the first button
+     * @param button2Text
+     *            the text of the second button
+     * @return the text of the clicked button
+     */
+    protected String showAlertWithTwoButtons(String title, String message, String button1Text, String button2Text) {
+        Alert alert = this.createAlert(title, message, AlertType.CONFIRMATION);
+
+        ButtonType button1 = new ButtonType(button1Text);
+        ButtonType button2 = new ButtonType(button2Text);
+
+        alert.getButtonTypes().setAll(button1, button2);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == button1 ? button1Text : button2Text;
+    }
+
+    private Alert createAlert(String title, String message, AlertType type) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-
         if (this.root != null && this.root.getScene() != null) {
             alert.initOwner(this.root.getScene().getWindow());
         }
-
-        alert.showAndWait();
+        return alert;
     }
 
     protected void showNoActiveTeamAlert(String message) {
-        this.showAlert("Aucune équipe active", message);
+        this.showWarningAlert("Aucune équipe active", message);
     }
 
     public void showAlertChooseTeamToLaunchCombat() {
