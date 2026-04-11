@@ -39,7 +39,6 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected final CombatAnimationController animationController;
     protected final PlayerService playerService;
     protected final BugemonService bugemonService;
-    protected boolean restoreHpAfterCombat;
 
     protected Combat combat;
     protected Trainer playerTrainer;

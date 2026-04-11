@@ -25,13 +25,20 @@ public class Combat {
     private final Trainer playerTrainer;
     private final Trainer opponentTrainer;
 
+    private final EndOfCombatAction endOfCombatAction;
+
     private TurnResult turnResult;
 
     private boolean isCompleted = false;
 
     public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
+        this(playerTrainer, opponentTrainer, EndOfCombatAction.NO_OP);
+    }
+
+    public Combat(Trainer playerTrainer, Trainer opponentTrainer, EndOfCombatAction endOfCombatAction) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
+        this.endOfCombatAction = endOfCombatAction;
         LOG.info("Combat started — player: {} vs opponent: {}", playerTrainer.getCurrentBugemonName(),
                 opponentTrainer.getCurrentBugemonName());
     }
@@ -155,6 +162,9 @@ public class Combat {
                 LOG.info("{} is defeated", trainer.getCurrentBugemonName());
                 this.turnResult.addStep(new TurnStep.TrainerKoStep(trainer));
                 this.isCompleted = true;
+
+                // run end-of-combat callback
+                this.endOfCombatAction.execute();
             }
         }
     }
@@ -214,5 +224,16 @@ public class Combat {
 
     public Trainer getOpponentTrainer() {
         return this.opponentTrainer;
+    }
+
+    @FunctionalInterface
+    public interface EndOfCombatAction {
+        void execute();
+
+        /**
+         * No action (as in does nothing).
+         */
+        EndOfCombatAction NO_OP = () -> {
+        };
     }
 }
