@@ -107,11 +107,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     public Stream<Bugemon> aliveStream() {
-        return this.team.stream().filter(Bugemon::isAlive);
-    }
-
-    public Iterator<Bugemon> aliveIterator() {
-        return this.team.stream().filter(Bugemon::isAlive).iterator();
+        return this.stream().filter(Bugemon::isAlive);
     }
 
     public void clear() {
