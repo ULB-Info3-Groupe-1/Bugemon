@@ -1,8 +1,11 @@
 package ulb.models.tower;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ulb.models.tower.room.Room;
 import ulb.models.tower.utils.CombatFactory;
@@ -26,22 +29,36 @@ public class Floor {
         return this.currentPosition.equals(this.floorGenerator.getBossNode());
     }
 
-    public List<Room> getNextRooms() throws EmptyStackException {
+    public List<Room> getNextRooms() {
         List<Room> nextRooms = new ArrayList<>();
-        for (FloorNode child : this.currentPosition.getChildren()) {
-            nextRooms.add(child.getRoom());
+        for (FloorNode node : this.getReachableNodes()) {
+            nextRooms.add(node.getRoom());
         }
-        this.currentPosition.getParent().ifPresent(parent -> nextRooms.add(parent.getRoom()));
         return nextRooms;
     }
 
-    public List<FloorNode> getFloorNodes() throws EmptyStackException {
+    public List<FloorNode> getFloorNodes() {
         List<FloorNode> floorNodes = new ArrayList<>();
-        for (FloorNode child : this.currentPosition.getChildren()) {
-            floorNodes.add(child);
+        Set<FloorNode> visited = new HashSet<>();
+        Deque<FloorNode> queue = new ArrayDeque<>();
+        queue.add(this.floorGenerator.getRoot());
+
+        while (!queue.isEmpty()) {
+            FloorNode node = queue.removeFirst();
+            if (!visited.add(node)) {
+                continue;
+            }
+            floorNodes.add(node);
+            queue.addAll(node.getChildren());
         }
-        this.currentPosition.getParent().ifPresent(parent -> floorNodes.add(parent));
         return floorNodes;
+    }
+
+    public List<FloorNode> getReachableNodes() {
+        List<FloorNode> reachableNodes = new ArrayList<>();
+        reachableNodes.addAll(this.currentPosition.getChildren());
+        this.currentPosition.getParent().ifPresent(reachableNodes::add);
+        return reachableNodes;
     }
 
     public void moveTo(FloorNode node) {

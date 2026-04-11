@@ -12,7 +12,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-
+import ulb.controllers.combat.TowerController.RoomState;
 import ulb.controllers.combat.TowerController.RoomType;
 
 /**

@@ -8,8 +8,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
-import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.Room;
 import ulb.views.components.RoomNodeView;
 
 /**
@@ -22,8 +20,8 @@ public class FloorMapView extends View {
     // Constants for automatic positioning
     private static final double ROOM_WIDTH = 80.0;
     private static final double ROOM_HEIGHT = 80.0;
-    private static final double HORIZONTAL_SPACING = 100.0;
-    private static final double VERTICAL_SPACING = 100.0;
+    private static final double HORIZONTAL_SPACING = 70.0;
+    private static final double VERTICAL_SPACING = 70.0;
     private static final double MAP_OFFSET_X = 0.0;
     private static final double MAP_OFFSET_Y = 0.0;
 
@@ -111,6 +109,7 @@ public class FloorMapView extends View {
         // Register listener to propagate events to FloorMapView's listener
         roomNode.setListener((row, col) -> {
             if (this.listener != null) {
+                this.listener.onRoomClicked(roomNode);
             }
         });
 
@@ -138,10 +137,6 @@ public class FloorMapView extends View {
      */
     private double calculateYPosition(int row) {
         return MAP_OFFSET_Y + (row * (ROOM_HEIGHT + VERTICAL_SPACING));
-    }
-
-    public void setupFloor(List<FloorNode> floorNodes) {
-
     }
 
     /**
@@ -175,32 +170,6 @@ public class FloorMapView extends View {
         this.innerMapPane.setMinSize(paneWidth, paneHeight);
         this.innerMapPane.setMaxSize(paneWidth, paneHeight);
     }
-
-    /**
-     * Automatically generates all connections between adjacent rooms. A room is adjacent if it is in the next column
-     * (col + 1) and in an adjacent row (row-1, row, or row+1). Should be called after centerMap() for proper
-     * positioning.
-     */
-    public void generateConnections() {
-        this.clearConnections();
-
-        for (RoomNodeView sourceRoom : this.roomNodes) {
-            int sourceRow = sourceRoom.getRow();
-            int sourceCol = sourceRoom.getCol();
-
-            // Look for rooms in the next column (col + 1)
-            for (RoomNodeView targetRoom : this.roomNodes) {
-                int targetRow = targetRoom.getRow();
-                int targetCol = targetRoom.getCol();
-
-                // Connection to next column (col + 1) with adjacent rows (-1, 0, +1)
-                if (targetCol == sourceCol + 1 && Math.abs(targetRow - sourceRow) <= 1) {
-                    this.addConnectionBetweenRooms(sourceRoom, targetRoom);
-                }
-            }
-        }
-    }
-
     /**
      * Adds a connection line between two RoomNodeViews.
      *
@@ -209,7 +178,7 @@ public class FloorMapView extends View {
      * @param target
      *            Target room
      */
-    private void addConnectionBetweenRooms(RoomNodeView source, RoomNodeView target) {
+    public void addConnectionBetweenRooms(RoomNodeView source, RoomNodeView target) {
         // Calculate the center of each room
         double sourceX = source.getLayoutX() + ROOM_WIDTH / 2;
         double sourceY = source.getLayoutY() + ROOM_HEIGHT / 2;
@@ -268,7 +237,7 @@ public class FloorMapView extends View {
      * interface.
      */
     public interface Listener {
-        void onRoomClicked(Room selectedRoom);
+        void onRoomClicked(RoomNodeView roomNode);
 
         void onBackToMainMenu();
     }
