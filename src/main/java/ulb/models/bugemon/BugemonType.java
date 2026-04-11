@@ -1,7 +1,6 @@
 package ulb.models.bugemon;
 
 import java.util.Map;
-import ulb.common.Efficiency;
 
 /** Elemental type of a Bugemon; used for type-matchup calculations during combat. */
 public enum BugemonType {

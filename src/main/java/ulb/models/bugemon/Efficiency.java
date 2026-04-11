@@ -1,4 +1,4 @@
-package ulb.common;
+package ulb.models.bugemon;
 
 /**
  * Represents the effectiveness of an attack type against a defender's type.

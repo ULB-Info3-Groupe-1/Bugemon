@@ -5,7 +5,6 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import ulb.common.dto.BugemonDTO;
-import ulb.common.Efficiency;
 import ulb.models.bugemon.components.AttackComponent;
 import ulb.models.bugemon.components.DefenseComponent;
 import ulb.models.bugemon.components.HealthComponent;

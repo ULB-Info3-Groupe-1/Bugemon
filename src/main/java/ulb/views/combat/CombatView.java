@@ -8,11 +8,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
-import ulb.common.Efficiency;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.TurnStep;
 import ulb.models.trainer.Trainer;

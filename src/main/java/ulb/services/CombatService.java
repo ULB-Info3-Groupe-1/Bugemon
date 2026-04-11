@@ -6,17 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.Configuration;
-import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.Trainer;
 
 /**
- * Stateless utility for combat calculations: attack priority, damage formula, and type effectiveness. Types follow a
- * fixed cycle defined by the {@link BugemonType} enum order — see
- * {@link #compareBugemonType(BugemonType, BugemonType)}.
+ * Stateless utility for combat calculations: attack priority, damage formula.
  */
 public class CombatService {
 
@@ -64,12 +62,11 @@ public class CombatService {
      */
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon,
             final double criticFactor) {
-        BugemonType defType = defenderBugemon.getType();
 
         final int basePower = attack.power();
         final double atkFactor = (100.0 + offenderBugemon.getAttack()) / 100.0;
         final double defFactor = 100.0 / (defenderBugemon.getDefense() + 100.0);
-        final double typeMultiplier = getEfficiencyFactor(attack, defType);
+        final double typeMultiplier = getEfficiencyFactor(attack, defenderBugemon);
         final double damage = basePower * atkFactor * defFactor * typeMultiplier * criticFactor;
 
         return (int) Math.ceil(damage);
@@ -86,18 +83,17 @@ public class CombatService {
     }
 
     /**
-     * Returns the damage multiplier corresponding to the effectiveness of an attack's type against the defender's type,
-     * derived from {@link #compareBugemonType(BugemonType, BugemonType)}.
+     * Returns the damage multiplier corresponding to the effectiveness of an attack's type against the defender's type.
      *
      * @param attack
      *            the attack being used
-     * @param defenderType
-     *            the type of the defending Bugemon
+     * @param defender
+     *            the defending Bugemon
      * @return {@code 0.75} for {@link Efficiency#LOW}, {@code 1.50} for {@link Efficiency#HIGH}, or {@code 1.00} for
      *         {@link Efficiency#NEUTRAL}
      */
-    public static double getEfficiencyFactor(final Attack attack, final BugemonType defenderType) {
-        final Efficiency matchup = compareBugemonType(attack.type(), defenderType);
+    public static double getEfficiencyFactor(final Attack attack, final Bugemon defender) {
+        final Efficiency matchup = attack.getEfficiencyAgainst(defender);
 
         if (matchup.equals(Efficiency.LOW)) {
             return 0.75;
@@ -123,24 +119,6 @@ public class CombatService {
      * @return {@link Efficiency#HIGH} if the offensive type is strong against the defensive type,
      *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
      */
-    public static Efficiency compareBugemonType(final BugemonType offensiveType, final BugemonType defensiveType) {
-        // Use the BugemonType enum declaration order as the type cycle
-        final List<BugemonType> cycle = new ArrayList<>(List.of(BugemonType.values()));
-
-        final int atkIdx = cycle.indexOf(offensiveType);
-        final int defIdx = cycle.indexOf(defensiveType);
-
-        // floorMod keeps the difference positive, wrapping around the cycle
-        final int delta = Math.floorMod(atkIdx - defIdx, cycle.size());
-
-        if (delta == 1) {
-            return Efficiency.LOW; // offender is one step ahead of defender
-        } else if (delta == cycle.size() - 1) {
-            return Efficiency.HIGH; // offender is one step behind of defender
-        } else {
-            return Efficiency.NEUTRAL;
-        }
-    }
 
     public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
         List<Bugemon> pool = new ArrayList<>(bugemonList);

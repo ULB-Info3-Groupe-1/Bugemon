@@ -1,8 +1,8 @@
 package ulb.controllers.combat;
 
-import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Efficiency;
 import ulb.models.combat.TurnStep;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.CombatView;

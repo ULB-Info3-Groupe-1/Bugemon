@@ -2,14 +2,13 @@ package ulb.views.combat;
 
 import java.util.List;
 
-import ulb.common.Efficiency;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.TurnStep;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
-import ulb.services.CombatService;
 import ulb.views.combat.components.ActionMenuView;
 import ulb.views.combat.components.AttackMenuView;
 import ulb.views.combat.components.ItemMenuView;
@@ -66,8 +65,7 @@ public class ManualCombatView extends CombatView {
 
             @Override
             public void onAttackHovered(Attack attack) {
-                Efficiency eff = CombatService.compareBugemonType(attack.type(),
-                        ManualCombatView.this.opponent.getCurrentBugemonType());
+                Efficiency eff = attack.getEfficiencyAgainst(ManualCombatView.this.opponent.getCurrentBugemon());
                 ManualCombatView.this.showHoverInfo(attack.name(), "Type : " + attack.type(),
                         "Puissance : " + attack.power(), attack.description().isBlank() ? null : attack.description());
                 ManualCombatView.this.setHoverType(attack.type());
