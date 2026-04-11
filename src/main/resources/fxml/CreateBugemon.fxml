@@ -8,106 +8,111 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Slider?>
-<?import ulb.views.components.BugemonCardView?>
-<?import ulb.models.bugemon.BugemonType?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 
+<?import ulb.views.components.BugemonCardView?>
+<?import ulb.models.bugemon.effect.EffectStat?>
+<?import ulb.models.bugemon.BugemonType?>
+
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CreateBugemonView" alignment="CENTER"
-    spacing="30" style="-fx-background-color: color-surface;">
-
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20" />
-    </padding>
-
-    <HBox alignment="CENTER" spacing="50">
-
-        <VBox alignment="CENTER" spacing="15">
+    spacing="20">
+    <HBox alignment="CENTER" spacing="20">
+        <VBox alignment="CENTER" spacing="20">
+            <padding>
+                <Insets top="40" right="40" bottom="40" left="40" />
+            </padding>
             <BugemonCardView fx:id="bugemonCardView" />
-            <Button text="Charger sprite" onAction="#onLoadButtonClicked" styleClass="btn,btn-secondary"     />
+            <Button text="Charger sprite" onAction="#onLoadButtonClicked"
+                styleClass="btn,btn-primary,btn-create-bugemon" />
             <Button text="Supprimer sprite"
-                onAction="#onRemoveButtonClicked" />
-            <Button text="Retourner au menu principal"
-                onAction="#onReturnClicked" />
-            <Button text="Sauvegarder" onAction="#onSaveClicked" />
+                onAction="#onRemoveButtonClicked"
+                styleClass="btn,btn-danger,btn-create-bugemon" />
+            <Button text="Sauvegarder" onAction="#onSaveClicked"
+                styleClass="btn,btn-success,btn-create-bugemon" />
+            <Button text="Retour au menu principal"
+                onAction="#onReturnClicked"
+                styleClass="btn,btn-secondary,btn-create-bugemon" />
         </VBox>
-
-        <VBox spacing="15" prefWidth="450">
+        <VBox alignment="CENTER" spacing="20">
+            <padding>
+                <Insets top="40" right="40" bottom="40" left="40" />
+            </padding>
             <TextField fx:id="bugemonNameTextField"
                 promptText="Nom de votre Bugemon..." onKeyTyped="#onKeyTyped" />
-            <!-- onAction="#onSaveClicked" /> -->
-            <Label text="Choisir le type du Bugemon" />
-            <HBox alignment="CENTER" spacing="20">
-                <Button fx:id="floraTypeButton" text="FLORA"
-                    onAction="#onTypeClicked" styleClass="btn, attack-FLORA" />
-                <Button fx:id="aquaTypeButton" text="AQUA"
-                    onAction="#onTypeClicked" styleClass="btn, attack-AQUA" />
-                <Button fx:id="pyroTypeButton" text="PYRO"
-                    onAction="#onTypeClicked" styleClass="btn, attack-PYRO" />
-                <Button fx:id="lithoTypeButton" text="LITHO"
-                    onAction="#onTypeClicked" styleClass="btn, attack-LITHO" />
+
+            <Label text="Choisir le type du Bugemon"
+                styleClass="section-label" />
+            <HBox spacing="10" alignment="CENTER">
+
+                <fx:define>
+                    <ToggleGroup fx:id="typeToggleGroup" />
+                </fx:define>
+
+                <ToggleButton text="FLORA"
+                    toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                    styleClass="btn, attack-FLORA">
+                    <userData>
+                        <BugemonType fx:constant="FLORA" />
+                    </userData>
+                </ToggleButton>
+                <ToggleButton text="AQUA"
+                    toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                    styleClass="btn, attack-AQUA">
+                    <userData>
+                        <BugemonType fx:constant="AQUA" />
+                    </userData>
+                </ToggleButton>
+                <ToggleButton text="PYRO"
+                    toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                    styleClass="btn, attack-PYRO">
+                    <userData>
+                        <BugemonType fx:constant="PYRO" />
+                    </userData>
+                </ToggleButton>
+                <ToggleButton text="LITHO"
+                    toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
+                    styleClass="btn, attack-LITHO">
+                    <userData>
+                        <BugemonType fx:constant="LITHO" />
+                    </userData>
+                </ToggleButton>
             </HBox>
+
             <Label text="Sélectionner les statistiques" />
             <Label text="Vie (0)" fx:id="healthLabel" />
-            <Slider fx:id="healthSlider" blockIncrement="1"
-                majorTickUnit="50" max="100" showTickLabels="true"
-                showTickMarks="true" onMouseReleased="#onSliderChanged">
+            <Slider fx:id="healthSlider" max="100" showTickLabels="true"
+                showTickMarks="true" blockIncrement="1">
                 <userData>
                     <EffectStat fx:constant="HP" />
                 </userData>
             </Slider>
 
-            <VBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="Choisir le type du Bugemon"
-                    styleClass="section-label" />
-                <HBox spacing="10" alignment="CENTER">
+            <Label text="Attaque (0)" fx:id="attackLabel" />
+            <Slider fx:id="attackSlider" max="100" showTickLabels="true"
+                showTickMarks="true" blockIncrement="1">
+                <userData>
+                    <EffectStat fx:constant="ATTACK" />
+                </userData>
+            </Slider>
 
-                    <fx:define>
-                        <ToggleGroup fx:id="typeToggleGroup" />
-                    </fx:define>
+            <Label text="Défense (0)" fx:id="defenseLabel" />
+            <Slider fx:id="defenseSlider" max="100" showTickLabels="true"
+                showTickMarks="true" blockIncrement="1">
+                <userData>
+                    <EffectStat fx:constant="DEFENSE" />
+                </userData>
+            </Slider>
 
-                    <ToggleButton text="FLORA"
-                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
-                        styleClass="btn, attack-FLORA">
-                        <userData>
-                            <BugemonType fx:constant="FLORA" />
-                        </userData>
-                    </ToggleButton>
-                    <ToggleButton text="AQUA"
-                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
-                        styleClass="btn, attack-AQUA">
-                        <userData>
-                            <BugemonType fx:constant="AQUA" />
-                        </userData>
-                    </ToggleButton>
-                    <ToggleButton text="PYRO"
-                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
-                        styleClass="btn, attack-PYRO">
-                        <userData>
-                            <BugemonType fx:constant="PYRO" />
-                        </userData>
-                    </ToggleButton>
-                    <ToggleButton text="LITHO"
-                        toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
-                        styleClass="btn, attack-LITHO">
-                        <userData>
-                            <BugemonType fx:constant="LITHO" />
-                        </userData>
-                    </ToggleButton>
-                </HBox>
-            </VBox>
-
-            <VBox spacing="10" styleClass="action-menu">
-                <Label text="Sélectionner les statistiques"
-                    styleClass="section-label" />
-
-                <VBox spacing="2">
-                    <Label text="Vie (0)" fx:id="healthLabel"
-                        styleClass="bugemon-level" />
-                    <Slider fx:id="healthSlider" max="100" showTickLabels="true"
-                        showTickMarks="true" blockIncrement="1" />
-                </VBox>
+            <Label text="Initiative (0)" fx:id="initiativeLabel" />
+            <Slider fx:id="initiativeSlider" max="100"
+                showTickLabels="true" showTickMarks="true" blockIncrement="1">
+                <userData>
+                    <EffectStat fx:constant="INITIATIVE" />
+                </userData>
+            </Slider>
 
             <Label fx:id="attackCountLabel"
                 text="Attaques sélectionnées: 0/3" />

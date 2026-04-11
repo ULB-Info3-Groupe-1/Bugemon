@@ -10,29 +10,30 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import ulb.models.bugemon.Attack;
 import ulb.Configuration;
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.effect.EffectStat;
 import ulb.views.components.BugemonCardView;
 
 public class CreateBugemonView extends View {
 
-    private static final String TYPE_SELECTED = "type-selected";
+    private static final String ATTACK_COUNT_INCOMPLETE = "attack-count-incomplete";
+    private static final String ATTACK_COUNT_COMPLETE = "attack-count-complete";
+
     private Listener listener;
 
-    // TODO: liste d'attaques ? comment gérer ? autre objet ?
     @FXML
     private ListView<String> attackListView;
 
@@ -70,16 +71,7 @@ public class CreateBugemonView extends View {
     private Label attackCountLabel;
 
     @FXML
-    private Button floraTypeButton;
-
-    @FXML
-    private Button aquaTypeButton;
-
-    @FXML
-    private Button pyroTypeButton;
-
-    @FXML
-    private Button lithoTypeButton;
+    private ToggleGroup typeToggleGroup;
 
     private BugemonType selectedType;
     private URL selectedSpriteUrl;
@@ -122,26 +114,39 @@ public class CreateBugemonView extends View {
 
         this.attackListView.getSelectionModel().getSelectedItems()
                 .addListener((ListChangeListener<String>) change -> this.updateAttackCountLabel());
+
+        this.healthSlider.valueProperty()
+                .addListener((obs, oldVal, newVal) -> this.healthLabel.setText(String.format("Vie (%.0f)", newVal)));
+
+        this.attackSlider.valueProperty().addListener(
+                (obs, oldVal, newVal) -> this.attackLabel.setText(String.format("Attaque (%.0f)", newVal)));
+
+        this.defenseSlider.valueProperty().addListener(
+                (obs, oldVal, newVal) -> this.defenseLabel.setText(String.format("Défense (%.0f)", newVal)));
+
+        this.initiativeSlider.valueProperty().addListener(
+                (obs, oldVal, newVal) -> this.initiativeLabel.setText(String.format("Initiative (%.0f)", newVal)));
+
     }
 
     private void updateAttackCountLabel() {
         int selectedCount = this.attackListView.getSelectionModel().getSelectedItems().size();
-        this.attackCountLabel.setText("Selected attacks: " + selectedCount + "/3");
+        this.attackCountLabel.setText("Attaques sélectionnées : " + selectedCount + "/3");
 
         if (selectedCount == 3) {
-            this.attackCountLabel.getStyleClass().removeAll("attack-count-incomplete");
-            this.attackCountLabel.getStyleClass().add("attack-count-complete");
+            this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE);
+            this.attackCountLabel.getStyleClass().add(ATTACK_COUNT_COMPLETE);
         } else {
-            this.attackCountLabel.getStyleClass().removeAll("attack-count-complete");
-            this.attackCountLabel.getStyleClass().add("attack-count-incomplete");
+            this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_COMPLETE);
+            this.attackCountLabel.getStyleClass().add(ATTACK_COUNT_INCOMPLETE);
         }
     }
 
     @FXML
     private void onLoadButtonClicked() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Bugemon Sprite");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png"));
+        fileChooser.setTitle("Sélectionnez un sprite pour votre bugemon");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers PNG", "*.png"));
         Stage stage = (Stage) this.getRoot().getScene().getWindow();
 
         File file = fileChooser.showOpenDialog(stage);
@@ -169,30 +174,18 @@ public class CreateBugemonView extends View {
 
     @FXML
     private void onTypeClicked(ActionEvent event) throws IllegalArgumentException {
-        Button button = (Button) event.getSource();
+        ToggleButton selectedButton = (ToggleButton) this.typeToggleGroup.getSelectedToggle();
+        if (selectedButton != null) {
+            this.selectedType = (BugemonType) selectedButton.getUserData();
+            if (this.listener != null) {
+                this.listener.onTypeSelected(this.selectedType);
+            }
+        }
 
-        this.selectedType = switch (button.getText()) {
-            case "FLORA" -> BugemonType.FLORA;
-            case "AQUA" -> BugemonType.AQUA;
-            case "PYRO" -> BugemonType.PYRO;
-            case "LITHO" -> BugemonType.LITHO;
-            default -> throw new IllegalArgumentException("Unexpected type: " + button.getText());
-        };
-
-        this.updateTypeSelectionState(button);
-        this.listener.onTypeSelected(this.selectedType);
-    }
-
-    private void updateTypeSelectionState(Button selectedButton) {
-        this.floraTypeButton.getStyleClass().remove(TYPE_SELECTED);
-        this.aquaTypeButton.getStyleClass().remove(TYPE_SELECTED);
-        this.pyroTypeButton.getStyleClass().remove(TYPE_SELECTED);
-        this.lithoTypeButton.getStyleClass().remove(TYPE_SELECTED);
-        selectedButton.getStyleClass().add(TYPE_SELECTED);
     }
 
     @FXML
-    private void onAddClicked() {
+    private void onSaveClicked() {
         String bugemonName = this.bugemonNameTextField.getText();
         double healthValue = this.healthSlider.getValue();
         double attackValue = this.attackSlider.getValue();
@@ -216,23 +209,11 @@ public class CreateBugemonView extends View {
         this.initiativeSlider.setValue(0);
         this.bugemonCardView.removeSprite();
         this.selectedSpriteUrl = null;
-        this.attackListView.getSelectionModel().clearSelection();
+        this.attackListView.getItems().clear();
+        this.typeToggleGroup.getToggles().forEach(toggle -> toggle.setSelected(false));
         this.selectedType = null;
-    }
-
-    @FXML
-    private void onSliderChanged(MouseEvent event) throws IllegalArgumentException {
-        Slider slider = (Slider) event.getSource();
-        EffectStat stat = (EffectStat) slider.getUserData();
-        double value = slider.getValue();
-
-        switch (stat) {
-            case HP -> this.healthLabel.setText(String.format("Vie (%.0f)", value));
-            case ATTACK -> this.attackLabel.setText(String.format("Attaque (%.0f)", value));
-            case DEFENSE -> this.defenseLabel.setText(String.format("Défense (%.0f)", value));
-            case INITIATIVE -> this.initiativeLabel.setText(String.format("Initiative (%.0f)", value));
-            default -> throw new IllegalArgumentException();
-        }
+        this.attackCountLabel.setText("Attaques sélectionnées : 0/3");
+        this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE, ATTACK_COUNT_COMPLETE);
     }
 
     /**
@@ -297,15 +278,15 @@ public class CreateBugemonView extends View {
     }
 
     public void showInvalidFormAlert(String message) {
-        this.showAlert("Invalid Form", message);
+        this.showWarningAlert("Formulaire invalide ", message);
     }
 
     public void showSaveSuccessAlert(String name) {
-        this.showAlert("Bugemon Saved", "The Bugemon " + name + " has been saved successfully.");
+        this.showInfoAlert("Bugemon sauvegardé", "Le Bugemon " + name + " a bien été sauvegardé.");
     }
 
     public void showSaveErrorAlert(String message) {
-        this.showAlert("Save Error", message);
+        this.showWarningAlert("Erreur de sauvegarde ", message);
     }
 
     // public void setModel()
