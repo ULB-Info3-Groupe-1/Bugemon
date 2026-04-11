@@ -2,8 +2,6 @@ package ulb.models.bugemon;
 
 import static org.junit.Assert.assertEquals;
 
-import java.lang.reflect.Type;
-
 import org.junit.Test;
 
 public class TestEfficiency {
