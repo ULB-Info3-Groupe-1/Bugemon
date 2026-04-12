@@ -106,7 +106,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
     /** Registers a forfeit action, resolves the turn, and navigates to the outcome screen immediately. */
     @Override
-    public void onSurrender() {
+    public void onForfeit() {
         this.manualPlayerTrainer.registerForfeit();
         this.startTurn();
     }

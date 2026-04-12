@@ -8,7 +8,7 @@ import ulb.views.components.ComponentView;
 
 /**
  * The main action menu displayed at the start of each manual combat turn. Presents four choices: Attack, Switch, Item,
- * Surrender. Each button dispatches its action through a callback registered from the outside. The Switch button is
+ * Forfeit. Each button dispatches its action through a callback registered from the outside. The Switch button is
  * disabled whenever a voluntary switch is not available, as signalled by {@link #refresh(boolean)}.
  */
 public class ActionMenuView extends ComponentView {
@@ -52,8 +52,8 @@ public class ActionMenuView extends ComponentView {
     }
 
     @FXML
-    private void onSurrenderClicked() {
-        this.listener.onSurrender();
+    private void onForfeitClicked() {
+        this.listener.onForfeit();
     }
 
     public interface Listener {
@@ -64,7 +64,7 @@ public class ActionMenuView extends ComponentView {
 
         void onInventory();
 
-        void onSurrender();
+        void onForfeit();
 
     }
 }
