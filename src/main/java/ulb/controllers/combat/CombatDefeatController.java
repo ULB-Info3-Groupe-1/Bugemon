@@ -18,7 +18,7 @@ public class CombatDefeatController extends Controller<CombatDefeatView> impleme
     }
 
     @Override
-    public void onBackToMainMenu() {
-        this.metaController.onCombatDefeatBackToMainMenu();
+    public void onReturnToMainMenu() {
+        this.metaController.onCombatDefeatReturnToMainMenu();
     }
 }

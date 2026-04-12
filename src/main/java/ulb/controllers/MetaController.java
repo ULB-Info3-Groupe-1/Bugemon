@@ -122,7 +122,7 @@ public class MetaController {
         this.switchTo(Window.MAIN_MENU);
     }
 
-    public void onCombatDefeatBackToMainMenu() {
+    public void onCombatDefeatReturnToMainMenu() {
         this.switchTo(Window.MAIN_MENU);
     }
 
