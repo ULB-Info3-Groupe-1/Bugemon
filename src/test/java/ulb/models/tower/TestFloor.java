@@ -1,6 +1,9 @@
 package ulb.models.tower;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,22 +39,83 @@ public class TestFloor {
 
     @Test
     public void testFloorInitialization() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam, PLAYER_SERVICE_MOCK.getInventory());
-
-        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK, 1);
+        Floor floor = this.createFloor();
 
         assertFalse(floor.isComplete());
     }
 
     @Test
-    public void testFloorCompletion() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam, PLAYER_SERVICE_MOCK.getInventory());
-
-        Floor floor = new Floor(playerTrainer, BUGEMON_SERVICE_MOCK, 1);
-
+    public void testGetNextRoomsNotEmptyAtStart() {
+        Floor floor = this.createFloor();
         List<Room> rooms = floor.getNextRooms();
         assertFalse(rooms.isEmpty());
+    }
+
+    @Test
+    public void testMoveToChildUpdatesCurrentPosition() {
+        Floor floor = this.createFloor();
+        FloorNode start = floor.getCurrentPosition();
+        FloorNode child = start.getChildren().getFirst();
+
+        floor.moveTo(child);
+
+        assertEquals(child, floor.getCurrentPosition());
+    }
+
+    @Test
+    public void testMoveBackToParentUpdatesCurrentPosition() {
+        Floor floor = this.createFloor();
+        FloorNode start = floor.getCurrentPosition();
+        FloorNode child = start.getChildren().getFirst();
+        floor.moveTo(child);
+
+        floor.moveTo(start);
+
+        assertEquals(start, floor.getCurrentPosition());
+    }
+
+    @Test
+    public void testMoveToNonAdjacentNodeKeepsCurrentPosition() {
+        Floor floor = this.createFloor();
+        FloorNode root = floor.getCurrentPosition();
+        FloorNode firstChild = root.getChildren().get(0);
+        FloorNode siblingChild = root.getChildren().get(1);
+        floor.moveTo(firstChild);
+
+        floor.moveTo(siblingChild);
+
+        assertEquals(firstChild, floor.getCurrentPosition());
+        assertNotEquals(siblingChild, floor.getCurrentPosition());
+    }
+
+    @Test
+    public void testReachableNodesFromChildContainParent() {
+        Floor floor = this.createFloor();
+        FloorNode root = floor.getCurrentPosition();
+        FloorNode child = root.getChildren().getFirst();
+        floor.moveTo(child);
+
+        List<FloorNode> reachable = floor.getReachableNodes();
+        assertTrue(reachable.contains(root));
+    }
+
+    @Test
+    public void testGetFloorNodesContainsRootAndCurrentPosition() {
+        Floor floor = this.createFloor();
+        FloorNode root = floor.getCurrentPosition();
+        FloorNode child = root.getChildren().getFirst();
+        floor.moveTo(child);
+
+        List<FloorNode> allNodes = floor.getFloorNodes();
+
+        assertTrue(allNodes.contains(root));
+        assertTrue(allNodes.contains(floor.getCurrentPosition()));
+        assertTrue(allNodes.size() >= floor.getReachableNodes().size());
+    }
+
+    private Floor createFloor() {
+        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Trainer playerTrainer = new ManualTrainer(playerTeam, PLAYER_SERVICE_MOCK.getInventory());
+        return new Floor(playerTrainer, BUGEMON_SERVICE_MOCK, 1);
     }
 }

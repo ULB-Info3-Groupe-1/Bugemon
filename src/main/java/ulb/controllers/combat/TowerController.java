@@ -19,6 +19,7 @@ import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
+import ulb.models.tower.room.RoomType;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
@@ -71,41 +72,23 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         if (targetRoomView != null) {
             this.view.animatePlayerTo(targetRoomView);
         }
-        if (selectedRoom instanceof CombatRoom combatRoom) {
-            if (!combatRoom.isCompleted()) {
-
-                this.handleCombatRoom(combatRoom);
-                return;
-            }
-            this.refreshFloorViewState();
-            return;
+        if (!selectedRoom.isCompleted()) {
+            selectedRoom.visit(this);
         }
-        if (selectedRoom instanceof RewardRoom rewardRoom) {
-            if (!rewardRoom.isCompleted()) {
-                this.handleRewardRoom(rewardRoom);
-            }
-            this.refreshFloorViewState();
-            return;
-        } else if (selectedRoom instanceof EmptyRoom emptyRoom) {
-            this.handleEmptyRoom(emptyRoom);
-            this.refreshFloorViewState();
-            return;
-        } else {
-            throw new IllegalStateException("Unknown room type: " + selectedRoom.getClass().getSimpleName());
-        }
+        this.refreshFloorViewState();
     }
 
-    private void handleCombatRoom(CombatRoom combatRoom) {
+    public void handleCombatRoom(CombatRoom combatRoom) {
         Combat combat = combatRoom
                 .getCombat(new ManualTrainer(this.playerService.getActiveTeam(), this.playerService.getInventory()));
         this.metaController.startTowerCombat(combat);
     }
 
-    private void handleRewardRoom(RewardRoom rewardRoom) {
+    public void handleRewardRoom(RewardRoom rewardRoom) {
         // TODO: Implement reward room handling -> STORY 11
     }
 
-    private void handleEmptyRoom(EmptyRoom emptyRoom) {
+    public void handleEmptyRoom(EmptyRoom emptyRoom) {
         // No action needed for empty rooms, but method is here for clarity and future
         // extensibility.
     }
@@ -157,7 +140,6 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
      * Shows the floor map before continuing the run.
      */
     private void showFloorMap(Stage stage) {
-        // Configure la vue de la carte
         this.view.setFloorNumber(this.tower.getCurrentFloorNumber() + 1);
         this.view.setInstructions("Cliquez sur une salle disponible pour continuer votre ascension");
         this.updateFloorStructure();
@@ -231,17 +213,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         if (node.getDepth() == 0) {
             return RoomType.START;
         }
-        Room room = node.getRoom();
-        if (room instanceof CombatRoom combatRoom) {
-            return combatRoom.isBoss() ? RoomType.BOSS : RoomType.COMBAT;
-        }
-        if (room instanceof RewardRoom) {
-            return RoomType.REWARD;
-        }
-        if (room instanceof EmptyRoom) {
-            return RoomType.EMPTY;
-        }
-        throw new IllegalStateException("Unknown room type: " + room.getClass().getSimpleName());
+        return node.getRoom().getType();
     }
 
     private RoomState resolveRoomState(FloorNode node, FloorNode currentNode, Set<FloorNode> reachableNodes) {
@@ -301,14 +273,6 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
 
     public boolean hasActiveRun() {
         return this.tower != null && !this.runEnded;
-    }
-
-    public enum RoomType {
-        START,
-        COMBAT,
-        BOSS,
-        REWARD,
-        EMPTY
     }
 
     public enum RoomState {

@@ -264,13 +264,6 @@ public class FloorMapView extends View {
     }
 
     /**
-     * Removes all connections (lines) from the map.
-     */
-    private void clearConnections() {
-        this.innerMapPane.getChildren().removeIf(node -> node instanceof Line);
-    }
-
-    /**
      * Clears the map by removing all room nodes and connections.
      */
     public void clearMap() {

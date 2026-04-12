@@ -1,5 +1,6 @@
 package ulb.models.tower.room;
 
+import ulb.controllers.combat.TowerController;
 import ulb.models.combat.Combat;
 import ulb.models.tower.utils.CombatFactory;
 import ulb.models.trainer.Trainer;
@@ -37,6 +38,16 @@ public final class CombatRoom implements Room {
     @Override
     public String toString() {
         return "CombatRoom{ isBoss=" + this.isBoss + '}';
+    }
+
+    @Override
+    public void visit(TowerController controller) {
+        controller.handleCombatRoom(this);
+    }
+
+    @Override
+    public RoomType getType() {
+        return this.isBoss ? RoomType.BOSS : RoomType.COMBAT;
     }
 
 }
