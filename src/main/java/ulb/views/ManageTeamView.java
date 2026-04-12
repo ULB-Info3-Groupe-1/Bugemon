@@ -45,13 +45,6 @@ public class ManageTeamView extends View {
     private ListView<String> teamListView;
     @FXML
     private Text selectedTeamName;
-
-    @FXML
-    private Button saveTeamButton;
-    @FXML
-    private Button returnMainMenuButton;
-    @FXML
-    private Button addNewTeamButton;
     @FXML
     private Button modifyTeamButton;
     @FXML

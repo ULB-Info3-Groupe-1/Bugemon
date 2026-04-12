@@ -21,19 +21,19 @@
             <RowConstraints fillHeight="true" vgrow="ALWAYS" />
         </rowConstraints>
 
-        <Button fx:id="topLeft" wrapText="true" maxWidth="Infinity"
-            maxHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"
-            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+        <Button fx:id="topLeftButton" wrapText="true"
+            maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="0"
+            GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onAttack1Clicked" />
-        <Button fx:id="topRight" wrapText="true" maxWidth="Infinity"
-            maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"
-            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+        <Button fx:id="topRightButton" wrapText="true"
+            maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="1"
+            GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onAttack2Clicked" />
-        <Button fx:id="bottomLeft" wrapText="true" maxWidth="Infinity"
-            maxHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"
-            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+        <Button fx:id="bottomLeftButton" wrapText="true"
+            maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="0"
+            GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onAttack3Clicked" />
-        <Button fx:id="bottomRight" text="Retour" wrapText="true"
+        <Button text="Retour" wrapText="true"
             styleClass="btn,btn-secondary" maxWidth="Infinity"
             maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"

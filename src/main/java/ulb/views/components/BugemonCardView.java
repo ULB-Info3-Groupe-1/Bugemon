@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
@@ -18,8 +17,6 @@ public class BugemonCardView extends ComponentView {
     private static final String EMPTY_NAME = "?";
     private static final Image EMPTY_IMAGE = new Image(Configuration.Paths.DEFAULT_SPRITE);
 
-    @FXML
-    private StackPane imagePane;
     @FXML
     private ImageView imageView;
     @FXML
