@@ -23,8 +23,6 @@ public class RoomNodeView extends StackPane {
     private static final String FXML_PATH = "/fxml/components/RoomNode.fxml";
     private static final String ROOM_BASE_PATH = "/png/rooms/";
 
-    @FXML
-    private Rectangle background;
 
     @FXML
     private ImageView roomToken;

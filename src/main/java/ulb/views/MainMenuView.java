@@ -1,7 +1,6 @@
 package ulb.views;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
 import ulb.Configuration;
 
@@ -10,18 +9,6 @@ import ulb.Configuration;
  * registered via setters. The view holds no reference to any concrete controller class.
  */
 public class MainMenuView extends View {
-    @FXML
-    private Button createTeamButton;
-    @FXML
-    private Button createBugemonButton;
-    @FXML
-    private Button noTowerButton;
-    @FXML
-    private Button quitButton;
-    @FXML
-    private Button startAutomaticCombatButton;
-    @FXML
-    private Button startManualCombatButton;
 
     private Listener listener;
 

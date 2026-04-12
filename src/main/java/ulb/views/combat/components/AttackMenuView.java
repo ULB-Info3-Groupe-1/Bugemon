@@ -17,11 +17,11 @@ import ulb.views.components.ComponentView;
 public class AttackMenuView extends ComponentView {
 
     @FXML
-    private Button topLeft;
+    private Button topLeftButton;
     @FXML
-    private Button topRight;
+    private Button topRightButton;
     @FXML
-    private Button bottomLeft;
+    private Button bottomLeftButton;
 
     private final Attack[] attacks = new Attack[3];
     private Listener listener;
@@ -43,7 +43,7 @@ public class AttackMenuView extends ComponentView {
      *            the opposing trainer, used to derive type-matchup labels
      */
     public void show(List<Attack> attackList, Trainer opponent) {
-        Button[] buttons = {this.topLeft, this.topRight, this.bottomLeft};
+        Button[] buttons = {this.topLeftButton, this.topRightButton, this.bottomLeftButton};
         for (int i = 0; i < buttons.length; i++) {
             if (i < attackList.size()) {
                 Attack attack = attackList.get(i);

@@ -19,8 +19,6 @@ public class BugemonCardView extends ComponentView {
     private static final Image EMPTY_IMAGE = new Image(Configuration.Paths.DEFAULT_SPRITE);
 
     @FXML
-    private StackPane imagePane;
-    @FXML
     private ImageView imageView;
     @FXML
     private Label nameLabel;

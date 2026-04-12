@@ -21,22 +21,22 @@
             <RowConstraints fillHeight="true" vgrow="ALWAYS" />
         </rowConstraints>
 
-        <Button fx:id="topLeft" text="Attaque" wrapText="true"
+        <Button fx:id="topLeftButton" text="Attaque" wrapText="true"
             styleClass="btn,btn-danger" maxWidth="Infinity" maxHeight="Infinity"
             GridPane.columnIndex="0" GridPane.rowIndex="0"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onAttackClicked" />
-        <Button fx:id="topRight" text="Changer de Bugémon"
+        <Button fx:id="topRightButton" text="Changer de Bugémon"
             wrapText="true" styleClass="btn,btn-action-blue" maxWidth="Infinity"
             maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onSwitchClicked" />
-        <Button fx:id="bottomLeft" text="Utiliser un objet"
+        <Button fx:id="bottomLeftButton" text="Utiliser un objet"
             wrapText="true" styleClass="btn,btn-warning" maxWidth="Infinity"
             maxHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onInventoryClicked" />
-        <Button fx:id="bottomRight" text="Abandonner" wrapText="true"
+        <Button fx:id="bottomRightButton" text="Abandonner" wrapText="true"
             styleClass="btn,btn-secondary" maxWidth="Infinity"
             maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"

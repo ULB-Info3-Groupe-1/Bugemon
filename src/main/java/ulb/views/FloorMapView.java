@@ -46,9 +46,6 @@ public class FloorMapView extends View {
     private Pane innerMapPane;
 
     @FXML
-    private VBox actionButtonsContainer;
-
-    @FXML
     private ImageView playerIcon;
 
     private RoomNodeView currentRoom;
