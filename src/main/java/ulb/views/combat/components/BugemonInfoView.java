@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
 import ulb.Configuration;
-import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.views.components.ComponentView;
 
@@ -28,7 +28,7 @@ public class BugemonInfoView extends ComponentView {
     }
 
     /** Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class. */
-    public void setBugemonInfo(BugemonDTO bugemon) {
+    public void setBugemonInfo(Bugemon bugemon) {
         for (BugemonType type : BugemonType.values()) {
             this.getStyleClass().remove(type.toString());
         }

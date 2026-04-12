@@ -1,14 +1,14 @@
 package ulb.views;
 
 import java.io.File;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import ulb.Configuration;
-import ulb.common.dto.BugemonDTO;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.level_up.LevelUp;
 
 /**
@@ -65,7 +65,7 @@ public class LevelUpView extends View {
             return;
         }
 
-        BugemonDTO bugemon = this.levelUp.getBugemon();
+        Bugemon bugemon = this.levelUp.getBugemon();
 
         File file = new File(Configuration.Paths.SPRITES + bugemon.getSpriteURL());
         this.bugemonImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));

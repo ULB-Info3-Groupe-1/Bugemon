@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-import ulb.common.dto.BugemonDTO;
 import ulb.models.bugemon.components.AttackComponent;
 import ulb.models.bugemon.components.DefenseComponent;
 import ulb.models.bugemon.components.HealthComponent;
@@ -22,7 +21,7 @@ import ulb.models.level_up.Upgrade;
  * Central game entity. Stats are backed by components (see {@code ulb.models.bugemon.components}). Create instances via
  * {@link BugemonBuilder}; equality is based on {@link #id}.
  */
-public class Bugemon implements BugemonDTO {
+public class Bugemon {
     @SerializedName("id")
     String id;
 
@@ -101,12 +100,10 @@ public class Bugemon implements BugemonDTO {
      *
      * @return (String) the name of the bugemon.
      */
-    @Override
     public String getId() {
         return this.id;
     }
 
-    @Override
     public String getName() {
         return this.name;
     }
@@ -155,7 +152,6 @@ public class Bugemon implements BugemonDTO {
         this.initiativeComponent.clearModifiers();
     }
 
-    @Override
     public int getLevel() {
         return this.levelComponent.getLevel();
     }
@@ -168,7 +164,6 @@ public class Bugemon implements BugemonDTO {
         return this.levelComponent.getXp();
     }
 
-    @Override
     public double getXpProgress() {
         return this.levelComponent.getXpProgress();
     }
