@@ -9,7 +9,7 @@ SELECT
     ) as total_rows;
 
 -- Query
--- isTablesPresent
+-- areTablesPresent
 SELECT COUNT(*) as existing_critical_tables
 FROM pg_tables
 WHERE schemaname = 'public'
