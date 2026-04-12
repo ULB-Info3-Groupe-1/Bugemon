@@ -183,12 +183,6 @@ public class Bugemon implements BugemonDTO {
         return this.levelComponent.addXp(xp);
     }
 
-    /**
-     * Applies a level-up upgrade's stat bonuses to this Bugemon.
-     *
-     * @param upgrade
-     *            the {@link Upgrade} to apply
-     */
     public void applyUpgrade(Upgrade upgrade) {
         this.healthComponent.increaseMaxHp(upgrade.hp());
         this.attackComponent.increaseAttack(upgrade.attack());

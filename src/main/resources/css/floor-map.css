@@ -73,11 +73,11 @@
     -fx-effect: dropshadow(gaussian, #8e44ad, 14, 0.6, 0, 0);
 }
 
-.room-node.room-reward .room-background {
+.room-node.room-bonus .room-background {
     -fx-stroke: #f39c12;
 }
 
-.room-node.room-reward .room-type-icon {
+.room-node.room-bonus .room-type-icon {
     -fx-effect: dropshadow(gaussian, #f39c12, 10, 0.5, 0, 0);
 }
 

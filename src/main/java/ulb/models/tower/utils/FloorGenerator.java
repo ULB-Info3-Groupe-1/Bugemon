@@ -11,9 +11,9 @@ import java.util.Random;
 import java.util.Set;
 
 import ulb.models.tower.FloorNode;
+import ulb.models.tower.room.BonusRoom;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
-import ulb.models.tower.room.RewardRoom;
 
 public class FloorGenerator {
 
@@ -192,7 +192,7 @@ public class FloorGenerator {
                 break;
             }
             if (combatSet.contains(node.getParent().get()) && !node.equals(this.bossNode)) {
-                node.setRoom(new RewardRoom());
+                node.setRoom(new BonusRoom());
                 placed++;
             }
         }
