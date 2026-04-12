@@ -47,7 +47,7 @@ public class StaticDataRepository extends AbstractRepository {
     private void prepareDatabase() {
         // Verify if the critical tables exist in the database. If not, we create the schema and add
         // the default game data
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("isTablesPresent"))) {
+        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("areTablesPresent"))) {
             ResultSet rs = ps.executeQuery();
             if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
                 this.createSchema();
@@ -55,7 +55,7 @@ public class StaticDataRepository extends AbstractRepository {
                 return;
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("isTablesPresent failed", e);
+            throw new IllegalStateException("areTablesPresent failed", e);
         }
 
         // If the tables exist, we check if they contain the static game data. If not, we add the
