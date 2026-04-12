@@ -171,21 +171,21 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public void onLaunchAutomaticCombat() {
+    public void onStartAutomaticCombat() {
         if (!this.isActiveTeamEmpty()) {
             this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
         }
     }
 
     @Override
-    public void onLaunchManualCombat() {
+    public void onStartManualCombat() {
         if (!this.isActiveTeamEmpty()) {
             this.metaController.switchTo(Window.MANUAL_COMBAT);
         }
     }
 
     @Override
-    public void onLaunchNOTowerCombat() {
+    public void onStartNOTowerCombat() {
         if (!this.isActiveTeamEmpty()) {
             this.metaController.switchTo(Window.NOTOWER);
         }

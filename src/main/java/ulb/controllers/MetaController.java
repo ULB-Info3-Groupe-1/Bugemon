@@ -200,7 +200,7 @@ public class MetaController {
         this.isTowerActive = false;
     }
 
-    public void launchTowerCombat(Combat combat) {
+    public void startTowerCombat(Combat combat) {
         this.manualCombatController.startCombat(combat);
         this.manualCombatController.show(this.stage);
     }
