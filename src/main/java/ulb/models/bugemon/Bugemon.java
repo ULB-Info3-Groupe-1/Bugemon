@@ -1,5 +1,6 @@
 package ulb.models.bugemon;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -120,7 +121,7 @@ public class Bugemon implements BugemonDTO {
     }
 
     public List<Attack> getAttackList() {
-        return this.attackList;
+        return Collections.unmodifiableList(this.attackList);
     }
 
     public int getHp() {
