@@ -221,11 +221,11 @@ public class Parser {
 
             inventory = new Inventory();
             for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
-                String objectId = entry.getKey();
+                String itemId = entry.getKey();
                 int quantity = entry.getValue();
 
-                Item obj = items.stream().filter(o -> o.id().equals(objectId)).findFirst()
-                        .orElseThrow(() -> new RuntimeException("Object with ID " + objectId + " not found"));
+                Item obj = items.stream().filter(o -> o.id().equals(itemId)).findFirst()
+                        .orElseThrow(() -> new RuntimeException("Item with ID " + itemId + " not found"));
                 inventory.addItem(obj, quantity);
             }
             reader.close();
