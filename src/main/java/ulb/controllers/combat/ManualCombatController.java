@@ -96,7 +96,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         if (this.manualPlayerTrainer.isForcedToSwitch()) {
             this.manualPlayerTrainer.switchAfterKO(target);
             this.manualPlayerTrainer.setForcedSwitch(false);
-            this.view.refresh();
+            this.view.updateTrainerBugemon(this.manualPlayerTrainer.getCurrentBugemon());
+            this.view.refreshMenuState();
         } else {
             this.manualPlayerTrainer.setHasSwitchedThisTurn(true);
             this.manualPlayerTrainer.registerSwitch(target);
@@ -126,6 +127,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         }
         this.manualPlayerTrainer.setHasSwitchedThisTurn(false);
         this.view.hideDialog();
-        this.view.refresh();
+        this.view.refreshMenuState();
     }
 }

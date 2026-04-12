@@ -118,7 +118,20 @@ public abstract class CombatView extends View {
 
     // ── Dialog zone ───────────────────────────────────────────────────────────
 
+    /** Disables the Next button immediately so rapid clicks cannot queue steps during an animation. */
+    public void lockNextButton() {
+        this.dialogZoneView.setNextButtonDisabled(true);
+    }
+
+    /**
+     * Updates only the menus and action slots to reflect the current model state, without touching sprites or HP bars.
+     * Override in concrete views that have interactive menus.
+     */
+    public void refreshMenuState() {
+    }
+
     private void showDialog(String dialog) {
+        this.dialogZoneView.setNextButtonDisabled(false);
         this.dialogZoneView.setDialogText(dialog);
         this.dialogZoneView.setVisible(true);
         this.dialogZoneView.setManaged(true);
@@ -167,18 +180,28 @@ public abstract class CombatView extends View {
 
     // ── Bugemon display ───────────────────────────────────────────────────────
 
-    protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
+    public void updateTrainerBugemon(BugemonDTO trainerBugemon) {
         File file = new File(Configuration.Paths.SPRITES + trainerBugemon.getSpriteURL());
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.makeTrainerBugemonReappear();
     }
 
-    protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
+    public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         File file = new File(Configuration.Paths.SPRITES + opponentBugemon.getSpriteURL());
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
         this.makeOpponentBugemonReappear();
+    }
+
+    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
+    public void updateTrainerInfo(BugemonDTO bugemon) {
+        this.bugemonTrainerInfo.setBugemonInfo(bugemon);
+    }
+
+    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
+    public void updateOpponentInfo(BugemonDTO bugemon) {
+        this.bugemonOpponentInfo.setBugemonInfo(bugemon);
     }
 
     // ── Attack animations ─────────────────────────────────────────────────────
