@@ -135,8 +135,8 @@ public class StaticDataRepository extends AbstractRepository {
                 this.setHealParameters(psEffect, heal);
                 break;
 
-            case EffectResetMalus malus :
-                this.setResetMalusParameters(psEffect, malus);
+            case EffectResetMalus resetMalus :
+                this.setResetMalusParameters(psEffect, resetMalus);
                 break;
 
             default :
@@ -163,9 +163,9 @@ public class StaticDataRepository extends AbstractRepository {
         psEffect.setInt(7, heal.amount());
     }
 
-    private void setResetMalusParameters(PreparedStatement psEffect, EffectResetMalus malus) throws SQLException {
-        psEffect.setString(2, malus.getClass().getSimpleName());
-        psEffect.setString(3, malus.target().name());
+    private void setResetMalusParameters(PreparedStatement psEffect, EffectResetMalus resetMalus) throws SQLException {
+        psEffect.setString(2, resetMalus.getClass().getSimpleName());
+        psEffect.setString(3, resetMalus.target().name());
         psEffect.setNull(4, Types.VARCHAR);
         psEffect.setNull(5, Types.INTEGER);
         psEffect.setNull(6, Types.VARCHAR);
