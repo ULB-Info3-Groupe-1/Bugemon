@@ -23,8 +23,8 @@ public class CombatDefeatView extends View {
     }
 
     @FXML
-    private void onBackToMainMenuClicked() {
-        this.listener.onBackToMainMenu();
+    private void onReturnToMainMenuClicked() {
+        this.listener.onReturnToMainMenu();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CombatDefeatView extends View {
 
         void onRetry();
 
-        void onBackToMainMenu();
+        void onReturnToMainMenu();
 
     }
 }

@@ -78,9 +78,9 @@ public class FloorMapView extends View {
     }
 
     @FXML
-    private void onBackToMainMenuClicked() {
+    private void onReturnToMainMenuClicked() {
         if (this.listener != null) {
-            this.listener.onBackToMainMenu();
+            this.listener.onReturnToMainMenu();
         }
     }
 
@@ -309,6 +309,6 @@ public class FloorMapView extends View {
     public interface Listener {
         void onRoomClicked(RoomNodeView roomNode);
 
-        void onBackToMainMenu();
+        void onReturnToMainMenu();
     }
 }

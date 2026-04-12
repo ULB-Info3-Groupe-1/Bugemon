@@ -111,7 +111,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     @Override
-    public void onBackToMainMenu() {
+    public void onReturnToMainMenu() {
         this.metaController.endTowerFlow();
         this.runEnded = true;
         this.metaController.switchTo(Window.MAIN_MENU);

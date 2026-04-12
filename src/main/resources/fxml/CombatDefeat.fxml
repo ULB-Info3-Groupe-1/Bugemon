@@ -19,7 +19,7 @@
         <children>
             <Button onAction="#onRetryClicked" text="Réessayer"
                 styleClass="btn,btn-danger,btn-choice" />
-            <Button onAction="#onBackToMainMenuClicked"
+            <Button onAction="#onReturnToMainMenuClicked"
                 text="Retour au menu principal"
                 styleClass="btn,btn-secondary,btn-choice" />
         </children>
