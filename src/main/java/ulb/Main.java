@@ -50,8 +50,9 @@ public class Main extends Application {
 
         BugemonService bugemonService = new BugemonService(staticDataRepository);
         PlayerService playerService = new PlayerService(bugemonService, playerRepository, "default_player");
+        stage.show();
+        stage.setResizable(false);
         MetaController controller = new MetaController(stage, bugemonService, playerService);
         controller.switchTo(Window.MAIN_MENU);
-        stage.setResizable(false);
     }
 }
