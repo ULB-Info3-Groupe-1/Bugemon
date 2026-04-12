@@ -39,7 +39,7 @@
         </HBox>
     </top>
 
-    <!-- Team slots (left) + launch buttons (right) -->
+    <!-- Team slots (left) + start buttons (right) -->
     <center>
         <HBox spacing="28" alignment="TOP_LEFT">
             <HBox.margin>
@@ -73,16 +73,16 @@
                 <Button fx:id="addNewTeamButton" text="Nouvelle équipe +"
                     onAction="#onAddNewTeamClicked"
                     styleClass="btn,btn-success,btn-team" />
-                <Button fx:id="launchAutomaticCombatButton"
+                <Button fx:id="startAutomaticCombatButton"
                     text="Lancer combat automatique"
-                    onAction="#onLaunchAutomaticCombatClicked"
+                    onAction="#onStartAutomaticCombatClicked"
                     styleClass="btn,btn-success,btn-team" />
-                <Button fx:id="launchManualCombatButton"
-                    text="Lancer combat manuel" onAction="#onLaunchManualCombatClicked"
+                <Button fx:id="startManualCombatButton"
+                    text="Lancer combat manuel" onAction="#onStartManualCombatClicked"
                     styleClass="btn,btn-success,btn-team" />
-                <Button fx:id="launchNOTowerCombatButton"
+                <Button fx:id="startTowerCombatButton"
                     text="Lancer combat de la Tour NO"
-                    onAction="#onLaunchNOTowerCombatClicked"
+                    onAction="#onStartTowerCombatClicked"
                     styleClass="btn,btn-success,btn-team" />
                 <Button fx:id="deleteTeamButton" text="Supprimer"
                     onAction="#onDeleteClicked" styleClass="btn,btn-danger,btn-team" />

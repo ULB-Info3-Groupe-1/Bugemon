@@ -37,7 +37,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
         javafx.application.Platform.exit();
     }
 
-    /** Launches an automatic combat session. */
+    /** Starts an automatic combat session. */
     @Override
     public void onStartAutomaticCombat() {
         if (!this.isActiveTeamEmpty()) {
@@ -45,7 +45,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
         }
     }
 
-    /** Launches a manual combat session. */
+    /** Starts a manual combat session. */
     @Override
     public void onStartManualCombat() {
         if (!this.isActiveTeamEmpty()) {

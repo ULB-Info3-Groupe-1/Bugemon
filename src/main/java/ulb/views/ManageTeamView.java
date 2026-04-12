@@ -59,11 +59,11 @@ public class ManageTeamView extends View {
     @FXML
     private Button renameTeamButton;
     @FXML
-    private Button launchAutomaticCombatButton;
+    private Button startAutomaticCombatButton;
     @FXML
-    private Button launchManualCombatButton;
+    private Button startManualCombatButton;
     @FXML
-    private Button launchNOTowerCombatButton;
+    private Button startTowerCombatButton;
 
     private Listener listener;
     private BugemonTeam bugemonTeam;
@@ -131,18 +131,18 @@ public class ManageTeamView extends View {
     }
 
     @FXML
-    private void onLaunchAutomaticCombatClicked() {
-        this.listener.onLaunchAutomaticCombat();
+    private void onStartAutomaticCombatClicked() {
+        this.listener.onStartAutomaticCombat();
     }
 
     @FXML
-    private void onLaunchManualCombatClicked() {
-        this.listener.onLaunchManualCombat();
+    private void onStartManualCombatClicked() {
+        this.listener.onStartManualCombat();
     }
 
     @FXML
-    private void onLaunchNOTowerCombatClicked() {
-        this.listener.onLaunchNOTowerCombat();
+    private void onStartTowerCombatClicked() {
+        this.listener.onStartNOTowerCombat();
     }
 
     public void setTeam(BugemonTeam newBugemonTeam) {
@@ -213,11 +213,11 @@ public class ManageTeamView extends View {
 
         void onModifyTeam();
 
-        void onLaunchAutomaticCombat();
+        void onStartAutomaticCombat();
 
-        void onLaunchManualCombat();
+        void onStartManualCombat();
 
-        void onLaunchNOTowerCombat();
+        void onStartNOTowerCombat();
     }
 
     public void setMode(TeamFormMode mode) {
@@ -231,14 +231,14 @@ public class ManageTeamView extends View {
             this.deleteTeamButton.setVisible(false);
             this.deleteTeamButton.setManaged(false);
 
-            this.launchAutomaticCombatButton.setVisible(false);
-            this.launchAutomaticCombatButton.setManaged(false);
+            this.startAutomaticCombatButton.setVisible(false);
+            this.startAutomaticCombatButton.setManaged(false);
 
-            this.launchManualCombatButton.setVisible(false);
-            this.launchManualCombatButton.setManaged(false);
+            this.startManualCombatButton.setVisible(false);
+            this.startManualCombatButton.setManaged(false);
 
-            this.launchNOTowerCombatButton.setVisible(false);
-            this.launchNOTowerCombatButton.setManaged(false);
+            this.startTowerCombatButton.setVisible(false);
+            this.startTowerCombatButton.setManaged(false);
         }
     }
 }

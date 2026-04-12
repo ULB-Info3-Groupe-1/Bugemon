@@ -16,7 +16,7 @@ import ulb.services.PlayerService;
 
 /**
  * Coordinates the NO Tower run. Has no view of its own — delegates combat display to
- * {@link MetaController#launchTowerCombat} and receives results via {@link #onTowerCombatFinished}.
+ * {@link MetaController#startTowerCombat} and receives results via {@link #onTowerCombatFinished}.
  *
  * <p>
  * Room navigation is automatic for now (first available child). When a TowerView is added, {@link #autoAdvance} is the
@@ -80,7 +80,7 @@ public class TowerController {
 
         if (room instanceof CombatRoom combatRoom) {
             Combat combat = combatRoom.getCombat(this.tower.getPlayerTrainer());
-            this.metaController.launchTowerCombat(combat);
+            this.metaController.startTowerCombat(combat);
             return;
         }
 
