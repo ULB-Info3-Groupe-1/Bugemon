@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public enum EffectTarget {
     @SerializedName("adversaire")
-    ADVERSARY,
+    OPPONENT,
     @SerializedName("lanceur")
     THROWER,
     @SerializedName("equipe")
