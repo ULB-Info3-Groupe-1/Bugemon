@@ -40,7 +40,7 @@
             styleClass="btn,btn-secondary" maxWidth="Infinity"
             maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
-            onAction="#onSurrenderClicked" />
+            onAction="#onForfeitClicked" />
     </GridPane>
 
 </fx:root>

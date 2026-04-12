@@ -48,8 +48,8 @@ public class ManualCombatView extends CombatView {
             }
 
             @Override
-            public void onSurrender() {
-                ManualCombatView.this.listener.onSurrender();
+            public void onForfeit() {
+                ManualCombatView.this.listener.onForfeit();
             }
 
         });
@@ -224,7 +224,7 @@ public class ManualCombatView extends CombatView {
 
         void onSwitch(Bugemon bugemon);
 
-        void onSurrender();
+        void onForfeit();
 
         void onItemSelected(Item item);
     }
