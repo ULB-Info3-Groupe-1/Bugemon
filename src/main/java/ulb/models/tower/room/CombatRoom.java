@@ -38,4 +38,5 @@ public final class CombatRoom implements Room {
     public String toString() {
         return "CombatRoom{ isBoss=" + this.isBoss + '}';
     }
+
 }

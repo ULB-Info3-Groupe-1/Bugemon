@@ -31,7 +31,9 @@ import ulb.views.ManageTeamView;
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
-    /** All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition. */
+    /**
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     */
     public enum Window {
         MAIN_MENU,
         CREATE_TEAM,
@@ -162,7 +164,7 @@ public class MetaController {
         this.transitions.put(Window.NOTOWER, () -> {
             this.isTowerActive = true;
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.towerController.runTower();
+            this.towerController.runTower(this.stage);
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show(this.stage);
@@ -201,7 +203,18 @@ public class MetaController {
     }
 
     public void startTowerCombat(Combat combat) {
+        this.musicPlayer.stopMusic();
+        this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
         this.manualCombatController.startCombat(combat);
         this.manualCombatController.show(this.stage);
     }
+
+    public ManualCombatController getCombatController() {
+        return this.manualCombatController;
+    }
+
+    // TODO: when we implement rewards !! <3 uwu
+    // public RewardController getRewardController() {
+    // return this.rewardController;
+    // }
 }
