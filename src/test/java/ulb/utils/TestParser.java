@@ -85,11 +85,11 @@ public class TestParser {
     public void testParseWithInputStreams() {
         InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
         InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
-        InputStream objectsStream = getClass().getResourceAsStream("/json/objets.json");
+        InputStream itemsStream = getClass().getResourceAsStream("/json/objets.json");
 
         assertNotNull(attacksStream);
         assertNotNull(bugemonsStream);
-        assertNotNull(objectsStream);
+        assertNotNull(itemsStream);
 
         Parser parser = new Parser();
         parser.parse();
@@ -111,41 +111,41 @@ public class TestParser {
     }
 
     @Test
-    public void testParseObjects() {
-        InputStream objectsStream = getClass().getResourceAsStream("/json/objets.json");
+    public void testParseItems() {
+        InputStream itemsStream = getClass().getResourceAsStream("/json/objets.json");
 
-        assertNotNull(objectsStream);
+        assertNotNull(itemsStream);
 
         Parser tempInstance = new Parser();
         tempInstance.parse();
 
-        List<Item> objectsList = tempInstance.getItems();
+        List<Item> itemsList = tempInstance.getItems();
         Inventory inventory = tempInstance.getInventory();
 
-        assertNotNull(objectsList);
+        assertNotNull(itemsList);
         assertNotNull(inventory);
 
-        Item testObject = objectsList.stream().filter(o -> "baie_revigorante".equals(o.id())).findFirst().orElseThrow();
+        Item testItem = itemsList.stream().filter(o -> "baie_revigorante".equals(o.id())).findFirst().orElseThrow();
 
         Effect effect = new EffectStatModifier(EffectTarget.THROWER, EffectStat.HP, 20, null);
         Item potion = new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
                 Item.ItemType.HEALING, effect);
 
-        assertEquals(potion.id(), testObject.id());
-        assertEquals(potion.name(), testObject.name());
-        assertEquals(potion.description(), testObject.description());
-        assertEquals(potion.type(), testObject.type());
+        assertEquals(potion.id(), testItem.id());
+        assertEquals(potion.name(), testItem.name());
+        assertEquals(potion.description(), testItem.description());
+        assertEquals(potion.type(), testItem.type());
 
         assertEquals(7, inventory.getMap().values().stream().mapToInt(i -> i).sum());
-        Map<Item, Integer> objects = inventory.getMap();
-        long revigoranteCount = objects.entrySet().stream().filter(e -> "baie_revigorante".equals(e.getKey().id()))
+        Map<Item, Integer> items = inventory.getMap();
+        long revigoranteCount = items.entrySet().stream().filter(e -> "baie_revigorante".equals(e.getKey().id()))
                 .mapToLong(Map.Entry::getValue).sum();
-        long toniqueCount = objects.entrySet().stream().filter(e -> "baie_tonique".equals(e.getKey().id()))
+        long toniqueCount = items.entrySet().stream().filter(e -> "baie_tonique".equals(e.getKey().id()))
                 .mapToLong(Map.Entry::getValue).sum();
-        long gelCount = objects.entrySet().stream().filter(e -> "gel_defensif".equals(e.getKey().id()))
+        long gelCount = items.entrySet().stream().filter(e -> "gel_defensif".equals(e.getKey().id()))
                 .mapToLong(Map.Entry::getValue).sum();
 
-        long serumCount = objects.entrySet().stream().filter(e -> "serum_offensif".equals(e.getKey().id()))
+        long serumCount = items.entrySet().stream().filter(e -> "serum_offensif".equals(e.getKey().id()))
                 .mapToLong(Map.Entry::getValue).sum();
 
         assertEquals(3, revigoranteCount);
