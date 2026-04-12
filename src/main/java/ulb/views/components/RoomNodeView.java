@@ -14,7 +14,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 
 import ulb.controllers.combat.TowerController.RoomState;
-import ulb.controllers.combat.TowerController.RoomType;
+import ulb.models.tower.room.RoomType;
 
 /**
  * Reusable component representing a single room node in the floor map. Configurable to represent different room types
