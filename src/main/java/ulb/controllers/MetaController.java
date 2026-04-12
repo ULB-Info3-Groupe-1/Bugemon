@@ -18,6 +18,7 @@ import ulb.controllers.combat.TowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
@@ -99,7 +100,7 @@ public class MetaController {
         LOG.info(String.format("onCombatFinished, won: %b, numLevelUps: %d", won, levelUps.size()));
 
         if (this.isTowerActive()) {
-            // this.towerController.onTowerCombatFinished(won);
+            this.towerController.onTowerCombatFinished(won);
             return;
         }
 
@@ -195,6 +196,17 @@ public class MetaController {
 
     public boolean isTowerActive() {
         return this.isTowerActive;
+    }
+
+    public void endTowerFlow() {
+        this.isTowerActive = false;
+    }
+
+    public void startTowerCombat(Combat combat) {
+        this.musicPlayer.stopMusic();
+        this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+        this.manualCombatController.startCombat(combat);
+        this.manualCombatController.show(this.stage);
     }
 
     public ManualCombatController getCombatController() {

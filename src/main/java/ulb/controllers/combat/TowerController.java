@@ -31,6 +31,9 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     private final PlayerService playerService;
     private final BugemonService bugemonService;
     private final Map<RoomNodeView, FloorNode> floorNodesByRoomNode;
+    private final Map<FloorNode, RoomNodeView> roomNodesByFloorNode;
+    private final Set<FloorNode> visitedNodes;
+    private int renderedFloorNumber;
     private boolean runEnded;
 
     public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService)
@@ -40,6 +43,9 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         this.playerService = playerService;
         this.bugemonService = bugemonService;
         this.floorNodesByRoomNode = new HashMap<>();
+        this.roomNodesByFloorNode = new HashMap<>();
+        this.visitedNodes = new HashSet<>();
+        this.renderedFloorNumber = -1;
         this.view.setListener(this);
     }
 
@@ -53,20 +59,37 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         Floor currentFloor = this.tower.getCurrentFloor();
         FloorNode currentNode = currentFloor.getCurrentPosition();
         currentFloor.moveTo(selectedNode);
-        if (currentNode.equals(currentFloor.getCurrentPosition())) {
+        FloorNode nextNode = currentFloor.getCurrentPosition();
+        if (currentNode.equals(nextNode)) {
             return;
         }
+        this.visitedNodes.add(currentNode);
+        this.visitedNodes.add(nextNode);
 
-        this.view.animatePlayerTo(roomNodeView);
-        Room selectedRoom = selectedNode.getRoom();
-        if (selectedRoom instanceof CombatRoom) {
-            this.handleCombatRoom((CombatRoom) selectedRoom);
-        } else if (selectedRoom instanceof RewardRoom) {
-            this.handleRewardRoom((RewardRoom) selectedRoom);
-            this.setupFloorView();
-        } else if (selectedRoom instanceof EmptyRoom) {
-            this.handleEmptyRoom((EmptyRoom) selectedRoom);
-            this.setupFloorView();
+        Room selectedRoom = nextNode.getRoom();
+        RoomNodeView targetRoomView = this.roomNodesByFloorNode.get(nextNode);
+        if (targetRoomView != null) {
+            this.view.animatePlayerTo(targetRoomView);
+        }
+        if (selectedRoom instanceof CombatRoom combatRoom) {
+            if (!combatRoom.isCompleted()) {
+
+                this.handleCombatRoom(combatRoom);
+                return;
+            }
+            this.refreshFloorViewState();
+            return;
+        }
+        if (selectedRoom instanceof RewardRoom rewardRoom) {
+            if (!rewardRoom.isCompleted()) {
+                this.handleRewardRoom(rewardRoom);
+            }
+            this.refreshFloorViewState();
+            return;
+        } else if (selectedRoom instanceof EmptyRoom emptyRoom) {
+            this.handleEmptyRoom(emptyRoom);
+            this.refreshFloorViewState();
+            return;
         } else {
             throw new IllegalStateException("Unknown room type: " + selectedRoom.getClass().getSimpleName());
         }
@@ -75,13 +98,11 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     private void handleCombatRoom(CombatRoom combatRoom) {
         Combat combat = combatRoom
                 .getCombat(new ManualTrainer(this.playerService.getActiveTeam(), this.playerService.getInventory()));
-        ManualCombatController manualCombatController = this.metaController.getCombatController();
-        manualCombatController.startCombat(combat);
-
+        this.metaController.startTowerCombat(combat);
     }
 
     private void handleRewardRoom(RewardRoom rewardRoom) {
-        // TODO: Implement reward room handling
+        // TODO: Implement reward room handling -> STORY 11
     }
 
     private void handleEmptyRoom(EmptyRoom emptyRoom) {
@@ -91,7 +112,33 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
 
     @Override
     public void onBackToMainMenu() {
+        this.metaController.endTowerFlow();
+        this.runEnded = true;
         this.metaController.switchTo(Window.MAIN_MENU);
+    }
+
+    public void onTowerCombatFinished(boolean playerWon) {
+        Floor currentFloor = this.tower.getCurrentFloor();
+        Room currentRoom = currentFloor.getCurrentRoom();
+        if (!(currentRoom instanceof CombatRoom combatRoom)) {
+            throw new IllegalStateException("Tower combat finished outside a combat room");
+        }
+
+        if (!playerWon) {
+            this.runEnded = true;
+            this.metaController.endTowerFlow();
+            this.metaController.switchTo(Window.COMBAT_DEFEAT);
+            this.playerService.restoreHpActiveTeam();
+            return;
+        }
+
+        combatRoom.markCompleted();
+        this.visitedNodes.add(currentFloor.getCurrentPosition());
+        if (currentFloor.isComplete() && !this.advanceToNextFloorIfPossible()) {
+            return;
+        }
+
+        this.metaController.switchTo(Window.NOTOWER);
     }
 
     /**
@@ -113,46 +160,48 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         // Configure la vue de la carte
         this.view.setFloorNumber(this.tower.getCurrentFloorNumber() + 1);
         this.view.setInstructions("Cliquez sur une salle disponible pour continuer votre ascension");
-
-        this.setupFloorView();
+        this.updateFloorStructure();
+        this.refreshFloorViewState();
 
         // Show the view using the Controller's show() method
         this.show(stage);
     }
 
-    private void setupFloorView() {
-        Floor currentFloor = this.tower.getCurrentFloor();
-        FloorNode currentNode = currentFloor.getCurrentPosition();
+    private void updateFloorStructure() {
+        int currentFloorNumber = this.tower.getCurrentFloorNumber();
+        if (this.renderedFloorNumber == currentFloorNumber && !this.roomNodesByFloorNode.isEmpty()) {
+            return;
+        }
+
+        this.setupFloorStructure(this.tower.getCurrentFloor());
+        this.renderedFloorNumber = currentFloorNumber;
+        this.visitedNodes.clear();
+    }
+
+    private void setupFloorStructure(Floor currentFloor) {
         List<FloorNode> floorNodes = currentFloor.getFloorNodes();
-        Set<FloorNode> reachableNodes = new HashSet<>(currentFloor.getReachableNodes());
-        Set<FloorNode> visitedNodes = this.collectVisitedNodes(currentNode);
-        Map<FloorNode, RoomNodeView> roomNodeByFloorNode = new HashMap<>();
 
         this.floorNodesByRoomNode.clear();
+        this.roomNodesByFloorNode.clear();
         this.view.clearMap();
 
         for (FloorNode node : floorNodes) {
             RoomNodeView roomNodeView = new RoomNodeView();
             roomNodeView.setPosition(node.getX(), node.getY());
             roomNodeView.setRoomType(this.resolveRoomType(node));
-            roomNodeView.setRoomState(this.resolveRoomState(node, currentNode, reachableNodes, visitedNodes));
             this.floorNodesByRoomNode.put(roomNodeView, node);
-            roomNodeByFloorNode.put(node, roomNodeView);
+            this.roomNodesByFloorNode.put(node, roomNodeView);
             this.view.addRoomNode(roomNodeView);
-        }
-        RoomNodeView currentRoomView = roomNodeByFloorNode.get(currentNode);
-        if (currentRoomView != null) {
-            this.view.setupPlayer(currentRoomView, "/png/Trainer.png");
         }
 
         this.view.centerMap();
         for (FloorNode node : floorNodes) {
-            RoomNodeView source = roomNodeByFloorNode.get(node);
+            RoomNodeView source = this.roomNodesByFloorNode.get(node);
             if (source == null) {
                 continue;
             }
             for (FloorNode child : node.getChildren()) {
-                RoomNodeView target = roomNodeByFloorNode.get(child);
+                RoomNodeView target = this.roomNodesByFloorNode.get(child);
                 if (target != null) {
                     this.view.addConnectionBetweenRooms(source, target);
                 }
@@ -160,14 +209,22 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         }
     }
 
-    private Set<FloorNode> collectVisitedNodes(FloorNode currentNode) {
-        Set<FloorNode> visitedNodes = new HashSet<>();
-        FloorNode cursor = currentNode;
-        while (cursor != null) {
-            visitedNodes.add(cursor);
-            cursor = cursor.getParent().orElse(null);
+    private void refreshFloorViewState() {
+        Floor currentFloor = this.tower.getCurrentFloor();
+        FloorNode currentNode = currentFloor.getCurrentPosition();
+        Set<FloorNode> reachableNodes = new HashSet<>(currentFloor.getReachableNodes());
+        this.visitedNodes.add(currentNode);
+
+        for (Map.Entry<FloorNode, RoomNodeView> entry : this.roomNodesByFloorNode.entrySet()) {
+            FloorNode node = entry.getKey();
+            RoomNodeView roomNodeView = entry.getValue();
+            roomNodeView.setRoomState(this.resolveRoomState(node, currentNode, reachableNodes));
         }
-        return visitedNodes;
+
+        RoomNodeView currentRoomView = this.roomNodesByFloorNode.get(currentNode);
+        if (currentRoomView != null) {
+            this.view.setupPlayer(currentRoomView, "/png/Trainer.png");
+        }
     }
 
     private RoomType resolveRoomType(FloorNode node) {
@@ -187,16 +244,15 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         throw new IllegalStateException("Unknown room type: " + room.getClass().getSimpleName());
     }
 
-    private RoomState resolveRoomState(FloorNode node, FloorNode currentNode, Set<FloorNode> reachableNodes,
-            Set<FloorNode> visitedNodes) {
+    private RoomState resolveRoomState(FloorNode node, FloorNode currentNode, Set<FloorNode> reachableNodes) {
         if (node.equals(currentNode)) {
             return RoomState.CURRENT;
         }
+        if (node.getRoom().isCompleted() || this.visitedNodes.contains(node)) {
+            return RoomState.VISITED;
+        }
         if (reachableNodes.contains(node)) {
             return RoomState.AVAILABLE;
-        }
-        if (visitedNodes.contains(node)) {
-            return RoomState.VISITED;
         }
         return RoomState.LOCKED;
     }
@@ -217,41 +273,13 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         if (this.tower == null || this.runEnded) {
             this.tower = new Tower(this.playerService.getActiveTeam(), this.playerService, this.bugemonService);
             this.runEnded = false;
+            this.renderedFloorNumber = -1;
+            this.floorNodesByRoomNode.clear();
+            this.roomNodesByFloorNode.clear();
+            this.visitedNodes.clear();
         }
 
         return true;
-    }
-
-    /**
-     * Continues the current Tower run until a combat room is reached, the run ends, or the tower is completed.
-     */
-    private void continueRun() {
-        while (!this.runEnded) {
-            Floor currentFloor = this.tower.getCurrentFloor();
-
-            if (currentFloor.isComplete()) {
-                if (!this.advanceToNextFloorIfPossible()) {
-                    return;
-                }
-                continue;
-            }
-
-            Room currentRoom = currentFloor.getCurrentRoom();
-
-            if (currentRoom instanceof CombatRoom) {
-                return;
-            }
-        }
-    }
-
-    private void handleCombatResult(boolean playerWon, Floor floor) {
-        if (!playerWon) {
-            this.runEnded = true;
-            this.metaController.switchTo(Window.COMBAT_DEFEAT);
-            this.playerService.restoreHpActiveTeam();
-            return;
-        }
-        this.continueRun();
     }
 
     private boolean advanceToNextFloorIfPossible() {
@@ -262,6 +290,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         // Reaching the end of floor 9 means the Tower run is complete.
         if (this.tower.getCurrentFloorNumber() == 8) {
             this.runEnded = true;
+            this.metaController.endTowerFlow();
             this.metaController.switchTo(Window.COMBAT_VICTORY);
             return false;
         }
