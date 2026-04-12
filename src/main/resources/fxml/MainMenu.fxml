@@ -14,8 +14,9 @@
         text="Créer une équipe" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="editTeamButton" onAction="#onEditTeamClicked"
         text="Gérer mes équipes" styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="createBugemonButton" onAction="#onCreateBugemonClicked"
-        text="Créer un nouveau Bugemon" styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="createBugemonButton"
+        onAction="#onCreateBugemonClicked" text="Créer un nouveau Bugemon"
+        styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="startAutomaticCombatButton"
         onAction="#onStartAutomaticCombatClicked"
         text="Lancer combat automatique" styleClass="btn,btn-primary,btn-nav" />

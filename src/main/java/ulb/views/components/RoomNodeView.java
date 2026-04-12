@@ -11,7 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
 
 import ulb.controllers.combat.TowerController.RoomState;
 import ulb.models.tower.room.RoomType;
@@ -22,7 +21,6 @@ import ulb.models.tower.room.RoomType;
 public class RoomNodeView extends StackPane {
     private static final String FXML_PATH = "/fxml/components/RoomNode.fxml";
     private static final String ROOM_BASE_PATH = "/png/rooms/";
-
 
     @FXML
     private ImageView roomToken;

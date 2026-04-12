@@ -12,7 +12,7 @@ import ulb.views.components.ComponentView;
  * disabled whenever a voluntary switch is not available, as signalled by {@link #refresh(boolean)}.
  */
 public class ActionMenuView extends ComponentView {
-    
+
     @FXML
     private Button topRightButton;
 

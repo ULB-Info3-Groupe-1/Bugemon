@@ -36,8 +36,8 @@
             maxHeight="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onInventoryClicked" />
-        <Button fx:id="bottomRightButton" text="Abandonner" wrapText="true"
-            styleClass="btn,btn-secondary" maxWidth="Infinity"
+        <Button fx:id="bottomRightButton" text="Abandonner"
+            wrapText="true" styleClass="btn,btn-secondary" maxWidth="Infinity"
             maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"
             GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
             onAction="#onForfeitClicked" />
