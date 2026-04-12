@@ -112,13 +112,15 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             // reactToKo() and view update are deferred into the animation callback so the
             // death animation plays on the dead Bugemon. After the fade-out, only the KO'd
             // side updates: makeReappear() fades the new Bugemon in from opacity 0.
-            // refreshMenuState() handles the forced-switch menu without touching the other side.
+            // refreshMenuState() handles the forced-switch menu without touching the other
+            // side.
             case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> this.showNextStep(step, () -> {
                 trainer.reactToKo();
-                if (trainer == this.playerTrainer)
+                if (trainer == this.playerTrainer) {
                     this.view.updateTrainerBugemon(trainer.getCurrentBugemon());
-                else
+                } else {
                     this.view.updateOpponentBugemon(trainer.getCurrentBugemon());
+                }
                 this.view.refreshMenuState();
             });
 
@@ -134,10 +136,11 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             });
 
             case TurnStep.SwitchStep s -> this.showNextStep(step, () -> {
-                if (s.trainer() == this.playerTrainer)
+                if (s.trainer() == this.playerTrainer) {
                     this.view.updateTrainerBugemon(s.trainer().getCurrentBugemon());
-                else
+                } else {
                     this.view.updateOpponentBugemon(s.trainer().getCurrentBugemon());
+                }
             });
 
             case TurnStep.ItemStep s -> this.showNextStep(step, () -> this.updateInfoForTrainer(s.trainer()));
@@ -148,10 +151,11 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     }
 
     private void updateInfoForTrainer(Trainer trainer) {
-        if (trainer == this.playerTrainer)
+        if (trainer == this.playerTrainer) {
             this.view.updateTrainerInfo(trainer.getCurrentBugemon());
-        else
+        } else {
             this.view.updateOpponentInfo(trainer.getCurrentBugemon());
+        }
     }
 
     /**
