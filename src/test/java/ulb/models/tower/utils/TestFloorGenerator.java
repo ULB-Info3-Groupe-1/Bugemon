@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.BonusRoom;
+import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 
@@ -28,7 +28,7 @@ public class TestFloorGenerator {
     private List<FloorNode> deepestNodes;
     private List<FloorNode> combatNodes;
     private int deepestLevel;
-    private int bonusCount;
+    private int rewardCount;
 
     @Before
     public void setup() {
@@ -37,7 +37,7 @@ public class TestFloorGenerator {
 
         this.allNodes = new ArrayList<>();
         this.combatNodes = new ArrayList<>();
-        this.bonusCount = 0;
+        this.rewardCount = 0;
         this.deepestLevel = 0;
 
         Deque<FloorNode> queue = new LinkedList<>();
@@ -54,8 +54,8 @@ public class TestFloorGenerator {
 
                 if (node.getRoom() instanceof CombatRoom combatRoom && !combatRoom.isBoss()) {
                     this.combatNodes.add(node);
-                } else if (node.getRoom() instanceof BonusRoom) {
-                    this.bonusCount++;
+                } else if (node.getRoom() instanceof RewardRoom) {
+                    this.rewardCount++;
                 }
 
                 queue.addAll(node.getChildren());
@@ -105,11 +105,11 @@ public class TestFloorGenerator {
     }
 
     @Test
-    public void testBonusRoomCountInRange() {
-        assertTrue("Too few BonusRooms: " + this.bonusCount + " < MIN_BONUS=" + FloorGenerator.MIN_BONUS,
-                this.bonusCount >= FloorGenerator.MIN_BONUS);
-        assertTrue("Too many BonusRooms: " + this.bonusCount + " > MAX_BONUS=" + FloorGenerator.MAX_BONUS,
-                this.bonusCount <= FloorGenerator.MAX_BONUS);
+    public void testRewardRoomCountInRange() {
+        assertTrue("Too few RewardRooms: " + this.rewardCount + " < MIN_REWARD=" + FloorGenerator.MIN_REWARD,
+                this.rewardCount >= FloorGenerator.MIN_REWARD);
+        assertTrue("Too many RewardRooms: " + this.rewardCount + " > MAX_REWARD=" + FloorGenerator.MAX_REWARD,
+                this.rewardCount <= FloorGenerator.MAX_REWARD);
     }
 
     @Test
@@ -122,12 +122,12 @@ public class TestFloorGenerator {
     }
 
     @Test
-    public void testBonusRoomHasCombatRoomParent() {
+    public void testRewardRoomHasCombatRoomParent() {
         for (FloorNode node : this.allNodes) {
-            if (node.getRoom() instanceof BonusRoom) {
-                assertTrue("BonusRoom at (" + node.getX() + "," + node.getY() + ") has no parent",
+            if (node.getRoom() instanceof RewardRoom) {
+                assertTrue("RewardRoom at (" + node.getX() + "," + node.getY() + ") has no parent",
                         node.getParent().isPresent());
-                assertTrue("BonusRoom at (" + node.getX() + "," + node.getY() + ") parent is not a CombatRoom",
+                assertTrue("RewardRoom at (" + node.getX() + "," + node.getY() + ") parent is not a CombatRoom",
                         node.getParent().get().getRoom() instanceof CombatRoom);
             }
         }

@@ -2,8 +2,8 @@ package ulb.models.tower.room;
 
 import ulb.controllers.combat.TowerController;
 
-public final class BonusRoom implements Room {
-    public BonusRoom() {
+public final class RewardRoom implements Room {
+    public RewardRoom() {
     }
 
     @Override
@@ -13,11 +13,11 @@ public final class BonusRoom implements Room {
 
     @Override
     public void visit(TowerController controller) {
-        controller.handleBonusRoom(this);
+        controller.handleRewardRoom(this);
     }
 
     @Override
     public RoomType getType() {
-        return RoomType.BONUS;
+        return RoomType.REWARD;
     }
 }

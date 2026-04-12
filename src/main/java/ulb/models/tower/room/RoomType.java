@@ -4,6 +4,6 @@ public enum RoomType {
     START,
     COMBAT,
     BOSS,
-    BONUS,
+    REWARD,
     EMPTY
 }
