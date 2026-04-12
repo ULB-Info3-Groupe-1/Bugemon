@@ -213,8 +213,4 @@ public class MetaController {
         return this.manualCombatController;
     }
 
-    // TODO: when we implement rewards !! <3 uwu
-    // public RewardController getRewardController() {
-    // return this.rewardController;
-    // }
 }

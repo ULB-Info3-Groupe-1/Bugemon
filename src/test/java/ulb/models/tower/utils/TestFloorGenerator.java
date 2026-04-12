@@ -13,9 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.tower.FloorNode;
+import ulb.models.tower.room.BonusRoom;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
-import ulb.models.tower.room.RewardRoom;
 
 public class TestFloorGenerator {
     private static final CombatFactory COMBAT_FACTORY_MOCK = mock(CombatFactory.class);
@@ -54,7 +54,7 @@ public class TestFloorGenerator {
 
                 if (node.getRoom() instanceof CombatRoom combatRoom && !combatRoom.isBoss()) {
                     this.combatNodes.add(node);
-                } else if (node.getRoom() instanceof RewardRoom) {
+                } else if (node.getRoom() instanceof BonusRoom) {
                     this.bonusCount++;
                 }
 
@@ -106,9 +106,9 @@ public class TestFloorGenerator {
 
     @Test
     public void testBonusRoomCountInRange() {
-        assertTrue("Too few RewardRooms: " + this.bonusCount + " < MIN_BONUS=" + FloorGenerator.MIN_BONUS,
+        assertTrue("Too few BonusRooms: " + this.bonusCount + " < MIN_BONUS=" + FloorGenerator.MIN_BONUS,
                 this.bonusCount >= FloorGenerator.MIN_BONUS);
-        assertTrue("Too many RewardRooms: " + this.bonusCount + " > MAX_BONUS=" + FloorGenerator.MAX_BONUS,
+        assertTrue("Too many BonusRooms: " + this.bonusCount + " > MAX_BONUS=" + FloorGenerator.MAX_BONUS,
                 this.bonusCount <= FloorGenerator.MAX_BONUS);
     }
 
@@ -122,12 +122,12 @@ public class TestFloorGenerator {
     }
 
     @Test
-    public void testRewardRoomHasCombatRoomParent() {
+    public void testBonusRoomHasCombatRoomParent() {
         for (FloorNode node : this.allNodes) {
-            if (node.getRoom() instanceof RewardRoom) {
-                assertTrue("RewardRoom at (" + node.getX() + "," + node.getY() + ") has no parent",
+            if (node.getRoom() instanceof BonusRoom) {
+                assertTrue("BonusRoom at (" + node.getX() + "," + node.getY() + ") has no parent",
                         node.getParent().isPresent());
-                assertTrue("RewardRoom at (" + node.getX() + "," + node.getY() + ") parent is not a CombatRoom",
+                assertTrue("BonusRoom at (" + node.getX() + "," + node.getY() + ") parent is not a CombatRoom",
                         node.getParent().get().getRoom() instanceof CombatRoom);
             }
         }
