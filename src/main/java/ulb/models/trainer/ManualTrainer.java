@@ -127,7 +127,7 @@ public class ManualTrainer extends Trainer {
 
     public void useItem(Item item) {
         this.inventory.useItem(item);
-        this.currentBugemon.addEffect(item.effect());
+        this.currentBugemon.apply(item.effect());
     }
 
     public Map<Item, Integer> getInventoryMap() {

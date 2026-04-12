@@ -195,28 +195,28 @@ public class Bugemon implements BugemonDTO {
         this.initiativeComponent.increaseInitiative(upgrade.initiative());
     }
 
-    public void addEffect(Effect effect) {
-        switch (effect) {
-            case EffectStatModifier e -> {
-                // TODO: I feel like this part should probably be done elsewhere
-                EffectDuration duration = e.duration();
-                Modifier modifier = (duration == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1)
-                        : new Modifier(e.modifier());
+    public void apply(Effect effect) {
+        effect.applyTo(this);
+    }
 
-                switch (e.stat()) {
-                    case HP -> this.healthComponent.addModifier(modifier);
-                    case ATTACK -> this.attackComponent.addModifier(modifier);
-                    case DEFENSE -> this.defenseComponent.addModifier(modifier);
-                    case INITIATIVE -> this.initiativeComponent.addModifier(modifier);
-                    default -> throw new IllegalArgumentException("unknown stat: " + e.stat());
-                }
-            }
-
-            case EffectHeal e -> this.healthComponent.increaseHp(e.amount());
-            case EffectResetMalus e -> this.resetModifiers();
-
-            default -> throw new IllegalArgumentException("unknown effect");
+    public void apply(EffectStatModifier e) {
+        Modifier m = (e.duration() == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1)
+                : new Modifier(e.modifier());
+        switch (e.stat()) {
+            case HP -> this.healthComponent.addModifier(m);
+            case ATTACK -> this.attackComponent.addModifier(m);
+            case DEFENSE -> this.defenseComponent.addModifier(m);
+            case INITIATIVE -> this.initiativeComponent.addModifier(m);
+            default -> throw new IllegalArgumentException("unknown stat: " + e.stat());
         }
+    }
+
+    public void apply(EffectHeal e) {
+        this.healthComponent.increaseHp(e.amount());
+    }
+
+    public void apply(EffectResetMalus e) {
+        this.resetModifiers();
     }
 
     public void kill() {
