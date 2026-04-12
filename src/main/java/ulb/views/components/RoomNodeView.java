@@ -55,8 +55,8 @@ public class RoomNodeView extends StackPane {
     }
 
     /**
-     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY"). 
-     * Updates the visual
+     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY"). Updates the
+     * visual
      *
      * @param roomType
      *            The type of room (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY")

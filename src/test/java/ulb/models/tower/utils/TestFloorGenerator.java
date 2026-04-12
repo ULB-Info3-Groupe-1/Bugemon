@@ -13,9 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
+import ulb.models.tower.room.RewardRoom;
 
 public class TestFloorGenerator {
     private static final CombatFactory COMBAT_FACTORY_MOCK = mock(CombatFactory.class);

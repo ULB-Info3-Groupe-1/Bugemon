@@ -11,9 +11,9 @@ import java.util.Random;
 import java.util.Set;
 
 import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
+import ulb.models.tower.room.RewardRoom;
 
 public class FloorGenerator {
 
