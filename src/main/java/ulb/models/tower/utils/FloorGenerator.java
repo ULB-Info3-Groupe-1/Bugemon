@@ -17,17 +17,17 @@ import ulb.models.tower.room.RewardRoom;
 
 public class FloorGenerator {
 
-    private static final int GRID_SIZE = 5;
-    private static final int MAX_DEPTH = 6;
+    static final int GRID_SIZE = 5;
+    static final int MAX_DEPTH = 6;
 
-    private static final int MIN_BRANCHES = 3;
-    private static final int MAX_BRANCHES = 4;
+    static final int MIN_BRANCHES = 3;
+    static final int MAX_BRANCHES = 4;
 
-    private static final int MIN_COMBATS = 4;
-    private static final int MAX_COMBATS = 6;
+    static final int MIN_COMBATS = 4;
+    static final int MAX_COMBATS = 6;
 
-    private static final int MIN_BONUS = 2;
-    private static final int MAX_BONUS = 3;
+    static final int MIN_BONUS = 2;
+    static final int MAX_BONUS = 3;
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
