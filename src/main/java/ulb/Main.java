@@ -35,14 +35,12 @@ public class Main extends Application {
         }
 
         stage.setTitle(Configuration.UI.STAGE_TITLE);
-        stage.setMaximized(true);
 
         Scene scene = new Scene(new StackPane());
         scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
         scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
         stage.setScene(scene);
 
-        // TODO: remove hardcoded playername once a login screen exists
         QueryLoader loader = new QueryLoader();
         DatabaseConnection dbConnection = new DatabaseConnection();
         StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
@@ -50,8 +48,11 @@ public class Main extends Application {
 
         BugemonService bugemonService = new BugemonService(staticDataRepository);
         PlayerService playerService = new PlayerService(bugemonService, playerRepository, "default_player");
+        stage.show();
+        stage.setMaximized(true);
+        stage.setResizable(false);
+
         MetaController controller = new MetaController(stage, bugemonService, playerService);
         controller.switchTo(Window.MAIN_MENU);
-        stage.setResizable(false);
     }
 }
