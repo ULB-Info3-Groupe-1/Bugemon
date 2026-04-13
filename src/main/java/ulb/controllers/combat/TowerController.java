@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javafx.stage.Stage;
 
@@ -19,7 +20,7 @@ import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
-import ulb.models.tower.room.RoomType;
+import ulb.models.tower.room.Room.RoomState;
 import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
@@ -30,7 +31,7 @@ import ulb.views.ViewLoader;
 import ulb.views.components.RoomView;
 
 public class TowerController extends Controller<FloorView> implements FloorView.Listener, RoomVisitor {
-    private Tower tower;
+    private Optional<Tower> tower;
     private final PlayerService playerService;
     private final BugemonService bugemonService;
 
@@ -39,24 +40,14 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private final ManualCombatController manualCombatController;
     private final LevelUpController levelUpController;
 
-    private final Map<RoomView, FloorNode> floorNodesByRoomNode;
-    private final Map<FloorNode, RoomView> roomNodesByFloorNode;
-    private final Set<FloorNode> visitedNodes;
-    private int renderedFloorNumber;
-    private boolean runEnded;
-
     public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService,
             ManualCombatController manualCombatController, LevelUpController levelUpController) {
         super(metaController, ViewLoader.load(FloorView::new));
-        this.tower = null;
         this.playerService = playerService;
         this.bugemonService = bugemonService;
+        this.tower = Optional.empty();
         this.manualCombatController = manualCombatController;
         this.levelUpController = levelUpController;
-        this.floorNodesByRoomNode = new HashMap<>();
-        this.roomNodesByFloorNode = new HashMap<>();
-        this.visitedNodes = new HashSet<>();
-        this.renderedFloorNumber = -1;
         this.view.setListener(this);
     }
 
@@ -157,7 +148,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      */
     private void showFloorMap() {
         this.view.setFloorNumber(this.tower.getCurrentFloorNumber() + 1);
-        this.view.setInstructions("Cliquez sur une salle disponible pour continuer votre ascension");
+        this.view.setInstruction();
         this.updateFloorStructure();
         this.refreshFloorViewState();
 
@@ -259,9 +250,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         }
 
         if (this.tower == null || this.runEnded) {
-            this.tower = new Tower(
-                    this.playerService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
-                    this.playerService, this.bugemonService);
+            this.tower = new Tower(this.playerService, this.bugemonService);
             this.runEnded = false;
             this.renderedFloorNumber = -1;
             this.floorNodesByRoomNode.clear();

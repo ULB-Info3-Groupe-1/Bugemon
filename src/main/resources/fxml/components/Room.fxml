@@ -6,8 +6,7 @@
 <?import javafx.scene.control.Label?>
 
 <fx:root type="javafx.scene.layout.StackPane"
-    xmlns:fx="http://javafx.com/fxml" styleClass="room-node" prefWidth="80"
-    prefHeight="80" onMouseClicked="#onClick">
+    xmlns:fx="http://javafx.com/fxml" styleClass="room-node" onMouseClicked="#onClick">
 
     <Rectangle fx:id="background" arcWidth="10" arcHeight="10"
         width="75" height="75" styleClass="room-background" />
