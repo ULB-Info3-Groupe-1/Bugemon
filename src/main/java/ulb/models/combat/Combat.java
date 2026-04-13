@@ -102,9 +102,28 @@ public class Combat {
         this.resolveAttack(playerAction, opponentAction);
     }
 
+    private Trainer getWinner() {
+        if (!this.isCompleted) {
+            throw new IllegalStateException("cannot get the winner because the combat is not completed yet");
+        }
+
+        return this.playerTrainer.isDefeated() ? this.opponentTrainer : this.playerTrainer;
+    }
+
     private void endTurn() {
         this.updateTrainerStatus(this.playerTrainer);
         this.updateTrainerStatus(this.opponentTrainer);
+
+        if (this.isCompleted) {
+            this.endOfCombatAction.execute(new CombatContext(this.playerTrainer, this.opponentTrainer));
+
+            Trainer winner = this.getWinner();
+            Trainer loser = this.getOtherTrainer(winner);
+
+            CombatContext combatCtx = new CombatContext(winner, loser);
+
+            this.xpDistributor.distributeXp(combatCtx);
+        }
     }
 
     private void resolveItem(TurnAction playerAction, TurnAction opponentAction) {
@@ -165,16 +184,6 @@ public class Combat {
                 LOG.info("{} is defeated", trainer.getCurrentBugemonName());
                 this.turnResult.addStep(new TurnStep.TrainerKoStep(trainer));
                 this.isCompleted = true;
-
-                // run end-of-combat callback
-                this.endOfCombatAction.execute(new CombatContext(this.playerTrainer, this.opponentTrainer));
-
-                // TODO: not the best place to do this
-                Trainer loser = trainer;
-                Trainer winner = this.getOtherTrainer(trainer);
-                CombatContext combatCtx = new CombatContext(winner, loser);
-
-                this.xpDistributor.distributeXp(combatCtx);
             }
         }
     }
