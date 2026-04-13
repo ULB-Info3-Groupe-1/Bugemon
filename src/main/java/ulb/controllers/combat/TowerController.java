@@ -87,7 +87,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     public void handleRewardRoom(RewardRoom rewardRoom) {
         // TODO: Implement reward room handling -> STORY 11
     }
-
+    
     public void handleEmptyRoom(EmptyRoom emptyRoom) {
         // No action needed for empty rooms, but method is here for clarity and future
         // extensibility.
