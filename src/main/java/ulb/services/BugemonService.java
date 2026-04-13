@@ -28,7 +28,8 @@ public class BugemonService {
     // Cache for all default Bugemons to avoid multiple database calls
     private List<Bugemon> allDefaultBugemonsCache;
 
-    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository, PlayerService playerService) throws PlayernameIsEmptyException {
+    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
+            PlayerService playerService) throws PlayernameIsEmptyException {
         this.staticDataRepository = staticDataRepository;
         this.playerRepository = playerRepository;
         this.playerService = playerService;
@@ -82,9 +83,9 @@ public class BugemonService {
      *            the bugemon to save
      */
     public void saveBugemonState(Bugemon bugemon) {
-        this.playerRepository.updatePlayerBugemon(
-                new PlayerBugemonDTO(this.playerService.getPlayerId(), bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
-                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+        this.playerRepository.updatePlayerBugemon(new PlayerBugemonDTO(this.playerService.getPlayerId(),
+                bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(),
+                bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
 
         this.playerService.updateLocalTeams();
     }
