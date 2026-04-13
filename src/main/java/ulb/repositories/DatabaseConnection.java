@@ -1,5 +1,7 @@
 package ulb.repositories;
 
+import java.io.File;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,7 +10,28 @@ import java.sql.SQLException;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class DatabaseConnection {
-    private static final Dotenv DOTENV = Dotenv.configure().ignoreIfMissing().load();
+    private static final Dotenv DOTENV = loadDotenv();
+
+    private static Dotenv loadDotenv() {
+        // 1. Current working directory (where the user runs "java -jar")
+        if (new File(System.getProperty("user.dir"), ".env").exists()) {
+            return Dotenv.configure().directory(System.getProperty("user.dir")).load();
+        }
+
+        // 2. Directory containing the JAR file
+        try {
+            URI location = DatabaseConnection.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+            File source = new File(location);
+            if (source.isFile() && new File(source.getParent(), ".env").exists()) {
+                return Dotenv.configure().directory(source.getParent()).load();
+            }
+        } catch (Exception e) {
+            // ignore, fall through
+        }
+
+        // 3. System environment variables only (no .env file)
+        return Dotenv.configure().ignoreIfMissing().load();
+    }
 
     private Connection connection;
 
