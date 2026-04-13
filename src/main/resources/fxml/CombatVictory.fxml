@@ -6,13 +6,14 @@
 <?import javafx.scene.control.Button?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      alignment="CENTER"
-      spacing="20"
-      stylesheets="@../css/combat-victory.css">
-    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+    fx:controller="ulb.views.CombatVictoryView" alignment="CENTER"
+    spacing="28">
+    <padding>
+        <Insets top="56" right="56" bottom="56" left="56" />
+    </padding>
 
     <Label text="VICTOIRE !" styleClass="victory-title" />
-    <Button fx:id="continueButton" text="Continuer" prefHeight="65.0" prefWidth="256.0"
-            styleClass="btn,btn-success" />
+    <Button onAction="#onContinueClicked" text="Continuer"
+        styleClass="btn,btn-success,btn-choice" />
 
 </VBox>

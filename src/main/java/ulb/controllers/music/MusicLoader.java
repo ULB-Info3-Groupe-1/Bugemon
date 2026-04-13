@@ -12,42 +12,34 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * MusicLoarder
- */
-public class MusicLoader {
-    private final String MUSIC_DIR = "/musics/";
-    private final String SOUND_EFFECTS_DIR = "/sound_effects/";
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    public MusicLoader() {}
+import ulb.Configuration;
+
+/** Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR). */
+public class MusicLoader {
+    private static final Logger LOG = LoggerFactory.getLogger(MusicLoader.class);
 
     /**
-     * Loads all music files from the given resource directory and assigns them the
-     * given ambiance.
+     * Loads all music files from the given resource directory and assigns them the given ambiance.
      *
-     * @param resourceDir path to the resource directory (inside JAR or filesystem)
-     * @param ambiance    ambiance to assign to each loaded music
+     * @param resourceDir
+     *            path to the resource directory (inside JAR or filesystem)
+     * @param ambiance
+     *            ambiance to assign to each loaded music
      * @return list of loaded Music objects
-     * @throws IOException if the directory cannot be accessed
+     * @throws IOException
+     *             if the directory cannot be accessed
      */
     public List<Music> loadFromDirectory(String resourceDir, Ambiance ambiance) throws IOException {
-        URI uri = getResourceURI(resourceDir);
-        Path dir = resolveDirectory(uri, resourceDir);
+        URI uri = this.getResourceURI(resourceDir);
+        Path dir = this.resolveDirectory(uri, resourceDir);
 
-        return listFiles(dir)
-                .stream()
-                .map(path -> loadMusic(path, ambiance))
-                .flatMap(Optional::stream)
+        return this.listFiles(dir).stream().map(path -> this.loadMusic(path, ambiance)).flatMap(Optional::stream)
                 .toList();
     }
 
-    /**
-     * Resolves the URI of the given resource directory.
-     *
-     * @param resourceDir path to the resource
-     * @return URI of the resource
-     * @throws IllegalArgumentException if the resource does not exist
-     */
     private URI getResourceURI(String resourceDir) {
         URL url = getClass().getResource(resourceDir);
         if (url == null) {
@@ -57,39 +49,24 @@ public class MusicLoader {
         try {
             return url.toURI();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Invalid resource URI for path: " + resourceDir, e);
         }
     }
 
-    /**
-     * Converts a URI to a Path, handling both filesystem and JAR schemes.
-     *
-     * @param uri         the URI to resolve
-     * @param resourceDir resource path inside the URI
-     * @return Path representing the directory
-     * @throws IOException if the directory cannot be accessed
-     */
     private Path resolveDirectory(URI uri, String resourceDir) throws IOException {
         if ("jar".equals(uri.getScheme())) {
-            FileSystem fs;
             try {
-                fs = FileSystems.getFileSystem(uri);
+                return FileSystems.getFileSystem(uri).getPath(resourceDir);
             } catch (java.nio.file.FileSystemNotFoundException e) {
-                fs = FileSystems.newFileSystem(uri, java.util.Map.of());
+                try (FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of())) {
+                    return fs.getPath(resourceDir);
+                }
             }
-            return fs.getPath(resourceDir);
         } else {
             return Paths.get(uri);
         }
     }
 
-    /**
-     * Lists all regular files in the given directory.
-     *
-     * @param dir directory to list
-     * @return list of file paths
-     * @throws IOException if listing fails
-     */
     private List<Path> listFiles(Path dir) throws IOException {
         try (Stream<Path> stream = Files.list(dir)) {
             return stream.filter(Files::isRegularFile).toList();
@@ -97,35 +74,29 @@ public class MusicLoader {
     }
 
     /**
-     * Loads all game music and sound effects and registers them with the provided
-     * player.
+     * Loads all game music and sound effects and registers them with the provided player.
      *
-     * @param musicPlayer the music player to register music with
-     * @throws IOException if any resource directory cannot be accessed
+     * @param musicPlayer
+     *            the music player to register music with
+     * @throws IOException
+     *             if any resource directory cannot be accessed
      */
     public void loadAllResources(MusicPlayer musicPlayer) throws IOException {
-        loadFromDirectory(MUSIC_DIR + "combat", Ambiance.COMBAT).forEach(musicPlayer::addMusic);
-        loadFromDirectory(MUSIC_DIR + "menu", Ambiance.MENU).forEach(musicPlayer::addMusic);
-        loadFromDirectory(MUSIC_DIR + "create_team", Ambiance.CREATE_TEAM)
+        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_COMBAT, Ambiance.COMBAT).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_MENU, Ambiance.MENU).forEach(musicPlayer::addMusic);
+        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_CREATE_TEAM, Ambiance.CREATE_TEAM)
                 .forEach(musicPlayer::addMusic);
-        loadFromDirectory(SOUND_EFFECTS_DIR + "victory", Ambiance.VICTORY)
+        this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_VICTORY, Ambiance.VICTORY)
                 .forEach(musicPlayer::addMusic);
-        loadFromDirectory(SOUND_EFFECTS_DIR + "defeat", Ambiance.DEFEAT)
+        this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_DEFEAT, Ambiance.DEFEAT)
                 .forEach(musicPlayer::addMusic);
     }
 
-    /**
-     * Loads a single music file from a path and assigns the given ambiance.
-     *
-     * @param path     path to the music file
-     * @param ambiance ambiance to assign
-     * @return optional containing the Music object if loaded successfully
-     */
     private Optional<Music> loadMusic(Path path, Ambiance ambiance) {
         try {
             return Optional.of(new Music(path.toUri().toURL(), ambiance));
         } catch (Exception e) {
-            System.err.println("error loading song: " + path);
+            LOG.error("Error loading song: {}", path);
             return Optional.empty();
         }
     }

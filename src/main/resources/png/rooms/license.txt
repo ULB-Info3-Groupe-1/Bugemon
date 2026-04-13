@@ -1,0 +1,12 @@
+Tiny Dungeon (1.0)
+Boardgame pack v2 by Kenney Vleugels
+
+Created/distributed by Kenney (www.kenney.nl)
+Creation date: 05-07-2022
+
+------------------------------
+
+License: (Creative Commons Zero, CC0)
+http://creativecommons.org/publicdomain/zero/1.0/
+
+This content is free to use in personal, educational and commercial projects.

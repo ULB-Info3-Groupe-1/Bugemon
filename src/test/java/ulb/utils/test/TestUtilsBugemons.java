@@ -15,29 +15,19 @@ import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public final class TestUtilsBugemons {
-    private TestUtilsBugemons() {}
+    private TestUtilsBugemons() {
+    }
 
-    public static Bugemon createDefaultBugemon(String id) {
-        Effect effect = new EffectStatModifier(EffectTarget.ADVERSARY, EffectStat.ATTACK, 10,
-                                               EffectDuration.ONE_TURN);
+    public static Bugemon createDefaultBugemon(String name) {
+        Effect effect = new EffectStatModifier(EffectTarget.OPPONENT, EffectStat.ATTACK, 10, EffectDuration.ONE_TURN);
         List<Effect> effects = new ArrayList<>();
         effects.add(effect);
-        Attack attack1 =
-                new Attack("TestAttack1", "TestAttack1", BugemonType.FLORA, "", 30, effects);
-        Attack attack2 =
-                new Attack("TestAttack2", "TestAttack2", BugemonType.FLORA, "", 20, effects);
+        Attack attack1 = new Attack("TestAttack1", "TestAttack1", BugemonType.FLORA, "", 30, effects);
+        Attack attack2 = new Attack("TestAttack2", "TestAttack2", BugemonType.FLORA, "", 20, effects);
         List<Attack> attackList = List.of(attack1, attack2);
 
-        return new BugemonBuilder()
-                .id(id)
-                .name("TestBugemon_" + id)
-                .hp(100)
-                .attack(20)
-                .defense(10)
-                .initiative(5)
-                .attackList(attackList)
-                .isStarter(false)
-                .build();
+        return new BugemonBuilder().name(name).hp(100).attack(20).defense(10).initiative(5).attackList(attackList)
+                .isStarter(false).build();
     }
 
     public static BugemonTeam createDefaultTeam(int count) {
@@ -46,12 +36,12 @@ public final class TestUtilsBugemons {
         for (int i = 1; i <= count; i++) {
             bugemons.add(createDefaultBugemon(String.valueOf(i)));
         }
-
         return bugemons;
     }
 
-    public static void killBugemon(BugemonTeam team, String id) {
-        Bugemon bugemon = team.stream().filter(b -> b.getId().equals(id)).findFirst().get();
+    public static void killBugemon(BugemonTeam team, String name) {
+        Bugemon bugemon = team.stream().filter(b -> b.getName().equals(name)).findFirst().get();
+
         bugemon.kill();
     }
 }

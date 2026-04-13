@@ -13,19 +13,22 @@ cache:
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-check-style:
+check-format:
   stage: lint
-  before_script:
-    - apt-get update && apt-get install -y clang-format
   script:
-    - |
-      if [ -f ".clang-format" ]; then
-        echo "File .clang-format detected. Verification in progress..."
-        find src -name "*.java" -exec clang-format --dry-run --Werror -style=file {} +
-        echo "The code is perfectly formatted."
-      else
-        echo "No .clang-format file found at the root. Job skipped."
-      fi
+    - mvn $MAVEN_OPTS spotless:check -Dspotless.formats.skip=true
+  allow_failure: false
+
+check-fxml-format:
+  stage: lint
+  script:
+    - mvn $MAVEN_OPTS spotless:check -Dspotless.java.skip=true
+  allow_failure: false
+
+check-lint:
+  stage: lint
+  script:
+    - mvn $MAVEN_OPTS checkstyle:check
   allow_failure: true
 
 # Job test

@@ -1,26 +1,34 @@
 package ulb.models.bugemon;
 
-/**
- * Represents the elemental type of a bugemon.
- * <p>
- * Each type may have strengths and weaknesses against other types during
- * combat.
- * </p>
- *
- * <ul>
- *   <li>{@link #FLORA}  – plant/nature-based type.</li>
- *   <li>{@link #AQUA}   – water-based type.</li>
- *   <li>{@link #PYRO}   – fire-based type.</li>
- *   <li>{@link #LITHO}  – rock/earth-based type.</li>
- * </ul>
- */
+import java.util.Map;
+
+/** Elemental type of a Bugemon; used for type-matchup calculations during combat. */
 public enum BugemonType {
-    /** Plant/nature-based elemental type. */
     FLORA,
-    /** Water-based elemental type. */
     AQUA,
-    /** Fire-based elemental type. */
     PYRO,
-    /** Rock/earth-based elemental type. */
-    LITHO,
+    LITHO;
+
+    private static Map<BugemonType, Map<BugemonType, Efficiency>> strongAgainst;
+
+    public Efficiency getEfficiencyAgainst(BugemonType opponentType) {
+        return strongAgainst.get(this).get(opponentType);
+    }
+
+    static {
+        strongAgainst = Map.of(BugemonType.FLORA,
+                Map.of(BugemonType.FLORA, Efficiency.NEUTRAL, BugemonType.AQUA, Efficiency.HIGH, BugemonType.PYRO,
+                        Efficiency.NEUTRAL, BugemonType.LITHO, Efficiency.LOW),
+
+                BugemonType.AQUA,
+                Map.of(BugemonType.FLORA, Efficiency.LOW, BugemonType.AQUA, Efficiency.NEUTRAL, BugemonType.PYRO,
+                        Efficiency.HIGH, BugemonType.LITHO, Efficiency.NEUTRAL),
+
+                BugemonType.PYRO,
+                Map.of(BugemonType.FLORA, Efficiency.NEUTRAL, BugemonType.AQUA, Efficiency.LOW, BugemonType.PYRO,
+                        Efficiency.NEUTRAL, BugemonType.LITHO, Efficiency.HIGH),
+
+                BugemonType.LITHO, Map.of(BugemonType.FLORA, Efficiency.HIGH, BugemonType.AQUA, Efficiency.NEUTRAL,
+                        BugemonType.PYRO, Efficiency.LOW, BugemonType.LITHO, Efficiency.NEUTRAL));
+    }
 }

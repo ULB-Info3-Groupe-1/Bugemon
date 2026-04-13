@@ -1,230 +1,79 @@
 package ulb.controllers.combat;
 
-import ulb.models.combat.TurnResult;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Efficiency;
+import ulb.models.combat.TurnStep;
 import ulb.models.trainer.Trainer;
 import ulb.views.combat.CombatView;
 
-/**
- * Class that manages attack animations for combat sequences.
- *
- * <p>
- * This controller encapsulates all animation logic related to bugemon attacks,
- * keeping the main combat controller clean and focused on game logic. It
- * handles
- * playing animations sequentially for turn results containing one or two
- * attacks.
- * </p>
- *
- * <p>
- * Usage example:
- *
- * <pre>
- * CombatAnimationController animController = new CombatAnimationController(view);
- * animController.playTurnAnimations(turnResult, playerTrainer, () -> {
- *     // Continue with game logic after animations complete
- * });
- * </pre>
- * </p>
- */
+/** Encapsulates all animation logic for combat so the main combat controller stays focused on game logic. */
 public class CombatAnimationController {
-    // Attributes
-
     private final CombatView view;
 
-    // Constructor
-
-    /**
-     * Creates an animation controller for the given combat view.
-     *
-     * @param view the {@link CombatView} where animations will be displayed.
-     */
     public CombatAnimationController(CombatView view) {
         this.view = view;
     }
 
-    // Methods
-
     /**
-     * Plays all attack animations from a turn result sequentially.
+     * Plays the animation corresponding to {@code step}, then invokes {@code onFinished}. Steps without a visual
+     * animation (item use, forfeit) invoke {@code onFinished} immediately.
      *
-     * <p>
-     * If the turn has no attacks, the callback is executed immediately. If there
-     * are one or two attacks, they are animated in order (attacking sprite lunges
-     * toward its opponent), and {@code onFinished} is called after all animations
-     * complete.
-     * </p>
-     *
-     * @param result        the turn result containing the attack(s) to animate.
-     * @param playerTrainer the player trainer, used to determine which sprite
-     *                      should lunge (forward = player attacks, backward =
-     *                      opponent attacks).
-     * @param onFinished    callback executed once all animations are complete;
-     *                      must not be {@code null}.
+     * @param step
+     *            the step to animate.
+     * @param playerTrainer
+     *            used to determine animation direction (player side vs opponent side).
+     * @param onFinished
+     *            callback executed after the animation completes.
      */
-    public void playTurnAnimations(TurnResult result, Trainer playerTrainer, Runnable onFinished) {
-        if (result == null) {
-            onFinished.run();
-            return;
-        }
-
-        Runnable afterAttackAnimations = () -> {
-            Boolean koOnTrainerSide = findKoDefenderSide(result, playerTrainer);
-            if (koOnTrainerSide == null) {
-                onFinished.run();
-                return;
+    public void playStepAnimation(TurnStep step, Trainer playerTrainer, Runnable onFinished) {
+        switch (step) {
+            case TurnStep.AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) -> {
+                boolean fromPlayer = attacker == playerTrainer;
+                this.playAttackAnimation(fromPlayer, onFinished);
             }
-            playDeathAnimation(koOnTrainerSide, onFinished);
-        };
 
-        if (result.first().wasAttack()) {
-            boolean firstFromPlayer = result.first().attacker() == playerTrainer;
-            playAttackAnimation(
-                    firstFromPlayer,
-                    () -> playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations));
-            return;
-        }
+            case TurnStep.BugemonKoStep(Trainer trainer) -> {
+                boolean isPlayerSide = trainer == playerTrainer;
+                this.playDeathAnimation(isPlayerSide, onFinished);
+            }
 
-        playSecondAttackIfPresent(result, playerTrainer, afterAttackAnimations);
-    }
+            // The death animation was already played for the BugemonKoStep that preceded
+            // this; replaying it would reset the sprite opacity and create a visual flash.
+            case TurnStep.TrainerKoStep(Trainer trainerKo) -> onFinished.run();
 
-    /**
-     * Plays the second attack animation if a second attack is present in the turn
-     * result, then executes the callback.
-     *
-     * @param result        the turn result containing the attack to check for a
-     *                      second attack.
-     * @param playerTrainer the player trainer, used to determine which sprite
-     *                      should lunge if a second attack is present.
-     * @param onFinished    callback executed once the second attack animation
-     *                      completes or immediately if no second attack is present;
-     *                      must not be {@code null}.
-     */
-    private void playSecondAttackIfPresent(TurnResult result, Trainer playerTrainer,
-                                           Runnable onFinished) {
-        if (result.second().isPresent() && result.second().orElseThrow().wasAttack()) {
-            boolean secondFromPlayer = result.second().orElseThrow().attacker() == playerTrainer;
-            playAttackAnimation(secondFromPlayer, onFinished);
-            return;
-        }
-        onFinished.run();
-    }
+            case TurnStep.ForfeitStep(Trainer trainer) -> {
+                boolean isPlayerForfeiting = trainer == playerTrainer;
+                this.playDeathAnimation(isPlayerForfeiting, onFinished);
+            }
 
-    /**
-     * Determines if a KO occurred in the turn result and on which side (player or
-     * opponent).
-     *
-     * @param result        the turn result to check for KO occurrences.
-     * @param playerTrainer the player trainer.
-     * @return {@code true} if the player's Bugemon was knocked out, {@code false}
-     *         if the opponent's Bugemon was knocked out, or {@code null} if no KO
-     *         occurred.
-     */
-    private Boolean findKoDefenderSide(TurnResult result, Trainer playerTrainer) {
-        if (result.second().isPresent() && result.second().orElseThrow().wasAttack()
-            && result.second().orElseThrow().defender().getCurrentBugemon().getHp() <= 0) {
-            return result.second().orElseThrow().defender() == playerTrainer;
-        }
+            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) -> onFinished.run();
 
-        if (result.first().wasAttack()
-            && result.first().defender().getCurrentBugemon().getHp() <= 0) {
-            return result.first().defender() == playerTrainer;
-        }
-
-        return null;
-    }
-
-    /**
-     * Plays a single attack animation.
-     *
-     * <p>
-     * Determines which sprite should animate based on who is attacking, then
-     * plays the corresponding lunge animation.
-     * </p>
-     *
-     * @param trainerAttacks {@code true} to animate the trainer's sprite,
-     *                       {@code false} to animate the opponent's sprite.
-     * @param onFinished     callback executed once the animation completes.
-     */
-    private void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
-        if (trainerAttacks) {
-            playTrainerAttackAnimation(onFinished);
-        } else {
-            playOpponentAttackAnimation(onFinished);
+            default -> onFinished.run();
         }
     }
 
-    /**
-     * Plays a lunge animation on the player's sprite (slide toward the opponent
-     * then return).
-     *
-     * @param onFinished callback executed once the animation completes.
-     */
-    private void playTrainerAttackAnimation(Runnable onFinished) {
-        view.playTrainerAttackAnimation(onFinished);
-    }
-
-    /**
-     * Plays a lunge animation on the opponent's sprite (slide toward the player
-     * then return).
-     *
-     * @param onFinished callback executed once the animation completes.
-     */
-    private void playOpponentAttackAnimation(Runnable onFinished) {
-        view.playOpponentAttackAnimation(onFinished);
-    }
-
-    /**
-     * Plays the death animation for the trainer's active Bugemon if
-     * {@code forTrainer} is {@code true}, or for the opponent's active Bugemon if
-     * {@code forTrainer} is {@code false}.
-     *
-     * @param onFinished callback executed once the animation completes.
-     */
-    private void playDeathAnimationForTrainer(Runnable onFinished) {
-        view.playDeathAnimationForTrainer(onFinished);
-    }
-
-    /**
-     * Plays the death animation for the opponent's active Bugemon.
-     *
-     * @param onFinished callback executed once the animation completes.
-     */
-    private void playDeathAnimationForOpponent(Runnable onFinished) {
-        view.playDeathAnimationForOpponent(onFinished);
-    }
-
-    /**
-     * Plays the death animation for the trainer's active Bugemon if
-     * {@code forTrainer} is {@code true}, or for the opponent's active Bugemon if
-     * {@code forTrainer} is {@code false}.
-     *
-     * @param forTrainer {@code true} to play the trainer's Bugemon death animation,
-     *                   {@code false} to play the opponent's Bugemon death
-     *                   animation.
-     * @param onFinished callback executed once the animation completes.
-     */
-    private void playDeathAnimation(boolean forTrainer, Runnable onFinished) {
-        if (forTrainer) {
-            playDeathAnimationForTrainer(onFinished);
-        } else {
-            playDeathAnimationForOpponent(onFinished);
-        }
-    }
-
-    /**
-     * Makes the trainer's active Bugemon reappear if {@code forTrainer} is
-     * {@code true},
-     * or the opponent's active Bugemon reappear if {@code forTrainer} is
-     * {@code false}.
-     *
-     * @param forTrainer {@code true} to make the trainer's Bugemon reappear,
-     *                   {@code false} to make the opponent's Bugemon reappear.
-     */
     public void makeBugemonReappear(boolean forTrainer) {
         if (forTrainer) {
-            view.makeTrainerBugemonReappear();
+            this.view.makeTrainerBugemonReappear();
         } else {
-            view.makeOpponentBugemonReappear();
+            this.view.makeOpponentBugemonReappear();
+        }
+    }
+
+    private void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
+        if (trainerAttacks) {
+            this.view.playTrainerAttackAnimation(onFinished);
+        } else {
+            this.view.playOpponentAttackAnimation(onFinished);
+        }
+    }
+
+    private void playDeathAnimation(boolean forTrainer, Runnable onFinished) {
+        if (forTrainer) {
+            this.view.playDeathAnimationForTrainer(onFinished);
+        } else {
+            this.view.playDeathAnimationForOpponent(onFinished);
         }
     }
 }

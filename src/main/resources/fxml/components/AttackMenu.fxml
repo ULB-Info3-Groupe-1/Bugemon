@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml">
+
+    <GridPane hgap="10" vgap="10" alignment="CENTER_RIGHT"
+        styleClass="action-menu">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50"
+                fillWidth="true" />
+            <ColumnConstraints percentWidth="50"
+                fillWidth="true" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints fillHeight="true" vgrow="ALWAYS" />
+            <RowConstraints fillHeight="true" vgrow="ALWAYS" />
+        </rowConstraints>
+
+        <Button fx:id="topLeftButton" wrapText="true"
+            maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="0"
+            GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onAttack1Clicked" />
+        <Button fx:id="topRightButton" wrapText="true"
+            maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="1"
+            GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onAttack2Clicked" />
+        <Button fx:id="bottomLeftButton" wrapText="true"
+            maxWidth="Infinity" maxHeight="Infinity" GridPane.columnIndex="0"
+            GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onAttack3Clicked" />
+        <Button text="Retour" wrapText="true"
+            styleClass="btn,btn-secondary" maxWidth="Infinity"
+            maxHeight="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"
+            GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS"
+            onAction="#onBackClicked" />
+    </GridPane>
+
+</fx:root>

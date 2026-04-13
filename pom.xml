@@ -70,6 +70,21 @@
       <artifactId>dotenv-java</artifactId>
       <version>3.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.16</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.5.18</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>2.0.16</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -162,29 +177,98 @@
             </execution>
         </executions>
       </plugin>
-       <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.0.1</version>
-            <executions>
-                <execution>
-                    <id>attach-javadocs</id>
-                    <goals>
-                        <goal>jar</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-                <docletArtifact>
-                    <groupId>nl.talsmasoftware</groupId>
-                    <artifactId>umldoclet</artifactId>
-                    <version>2.2.5</version>
-                </docletArtifact>
-                <doclint>none</doclint>
-                <failOnError>false</failOnError>
-            </configuration>
-        </plugin>
+
+      <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>2.43.0</version>
+          <configuration>
+              <lineEndings>UNIX</lineEndings>
+              <java>
+                  <eclipse>
+                      <version>4.31</version>
+                      <file>${project.basedir}/.eclipse-formatter.xml</file>
+                  </eclipse>
+                  <removeUnusedImports/>
+                  <importOrder>
+                      <order>java,javax,org,com,ulb</order>
+                  </importOrder>
+                  <endWithNewline/>
+                  <trimTrailingWhitespace/>
+              </java>
+              <formats>
+                  <format>
+                      <includes>
+                          <include>src/main/resources/fxml/**/*.fxml</include>
+                      </includes>
+                      <eclipseWtp>
+                          <type>XML</type>
+                          <files>
+                              <file>${project.basedir}/.eclipse-wtp-xml-formatter.prefs</file>
+                          </files>
+                      </eclipseWtp>
+                      <trimTrailingWhitespace/>
+                      <endWithNewline/>
+                      <indent>
+                          <spaces>true</spaces>
+                          <spacesPerTab>4</spacesPerTab>
+                      </indent>
+                  </format>
+              </formats>
+          </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.3.1</version>
+          <dependencies>
+              <dependency>
+                  <groupId>com.puppycrawl.tools</groupId>
+                  <artifactId>checkstyle</artifactId>
+                  <version>10.18.2</version>
+              </dependency>
+          </dependencies>
+          <configuration>
+              <configLocation>${project.basedir}/checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+              <violationSeverity>warning</violationSeverity>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+              <propertyExpansion>checkstyle.java.version=21</propertyExpansion>
+          </configuration>
+          <executions>
+              <execution>
+                  <id>validate</id>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>check</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.1</version>
+          <executions>
+              <execution>
+                  <id>attach-javadocs</id>
+                  <goals>
+                      <goal>jar</goal>
+                  </goals>
+              </execution>
+          </executions>
+          <configuration>
+              <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+              <docletArtifact>
+                  <groupId>nl.talsmasoftware</groupId>
+                  <artifactId>umldoclet</artifactId>
+                  <version>2.2.5</version>
+              </docletArtifact>
+              <doclint>none</doclint>
+              <failOnError>false</failOnError>
+          </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

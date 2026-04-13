@@ -1,76 +1,94 @@
 package ulb.views;
 
-import java.io.IOException;
-import java.net.URL;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import java.util.Optional;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 /**
- * View
- *
- * Base class for all JavaFX views.
- * Loads an FXML layout and manages its associated scene.
+ * Base class for all JavaFX views. Navigation swaps the root of the application's single {@link javafx.scene.Scene} via
+ * {@link #show(Stage)}, avoiding the resize flash that occurs when replacing the scene itself.
  */
 public abstract class View {
-    protected final Pane root;
-    protected final Scene scene;
+    protected Parent root;
 
-    /**
-     * Loads the FXML file and initializes the scene.
-     *
-     * @param fxmlPath path to the FXML resource
-     * @throws IOException if the FXML file cannot be loaded
-     */
-    public View(String fxmlPath) throws IOException {
-        URL url = View.class.getResource(fxmlPath);
-        FXMLLoader loader = new FXMLLoader(url);
-        loader.setController((Object)this);
-
-        this.root = loader.load();
-        this.scene = new Scene(root);
-        this.scene.getStylesheets().add(0,
-                                        View.class.getResource("/css/theme.css").toExternalForm());
-        // Ensure Modena label lookup can always resolve on this scene tree.
-        this.root.setStyle("-fx-text-background-color: -fx-text-inner-color;");
-        this.root.prefWidthProperty().bind(this.scene.widthProperty());
-        this.root.prefHeightProperty().bind(this.scene.heightProperty());
+    /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
+    public void initRoot(Parent newroot) {
+        this.root = newroot;
     }
 
+    /** Returns the FXML resource path used by {@link ViewLoader} to load this view. */
+    protected abstract String getPath();
+
     /**
-     * Reads the current state from the model and updates every UI component.
-     *
-     * <p>
-     * Called by the controller after any model mutation. The view is responsible
-     * for pulling all data it needs directly from the model references it holds.
-     * The controller never pushes data into the view.
-     * </p>
+     * Reads the current state from the model and updates every UI component. Called by the controller after any model
+     * mutation; the controller never pushes data into the view.
      */
     public abstract void refresh();
 
-    /**
-     * Displays this view on the given stage.
-     *
-     * @param stage JavaFX stage where the view is shown
-     */
+    /** Replaces the scene's root with this view's root, keeping the stage size stable. */
     public void show(Stage stage) {
-        stage.setScene(this.scene);
+        stage.getScene().setRoot(this.root);
         stage.show();
     }
 
+    /** Displays a warning dialog with the given title and message. */
+    protected void showWarningAlert(String title, String message) {
+        this.createAlert(title, message, AlertType.WARNING).showAndWait();
+    }
+
+    protected void showInfoAlert(String title, String message) {
+        this.createAlert(title, message, AlertType.INFORMATION).showAndWait();
+    }
+
     /**
-     * Displays an alert dialog with the specified title and message.
-     * @param title the title of the alert dialog
-     * @param message the content message of the alert dialog
+     * Displays a warning dialog with the given title and message. It has two buttons. If the user clicks on the first
+     * button, the first button text is returned, otherwise the second button text is returned.
+     *
+     * @param title
+     *            the title of the dialog
+     * @param message
+     *            the message of the dialog
+     * @param button1Text
+     *            the text of the first button
+     * @param button2Text
+     *            the text of the second button
+     * @return the text of the clicked button
      */
-    public void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.WARNING);
+    protected String showAlertWithTwoButtons(String title, String message, String button1Text, String button2Text) {
+        Alert alert = this.createAlert(title, message, AlertType.CONFIRMATION);
+
+        ButtonType button1 = new ButtonType(button1Text);
+        ButtonType button2 = new ButtonType(button2Text);
+
+        alert.getButtonTypes().setAll(button1, button2);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == button1 ? button1Text : button2Text;
+    }
+
+    private Alert createAlert(String title, String message, AlertType type) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+        if (this.root != null && this.root.getScene() != null) {
+            alert.initOwner(this.root.getScene().getWindow());
+        }
+        return alert;
+    }
+
+    protected void showNoActiveTeamAlert(String message) {
+        this.showWarningAlert("Aucune équipe active", message);
+    }
+
+    public void showAlertChooseTeamToLaunchCombat() {
+        this.showNoActiveTeamAlert("Veuillez choisir une equipe pour lancer un combat.");
+    }
+
+    protected Parent getRoot() {
+        return this.root;
     }
 }

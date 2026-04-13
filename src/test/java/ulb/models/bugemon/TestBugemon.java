@@ -24,7 +24,8 @@ import ulb.utils.test.TestUtilsBugemons;
 public class TestBugemon {
     @Test
     public void testBuilderNoIdThrows() {
-        assertThrows(IllegalStateException.class, () -> { new BugemonBuilder().build(); });
+        BugemonBuilder builder = new BugemonBuilder();
+        assertThrows(IllegalStateException.class, builder::build);
     }
 
     @Test
@@ -72,7 +73,7 @@ public class TestBugemon {
 
     @Test
     public void testResetBugemon() {
-        Bugemon bugemon = new BugemonBuilder().id("1").hp(100).build();
+        Bugemon bugemon = new BugemonBuilder().name("1").hp(100).build();
         bugemon.takeDamage(50);
         assertEquals(50, bugemon.getHp());
         bugemon.restoreHp();

@@ -1,3 +1,10 @@
 package ulb.models.bugemon.effect;
 
-public record EffectResetMalus(EffectTarget target) implements Effect {}
+import ulb.models.bugemon.Bugemon;
+
+public record EffectResetMalus(EffectTarget target) implements Effect {
+    @Override
+    public void applyTo(Bugemon bugemon) {
+        bugemon.apply(this);
+    }
+}

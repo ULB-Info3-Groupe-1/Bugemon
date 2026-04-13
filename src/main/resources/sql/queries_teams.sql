@@ -1,40 +1,49 @@
 -- Query
 -- CreateTeam
-INSERT INTO teams (user_id, name)
+INSERT INTO teams (player_id, name)
 VALUES (?, ?)
-ON CONFLICT (user_id, name) DO NOTHING;
+ON CONFLICT (player_id, name) DO NOTHING;
 
 -- Query
 -- DeleteTeamMembers
-DELETE FROM team_members WHERE user_id = ? AND team_name = ?;
+DELETE FROM team_members WHERE player_id = ? AND team_name = ?;
 
 -- Query
 -- DeleteTeam
-DELETE FROM teams WHERE user_id = ? AND name = ?;
+DELETE FROM teams WHERE player_id = ? AND name = ?;
 
 -- Query
--- GetUserTeams
-SELECT * FROM teams WHERE user_id = ?;
+-- GetPlayerTeams
+SELECT * FROM teams WHERE player_id = ?;
 
 -- Query
 -- AddTeamMember
-INSERT INTO team_members (user_id, team_name, bugemon_id, slot_position)
+INSERT INTO team_members (player_id, team_name, bugemon_name, slot_position)
 VALUES (?, ?, ?, ?)
-ON CONFLICT (user_id, team_name, slot_position) DO NOTHING;
+ON CONFLICT (player_id, team_name, slot_position) DO NOTHING;
 
 -- Query
 -- RemoveTeamMember
 DELETE FROM team_members
-WHERE user_id = ? AND team_name = ? AND bugemon_id = ?;
+WHERE player_id = ? AND team_name = ? AND bugemon_name = ?;
 
 -- Query
 -- GetTeamMembers
-SELECT * FROM team_members WHERE user_id = ? AND team_name = ?;
+SELECT * FROM team_members WHERE player_id = ? AND team_name = ?;
 
 -- Query
 -- RenameTeam
-UPDATE teams SET name = ? WHERE user_id = ? AND name = ?;
+UPDATE teams SET name = ? WHERE player_id = ? AND name = ?;
 
 -- Query
 -- RenameTeamMembers
-UPDATE team_members SET team_name = ? WHERE user_id = ? AND team_name = ?;
+UPDATE team_members SET team_name = ? WHERE player_id = ? AND team_name = ?;
+
+-- Query
+-- RemoveTeamComposition
+DELETE FROM team_members 
+WHERE player_id = ? AND team_name = ?;
+
+-- Query
+-- TeamNameAlreadyExists
+SELECT * FROM teams WHERE player_id = ? AND name = ?;

@@ -188,7 +188,9 @@ buildNumber.properties
 
 Todo.md
 
+# Test pipeline tool
 .gitlab-ci-local/
+.github
 
 # Personal settings file
 .settings/*
@@ -196,7 +198,11 @@ Todo.md
 
 # Environment variables file
 .env
-# Database file
-db.sqlite
 
 org.mockito.plugins.MockMaker
+
+# config file of Claude code
+CLAUDE.md
+
+# The assets directory created by the program to save the data of the game
+assets

@@ -51,7 +51,7 @@ public class TestDefenseComponent {
         defense.addModifier(mod2);
         assertEquals(18, defense.getDefense());
 
-        defense.clearModifiers();
+        defense.resetModifiers();
         assertEquals(10, defense.getDefense());
     }
 

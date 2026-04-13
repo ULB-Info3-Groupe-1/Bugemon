@@ -15,17 +15,23 @@ public class TestLevelComponent {
 
     @Test
     public void testCreationNegXp() {
-        assertThrows(IllegalArgumentException.class, () -> { new LevelComponent(-1, 1); });
+        assertThrows(IllegalArgumentException.class, () -> {
+            new LevelComponent(-1, 1);
+        });
     }
 
     @Test
     public void testCreationZeroLevel() {
-        assertThrows(IllegalArgumentException.class, () -> { new LevelComponent(0, 0); });
+        assertThrows(IllegalArgumentException.class, () -> {
+            new LevelComponent(0, 0);
+        });
     }
 
     @Test
     public void testCreationNegLevel() {
-        assertThrows(IllegalArgumentException.class, () -> { new LevelComponent(0, -1); });
+        assertThrows(IllegalArgumentException.class, () -> {
+            new LevelComponent(0, -1);
+        });
     }
 
     @Test

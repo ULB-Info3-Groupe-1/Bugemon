@@ -3,105 +3,49 @@ package ulb.common.dto;
 import ulb.models.bugemon.BugemonType;
 
 /**
- * Data Transfer Object (DTO) interface exposing a read-only view of a
- * {@link ulb.models.bugemon.Bugemon} for use outside the model layer (e.g.,
- * in views and controllers).
- *
- * <p>
- * {@code BugemonDTO} decouples the view and controller layers from the full
- * {@link ulb.models.bugemon.Bugemon} implementation by providing only the
- * subset of data required to render a Bugemon on screen. Any class that
- * implements this interface can be safely passed to UI components without
- * exposing mutable model internals.
- * </p>
- *
- * <p>
- * The {@link ulb.models.bugemon.Bugemon} class itself implements this
- * interface. Other lightweight or decorating wrappers may also implement it.
- * </p>
+ * Read-only view of a {@link ulb.models.bugemon.Bugemon} for use outside the model layer (e.g., in views and
+ * controllers). Exposes only the subset of data required to render a Bugemon on screen.
  *
  * @see ulb.models.bugemon.Bugemon
  */
 public interface BugemonDTO {
-    /**
-     * Returns the path to the sprite image associated with this Bugemon.
-     *
-     * <p>
-     * The returned string is a classpath-relative resource path (e.g.,
-     * {@code "png/florachu.png"}) suitable for use with
-     * {@link ClassLoader#getResource(String)}.
-     * </p>
-     *
-     * @return the sprite resource path as a non-{@code null} {@code String}.
-     */
+    /** Classpath-relative resource path to the sprite image (e.g., {@code "png/florachu.png"}). */
     String getSpriteURL();
 
-    /**
-     * Returns the unique identifier of this Bugemon.
-     *
-     * <p>
-     * The ID is a stable, opaque string that uniquely distinguishes one Bugemon
-     * from another across the whole game (e.g., {@code "001"}).
-     * </p>
-     *
-     * @return the unique identifier as a non-{@code null} {@code String}.
-     */
+    /** Stable, opaque identifier that uniquely distinguishes one Bugemon from another (e.g., {@code "001"}). */
     String getId();
 
-    /**
-     * Returns the display name of this Bugemon.
-     *
-     * <p>
-     * The name is the human-readable label shown in the UI (e.g.,
-     * {@code "Florachu"}).
-     * </p>
-     *
-     * @return the display name as a non-{@code null} {@code String}.
-     */
+    /** Human-readable label shown in the UI (e.g., {@code "Florachu"}). */
     String getName();
 
     /**
-     * Returns the elemental type of this Bugemon.
+     * Elemental type of this Bugemon. Affects combat effectiveness — see
+     * {@link ulb.services.CombatService#compareBugemonType} for matchup rules.
      *
-     * <p>
-     * The type affects combat effectiveness calculations; see
-     * {@link ulb.services.CombatService#compareBugemonType} for the type
-     * matchup rules.
-     * </p>
-     *
-     * @return the {@link BugemonType} of this Bugemon; never {@code null}.
+     * @return the {@link BugemonType}; never {@code null}.
      */
     BugemonType getType();
 
     /**
-     * Returns the current hit points (HP) of this Bugemon.
-     *
-     * <p>
-     * HP represents the Bugemon's remaining health during a battle. When HP
-     * reaches zero the Bugemon is considered defeated and
+     * Current HP. When it reaches zero the Bugemon is considered defeated and
      * {@link ulb.models.bugemon.Bugemon#isAlive()} returns {@code false}.
-     * </p>
-     *
-     * @return the current HP as a non-negative {@code int}.
      */
     int getHp();
 
-    /**
-     * Returns the maximum health points (Max HP) of the Bugemon.
-     * @return (int) the maximum health points of the Bugemon as an integer
-     */
     int getMaxHp();
 
     /**
-     * Returns the current level of this Bugemon.
-     *
-     * <p>
-     * The level starts at {@code 1} and increases each time the Bugemon
-     * accumulates enough XP via {@link ulb.models.bugemon.Bugemon#addXp(int)}.
-     * It is used to determine XP thresholds for future level-ups.
-     * </p>
-     *
-     * @return the current level as a positive {@code int} (minimum {@code 1}).
+     * Current level. Starts at {@code 1} and increases when the Bugemon accumulates enough XP via
+     * {@link ulb.models.bugemon.Bugemon#gainXp(int)}.
      */
     int getLevel();
+
+    int getXp();
+
+    /**
+     * XP progress toward the next level as a fraction in {@code [0.0, 1.0]}.
+     *
+     * @return {@code 0.0} at the start of a level, {@code 1.0} at the threshold for the next level-up.
+     */
+    double getXpProgress();
 }

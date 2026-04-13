@@ -1,62 +1,38 @@
 package ulb.views.combat;
 
-import java.io.IOException;
-
-import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 
 /**
  * View for the automatic combat screen.
  *
- * <p>
- * Holds references to the player {@link AutoTrainer}, the opponent
- * {@link AutoTrainer}, and the {@link Combat} model. In {@link #refresh()} it
- * reads their current state and updates the Bugemon panels and dialog zone.
- * No controller reference is held.
- * </p>
+ * Dialog steps are driven step by step by the controller via {@link CombatView#showStepDialog}; all player interaction
+ * is dispatched through the {@link Listener} interface.
  */
 public class AutomaticCombatView extends CombatView {
     private AutoTrainer player;
     private AutoTrainer opponent;
-    private Combat combat;
 
-    /**
-     * Loads the shared combat FXML layout and configures it for automatic mode
-     * (hides the action menu and team pane).
-     *
-     * @throws IOException if the FXML resource cannot be loaded.
-     */
-    public AutomaticCombatView() throws IOException {
+    public AutomaticCombatView() {
         super();
-        this.initCombatMode();
     }
 
-    /** Gives the view the model objects it needs to read from in {@link #refresh()}. */
-    public void setModel(AutoTrainer player, AutoTrainer opponent, Combat combat) {
-        this.player = player;
-        this.opponent = opponent;
-        this.combat = combat;
+    /** Gives the view the trainer references it needs to read from in {@link #refresh()}. */
+    public void setModel(AutoTrainer newPlayer, AutoTrainer newOpponent) {
+        this.player = newPlayer;
+        this.opponent = newOpponent;
     }
 
     @Override
     protected void initCombatMode() {
-        this.actionMenuView.setVisible(false);
-        this.actionMenuView.setManaged(false);
+        this.hideActionMenu();
     }
 
     @Override
     public void refresh() {
-        if (player == null)
+        if (this.player == null) {
             return;
-        updateTrainerBugemon(player.getCurrentBugemon());
-        updateOpponentBugemon(opponent.getCurrentBugemon());
-
-        TurnResult last = combat.getLastTurnResult();
-        if (last != null && last.first().wasAttack()) {
-            showCombatDialog(last.first(), last.second());
-        } else {
-            hideDialog();
         }
+        this.updateTrainerBugemon(this.player.getCurrentBugemon());
+        this.updateOpponentBugemon(this.opponent.getCurrentBugemon());
     }
 }

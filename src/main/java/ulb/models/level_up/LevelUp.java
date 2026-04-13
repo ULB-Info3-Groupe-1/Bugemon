@@ -1,99 +1,86 @@
-/**
- * File name : LevelUp.java
- * Description : Class representing the level-up process for a Bugemon, including the choices
- * available to the player.
- * @author Gouverneur Martin
- * @co-author Verbeiren Lucas
- * @date 09 mar. 2026
- * @version 1.0
- */
 package ulb.models.level_up;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
-import ulb.common.dto.LevelUpDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.models.bugemon.Bugemon;
 
-public class LevelUp implements LevelUpDTO {
-    // Attributes
+public class LevelUp {
+    private static final Logger LOG = LoggerFactory.getLogger(LevelUp.class);
+
+    private static final Random RANDOM = new Random();
+
+    static final int NUM_UPGRADES = 3;
+    static final int TARGET_POINTS = 10;
+
     private Bugemon bugemon;
-    private List<Upgrade> choices;
+    private List<Upgrade> upgrades;
 
-    // Constructor
+    enum Stat {
+        HP,
+        ATTACK,
+        DEFENSE,
+        INITIATIVE,
+    }
 
-    /**
-     * Constructs a {@code LevelUp} for the given {@link Bugemon}, automatically
-     * generating three random stat-bonus {@link Upgrade}s for the player to
-     * select from.
-     *
-     * @param bugemon the {@link Bugemon} that is levelling up; must not be
-     *                {@code null}.
-     */
     public LevelUp(Bugemon bugemon) {
         this.bugemon = bugemon;
-        this.choices =
-                List.of(generateRandomChoice(), generateRandomChoice(), generateRandomChoice());
+        this.upgrades = IntStream.range(0, NUM_UPGRADES).mapToObj(i -> this.generateRandomUpgrade()).toList();
+    }
+
+    public int numUpgrades() {
+        return this.upgrades.size();
     }
 
     /**
-     * Generates a single random {@link Upgrade} of stat bonuses for the level-up
-     * process.
-     *
-     * <p>
-     * A total of 10 points are distributed randomly across the four stats
-     * ({@code HP}, {@code Attack}, {@code Defense}, {@code Initiative}). Each
-     * point is independently assigned to one of the four stats with equal
-     * probability. The raw point counts are then scaled before being passed to
-     * the {@link Upgrade} constructor:
-     * </p>
-     * <ul>
-     *   <li><strong>HP</strong> and <strong>Initiative</strong> are multiplied
-     *       by {@code 2}, so each can yield between {@code 0} and {@code 20}
-     *       bonus points.</li>
-     *   <li><strong>Attack</strong> and <strong>Defense</strong> are kept at
-     *       face value, so each can yield between {@code 0} and {@code 10}
-     *       bonus points.</li>
-     * </ul>
-     *
-     * @return a new {@link Upgrade} whose four bonus values sum to at most
-     *         {@code 60} (all 10 points on HP or Initiative at 2× weight).
+     * Distributes 10 points randomly across HP, Attack, Defense, Initiative. HP and Initiative are scaled ×2; Attack
+     * and Defense are face value.
      */
-    private Upgrade generateRandomChoice() {
-        Random rand = new Random();
-        int hp = 0, attack = 0, defense = 0, initiative = 0;
-        for (int i = 0; i < 10; i++) {
-            int choice = rand.nextInt(4); // 0: HP, 1: Attack, 2: Defense, 3: Initiative
+    private Upgrade generateRandomUpgrade() {
+        int hp = 0;
+        int attack = 0;
+        int defense = 0;
+        int initiative = 0;
 
-            switch (choice) {
-                case 0 -> hp++;
-                case 1 -> attack++;
-                case 2 -> defense++;
-                case 3 -> initiative++;
+        for (int i = 0; i < TARGET_POINTS; i++) {
+            switch (this.randomStat()) {
+                case HP -> hp++;
+                case ATTACK -> attack++;
+                case DEFENSE -> defense++;
+                case INITIATIVE -> initiative++;
+                default -> throw new IllegalStateException("unknown stat");
             }
         }
         return new Upgrade(hp * 2, attack, defense, initiative * 2);
     }
 
-    /**
-     * Returns the list of stat-bonus choices available to the player during the
-     * level-up process.
-     *
-     * @return an unmodifiable {@link List} of exactly three {@link Upgrade}
-     *         instances generated at construction time; never {@code null}.
-     */
-    @Override
-    public List<Upgrade> getChoices() {
-        return this.choices;
+    private Stat randomStat() {
+        return Stat.values()[RANDOM.nextInt(Stat.values().length)];
     }
 
-    /**
-     * Returns the {@link Bugemon} that triggered this level-up.
-     *
-     * @return the levelling-up {@link Bugemon}; never {@code null}.
-     */
-    @Override
+    public Upgrade get(int idx) {
+        if (idx >= this.numUpgrades()) {
+            throw new IndexOutOfBoundsException("attempted to get an upgrade out of bounds");
+        }
+
+        return this.upgrades.get(idx);
+    }
+
     public Bugemon getBugemon() {
         return this.bugemon;
+    }
+
+    public void apply(int idx) {
+        LOG.info("applying upgrade #{}, content: {} ", idx, this.get(idx));
+
+        this.bugemon.applyUpgrade(this.get(idx));
+    }
+
+    public Iterable<Upgrade> upgrades() {
+        return this.upgrades;
     }
 }

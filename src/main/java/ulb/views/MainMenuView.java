@@ -1,79 +1,79 @@
 package ulb.views;
 
-import java.io.IOException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+
+import ulb.Configuration;
 
 /**
- * View for the main menu screen.
- *
- * <p>
- * Dispatches user interactions to the controller exclusively through
- * callbacks registered via {@link #setOnCreateTeam(Runnable)} and
- * {@link #setOnQuit(Runnable)}. The view holds no reference to any
- * concrete controller class.
- * </p>
+ * View for the main menu screen. Dispatches player interactions to the controller exclusively through callbacks
+ * registered via setters. The view holds no reference to any concrete controller class.
  */
 public class MainMenuView extends View {
-    @FXML private Button createTeamButton;
-    @FXML private Button noTowerButton;
-    @FXML private Button quitButton;
 
-    private Runnable onCreateTeam;
-    private Runnable onNoTower;
-    private Runnable onQuit;
-    @FXML private Button launchAutomaticCombat;
-    @FXML private Button launchManualCombat;
+    private Listener listener;
 
-    /**
-     * Loads the main-menu FXML layout and wires the button actions to the
-     * registered callbacks.
-     *
-     * @throws IOException if the FXML resource cannot be loaded.
-     */
-    public MainMenuView() throws IOException {
-        super("/fxml/MainMenu.fxml");
-        this.createTeamButton.setOnAction(e -> {
-            if (onCreateTeam != null)
-                onCreateTeam.run();
-        });
-        this.noTowerButton.setOnAction(e -> {
-            if (onNoTower != null)
-                onNoTower.run();
-        });
-        this.quitButton.setOnAction(e -> {
-            if (onQuit != null)
-                onQuit.run();
-        });
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
-    /** Registers the callback invoked when the player clicks "Créer une équipe". */
-    public void setOnCreateTeam(Runnable callback) {
-        this.onCreateTeam = callback;
+    @FXML
+    private void onCreateTeamClicked() {
+        this.listener.onCreateTeam();
     }
 
-    /** Registers the callback invoked when the player clicks "Lancer la NO Tower". */
-    public void setOnNoTower(Runnable callback) {
-        this.onNoTower = callback;
+    @FXML
+    private void onEditTeamClicked() {
+        this.listener.onEditTeam();
     }
 
-    /** Registers the callback invoked when the player clicks "Quitter". */
-    public void setOnQuit(Runnable callback) {
-        this.quitButton.setOnAction(e -> callback.run());
+    @FXML
+    private void onCreateBugemonClicked() {
+        this.listener.onCreateBugemon();
     }
 
-    /** Registers the callback invoked when the player launches an automatic combat. */
-    public void setOnStartAutoCombat(Runnable callback) {
-        this.launchAutomaticCombat.setOnAction(e -> callback.run());
+    @FXML
+    private void onNoTowerClicked() {
+        this.listener.onNoTower();
     }
 
-    /** Registers the callback invoked when the player launches a manual combat. */
-    public void setOnStartManualCombat(Runnable callback) {
-        this.launchManualCombat.setOnAction(e -> callback.run());
+    @FXML
+    private void onQuitClicked() {
+        this.listener.onQuit();
+    }
+
+    @FXML
+    private void onStartManualCombatClicked() {
+        this.listener.onStartManualCombat();
+    }
+
+    @FXML
+    private void onStartAutomaticCombatClicked() {
+        this.listener.onStartAutomaticCombat();
+    }
+
+    @Override
+    public String getPath() {
+        return Configuration.Paths.Fxml.MAIN_MENU_VIEW;
     }
 
     @Override
     public void refresh() {
         // No dynamic content to refresh in the main menu, so this method is empty.
+    }
+
+    public interface Listener {
+        void onCreateTeam();
+
+        void onCreateBugemon();
+
+        void onNoTower();
+
+        void onQuit();
+
+        void onStartManualCombat();
+
+        void onStartAutomaticCombat();
+
+        void onEditTeam();
     }
 }

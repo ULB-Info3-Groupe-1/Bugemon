@@ -1,178 +1,178 @@
 package ulb.views.combat;
 
-import java.io.IOException;
-import java.util.Optional;
+import java.io.File;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
-import ulb.common.Efficiency;
+import ulb.Configuration;
 import ulb.common.dto.BugemonDTO;
-import ulb.models.combat.TurnResult;
-import ulb.views.DialogZoneView;
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Efficiency;
+import ulb.models.bugemon.Item;
+import ulb.models.combat.TurnStep;
+import ulb.models.trainer.Trainer;
 import ulb.views.View;
+import ulb.views.combat.components.BugemonInfoView;
+import ulb.views.components.DialogZoneView;
+import ulb.views.components.HoverInfoView;
 
 /**
- * Abstract base view for all combat screens.
- *
- * <p>
- * {@code CombatView} loads the shared {@code Combat.fxml} layout and exposes
- * the FXML-injected components that are common to every combat mode:
- * Bugemon info panels, sprite images, the action menu container, the team
- * switcher pane and the dialog zone.
- * </p>
- *
- * <p>
- * Concrete subclasses ({@link AutomaticCombatView}, {@link ManualCombatView})
- * must implement {@link #initCombatMode()} to configure which UI regions are
- * visible and how they behave for their specific mode.
- * </p>
- *
- * <p>
- * The controller layer interacts with the combat UI exclusively through the
- * public methods of this class, keeping all JavaFX node manipulation out of
- * the controller.
- * </p>
- *
- * @see AutomaticCombatView
- * @see ManualCombatView
+ * Abstract base view for all combat screens, loaded from the shared {@code Combat.fxml} layout. Subclasses implement
+ * {@link #initCombatMode()} to configure their specific UI behaviour.
  */
 public abstract class CombatView extends View {
-    private final CombatAnimationView attackAnimationView;
 
-    // ── FXML-injected components ──────────────────────────────────────────────
+    private CombatAnimationView attackAnimationView;
 
-    /**
-     * Info panel (name, type, HP bar) for the player's active Bugemon,
-     * displayed on the player's side of the combat screen.
-     */
-    @FXML protected BugemonInfoView bugemonTrainerInfo;
+    @FXML
+    private BugemonInfoView bugemonTrainerInfo;
+    @FXML
+    private BugemonInfoView bugemonOpponentInfo;
+    @FXML
+    private ImageView bugemonTrainerImage;
+    @FXML
+    private ImageView bugemonOpponentImage;
+    @FXML
+    private VBox actionMenuSlot;
+    @FXML
+    private HoverInfoView hoverInfoView;
+    @FXML
+    private DialogZoneView dialogZoneView;
 
-    /**
-     * Info panel (name, type, HP bar) for the opponent's active Bugemon,
-     * displayed on the opponent's side of the combat screen.
-     */
-    @FXML protected BugemonInfoView bugemonOpponentInfo;
+    NextListener nextListener;
 
-    /** Sprite image of the player's currently active Bugemon. */
-    @FXML protected ImageView bugemonTrainerImage;
+    protected CombatView() {
+    }
 
-    /** Sprite image of the opponent's currently active Bugemon. */
-    @FXML protected ImageView bugemonOpponentImage;
+    /** Called by the FXMLLoader after all {@code @FXML} fields are injected. */
+    @FXML
+    protected void initialize() {
+        this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
+        this.dialogZoneView.setListener(() -> this.nextListener.onNext());
+        this.initCombatMode();
+    }
 
-    /**
-     * Container for the action menu components (main menu, attack menu, …).
-     * Subclasses populate this container via their own menu components.
-     */
-    @FXML protected ActionMenuView actionMenuView;
+    public void setNextListener(NextListener listener) {
+        this.nextListener = listener;
+    }
 
-    /**
-     * Overlay banner used to display turn feedback messages such as attack
-     * effectiveness or KO notifications. Toggled visible/invisible by
-     * {@link #showDialog(String, String)} and {@link #hideDialog()}.
-     */
-    @FXML protected DialogZoneView dialogZoneView;
-
-    // ── Constructor ───────────────────────────────────────────────────────────
-
-    /**
-     * Loads the shared {@code Combat.fxml} layout.
-     *
-     * <p>
-     * Subclass constructors must call {@code super()} and then invoke
-     * {@link #initCombatMode()} to finalise their mode-specific UI setup.
-     * </p>
-     *
-     * @throws IOException if the {@code Combat.fxml} resource cannot be found
-     *                     or parsed.
-     */
-    public CombatView() throws IOException {
-        super("/fxml/Combat.fxml");
-        this.attackAnimationView =
-                new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
+    @Override
+    public String getPath() {
+        return Configuration.Paths.Fxml.COMBAT_VIEW;
     }
 
     // ── Abstract contract ─────────────────────────────────────────────────────
 
     /**
-     * Configures the combat UI for the specific mode implemented by the
-     * subclass.
-     *
-     * <p>
-     * Typical implementations show or hide regions that are irrelevant for
-     * their mode (e.g. {@link AutomaticCombatView} hides the action menu and
-     * team pane, while {@link ManualCombatView} shows the main action menu).
-     * This method is called once by the subclass constructor after the FXML
-     * components have been injected.
-     * </p>
+     * Configures UI regions specific to this combat mode. Called once after FXML injection via {@link #initialize()}.
      */
     protected abstract void initCombatMode();
 
+    // ── Action menu ───────────────────────────────────────────────────────────
+
+    /** Replaces the content of the action menu slot with the given node. */
+    protected void setActionMenuContent(Node content) {
+        this.actionMenuSlot.getChildren().setAll(content);
+    }
+
+    // ── Hover info panel ──────────────────────────────────────────────────────
+
+    /** Populates and shows the hover info panel with the given title and lines. */
+    public void showHoverInfo(String title, String... lines) {
+        this.hoverInfoView.show(title, lines);
+    }
+
+    /** Applies a type-based background colour to the hover info panel. */
+    public void setHoverType(BugemonType type) {
+        this.hoverInfoView.setType(type);
+    }
+
+    /** Shows or hides the efficiency badge on the hover info panel. */
+    public void setHoverEfficiency(Efficiency eff) {
+        this.hoverInfoView.setEfficiency(eff);
+    }
+
+    /** Hides the hover info panel. */
+    public void hideHoverInfo() {
+        this.hoverInfoView.hide();
+    }
+
+    // ── Action menu ───────────────────────────────────────────────────────────
+
+    /** Hides the action menu slot from the layout. */
+    protected void hideActionMenu() {
+        this.actionMenuSlot.setVisible(false);
+        this.actionMenuSlot.setManaged(false);
+    }
+
+    /** Restores the action menu slot in the layout. */
+    protected void showActionMenu() {
+        this.actionMenuSlot.setVisible(true);
+        this.actionMenuSlot.setManaged(true);
+    }
+
     // ── Dialog zone ───────────────────────────────────────────────────────────
 
+    /** Disables the Next button immediately so rapid clicks cannot queue steps during an animation. */
+    public void lockNextButton() {
+        this.dialogZoneView.setNextButtonDisabled(true);
+    }
+
     /**
-     * Displays the dialog zone with the given message and optional additional
-     * information.
-     *
-     * <p>
-     * Typical uses include showing attack-effectiveness feedback
-     * ("ATTAQUE EFFICACE !") or KO announcements. The dialog zone remains
-     * visible until {@link #hideDialog()} is called.
-     * </p>
-     *
-     * @param dialog         the main message to display; must not be
-     *                       {@code null}.
-     * @param additionalInfo a secondary line of text, or {@code null} if no
-     *                       additional information should be shown.
+     * Updates only the menus and action slots to reflect the current model state, without touching sprites or HP bars.
+     * Override in concrete views that have interactive menus.
      */
-    private void showDialog(String dialog, String additionalInfo) {
+    public void refreshMenuState() {
+    }
+
+    private void showDialog(String dialog) {
+        this.dialogZoneView.setNextButtonDisabled(false);
         this.dialogZoneView.setDialogText(dialog);
-        this.dialogZoneView.setAdditionalInfo(additionalInfo);
         this.dialogZoneView.setVisible(true);
         this.dialogZoneView.setManaged(true);
     }
 
-    /**
-     * Builds and displays the turn-summary dialog from the two attack results of
-     * the last resolved turn. Only the attacks that actually happened are shown;
-     * the second result is absent when one trainer did not attack.
-     *
-     * @param firstAttackResult  result of the first attack; never {@code null}.
-     * @param secondAttackResult result of the second attack, or empty if only
-     *                           one attack was made this turn.
-     */
-    public void showCombatDialog(TurnResult.AttackResult firstAttackResult,
-                                 Optional<TurnResult.AttackResult> secondAttackResult) {
-        String message = "1- " + firstAttackResult.attacker().getCurrentBugemonName()
-                         + " à utilisé l'attaque " + firstAttackResult.getAttackName() + "\n";
-        String efficiency = "1- " + formatEfficiency(firstAttackResult.efficiency()) + "\n";
+    /** Builds and displays a dialog describing the given {@code step}. */
+    public void showStepDialog(TurnStep step, Trainer playerTrainer) {
+        String message = switch (step) {
+            case TurnStep.AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) ->
+                attacker.getCurrentBugemonName() + " utilise " + attack.name() + " !"
+                        + this.formatEfficiency(efficiency);
 
-        if (secondAttackResult.isPresent()) {
-            message += "2- " + secondAttackResult.orElseThrow().attacker().getCurrentBugemonName()
-                       + " à utilisé l'attaque "
-                       + secondAttackResult.orElseThrow().getAttackName();
-            efficiency += "2- " + formatEfficiency(secondAttackResult.orElseThrow().efficiency());
-        }
-        showDialog(message, efficiency);
+            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) ->
+                (trainer == playerTrainer ? "Vous envoyez " : "L'adversaire envoie ") + bugemon.getName() + " !";
+
+            case TurnStep.ItemStep(Trainer trainer, Item item) ->
+                (trainer == playerTrainer ? "Vous utilisez " : "L'adversaire utilise ") + item.name() + " !";
+
+            case TurnStep.BugemonKoStep(Trainer trainer) ->
+                trainer == playerTrainer ? "Votre Bugémon est K.O. !" : "Le Bugémon adverse est K.O. !";
+
+            case TurnStep.TrainerKoStep(Trainer trainerKo) ->
+                trainerKo == playerTrainer ? "Vous êtes vaincu !" : "L'adversaire est vaincu !";
+
+            case TurnStep.ForfeitStep(Trainer trainer) ->
+                trainer == playerTrainer ? "Vous abandonnez..." : "L'adversaire abandonne.";
+
+            default -> "";
+        };
+
+        this.showDialog(message);
     }
 
-    /** Converts an {@link Efficiency} value to a human-readable French label. */
-    protected String formatEfficiency(Efficiency efficiency) {
-        switch (efficiency) {
-            case HIGH:
-                return "ATTAQUE EFFICACE: félicitation";
-            case LOW:
-                return "Peu d'effet ...";
-            case NEUTRAL:
-            default:
-                return "Dégats standards";
-        }
+    private String formatEfficiency(Efficiency efficiency) {
+        return switch (efficiency) {
+            case HIGH -> " C'est super efficace !";
+            case LOW -> " Ce n'est pas très efficace.";
+            default -> "";
+        };
     }
 
-    /**
-     * Hides the dialog zone, removing it from the layout flow so that it does
-     * not occupy space when empty.
-     */
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
@@ -180,77 +180,59 @@ public abstract class CombatView extends View {
 
     // ── Bugemon display ───────────────────────────────────────────────────────
 
-    /**
-     * Updates the player-side info panel and sprite to reflect the given
-     * Bugemon's current state (name, type, HP).
-     *
-     * <p>
-     * Should be called by the controller at the start of a combat session and
-     * after every turn in which the player's active Bugemon may have changed
-     * or taken damage.
-     * </p>
-     *
-     * @param trainerBugemon a {@link BugemonDTO} snapshot of the player's
-     *                       currently active Bugemon; must not be {@code null}.
-     */
-    protected void updateTrainerBugemon(BugemonDTO trainerBugemon) {
+    public void updateTrainerBugemon(BugemonDTO trainerBugemon) {
+        File file = new File(Configuration.Paths.SPRITES + trainerBugemon.getSpriteURL());
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
-        this.bugemonTrainerImage.setImage(
-                new Image(trainerBugemon.getSpriteURL(), 256, 256, true, false));
-        makeTrainerBugemonReappear();
+        this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
+        this.makeTrainerBugemonReappear();
     }
 
-    /**
-     * Updates the opponent-side info panel and sprite to reflect the given
-     * Bugemon's current state (name, type, HP).
-     *
-     * @param opponentBugemon a {@link BugemonDTO} snapshot of the opponent's
-     *                        currently active Bugemon; must not be {@code null}.
-     */
-    protected void updateOpponentBugemon(BugemonDTO opponentBugemon) {
+    public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
+        File file = new File(Configuration.Paths.SPRITES + opponentBugemon.getSpriteURL());
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
-        this.bugemonOpponentImage.setImage(
-                new Image(opponentBugemon.getSpriteURL(), 256, 256, true, false));
-        makeOpponentBugemonReappear();
+        this.bugemonOpponentImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
+        this.makeOpponentBugemonReappear();
+    }
+
+    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
+    public void updateTrainerInfo(BugemonDTO bugemon) {
+        this.bugemonTrainerInfo.setBugemonInfo(bugemon);
+    }
+
+    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
+    public void updateOpponentInfo(BugemonDTO bugemon) {
+        this.bugemonOpponentInfo.setBugemonInfo(bugemon);
     }
 
     // ── Attack animations ─────────────────────────────────────────────────────
 
-    /**
-     * Plays a lunge animation on the player's sprite (slide toward the opponent
-     * then return), then invokes {@code onFinished} on the JavaFX thread.
-     *
-     * @param onFinished callback executed once the animation completes; must
-     *                   not be {@code null}.
-     */
     public void playTrainerAttackAnimation(Runnable onFinished) {
-        attackAnimationView.playTrainerAttackAnimation(onFinished);
+        this.attackAnimationView.playTrainerAttackAnimation(onFinished);
     }
 
-    /**
-     * Plays a lunge animation on the opponent's sprite (slide toward the player
-     * then return), then invokes {@code onFinished} on the JavaFX thread.
-     *
-     * @param onFinished callback executed once the animation completes; must
-     *                   not be {@code null}.
-     */
     public void playOpponentAttackAnimation(Runnable onFinished) {
-        attackAnimationView.playOpponentAttackAnimation(onFinished);
+        this.attackAnimationView.playOpponentAttackAnimation(onFinished);
     }
 
     public void playDeathAnimationForTrainer(Runnable onFinished) {
-        attackAnimationView.playDeathAnimationForTrainer(onFinished);
+        this.attackAnimationView.playDeathAnimationForTrainer(onFinished);
     }
 
     public void playDeathAnimationForOpponent(Runnable onFinished) {
-        attackAnimationView.playDeathAnimationForOpponent(onFinished);
+        this.attackAnimationView.playDeathAnimationForOpponent(onFinished);
     }
 
     public void makeTrainerBugemonReappear() {
-        attackAnimationView.makeBugemonReappear(this.bugemonTrainerImage);
+        this.attackAnimationView.makeBugemonReappear(this.bugemonTrainerImage);
     }
 
     public void makeOpponentBugemonReappear() {
-        attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
+        this.attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
+    }
+
+    public interface NextListener {
+
+        void onNext();
+
     }
 }

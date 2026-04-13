@@ -1,180 +1,131 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
-import java.util.function.Consumer;
-import javafx.stage.Stage;
+import java.util.Collections;
 
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.PlayerService;
+import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
 
 /**
- * Controller for the manual combat screen.
- *
- * <p>
- * Registers action callbacks on the {@link ManualCombatView} at construction
- * time. Each callback mutates the model, then calls {@code view.refresh()} so
- * the view pulls the updated state itself. The controller never calls any
- * show/hide method on the view, and holds no knowledge of view layout.
- * </p>
+ * Controller for the manual combat screen. Implements {@link ManualCombatView.Listener} to receive player combat
+ * actions. Each action mutates the model, then iterates the resulting {@link ulb.models.combat.TurnResult} steps one by
+ * one via the dialog zone. The controller never calls any show/hide method on the view directly, and holds no knowledge
+ * of view layout.
  */
-public class ManualCombatController extends CombatController<ManualCombatView> {
-    private Combat combat;
-    private ManualTrainer playerTrainer;
-    private Consumer<Boolean> onCombatFinished;
+public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
+    private ManualTrainer manualPlayerTrainer;
 
     /**
-     * Constructs a {@code ManualCombatController}, initialises its
-     * {@link ManualCombatView},
-     * and registers the attack, switch, and surrender callbacks.
+     * Constructs a {@code ManualCombatController} and wires itself as the view listener.
      *
-     * @param metaController the application-level controller used for navigation.
-     * @throws IOException if the view fails to load its FXML resource.
      */
-    public ManualCombatController(MetaController metaController, PlayerService playerService)
-            throws IOException {
-        super(metaController, playerService, new ManualCombatView());
-
-        this.view.setOnAttack(this::onAttack);
-        this.view.setOnSwitch(this::onSwitch);
-        this.view.setOnSurrender(this::onSurrender);
-        this.view.setOnItemSelected(this::onItemSelected);
+    public ManualCombatController(MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService, CombatService combatService) {
+        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+        this.view.setListener(this);
     }
 
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
-    public void startCombat(boolean restoreHpAfterCombat) {
-        this.restoreHpAfterCombat = restoreHpAfterCombat;
+    public void startCombat(boolean shouldRestoreHp) {
+        this.manualPlayerTrainer = new ManualTrainer(
+                this.playerService.getActiveTeam().orElseThrow(
+                        () -> new IllegalStateException("No active team for player when starting Manual combat")),
+                this.playerService.getInventory());
+        this.playerTrainer = this.manualPlayerTrainer;
 
-        this.playerTrainer = new ManualTrainer(this.playerService.getActiveTeam(),
-                                               this.playerService.getInventory());
+        AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
 
-        AutoTrainer opponentTrainer = createRandomOpponent(this.playerTrainer.getTeamSize());
-        this.combat = new Combat(playerTrainer, opponentTrainer);
+        this.combat = this.combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
 
-        this.view.setModel(playerTrainer, opponentTrainer, this.combat);
+        this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
+        this.pendingSteps = Collections.emptyIterator();
+        this.view.hideDialog();
         this.view.refresh();
     }
 
     /**
      * Starts a manual combat session using an already prepared combat instance.
      *
-     * @param combat combat model to drive from this controller.
-     * @throws IllegalArgumentException if the ally trainer is not a ManualTrainer.
+     * @param newCombat
+     *            the combat to drive from this controller.
+     * @throws IllegalArgumentException
+     *             if the player trainer is not a ManualTrainer.
      */
-    public void startCombat(Combat combat) {
-        if (!(combat.getAllyTrainer() instanceof ManualTrainer manualAlly)) {
+    public void startCombat(Combat newCombat) {
+        if (!(newCombat.getPlayerTrainer() instanceof ManualTrainer playerManualTrainer)) {
             throw new IllegalArgumentException("Manual combat requires a ManualTrainer as ally");
         }
 
-        this.playerTrainer = manualAlly;
-        Trainer opponentTrainer = combat.getAdversaryTrainer();
-        this.combat = combat;
+        this.manualPlayerTrainer = playerManualTrainer;
+        this.playerTrainer = this.manualPlayerTrainer;
+        this.combat = newCombat;
+        Trainer opponentTrainer = this.combat.getOpponentTrainer();
 
-        this.view.setModel(playerTrainer, opponentTrainer, this.combat);
+        this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
+        this.pendingSteps = Collections.emptyIterator();
+        this.view.hideDialog();
         this.view.refresh();
     }
 
-    /**
-     * Registers a callback invoked when the combat ends.
-     *
-     * @param callback receives true when the player wins, false otherwise.
-     */
-    public void setOnCombatFinished(Consumer<Boolean> callback) {
-        this.onCombatFinished = callback;
+    // ── ManualCombatView.Listener ─────────────────────────────────────────────
+
+    @Override
+    public void onAttack(Attack attack) {
+        this.manualPlayerTrainer.registerAttack(attack);
+        this.startTurn();
     }
 
     /**
-     * Public bridge used by other controllers to display this combat controller.
+     * Handles a switch request. If a forced post-KO switch is pending the switch is applied immediately without
+     * consuming a turn; otherwise a normal switch action is registered and the turn is advanced.
      */
-    public void display(Stage stage) {
-        this.show(stage);
-    }
-
-    // ── Private callbacks (registered on the view) ───────────────────────────
-
-    /**
-     * Registers the chosen attack, advances the turn, then handles the result.
-     *
-     * @param attack the attack chosen by the user, registered on the player trainer
-     *               to be executed in the next turn.
-     */
-    private void onAttack(Attack attack) {
-        this.playerTrainer.registerAttack(attack);
-        handleAnimatedPostTurn(this.combat.turn());
-    }
-
-    /**
-     * Handles a switch request. If a forced post-KO switch is pending the
-     * switch is applied immediately without consuming a turn; otherwise a
-     * normal switch action is registered and the turn is advanced.
-     */
-    private void onSwitch(Bugemon target) {
-        if (this.playerTrainer.isForcedToSwitch()) {
-            this.playerTrainer.switchAfterKO(target);
-            this.playerTrainer.setForcedSwitch(false);
-            view.refresh();
+    @Override
+    public void onSwitch(Bugemon target) {
+        if (this.manualPlayerTrainer.isForcedToSwitch()) {
+            this.manualPlayerTrainer.switchAfterKO(target);
+            this.manualPlayerTrainer.setForcedSwitch(false);
+            this.view.updateTrainerBugemon(this.manualPlayerTrainer.getCurrentBugemon());
+            this.view.refreshMenuState();
         } else {
-            this.playerTrainer.setHasSwitchedThisTurn(true);
-            this.playerTrainer.registerSwitch(target);
-            handleAnimatedPostTurn(this.combat.turn());
+            this.manualPlayerTrainer.setHasSwitchedThisTurn(true);
+            this.manualPlayerTrainer.registerSwitch(target);
+            this.startTurn();
         }
     }
 
-    private void handleAnimatedPostTurn(TurnResult result) {
-        playTurnAnimations(result, this.playerTrainer, () -> handlePostTurn(result));
+    /** Registers a forfeit action, resolves the turn, and navigates to the outcome screen immediately. */
+    @Override
+    public void onForfeit() {
+        this.manualPlayerTrainer.registerForfeit();
+        this.startTurn();
     }
 
-    /**
-     * Navigates to the outcome screen if combat ended, or refreshes the view.
-     *
-     * @param result the turn result to check for KO switches and to determine if
-     *               the combat has ended.
-     *
-     */
-    private void handlePostTurn(TurnResult result) {
-        if (this.combat.isFinished()) {
-            boolean playerWon = this.combat.getWinner().orElseThrow() == this.playerTrainer;
-            if (this.onCombatFinished != null) {
-                this.onCombatFinished.accept(playerWon);
-                return;
-            }
-            handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
-        } else {
-            if (result.allyIsKo()) {
-                this.playerTrainer.setForcedSwitch(true);
-            }
-            this.playerTrainer.setHasSwitchedThisTurn(false);
-            this.view.refresh();
+    @Override
+    public void onItemSelected(Item item) {
+        this.manualPlayerTrainer.registerUseItem(item);
+        this.startTurn();
+    }
+
+    // ── CombatController hooks ────────────────────────────────────────────────
+
+    @Override
+    protected void onStepsExhausted() {
+        if (!this.manualPlayerTrainer.isCurrentBugemonAlive()) {
+            this.manualPlayerTrainer.setForcedSwitch(true);
         }
-    }
-
-    /**
-     * Registers a forfeit action, resolves the turn, and navigates to the defeat
-     * screen.
-     */
-    private void onSurrender() {
-        this.playerTrainer.registerForfeit();
-        this.combat.turn();
-        boolean playerWon = this.combat.getWinner().orElseThrow() == this.playerTrainer;
-        if (this.onCombatFinished != null) {
-            this.onCombatFinished.accept(playerWon);
-            return;
-        }
-        handleCombatResult(this.combat.getWinner().orElseThrow(), this.playerTrainer);
-    }
-
-    private void onItemSelected(Item item) {
-        this.playerTrainer.registerUseItem(item);
-        this.combat.turn();
-        this.view.refresh();
+        this.manualPlayerTrainer.setHasSwitchedThisTurn(false);
+        this.view.hideDialog();
+        this.view.refreshMenuState();
     }
 }

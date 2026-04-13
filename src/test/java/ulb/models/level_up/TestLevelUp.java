@@ -9,9 +9,8 @@
 package ulb.models.level_up;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
 
 import org.junit.Test;
 
@@ -23,27 +22,36 @@ public class TestLevelUp {
 
     @Test
     public void testChoicesTotalTenPoints() {
-        bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+        this.bugemon = TestUtilsBugemons.createDefaultBugemon("1");
 
-        LevelUp levelUp = new LevelUp(bugemon);
-        List<Upgrade> choices = levelUp.getChoices();
-
-        for (Upgrade choice : choices) {
-            // 1 point is worth 2 HP or 1 Initiative, while Attack and Defense are worth 1 point
+        LevelUp levelUp = new LevelUp(this.bugemon);
+        for (Upgrade upgrade : levelUp.upgrades()) {
+            // 1 point is worth 2 HP or 1 Initiative, while Attack and Defense are worth 1
+            // point
             // each
-            int pointsHp = choice.hp() / 2;
-            int pointsAttack = choice.attack();
-            int pointsDefense = choice.defense();
-            int pointsInitiative = choice.initiative() / 2;
+            int pointsHp = upgrade.hp() / 2;
+            int pointsAttack = upgrade.attack();
+            int pointsDefense = upgrade.defense();
+            int pointsInitiative = upgrade.initiative() / 2;
 
             int totalPoints = pointsHp + pointsAttack + pointsDefense + pointsInitiative;
 
             assertEquals(10, totalPoints);
 
-            assertTrue(choice.hp() % 2 == 0);
-            assertTrue(choice.initiative() % 2 == 0);
-            assertTrue(choice.hp() >= 0 && choice.attack() >= 0 && choice.defense() >= 0
-                       && choice.initiative() >= 0);
+            assertEquals(0, upgrade.hp() % 2);
+            assertEquals(0, upgrade.initiative() % 2);
+            assertTrue(
+                    upgrade.hp() >= 0 && upgrade.attack() >= 0 && upgrade.defense() >= 0 && upgrade.initiative() >= 0);
         }
+    }
+
+    @Test
+    public void testGetOutOfBoundsThrows() {
+        this.bugemon = TestUtilsBugemons.createDefaultBugemon("1");
+        LevelUp levelUp = new LevelUp(this.bugemon);
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            levelUp.get(levelUp.numUpgrades());
+        });
     }
 }

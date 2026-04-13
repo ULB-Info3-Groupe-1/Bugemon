@@ -1,88 +1,55 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
-
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
-import ulb.models.combat.TurnResult;
 import ulb.models.trainer.AutoTrainer;
+import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.PlayerService;
+import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
 
 /**
  * Controller for the automatic combat screen.
  *
- * <p>
- * Drives the {@link Combat} loop via a JavaFX {@link Timeline}. After each
- * turn it calls {@code view.refresh()} so the view can pull the updated state
- * from the model; no data is pushed into the view.
- * </p>
+ * Drives the {@link Combat} loop one step at a time, gated by the player's "Next" clicks. Each step triggers its
+ * animation and dialog before the next one is unlocked. Implements {@link AutomaticCombatView.Listener} to receive
+ * those events.
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
-    private Timeline turnTimeline;
     /**
-     * Constructs an {@code AutomaticCombatController} and initialises its
-     * {@link AutomaticCombatView}.
+     * Constructs an {@code AutomaticCombatController} and initialises its {@link AutomaticCombatView}.
      *
-     * @param metaController the application-level controller used for navigation.
-     * @throws IOException if the view fails to load its FXML resource.
+     * @param metaController
+     *            the application-level controller used for navigation.
      */
-    public AutomaticCombatController(MetaController metaController, PlayerService playerService)
-            throws IOException {
-        super(metaController, playerService, new AutomaticCombatView());
+    public AutomaticCombatController(MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService, CombatService combatService) {
+        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
     }
 
-    /** Starts a complete automatic combat session and drives it to completion. */
     @Override
-    public void startCombat(boolean restoreHpAfterCombat) {
-        this.restoreHpAfterCombat = restoreHpAfterCombat;
+    public void startCombat(boolean shouldRestoreHp) {
+        AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam().orElseThrow(
+                () -> new IllegalStateException("No active team for player when starting Automatic combat")));
+        this.playerTrainer = autoPlayer;
+        AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 
-        // Stop any existing timeline from a previous combat
-        if (this.turnTimeline != null) {
-            this.turnTimeline.stop();
-        }
+        this.combat = combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
 
-        AutoTrainer playerTrainer = new AutoTrainer(this.playerService.getActiveTeam());
-        AutoTrainer opponentTrainer = createRandomOpponent(playerTrainer.getTeamSize());
-        Combat combat = new Combat(playerTrainer, opponentTrainer);
-
-        this.view.setModel(playerTrainer, opponentTrainer, combat);
+        this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
-
-        scheduleTurn(combat, playerTrainer, Duration.seconds(1));
     }
 
-    /**
-     * Schedules the next combat turn to happen after the specified delay.
-     * Creates a fresh Timeline for each turn to avoid timing drift issues.
-     *
-     * @param combat the combat model
-     * @param playerTrainer the player trainer
-     * @param delay the delay before executing the turn
-     */
-    private void scheduleTurn(Combat combat, AutoTrainer playerTrainer, Duration delay) {
-        this.turnTimeline = new Timeline();
-        KeyFrame keyFrame = new KeyFrame(delay, event -> {
-            TurnResult turnResult = combat.turn();
+    /** Starts the automatic turn loop. Must be called after the view is shown. */
+    public void startAutoRun() {
+        this.startTurn();
+    }
 
-            playTurnAnimations(turnResult, playerTrainer, () -> {
-                this.view.refresh();
+    // ── CombatController hooks ────────────────────────────────────────────────
 
-                if (combat.getWinner().isPresent()) {
-                    this.turnTimeline.stop();
-                    handleCombatResult(combat.getWinner().orElseThrow(), playerTrainer);
-                    return;
-                }
-
-                // Schedule the next turn after 3 seconds
-                scheduleTurn(combat, playerTrainer, Duration.seconds(3));
-            });
-        });
-
-        this.turnTimeline.getKeyFrames().add(keyFrame);
-        this.turnTimeline.play();
+    @Override
+    protected void onStepsExhausted() {
+        this.startTurn();
     }
 }

@@ -23,19 +23,18 @@ public class TestManualTrainer {
 
     @Before
     public void setUp() {
-        inventory = new Inventory();
+        this.inventory = new Inventory();
 
-        baieRevigorante =
-                new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
-                         Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
+        this.baieRevigorante = new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
+                Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
 
-        inventory.addItem(baieRevigorante, 5);
+        this.inventory.addItem(this.baieRevigorante, 5);
     }
 
     @Test
     public void testRegisterSwitch() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
         Bugemon target = team.get("2").get();
 
         trainer.registerSwitch(target);
@@ -48,16 +47,15 @@ public class TestManualTrainer {
     public void testRegisterSwitchDeadBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         TestUtilsBugemons.killBugemon(team, "2");
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
-        assertThrows(IllegalArgumentException.class,
-                     () -> trainer.registerSwitch(team.get("2").get()));
+        assertThrows(IllegalArgumentException.class, () -> trainer.registerSwitch(team.get("2").get()));
     }
 
     @Test
     public void testRegisterAttack() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
         var attack = trainer.getCurrentBugemonAttackList().get(0);
 
         trainer.registerAttack(attack);
@@ -69,11 +67,12 @@ public class TestManualTrainer {
     @Test
     public void testRegisterAttackNotInMoveSet() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
-        // Build an attack with an ID that is guaranteed to not be in any Bugemon's attacks
+        // Build an attack with an ID that is guaranteed to not be in any Bugemon's
+        // attacks
         Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", BugemonType.FLORA, "", 10,
-                                          new java.util.ArrayList<>());
+                new java.util.ArrayList<>());
 
         assertThrows(IllegalArgumentException.class, () -> trainer.registerAttack(foreignAttack));
     }
@@ -82,18 +81,18 @@ public class TestManualTrainer {
     public void testRegisterUseItem() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
 
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
-        trainer.registerUseItem(baieRevigorante);
+        trainer.registerUseItem(this.baieRevigorante);
 
         TurnAction action = trainer.getAction();
-        assertEquals(new TurnAction.UseItemAction(baieRevigorante), action);
+        assertEquals(new TurnAction.UseItemAction(this.baieRevigorante), action);
     }
 
     @Test
     public void testRegisterForfeit() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
         trainer.registerForfeit();
 
@@ -104,21 +103,21 @@ public class TestManualTrainer {
     @Test
     public void testSelectActionClearsRegistered() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
         trainer.registerForfeit();
         trainer.getAction(); // consume the pending action
 
         // no action registered -> should throw
-        assertThrows(IllegalStateException.class, () -> trainer.getAction());
+        assertThrows(IllegalStateException.class, trainer::getAction);
     }
 
     @Test
     public void testHasPendingAction() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
-        assertThrows(IllegalStateException.class, () -> trainer.getAction());
+        assertThrows(IllegalStateException.class, trainer::getAction);
 
         trainer.registerForfeit();
         assertEquals(true, trainer.hasPendingAction());
@@ -130,7 +129,7 @@ public class TestManualTrainer {
     @Test
     public void testSwitchAfterKO() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
         Bugemon replacement = team.get("2").get();
 
         TestUtilsBugemons.killBugemon(team, "1"); // kill current bugemon
@@ -142,10 +141,9 @@ public class TestManualTrainer {
     @Test
     public void testSwitchAfterKODeadTarget() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        ManualTrainer trainer = new ManualTrainer(team, inventory);
+        ManualTrainer trainer = new ManualTrainer(team, this.inventory);
         TestUtilsBugemons.killBugemon(team, "2");
 
-        assertThrows(IllegalArgumentException.class,
-                     () -> trainer.switchAfterKO(team.get("2").get()));
+        assertThrows(IllegalArgumentException.class, () -> trainer.switchAfterKO(team.get("2").get()));
     }
 }

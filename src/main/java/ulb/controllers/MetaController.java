@@ -5,59 +5,38 @@ import java.util.EnumMap;
 import java.util.Map;
 import javafx.stage.Stage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
-import ulb.controllers.combat.NOTowerController;
+import ulb.controllers.combat.TowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import ulb.models.combat.Combat;
+import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.PlayerService;
+import ulb.views.View;
 
 /**
- * Central controller responsible for managing all screen controllers and
- * orchestrating application-level navigation.
- *
- * <p>
- * {@code MetaController} is instantiated once at startup by {@link ulb.Main}
- * and owns every concrete {@link Controller} in the application. It is the
- * single authority for:
- * <ul>
- * <li>Loading game resources from JSON files via {@link ulb.utils.Parser}.</li>
- * <li>Navigating between screens via
- * {@link #switchTo(Window)}.</li>
- * <li>Launching combat sessions ({@link #launchAutoCombat()},
- * {@link #launchManualCombat()}).</li>
- * <li>Resetting the player's team between sessions
- * ({@link #resetTeam()}).</li>
- * <li>Displaying application-wide alert dialogs
- * ({@link #showAlert(String, String)}).</li>
- * </ul>
- *
- * <p>
- * All lower-level controllers hold a reference to this class and call its
- * methods to trigger navigation or access shared state (e.g. the list of all
- * available Bugemons).
- * </p>
- *
- * @see Controller
- * @see Window
- * @see ulb.utils.Parser
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
+    private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
+
     /**
-     * Enumerates all navigable screens in the application.
-     *
-     * <p>
-     * Each constant corresponds to a concrete {@link Controller} managed by
-     * the {@link MetaController}. Pass one of these values to
-     * {@link MetaController#switchTo(Window)} to trigger a screen transition.
-     * </p>
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
      */
     public enum Window {
         MAIN_MENU,
         CREATE_TEAM,
+        EDIT_TEAM,
+        CREATE_BUGEMON,
         MANUAL_COMBAT,
         AUTOMATIC_COMBAT,
         NOTOWER,
@@ -66,116 +45,172 @@ public class MetaController {
         LEVEL_UP,
     }
 
+    private final BugemonService bugemonService;
+
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final MainMenuController mainMenuController;
-    private final CreateTeamController createTeamController;
+    private final ManageTeamController createTeamController;
+    private final ManageTeamController editTeamController;
+    private final CreateBugemonController createBugemonController;
     private final AutomaticCombatController automaticCombatController;
     private final ManualCombatController manualCombatController;
-    private final NOTowerController noTowerController;
+    private final TowerController towerController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
-    private final PlayerService playerService;
-    private boolean noTowerFlowActive;
+    private boolean isTowerActive;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
-     * @param primaryStage main JavaFX stage of the application
-     * @throws IOException if a controller or view fails to initialize
+     * @param primaryStage
+     *            main JavaFX stage of the application
+     * @throws IOException
+     *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage, PlayerService playerService) throws IOException {
-        this.stage = primaryStage;
-        this.playerService = playerService;
+    public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
+            CombatService combatService) throws IOException {
+        this.bugemonService = bugemonService;
 
-        this.mainMenuController = new MainMenuController(this, this.playerService);
-        this.createTeamController = new CreateTeamController(this, this.playerService);
-        this.manualCombatController = new ManualCombatController(this, this.playerService);
-        this.automaticCombatController = new AutomaticCombatController(this, this.playerService);
-        this.noTowerController = new NOTowerController(this, this.playerService);
+        this.stage = primaryStage;
+
+        this.mainMenuController = new MainMenuController(this, playerService);
+        this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
+                playerService, bugemonService);
+        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, playerService,
+                bugemonService);
+        this.createBugemonController = new CreateBugemonController(this, bugemonService);
+        this.manualCombatController = new ManualCombatController(this, playerService, bugemonService, combatService);
+        this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService,
+                combatService);
+        this.levelUpController = new LevelUpController(this, bugemonService);
+        this.towerController = new TowerController(this, playerService, bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.levelUpController = new LevelUpController(this, this.playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        initializeMusicResources();
-        this.manualCombatController.setOnVictory(levelUpController::setLevelUp);
-        this.automaticCombatController.setOnVictory(levelUpController::setLevelUp);
-
-        initTransitions();
+        this.initializeMusicResources();
+        this.initTransitions();
     }
 
-    /**
-     * Call the method from the musicLoader to load all music and sound effects
-     * resources and register them with the musicPlayer.
-     *
-     * @throws IOException if any resource directory cannot be accessed
-     */
+    public void onCombatFinished(boolean won) {
+        LOG.info("onCombatFinished, won: {}", won);
+        if (this.isTowerActive()) {
+            this.towerController.onTowerCombatFinished(won);
+            return;
+        }
+
+        this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
+    }
+
+    public void onCombatVictoryFinished() {
+        if (this.bugemonService.hasPendingLevelUps()) {
+            this.switchTo(Window.LEVEL_UP);
+        } else {
+            this.switchTo(Window.MAIN_MENU);
+        }
+    }
+
+    public void onCombatDefeatRetry() {
+        this.switchTo(Window.CREATE_TEAM);
+    }
+
+    public void onCombatDefeatReturnToMainMenu() {
+        this.switchTo(Window.MAIN_MENU);
+    }
+
+    public void onLevelUpfinished() {
+        if (this.isTowerActive()) {
+            this.switchTo(Window.NOTOWER);
+        } else {
+            this.switchTo(Window.MAIN_MENU);
+        }
+    }
+
     private void initializeMusicResources() throws IOException {
-        musicLoader.loadAllResources(musicPlayer);
+        this.musicLoader.loadAllResources(this.musicPlayer);
     }
 
-    /**
-     * Initializes the screen transition map, associating each {@link Window} with
-     * a lambda that performs the necessary actions to display that screen.
-     */
     private void initTransitions() {
-        transitions.put(Window.MAIN_MENU, () -> {
+        this.transitions.put(Window.MAIN_MENU, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
-            mainMenuController.show(stage);
+            this.mainMenuController.show();
         });
-        transitions.put(Window.CREATE_TEAM, () -> {
+        this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
-            createTeamController.show(stage);
+            this.createTeamController.show();
         });
-        transitions.put(Window.MANUAL_COMBAT, () -> {
+        this.transitions.put(Window.EDIT_TEAM, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
+            this.editTeamController.show();
+        });
+        this.transitions.put(Window.CREATE_BUGEMON, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
+            this.createBugemonController.show();
+        });
+        this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            manualCombatController.startCombat(true);
-            manualCombatController.show(stage);
+            this.manualCombatController.startCombat(true);
+            this.manualCombatController.show();
         });
-        transitions.put(Window.AUTOMATIC_COMBAT, () -> {
+        this.transitions.put(Window.AUTOMATIC_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            automaticCombatController.startCombat(true);
-            automaticCombatController.show(stage);
+            this.automaticCombatController.startCombat(true);
+            this.automaticCombatController.show();
+            this.automaticCombatController.startAutoRun();
         });
-        transitions.put(Window.NOTOWER, () -> {
-            this.noTowerFlowActive = true;
-            musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            noTowerController.runNOTower(stage);
+        this.transitions.put(Window.NOTOWER, () -> {
+            this.isTowerActive = true;
+            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+            this.towerController.runTower();
         });
-        transitions.put(Window.COMBAT_VICTORY, () -> {
-            combatVictoryController.show(stage);
+        this.transitions.put(Window.COMBAT_VICTORY, () -> {
+            this.combatVictoryController.show();
             this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
         });
-        transitions.put(Window.COMBAT_DEFEAT, () -> {
-            combatDefeatController.show(stage);
+        this.transitions.put(Window.COMBAT_DEFEAT, () -> {
+            this.combatDefeatController.show();
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
-        transitions.put(Window.LEVEL_UP, () -> levelUpController.show(stage));
+        this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
     }
 
     /**
      * Switches the current screen to the specified window.
      *
-     * @param window target screen to display
-     * @throws IllegalArgumentException if the window is invalid
+     * @param window
+     *            target screen to display
+     * @throws IllegalArgumentException
+     *             if the window is invalid
      */
     public final void switchTo(Window window) {
-        Runnable transition = transitions.get(window);
-        if (transition == null)
+        Runnable transition = this.transitions.get(window);
+        if (transition == null) {
             throw new IllegalArgumentException("Unknown window: " + window);
-        musicPlayer.stopMusic();
+        }
+        this.musicPlayer.stopMusic();
         transition.run();
     }
 
-    public boolean isNOTowerFlowActive() {
-        return this.noTowerFlowActive;
+    void showView(View view) {
+        view.show(this.stage);
     }
 
-    public void endNOTowerFlow() {
-        this.noTowerFlowActive = false;
+    public boolean isTowerActive() {
+        return this.isTowerActive;
+    }
+
+    public void endTowerFlow() {
+        this.isTowerActive = false;
+    }
+
+    public void startTowerCombat(Combat combat) {
+        this.musicPlayer.stopMusic();
+        this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+        this.manualCombatController.startCombat(combat);
+        this.manualCombatController.show();
     }
 }
