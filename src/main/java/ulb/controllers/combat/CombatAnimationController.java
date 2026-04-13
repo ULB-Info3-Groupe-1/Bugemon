@@ -48,11 +48,7 @@ public class CombatAnimationController {
                 this.playDeathAnimation(isPlayerForfeiting, onFinished);
             }
 
-            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) -> {
-                boolean forPlayer = trainer == playerTrainer;
-                this.makeBugemonReappear(forPlayer);
-                onFinished.run();
-            }
+            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) -> onFinished.run();
 
             default -> onFinished.run();
         }

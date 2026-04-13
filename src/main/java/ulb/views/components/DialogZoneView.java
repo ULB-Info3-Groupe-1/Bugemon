@@ -41,6 +41,10 @@ public class DialogZoneView extends ComponentView {
         this.nextButton.setText(text);
     }
 
+    public void setNextButtonDisabled(boolean disabled) {
+        this.nextButton.setDisable(disabled);
+    }
+
     public interface Listener {
 
         void onNext();

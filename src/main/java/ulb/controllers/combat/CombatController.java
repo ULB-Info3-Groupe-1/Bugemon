@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
+import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.combat.TurnStep;
@@ -64,57 +66,96 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     }
 
     /**
-     * Displays the next step: plays its animation then shows the dialog. Calls {@link #onStepsExhausted()} when all
-     * steps of the current turn have been shown.
+     * Displays the next step: plays its animation, then runs the targeted {@code viewRefresh} callback, then shows the
+     * dialog. The callback updates only the UI elements affected by this specific step.
      */
-    protected void showNextStep(TurnStep step) {
+    protected void showNextStep(TurnStep step, Runnable viewRefresh) {
+        this.view.lockNextButton();
         this.animationController.playStepAnimation(step, this.playerTrainer, () -> {
-            this.view.refresh();
+            viewRefresh.run();
             this.view.showStepDialog(step, this.playerTrainer);
         });
     }
 
     /**
-     * Processes {@link #currentStep} and advances: detects end-of-combat steps, handles KO reactions for any
-     * non-defeated trainer, then calls {@link #showNextStep()}. Subclass {@code onNext()} listener implementations
-     * should delegate here.
+     * Processes the next pending step. Delegates entirely to {@link #handleStep(TurnStep)}.
      */
     protected void advanceStep() {
         if (!this.pendingSteps.hasNext()) {
             this.onStepsExhausted();
             return;
         }
-
         TurnStep step = this.pendingSteps.next();
         LOG.debug("Advancing step: {}", step);
+        this.handleStep(step);
+    }
 
+    /**
+     * Single dispatch point for all step types. Each branch owns both the model reaction and the targeted
+     * post-animation view update, keeping them in sync.
+     */
+    private void handleStep(TurnStep step) {
         switch (step) {
             case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
                 Trainer winner = trainerKo == this.playerTrainer ? this.combat.getOpponentTrainer()
                         : this.playerTrainer;
                 LOG.info("Combat ended – winner: {}", winner.getCurrentBugemonName());
                 this.onCombatEnded(winner);
-                return;
             }
 
             case TurnStep.ForfeitStep(Trainer trainer) -> {
                 Trainer winner = trainer == this.playerTrainer ? this.combat.getOpponentTrainer() : this.playerTrainer;
                 LOG.info("Combat ended by forfeit – winner: {}", winner.getCurrentBugemonName());
                 this.onCombatEnded(winner);
-                return;
             }
 
-            case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> {
+            // reactToKo() and view update are deferred into the animation callback so the
+            // death animation plays on the dead Bugemon. After the fade-out, only the KO'd
+            // side updates: makeReappear() fades the new Bugemon in from opacity 0.
+            // refreshMenuState() handles the forced-switch menu without touching the other
+            // side.
+            case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> this.showNextStep(step, () -> {
                 trainer.reactToKo();
-                this.view.refresh();
-            }
+                if (trainer == this.playerTrainer) {
+                    this.view.updateTrainerBugemon(trainer.getCurrentBugemon());
+                } else {
+                    this.view.updateOpponentBugemon(trainer.getCurrentBugemon());
+                }
+                this.view.refreshMenuState();
+            });
 
-            default -> {
-                // No specific action required for other steps
-            }
+            case TurnStep.AttackStep s -> this.showNextStep(step, () -> {
+                Trainer defender = s.attacker() == this.playerTrainer ? this.combat.getOpponentTrainer()
+                        : this.playerTrainer;
+                this.updateInfoForTrainer(defender);
+                boolean selfHpEffect = s.getAttackEffects().stream()
+                        .anyMatch(e -> e.target() == EffectTarget.THROWER && e instanceof EffectHeal);
+                if (selfHpEffect) {
+                    this.updateInfoForTrainer(s.attacker());
+                }
+            });
+
+            case TurnStep.SwitchStep s -> this.showNextStep(step, () -> {
+                if (s.trainer() == this.playerTrainer) {
+                    this.view.updateTrainerBugemon(s.trainer().getCurrentBugemon());
+                } else {
+                    this.view.updateOpponentBugemon(s.trainer().getCurrentBugemon());
+                }
+            });
+
+            case TurnStep.ItemStep s -> this.showNextStep(step, () -> this.updateInfoForTrainer(s.trainer()));
+
+            default -> this.showNextStep(step, () -> {
+            });
         }
+    }
 
-        this.showNextStep(step);
+    private void updateInfoForTrainer(Trainer trainer) {
+        if (trainer == this.playerTrainer) {
+            this.view.updateTrainerInfo(trainer.getCurrentBugemon());
+        } else {
+            this.view.updateOpponentInfo(trainer.getCurrentBugemon());
+        }
     }
 
     /**

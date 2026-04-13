@@ -160,6 +160,7 @@ public class MetaController {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             this.automaticCombatController.startCombat(true);
             this.automaticCombatController.show(this.stage);
+            this.automaticCombatController.startAutoRun();
         });
         this.transitions.put(Window.NOTOWER, () -> {
             this.isTowerActive = true;

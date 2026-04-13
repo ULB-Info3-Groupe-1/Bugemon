@@ -42,6 +42,10 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
         this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
+    }
+
+    /** Starts the automatic turn loop. Must be called after the view is shown. */
+    public void startAutoRun() {
         this.startTurn();
     }
 

@@ -152,6 +152,16 @@ public class ManualCombatView extends CombatView {
         this.listener = listener;
     }
 
+    /**
+     * Overrides to also hide the action menu when the controller locks between steps, preventing the player from
+     * triggering another action while an animation is playing.
+     */
+    @Override
+    public void lockNextButton() {
+        super.lockNextButton();
+        this.hideActionMenu();
+    }
+
     /** Gives the view the model objects it reads from in {@link #refresh()}. */
     public void setModel(ManualTrainer newPlayer, Trainer newOpponent) {
         this.player = newPlayer;
@@ -171,6 +181,14 @@ public class ManualCombatView extends CombatView {
 
         this.updateTrainerBugemon(this.player.getCurrentBugemon());
         this.updateOpponentBugemon(this.opponent.getCurrentBugemon());
+        this.refreshMenuState();
+    }
+
+    @Override
+    public void refreshMenuState() {
+        if (this.player == null) {
+            return;
+        }
 
         if (this.player.isForcedToSwitch()) {
             this.showSwitchMenu(true);
