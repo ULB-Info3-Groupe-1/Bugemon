@@ -7,6 +7,7 @@ import java.util.Set;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
@@ -139,5 +140,9 @@ public abstract class Trainer {
 
     public void restoreTeamHp() {
         this.team.restoreHp();
+    }
+
+    public void applyEffectToCurrentTeam(Effect effect) {
+        this.team.forEach(b -> b.apply(effect));
     }
 }
