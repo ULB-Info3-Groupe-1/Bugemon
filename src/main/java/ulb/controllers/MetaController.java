@@ -171,7 +171,7 @@ public class MetaController {
             this.combatDefeatController.show();
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
-        this.transitions.put(Window.LEVEL_UP, () -> this.levelUpController.show());
+        this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
     }
 
     /**
