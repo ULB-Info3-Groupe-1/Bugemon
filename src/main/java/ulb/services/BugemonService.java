@@ -15,7 +15,6 @@ import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
-import ulb.repositories.exceptions.PlayernameIsEmptyException;
 
 public class BugemonService {
 
@@ -29,7 +28,7 @@ public class BugemonService {
     private List<Bugemon> allDefaultBugemonsCache;
 
     public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
-            PlayerService playerService) throws PlayernameIsEmptyException {
+            PlayerService playerService) {
         this.staticDataRepository = staticDataRepository;
         this.playerRepository = playerRepository;
         this.playerService = playerService;

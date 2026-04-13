@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
+import ulb.Configuration;
 import ulb.controllers.combat.TowerController.RoomState;
 import ulb.models.tower.room.RoomType;
 
@@ -19,8 +20,6 @@ import ulb.models.tower.room.RoomType;
  * Reusable component representing a single room node in the floor map. Configurable to represent different room types
  */
 public class RoomNodeView extends StackPane {
-    private static final String FXML_PATH = "/fxml/components/RoomNode.fxml";
-    private static final String ROOM_BASE_PATH = "/png/rooms/";
 
     @FXML
     private ImageView roomToken;
@@ -39,19 +38,20 @@ public class RoomNodeView extends StackPane {
     private Listener listener;
 
     public RoomNodeView() {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource(FXML_PATH));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource(Configuration.Paths.Fxml.COMPONENT_ROOM_NODE));
         loader.setRoot(this);
         loader.setController(this);
         try {
             loader.load();
         } catch (IOException e) {
-            throw new UncheckedIOException("Failed to load component: " + FXML_PATH, e);
+            throw new UncheckedIOException("Failed to load component: " + Configuration.Paths.Fxml.COMPONENT_ROOM_NODE,
+                    e);
         }
     }
 
     @FXML
     private void initialize() {
-        this.roomToken.setImage(this.loadRequiredImage(ROOM_BASE_PATH + "base.png"));
+        this.roomToken.setImage(this.loadRequiredImage(Configuration.Paths.ROOM_BASE_PATH + "base.png"));
     }
 
     /**
@@ -69,7 +69,7 @@ public class RoomNodeView extends StackPane {
         String styleClass = "room-" + normalizedRoomType;
         this.getStyleClass().add(styleClass);
 
-        String iconPath = ROOM_BASE_PATH + normalizedRoomType + ".png";
+        String iconPath = Configuration.Paths.ROOM_BASE_PATH + normalizedRoomType + ".png";
         this.roomTypeIcon.setImage(this.loadOptionalImage(iconPath));
     }
 
@@ -90,27 +90,22 @@ public class RoomNodeView extends StackPane {
             case CURRENT -> {
                 this.stateLabel.setText("");
                 this.stateOverlay.setVisible(true);
-                break;
             }
             case VISITED -> {
                 this.stateLabel.setText("✓");
                 this.stateOverlay.setVisible(true);
-                break;
             }
             case AVAILABLE -> {
                 this.stateLabel.setText("");
                 this.stateOverlay.setVisible(true);
-                break;
             }
             case LOCKED -> {
                 this.stateLabel.setText("");
                 this.stateOverlay.setVisible(false);
-                break;
             }
             default -> {
                 this.stateLabel.setText("");
                 this.stateOverlay.setVisible(false);
-                break;
             }
         }
 
