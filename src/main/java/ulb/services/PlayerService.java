@@ -48,6 +48,10 @@ public class PlayerService {
         return this.playerTeams.stream().map(BugemonTeam::getName).toList();
     }
 
+    public int getPlayerId() {
+        return this.playerId;
+    }
+
     // --- Team Management ---
 
     /**
@@ -208,20 +212,6 @@ public class PlayerService {
         this.updateLocalTeams();
     }
 
-    /**
-     * Saves the state of a single bugemon to the database.
-     *
-     * @param bugemon
-     *            the bugemon to save
-     */
-    public void saveBugemonState(Bugemon bugemon) {
-        this.playerRepository.updatePlayerBugemon(
-                new PlayerBugemonDTO(this.playerId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
-                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
-
-        this.updateLocalTeams();
-    }
-
     private void updateBugemonInDb(Bugemon b) {
         this.playerRepository.updatePlayerBugemon(this.toDTO(b));
     }
@@ -244,7 +234,7 @@ public class PlayerService {
         }
     }
 
-    private void updateLocalTeams() {
+    public void updateLocalTeams() {
         this.activeTeam.ifPresent(current -> {
             this.playerTeams.removeIf(t -> t.getName().equals(current.getName()));
             this.playerTeams.add(new BugemonTeam(current));

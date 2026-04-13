@@ -26,17 +26,17 @@ public class Combat {
     private final Trainer opponentTrainer;
 
     private final EndOfCombatAction endOfCombatAction;
-    private final CombatXpDistributor xpDistributor;
+    private final ICombatXpDistributor xpDistributor;
 
     private TurnResult turnResult;
 
     private boolean isCompleted = false;
 
-    public Combat(CombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer) {
+    public Combat(ICombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer) {
         this(xpDistributor, playerTrainer, opponentTrainer, EndOfCombatAction.NO_OP);
     }
 
-    public Combat(CombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer,
+    public Combat(ICombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer,
             EndOfCombatAction endOfCombatAction) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;

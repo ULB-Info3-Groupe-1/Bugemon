@@ -7,7 +7,7 @@ import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 
-public class CombatXpDistributor {
+public class CombatXpDistributor implements ICombatXpDistributor {
 
     private final BugemonService bugemonService;
 
