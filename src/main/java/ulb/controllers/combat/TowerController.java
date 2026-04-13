@@ -137,20 +137,19 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
             return;
         }
 
-        this.showFloorMap(stage);
+        this.showFloorMap();
     }
 
     /**
      * Shows the floor map before continuing the run.
      */
-    private void showFloorMap(Stage stage) {
+    private void showFloorMap() {
         this.view.setFloorNumber(this.tower.getCurrentFloorNumber() + 1);
         this.view.setInstructions("Cliquez sur une salle disponible pour continuer votre ascension");
         this.updateFloorStructure();
         this.refreshFloorViewState();
 
-        // Show the view using the Controller's show() method
-        this.show(stage);
+        this.show();
     }
 
     private void updateFloorStructure() {
