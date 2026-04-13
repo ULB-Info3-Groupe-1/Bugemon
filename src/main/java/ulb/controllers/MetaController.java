@@ -123,7 +123,11 @@ public class MetaController {
     }
 
     public void onLevelUpfinished() {
-        this.switchTo(Window.MAIN_MENU);
+        if (this.isTowerActive()) {
+            this.switchTo(Window.NOTOWER);
+        } else {
+            this.switchTo(Window.MAIN_MENU);
+        }
     }
 
     private void initializeMusicResources() throws IOException {
