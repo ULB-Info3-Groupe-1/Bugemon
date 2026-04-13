@@ -10,8 +10,7 @@
 
     <VBox spacing="0">
         <HBox spacing="8" alignment="CENTER">
-            <Label fx:id="bugemonName" styleClass="bugemon-name"
-                text="Name" />
+            <Label fx:id="bugemonName" styleClass="bugemon-name" text="Nom" />
             <Label fx:id="bugemonLevel" styleClass="bugemon-level"
                 text="Lv.1" />
         </HBox>
