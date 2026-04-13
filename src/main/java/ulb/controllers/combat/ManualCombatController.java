@@ -11,6 +11,7 @@ import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
@@ -29,16 +30,14 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      *
      */
     public ManualCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) {
-        super(metaController, playerService, bugemonService, ViewLoader.load(ManualCombatView::new));
+            BugemonService bugemonService, CombatService combatService) {
+        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
         this.view.setListener(this);
     }
 
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        this.restoreHpAfterCombat = shouldRestoreHp;
-
         this.manualPlayerTrainer = new ManualTrainer(
                 this.playerService.getActiveTeam().orElseThrow(
                         () -> new IllegalStateException("No active team for player when starting Manual combat")),
@@ -46,7 +45,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.playerTrainer = this.manualPlayerTrainer;
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
-        this.combat = new Combat(this.playerTrainer, opponentTrainer);
+
+        this.combat = this.combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
         this.pendingSteps = Collections.emptyIterator();

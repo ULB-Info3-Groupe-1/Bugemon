@@ -2,7 +2,6 @@ package ulb.controllers.combat;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +13,11 @@ import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.combat.TurnStep;
-import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.LevelUpService;
 import ulb.services.PlayerService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.combat.CombatView;
 
 /**
@@ -39,18 +35,19 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected final CombatAnimationController animationController;
     protected final PlayerService playerService;
     protected final BugemonService bugemonService;
-    protected boolean restoreHpAfterCombat;
+    protected final CombatService combatService;
 
     protected Combat combat;
     protected Trainer playerTrainer;
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
 
     protected CombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService, V view) {
+            BugemonService bugemonService, CombatService combatService, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
         this.playerService = playerService;
         this.bugemonService = bugemonService;
+        this.combatService = combatService;
 
         this.view.setNextListener(this);
     }
@@ -172,19 +169,8 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      *            the trainer who won the combat.
      */
     protected void onCombatEnded(Trainer winner) {
-        // FIXME: this should obv not be done here
-        try {
-            this.playerService.restoreHpActiveTeam();
-
-            List<LevelUp> levelUps = LevelUpService.distributeXpAndGetLevelUps(winner,
-                    this.combat.getOpponentTrainer());
-            this.playerService.saveBugemonStateOfActiveTeam();
-
-            boolean won = winner == this.playerTrainer;
-            this.metaController.onCombatFinished(levelUps, won);
-        } catch (NoActiveTeamException e) {
-            throw new IllegalStateException("No active team after a combat is not possible");
-        }
+        boolean won = winner == this.playerTrainer;
+        this.metaController.onCombatFinished(won);
     }
 
     // ── Shared utilities ──────────────────────────────────────────────────────

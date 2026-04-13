@@ -25,13 +25,23 @@ public class Combat {
     private final Trainer playerTrainer;
     private final Trainer opponentTrainer;
 
+    private final EndOfCombatAction endOfCombatAction;
+    private final ICombatXpDistributor xpDistributor;
+
     private TurnResult turnResult;
 
     private boolean isCompleted = false;
 
-    public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
+    public Combat(ICombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer) {
+        this(xpDistributor, playerTrainer, opponentTrainer, EndOfCombatAction.NO_OP);
+    }
+
+    public Combat(ICombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer,
+            EndOfCombatAction endOfCombatAction) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
+        this.endOfCombatAction = endOfCombatAction;
+        this.xpDistributor = xpDistributor;
         LOG.info("Combat started — player: {} vs opponent: {}", playerTrainer.getCurrentBugemonName(),
                 opponentTrainer.getCurrentBugemonName());
     }
@@ -155,6 +165,16 @@ public class Combat {
                 LOG.info("{} is defeated", trainer.getCurrentBugemonName());
                 this.turnResult.addStep(new TurnStep.TrainerKoStep(trainer));
                 this.isCompleted = true;
+
+                // run end-of-combat callback
+                this.endOfCombatAction.execute(new CombatContext(this.playerTrainer, this.opponentTrainer));
+
+                // TODO: not the best place to do this
+                Trainer loser = trainer;
+                Trainer winner = this.getOtherTrainer(trainer);
+                CombatContext combatCtx = new CombatContext(winner, loser);
+
+                this.xpDistributor.distributeXp(combatCtx);
             }
         }
     }
@@ -214,5 +234,25 @@ public class Combat {
 
     public Trainer getOpponentTrainer() {
         return this.opponentTrainer;
+    }
+
+    private Trainer getOtherTrainer(Trainer trainer) {
+        return trainer.equals(this.playerTrainer) ? this.opponentTrainer : this.playerTrainer;
+    }
+
+    @FunctionalInterface
+    public interface EndOfCombatAction {
+        void execute(CombatContext ctx);
+
+        /**
+         * No action (as in does nothing).
+         */
+        EndOfCombatAction NO_OP = ctx -> {
+        };
+
+        EndOfCombatAction RESTORE_HP = ctx -> {
+            ctx.winner().restoreTeamHp();
+            ctx.loser().restoreTeamHp();
+        };
     }
 }
