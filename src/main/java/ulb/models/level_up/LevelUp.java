@@ -4,9 +4,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.models.bugemon.Bugemon;
 
 public class LevelUp {
+    private static final Logger LOG = LoggerFactory.getLogger(LevelUp.class);
+
     private static final Random RANDOM = new Random();
 
     static final int NUM_UPGRADES = 3;
@@ -70,6 +75,8 @@ public class LevelUp {
     }
 
     public void apply(int idx) {
+        LOG.info("applying upgrade #{}, content: {} ", idx, this.get(idx));
+
         this.bugemon.applyUpgrade(this.get(idx));
     }
 
