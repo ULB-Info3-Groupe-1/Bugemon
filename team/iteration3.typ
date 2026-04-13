@@ -60,6 +60,65 @@ _Exemple :_
   ```
 )
 
+== View sans controller et Listener
+
+Les views qui sont des components réutilisables n'ont pas de controller
+associé. Ainsi nous n'avons pas de controllers à définir comme étant les
+listeners de ces views.
+
+Dans une configuration avec :
+- Controller A
+- View A
+- ComponentView (un component de A)
+
+Dans *View A*, nous instancions une classe anonyme pour jouer le rôle de
+Listener de *ComponentView*. Cette classe anonyme ne fait que déléguer la
+gestion d'évènements venant de *ComponentView* vers le listener de *View A*
+(i.e. *Controller A*).
+
+_Exemple :_
+
+Cette techniques est utilisée à de nombreuses reprises dans `ManualCombatView`.
+
+Cette classes contient plusieurs components :
+- `ActionMenuView`
+- `AttackMenuView`
+- `SwitchMenuView`
+- `ItemMenuView`
+
+Et celle-ci crée les listeners pour chacun de ces composants comme décrit ci-dessus.
+Voici un exemple pour la création du listener du component `ActionMenuView` :
+
+#figure(
+  ```java
+  private void initActionMenuViewListener() {
+      this.actionMenu.setListener(new ActionMenuView.Listener() {
+
+          @Override
+          public void onAttack() {
+              ManualCombatView.this.showAttackMenu();
+          }
+
+          @Override
+          public void onSwitch() {
+              ManualCombatView.this.showSwitchMenu(false);
+          }
+
+          @Override
+          public void onInventory() {
+              ManualCombatView.this.showInventory();
+          }
+
+          @Override
+          public void onForfeit() {
+              ManualCombatView.this.listener.onForfeit();
+          }
+
+      });
+  }
+  ```
+)
+
 = Logique dans les Controllers
 
 Dans l'itération 2, nous avions de la logique dans les controllers, en
@@ -133,7 +192,7 @@ _Note :_ nous n'avons pas encore fini de remplacer tous les appels à
 
 = Double dispatch
 
-Utilisation du double dispatch dans l'application des effets sur les bugemons.
+Utilisation du double dispatch pour éviter les `instanceof` dans l'application des effets sur les bugemons.
 
 `Bugemon` expose une méthode :
 
@@ -160,4 +219,23 @@ public void apply(EffectStatModifier e) { ... }
 public void apply(EffectHeal e) { ... }
 public void apply(EffectResetMalus e) { ... }
 ```
+
+_Note :_ maintenant que nous comprenons mieux le principe du double dispatch,
+nous avons remarqué plusieurs autres endroits où ce concept pourrait être utile
+dans la codebase. Notamment dans la logique du combat qui contient beaucoup de
+`instanceof`/switch sur le type.
+
+= Tâches pas terminée
+
+Les items et l'inventaire ne sont pas encore stockés dans la base de donnée,
+bien qu'un membre du groupe ait ajouté cette fonctionnalité sur une branche du
+dépôt.
+
+_Note :_ cette fonctionnalité ne devaient pas impérativement être implémentées
+dans cette itération, mais ayant fait le choix d'utiliser une base de donnée,
+et celle-ci gérant déjà la plupart des autres éléments du jeu (bugemons etc),
+il semblait cohérent d'ajouter la gestion des objets à celle-ci.
+
+Malheureusement, du à des problèmes de communication, cette fonctionnalité n'a
+pas été mergée. Celle-ci sera donc mergée dans l'itération 4.
 
