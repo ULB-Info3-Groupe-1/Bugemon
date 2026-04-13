@@ -31,7 +31,7 @@ public class FloorGenerator {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final Random random;
     private final CombatFactory combatFactory;
@@ -82,8 +82,7 @@ public class FloorGenerator {
         this.bossNode = null;
         this.visitedNode = new HashSet<>();
 
-        this.root = new FloorNode(GRID_SIZE / 2, GRID_SIZE / 2, new EmptyRoom(), new ArrayList<>(),
-                null, 0);
+        this.root = new FloorNode(GRID_SIZE / 2, GRID_SIZE / 2, new EmptyRoom(), new ArrayList<>(), null, 0);
     }
 
     private void generateFloor() {

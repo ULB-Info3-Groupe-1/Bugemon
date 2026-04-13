@@ -32,7 +32,7 @@ public class Tower {
     }
 
     public boolean isCompleted() {
-        return isFloorComplete() && !hasNextFloor();
+        return this.isFloorComplete() && !this.hasNextFloor();
     }
 
     public Trainer getPlayerTrainer() {

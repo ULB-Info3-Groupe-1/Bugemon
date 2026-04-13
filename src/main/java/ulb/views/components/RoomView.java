@@ -11,15 +11,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+
 import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.Room;
 import ulb.models.tower.FloorNode.RoomPosition;
+import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.tower.room.Room.RoomType;
 
 /**
- * Reusable component representing a single room node in the floor map.
- * Configurable to represent different room types
+ * Reusable component representing a single room node in the floor map. Configurable to represent different room types
  */
 public class RoomView extends StackPane {
     private static final String FXML_PATH = "/fxml/components/Room.fxml";
@@ -76,8 +76,7 @@ public class RoomView extends StackPane {
     }
 
     /**
-     * Configure the visual state of the room (CURRENT, AVAILABLE, VISITED, LOCKED).
-     * Applies the appropriate CSS styles
+     * Configure the visual state of the room (CURRENT, AVAILABLE, VISITED, LOCKED). Applies the appropriate CSS styles
      * and overlays.
      *
      */
@@ -116,7 +115,7 @@ public class RoomView extends StackPane {
      * Registers a listener to receive callbacks for room interactions.
      *
      * @param listener
-     *                 The listener to be notified of room events
+     *            The listener to be notified of room events
      */
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -134,8 +133,7 @@ public class RoomView extends StackPane {
     }
 
     /**
-     * Callback interface for room node interactions. Dispatches room events to the
-     * controller exclusively through this
+     * Callback interface for room node interactions. Dispatches room events to the controller exclusively through this
      * interface.
      */
     public interface Listener {

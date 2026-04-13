@@ -3,7 +3,6 @@ package ulb.views;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -15,13 +14,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
+
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.FloorNode.RoomPosition;
 import ulb.views.components.RoomView;
 
 /**
- * View for the map of a NO Tower floor. Displays the layout of rooms and
- * connections, and allows the player to click on
+ * View for the map of a NO Tower floor. Displays the layout of rooms and connections, and allows the player to click on
  * rooms.
  */
 public class FloorView extends View {
@@ -57,8 +56,9 @@ public class FloorView extends View {
 
     private Map<FloorNode, RoomView> roomNodesByFloorNode;
 
+    @FXML
     public void initialize() {
-        initPlayerIcon(PLAYER_ICON_PATH);
+        this.initPlayerIcon(PLAYER_ICON_PATH);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FloorView extends View {
      * Registers a listener to receive callbacks for floor map interactions.
      *
      * @param listener
-     *                 The listener to be notified of map events
+     *            The listener to be notified of map events
      */
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -271,8 +271,7 @@ public class FloorView extends View {
     }
 
     /**
-     * Callback interface for floor map interactions. Dispatches map events to the
-     * controller exclusively through this
+     * Callback interface for floor map interactions. Dispatches map events to the controller exclusively through this
      * interface.
      */
     public interface Listener {

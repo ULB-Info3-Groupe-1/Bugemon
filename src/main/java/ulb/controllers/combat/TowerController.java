@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,8 +113,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     /**
-     * Runs the Tower flow until a combat starts, the run ends, or the tower is
-     * completed. Reward rooms are resolved
+     * Runs the Tower flow until a combat starts, the run ends, or the tower is completed. Reward rooms are resolved
      * immediately; combat rooms continue via callback.
      */
     public void runTower() {
