@@ -153,7 +153,7 @@ public class Combat {
 
     private void handleForfeit(Trainer trainer) {
         LOG.info("{} forfeited", trainer.getCurrentBugemonName());
-        trainer.killTeam(); // TODO: Better way to handle forfeit with new implementation ?
+        trainer.killTeam();
     }
 
     private void updateTrainerStatus(Trainer trainer) {
