@@ -109,7 +109,11 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             return;
         }
 
-        this.metaController.switchTo(Window.NOTOWER);
+        if (this.bugemonService.hasPendingLevelUps()) {
+            this.metaController.switchTo(Window.LEVEL_UP);
+        } else {
+            this.metaController.switchTo(Window.NOTOWER);
+        }
     }
 
     /**
