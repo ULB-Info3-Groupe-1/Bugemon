@@ -1,7 +1,5 @@
 package ulb.controllers;
 
-import javafx.stage.Stage;
-
 import ulb.views.View;
 
 /**
@@ -20,8 +18,8 @@ public abstract class Controller<T extends View> {
         this.view = view;
     }
 
-    protected void show(Stage stage) {
+    protected void show() {
         this.view.refresh();
-        this.view.show(stage);
+        this.metaController.showView(this.view);
     }
 }

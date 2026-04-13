@@ -22,6 +22,7 @@ import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
+import ulb.views.View;
 
 /**
  * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
@@ -136,29 +137,29 @@ public class MetaController {
     private void initTransitions() {
         this.transitions.put(Window.MAIN_MENU, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
-            this.mainMenuController.show(this.stage);
+            this.mainMenuController.show();
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
-            this.createTeamController.show(this.stage);
+            this.createTeamController.show();
         });
         this.transitions.put(Window.EDIT_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
-            this.editTeamController.show(this.stage);
+            this.editTeamController.show();
         });
         this.transitions.put(Window.CREATE_BUGEMON, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
-            this.createBugemonController.show(this.stage);
+            this.createBugemonController.show();
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             this.manualCombatController.startCombat(true);
-            this.manualCombatController.show(this.stage);
+            this.manualCombatController.show();
         });
         this.transitions.put(Window.AUTOMATIC_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             this.automaticCombatController.startCombat(true);
-            this.automaticCombatController.show(this.stage);
+            this.automaticCombatController.show();
             this.automaticCombatController.startAutoRun();
         });
         this.transitions.put(Window.NOTOWER, () -> {
@@ -167,14 +168,14 @@ public class MetaController {
             this.towerController.runTower(this.stage);
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
-            this.combatVictoryController.show(this.stage);
+            this.combatVictoryController.show();
             this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
         });
         this.transitions.put(Window.COMBAT_DEFEAT, () -> {
-            this.combatDefeatController.show(this.stage);
+            this.combatDefeatController.show();
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
-        this.transitions.put(Window.LEVEL_UP, () -> this.levelUpController.show(this.stage));
+        this.transitions.put(Window.LEVEL_UP, () -> this.levelUpController.show());
     }
 
     /**
@@ -194,6 +195,10 @@ public class MetaController {
         transition.run();
     }
 
+    void showView(View view) {
+        view.show(this.stage);
+    }
+
     public boolean isTowerActive() {
         return this.isTowerActive;
     }
@@ -206,7 +211,7 @@ public class MetaController {
         this.musicPlayer.stopMusic();
         this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
         this.manualCombatController.startCombat(combat);
-        this.manualCombatController.show(this.stage);
+        this.manualCombatController.show();
     }
 
     public ManualCombatController getCombatController() {

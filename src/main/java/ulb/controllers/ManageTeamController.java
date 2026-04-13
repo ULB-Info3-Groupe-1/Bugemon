@@ -1,7 +1,5 @@
 package ulb.controllers;
 
-import javafx.stage.Stage;
-
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -44,10 +42,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    protected void show(Stage stage) {
+    protected void show() {
         this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
         this.refresh();
-        super.show(stage);
+        super.show();
     }
 
     private void refresh() {
