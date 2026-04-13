@@ -29,7 +29,7 @@ public class TestAbstractComponent {
         component.addModifier(mod2);
         assertEquals(2, component.modifiers.size());
 
-        component.clearModifiers();
+        component.resetModifiers();
         assertEquals(0, component.modifiers.size());
     }
 

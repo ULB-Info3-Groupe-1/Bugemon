@@ -24,7 +24,11 @@ public abstract class AbstractComponent {
         this.modifiers.add(attackEffect);
     }
 
-    public void clearModifiers() {
+    public void resetMalus() {
+        this.modifiers.removeIf(Modifier::isMalus);
+    }
+
+    public void resetModifiers() {
         this.modifiers.clear();
     }
 }

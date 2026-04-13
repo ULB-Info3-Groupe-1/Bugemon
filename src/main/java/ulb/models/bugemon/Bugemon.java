@@ -149,11 +149,11 @@ public class Bugemon implements BugemonDTO {
     }
 
     /** Clears all active modifiers on every stat component. */
-    public void resetModifiers() {
-        this.healthComponent.clearModifiers();
-        this.attackComponent.clearModifiers();
-        this.defenseComponent.clearModifiers();
-        this.initiativeComponent.clearModifiers();
+    public void resetMalus() {
+        this.healthComponent.resetMalus();
+        this.attackComponent.resetMalus();
+        this.defenseComponent.resetMalus();
+        this.initiativeComponent.resetMalus();
     }
 
     @Override
@@ -211,7 +211,7 @@ public class Bugemon implements BugemonDTO {
     }
 
     public void apply(EffectResetMalus e) {
-        this.resetModifiers();
+        this.resetMalus();
     }
 
     public void kill() {
