@@ -2,7 +2,6 @@ package ulb.models.tower.room;
 
 public abstract class Room {
     RoomState state = RoomState.LOCKED; // default state
-    private RoomPosition position;
 
     public RoomState getState() {
         return this.state;
@@ -20,14 +19,6 @@ public abstract class Room {
         this.state = roomState;
     }
 
-    public RoomPosition getPosition() {
-        return this.position;
-    }
-
-    public void setPosition(RoomPosition position) {
-        this.position = position;
-    }
-
     public abstract void visit(RoomVisitor roomVisitor);
 
     public abstract RoomType getType();
@@ -43,8 +34,5 @@ public abstract class Room {
         BOSS,
         REWARD,
         EMPTY,
-    }
-
-    public record RoomPosition(int row, int col) {
     }
 }

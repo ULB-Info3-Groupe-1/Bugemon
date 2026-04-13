@@ -13,15 +13,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.Room;
-import ulb.models.tower.room.Room.RoomPosition;
+import ulb.models.tower.FloorNode.RoomPosition;
 import ulb.models.tower.room.Room.RoomState;
+import ulb.models.tower.room.Room.RoomType;
 
 /**
  * Reusable component representing a single room node in the floor map.
  * Configurable to represent different room types
  */
 public class RoomView extends StackPane {
-    private static final String FXML_PATH = "/fxml/components/RoomNode.fxml";
+    private static final String FXML_PATH = "/fxml/components/Room.fxml";
     private static final String ROOM_BASE_PATH = "/png/rooms/";
 
     @FXML
@@ -59,11 +60,16 @@ public class RoomView extends StackPane {
 
     public void initRoom() {
         this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-reward", "room-empty");
+        Room room = this.node.getRoom();
 
-        String normalizedRoomType = this.node.getRoom().getType().toString().toLowerCase();
+        String normalizedRoomType = room.getType().toString().toLowerCase();
 
         String styleClass = "room-" + normalizedRoomType;
         this.getStyleClass().add(styleClass);
+
+        if (room.getType() == RoomType.EMPTY) {
+            return;
+        }
 
         String iconPath = ROOM_BASE_PATH + normalizedRoomType + ".png";
         this.roomTypeIcon.setImage(this.loadImage(iconPath));
@@ -123,7 +129,7 @@ public class RoomView extends StackPane {
         }
 
         if (!this.isDisabled()) {
-            this.listener.onRoomClicked(this.node.getRoom().getPosition());
+            this.listener.onRoomClicked(this.node.getPosition());
         }
     }
 

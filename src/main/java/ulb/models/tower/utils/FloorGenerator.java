@@ -31,7 +31,7 @@ public class FloorGenerator {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
-    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
 
     private final Random random;
     private final CombatFactory combatFactory;
@@ -81,7 +81,9 @@ public class FloorGenerator {
         this.maxDepthReached = 0;
         this.bossNode = null;
         this.visitedNode = new HashSet<>();
-        this.root = new FloorNode(GRID_SIZE / 2, GRID_SIZE / 2, new EmptyRoom(), new ArrayList<>(), null, 0);
+
+        this.root = new FloorNode(GRID_SIZE / 2, GRID_SIZE / 2, new EmptyRoom(), new ArrayList<>(),
+                null, 0);
     }
 
     private void generateFloor() {
@@ -207,7 +209,8 @@ public class FloorGenerator {
         }
     }
 
-    // To print the floor with the associated branch (each number represents a branch)
+    // To print the floor with the associated branch (each number represents a
+    // branch)
     @Override
     public String toString() {
         int[][] grid = new int[GRID_SIZE][GRID_SIZE];

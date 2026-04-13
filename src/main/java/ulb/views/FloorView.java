@@ -1,6 +1,8 @@
 package ulb.views;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -14,8 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.Room;
-import ulb.models.tower.room.Room.RoomPosition;
+import ulb.models.tower.FloorNode.RoomPosition;
 import ulb.views.components.RoomView;
 
 /**
@@ -24,7 +25,7 @@ import ulb.views.components.RoomView;
  * rooms.
  */
 public class FloorView extends View {
-    private static final String FXML_PATH = "/fxml/FloorMap.fxml";
+    private static final String FXML_PATH = "/fxml/Floor.fxml";
     private static final String PLAYER_ICON_PATH = "/png/Trainer.png";
 
     // Constants for automatic positioning
@@ -53,6 +54,8 @@ public class FloorView extends View {
     private ImageView playerIcon;
 
     private Listener listener;
+
+    private Map<FloorNode, RoomView> roomNodesByFloorNode;
 
     public void initialize() {
         initPlayerIcon(PLAYER_ICON_PATH);
@@ -107,13 +110,15 @@ public class FloorView extends View {
         this.innerMapPane.getChildren().add(this.playerIcon);
     }
 
-    public void setupPlayer(Room startRoom, String imagePath) {
-        this.setPlayerPosition(startRoom.getPosition());
-    }
-
-    public void setPlayerPosition(RoomPosition position) {
-        double playerX = position.col() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2) + PLAYER_OFFSET_X;
-        double playerY = position.row() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2) + PLAYER_OFFSET_Y;
+    public void setPlayerPosition(FloorNode node) {
+        RoomView roomView = this.roomNodesByFloorNode.get(node);
+        if (roomView == null) {
+            return;
+        }
+        double playerX = roomView.getLayoutX() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2)
+                + PLAYER_OFFSET_X;
+        double playerY = roomView.getLayoutY() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2)
+                + PLAYER_OFFSET_Y;
 
         this.playerIcon.setLayoutX(playerX);
         this.playerIcon.setLayoutY(playerY);
@@ -121,9 +126,15 @@ public class FloorView extends View {
         this.playerIcon.toFront();
     }
 
-    public void animatePlayerTo(RoomPosition position) {
-        double targetX = position.col() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2) + PLAYER_OFFSET_X;
-        double targetY = position.row() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2) + PLAYER_OFFSET_Y;
+    public void animatePlayerTo(FloorNode node) {
+        RoomView roomView = this.roomNodesByFloorNode.get(node);
+        if (roomView == null) {
+            return;
+        }
+        double targetX = roomView.getLayoutX() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2)
+                + PLAYER_OFFSET_X;
+        double targetY = roomView.getLayoutY() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2)
+                + PLAYER_OFFSET_Y;
 
         this.playerIcon.toFront();
 
@@ -138,15 +149,22 @@ public class FloorView extends View {
     }
 
     public void setFloorNodes(List<FloorNode> floorNodes) {
+        this.clearMap();
+
+        this.roomNodesByFloorNode = new HashMap<>();
         for (FloorNode node : floorNodes) {
             this.addFloorNode(node);
         }
 
-        for (FloorNode node : floorNodes) {
-            for (FloorNode child : node.getChildren()) {
-                RoomView target = this.roomNodesByFloorNode.get(child);
-                if (target != null) {
-                    this.view.addConnectionBetweenRooms(source, target);
+        this.centerMap();
+
+        // Setup connections after centerMap to use final pixel positions
+        for (Map.Entry<FloorNode, RoomView> entry : this.roomNodesByFloorNode.entrySet()) {
+            RoomView roomView = entry.getValue();
+            for (FloorNode connectedNode : entry.getKey().getChildren()) {
+                RoomView connectedRoomView = this.roomNodesByFloorNode.get(connectedNode);
+                if (connectedRoomView != null) {
+                    this.addConnectionBetweenRooms(roomView, connectedRoomView);
                 }
             }
         }
@@ -171,11 +189,7 @@ public class FloorView extends View {
             }
         });
 
-        for (FloorNode child : floorNode.getChildren()) {
-            this.addConnectionBetweenRooms(floorNode, child);
-
-        }
-
+        this.roomNodesByFloorNode.put(floorNode, roomView);
         this.innerMapPane.getChildren().add(roomView);
     }
 
@@ -216,8 +230,44 @@ public class FloorView extends View {
         this.innerMapPane.getChildren().add(0, connection);
     }
 
+    public void refreshRoomStates() {
+        for (RoomView roomView : this.roomNodesByFloorNode.values()) {
+            roomView.setRoomState();
+        }
+    }
+
     public void clearMap() {
-        this.innerMapPane.getChildren().clear();
+        this.innerMapPane.getChildren().removeIf(node -> node != this.playerIcon);
+    }
+
+    private void centerMap() {
+        if (this.roomNodesByFloorNode.isEmpty()) {
+            return;
+        }
+
+        // Find bounds of all rooms
+        int minCol = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getX).min().orElse(0);
+        int maxCol = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getX).max().orElse(0);
+        int minRow = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getY).min().orElse(0);
+        int maxRow = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getY).max().orElse(0);
+
+        // Reposition all rooms relative to the minimum row/col
+        for (Map.Entry<FloorNode, RoomView> entry : this.roomNodesByFloorNode.entrySet()) {
+            FloorNode node = entry.getKey();
+            RoomView roomView = entry.getValue();
+            double x = (node.getX() - minCol) * (ROOM_WIDTH + HORIZONTAL_SPACING);
+            double y = (node.getY() - minRow) * (ROOM_HEIGHT + VERTICAL_SPACING);
+            roomView.setLayoutX(x);
+            roomView.setLayoutY(y);
+        }
+
+        // Calculate and set the inner pane size to fit all rooms
+        // Formula: spacing between rooms + last room width (no spacing after last room)
+        double paneWidth = (maxCol - minCol) * (ROOM_WIDTH + HORIZONTAL_SPACING) + ROOM_WIDTH;
+        double paneHeight = (maxRow - minRow) * (ROOM_HEIGHT + VERTICAL_SPACING) + ROOM_HEIGHT;
+        this.innerMapPane.setPrefSize(paneWidth, paneHeight);
+        this.innerMapPane.setMinSize(paneWidth, paneHeight);
+        this.innerMapPane.setMaxSize(paneWidth, paneHeight);
     }
 
     /**
