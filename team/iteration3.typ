@@ -60,7 +60,7 @@ _Exemple :_
   ```
 )
 
-== View sans controller et Listener
+== View sans controller associé
 
 Les views qui sont des components réutilisables n'ont pas de controller
 associé. Ainsi nous n'avons pas de controllers à définir comme étant les
@@ -78,19 +78,20 @@ gestion d'évènements venant de *ComponentView* vers le listener de *View A*
 
 _Exemple :_
 
-Cette techniques est utilisée à de nombreuses reprises dans `ManualCombatView`.
+Cette technique est utilisée à de nombreuses reprises dans `ManualCombatView`.
 
-Cette classes contient plusieurs components :
+Cette classe contient plusieurs components :
 - `ActionMenuView`
 - `AttackMenuView`
 - `SwitchMenuView`
 - `ItemMenuView`
 
 Et celle-ci crée les listeners pour chacun de ces composants comme décrit ci-dessus.
-Voici un exemple pour la création du listener du component `ActionMenuView` :
+Voici un exemple pour la création du listener du component `ActionMenuView` dans `CombatView`:
 
 #figure(
   ```java
+  // CombatView.java
   private void initActionMenuViewListener() {
       this.actionMenu.setListener(new ActionMenuView.Listener() {
 
@@ -143,7 +144,7 @@ particulier pour les fins de combats.
 
 Clairement, la distribution d'XP à la fin du combat, ainsi que la création des
 objets `LevelUp` (contenant les choix d'upgrade pour les montées de niveau)
-n'a rien à faire dans un controller. 
+n'ont rien à faire dans un controller. 
 
 La distribution de l'XP (et la création des LevelUp) est une étape du
 déroulement d'un combat.
@@ -199,19 +200,20 @@ Utilisation du double dispatch pour éviter les `instanceof` dans l'application 
 ```java
 // Bugemon.java
 public void apply(Effect effect) {
-    effect.applyTo(this);
+    effect.applyTo(this); // dispatch vers le bon type effet
 }
 ```
 
 `Effect`, `EffectStatModifier`, `EffectHeal`, `EffectResetMalus` ont tous la méthode suivante :
 
 ```java
+// this est un effet _concret_ ici
 public void applyTo(Bugemon bugemon) {
-    bugemon.apply(this);
+    bugemon.apply(this); // appellera le bon overload
 }
 ```
 
-Ces méthodes permettent d'appeler le bon overload de `Bugemon` :
+Ces méthodes `applyTo` permettent d'appeler le bon overload de la méthode `apply` dans `Bugemon` :
 
 ```java
 // Bugemon.java
@@ -225,17 +227,32 @@ nous avons remarqué plusieurs autres endroits où ce concept pourrait être uti
 dans la codebase. Notamment dans la logique du combat qui contient beaucoup de
 `instanceof`/switch sur le type.
 
-= Tâches pas terminée
+= Tâche pas terminé
 
-Les items et l'inventaire ne sont pas encore stockés dans la base de donnée,
+Les items et l'inventaire ne sont pas encore stockés dans la base de données,
 bien qu'un membre du groupe ait ajouté cette fonctionnalité sur une branche du
 dépôt.
 
-_Note :_ cette fonctionnalité ne devaient pas impérativement être implémentées
-dans cette itération, mais ayant fait le choix d'utiliser une base de donnée,
+_Note :_ cette fonctionnalité ne devait pas impérativement être implémentée
+dans cette itération, mais ayant fait le choix d'utiliser une base de données,
 et celle-ci gérant déjà la plupart des autres éléments du jeu (bugemons etc),
 il semblait cohérent d'ajouter la gestion des objets à celle-ci.
 
-Malheureusement, du à des problèmes de communication, cette fonctionnalité n'a
+Malheureusement, dû à des problèmes de communication, cette fonctionnalité n'a
 pas été mergée. Celle-ci sera donc mergée dans l'itération 4.
 
+= Fonctionnalités 
+
+== Génération Procédurale d'un étage 
+
+Un étage est structuré sous une forme d'arbre comprenant 3 à 4 sous-arbres
+générés aléatoirement. Chaque pièce de l'étage représentant un nœud
+`FloorNode` encapsulant les informations nécessaires (position, pièce,
+profondeur). Chaque étage a donc besoin de seulement un `FloorNode`
+représentant la racine/point de départ de l'étage.
+
+Lorsqu'un controller fait appel à une pièce d'instance `CombatRoom` l'appel à
+`getCombat()` fait appel au `CombatFactory` ceci permettant une
+instanciation _lazy_ d'un combat. De plus, le `CombatFactory` permet de
+prévoir de futures implémentation quant à la gestion des difficultés d'un étage
+ou d'un Boss.
