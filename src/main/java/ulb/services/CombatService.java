@@ -11,6 +11,9 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.combat.Combat;
+import ulb.models.combat.Combat.EndOfCombatAction;
+import ulb.models.combat.CombatXpDistributor;
 import ulb.models.trainer.Trainer;
 
 /**
@@ -18,8 +21,21 @@ import ulb.models.trainer.Trainer;
  */
 public class CombatService {
 
-    private CombatService() {
-        // Private constructor to prevent instantiation
+    public final BugemonService bugemonService;
+
+    public CombatService(BugemonService bugemonService) {
+        this.bugemonService = bugemonService;
+    }
+
+    /**
+     * Creates a combat.
+     *
+     * At the end of the combat, HPs are restored and XP is distributed.
+     */
+    public Combat createUniqueCombat(Trainer playerTrainer, Trainer opponentTrainer) {
+        EndOfCombatAction endOfCombatCb = EndOfCombatAction.RESTORE_HP;
+        CombatXpDistributor combatxpDistributor = new CombatXpDistributor(this.bugemonService);
+        return new Combat(combatxpDistributor, playerTrainer, opponentTrainer, endOfCombatCb);
     }
 
     /**

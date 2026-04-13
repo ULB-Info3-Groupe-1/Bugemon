@@ -2,10 +2,9 @@ package ulb.controllers.combat;
 
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
-import ulb.models.combat.Combat.EndOfCombatAction;
-import ulb.models.combat.CombatXpDistributor;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
@@ -25,8 +24,8 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *            the application-level controller used for navigation.
      */
     public AutomaticCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) {
-        super(metaController, playerService, bugemonService, ViewLoader.load(AutomaticCombatView::new));
+            BugemonService bugemonService, CombatService combatService) {
+        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
     }
 
     @Override
@@ -36,11 +35,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 
-        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? EndOfCombatAction.RESTORE_HP : EndOfCombatAction.NO_OP;
-
-        // TODO: move the CombatXpDistributor creation
-        CombatXpDistributor combatxpDistributor = new CombatXpDistributor(this.bugemonService);
-        this.combat = new Combat(combatxpDistributor, this.playerTrainer, opponentTrainer, endOfCombatCb);
+        this.combat = combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
 
         this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
