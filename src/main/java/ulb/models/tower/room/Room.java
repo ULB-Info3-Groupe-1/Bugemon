@@ -1,11 +1,38 @@
 package ulb.models.tower.room;
 
-import ulb.controllers.combat.TowerController;
+public abstract class Room {
+    RoomState state = RoomState.LOCKED; // default state
 
-public sealed interface Room permits CombatRoom, RewardRoom, EmptyRoom {
-    boolean isCompleted();
+    public RoomState getState() {
+        return this.state;
+    }
 
-    void visit(TowerController controller);
+    public boolean isVisited() {
+        return this.state.equals(RoomState.VISITED);
+    }
 
-    RoomType getType();
+    public void setVisited() {
+        this.state = RoomState.VISITED;
+    }
+
+    public void setState(RoomState roomState) {
+        this.state = roomState;
+    }
+
+    public abstract void visit(RoomVisitor roomVisitor);
+
+    public abstract RoomType getType();
+
+    public enum RoomState {
+        AVAILABLE,
+        VISITED,
+        LOCKED
+    }
+
+    public enum RoomType {
+        COMBAT,
+        BOSS,
+        REWARD,
+        EMPTY,
+    }
 }

@@ -1,19 +1,12 @@
 package ulb.models.tower.room;
 
-import ulb.controllers.combat.TowerController;
-
-public final class RewardRoom implements Room {
+public final class RewardRoom extends Room {
     public RewardRoom() {
     }
 
     @Override
-    public boolean isCompleted() {
-        return true;
-    }
-
-    @Override
-    public void visit(TowerController controller) {
-        controller.handleRewardRoom(this);
+    public void visit(RoomVisitor roomVisitor) {
+        roomVisitor.visitRewardRoom(this);
     }
 
     @Override

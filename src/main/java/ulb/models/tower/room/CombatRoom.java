@@ -1,15 +1,13 @@
 package ulb.models.tower.room;
 
-import ulb.controllers.combat.TowerController;
 import ulb.models.combat.Combat;
 import ulb.models.tower.utils.CombatFactory;
 import ulb.models.trainer.Trainer;
 
-public final class CombatRoom implements Room {
+public final class CombatRoom extends Room {
     private final int floorLevel;
     private final boolean isBoss;
     private final CombatFactory combatFactory;
-    private boolean isCompleted = false;
 
     public CombatRoom(CombatFactory combatFactory, int floorLevel, boolean isBoss) {
         this.combatFactory = combatFactory;
@@ -26,23 +24,14 @@ public final class CombatRoom implements Room {
         return this.isBoss;
     }
 
-    public void markCompleted() {
-        this.isCompleted = true;
-    }
-
-    @Override
-    public boolean isCompleted() {
-        return this.isCompleted;
-    }
-
     @Override
     public String toString() {
         return "CombatRoom{ isBoss=" + this.isBoss + '}';
     }
 
     @Override
-    public void visit(TowerController controller) {
-        controller.handleCombatRoom(this);
+    public void visit(RoomVisitor roomVisitor) {
+        roomVisitor.visitCombatRoom(this);
     }
 
     @Override

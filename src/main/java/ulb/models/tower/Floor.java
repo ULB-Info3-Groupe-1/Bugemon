@@ -2,6 +2,7 @@ package ulb.models.tower;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -17,12 +18,14 @@ public class Floor {
     private final Trainer playerTrainer;
     private final FloorGenerator floorGenerator;
     private FloorNode currentPosition;
+    private final FloorNode floorRoot;
 
     public Floor(Trainer playerTrainer, BugemonService bugemonService, int floorLevel) {
         this.playerTrainer = playerTrainer;
         CombatFactory combatFactory = new CombatFactory(bugemonService);
         this.floorGenerator = new FloorGenerator(combatFactory, floorLevel);
         this.currentPosition = this.floorGenerator.getRoot();
+        this.floorRoot = this.floorGenerator.getRoot();
     }
 
     public boolean isComplete() {
@@ -35,6 +38,10 @@ public class Floor {
             nextRooms.add(node.getRoom());
         }
         return nextRooms;
+    }
+
+    public FloorNode getRoot() {
+        return this.floorRoot;
     }
 
     public List<FloorNode> getFloorNodes() {
@@ -51,7 +58,7 @@ public class Floor {
             floorNodes.add(node);
             queue.addAll(node.getChildren());
         }
-        return floorNodes;
+        return Collections.unmodifiableList(floorNodes);
     }
 
     public List<FloorNode> getReachableNodes() {

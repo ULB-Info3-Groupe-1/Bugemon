@@ -69,7 +69,8 @@ public class TestManualTrainer {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
-        // Build an attack with an ID that is guaranteed to not be in any Bugemon's attacks
+        // Build an attack with an ID that is guaranteed to not be in any Bugemon's
+        // attacks
         Attack foreignAttack = new Attack("UNKNOWN_ATTACK_ID", "Foreign", BugemonType.FLORA, "", 10,
                 new java.util.ArrayList<>());
 

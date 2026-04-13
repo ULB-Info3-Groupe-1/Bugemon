@@ -32,6 +32,10 @@ public class FloorNode {
         return this.y;
     }
 
+    public RoomPosition getPosition() {
+        return new RoomPosition(this.x, this.y);
+    }
+
     public int getDepth() {
         return this.depth;
     }
@@ -92,5 +96,8 @@ public class FloorNode {
     @Override
     public int hashCode() {
         return Objects.hash(this.x, this.y);
+    }
+
+    public record RoomPosition(int row, int col) {
     }
 }

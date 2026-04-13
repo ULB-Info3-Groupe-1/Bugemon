@@ -40,6 +40,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected Combat combat;
     protected Trainer playerTrainer;
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
+    private Trainer pendingWinner = null;
 
     protected CombatController(MetaController metaController, PlayerService playerService,
             BugemonService bugemonService, CombatService combatService, V view) {
@@ -98,13 +99,17 @@ public abstract class CombatController<V extends CombatView> extends Controller<
                 Trainer winner = trainerKo == this.playerTrainer ? this.combat.getOpponentTrainer()
                         : this.playerTrainer;
                 LOG.info("Combat ended – winner: {}", winner.getCurrentBugemonName());
-                this.onCombatEnded(winner);
+                this.pendingWinner = winner;
+                this.showNextStep(step, () -> {
+                });
             }
 
             case TurnStep.ForfeitStep(Trainer trainer) -> {
                 Trainer winner = trainer == this.playerTrainer ? this.combat.getOpponentTrainer() : this.playerTrainer;
                 LOG.info("Combat ended by forfeit – winner: {}", winner.getCurrentBugemonName());
-                this.onCombatEnded(winner);
+                this.pendingWinner = winner;
+                this.showNextStep(step, () -> {
+                });
             }
 
             // reactToKo() and view update are deferred into the animation callback so the
@@ -188,6 +193,12 @@ public abstract class CombatController<V extends CombatView> extends Controller<
 
     @Override
     public void onNext() {
+        if (this.pendingWinner != null) {
+            Trainer winner = this.pendingWinner;
+            this.pendingWinner = null;
+            this.onCombatEnded(winner);
+            return;
+        }
         this.advanceStep();
     }
 }

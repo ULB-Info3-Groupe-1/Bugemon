@@ -9,7 +9,7 @@
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.FloorMapView" styleClass="floor-map-container"
+    fx:controller="ulb.views.FloorView" styleClass="floor-container"
     stylesheets="@../css/floor-map.css">
 
     <!-- Header: Floor Number and Instructions -->

@@ -86,10 +86,10 @@ public class MetaController {
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService, combatService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService,
                 combatService);
+        this.levelUpController = new LevelUpController(this, bugemonService);
         this.towerController = new TowerController(this, playerService, bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.levelUpController = new LevelUpController(this, bugemonService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
@@ -161,7 +161,7 @@ public class MetaController {
         this.transitions.put(Window.NOTOWER, () -> {
             this.isTowerActive = true;
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.towerController.runTower(this.stage);
+            this.towerController.runTower();
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();
@@ -209,9 +209,4 @@ public class MetaController {
         this.manualCombatController.startCombat(combat);
         this.manualCombatController.show();
     }
-
-    public ManualCombatController getCombatController() {
-        return this.manualCombatController;
-    }
-
 }

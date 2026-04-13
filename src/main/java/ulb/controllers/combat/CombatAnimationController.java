@@ -38,10 +38,9 @@ public class CombatAnimationController {
                 this.playDeathAnimation(isPlayerSide, onFinished);
             }
 
-            case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
-                boolean isPlayerSide = trainerKo == playerTrainer;
-                this.playDeathAnimation(isPlayerSide, onFinished);
-            }
+            // The death animation was already played for the BugemonKoStep that preceded
+            // this; replaying it would reset the sprite opacity and create a visual flash.
+            case TurnStep.TrainerKoStep(Trainer trainerKo) -> onFinished.run();
 
             case TurnStep.ForfeitStep(Trainer trainer) -> {
                 boolean isPlayerForfeiting = trainer == playerTrainer;
