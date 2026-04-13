@@ -51,7 +51,7 @@ public class TestInitiativeComponent {
         initiative.addModifier(mod2);
         assertEquals(18, initiative.getInitiative());
 
-        initiative.clearModifiers();
+        initiative.resetModifiers();
         assertEquals(10, initiative.getInitiative());
     }
 

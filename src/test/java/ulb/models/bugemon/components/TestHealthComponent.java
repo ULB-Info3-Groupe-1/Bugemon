@@ -112,7 +112,7 @@ public class TestHealthComponent {
         health.addModifier(mod2);
         assertEquals(65, health.getHp());
 
-        health.clearModifiers();
+        health.resetModifiers();
         assertEquals(50, health.getHp());
     }
 
