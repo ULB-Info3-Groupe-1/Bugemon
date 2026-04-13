@@ -1,7 +1,6 @@
 package ulb.models.tower.room;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -9,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import org.junit.Test;
 
 import ulb.controllers.combat.TowerController;
+import ulb.models.tower.room.Room.RoomType;
 import ulb.models.tower.utils.CombatFactory;
 
 public class TestRooms {
@@ -17,11 +17,7 @@ public class TestRooms {
         CombatFactory combatFactory = mock(CombatFactory.class);
         CombatRoom combatRoom = new CombatRoom(combatFactory, 2, false);
 
-        assertFalse(combatRoom.isCompleted());
         assertEquals(RoomType.COMBAT, combatRoom.getType());
-
-        combatRoom.markCompleted();
-        assertTrue(combatRoom.isCompleted());
     }
 
     @Test
@@ -37,7 +33,6 @@ public class TestRooms {
     public void testEmptyCompletionSemantics() {
         EmptyRoom emptyRoom = new EmptyRoom();
 
-        assertFalse(emptyRoom.isCompleted());
         assertEquals(RoomType.EMPTY, emptyRoom.getType());
     }
 
@@ -53,8 +48,8 @@ public class TestRooms {
         rewardRoom.visit(towerController);
         emptyRoom.visit(towerController);
 
-        verify(towerController).handleCombatRoom(combatRoom);
-        verify(towerController).handleRewardRoom(rewardRoom);
-        verify(towerController).handleEmptyRoom(emptyRoom);
+        verify(towerController).visitCombatRoom(combatRoom);
+        verify(towerController).visitRewardRoom(rewardRoom);
+        verify(towerController).visitEmptyRoom(emptyRoom);
     }
 }

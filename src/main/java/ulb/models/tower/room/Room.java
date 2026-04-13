@@ -8,6 +8,14 @@ public abstract class Room {
         return this.state;
     }
 
+    public boolean isVisited() {
+        return this.state.equals(RoomState.VISITED);
+    }
+
+    public void setVisited() {
+        this.state = RoomState.VISITED;
+    }
+
     public void setState(RoomState roomState) {
         this.state = roomState;
     }
@@ -32,8 +40,9 @@ public abstract class Room {
 
     public enum RoomType {
         COMBAT,
+        BOSS,
         REWARD,
-        EMPTY
+        EMPTY,
     }
 
     public record RoomPosition(int row, int col) {

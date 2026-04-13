@@ -21,6 +21,7 @@ import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
+import ulb.models.tower.room.Room.RoomType;
 import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
@@ -52,29 +53,21 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     @Override
-    public void onRoomClicked(RoomView roomNodeView) {
-        FloorNode selectedNode = this.floorNodesByRoomNode.get(roomNodeView);
-        if (selectedNode == null) {
-            throw new IllegalStateException("Clicked room is not mapped to a floor node");
-        }
-
-        Floor currentFloor = this.tower.getCurrentFloor();
+    public void onRoomClicked(FloorNode node) {
+        Floor currentFloor = this.tower.get().getCurrentFloor();
         FloorNode currentNode = currentFloor.getCurrentPosition();
-        currentFloor.moveTo(selectedNode);
+        currentFloor.moveTo(node);
         FloorNode nextNode = currentFloor.getCurrentPosition();
         if (currentNode.equals(nextNode)) {
             return;
         }
-        this.visitedNodes.add(currentNode);
-        this.visitedNodes.add(nextNode);
 
         Room selectedRoom = nextNode.getRoom();
-        RoomView targetRoomView = this.roomNodesByFloorNode.get(nextNode);
-        if (targetRoomView != null) {
-            this.view.animatePlayerTo(targetRoomView);
-        }
-        if (!selectedRoom.isCompleted()) {
+        this.view.animatePlayerTo(selectedRoom.getPosition());
+
+        if (!selectedRoom.isVisited()) {
             selectedRoom.visit(this);
+            selectedRoom.setVisited();
         }
         this.refreshFloorViewState();
     }
@@ -98,19 +91,11 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     @Override
     public void onReturnToMainMenu() {
         this.metaController.endTowerFlow();
-        this.runEnded = true;
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 
     public void onTowerCombatFinished(boolean playerWon) {
-        Floor currentFloor = this.tower.getCurrentFloor();
-        Room currentRoom = currentFloor.getCurrentRoom();
-        if (!(currentRoom instanceof CombatRoom combatRoom)) {
-            throw new IllegalStateException("Tower combat finished outside a combat room");
-        }
-
         if (!playerWon) {
-            this.runEnded = true;
             this.metaController.endTowerFlow();
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
             try {
@@ -120,10 +105,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             }
             return;
         }
-
-        combatRoom.markCompleted();
-        this.visitedNodes.add(currentFloor.getCurrentPosition());
-        if (currentFloor.isComplete() && !this.advanceToNextFloorIfPossible()) {
+        if (this.tower.get().isCompleted()) {
+            this.metaController.switchTo(Window.COMBAT_VICTORY);
             return;
         }
 
@@ -147,7 +130,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      * Shows the floor map before continuing the run.
      */
     private void showFloorMap() {
-        this.view.setFloorNumber(this.tower.getCurrentFloorNumber() + 1);
+        this.view.setFloorNumber(this.tower.get().getCurrentFloorNumber() + 1);
         this.view.setInstruction();
         this.updateFloorStructure();
         this.refreshFloorViewState();
@@ -156,45 +139,14 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     private void updateFloorStructure() {
-        int currentFloorNumber = this.tower.getCurrentFloorNumber();
-        if (this.renderedFloorNumber == currentFloorNumber && !this.roomNodesByFloorNode.isEmpty()) {
-            return;
-        }
-
-        this.setupFloorStructure(this.tower.getCurrentFloor());
-        this.renderedFloorNumber = currentFloorNumber;
-        this.visitedNodes.clear();
+        this.setupFloorStructure(this.tower.get().getCurrentFloor());
     }
 
     private void setupFloorStructure(Floor currentFloor) {
         List<FloorNode> floorNodes = currentFloor.getFloorNodes();
-
-        this.floorNodesByRoomNode.clear();
-        this.roomNodesByFloorNode.clear();
         this.view.clearMap();
 
-        for (FloorNode node : floorNodes) {
-            RoomView roomNodeView = new RoomView();
-            roomNodeView.setPosition(node.getX(), node.getY());
-            roomNodeView.setRoomType(this.resolveRoomType(node));
-            this.floorNodesByRoomNode.put(roomNodeView, node);
-            this.roomNodesByFloorNode.put(node, roomNodeView);
-            this.view.addRoomNode(roomNodeView);
-        }
-
-        this.view.centerMap();
-        for (FloorNode node : floorNodes) {
-            RoomView source = this.roomNodesByFloorNode.get(node);
-            if (source == null) {
-                continue;
-            }
-            for (FloorNode child : node.getChildren()) {
-                RoomView target = this.roomNodesByFloorNode.get(child);
-                if (target != null) {
-                    this.view.addConnectionBetweenRooms(source, target);
-                }
-            }
-        }
+        this.view.setFloorNodes(floorNodes);
     }
 
     private void refreshFloorViewState() {

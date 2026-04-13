@@ -14,12 +14,21 @@ public class Tower {
     private int currentFloor = 0;
     private final ArrayList<Floor> floors = new ArrayList<>();
     private final Trainer playerTrainer;
+    private boolean isFinished = false;
 
     public Tower(BugemonTeam playerTeam, PlayerService playerService, BugemonService bugemonService) {
         this.playerTrainer = new ManualTrainer(playerTeam, playerService.getInventory());
         for (int i = 0; i < MAX_FLOORS; i++) {
             this.floors.add(new Floor(this.playerTrainer, bugemonService, i));
         }
+    }
+
+    public boolean isFinished() {
+        return this.isFinished;
+    }
+
+    public boolean isCompleted() {
+        return isFloorComplete() && !hasNextFloor();
     }
 
     public Trainer getPlayerTrainer() {

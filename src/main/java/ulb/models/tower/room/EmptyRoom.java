@@ -1,13 +1,8 @@
 package ulb.models.tower.room;
 
-public final class EmptyRoom implements Room {
+public final class EmptyRoom extends Room {
     public EmptyRoom() {
 
-    }
-
-    @Override
-    public boolean isCompleted() {
-        return false;
     }
 
     @Override

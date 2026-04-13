@@ -1,5 +1,7 @@
 package ulb.views;
 
+import java.util.List;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -135,13 +137,27 @@ public class FloorView extends View {
         timeline.play();
     }
 
+    public void setFloorNodes(List<FloorNode> floorNodes) {
+        for (FloorNode node : floorNodes) {
+            this.addFloorNode(node);
+        }
+
+        for (FloorNode node : floorNodes) {
+            for (FloorNode child : node.getChildren()) {
+                RoomView target = this.roomNodesByFloorNode.get(child);
+                if (target != null) {
+                    this.view.addConnectionBetweenRooms(source, target);
+                }
+            }
+        }
+    }
+
     public void addFloorNode(FloorNode floorNode) {
         // Calculate x,y position from row/col
         double x = this.calculateXPosition(floorNode.getX());
         double y = this.calculateYPosition(floorNode.getY());
 
-        Room room = floorNode.getRoom();
-        RoomView roomView = new RoomView(room);
+        RoomView roomView = new RoomView(floorNode);
 
         roomView.setLayoutX(x);
         roomView.setLayoutY(y);
@@ -150,10 +166,15 @@ public class FloorView extends View {
         roomView.setListener(new RoomView.Listener() {
             @Override
             public void onRoomClicked(RoomPosition position) {
-                FloorView.this.listener.onRoomClicked(roomView);
+                FloorView.this.listener.onRoomClicked(floorNode);
 
             }
         });
+
+        for (FloorNode child : floorNode.getChildren()) {
+            this.addConnectionBetweenRooms(floorNode, child);
+
+        }
 
         this.innerMapPane.getChildren().add(roomView);
     }
@@ -205,7 +226,7 @@ public class FloorView extends View {
      * interface.
      */
     public interface Listener {
-        void onRoomClicked(RoomView roomNode);
+        void onRoomClicked(FloorNode node);
 
         void onReturnToMainMenu();
     }

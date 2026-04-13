@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-
+import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomPosition;
 import ulb.models.tower.room.Room.RoomState;
@@ -36,11 +36,11 @@ public class RoomView extends StackPane {
     @FXML
     private Label stateLabel;
 
-    private final Room room;
+    private final FloorNode node;
     private Listener listener;
 
-    public RoomView(Room room) {
-        this.room = room;
+    public RoomView(FloorNode node) {
+        this.node = node;
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource(FXML_PATH));
         loader.setRoot(this);
         loader.setController(this);
@@ -60,7 +60,7 @@ public class RoomView extends StackPane {
     public void initRoom() {
         this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-reward", "room-empty");
 
-        String normalizedRoomType = this.room.getType().toString().toLowerCase();
+        String normalizedRoomType = this.node.getRoom().getType().toString().toLowerCase();
 
         String styleClass = "room-" + normalizedRoomType;
         this.getStyleClass().add(styleClass);
@@ -78,7 +78,7 @@ public class RoomView extends StackPane {
     public void setRoomState() throws IllegalStateException {
         this.getStyleClass().removeAll("current", "available", "visited", "locked");
 
-        RoomState roomState = this.room.getState();
+        RoomState roomState = this.node.getRoom().getState();
         this.getStyleClass().add(roomState.toString().toLowerCase());
 
         // Configurer l'overlay selon l'état
@@ -123,7 +123,7 @@ public class RoomView extends StackPane {
         }
 
         if (!this.isDisabled()) {
-            this.listener.onRoomClicked(this.room.getPosition());
+            this.listener.onRoomClicked(this.node.getRoom().getPosition());
         }
     }
 
