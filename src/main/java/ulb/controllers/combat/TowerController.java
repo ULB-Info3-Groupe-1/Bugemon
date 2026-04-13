@@ -25,11 +25,11 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 import ulb.services.exceptions.NoActiveTeamException;
-import ulb.views.FloorMapView;
+import ulb.views.FloorView;
 import ulb.views.ViewLoader;
-import ulb.views.components.RoomNodeView;
+import ulb.views.components.RoomView;
 
-public class TowerController extends Controller<FloorMapView> implements FloorMapView.Listener, RoomVisitor {
+public class TowerController extends Controller<FloorView> implements FloorView.Listener, RoomVisitor {
     private Tower tower;
     private final PlayerService playerService;
     private final BugemonService bugemonService;
@@ -39,15 +39,15 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     private final ManualCombatController manualCombatController;
     private final LevelUpController levelUpController;
 
-    private final Map<RoomNodeView, FloorNode> floorNodesByRoomNode;
-    private final Map<FloorNode, RoomNodeView> roomNodesByFloorNode;
+    private final Map<RoomView, FloorNode> floorNodesByRoomNode;
+    private final Map<FloorNode, RoomView> roomNodesByFloorNode;
     private final Set<FloorNode> visitedNodes;
     private int renderedFloorNumber;
     private boolean runEnded;
 
     public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService,
             ManualCombatController manualCombatController, LevelUpController levelUpController) {
-        super(metaController, ViewLoader.load(FloorMapView::new));
+        super(metaController, ViewLoader.load(FloorView::new));
         this.tower = null;
         this.playerService = playerService;
         this.bugemonService = bugemonService;
@@ -61,7 +61,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     @Override
-    public void onRoomClicked(RoomNodeView roomNodeView) {
+    public void onRoomClicked(RoomView roomNodeView) {
         FloorNode selectedNode = this.floorNodesByRoomNode.get(roomNodeView);
         if (selectedNode == null) {
             throw new IllegalStateException("Clicked room is not mapped to a floor node");
@@ -78,7 +78,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         this.visitedNodes.add(nextNode);
 
         Room selectedRoom = nextNode.getRoom();
-        RoomNodeView targetRoomView = this.roomNodesByFloorNode.get(nextNode);
+        RoomView targetRoomView = this.roomNodesByFloorNode.get(nextNode);
         if (targetRoomView != null) {
             this.view.animatePlayerTo(targetRoomView);
         }
@@ -183,7 +183,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         this.view.clearMap();
 
         for (FloorNode node : floorNodes) {
-            RoomNodeView roomNodeView = new RoomNodeView();
+            RoomView roomNodeView = new RoomView();
             roomNodeView.setPosition(node.getX(), node.getY());
             roomNodeView.setRoomType(this.resolveRoomType(node));
             this.floorNodesByRoomNode.put(roomNodeView, node);
@@ -193,12 +193,12 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
 
         this.view.centerMap();
         for (FloorNode node : floorNodes) {
-            RoomNodeView source = this.roomNodesByFloorNode.get(node);
+            RoomView source = this.roomNodesByFloorNode.get(node);
             if (source == null) {
                 continue;
             }
             for (FloorNode child : node.getChildren()) {
-                RoomNodeView target = this.roomNodesByFloorNode.get(child);
+                RoomView target = this.roomNodesByFloorNode.get(child);
                 if (target != null) {
                     this.view.addConnectionBetweenRooms(source, target);
                 }
@@ -212,13 +212,13 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         Set<FloorNode> reachableNodes = new HashSet<>(currentFloor.getReachableNodes());
         this.visitedNodes.add(currentNode);
 
-        for (Map.Entry<FloorNode, RoomNodeView> entry : this.roomNodesByFloorNode.entrySet()) {
+        for (Map.Entry<FloorNode, RoomView> entry : this.roomNodesByFloorNode.entrySet()) {
             FloorNode node = entry.getKey();
-            RoomNodeView roomNodeView = entry.getValue();
+            RoomView roomNodeView = entry.getValue();
             roomNodeView.setRoomState(this.resolveRoomState(node, currentNode, reachableNodes));
         }
 
-        RoomNodeView currentRoomView = this.roomNodesByFloorNode.get(currentNode);
+        RoomView currentRoomView = this.roomNodesByFloorNode.get(currentNode);
         if (currentRoomView != null) {
             this.view.setupPlayer(currentRoomView, "/png/Trainer.png");
         }
@@ -291,12 +291,5 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
 
     public boolean hasActiveRun() {
         return this.tower != null && !this.runEnded;
-    }
-
-    public enum RoomState {
-        CURRENT,
-        AVAILABLE,
-        VISITED,
-        LOCKED
     }
 }

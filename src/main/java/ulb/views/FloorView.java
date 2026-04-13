@@ -14,13 +14,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
-import ulb.views.components.RoomNodeView;
+import ulb.views.components.RoomView;
 
 /**
  * View for the map of a NO Tower floor. Displays the layout of rooms and connections, and allows the player to click on
  * rooms.
  */
-public class FloorMapView extends View {
+public class FloorView extends View {
     private static final String FXML_PATH = "/fxml/FloorMap.fxml";
 
     // Constants for automatic positioning
@@ -47,9 +47,9 @@ public class FloorMapView extends View {
     @FXML
     private ImageView playerIcon;
 
-    private RoomNodeView currentRoom;
+    private RoomView currentRoom;
     private Listener listener;
-    private List<RoomNodeView> roomNodes = new ArrayList<>();
+    private List<RoomView> roomNodes = new ArrayList<>();
 
     @Override
     public String getPath() {
@@ -100,7 +100,7 @@ public class FloorMapView extends View {
         this.instructionsLabel.setText(instructions);
     }
 
-    public void setupPlayer(RoomNodeView startRoom, String imagePath) {
+    public void setupPlayer(RoomView startRoom, String imagePath) {
         if (this.playerIcon == null) {
             Image img = new Image(getClass().getResourceAsStream(imagePath));
             this.playerIcon = new ImageView(img);
@@ -115,7 +115,7 @@ public class FloorMapView extends View {
         this.setPlayerPosition(startRoom);
     }
 
-    public void setPlayerPosition(RoomNodeView room) {
+    public void setPlayerPosition(RoomView room) {
         this.currentRoom = room;
 
         if (this.playerIcon == null || room == null) {
@@ -131,7 +131,7 @@ public class FloorMapView extends View {
         this.playerIcon.toFront();
     }
 
-    public void animatePlayerTo(RoomNodeView room) {
+    public void animatePlayerTo(RoomView room) {
         if (this.playerIcon == null || room == null) {
             return;
         }
@@ -157,7 +157,7 @@ public class FloorMapView extends View {
      * @param roomNode
      *            The RoomNodeView component to add (must have row/col already set via setPosition)
      */
-    public void addRoomNode(RoomNodeView roomNode) {
+    public void addRoomNode(RoomView roomNode) {
         // Calculate x,y position from row/col
         double x = this.calculateXPosition(roomNode.getCol());
         double y = this.calculateYPosition(roomNode.getRow());
@@ -208,13 +208,13 @@ public class FloorMapView extends View {
         }
 
         // Find bounds of all rooms
-        int minRow = this.roomNodes.stream().mapToInt(RoomNodeView::getRow).min().orElse(0);
-        int maxRow = this.roomNodes.stream().mapToInt(RoomNodeView::getRow).max().orElse(0);
-        int minCol = this.roomNodes.stream().mapToInt(RoomNodeView::getCol).min().orElse(0);
-        int maxCol = this.roomNodes.stream().mapToInt(RoomNodeView::getCol).max().orElse(0);
+        int minRow = this.roomNodes.stream().mapToInt(RoomView::getRow).min().orElse(0);
+        int maxRow = this.roomNodes.stream().mapToInt(RoomView::getRow).max().orElse(0);
+        int minCol = this.roomNodes.stream().mapToInt(RoomView::getCol).min().orElse(0);
+        int maxCol = this.roomNodes.stream().mapToInt(RoomView::getCol).max().orElse(0);
 
         // Reposition all rooms relative to the minimum row/col
-        for (RoomNodeView roomNode : this.roomNodes) {
+        for (RoomView roomNode : this.roomNodes) {
             double x = (roomNode.getCol() - minCol) * (ROOM_WIDTH + HORIZONTAL_SPACING);
             double y = (roomNode.getRow() - minRow) * (ROOM_HEIGHT + VERTICAL_SPACING);
             roomNode.setLayoutX(x);
@@ -244,7 +244,7 @@ public class FloorMapView extends View {
      * @param target
      *            Target room
      */
-    public void addConnectionBetweenRooms(RoomNodeView source, RoomNodeView target) {
+    public void addConnectionBetweenRooms(RoomView source, RoomView target) {
         // Calculate the center of each room
         double sourceX = source.getLayoutX() + ROOM_WIDTH / 2;
         double sourceY = source.getLayoutY() + ROOM_HEIGHT / 2;
@@ -286,7 +286,7 @@ public class FloorMapView extends View {
      *            The column position to search for
      * @return The RoomNodeView found, or null if none
      */
-    public RoomNodeView getRoomNodeAt(int row, int col) {
+    public RoomView getRoomNodeAt(int row, int col) {
         return this.roomNodes.stream().filter(roomNode -> roomNode.getRow() == row && roomNode.getCol() == col)
                 .findFirst().orElse(null);
     }
@@ -296,7 +296,7 @@ public class FloorMapView extends View {
      * interface.
      */
     public interface Listener {
-        void onRoomClicked(RoomNodeView roomNode);
+        void onRoomClicked(RoomView roomNode);
 
         void onReturnToMainMenu();
     }
