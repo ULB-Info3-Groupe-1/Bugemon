@@ -1,5 +1,7 @@
 package ulb.models.combat;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,6 +9,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
+import ulb.models.bugemon.effect.Effect;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
@@ -230,11 +233,24 @@ public class Combat {
         int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
+        this.applyAttackEffects(attack.effects(), attacker, defender);
+
         Efficiency efficiency = attack.getEfficiencyAgainst(defender.getCurrentBugemon());
         LOG.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
                 defender.getCurrentBugemonName(), damage, efficiency);
 
         this.turnResult.addStep(new TurnStep.AttackStep(attacker, attack, efficiency));
+    }
+
+    private void applyAttackEffects(List<Effect> effects, Trainer attacker, Trainer defender) {
+        effects.forEach(e -> {
+            switch (e.target()) {
+                case OPPONENT -> attacker.getCurrentBugemon().apply(e);
+                case TEAM -> attacker.applyEffectToCurrentTeam(e);
+                case THROWER -> attacker.getCurrentBugemon().apply(e);
+                default -> throw new IllegalStateException("unknown effect target");
+            }
+        });
     }
 
     public Trainer getPlayerTrainer() {
