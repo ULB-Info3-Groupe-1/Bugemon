@@ -15,9 +15,9 @@ public abstract class Configuration {
         public static final String SPRITES = "assets/sprites/";
         public static final String DEFAULT_SPRITE = "/png/unknown.png";
 
-        public static final class FXML {
+        public static final class Fxml {
 
-            private FXML() {
+            private Fxml() {
                 // Private constructor to prevent instantiation
             }
 
@@ -39,12 +39,14 @@ public abstract class Configuration {
             public static final String LEVEL_UP_VIEW = "/fxml/LevelUp.fxml";
             public static final String MAIN_MENU_VIEW = "/fxml/MainMenu.fxml";
             public static final String MANAGE_TEAM_VIEW = "/fxml/ManageTeam.fxml";
+            public static final String CREATE_BUGEMON_VIEW = "/fxml/CreateBugemon.fxml";
+
         }
     }
 
-    public static final class UI {
+    public static final class Ui {
 
-        private UI() {
+        private Ui() {
             // Private constructor to prevent instantiation
         }
 

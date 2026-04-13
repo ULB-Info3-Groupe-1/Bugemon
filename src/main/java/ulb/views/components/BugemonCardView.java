@@ -38,7 +38,7 @@ public class BugemonCardView extends ComponentView {
     }
 
     private BugemonCardView(Optional<Bugemon> bugemonData) {
-        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_CARD);
+        super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
         this.bugemonData = bugemonData;
         this.nameLabel.setText(bugemonData.map(Bugemon::getName).orElse(EMPTY_NAME));
         this.levelLabel.setText(bugemonData.map(b -> "Lv." + b.getLevel()).orElse(""));

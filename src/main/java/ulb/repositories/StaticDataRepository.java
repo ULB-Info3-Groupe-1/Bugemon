@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,93 +37,67 @@ import ulb.utils.Parser;
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 7;
 
-    private final DatabaseConnection dbConnection;
-
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
-        super(queries);
-        this.dbConnection = dbConnection;
+        super(dbConnection, queries);
         this.prepareDatabase();
     }
 
+    // --- DATABASE INIT ---
+
     private void prepareDatabase() {
-        // Verify if the critical tables exist in the database. If not, we create the schema and add
-        // the default game data
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("areTablesPresent"))) {
-            ResultSet rs = ps.executeQuery();
-            if (rs.next() && rs.getInt("existing_critical_tables") < CRITICAL_TABLES_COUNT) {
-                this.createSchema();
-                this.addDefaultGameData();
-                return;
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("areTablesPresent failed", e);
-        }
+        Integer tableCount = executeQuery("areTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
+                .findFirst().orElse(0);
 
-        // If the tables exist, we check if they contain the static game data. If not, we add the
-        // static game data
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("IsDataEmpty"))) {
-            ResultSet rs = ps.executeQuery();
-            if (rs.next() && rs.getInt("total_rows") == 0) {
-                this.addDefaultGameData();
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("IsDataEmpty failed", e);
-        }
-    }
-
-    private void createSchema() {
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("CreateSchema"))) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new IllegalStateException("createSchema failed", e);
-        }
-    }
-
-    public void addDefaultGameData() {
-        Parser parser = new Parser();
-        parser.parse();
-        this.saveGameDataAttacks(parser.getAttacks());
-        for (CreateBugemonDTO bugemon : parser.getBugemons()) {
-            this.saveBugemon(bugemon);
-        }
-    }
-
-    private void saveGameDataAttacks(Map<String, Attack> attacks) {
-        for (Attack attack : attacks.values()) {
-            try {
-                this.saveAttack(attack);
-                this.saveAttackEffects(attack);
-            } catch (SQLException e) {
-                throw new IllegalStateException(
-                        "Error occurred while saving the default game data for attack: " + attack.id(), e);
-            }
-        }
-    }
-
-    private void saveAttack(Attack attack) throws SQLException {
-        try (PreparedStatement psAttack = this.dbConnection.prepareStatement(this.getSql("SaveAttack"))) {
-            psAttack.setString(1, attack.id());
-            psAttack.setString(2, attack.name());
-            psAttack.setObject(3, attack.type() != null ? attack.type().name() : null, Types.VARCHAR);
-            psAttack.setString(4, attack.description());
-            psAttack.setInt(5, attack.power());
-            psAttack.executeUpdate();
-        }
-    }
-
-    private void saveAttackEffects(Attack attack) throws SQLException {
-        if (attack.effects() == null || attack.effects().isEmpty()) {
+        if (tableCount < CRITICAL_TABLES_COUNT) {
+            executeUpdate("CreateSchema");
+            this.addDefaultGameData();
             return;
         }
 
-        try (PreparedStatement psEffect = this.dbConnection.prepareStatement(this.getSql("SaveEffect"))) {
-            for (Effect effect : attack.effects()) {
-                psEffect.setString(1, attack.id()); // Foreign key to the attack
-                this.setEffectParameters(psEffect, effect);
-                psEffect.addBatch();
-            }
-            psEffect.executeBatch();
+        Integer rowCount = executeQuery("IsDataEmpty", rs -> rs.getInt("total_rows")).stream().findFirst().orElse(0);
+        if (rowCount == 0) {
+            this.addDefaultGameData();
         }
+    }
+
+    private void addDefaultGameData() {
+        Parser parser = new Parser();
+        parser.parse();
+        parser.getAttacks().values().forEach(this::saveAttackFull);
+        parser.getBugemons().forEach(this::saveBugemon);
+    }
+
+    private void saveAttackFull(Attack attack) {
+        executeUpdate("SaveAttack", attack.id(), attack.name(), (attack.type() != null ? attack.type().name() : null),
+                attack.description(), attack.power());
+
+        if (attack.effects() != null && !attack.effects().isEmpty()) {
+            try (PreparedStatement ps = dbConnection.prepareStatement(getSql("SaveEffect"))) {
+                for (Effect effect : attack.effects()) {
+                    ps.setString(1, attack.id());
+                    this.setEffectParameters(ps, effect);
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+            } catch (SQLException e) {
+                throw new IllegalStateException("Error saving effects for " + attack.id(), e);
+            }
+        }
+    }
+
+    // --- DATABASE QUERIES ---
+
+    private Bugemon mapBugemon(ResultSet rs, Map<String, Attack> attackMap) throws SQLException {
+        BugemonType type = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TYPE, BugemonType.class);
+        return new BugemonBuilder().name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
+                .sprite(rs.getString(DatabaseColumns.COL_SPRITE)).defense(rs.getInt(DatabaseColumns.COL_BASE_DEFENSE))
+                .attack(rs.getInt(DatabaseColumns.COL_BASE_ATTACK))
+                .initiative(rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE))
+                .hp(rs.getInt(DatabaseColumns.COL_BASE_MAX_HP))
+                .addAttack(attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_1)))
+                .addAttack(attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_2)))
+                .addAttack(attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_3)))
+                .isStarter(rs.getBoolean(DatabaseColumns.COL_IS_STARTER)).build();
     }
 
     private void setEffectParameters(PreparedStatement psEffect, Effect effect) throws SQLException {
@@ -172,95 +147,16 @@ public class StaticDataRepository extends AbstractRepository {
         psEffect.setNull(7, Types.INTEGER);
     }
 
-    // ─── UTILS FOR CLASS USING THIS REPO ──
+    // --- UTILS FOR CLASS USING THIS REPO --
 
     /**
-     * Retrieves all default Bugemons. Uses optimized bulk loading: one query for bugemons, one for all attacks with
-     * effects. This avoids the N+1 query problem.
+     * Retrieves all default Bugemons.
      *
-     * @return List of all default Bugemons
+     * @return (List<Bugemon>) List of default Bugemons of the game
      */
     public List<Bugemon> getAllDefaultBugemons() {
-        Map<String, Attack> attackMap = this.loadAllAttacks();
-
-        List<Bugemon> bugemons = new ArrayList<>();
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetAllDefaultBugemons"))) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                BugemonType type = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_TYPE, BugemonType.class);
-
-                Attack attack1 = attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_1));
-                Attack attack2 = attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_2));
-                Attack attack3 = attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_3));
-
-                BugemonBuilder builder = new BugemonBuilder();
-                builder.name(rs.getString(DatabaseColumns.COL_NAME)).type(type)
-                        .sprite(rs.getString(DatabaseColumns.COL_SPRITE))
-                        .defense(rs.getInt(DatabaseColumns.COL_BASE_DEFENSE))
-                        .attack(rs.getInt(DatabaseColumns.COL_BASE_ATTACK))
-                        .initiative(rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE))
-                        .hp(rs.getInt(DatabaseColumns.COL_BASE_MAX_HP)).addAttack(attack1).addAttack(attack2)
-                        .addAttack(attack3).isStarter(rs.getBoolean(DatabaseColumns.COL_IS_STARTER));
-
-                bugemons.add(builder.build());
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("getAllDefaultBugemons failed", e);
-        }
-        return bugemons;
-    }
-
-    /**
-     * Retrieves all attacks indexed by their ID.
-     *
-     * @return Map of attack ID to Attack
-     */
-    public Map<String, Attack> getAllAttacks() {
-        return this.loadAllAttacks();
-    }
-
-    /**
-     * Loads all attacks with their effects in a single optimized query.
-     *
-     * @return Map of attack ID to Attack object
-     */
-    private Map<String, Attack> loadAllAttacks() {
-        Map<String, List<Effect>> effectsMap = new HashMap<>();
-        Map<String, AttackInfo> attackInfoMap = new HashMap<>();
-
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("GetAllAttacksWithEffects"))) {
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                String attackId = rs.getString("attack_id");
-
-                if (!attackInfoMap.containsKey(attackId)) {
-                    AttackInfo info = new AttackInfo();
-                    info.name = rs.getString("attack_name");
-                    info.type = DatabaseHelper.getEnumOrNull(rs, "attack_type", BugemonType.class);
-                    info.description = rs.getString("attack_description");
-                    info.power = rs.getInt("attack_power");
-                    attackInfoMap.put(attackId, info);
-                    effectsMap.put(attackId, new ArrayList<>());
-                }
-
-                String effectType = rs.getString("effect_type");
-                if (effectType != null) {
-                    Effect effect = this.buildEffect(rs, effectType);
-                    effectsMap.get(attackId).add(effect);
-                }
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("loadAllAttacks failed", e);
-        }
-
-        Map<String, Attack> attackMap = new HashMap<>();
-        for (String attackId : attackInfoMap.keySet()) {
-            AttackInfo info = attackInfoMap.get(attackId);
-            List<Effect> effects = effectsMap.get(attackId);
-            attackMap.put(attackId, new Attack(attackId, info.name, info.type, info.description, info.power, effects));
-        }
-        return attackMap;
+        Map<String, Attack> attackMap = this.getAllAttacks();
+        return executeQuery("GetAllDefaultBugemons", rs -> this.mapBugemon(rs, attackMap));
     }
 
     private static class AttackInfo {
@@ -268,13 +164,55 @@ public class StaticDataRepository extends AbstractRepository {
         BugemonType type;
         String description;
         int power;
+
+        AttackInfo(String name, BugemonType type, String description, int power) {
+            this.name = name;
+            this.type = type;
+            this.description = description;
+            this.power = power;
+        }
+    }
+
+    /**
+     * Retrieves all attacks with their effects.
+     *
+     * @return (Map<String, Attack>) Map of attacks.
+     */
+    public Map<String, Attack> getAllAttacks() {
+        Map<String, AttackInfo> infos = new LinkedHashMap<>();
+        Map<String, List<Effect>> effects = new HashMap<>();
+
+        executeQuery("GetAllAttacksWithEffects", rs -> {
+            String id = rs.getString("attack_id");
+            infos.computeIfAbsent(id, k -> {
+                effects.put(k, new ArrayList<>());
+                try {
+                    return new AttackInfo(rs.getString("attack_name"),
+                            DatabaseHelper.getEnumOrNull(rs, "attack_type", BugemonType.class),
+                            rs.getString("attack_description"), rs.getInt("attack_power"));
+                } catch (SQLException e) {
+                    throw new IllegalStateException("Error loading attack " + id, e);
+                }
+            });
+
+            String effType = rs.getString("effect_type");
+            if (effType != null) {
+                effects.get(id).add(this.buildEffect(rs, effType));
+            }
+            return null;
+        });
+
+        Map<String, Attack> attackMap = new HashMap<>();
+        infos.forEach((id, info) -> attackMap.put(id,
+                new Attack(id, info.name, info.type, info.description, info.power, effects.get(id))));
+        return attackMap;
     }
 
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
         EffectTarget target;
         switch (effectType) {
             case "EffectStatModifier" :
-                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
                 EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "effect_stat", EffectStat.class);
                 String duration = (rs.getString("effect_duration") != null) ? rs.getString("effect_duration")
                         : "0_tour";
@@ -282,11 +220,11 @@ public class StaticDataRepository extends AbstractRepository {
                         EffectDuration.fromLabel(duration));
 
             case "EffectHeal" :
-                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
                 return new EffectHeal(target, rs.getInt("effect_amount"));
 
             case "EffectResetMalus" :
-                target = DatabaseHelper.getEnumOrNull(rs, "effect_target", EffectTarget.class);
+                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
                 return new EffectResetMalus(target);
 
             default :
@@ -295,52 +233,23 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     /**
-     * Save a Bugemon to the database. It also saves the sprite file for the Bugemon. It set the sprite file name to the
-     * name of the Bugemon in lowercase and replacing non-alphanumeric characters with underscores.
+     * Saves a Bugemon to the database.
      *
-     * @param bugemon
-     *            (CreateBugemonDTO) the Bugemon to be saved
+     * @param b
+     *            (CreateBugemonDTO) the bugemon to be saved
      */
-    public void saveBugemon(CreateBugemonDTO bugemon) {
-        String fileName = bugemon.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
-
+    public void saveBugemon(CreateBugemonDTO b) {
+        String fileName = b.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
         try {
-            this.saveSpriteFile(bugemon.spriteUrl(), fileName);
+            this.saveSpriteFile(b.spriteUrl(), fileName);
         } catch (IOException e) {
-            throw new UncheckedIOException("Error occurred while saving the sprite for bugemon: " + bugemon.name(), e);
+            throw new UncheckedIOException(e);
         }
 
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("SaveBugemon"))) {
-            ps.setString(1, bugemon.name());
-            ps.setString(2, bugemon.type().name());
-            ps.setString(3, fileName);
-            ps.setInt(4, bugemon.defense());
-            ps.setInt(5, bugemon.attack());
-            ps.setInt(6, bugemon.initiative());
-            ps.setInt(7, bugemon.maxHp());
-            ps.setBoolean(8, bugemon.isStarter());
-            // Assuming each Bugemon has exactly 3 attacks, we insert them in the order they
-            // appear in the list
-            ps.setString(9, bugemon.attack1().id());
-            ps.setString(10, bugemon.attack2().id());
-            ps.setString(11, bugemon.attack3().id());
-            ps.addBatch();
-            ps.executeBatch();
-        } catch (SQLException e) {
-            throw new IllegalStateException("saveGameDataBugemon failed", e);
-        }
+        executeUpdate("SaveBugemon", b.name(), b.type().name(), fileName, b.defense(), b.attack(), b.initiative(),
+                b.maxHp(), b.isStarter(), b.attack1().id(), b.attack2().id(), b.attack3().id());
     }
 
-    /**
-     * Save the sprite file for a Bugemon.
-     *
-     * @param currentSpriteUrl
-     *            the URL of the sprite file to be saved (to get access to the file)
-     * @param spriteFileName
-     *            the name of the sprite file to be saved
-     * @throws IOException
-     *             if the sprite file cannot be saved
-     */
     private void saveSpriteFile(URL currentSpriteUrl, String spriteFileName) throws IOException {
         Path dirDestination = Paths.get(Configuration.Paths.SPRITES);
 

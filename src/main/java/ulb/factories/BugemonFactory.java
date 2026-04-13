@@ -5,7 +5,9 @@ import java.nio.file.Paths;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
+import ulb.models.bugemon.BugemonType;
 import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
 
 /**
@@ -32,6 +34,15 @@ public class BugemonFactory {
                 .defense(bugemon.defense()).attack(bugemon.attack()).initiative(bugemon.initiative())
                 .hp(bugemon.maxHp()).isStarter(bugemon.isStarter()).addAttack(bugemon.attack1())
                 .addAttack(bugemon.attack2()).addAttack(bugemon.attack3()).build();
+    }
+
+    public static Bugemon createBugemon(StaticBugemonDataDTO defaultBugemon, PlayerBugemonDTO playerBugemon) {
+        return new BugemonBuilder().name(defaultBugemon.name()).type(BugemonType.valueOf(defaultBugemon.type()))
+                .sprite(defaultBugemon.spriteUrl()).hp(playerBugemon.currentMaxHp())
+                .attack(playerBugemon.currentAttackPower()).defense(playerBugemon.currentDefense())
+                .initiative(playerBugemon.currentInitiative()).xp(playerBugemon.currentXp())
+                .level(playerBugemon.currentLevel()).attackList(defaultBugemon.attackList())
+                .isStarter(defaultBugemon.isStarter()).build();
     }
 
     public static StaticBugemonDataDTO createStaticBugemonData(Bugemon bugemon) {

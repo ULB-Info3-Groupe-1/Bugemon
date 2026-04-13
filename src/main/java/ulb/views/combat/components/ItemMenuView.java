@@ -13,7 +13,7 @@ public class ItemMenuView extends ComponentView {
     private Listener listener;
 
     public ItemMenuView() {
-        super(Configuration.Paths.FXML.COMPONENT_ITEM_MENU);
+        super(Configuration.Paths.Fxml.COMPONENT_ITEM_MENU);
     }
 
     public void setListener(Listener listener) {

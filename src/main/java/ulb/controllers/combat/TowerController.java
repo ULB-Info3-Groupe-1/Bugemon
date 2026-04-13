@@ -1,6 +1,5 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +22,7 @@ import ulb.models.tower.room.RoomType;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
+import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.FloorMapView;
 import ulb.views.ViewLoader;
 import ulb.views.components.RoomNodeView;
@@ -37,8 +37,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     private int renderedFloorNumber;
     private boolean runEnded;
 
-    public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService)
-            throws IOException {
+    public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService) {
         super(metaController, ViewLoader.load(FloorMapView::new));
         this.tower = null;
         this.playerService = playerService;
@@ -79,8 +78,9 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     public void handleCombatRoom(CombatRoom combatRoom) {
-        Combat combat = combatRoom
-                .getCombat(new ManualTrainer(this.playerService.getActiveTeam(), this.playerService.getInventory()));
+        Combat combat = combatRoom.getCombat(new ManualTrainer(
+                this.playerService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
+                this.playerService.getInventory()));
         this.metaController.startTowerCombat(combat);
     }
 
@@ -111,7 +111,11 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
             this.runEnded = true;
             this.metaController.endTowerFlow();
             this.metaController.switchTo(Window.COMBAT_DEFEAT);
-            this.playerService.restoreHpActiveTeam();
+            try {
+                this.playerService.restoreHpActiveTeam();
+            } catch (NoActiveTeamException e) {
+                throw new IllegalStateException("No active team when combat ended is not possible", e);
+            }
             return;
         }
 
@@ -243,7 +247,9 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         }
 
         if (this.tower == null || this.runEnded) {
-            this.tower = new Tower(this.playerService.getActiveTeam(), this.playerService, this.bugemonService);
+            this.tower = new Tower(
+                    this.playerService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
+                    this.playerService, this.bugemonService);
             this.runEnded = false;
             this.renderedFloorNumber = -1;
             this.floorNodesByRoomNode.clear();

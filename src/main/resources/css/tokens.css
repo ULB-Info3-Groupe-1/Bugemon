@@ -87,6 +87,8 @@
     /* team-management buttons and inputs */
     size-btn-choice: 260;
     /* combat / level-up choice buttons */
+    size-btn-create-bugemon: 260;
+    /* create-bugemon buttons */
 
     /* ── Action menu grid ───────────────────────────────────── */
     size-action-menu: 380;

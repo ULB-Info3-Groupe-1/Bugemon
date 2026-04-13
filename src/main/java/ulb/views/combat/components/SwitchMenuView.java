@@ -25,7 +25,7 @@ public class SwitchMenuView extends ComponentView {
     private Listener listener;
 
     public SwitchMenuView() {
-        super(Configuration.Paths.FXML.COMPONENT_SWITCH_MENU);
+        super(Configuration.Paths.Fxml.COMPONENT_SWITCH_MENU);
     }
 
     public void setListener(Listener listener) {

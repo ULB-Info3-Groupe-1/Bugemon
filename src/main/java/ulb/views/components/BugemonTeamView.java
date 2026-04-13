@@ -18,7 +18,7 @@ public class BugemonTeamView extends ComponentView {
     private Listener listener;
 
     public BugemonTeamView() {
-        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_TEAM);
+        super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_TEAM);
     }
 
     public void setListener(Listener listener) {
@@ -27,7 +27,7 @@ public class BugemonTeamView extends ComponentView {
 
     /** Clears and repopulates the grid with the alive members of the given team. */
     public void showTeam(BugemonTeam bugemonTeam) {
-        this.gridPane.getChildren().clear();
+        this.clearBugemons();
 
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
         for (int i = 0; i < aliveBugemons.size(); i++) {
@@ -35,6 +35,13 @@ public class BugemonTeamView extends ComponentView {
             card.setListener(this.listener::onBugemonClicked);
             this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
         }
+    }
+
+    /**
+     * Clears the grid of the current Bugemons selected.
+     */
+    public void clearBugemons() {
+        this.gridPane.getChildren().clear();
     }
 
     public interface Listener {

@@ -24,7 +24,7 @@ public class BugemonInfoView extends ComponentView {
     private Label bugemonHpLabel;
 
     public BugemonInfoView() {
-        super(Configuration.Paths.FXML.COMPONENT_BUGEMON_INFO);
+        super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_INFO);
     }
 
     /** Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class. */

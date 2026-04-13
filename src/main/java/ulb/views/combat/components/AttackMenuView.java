@@ -27,7 +27,7 @@ public class AttackMenuView extends ComponentView {
     private Listener listener;
 
     public AttackMenuView() {
-        super(Configuration.Paths.FXML.COMPONENT_ATTACK_MENU);
+        super(Configuration.Paths.Fxml.COMPONENT_ATTACK_MENU);
     }
 
     public void setListener(Listener listener) {

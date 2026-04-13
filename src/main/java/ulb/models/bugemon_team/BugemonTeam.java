@@ -19,15 +19,22 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
  */
 public class BugemonTeam implements Iterable<Bugemon> {
 
-    private final ArrayList<Bugemon> team = new ArrayList<>();
+    private final ArrayList<Bugemon> team;
     private String name;
 
     public BugemonTeam() {
         this.name = Configuration.Game.DEFAULT_TEAM_NAME;
+        this.team = new ArrayList<>();
     }
 
     public BugemonTeam(String name) {
         this.name = name;
+        this.team = new ArrayList<>();
+    }
+
+    public BugemonTeam(BugemonTeam other) {
+        this.name = other.name;
+        this.team = new ArrayList<>(other.team);
     }
 
     public int size() {
@@ -98,6 +105,20 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return this.team.stream().anyMatch(member -> member.getName().equals(bugemon.getName()));
     }
 
+    /**
+     * Adds or removes a bugemon from the team depending on whether it is already in the team.
+     *
+     * @param bugemon
+     *            the bugemon to add or remove
+     */
+    public void addOrRemoveBugemon(Bugemon bugemon) {
+        if (this.contains(bugemon)) {
+            this.remove(bugemon);
+        } else if (!this.isFull()) {
+            this.add(bugemon);
+        }
+    }
+
     @Override
     public Iterator<Bugemon> iterator() {
         return this.team.iterator();
@@ -158,5 +179,23 @@ public class BugemonTeam implements Iterable<Bugemon> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        BugemonTeam other = (BugemonTeam) obj;
+        return java.util.Objects.equals(this.name, other.name) && java.util.Objects.equals(this.team, other.team);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(this.name, this.team);
     }
 }

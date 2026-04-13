@@ -53,7 +53,7 @@ public class MainMenuView extends View {
 
     @Override
     public String getPath() {
-        return Configuration.Paths.FXML.MAIN_MENU_VIEW;
+        return Configuration.Paths.Fxml.MAIN_MENU_VIEW;
     }
 
     @Override

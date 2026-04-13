@@ -17,7 +17,7 @@ public class DialogZoneView extends ComponentView {
     private Listener listener;
 
     public DialogZoneView() {
-        super(Configuration.Paths.FXML.COMPONENT_DIALOG_ZONE);
+        super(Configuration.Paths.Fxml.COMPONENT_DIALOG_ZONE);
     }
 
     public void setListener(Listener listener) {

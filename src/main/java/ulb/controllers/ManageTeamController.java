@@ -1,16 +1,17 @@
 package ulb.controllers;
 
-import java.io.IOException;
 import javafx.stage.Stage;
 
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.repositories.exceptions.TeamEmptyException;
+import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
+import ulb.repositories.exceptions.TeamNameEmptyException;
+import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
-import ulb.services.exceptions.TeamEmptyException;
-import ulb.services.exceptions.TeamNameAlreadyExistsException;
-import ulb.services.exceptions.TeamNotFoundException;
+import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
@@ -22,180 +23,160 @@ import ulb.views.ViewLoader;
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
     private final PlayerService playerService;
     private final BugemonService bugemonService;
-    private BugemonTeam selectedTeam;
-    private final ManageTeamView.TeamFormMode mode;
+
+    public enum TeamFormMode {
+        EDIT,
+        CREATE
+    }
 
     /**
      * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
      * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
      *
-     * @throws IOException
-     *             if the view fails to load its FXML resource.
      */
-    public ManageTeamController(ManageTeamView.TeamFormMode mode, MetaController metaController,
-            PlayerService playerService, BugemonService bugemonService) throws IOException {
-        super(metaController, ViewLoader.load(ManageTeamView::new));
-        this.mode = mode;
+    public ManageTeamController(TeamFormMode mode, MetaController metaController, PlayerService playerService,
+            BugemonService bugemonService) {
+        super(metaController, ViewLoader.load(() -> new ManageTeamView(mode)));
         this.playerService = playerService;
         this.bugemonService = bugemonService;
-        this.selectedTeam = new BugemonTeam();
 
         this.view.setListener(this);
     }
 
     @Override
     protected void show(Stage stage) {
-        this.updateTeam();
-        this.udpateAvailableBugemons();
-        this.updateTeamList();
-        this.view.setMode(this.mode);
-
+        this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
+        this.refresh();
         super.show(stage);
     }
 
-    public void updateTeamList() {
+    private void refresh() {
+        this.view.setTeam(this.playerService.getActiveTeam());
+        this.view.setIsActiveTeamSaved(this.playerService.isActiveTeamSaved());
         this.view.setTeamList(this.playerService.getTeamNames());
-    }
-
-    public void updateTeam() {
-        this.view.setTeam(this.selectedTeam);
-    }
-
-    private void udpateAvailableBugemons() {
-        this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
-    }
-
-    @Override
-    public void onBugemonSelected(Bugemon bugemon) {
-        if (this.selectedTeam.contains(bugemon)) {
-            this.selectedTeam.remove(bugemon);
-        } else if (!this.selectedTeam.isFull()) {
-            this.selectedTeam.add(new Bugemon(bugemon));
-        }
-
         this.view.refresh();
     }
 
     @Override
-    public void onReturnToMainMenu() {
-        this.metaController.switchTo(MetaController.Window.MAIN_MENU);
+    public void onBugemonSelected(Bugemon bugemon) {
+        this.playerService.addOrRemoveBugemonOfActiveTeam(bugemon);
+        this.refresh();
     }
 
     @Override
     public void onSave(String teamName) {
-        if (this.teamNameIsEmpty(teamName)) {
-            this.view.showEmptyTeamNameAlert();
-            return;
-        }
-
         try {
-            this.playerService.saveTeam(teamName, this.selectedTeam);
-            this.view.setTeamList(this.playerService.getTeamNames());
+            this.playerService.saveTeam(teamName);
+            this.refresh();
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
+        } catch (NoActiveTeamException e) {
+            throw new IllegalStateException(
+                    "The player team to save doesn't exist. The active team should exist now and be modified.");
+        } catch (TeamNameEmptyException e) {
+            this.view.showEmptyTeamNameAlert();
         }
     }
 
     @Override
     public void onLoad(String teamName) {
-        if (this.teamNameIsEmpty(teamName)) {
-            this.view.showEmptyTeamNameAlert();
-            return;
-        }
-
         try {
-            this.playerService.loadTeamAndSetActiveTeam(teamName);
-            this.selectedTeam = this.playerService.getActiveTeam();
-            this.updateTeam();
-            this.view.refresh();
+            this.playerService.setActiveTeam(teamName);
+            this.refresh();
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
     }
 
     @Override
-    public void onDelete(String teamName) {
+    public void onDelete() {
         try {
-            this.playerService.deleteTeam(teamName);
-            this.view.setTeamList(this.playerService.getTeamNames());
-            if (this.selectedTeam != null && teamName.equals(this.selectedTeam.getName())) {
-                this.selectedTeam = new BugemonTeam();
-                this.updateTeam();
-                this.view.refresh();
-            }
+            this.playerService.deleteActiveTeam();
+            this.refresh();
+        } catch (NoActiveTeamException e) {
+            this.view.showDeletTeamNoActiveTeamAlert();
         } catch (TeamNotFoundException e) {
-            this.view.showTeamNotFoundAlert(teamName);
-        }
-    }
-
-    @Override
-    public void onRename(String oldName, String newName) {
-        if (this.teamNameIsEmpty(newName)) {
-            this.view.showEmptyTeamNameAlert();
-            return;
-        }
-
-        try {
-            this.playerService.renameTeam(oldName, newName);
-            this.view.setTeamList(this.playerService.getTeamNames());
-            if (this.selectedTeam != null && oldName.equals(this.selectedTeam.getName())) {
-                this.selectedTeam.setName(newName);
-            }
-        } catch (TeamNotFoundException e) {
-            this.view.showTeamNotFoundAlert(oldName);
-        } catch (TeamNameAlreadyExistsException e) {
-            this.view.showTeamNameAlreadyExistsAlert(newName);
-        }
-    }
-
-    @Override
-    public void onAddNewTeam() {
-        this.selectedTeam = new BugemonTeam();
-        this.updateTeam();
-        this.view.refresh();
-    }
-
-    private boolean teamNameIsEmpty(String name) {
-        return name.trim().isEmpty();
-    }
-
-    @Override
-    public void onModifyTeam() {
-        try {
-            this.playerService.modifyTeam(this.selectedTeam);
-        } catch (TeamEmptyException e) {
+            this.playerService.getActiveTeam().ifPresentOrElse(team -> this.view.showTeamNotFoundAlert(team.getName()),
+                    this.view::showDeletTeamNoActiveTeamAlert);
+        } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamAlert();
         }
     }
 
     @Override
-    public void onStartAutomaticCombat() {
-        if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
+    public void onRename(String oldName, String newName) {
+        try {
+            this.playerService.renameTeam(oldName, newName);
+            this.refresh();
+        } catch (TeamNotFoundException e) {
+            this.view.showTeamNotFoundAlert(oldName);
+        } catch (TeamNameAlreadyExistsException e) {
+            this.view.showTeamNameAlreadyExistsAlert(newName);
+        } catch (NoActiveTeamException e) {
+            this.view.showRenameTeamNoActiveTeamAlert();
+        } catch (TeamNameEmptyException e) {
+            this.view.showEmptyTeamNameAlert();
         }
+    }
+
+    @Override
+    public void onAddNewTeam() {
+        this.playerService.clearActiveTeam();
+        this.view.clearTeamNameToSave();
+        this.refresh();
+    }
+
+    @Override
+    public void onModifyTeam() {
+        try {
+            this.playerService.modifyActiveTeam();
+            this.refresh();
+        } catch (TeamEmptyException e) {
+            this.view.showEmptyTeamAlert();
+        } catch (NoActiveTeamException e) {
+            this.view.showAlertChooseTeamToModify();
+        } catch (TeamNotFoundException e) {
+            this.playerService.getActiveTeam().ifPresentOrElse(team -> this.view.showTeamNotFoundAlert(team.getName()),
+                    this.view::showAlertChooseTeamToModify);
+        }
+    }
+
+    private void launchCombat(Window window) {
+        if (this.playerService.isActiveTeamEmpty()) {
+            this.view.showAlertChooseTeamToLaunchCombat();
+        } else {
+            this.metaController.switchTo(window);
+        }
+    }
+
+    @Override
+    public void onStartAutomaticCombat() {
+        this.launchCombat(Window.AUTOMATIC_COMBAT);
     }
 
     @Override
     public void onStartManualCombat() {
-        if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.MANUAL_COMBAT);
-        }
+        this.launchCombat(Window.MANUAL_COMBAT);
     }
 
     @Override
     public void onStartNOTowerCombat() {
-        if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.NOTOWER);
-        }
+        this.launchCombat(Window.NOTOWER);
     }
 
-    private boolean isActiveTeamEmpty() {
-        if (this.playerService.isActiveTeamEmpty()) {
-            this.view.showNoTeamAlert();
-            return true;
+    @Override
+    public void onReturnToMainMenu() {
+        boolean canLeave = this.playerService.isActiveTeamSaved();
+
+        if (!canLeave && this.view.showAlertTeamChangesNotSave()) {
+            this.playerService.clearActiveTeam();
+            canLeave = true;
         }
-        return false;
+
+        if (canLeave) {
+            this.metaController.switchTo(MetaController.Window.MAIN_MENU);
+        }
     }
 }

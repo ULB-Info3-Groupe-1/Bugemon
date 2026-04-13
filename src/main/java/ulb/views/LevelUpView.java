@@ -56,7 +56,7 @@ public class LevelUpView extends View {
 
     @Override
     public String getPath() {
-        return Configuration.Paths.FXML.LEVEL_UP_VIEW;
+        return Configuration.Paths.Fxml.LEVEL_UP_VIEW;
     }
 
     @Override

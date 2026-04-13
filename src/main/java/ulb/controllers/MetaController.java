@@ -22,7 +22,6 @@ import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
-import ulb.views.ManageTeamView;
 
 /**
  * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
@@ -72,16 +71,16 @@ public class MetaController {
      * @param primaryStage
      *            main JavaFX stage of the application
      * @throws IOException
-     *             if a controller or view fails to initialize
+     *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService)
             throws IOException {
         this.stage = primaryStage;
 
         this.mainMenuController = new MainMenuController(this, playerService);
-        this.createTeamController = new ManageTeamController(ManageTeamView.TeamFormMode.CREATE, this, playerService,
-                bugemonService);
-        this.editTeamController = new ManageTeamController(ManageTeamView.TeamFormMode.EDIT, this, playerService,
+        this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
+                playerService, bugemonService);
+        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, playerService,
                 bugemonService);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService);
@@ -97,7 +96,7 @@ public class MetaController {
     }
 
     public void onCombatFinished(List<LevelUp> levelUps, boolean won) {
-        LOG.info(String.format("onCombatFinished, won: %b, numLevelUps: %d", won, levelUps.size()));
+        LOG.info("onCombatFinished, won: {}, numLevelUps: {}", won, levelUps.size());
 
         if (this.isTowerActive()) {
             this.towerController.onTowerCombatFinished(won);
@@ -109,7 +108,7 @@ public class MetaController {
     }
 
     public void onCombatVictoryFinished() {
-        if (this.pendingLevelUps.size() > 0) {
+        if (!this.pendingLevelUps.isEmpty()) {
             this.levelUpController.setLevelUps(this.pendingLevelUps);
             this.switchTo(Window.LEVEL_UP);
         } else {

@@ -35,4 +35,5 @@ public class DatabaseColumns {
     public static final String COL_ATTACK_ID_1 = "attack_1_id";
     public static final String COL_ATTACK_ID_2 = "attack_2_id";
     public static final String COL_ATTACK_ID_3 = "attack_3_id";
+    public static final String COL_EFFECT_TARGET = "effect_target";
 }

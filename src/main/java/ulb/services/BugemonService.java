@@ -1,7 +1,6 @@
 package ulb.services;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Attack;
@@ -10,7 +9,7 @@ import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.services.exceptions.BugemonNameIsEmptyException;
+import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 
 public class BugemonService {
 
@@ -45,12 +44,6 @@ public class BugemonService {
      */
     public void saveBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
-        if (bugemon.name().isBlank()) {
-            throw new BugemonNameIsEmptyException("The name cannot be blank");
-        }
-        if (this.getAllDefaultBugemons().stream().anyMatch(b -> b.getName().equals(bugemon.name()))) {
-            throw new BugemonAlreadyExistsException("There cannot be multiple bugemons with the same name");
-        }
         this.staticDataRepository.saveBugemon(bugemon);
         this.allDefaultBugemonsCache.add(BugemonFactory.createBugemon(bugemon));
     }
@@ -67,7 +60,6 @@ public class BugemonService {
      * @return attacks for the provided type
      */
     public List<Attack> getAttacksByType(BugemonType type) {
-        return this.staticDataRepository.getAllAttacks().values().stream().filter(a -> a.type() == type)
-                .collect(Collectors.toList());
+        return this.staticDataRepository.getAllAttacks().values().stream().filter(a -> a.type() == type).toList();
     }
 }

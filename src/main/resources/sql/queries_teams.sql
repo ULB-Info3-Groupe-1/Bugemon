@@ -43,3 +43,7 @@ UPDATE team_members SET team_name = ? WHERE player_id = ? AND team_name = ?;
 -- RemoveTeamComposition
 DELETE FROM team_members 
 WHERE player_id = ? AND team_name = ?;
+
+-- Query
+-- TeamNameAlreadyExists
+SELECT * FROM teams WHERE player_id = ? AND name = ?;

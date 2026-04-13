@@ -1,6 +1,5 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import ulb.controllers.MetaController;
@@ -28,11 +27,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     /**
      * Constructs a {@code ManualCombatController} and wires itself as the view listener.
      *
-     * @throws IOException
-     *             to load its FXML resource.
      */
     public ManualCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) throws IOException {
+            BugemonService bugemonService) {
         super(metaController, playerService, bugemonService, ViewLoader.load(ManualCombatView::new));
         this.view.setListener(this);
     }
@@ -42,7 +39,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     public void startCombat(boolean shouldRestoreHp) {
         this.restoreHpAfterCombat = shouldRestoreHp;
 
-        this.manualPlayerTrainer = new ManualTrainer(this.playerService.getActiveTeam(),
+        this.manualPlayerTrainer = new ManualTrainer(
+                this.playerService.getActiveTeam().orElseThrow(
+                        () -> new IllegalStateException("No active team for player when starting Manual combat")),
                 this.playerService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 

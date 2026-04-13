@@ -1,6 +1,5 @@
 package ulb.controllers;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
@@ -25,10 +24,8 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
      *
      * @param metaController
      *            the application-level controller used for navigation.
-     * @throws IOException
-     *             if the view fails to load its FXML resource.
      */
-    public LevelUpController(MetaController metaController, PlayerService playerService) throws IOException {
+    public LevelUpController(MetaController metaController, PlayerService playerService) {
         super(metaController, ViewLoader.load(LevelUpView::new));
         this.playerService = playerService;
         this.view.setListener(this);

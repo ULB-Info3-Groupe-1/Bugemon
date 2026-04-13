@@ -1,7 +1,5 @@
 package ulb.controllers.combat;
 
-import java.io.IOException;
-
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
 import ulb.models.trainer.AutoTrainer;
@@ -23,11 +21,9 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *
      * @param metaController
      *            the application-level controller used for navigation.
-     * @throws IOException
-     *             if the view fails to load its FXML resource.
      */
     public AutomaticCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) throws IOException {
+            BugemonService bugemonService) {
         super(metaController, playerService, bugemonService, ViewLoader.load(AutomaticCombatView::new));
     }
 
@@ -35,7 +31,8 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     public void startCombat(boolean shouldRestoreHp) {
         this.restoreHpAfterCombat = shouldRestoreHp;
 
-        AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam());
+        AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam().orElseThrow(
+                () -> new IllegalStateException("No active team for player when starting Automatic combat")));
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
         this.combat = new Combat(this.playerTrainer, opponentTrainer);

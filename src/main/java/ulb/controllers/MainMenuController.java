@@ -60,7 +60,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
 
     private boolean isActiveTeamEmpty() {
         if (this.playerService.isActiveTeamEmpty()) {
-            this.view.showNoTeamAlert();
+            this.view.showAlertChooseTeamToLaunchCombat();
             return true;
         }
         return false;
