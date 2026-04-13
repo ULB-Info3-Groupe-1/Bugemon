@@ -152,17 +152,17 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public void onLaunchAutomaticCombat() {
+    public void onStartAutomaticCombat() {
         this.launchCombat(Window.AUTOMATIC_COMBAT);
     }
 
     @Override
-    public void onLaunchManualCombat() {
+    public void onStartManualCombat() {
         this.launchCombat(Window.MANUAL_COMBAT);
     }
 
     @Override
-    public void onLaunchNOTowerCombat() {
+    public void onStartNOTowerCombat() {
         this.launchCombat(Window.NOTOWER);
     }
 

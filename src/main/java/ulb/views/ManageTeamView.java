@@ -88,7 +88,7 @@ public class ManageTeamView extends View {
     public void setMode(TeamFormMode mode) {
         boolean isCreate = (mode == TeamFormMode.CREATE);
         List<Button> editButtons = List.of(this.modifyTeamButton, this.renameTeamButton, this.deleteTeamButton,
-                this.launchAutomaticCombatButton, this.launchManualCombatButton, this.launchNOTowerCombatButton);
+                this.startAutomaticCombatButton, this.startManualCombatButton, this.startTowerCombatButton);
 
         editButtons.forEach(btn -> {
             btn.setVisible(!isCreate);
@@ -129,11 +129,11 @@ public class ManageTeamView extends View {
 
         void onModifyTeam();
 
-        void onLaunchAutomaticCombat();
+        void onStartAutomaticCombat();
 
-        void onLaunchManualCombat();
+        void onStartManualCombat();
 
-        void onLaunchNOTowerCombat();
+        void onStartNOTowerCombat();
     }
 
     // --- View refresh ---
