@@ -3,7 +3,6 @@ package ulb.services;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
-import java.util.stream.Collectors;
 
 import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Attack;
@@ -11,21 +10,28 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.models.level_up.LevelUp;
+import ulb.repositories.PlayerRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
+import ulb.repositories.exceptions.PlayernameIsEmptyException;
 
 public class BugemonService {
 
     private final StaticDataRepository staticDataRepository;
+    private final PlayerRepository playerRepository;
+    private final PlayerService playerService;
 
     private Queue<LevelUp> levelUps = new ArrayDeque<>();
 
     // Cache for all default Bugemons to avoid multiple database calls
     private List<Bugemon> allDefaultBugemonsCache;
 
-    public BugemonService(StaticDataRepository staticDataRepository) {
+    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository, PlayerService playerService) throws PlayernameIsEmptyException {
         this.staticDataRepository = staticDataRepository;
+        this.playerRepository = playerRepository;
+        this.playerService = playerService;
     }
 
     /**
@@ -69,6 +75,20 @@ public class BugemonService {
         return this.staticDataRepository.getAllAttacks().values().stream().filter(a -> a.type() == type).toList();
     }
 
+    /**
+     * Saves the state of a single bugemon to the database.
+     *
+     * @param bugemon
+     *            the bugemon to save
+     */
+    public void saveBugemonState(Bugemon bugemon) {
+        this.playerRepository.updatePlayerBugemon(
+                new PlayerBugemonDTO(this.playerService.getPlayerId(), bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
+                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+
+        this.playerService.updateLocalTeams();
+    }
+
     public int numPendingLevelUps() {
         return this.levelUps.size();
     }
@@ -85,8 +105,7 @@ public class BugemonService {
         LevelUp levelUp = this.levelUps.remove();
         levelUp.apply(upgradeIdx);
 
-        // TODO: save the state of the bugemon
-
+        this.saveBugemonState(levelUp.getBugemon());
     }
 
     public void distributeXp(Bugemon bugemon, int amount) {
@@ -100,6 +119,6 @@ public class BugemonService {
             this.levelUps.add(new LevelUp(bugemon));
         }
 
-        // TODO: save the state of the bugemon
+        this.saveBugemonState(bugemon);
     }
 }

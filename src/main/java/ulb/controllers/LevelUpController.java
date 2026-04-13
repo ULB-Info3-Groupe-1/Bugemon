@@ -1,10 +1,7 @@
 package ulb.controllers;
 
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Queue;
-
 import ulb.models.level_up.LevelUp;
+import ulb.models.level_up.Upgrade;
 import ulb.services.BugemonService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;

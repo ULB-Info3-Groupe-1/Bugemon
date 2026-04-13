@@ -48,8 +48,8 @@ public class Main extends Application {
         PlayerRepository playerRepository = new PlayerRepository(dbConnection, staticDataRepository,
                 loader.getQueries());
 
-        BugemonService bugemonService = new BugemonService(staticDataRepository);
         PlayerService playerService = new PlayerService(playerRepository, "default_player");
+        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerService);
         MetaController controller = new MetaController(stage, bugemonService, playerService);
         controller.switchTo(Window.MAIN_MENU);
     }

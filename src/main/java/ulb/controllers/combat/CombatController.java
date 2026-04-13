@@ -18,7 +18,6 @@ import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.PlayerService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.combat.CombatView;
 
 /**
