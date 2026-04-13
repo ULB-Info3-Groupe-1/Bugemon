@@ -24,8 +24,15 @@ public class InventoryService {
             "Renforce temporairement l'attaque du Bugémon actif.", Item.ItemType.BOOST,
             new EffectStatModifier(EffectTarget.THROWER, EffectStat.ATTACK, 10, EffectDuration.PERMANENT));
 
-    // TODO: query the database to get the default items for stater inventory
-    public static Inventory addStarterItem(Inventory inventory) {
+    /**
+     * Adds starter items to the inventory.
+     *
+     * @param inventory
+     * @return
+     */
+    public static Inventory addStarterItems(Inventory inventory) {
+        // NOTE: the items are currently hardcoded as we don't store them in the db
+
         inventory.addItem(baieRevigorante, 3);
         inventory.addItem(baieTonique, 2);
         inventory.addItem(gelDefensif, 1);

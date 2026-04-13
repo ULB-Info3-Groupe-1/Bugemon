@@ -46,7 +46,7 @@ public class TestInventoryService {
 
     @Test
     public void testAddStarterItem() {
-        InventoryService.addStarterItem(this.inventory);
+        InventoryService.addStarterItems(this.inventory);
         assertEquals(this.expectedInventory.getMap(), this.inventory.getMap());
 
         for (Item item : this.expectedInventory.getMap().keySet()) {

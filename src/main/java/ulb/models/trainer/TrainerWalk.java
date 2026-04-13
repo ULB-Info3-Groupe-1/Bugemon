@@ -81,16 +81,10 @@ public class TrainerWalk {
                 this.walkProgress = 1f;
                 this.isMoving = false;
                 this.clearPath();
-                this.onArrival();
             }
         } else {
             this.pos = Vec2.linearInterpolation(this.initPos, this.endPos, this.walkProgress);
         }
-    }
-
-    private void onArrival() {
-        // TODO : notifier la salle visitée pour la griser
-        // ex : map.markVisited(pos);
     }
 
     /**
