@@ -115,8 +115,7 @@ public class MetaController {
     }
 
     public void onCombatDefeatRetry() {
-        // TODO: correct impl
-        this.switchTo(Window.MAIN_MENU);
+        this.switchTo(Window.CREATE_TEAM);
     }
 
     public void onCombatDefeatReturnToMainMenu() {
