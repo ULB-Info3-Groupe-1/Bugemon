@@ -15,7 +15,7 @@
 == Linter Checkstyle
 
 Nous avons ajouté celui-ci au début de cette itération. Nous avons rapidement vu
-les bénéfices, code beaucoup plus uniforme, même style.
+les bénéfices: code beaucoup plus uniforme (même style).
 
 == Nommage
 
