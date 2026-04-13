@@ -31,6 +31,7 @@ public class CreateBugemonView extends View {
 
     private static final String ATTACK_COUNT_INCOMPLETE = "attack-count-incomplete";
     private static final String ATTACK_COUNT_COMPLETE = "attack-count-complete";
+    private static final String INVALID_FORM = "Formulaire invalide";
 
     private Listener listener;
 
@@ -277,8 +278,16 @@ public class CreateBugemonView extends View {
         return this.attacksByName.get(selectedNames.get(2));
     }
 
-    public void showInvalidFormAlert(String message) {
-        this.showWarningAlert("Formulaire invalide ", message);
+    public void showInvalidFormChooseBugemonType() {
+        this.showWarningAlert(INVALID_FORM, "Choisissez un type pour votre Bugemon.");
+    }
+
+    public void showInvalidFormChooseSprite() {
+        this.showWarningAlert(INVALID_FORM, "Choisissez un sprite pour votre Bugemon.");
+    }
+
+    public void showInvalidFormChooseAttacks() {
+        this.showWarningAlert(INVALID_FORM, "Vous devez choisir trois attaques pour votre Bugemon.");
     }
 
     public void showSaveSuccessAlert(String name) {

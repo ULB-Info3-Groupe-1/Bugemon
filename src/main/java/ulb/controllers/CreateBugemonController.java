@@ -35,11 +35,11 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
         URL spriteUrl = this.view.getSelectedSpriteUrl();
 
         if (selectedType == null) {
-            this.view.showInvalidFormAlert("Choisissez un type pour votre Bugemon.");
+            this.view.showInvalidFormChooseBugemonType();
             return;
         }
         if (spriteUrl == null) {
-            this.view.showInvalidFormAlert("Choisissez un sprite pour votre Bugemon.");
+            this.view.showInvalidFormChooseSprite();
             return;
         }
 
@@ -52,7 +52,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
         Attack attack3 = this.view.getSelectedAttack3();
 
         if (attack1 == null || attack2 == null || attack3 == null) {
-            this.view.showInvalidFormAlert("Vous devez choisir trois attaques pour votre Bugemon.");
+            this.view.showInvalidFormChooseAttacks();
             return;
         }
 
