@@ -30,7 +30,7 @@ public class PlayerService {
         this.playerRepository = playerRepository;
         this.playerId = this.playerRepository.getPlayerIdOrCreatePlayer(playername);
         // TODO: probably connect to db
-        this.inventory = InventoryService.addStarterItem(new Inventory());
+        this.inventory = InventoryService.addStarterItems(new Inventory());
         this.playerTeams = this.playerRepository.loadTeams(this.playerId);
     }
 

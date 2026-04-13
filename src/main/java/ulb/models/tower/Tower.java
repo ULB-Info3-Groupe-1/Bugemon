@@ -15,7 +15,6 @@ public class Tower {
     private final ArrayList<Floor> floors = new ArrayList<>();
     private final Trainer playerTrainer;
 
-    // TODO: change to Player class when it will be implemented
     public Tower(BugemonTeam playerTeam, PlayerService playerService, BugemonService bugemonService) {
         this.playerTrainer = new ManualTrainer(playerTeam, playerService.getInventory());
         for (int i = 0; i < MAX_FLOORS; i++) {
