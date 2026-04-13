@@ -51,7 +51,8 @@ import ulb.repositories.dto.CreateBugemonDTO;
 public class Parser {
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
-    // Constants for the paths to the JSON data files within the resources directory
+    // Constants for the paths to the JSON data files within the resources
+    // directory
     private static final String JSON_ATTACK_PATH = Configuration.Json.ATTACK_PATH;
     private static final String JSON_BUGEMON_PATH = Configuration.Json.BUGEMON_PATH;
     private static final String JSON_ITEMS_PATH = Configuration.Json.ITEMS_PATH;
@@ -73,9 +74,9 @@ public class Parser {
         InputStream bugemonsStream;
         InputStream itemsStream;
         try {
-            attacksStream = getClass().getResourceAsStream(JSON_ATTACK_PATH);
-            bugemonsStream = getClass().getResourceAsStream(JSON_BUGEMON_PATH);
-            itemsStream = getClass().getResourceAsStream(JSON_ITEMS_PATH);
+            attacksStream = Parser.class.getResourceAsStream(JSON_ATTACK_PATH);
+            bugemonsStream = Parser.class.getResourceAsStream(JSON_BUGEMON_PATH);
+            itemsStream = Parser.class.getResourceAsStream(JSON_ITEMS_PATH);
             if (attacksStream == null || bugemonsStream == null || itemsStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }

@@ -17,7 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
 
-/** Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR). */
+/**
+ * Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR).
+ */
 public class MusicLoader {
     private static final Logger LOG = LoggerFactory.getLogger(MusicLoader.class);
 
@@ -34,14 +36,28 @@ public class MusicLoader {
      */
     public List<Music> loadFromDirectory(String resourceDir, Ambiance ambiance) throws IOException {
         URI uri = this.getResourceURI(resourceDir);
-        Path dir = this.resolveDirectory(uri, resourceDir);
 
+        if (!"jar".equals(uri.getScheme())) {
+            return this.collectMusic(Paths.get(uri), ambiance);
+        }
+
+        try {
+            FileSystem fs = FileSystems.getFileSystem(uri);
+            return this.collectMusic(fs.getPath(resourceDir), ambiance);
+        } catch (java.nio.file.FileSystemNotFoundException e) {
+            try (FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of())) {
+                return this.collectMusic(fs.getPath(resourceDir), ambiance);
+            }
+        }
+    }
+
+    private List<Music> collectMusic(Path dir, Ambiance ambiance) throws IOException {
         return this.listFiles(dir).stream().map(path -> this.loadMusic(path, ambiance)).flatMap(Optional::stream)
                 .toList();
     }
 
     private URI getResourceURI(String resourceDir) {
-        URL url = getClass().getResource(resourceDir);
+        URL url = MusicLoader.class.getResource(resourceDir);
         if (url == null) {
             throw new IllegalArgumentException("Resource not found: " + resourceDir);
         }
@@ -50,20 +66,6 @@ public class MusicLoader {
             return url.toURI();
         } catch (Exception e) {
             throw new IllegalStateException("Invalid resource URI for path: " + resourceDir, e);
-        }
-    }
-
-    private Path resolveDirectory(URI uri, String resourceDir) throws IOException {
-        if ("jar".equals(uri.getScheme())) {
-            try {
-                return FileSystems.getFileSystem(uri).getPath(resourceDir);
-            } catch (java.nio.file.FileSystemNotFoundException e) {
-                try (FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of())) {
-                    return fs.getPath(resourceDir);
-                }
-            }
-        } else {
-            return Paths.get(uri);
         }
     }
 

@@ -42,7 +42,7 @@ public class RoomView extends StackPane {
 
     public RoomView(FloorNode node) {
         this.node = node;
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource(FXML_PATH));
+        FXMLLoader loader = new FXMLLoader(RoomView.class.getResource(FXML_PATH));
         loader.setRoot(this);
         loader.setController(this);
         try {
@@ -142,7 +142,7 @@ public class RoomView extends StackPane {
     }
 
     private Image loadImage(String imagePath) throws IllegalStateException {
-        URL imageUrl = this.getClass().getResource(imagePath);
+        URL imageUrl = RoomView.class.getResource(imagePath);
         if (imageUrl == null) {
             throw new IllegalStateException("Missing required image resource: " + imagePath);
         }

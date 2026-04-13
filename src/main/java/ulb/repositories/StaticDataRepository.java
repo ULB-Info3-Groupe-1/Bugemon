@@ -121,7 +121,7 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void setStatModifierParameters(PreparedStatement psEffect, EffectStatModifier modifier)
             throws SQLException {
-        psEffect.setString(2, modifier.getClass().getSimpleName());
+        psEffect.setString(2, StaticDataRepository.class.getSimpleName());
         psEffect.setString(3, modifier.target().name());
         psEffect.setObject(4, modifier.stat() != null ? modifier.stat().name() : null, Types.VARCHAR);
         psEffect.setInt(5, modifier.modifier());
@@ -130,7 +130,7 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     private void setHealParameters(PreparedStatement psEffect, EffectHeal heal) throws SQLException {
-        psEffect.setString(2, heal.getClass().getSimpleName());
+        psEffect.setString(2, StaticDataRepository.class.getSimpleName());
         psEffect.setString(3, heal.target().name());
         psEffect.setNull(4, Types.VARCHAR);
         psEffect.setNull(5, Types.INTEGER);
@@ -139,7 +139,7 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     private void setResetMalusParameters(PreparedStatement psEffect, EffectResetMalus resetMalus) throws SQLException {
-        psEffect.setString(2, resetMalus.getClass().getSimpleName());
+        psEffect.setString(2, StaticDataRepository.class.getSimpleName());
         psEffect.setString(3, resetMalus.target().name());
         psEffect.setNull(4, Types.VARCHAR);
         psEffect.setNull(5, Types.INTEGER);
