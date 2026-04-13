@@ -23,14 +23,16 @@ import ulb.services.PlayerService;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is
+ * the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
+     * transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -67,9 +69,9 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *            main JavaFX stage of the application
+     *                     main JavaFX stage of the application
      * @throws IOException
-     *             if the music fails to be initialized
+     *                     if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             CombatService combatService) throws IOException {
@@ -86,10 +88,11 @@ public class MetaController {
         this.manualCombatController = new ManualCombatController(this, playerService, bugemonService, combatService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService,
                 combatService);
-        this.towerController = new TowerController(this, playerService, bugemonService);
+        this.levelUpController = new LevelUpController(this, bugemonService);
+        this.towerController = new TowerController(this, playerService, bugemonService, this.manualCombatController,
+                this.levelUpController);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.levelUpController = new LevelUpController(this, bugemonService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
@@ -178,9 +181,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *            target screen to display
+     *               target screen to display
      * @throws IllegalArgumentException
-     *             if the window is invalid
+     *                                  if the window is invalid
      */
     public final void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
@@ -209,9 +212,4 @@ public class MetaController {
         this.manualCombatController.startCombat(combat);
         this.manualCombatController.show();
     }
-
-    public ManualCombatController getCombatController() {
-        return this.manualCombatController;
-    }
-
 }

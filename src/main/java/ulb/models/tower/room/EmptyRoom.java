@@ -1,7 +1,5 @@
 package ulb.models.tower.room;
 
-import ulb.controllers.combat.TowerController;
-
 public final class EmptyRoom implements Room {
     public EmptyRoom() {
 
@@ -13,8 +11,8 @@ public final class EmptyRoom implements Room {
     }
 
     @Override
-    public void visit(TowerController controller) {
-        controller.handleEmptyRoom(this);
+    public void visit(RoomVisitor roomVisitor) {
+        roomVisitor.visitEmptyRoom(this);
     }
 
     @Override

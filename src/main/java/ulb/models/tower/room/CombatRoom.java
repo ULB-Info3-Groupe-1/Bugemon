@@ -1,6 +1,5 @@
 package ulb.models.tower.room;
 
-import ulb.controllers.combat.TowerController;
 import ulb.models.combat.Combat;
 import ulb.models.tower.utils.CombatFactory;
 import ulb.models.trainer.Trainer;
@@ -41,8 +40,8 @@ public final class CombatRoom implements Room {
     }
 
     @Override
-    public void visit(TowerController controller) {
-        controller.handleCombatRoom(this);
+    public void visit(RoomVisitor roomVisitor) {
+        roomVisitor.visitCombatRoom(this);
     }
 
     @Override

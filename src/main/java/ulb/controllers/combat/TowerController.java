@@ -8,6 +8,7 @@ import java.util.Set;
 import javafx.stage.Stage;
 
 import ulb.controllers.Controller;
+import ulb.controllers.LevelUpController;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.models.combat.Combat;
@@ -19,6 +20,7 @@ import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.RoomType;
+import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
@@ -27,21 +29,30 @@ import ulb.views.FloorMapView;
 import ulb.views.ViewLoader;
 import ulb.views.components.RoomNodeView;
 
-public class TowerController extends Controller<FloorMapView> implements FloorMapView.Listener {
+public class TowerController extends Controller<FloorMapView> implements FloorMapView.Listener, RoomVisitor {
     private Tower tower;
     private final PlayerService playerService;
     private final BugemonService bugemonService;
+
+    // Annex controllers used for the many tasks the TowerController has to handle
+    // and delegate.
+    private final ManualCombatController manualCombatController;
+    private final LevelUpController levelUpController;
+
     private final Map<RoomNodeView, FloorNode> floorNodesByRoomNode;
     private final Map<FloorNode, RoomNodeView> roomNodesByFloorNode;
     private final Set<FloorNode> visitedNodes;
     private int renderedFloorNumber;
     private boolean runEnded;
 
-    public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService) {
+    public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService,
+            ManualCombatController manualCombatController, LevelUpController levelUpController) {
         super(metaController, ViewLoader.load(FloorMapView::new));
         this.tower = null;
         this.playerService = playerService;
         this.bugemonService = bugemonService;
+        this.manualCombatController = manualCombatController;
+        this.levelUpController = levelUpController;
         this.floorNodesByRoomNode = new HashMap<>();
         this.roomNodesByFloorNode = new HashMap<>();
         this.visitedNodes = new HashSet<>();
@@ -77,18 +88,18 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         this.refreshFloorViewState();
     }
 
-    public void handleCombatRoom(CombatRoom combatRoom) {
+    public void visitCombatRoom(CombatRoom combatRoom) {
         Combat combat = combatRoom.getCombat(new ManualTrainer(
                 this.playerService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
                 this.playerService.getInventory()));
         this.metaController.startTowerCombat(combat);
     }
 
-    public void handleRewardRoom(RewardRoom rewardRoom) {
-        // TODO: Implement reward room handling -> STORY 11
+    public void visitRewardRoom(RewardRoom rewardRoom) {
+        // NOT IMPLEMENTED
     }
 
-    public void handleEmptyRoom(EmptyRoom emptyRoom) {
+    public void visitEmptyRoom(EmptyRoom emptyRoom) {
         // No action needed for empty rooms, but method is here for clarity and future
         // extensibility.
     }
@@ -129,7 +140,8 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     /**
-     * Runs the Tower flow until a combat starts, the run ends, or the tower is completed. Reward rooms are resolved
+     * Runs the Tower flow until a combat starts, the run ends, or the tower is
+     * completed. Reward rooms are resolved
      * immediately; combat rooms continue via callback.
      */
     public void runTower(Stage stage) {
@@ -233,7 +245,8 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     /**
-     * Ensures that a Tower run can be started or continued. If the player has no active team, or if the current run has
+     * Ensures that a Tower run can be started or continued. If the player has no
+     * active team, or if the current run has
      * ended, a new run is initialised. If a new run cannot be started.
      *
      * @return
