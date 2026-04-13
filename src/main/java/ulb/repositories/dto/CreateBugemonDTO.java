@@ -6,6 +6,7 @@ import java.util.Objects;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 
+/** DTO carrying all data required to persist a new player-created Bugemon; validates name and sprite format on construction. */
 public record CreateBugemonDTO(String name, BugemonType type, URL spriteUrl, int defense, int attack, int initiative,
         int maxHp, boolean isStarter, Attack attack1, Attack attack2, Attack attack3) {
     public CreateBugemonDTO {

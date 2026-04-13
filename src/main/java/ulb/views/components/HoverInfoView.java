@@ -8,11 +8,7 @@ import ulb.Configuration;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Efficiency;
 
-/**
- * Generic hover info panel that displays a title and a variable list of info lines. Callers build the content via
- * {@link #show(String, String...)} and dismiss it with {@link #hide()}. Type-based background colouring and an
- * efficiency badge can be layered on top via {@link #setType(BugemonType)} and {@link #setEfficiency(Efficiency)}.
- */
+/** Hover info panel displaying a title, optional info lines, a type-coloured background, and an efficiency badge. */
 public class HoverInfoView extends ComponentView {
 
     @FXML

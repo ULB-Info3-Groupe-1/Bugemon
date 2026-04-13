@@ -25,6 +25,11 @@ import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
 
+/**
+ * Manages the tower dungeon flow: initialises a {@link Tower}, displays each {@link Floor} map, and routes the player
+ * into combat or reward rooms. Navigation back to the main flow (level-up, defeat, victory) is delegated to
+ * {@link MetaController}.
+ */
 public class TowerController extends Controller<FloorView> implements FloorView.Listener, RoomVisitor {
     private static final Logger LOG = LoggerFactory.getLogger(TowerController.class);
 
@@ -60,6 +65,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.refreshFloorViewState();
     }
 
+    /** Starts a tower combat using the player's active team against the room's prepared {@link Combat}. */
     public void visitCombatRoom(CombatRoom combatRoom) {
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
         Combat combat = combatRoom.getCombat(new ManualTrainer(
@@ -87,6 +93,13 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.metaController.switchTo(Window.MAIN_MENU);
     }
 
+    /**
+     * Handles the outcome of a tower combat. On defeat, restores team HP and navigates to the defeat screen. On
+     * victory, advances the tower or routes to level-up if pending upgrades exist.
+     *
+     * @param playerWon
+     *            {@code true} if the player won the combat.
+     */
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
         if (!playerWon) {

@@ -20,14 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/** Loads all SQL queries from {@code resources/sql/*.sql} at construction time into a name-to-SQL map. */
 public class QueryLoader {
 
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
-    /**
-     * Loads SQL queries, creates the schema if absent, and bootstraps static game data.
-     */
     public QueryLoader() {
         this.loadSQLQueries();
     }
@@ -39,10 +37,6 @@ public class QueryLoader {
         }
     }
 
-    /**
-     * Parses a SQL file and populates {@code queries}. See {@code team/rules.md} for the required file format
-     * ({@code -- Query ...} / {@code -- QueryName} / SQL body).
-     */
     private void loadQueriesFromFile(String filePath) {
         try (InputStream is = QueryLoader.class.getResourceAsStream(filePath)) {
             if (is == null) {
@@ -98,9 +92,6 @@ public class QueryLoader {
         return result;
     }
 
-    /**
-     * Handles both regular filesystem and JAR filesystem for resource loading.
-     */
     private FileSystem getOrCreateFileSystem(URI uri) throws IOException {
         try {
             return FileSystems.getFileSystem(uri);
@@ -116,12 +107,6 @@ public class QueryLoader {
         }
     }
 
-    /**
-     * Returns the SQL string for the given query name.
-     *
-     * @throws IllegalArgumentException
-     *             if the query name is not found
-     */
     public String getSql(String queryName) {
         String sql = this.queries.get(queryName);
         if (sql == null) {

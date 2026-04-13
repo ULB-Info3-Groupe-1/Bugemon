@@ -18,9 +18,7 @@ import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.tower.room.Room.RoomType;
 
-/**
- * Reusable component representing a single room node in the floor map. Configurable to represent different room types
- */
+/** Reusable component representing a single room node in the floor map. */
 public class RoomView extends StackPane {
     private static final String FXML_PATH = "/fxml/components/Room.fxml";
     private static final String ROOM_BASE_PATH = "/png/rooms/";
@@ -75,11 +73,7 @@ public class RoomView extends StackPane {
         this.roomTypeIcon.setImage(this.loadImage(iconPath));
     }
 
-    /**
-     * Configure the visual state of the room (CURRENT, AVAILABLE, VISITED, LOCKED). Applies the appropriate CSS styles
-     * and overlays.
-     *
-     */
+    /** Applies the CSS style and overlay matching the room's current {@link ulb.models.tower.room.Room.RoomState}. */
     public void setRoomState() throws IllegalStateException {
         this.getStyleClass().removeAll("current", "available", "visited", "locked");
 
@@ -111,12 +105,6 @@ public class RoomView extends StackPane {
         this.setDisable(roomState == RoomState.LOCKED);
     }
 
-    /**
-     * Registers a listener to receive callbacks for room interactions.
-     *
-     * @param listener
-     *            The listener to be notified of room events
-     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -132,10 +120,6 @@ public class RoomView extends StackPane {
         }
     }
 
-    /**
-     * Callback interface for room node interactions. Dispatches room events to the controller exclusively through this
-     * interface.
-     */
     public interface Listener {
 
         void onRoomClicked(RoomPosition position);

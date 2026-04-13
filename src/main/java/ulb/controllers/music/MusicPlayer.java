@@ -32,12 +32,6 @@ public class MusicPlayer {
         this.musics.add(music);
     }
 
-    /**
-     * Plays the given music.
-     *
-     * @param music
-     *            the music
-     */
     private void playMusic(Music music) {
         this.stopMusic();
 

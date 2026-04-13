@@ -2,12 +2,7 @@ package ulb.views.combat;
 
 import ulb.models.trainer.AutoTrainer;
 
-/**
- * View for the automatic combat screen.
- *
- * Dialog steps are driven step by step by the controller via {@link CombatView#showStepDialog}; all player interaction
- * is dispatched through the {@link Listener} interface.
- */
+/** View for the automatic combat screen; the action menu is hidden since both trainers are AI-controlled. */
 public class AutomaticCombatView extends CombatView {
     private AutoTrainer player;
     private AutoTrainer opponent;

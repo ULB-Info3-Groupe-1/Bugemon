@@ -12,6 +12,10 @@ import ulb.services.BugemonService;
 import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 
+/**
+ * Controller for the Bugemon creation screen; validates form input and delegates persistence to
+ * {@link ulb.services.BugemonService}.
+ */
 public class CreateBugemonController extends Controller<CreateBugemonView> implements CreateBugemonView.Listener {
 
     private final BugemonService bugemonService;

@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import ulb.models.bugemon.Bugemon;
 
+/**
+ * Represents one level-up event for a {@link Bugemon}. Generates {@value #NUM_UPGRADES} random {@link Upgrade} choices;
+ * the chosen one is applied via {@link #apply(int)}.
+ */
 public class LevelUp {
     private static final Logger LOG = LoggerFactory.getLogger(LevelUp.class);
 
@@ -62,6 +66,12 @@ public class LevelUp {
         return Stat.values()[RANDOM.nextInt(Stat.values().length)];
     }
 
+    /**
+     * Returns the upgrade at position {@code idx}.
+     *
+     * @throws IndexOutOfBoundsException
+     *             if {@code idx >= numUpgrades()}
+     */
     public Upgrade get(int idx) {
         if (idx >= this.numUpgrades()) {
             throw new IndexOutOfBoundsException("attempted to get an upgrade out of bounds");
@@ -74,6 +84,7 @@ public class LevelUp {
         return this.bugemon;
     }
 
+    /** Applies the upgrade at position {@code idx} to the associated Bugemon. */
     public void apply(int idx) {
         LOG.info("applying upgrade #{}, content: {} ", idx, this.get(idx));
 

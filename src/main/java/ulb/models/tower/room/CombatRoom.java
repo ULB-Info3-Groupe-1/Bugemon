@@ -4,6 +4,7 @@ import ulb.models.combat.Combat;
 import ulb.models.tower.utils.CombatFactory;
 import ulb.models.trainer.Trainer;
 
+/** A room that triggers a combat when visited; may be a regular encounter or the boss fight at floor end. */
 public final class CombatRoom extends Room {
     private final int floorLevel;
     private final boolean isBoss;
@@ -15,8 +16,10 @@ public final class CombatRoom extends Room {
         this.isBoss = isBoss;
     }
 
+    /**
+     * Creates and returns a new {@link Combat} for the given trainer. A new instance is created on every call.
+     */
     public Combat getCombat(Trainer playerTrainer) {
-        // Not a real getter but lazily creates the combat :))) <3 Love
         return this.combatFactory.create(playerTrainer, this.floorLevel, this.isBoss);
     }
 

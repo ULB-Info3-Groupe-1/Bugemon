@@ -1,5 +1,9 @@
 package ulb.models.tower.room;
 
+/**
+ * Abstract base for all tower rooms. Tracks {@link RoomState} and delegates concrete behaviour to subclasses via the
+ * Visitor pattern ({@link #visit(RoomVisitor)}).
+ */
 public abstract class Room {
     RoomState state = RoomState.LOCKED; // default state
 

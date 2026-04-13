@@ -22,6 +22,7 @@ import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 
+/** Repository for all player, team, and Bugemon persistence operations. */
 public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
     private final StaticDataRepository staticDataRepository;
@@ -35,13 +36,9 @@ public class PlayerRepository extends AbstractRepository {
     // --- PLAYERS ---
 
     /**
-     * Returns the player id or creates a new player and returns its id
+     * Returns the existing player id for {@code playername}, or creates a new player and returns the new id.
      *
-     * @param playername
-     *            the player name to create or retrieve
-     * @return (int) the player id
-     * @throws PlayernameIsEmptyException
-     *             if the playername is null or empty
+     * @throws PlayernameIsEmptyException if {@code playername} is null or blank
      */
     public int getPlayerIdOrCreatePlayer(String playername) throws PlayernameIsEmptyException {
         if (playername == null || playername.isEmpty()) {
@@ -95,14 +92,7 @@ public class PlayerRepository extends AbstractRepository {
         executeUpdate("CreateTeam", playerId, teamName);
     }
 
-    /**
-     * Delete a team and its members
-     *
-     * @param playerId
-     *            the player's ID who owns the team
-     * @param teamName
-     *            the team's name to delete
-     */
+    /** Deletes a team and all its members from the database. */
     public void deleteTeam(int playerId, String teamName) throws TeamNotFoundException, TeamNameEmptyException {
         LOG.debug("Deleting team '{}' for playerId: {}", teamName, playerId);
         this.checkValidName(teamName);
@@ -112,18 +102,10 @@ public class PlayerRepository extends AbstractRepository {
     }
 
     /**
-     * Rename a team
+     * Renames a team for the given player.
      *
-     * @param playerId
-     *            the player's ID who owns the team to rename
-     * @param oldTeamName
-     *            the team's name to rename
-     * @param newTeamName
-     *            the team's new name
-     * @throws TeamNameAlreadyExistsException
-     *             if the new team name already exists
-     * @throws TeamNotFoundException
-     *             if the old team name does not exist
+     * @throws TeamNameAlreadyExistsException if {@code newTeamName} is already taken
+     * @throws TeamNotFoundException if {@code oldTeamName} does not exist
      */
     public void renameTeam(int playerId, String oldTeamName, String newTeamName)
             throws TeamNameAlreadyExistsException, TeamNotFoundException, TeamNameEmptyException {
@@ -147,13 +129,9 @@ public class PlayerRepository extends AbstractRepository {
     }
 
     /**
-     * Load all teams for a player
+     * Returns all teams for the given player, with their Bugemons fully reconstructed from the database.
      *
-     * @param playerId
-     *            the player's ID who owns the teams
-     * @return (List<BugemonTeam>) the teams of the player to be loaded
-     * @throws TeamNotFoundException
-     *             if the player has no teams
+     * @return empty list if the player has no teams
      */
     public List<BugemonTeam> loadTeams(int playerId) {
         List<BugemonTeam> playerTeams = new ArrayList<>();

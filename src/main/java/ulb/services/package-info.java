@@ -1,12 +1,9 @@
 /**
- * Business logic layer, sitting between controllers and the repository.
+ * Business logic layer between controllers and the repository.
  *
- * {@link ulb.services.PlayerService} is the main entry point. It owns the player's runtime state: active team, team
- * list, inventory, and a cache of all default Bugemons (loaded once on first access). All persistence calls go through
- * {@link ulb.repository.DatabaseRepository}.
- *
+ * {@link ulb.services.PlayerService} is the main entry point: it owns the player's runtime state (active team, team
+ * list, inventory) and delegates all persistence to {@link ulb.repositories.PlayerRepository}.
  * {@link ulb.services.CombatService} is stateless and handles damage formulas, type effectiveness, and initiative
- * priority. {@link ulb.services.LevelUpService} handles XP distribution and level-up logic.
- * {@link ulb.services.InventoryService} handles item management.
+ * priority. {@link ulb.services.InventoryService} manages item creation.
  */
 package ulb.services;

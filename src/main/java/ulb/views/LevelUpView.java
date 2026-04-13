@@ -11,9 +11,7 @@ import ulb.Configuration;
 import ulb.common.dto.BugemonDTO;
 import ulb.models.level_up.LevelUp;
 
-/**
- * View for the level-up screen. Holds a reference to the displayed LevelUp.
- */
+/** View for the level-up screen, presenting three upgrade choices for the player to pick. */
 public class LevelUpView extends View {
 
     @FXML

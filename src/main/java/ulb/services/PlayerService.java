@@ -17,6 +17,10 @@ import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.exceptions.NoActiveTeamException;
 
+/**
+ * Manages the player's runtime state: active team, team list, and inventory.
+ * All persistence is delegated to {@link ulb.repositories.PlayerRepository}.
+ */
 public class PlayerService {
     private final int playerId;
     private final PlayerRepository playerRepository;
@@ -55,12 +59,9 @@ public class PlayerService {
     // --- Team Management ---
 
     /**
-     * Sets the active team for the player.
+     * Sets the active team by name.
      *
-     * @param teamName
-     *            the name of the team to be set
-     * @throws TeamNotFoundException
-     *             if the team does not exist
+     * @throws TeamNotFoundException if no team with that name exists
      */
     public void setActiveTeam(String teamName) throws TeamNotFoundException {
         BugemonTeam team = this.playerTeams.stream().filter(t -> t.getName().equals(teamName)).findFirst()
@@ -69,16 +70,11 @@ public class PlayerService {
     }
 
     /**
-     * Saves the active team to the database.
+     * Persists the active team under the given name.
      *
-     * @param teamName
-     *            the name of the team to be saved
-     * @throws NoActiveTeamException
-     *             if the player does not have an active team
-     * @throws TeamNameAlreadyExistsException
-     *             if the team name is already taken
-     * @throws TeamEmptyException
-     *             if the active team is empty
+     * @throws NoActiveTeamException if there is no active team
+     * @throws TeamEmptyException if the active team has no members
+     * @throws TeamNameAlreadyExistsException if the name is already taken
      */
     public void saveTeam(String teamName)
             throws NoActiveTeamException, TeamNameAlreadyExistsException, TeamEmptyException, TeamNameEmptyException {
@@ -97,14 +93,11 @@ public class PlayerService {
     }
 
     /**
-     * Modifies the active team in the database.
+     * Overwrites the active team's composition in the database.
      *
-     * @throws NoActiveTeamException
-     *             if the player does not have an active team
-     * @throws TeamEmptyException
-     *             if the active team is empty
-     * @throws TeamNotFoundException
-     *             if the team does not exist
+     * @throws NoActiveTeamException if there is no active team
+     * @throws TeamEmptyException if the active team has no members
+     * @throws TeamNotFoundException if the team no longer exists in the database
      */
     public void modifyActiveTeam() throws NoActiveTeamException, TeamEmptyException, TeamNotFoundException {
         if (this.activeTeam.isEmpty()) {
@@ -121,18 +114,11 @@ public class PlayerService {
     }
 
     /**
-     * Renames a team
+     * Renames the active team from {@code oldName} to {@code newName}.
      *
-     * @param oldName
-     *            the old team name
-     * @param newName
-     *            the new team name
-     * @throws TeamNotFoundException
-     *             if the team does not exist
-     * @throws TeamNameAlreadyExistsException
-     *             if the team name is already taken
-     * @throws NoActiveTeamException
-     *             if the player does not have an active team
+     * @throws TeamNotFoundException if {@code oldName} does not exist
+     * @throws TeamNameAlreadyExistsException if {@code newName} is already taken
+     * @throws NoActiveTeamException if there is no active team
      */
     public void renameTeam(String oldName, String newName) throws TeamNotFoundException, TeamNameAlreadyExistsException,
             NoActiveTeamException, TeamNameEmptyException {
@@ -154,10 +140,9 @@ public class PlayerService {
     }
 
     /**
-     * Checks if the active team of the player has been saved to the database. If the active team is empty, it is
-     * considered as saved because there is nothing to save (we cannot s).
+     * Returns {@code true} if the active team matches a persisted team, or if there is no active team.
      *
-     * @return (boolean) true if the active team has been saved, false otherwise
+     * @return {@code false} if the active team has unsaved changes
      */
     public boolean isActiveTeamSaved() {
         if (this.activeTeam.isEmpty() || this.activeTeam.get().isEmpty()) {
@@ -181,12 +166,10 @@ public class PlayerService {
     }
 
     /**
-     * Deletes the active team from the database and clears the active team.
+     * Deletes the active team from the database and clears it from the runtime state.
      *
-     * @throws NoActiveTeamException
-     *             if the player does not have an active team
-     * @throws TeamNotFoundException
-     *             if the team does not exist
+     * @throws NoActiveTeamException if there is no active team to delete
+     * @throws TeamNotFoundException if the team no longer exists in the database
      */
     public void deleteActiveTeam() throws NoActiveTeamException, TeamNotFoundException, TeamNameEmptyException {
         if (this.activeTeam.isEmpty()) {
@@ -201,10 +184,9 @@ public class PlayerService {
     // --- Bugemon State ---
 
     /**
-     * Saves the state of the bugemons of the active team to the database.
+     * Persists the current stats (HP, XP, level) of every Bugemon in the active team.
      *
-     * @throws NoActiveTeamException
-     *             if the player does not have an active team
+     * @throws NoActiveTeamException if there is no active team
      */
     public void saveBugemonStateOfActiveTeam() throws NoActiveTeamException {
         BugemonTeam team = this.activeTeam.orElseThrow(() -> new NoActiveTeamException("No active team"));

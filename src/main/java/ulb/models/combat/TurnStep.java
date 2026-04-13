@@ -9,6 +9,10 @@ import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.trainer.Trainer;
 
+/**
+ * A single observable event within a combat turn. The controller iterates over the steps returned by
+ * {@link TurnResult#steps()} and triggers the matching animation and dialog for each one.
+ */
 public sealed interface TurnStep {
 
     record AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) implements TurnStep {

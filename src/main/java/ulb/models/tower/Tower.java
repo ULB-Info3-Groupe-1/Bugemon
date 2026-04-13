@@ -12,6 +12,10 @@ import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
 
+/**
+ * A dungeon run composed of {@value #MAX_FLOORS} sequential {@link Floor}s. The player advances one floor at a time;
+ * completing the last floor marks the run as a victory.
+ */
 public class Tower {
 
     private static final int MAX_FLOORS = 9;
@@ -31,6 +35,7 @@ public class Tower {
         return this.isFinished;
     }
 
+    /** Returns {@code true} when the current floor is complete and no further floors remain. */
     public boolean isCompleted() {
         return this.isFloorComplete() && !this.hasNextFloor();
     }
@@ -51,6 +56,12 @@ public class Tower {
         return this.floors.get(this.currentFloor);
     }
 
+    /**
+     * Advances the tower to the next floor.
+     *
+     * @throws IllegalStateException
+     *             if the current floor is not yet complete or there are no more floors
+     */
     public void goToNextFloor() {
         if (!this.getCurrentFloor().isComplete()) {
             throw new IllegalStateException("Current floor is not complete");
@@ -65,6 +76,11 @@ public class Tower {
         return this.currentFloor < MAX_FLOORS - 1;
     }
 
+    /**
+     * Recomputes the {@link ulb.models.tower.room.Room.RoomState} of every node on the current floor based on the
+     * player's position: visited nodes stay {@code VISITED}, adjacent ones become {@code AVAILABLE}, the rest remain
+     * {@code LOCKED}.
+     */
     public void updateRoomsState() {
         Floor floor = this.getCurrentFloor();
         Set<FloorNode> reachableNodes = new HashSet<>(floor.getReachableNodes());

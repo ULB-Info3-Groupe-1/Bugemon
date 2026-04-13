@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Utility methods for reading typed values from a {@link java.sql.ResultSet}. */
 public class DatabaseHelper {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseHelper.class);
 
@@ -13,6 +14,7 @@ public class DatabaseHelper {
         // Private constructor to prevent instantiation
     }
 
+    /** Returns the enum constant named by the column value, or {@code null} if the value is null, blank, or unrecognised. */
     public static <E extends Enum<E>> E getEnumOrNull(ResultSet rs, String columnName, Class<E> enumClass)
             throws SQLException {
         String value = rs.getString(columnName);

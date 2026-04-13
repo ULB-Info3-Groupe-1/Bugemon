@@ -16,6 +16,7 @@ import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 
+/** Service for Bugemon data access and XP/level-up lifecycle. Caches all default Bugemons after the first DB load. */
 public class BugemonService {
 
     private final StaticDataRepository staticDataRepository;
@@ -34,11 +35,7 @@ public class BugemonService {
         this.playerService = playerService;
     }
 
-    /**
-     * Get all default Bugemons from the database. Cached after the first call.
-     *
-     * @return (List<Bugemon>) List of default Bugemons
-     */
+    /** Returns all game-defined Bugemons; result is cached after the first database call. */
     public List<Bugemon> getAllDefaultBugemons() {
         if (this.allDefaultBugemonsCache == null) {
             this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
@@ -47,12 +44,9 @@ public class BugemonService {
     }
 
     /**
-     * Save a new bugemon in the database.
+     * Persists a new Bugemon and adds it to the in-memory cache.
      *
-     * @param bugemon
-     *            (CreateBugemonDTO) the bugemon to be saved
-     * @throws BugemonNameIsEmptyException
-     *             if the name of the bugemon is empty
+     * @throws BugemonNameIsEmptyException if the name is blank
      */
     public void saveBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
@@ -64,23 +58,12 @@ public class BugemonService {
         return this.getAllDefaultBugemons().stream().filter(b -> b.getName().equals(name)).findFirst().orElse(null);
     }
 
-    /**
-     * Get all attacks matching a specific Bugemon type.
-     *
-     * @param type
-     *            type used to filter attacks
-     * @return attacks for the provided type
-     */
+    /** Returns all attacks whose type matches {@code type}. */
     public List<Attack> getAttacksByType(BugemonType type) {
         return this.staticDataRepository.getAllAttacks().values().stream().filter(a -> a.type() == type).toList();
     }
 
-    /**
-     * Saves the state of a single bugemon to the database.
-     *
-     * @param bugemon
-     *            the bugemon to save
-     */
+    /** Persists the current stats (HP, XP, level) of {@code bugemon} and refreshes the local team cache. */
     public void saveBugemonState(Bugemon bugemon) {
         this.playerRepository.updatePlayerBugemon(new PlayerBugemonDTO(this.playerService.getPlayerId(),
                 bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(),

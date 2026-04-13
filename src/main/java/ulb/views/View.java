@@ -44,18 +44,9 @@ public abstract class View {
     }
 
     /**
-     * Displays a warning dialog with the given title and message. It has two buttons. If the user clicks on the first
-     * button, the first button text is returned, otherwise the second button text is returned.
+     * Shows a two-button confirmation dialog and returns the text of the clicked button.
      *
-     * @param title
-     *            the title of the dialog
-     * @param message
-     *            the message of the dialog
-     * @param button1Text
-     *            the text of the first button
-     * @param button2Text
-     *            the text of the second button
-     * @return the text of the clicked button
+     * @return {@code button1Text} if the first button was clicked, {@code button2Text} otherwise
      */
     protected String showAlertWithTwoButtons(String title, String message, String button1Text, String button2Text) {
         Alert alert = this.createAlert(title, message, AlertType.CONFIRMATION);

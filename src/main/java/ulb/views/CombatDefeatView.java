@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 
 import ulb.Configuration;
 
-/** View for the combat defeat screen, dispatching actions through the {@link Listener} interface. */
+/** View for the combat defeat screen. */
 public class CombatDefeatView extends View {
     private Listener listener;
 

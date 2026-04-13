@@ -264,11 +264,7 @@ public class TrainerWalk {
         return matrix[y][x] != 0;
     }
 
-    /**
-     * Checks if the trainer is currently moving towards a target position.
-     *
-     * @return (boolean) true if the trainer is in the process of walking, false otherwise.
-     */
+    /** Returns {@code true} while the trainer is moving towards a target position. */
     public boolean isMoving() {
         return this.isMoving;
     }

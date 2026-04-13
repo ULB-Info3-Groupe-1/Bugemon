@@ -96,6 +96,13 @@ public class MetaController {
         this.initTransitions();
     }
 
+    /**
+     * Routes to the appropriate post-combat screen. Delegates to the tower flow if a tower run is active; otherwise
+     * switches to {@link Window#COMBAT_VICTORY} or {@link Window#COMBAT_DEFEAT}.
+     *
+     * @param won
+     *            {@code true} if the player won the combat.
+     */
     public void onCombatFinished(boolean won) {
         LOG.info("onCombatFinished, won: {}", won);
         if (this.isTowerActive()) {
@@ -106,6 +113,10 @@ public class MetaController {
         this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
     }
 
+    /**
+     * Called when the victory screen is dismissed. Switches to {@link Window#LEVEL_UP} if level-ups are pending,
+     * otherwise to {@link Window#MAIN_MENU}.
+     */
     public void onCombatVictoryFinished() {
         if (this.bugemonService.hasPendingLevelUps()) {
             this.switchTo(Window.LEVEL_UP);
@@ -122,6 +133,10 @@ public class MetaController {
         this.switchTo(Window.MAIN_MENU);
     }
 
+    /**
+     * Called when all pending level-ups have been resolved. Returns to the tower map if a tower run is active,
+     * otherwise to {@link Window#MAIN_MENU}.
+     */
     public void onLevelUpfinished() {
         if (this.isTowerActive()) {
             this.switchTo(Window.NOTOWER);
@@ -203,10 +218,17 @@ public class MetaController {
         return this.isTowerActive;
     }
 
+    /** Marks the tower run as inactive. Must be called before navigating away from any tower screen. */
     public void endTowerFlow() {
         this.isTowerActive = false;
     }
 
+    /**
+     * Starts a manual combat within the tower flow, using an already-prepared {@link Combat} instance.
+     *
+     * @param combat
+     *            the combat to drive; its player trainer must be a {@link ulb.models.trainer.ManualTrainer}.
+     */
     public void startTowerCombat(Combat combat) {
         this.musicPlayer.stopMusic();
         this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);

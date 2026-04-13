@@ -8,6 +8,7 @@ import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 
+/** Stateless utility that populates an {@link ulb.models.bugemon.Inventory} with the hardcoded starter items. */
 public class InventoryService {
     private InventoryService() {
         // Private constructor to prevent instantiation
@@ -24,12 +25,7 @@ public class InventoryService {
             "Renforce temporairement l'attaque du Bugémon actif.", Item.ItemType.BOOST,
             new EffectStatModifier(EffectTarget.THROWER, EffectStat.ATTACK, 10, EffectDuration.PERMANENT));
 
-    /**
-     * Adds starter items to the inventory.
-     *
-     * @param inventory
-     * @return
-     */
+    /** Adds the hardcoded starter items to {@code inventory} and returns it. */
     public static Inventory addStarterItems(Inventory inventory) {
         // NOTE: the items are currently hardcoded as we don't store them in the db
 

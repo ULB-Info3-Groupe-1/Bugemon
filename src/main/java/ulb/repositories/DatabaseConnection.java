@@ -9,6 +9,10 @@ import java.sql.SQLException;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 
+/**
+ * Manages the single PostgreSQL connection.
+ * Falls back to embedded Postgres if no {@code .env} file is found.
+ */
 public class DatabaseConnection {
     private static final String DB_URL;
     private static final String DB_USER;
@@ -62,15 +66,6 @@ public class DatabaseConnection {
         }
     }
 
-    /**
-     * Helper method to prepare a SQL statement using the current database connection.
-     *
-     * @param sql
-     *            The SQL query to prepare
-     * @return A PreparedStatement ready to be executed
-     * @throws SQLException
-     *             if the preparation fails
-     */
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         return this.connection.prepareStatement(sql);
     }

@@ -55,6 +55,7 @@ public class Bugemon implements BugemonDTO {
     Bugemon() {
     }
 
+    /** Deep-copies all stat components and the attack list; the copy is fully independent from the original. */
     public Bugemon(Bugemon copy) {
         this.id = copy.getId();
         this.name = copy.getName();
@@ -97,11 +98,6 @@ public class Bugemon implements BugemonDTO {
 
     // Getters and Setters
 
-    /**
-     * Get the name of the bugemon.
-     *
-     * @return (String) the name of the bugemon.
-     */
     @Override
     public String getId() {
         return this.id;
@@ -183,6 +179,7 @@ public class Bugemon implements BugemonDTO {
         return this.levelComponent.addXp(xp);
     }
 
+    /** Permanently increases all stats by the amounts specified in {@code upgrade}. */
     public void applyUpgrade(Upgrade upgrade) {
         this.healthComponent.increaseMaxHp(upgrade.hp());
         this.attackComponent.increaseAttack(upgrade.attack());

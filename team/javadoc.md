@@ -10,6 +10,9 @@ Ce guide précise quand écrire de la Javadoc, comment la structurer, et quels t
 Une Javadoc utile répond à la question : *« Qu'est-ce que ce code garantit ou exige ? »*
 Elle ne décrit pas ce que le code fait ligne par ligne — le code lui-même le fait déjà.
 
+**La brièveté est une qualité.** Une phrase suffit presque toujours.
+Si la Javadoc est plus longue que le code qu'elle documente, c'est un signe qu'elle en dit trop.
+
 ```java
 // Mauvais — paraphrase le code
 /**
@@ -67,14 +70,14 @@ public int calculateDamage(Bugemon attacker, Bugemon defender) { ... }
 
 ### Classe / interface / enum
 
-Une seule phrase décrivant le rôle. Pas de `<p>`, pas de `@see` en cascade, pas d'en-tête d'auteur.
+**Une seule phrase** décrivant le rôle. Pas de `<p>`, pas de `@see` en cascade, pas d'en-tête d'auteur.
 
 ```java
 /** Represents a single turn's outcome, including damage dealt and effects applied. */
 public record TurnResult(...) { }
 ```
 
-Pour une classe plus complexe, deux phrases maximum :
+Pour une classe plus complexe, deux phrases maximum. Au-delà, questionner si la Javadoc est vraiment nécessaire.
 
 ```java
 /**
@@ -86,13 +89,11 @@ public class TeamRepository { ... }
 
 ### Méthode
 
-Format standard :
+Format standard — omettre les tags absents plutôt que les laisser vides :
 
 ```
 /**
  * <phrase d'intention en une ligne>.
- *
- * <détail optionnel si nécessaire>.
  *
  * @param  nom   <contrainte ou rôle non trivial>
  * @return       <ce qui est garanti sur la valeur retournée>
@@ -100,8 +101,9 @@ Format standard :
  */
 ```
 
-La ligne de résumé (première phrase) doit tenir sur une ligne et se terminer par un point.
+La ligne de résumé doit tenir sur **une seule ligne** et se terminer par un point.
 Elle doit être au présent à la troisième personne : *« Returns… »*, *« Computes… »*, *« Throws if… »*.
+Le bloc de détail optionnel est à éviter sauf si le contrat ne peut vraiment pas tenir en une phrase.
 
 ---
 
@@ -217,6 +219,8 @@ package ulb.models.combat;
 | `@param` et `@return` vides ou évidents | Bruit sans information |
 | Javadoc sur des méthodes privées simples | Audience = personne |
 | Blocs multi-paragraphes sur des getters | Disproportionné |
+| Détails d'implémentation ou paraphrases du code | La Javadoc documente le contrat, pas le « comment » |
+| Phrase de résumé qui déborde sur plusieurs lignes | Signe que le contrat est trop vague ou trop verbeux |
 
 ---
 

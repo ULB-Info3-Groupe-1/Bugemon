@@ -6,6 +6,9 @@ import java.util.Optional;
 
 import ulb.models.tower.room.Room;
 
+/**
+ * A node in the floor's tree structure, holding grid coordinates, its {@link Room}, and links to parent and children.
+ */
 public class FloorNode {
     private final int x;
     private final int y;
@@ -56,6 +59,10 @@ public class FloorNode {
         this.children.add(child);
     }
 
+    /**
+     * Returns the total number of nodes in the subtree whose root is at depth 1 on this node's branch. Used by the
+     * floor generator to limit branch sprawl.
+     */
     public int getBranchCount() {
         FloorNode n = this;
         while (n.getDepth() > 1 && n.getParent().isPresent()) {

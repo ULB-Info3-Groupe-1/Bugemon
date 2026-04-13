@@ -27,6 +27,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 import ulb.views.components.BugemonCardView;
 
+/** View for the Bugemon creation screen. */
 public class CreateBugemonView extends View {
 
     private static final String ATTACK_COUNT_INCOMPLETE = "attack-count-incomplete";
@@ -217,9 +218,6 @@ public class CreateBugemonView extends View {
         this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE, ATTACK_COUNT_COMPLETE);
     }
 
-    /**
-     * Registers the listener that receives all user interaction events from this view.
-     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }

@@ -10,17 +10,13 @@ import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
 
-/**
- * Factory to create {@link ulb.models.bugemon.Bugemon} instances.
- */
+/** Creates {@link ulb.models.bugemon.Bugemon} instances from the various DTO types used by repositories. */
 public class BugemonFactory {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private BugemonFactory() {
     }
 
+    /** Creates a fresh level-1 Bugemon from a player-created DTO; extracts the sprite file name from the URL. */
     public static Bugemon createBugemon(CreateBugemonDTO bugemon) {
         String fileName;
         try {
@@ -36,6 +32,7 @@ public class BugemonFactory {
                 .addAttack(bugemon.attack2()).addAttack(bugemon.attack3()).build();
     }
 
+    /** Reconstructs a Bugemon from its static definition and the player's saved progression stats. */
     public static Bugemon createBugemon(StaticBugemonDataDTO defaultBugemon, PlayerBugemonDTO playerBugemon) {
         return new BugemonBuilder().name(defaultBugemon.name()).type(BugemonType.valueOf(defaultBugemon.type()))
                 .sprite(defaultBugemon.spriteUrl()).hp(playerBugemon.currentMaxHp())
@@ -45,6 +42,7 @@ public class BugemonFactory {
                 .isStarter(defaultBugemon.isStarter()).build();
     }
 
+    /** Snapshots the static (level-1) fields of a Bugemon into a {@link StaticBugemonDataDTO}. */
     public static StaticBugemonDataDTO createStaticBugemonData(Bugemon bugemon) {
         return new StaticBugemonDataDTO(bugemon.getName(), bugemon.getType().name(), bugemon.getSpriteURL(),
                 bugemon.getAttackList(), bugemon.isStarter());

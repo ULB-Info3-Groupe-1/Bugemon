@@ -53,6 +53,12 @@ public class CombatAnimationController {
         }
     }
 
+    /**
+     * Fades the Bugemon sprite back in after a KO switch.
+     *
+     * @param forTrainer
+     *            {@code true} to animate the player's side; {@code false} for the opponent's side.
+     */
     public void makeBugemonReappear(boolean forTrainer) {
         if (forTrainer) {
             this.view.makeTrainerBugemonReappear();

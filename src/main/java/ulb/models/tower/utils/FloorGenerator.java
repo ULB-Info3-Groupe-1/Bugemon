@@ -15,6 +15,12 @@ import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 
+/**
+ * Procedurally generates a tower floor as a tree of {@link ulb.models.tower.FloorNode}s on a
+ * {@value #GRID_SIZE}×{@value #GRID_SIZE} grid. The tree is created via random BFS branching; rooms (combat, reward,
+ * empty) are then placed to meet minimum counts. Regenerates up to {@code MAX_GENERATION_ATTEMPTS} times if the
+ * placement constraints cannot be satisfied.
+ */
 public class FloorGenerator {
 
     static final int GRID_SIZE = 5;
@@ -54,6 +60,13 @@ public class FloorGenerator {
         this.generateNewFloor();
     }
 
+    /**
+     * Generates a new floor, retrying up to {@code MAX_GENERATION_ATTEMPTS} times until room placement constraints are
+     * met.
+     *
+     * @throws IllegalStateException
+     *             if no valid floor can be generated within the attempt limit
+     */
     public void generateNewFloor() {
         for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
             this.initialize();

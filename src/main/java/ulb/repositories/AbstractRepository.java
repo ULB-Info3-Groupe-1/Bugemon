@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** Base class for repositories — wraps SQL preparation, execution, and error translation into runtime exceptions. */
 public abstract class AbstractRepository {
 
     private final Map<String, String> queries;

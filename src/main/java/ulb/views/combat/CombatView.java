@@ -49,7 +49,6 @@ public abstract class CombatView extends View {
     protected CombatView() {
     }
 
-    /** Called by the FXMLLoader after all {@code @FXML} fields are injected. */
     @FXML
     protected void initialize() {
         this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);

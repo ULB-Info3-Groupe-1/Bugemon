@@ -17,9 +17,6 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
 
     /**
      * Constructs a {@code LevelUpController}, initialises its {@link LevelUpView}, and registers the choice callback.
-     *
-     * @param metaController
-     *            the application-level controller used for navigation.
      */
     public LevelUpController(MetaController metaController, BugemonService bugemonService) {
         super(metaController, ViewLoader.load(LevelUpView::new));
@@ -38,6 +35,7 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
         }
     }
 
+    /** Pushes the next pending {@link ulb.models.level_up.LevelUp} to the view and requests a refresh. */
     public void updateDisplayedLevelUp() {
         this.view.setLevelUp(this.bugemonService.peekNextLevelUp());
         this.view.refresh();

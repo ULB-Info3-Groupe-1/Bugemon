@@ -3,10 +3,13 @@ package ulb.models.combat;
 import java.util.Set;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 
+/**
+ * Distributes XP among all Bugemons that participated in a won combat and notifies {@link ulb.services.BugemonService}
+ * to enqueue level-ups.
+ */
 public class CombatXpDistributor implements ICombatXpDistributor {
 
     private final BugemonService bugemonService;
@@ -20,6 +23,7 @@ public class CombatXpDistributor implements ICombatXpDistributor {
         return 30 * floorLevel * multiplier * opponentCount;
     }
 
+    /** Distributes XP to all Bugemons that participated on the winning side. */
     public void distributeXp(CombatContext combatCtx) {
         this.distributeXp(combatCtx.winner(), combatCtx.loser());
     }
@@ -32,11 +36,6 @@ public class CombatXpDistributor implements ICombatXpDistributor {
         this.distributeXp(winner, loser, floorLevel, multiplier);
     }
 
-    /**
-     * Distributes XP equally among all participating Bugemons and returns the resulting level-ups.
-     *
-     * @return one {@link LevelUp} per level crossed per Bugemon
-     */
     private void distributeXp(final Trainer winner, final Trainer loser, final int floor, final int multiplier) {
         final Set<Bugemon> participatingBugemon = winner.getParticipatingBugemons();
 

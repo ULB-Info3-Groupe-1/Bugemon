@@ -33,11 +33,6 @@ public class ActiveEffect {
         this.durationLeft = durationLeft;
     }
 
-    /**
-     * Returns the underlying {@link Effect} wrapped by this active effect.
-     *
-     * @return the {@link Effect} associated with this active effect.
-     */
     public Effect getEffect() {
         return this.effect;
     }

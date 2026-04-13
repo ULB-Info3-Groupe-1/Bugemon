@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/** Ordered sequence of {@link TurnStep}s produced by one call to {@link Combat#turn()}. */
 public class TurnResult {
     private final List<TurnStep> steps;
 

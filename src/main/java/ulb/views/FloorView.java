@@ -73,12 +73,6 @@ public class FloorView extends View {
         // (setFloorNumber, addRoomNode, etc.)
     }
 
-    /**
-     * Registers a listener to receive callbacks for floor map interactions.
-     *
-     * @param listener
-     *            The listener to be notified of map events
-     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -191,24 +185,10 @@ public class FloorView extends View {
         this.innerMapPane.getChildren().add(roomView);
     }
 
-    /**
-     * Calculates the X position in pixels from a column number.
-     *
-     * @param col
-     *            Column number (0-indexed)
-     * @return X position in pixels
-     */
     private double calculateXPosition(int col) {
         return MAP_OFFSET_X + (col * (ROOM_WIDTH + HORIZONTAL_SPACING));
     }
 
-    /**
-     * Calculates the Y position in pixels from a row number.
-     *
-     * @param row
-     *            Row number (0-indexed)
-     * @return Y position in pixels
-     */
     private double calculateYPosition(int row) {
         return MAP_OFFSET_Y + (row * (ROOM_HEIGHT + VERTICAL_SPACING));
     }
@@ -269,10 +249,6 @@ public class FloorView extends View {
         this.innerMapPane.setMaxSize(paneWidth, paneHeight);
     }
 
-    /**
-     * Callback interface for floor map interactions. Dispatches map events to the controller exclusively through this
-     * interface.
-     */
     public interface Listener {
         void onRoomClicked(FloorNode node);
 

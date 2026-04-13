@@ -1,5 +1,6 @@
 package ulb;
 
+/** Centralised application constants — resource paths, UI strings, and game rules. */
 public abstract class Configuration {
 
     private Configuration() {

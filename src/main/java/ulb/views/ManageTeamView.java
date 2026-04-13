@@ -18,11 +18,7 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.components.AllBugemonsView;
 import ulb.views.components.BugemonTeamView;
 
-/**
- * View for the team creation screen. Holds a reference to the {@link BugemonTeam} model and reads from it directly in
- * {@link #refresh()}. Dispatches player interactions through a {@link Listener}; holds no reference to any concrete
- * controller class.
- */
+/** View for the team creation and editing screen. */
 public class ManageTeamView extends View {
 
     private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
@@ -79,12 +75,7 @@ public class ManageTeamView extends View {
         }
     }
 
-    /**
-     * Sets the mode of the view and displays the appropriate buttons.
-     *
-     * @param mode
-     *            The mode of the view
-     */
+    /** Shows or hides the edit-only buttons (modify, rename, delete, combat) depending on {@code mode}. */
     public void setMode(TeamFormMode mode) {
         boolean isCreate = (mode == TeamFormMode.CREATE);
         List<Button> editButtons = List.of(this.modifyTeamButton, this.renameTeamButton, this.deleteTeamButton,
@@ -291,9 +282,9 @@ public class ManageTeamView extends View {
     }
 
     /**
-     * Displays a warning dialog to warn the user that there are unsaved changes. He can choose to continue or go back.
+     * Shows an unsaved-changes confirmation dialog.
      *
-     * @return (boolean) true if the user wants to continue, false if he wants to go back
+     * @return {@code true} if the user chose to leave without saving
      */
     public boolean showAlertTeamChangesNotSave() {
         return this.showAlertWithTwoButtons(TEAM_NOT_SAVED, TEAM_NOT_SAVED_MESSAGE, GO_MAIN_MENU_WITHOUT_SAVING, BACK)

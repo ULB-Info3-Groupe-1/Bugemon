@@ -84,23 +84,13 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     /**
-     * Returns the select Bugemon with the given name if it's in the team.
-     *
-     * @param name
-     *            (String) the ID of the Bugemon to be returned
-     * @return (Bugemon) the Bugemon with the given name
+     * Returns the Bugemon with the given name, or empty if not in the team.
      */
     public Optional<Bugemon> get(String bugemonName) {
         return this.team.stream().filter(b -> bugemonName.equals(b.getName())).findFirst();
     }
 
-    /**
-     * Checks if a Bugemon with the same name is already in the team
-     *
-     * @param bugemon
-     *            (Bugemon) the Bugemon to search for
-     * @return (boolean) true if a Bugemon with the same name is already in the team, false otherwise
-     */
+    /** Returns {@code true} if a Bugemon with the same name is already in the team. */
     public boolean contains(Bugemon bugemon) {
         return this.team.stream().anyMatch(member -> member.getName().equals(bugemon.getName()));
     }

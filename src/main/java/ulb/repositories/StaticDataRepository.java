@@ -34,6 +34,10 @@ import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
+/**
+ * Repository for read-only game data.
+ * Creates the schema and bootstraps static content (Bugemons, attacks) at construction time if absent.
+ */
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 7;
 
@@ -149,11 +153,7 @@ public class StaticDataRepository extends AbstractRepository {
 
     // --- UTILS FOR CLASS USING THIS REPO --
 
-    /**
-     * Retrieves all default Bugemons.
-     *
-     * @return (List<Bugemon>) List of default Bugemons of the game
-     */
+    /** Returns all default (game-defined) Bugemons, with their attacks fully populated. */
     public List<Bugemon> getAllDefaultBugemons() {
         Map<String, Attack> attackMap = this.getAllAttacks();
         return executeQuery("GetAllDefaultBugemons", rs -> this.mapBugemon(rs, attackMap));
@@ -173,11 +173,7 @@ public class StaticDataRepository extends AbstractRepository {
         }
     }
 
-    /**
-     * Retrieves all attacks with their effects.
-     *
-     * @return (Map<String, Attack>) Map of attacks.
-     */
+    /** Returns all attacks keyed by their ID, with their effects fully populated. */
     public Map<String, Attack> getAllAttacks() {
         Map<String, AttackInfo> infos = new LinkedHashMap<>();
         Map<String, List<Effect>> effects = new HashMap<>();
@@ -232,12 +228,7 @@ public class StaticDataRepository extends AbstractRepository {
         }
     }
 
-    /**
-     * Saves a Bugemon to the database.
-     *
-     * @param b
-     *            (CreateBugemonDTO) the bugemon to be saved
-     */
+    /** Persists a new Bugemon definition and copies its sprite file into the assets directory. */
     public void saveBugemon(CreateBugemonDTO b) {
         String fileName = b.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
         try {

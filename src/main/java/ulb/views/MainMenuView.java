@@ -4,10 +4,7 @@ import javafx.fxml.FXML;
 
 import ulb.Configuration;
 
-/**
- * View for the main menu screen. Dispatches player interactions to the controller exclusively through callbacks
- * registered via setters. The view holds no reference to any concrete controller class.
- */
+/** View for the main menu screen. */
 public class MainMenuView extends View {
 
     private Listener listener;

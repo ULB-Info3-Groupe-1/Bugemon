@@ -53,6 +53,12 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         this.view.setNextListener(this);
     }
 
+    /**
+     * Initialises and starts a new combat session for the current player.
+     *
+     * @param shouldRestoreHp
+     *            {@code true} to fully restore all Bugemon HP before the fight begins.
+     */
     public abstract void startCombat(boolean shouldRestoreHp);
 
     // ── Step iteration ────────────────────────────────────────────────────────

@@ -1,5 +1,9 @@
 package ulb.models.bugemon.components.modifier;
 
+/**
+ * Counts down a fixed number of ticks; expires (returns {@code true} from {@link #isExpired()}) when the counter
+ * reaches zero.
+ */
 public class Ticker {
     private int remainingTicks;
 

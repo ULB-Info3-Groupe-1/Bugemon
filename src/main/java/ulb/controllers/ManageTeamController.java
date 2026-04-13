@@ -28,9 +28,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     /**
-     * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
-     * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
+     * Constructs a {@code ManageTeamController} for the given mode and wires the view listener.
      *
+     * @param mode
+     *            whether the form is used to create or edit a team.
      */
     public ManageTeamController(TeamFormMode mode, MetaController metaController, PlayerService playerService,
             BugemonService bugemonService) {

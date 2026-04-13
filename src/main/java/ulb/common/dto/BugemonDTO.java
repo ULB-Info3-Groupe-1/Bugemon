@@ -3,10 +3,8 @@ package ulb.common.dto;
 import ulb.models.bugemon.BugemonType;
 
 /**
- * Read-only view of a {@link ulb.models.bugemon.Bugemon} for use outside the model layer (e.g., in views and
- * controllers). Exposes only the subset of data required to render a Bugemon on screen.
- *
- * @see ulb.models.bugemon.Bugemon
+ * Read-only view of a {@link ulb.models.bugemon.Bugemon} for use outside the model layer.
+ * Exposes only the subset of data required to render a Bugemon on screen.
  */
 public interface BugemonDTO {
     /** Classpath-relative resource path to the sprite image (e.g., {@code "png/florachu.png"}). */
@@ -15,14 +13,11 @@ public interface BugemonDTO {
     /** Stable, opaque identifier that uniquely distinguishes one Bugemon from another (e.g., {@code "001"}). */
     String getId();
 
-    /** Human-readable label shown in the UI (e.g., {@code "Florachu"}). */
     String getName();
 
     /**
-     * Elemental type of this Bugemon. Affects combat effectiveness — see
-     * {@link ulb.services.CombatService#compareBugemonType} for matchup rules.
-     *
-     * @return the {@link BugemonType}; never {@code null}.
+     * Elemental type; never {@code null}.
+     * Affects combat effectiveness — see {@link ulb.services.CombatService} for matchup rules.
      */
     BugemonType getType();
 
@@ -34,10 +29,6 @@ public interface BugemonDTO {
 
     int getMaxHp();
 
-    /**
-     * Current level. Starts at {@code 1} and increases when the Bugemon accumulates enough XP via
-     * {@link ulb.models.bugemon.Bugemon#gainXp(int)}.
-     */
     int getLevel();
 
     int getXp();

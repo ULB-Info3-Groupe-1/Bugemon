@@ -8,7 +8,6 @@ import java.util.Optional;
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
@@ -27,11 +26,7 @@ public class CombatService {
         this.bugemonService = bugemonService;
     }
 
-    /**
-     * Creates a combat.
-     *
-     * At the end of the combat, HPs are restored and XP is distributed.
-     */
+    /** Creates a combat that restores HP and distributes XP when it ends. */
     public Combat createUniqueCombat(Trainer playerTrainer, Trainer opponentTrainer) {
         EndOfCombatAction endOfCombatCb = EndOfCombatAction.RESTORE_HP;
         CombatXpDistributor combatxpDistributor = new CombatXpDistributor(this.bugemonService);
@@ -39,14 +34,7 @@ public class CombatService {
     }
 
     /**
-     * Determines which trainer's Bugemon attacks first based on initiative. In case of a tie, the winner is chosen
-     * randomly.
-     *
-     * @param trainer1
-     *            the first trainer
-     * @param trainer2
-     *            the second trainer
-     * @return the trainer whose Bugemon attacks first
+     * Returns the trainer whose Bugemon attacks first based on initiative; ties are broken randomly.
      */
     public static Trainer attackPriority(final Trainer trainer1, final Trainer trainer2) {
         final int initiative1 = trainer1.getCurrentBugemonInitiative();
@@ -62,19 +50,11 @@ public class CombatService {
     }
 
     /**
-     * Calculates the damage dealt by an attack using an explicit critical hit factor, factoring in the offender's
-     * attack stat, the defender's defense stat, and type effectiveness. Formula:
-     * {@code power * ((100 + offenderAttack) / 100) * (100 / (defenderDefense + 100)) * typeFactor * criticFactor}
+     * Computes damage using an explicit crit factor.
+     * Formula: {@code power * ((100 + offenderAttack) / 100) * (100 / (defenderDefense + 100)) * typeFactor * criticFactor}
      *
-     * @param attack
-     *            the attack being used
-     * @param offenderBugemon
-     *            the attacking Bugemon, used to access its attack stat
-     * @param defenderBugemon
-     *            the defending Bugemon, used to access its defense stat and type
-     * @param criticFactor
-     *            the critical hit multiplier to apply (e.g. {@code 1.0} for normal, {@code 1.5} for a critical hit)
-     * @return the computed damage as a double
+     * @param criticFactor multiplier to apply (e.g. {@code 1.0} normal, {@code 1.5} critical)
+     * @return damage value, always >= 1
      */
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon,
             final double criticFactor) {
@@ -99,14 +79,9 @@ public class CombatService {
     }
 
     /**
-     * Returns the damage multiplier corresponding to the effectiveness of an attack's type against the defender's type.
+     * Returns the type-effectiveness damage multiplier for an attack against a defender.
      *
-     * @param attack
-     *            the attack being used
-     * @param defender
-     *            the defending Bugemon
-     * @return {@code 0.75} for {@link Efficiency#LOW}, {@code 1.50} for {@link Efficiency#HIGH}, or {@code 1.00} for
-     *         {@link Efficiency#NEUTRAL}
+     * @return {@code 0.75} for {@link Efficiency#LOW}, {@code 1.50} for {@link Efficiency#HIGH}, {@code 1.00} otherwise
      */
     public static double getEfficiencyFactor(final Attack attack, final Bugemon defender) {
         final Efficiency matchup = attack.getEfficiencyAgainst(defender);
@@ -119,22 +94,6 @@ public class CombatService {
             return 1.00;
         }
     }
-
-    /**
-     * Determines the type effectiveness of an offensive type against a defensive type. Types follow a fixed cycle
-     * defined by the {@link BugemonType} enum declaration order: each type is strong against the type immediately
-     * before it (wrapping around) and weak against the type immediately after it.
-     *
-     * Given {@code delta = (offensiveIdx - defensiveIdx) mod cycleSize}: delta 1 → {@link Efficiency#LOW} (weak); delta
-     * {@code cycleSize - 1} → {@link Efficiency#HIGH} (strong); any other → {@link Efficiency#NEUTRAL}.
-     *
-     * @param offensiveType
-     *            the type of the attacking Bugemon or attack
-     * @param defensiveType
-     *            the type of the defending Bugemon
-     * @return {@link Efficiency#HIGH} if the offensive type is strong against the defensive type,
-     *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
-     */
 
     public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
         List<Bugemon> pool = new ArrayList<>(bugemonList);

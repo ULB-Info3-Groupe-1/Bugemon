@@ -106,6 +106,8 @@ public final class BugemonBuilder {
     }
 
     /**
+     * Builds and returns the configured {@link Bugemon} instance.
+     *
      * @throws IllegalStateException
      *             if no {@code name} was provided
      */

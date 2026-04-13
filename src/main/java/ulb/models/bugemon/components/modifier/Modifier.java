@@ -2,6 +2,10 @@ package ulb.models.bugemon.components.modifier;
 
 import java.util.Optional;
 
+/**
+ * An integer delta applied to a stat value. Carries an optional {@link Ticker} that counts down remaining turns;
+ * modifiers without a ticker are permanent and never expire.
+ */
 public class Modifier {
     Optional<Ticker> ticker;
     private int amount;
@@ -25,16 +29,20 @@ public class Modifier {
     }
 
     /**
-     * Returns true if the modifier is a malus.
+     * Returns {@code true} if this modifier reduces a stat (negative amount).
      *
-     * WARN: a modifier with a negative amount is considered as a malus. This lacks flexiblity and might need to change
-     * in the future, but should work for now because the higher the initiative/defense/attack the better. Consequently,
-     * a negative modifier must be a malus.
+     * Assumes higher is always better for all stats; a negative delta is therefore always a malus.
      */
     public boolean isMalus() {
         return this.amount < 0;
     }
 
+    /**
+     * Applies the modifier delta to {@code value} and returns the result.
+     *
+     * @throws IllegalStateException
+     *             if the modifier has a ticker that is already expired
+     */
     public int apply(int value) {
         this.ticker.ifPresent(t -> {
             if (t.isExpired()) {

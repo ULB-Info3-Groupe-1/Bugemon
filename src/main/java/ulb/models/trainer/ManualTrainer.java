@@ -154,6 +154,10 @@ public class ManualTrainer extends Trainer {
         this.switchedThisTurn = value;
     }
 
+    /**
+     * Returns {@code true} when the player may choose to switch this turn: no forced post-KO switch is pending and no
+     * voluntary switch has already been made this turn.
+     */
     public boolean canVoluntarilySwitch() {
         return !this.forcedSwitch && !this.switchedThisTurn;
     }
