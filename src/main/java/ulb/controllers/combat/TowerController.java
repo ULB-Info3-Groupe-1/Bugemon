@@ -15,9 +15,9 @@ import ulb.models.combat.Combat;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.Tower;
-import ulb.models.tower.room.BonusRoom;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
+import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.RoomType;
 import ulb.models.trainer.ManualTrainer;
@@ -84,8 +84,8 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
         this.metaController.startTowerCombat(combat);
     }
 
-    public void handleBonusRoom(BonusRoom bonusRoom) {
-        // TODO: Implement bonus room handling -> STORY 11
+    public void handleRewardRoom(RewardRoom rewardRoom) {
+        // TODO: Implement reward room handling -> STORY 11
     }
 
     public void handleEmptyRoom(EmptyRoom emptyRoom) {
@@ -125,7 +125,7 @@ public class TowerController extends Controller<FloorMapView> implements FloorMa
     }
 
     /**
-     * Runs the Tower flow until a combat starts, the run ends, or the tower is completed. Bonus rooms are resolved
+     * Runs the Tower flow until a combat starts, the run ends, or the tower is completed. Reward rooms are resolved
      * immediately; combat rooms continue via callback.
      */
     public void runTower(Stage stage) {

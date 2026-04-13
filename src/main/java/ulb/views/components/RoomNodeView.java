@@ -55,13 +55,14 @@ public class RoomNodeView extends StackPane {
     }
 
     /**
-     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS", "BONUS", "EMPTY"). Updates the visual
+     * Set the type of room this node represents (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY"). Updates the
+     * visual
      *
      * @param roomType
-     *            The type of room (e.g., "START", "COMBAT", "BOSS", "BONUS", "EMPTY")
+     *            The type of room (e.g., "START", "COMBAT", "BOSS", "REWARD", "EMPTY")
      */
     public void setRoomType(RoomType roomType) {
-        this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-bonus", "room-empty");
+        this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-reward", "room-empty");
 
         String normalizedRoomType = roomType.toString().toLowerCase();
 

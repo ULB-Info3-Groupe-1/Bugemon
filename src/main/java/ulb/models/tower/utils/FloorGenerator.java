@@ -11,9 +11,9 @@ import java.util.Random;
 import java.util.Set;
 
 import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.BonusRoom;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
+import ulb.models.tower.room.RewardRoom;
 
 public class FloorGenerator {
 
@@ -26,8 +26,8 @@ public class FloorGenerator {
     static final int MIN_COMBATS = 4;
     static final int MAX_COMBATS = 6;
 
-    static final int MIN_BONUS = 2;
-    static final int MAX_BONUS = 3;
+    static final int MIN_REWARD = 2;
+    static final int MAX_REWARD = 3;
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
@@ -41,7 +41,7 @@ public class FloorGenerator {
     private FloorNode bossNode;
     private int maxDepthReached;
 
-    private int bonusCount;
+    private int rewardCount;
     private int branchCount;
     private int combatCount;
 
@@ -75,7 +75,7 @@ public class FloorGenerator {
     }
 
     private void initialize() {
-        this.bonusCount = this.random.nextInt(MIN_BONUS, MAX_BONUS + 1);
+        this.rewardCount = this.random.nextInt(MIN_REWARD, MAX_REWARD + 1);
         this.branchCount = this.random.nextInt(MIN_BRANCHES, MAX_BRANCHES + 1);
         this.combatCount = this.random.nextInt(MIN_COMBATS, MAX_COMBATS + 1);
         this.maxDepthReached = 0;
@@ -151,11 +151,11 @@ public class FloorGenerator {
         List<FloorNode> remaining = this.getAllNonRootNodes();
 
         List<FloorNode> combatNodes = this.placeCombatRooms(remaining);
-        int bonusPlaced = this.placeBonusRooms(remaining, combatNodes);
+        int rewardPlaced = this.placeRewardRooms(remaining, combatNodes);
         this.fillEmptyRooms(remaining);
 
         // check if all interest points are placed correctly
-        return combatNodes.size() == this.combatCount && bonusPlaced == this.bonusCount;
+        return combatNodes.size() == this.combatCount && rewardPlaced == this.rewardCount;
     }
 
     private List<FloorNode> getAllNonRootNodes() {
@@ -182,17 +182,17 @@ public class FloorGenerator {
         return combatNodes;
     }
 
-    private int placeBonusRooms(List<FloorNode> remaining, List<FloorNode> combatNodes) {
+    private int placeRewardRooms(List<FloorNode> remaining, List<FloorNode> combatNodes) {
         Set<FloorNode> combatSet = new HashSet<>(combatNodes); // maybe overkill ?
         Collections.shuffle(remaining, this.random);
         int placed = 0;
 
         for (FloorNode node : remaining) {
-            if (placed >= this.bonusCount) {
+            if (placed >= this.rewardCount) {
                 break;
             }
             if (combatSet.contains(node.getParent().get()) && !node.equals(this.bossNode)) {
-                node.setRoom(new BonusRoom());
+                node.setRoom(new RewardRoom());
                 placed++;
             }
         }

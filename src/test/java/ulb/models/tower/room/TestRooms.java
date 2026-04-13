@@ -45,16 +45,16 @@ public class TestRooms {
     public void testVisitDelegatesToTowerController() {
         CombatFactory combatFactory = mock(CombatFactory.class);
         CombatRoom combatRoom = new CombatRoom(combatFactory, 1, false);
-        BonusRoom bonusRoom = new BonusRoom();
+        RewardRoom rewardRoom = new RewardRoom();
         EmptyRoom emptyRoom = new EmptyRoom();
         TowerController towerController = mock(TowerController.class);
 
         combatRoom.visit(towerController);
-        bonusRoom.visit(towerController);
+        rewardRoom.visit(towerController);
         emptyRoom.visit(towerController);
 
         verify(towerController).handleCombatRoom(combatRoom);
-        verify(towerController).handleBonusRoom(bonusRoom);
+        verify(towerController).handleRewardRoom(rewardRoom);
         verify(towerController).handleEmptyRoom(emptyRoom);
     }
 }
