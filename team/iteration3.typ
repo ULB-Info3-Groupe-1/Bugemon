@@ -191,7 +191,9 @@ méthode `onCombatEnded` (voir @on_combat_ended_after).
 _Note :_ nous n'avons pas encore fini de remplacer tous les appels à
 `switchTo`. Ceci sera terminé au début de la prochaine itération.
 
-= Double dispatch
+= Double dispatch et visitor
+
+== Application des effets
 
 Utilisation du double dispatch pour éviter les `instanceof` dans l'application des effets sur les bugemons.
 
@@ -227,7 +229,14 @@ nous avons remarqué plusieurs autres endroits où ce concept pourrait être uti
 dans la codebase. Notamment dans la logique du combat qui contient beaucoup de
 `instanceof`/switch sur le type.
 
-= Tâche pas terminé
+== `TowerController`
+
+Nous utilisons également le _visitor pattern_ pour la gestion des différents
+types concrets de `Room`.
+
+TowerController impémente `RoomVisitor`.
+
+= Tâche pas terminée
 
 Les items et l'inventaire ne sont pas encore stockés dans la base de données,
 bien qu'un membre du groupe ait ajouté cette fonctionnalité sur une branche du
@@ -256,3 +265,13 @@ Lorsqu'un controller fait appel à une pièce d'instance `CombatRoom` l'appel à
 instanciation _lazy_ d'un combat. De plus, le `CombatFactory` permet de
 prévoir de futures implémentation quant à la gestion des difficultés d'un étage
 ou d'un Boss.
+
+= Estimation nombre d'heures
+
+Nous pensons avoir surestimé le nombre d'heures de l'histoire 16 (animation de
+déplacement).
+
+Concrètement, nous avons terminé toutes les histoires de cette itération, mais
+un nombre d'heures non-négligeable a été consacré à du refactoring que nous
+n'avions pas mentionné au client.
+
