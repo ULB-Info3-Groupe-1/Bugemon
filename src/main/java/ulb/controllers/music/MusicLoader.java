@@ -17,7 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
 
-/** Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR). */
+/**
+ * Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR).
+ */
 public class MusicLoader {
     private static final Logger LOG = LoggerFactory.getLogger(MusicLoader.class);
 
@@ -41,7 +43,7 @@ public class MusicLoader {
     }
 
     private URI getResourceURI(String resourceDir) {
-        URL url = getClass().getResource(resourceDir);
+        URL url = MusicLoader.class.getResource(resourceDir);
         if (url == null) {
             throw new IllegalArgumentException("Resource not found: " + resourceDir);
         }

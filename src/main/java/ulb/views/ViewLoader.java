@@ -7,7 +7,9 @@ import javafx.scene.Parent;
 
 import ulb.views.exceptions.ViewLoadingException;
 
-/** Utility that loads a {@link View} from its FXML path and injects the loaded root back into the view instance. */
+/**
+ * Utility that loads a {@link View} from its FXML path and injects the loaded root back into the view instance.
+ */
 public class ViewLoader {
 
     private ViewLoader() {
@@ -32,7 +34,7 @@ public class ViewLoader {
         } catch (IOException e) {
             throw new ViewLoadingException("Failed to load FXML: " + fxmlPath, e);
         } catch (Exception e) {
-            throw new ViewLoadingException("Failed to instantiate view class: " + viewClass.getClass().getName(), e);
+            throw new ViewLoadingException("Failed to instantiate view class: " + ViewLoader.class.getName(), e);
         }
     }
 }

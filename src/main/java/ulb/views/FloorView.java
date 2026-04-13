@@ -68,9 +68,8 @@ public class FloorView extends View {
 
     @Override
     public void refresh() {
-        // The map is entirely dynamic and controlled by the controller, so no static
-        // data to refresh here. All updates
-        // happen through explicit methods
+        // The map is entirely dynamic and controlled by the controller, so no
+        // static data to refresh here. All updates happen through explicit methods
         // (setFloorNumber, addRoomNode, etc.)
     }
 
@@ -100,7 +99,7 @@ public class FloorView extends View {
     }
 
     private void initPlayerIcon(String imagePath) {
-        Image img = new Image(getClass().getResourceAsStream(imagePath));
+        Image img = new Image(FloorView.class.getResourceAsStream(imagePath));
         this.playerIcon = new ImageView(img);
 
         this.playerIcon.setFitWidth(70);
@@ -185,7 +184,6 @@ public class FloorView extends View {
             @Override
             public void onRoomClicked(RoomPosition position) {
                 FloorView.this.listener.onRoomClicked(floorNode);
-
             }
         });
 
@@ -262,7 +260,8 @@ public class FloorView extends View {
         }
 
         // Calculate and set the inner pane size to fit all rooms
-        // Formula: spacing between rooms + last room width (no spacing after last room)
+        // Formula: spacing between rooms + last room width (no spacing after last
+        // room)
         double paneWidth = (maxCol - minCol) * (ROOM_WIDTH + HORIZONTAL_SPACING) + ROOM_WIDTH;
         double paneHeight = (maxRow - minRow) * (ROOM_HEIGHT + VERTICAL_SPACING) + ROOM_HEIGHT;
         this.innerMapPane.setPrefSize(paneWidth, paneHeight);

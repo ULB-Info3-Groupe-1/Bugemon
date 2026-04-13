@@ -25,7 +25,9 @@ public class QueryLoader {
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
 
-    /** Loads SQL queries, creates the schema if absent, and bootstraps static game data. */
+    /**
+     * Loads SQL queries, creates the schema if absent, and bootstraps static game data.
+     */
     public QueryLoader() {
         this.loadSQLQueries();
     }
@@ -42,7 +44,7 @@ public class QueryLoader {
      * ({@code -- Query ...} / {@code -- QueryName} / SQL body).
      */
     private void loadQueriesFromFile(String filePath) {
-        try (InputStream is = getClass().getResourceAsStream(filePath)) {
+        try (InputStream is = QueryLoader.class.getResourceAsStream(filePath)) {
             if (is == null) {
                 throw new IllegalArgumentException("SQL file not found: " + filePath);
             }
@@ -77,7 +79,7 @@ public class QueryLoader {
     private List<String> getSqlFiles() {
         List<String> result = new ArrayList<>();
         try {
-            URL url = getClass().getResource("/sql/");
+            URL url = QueryLoader.class.getResource("/sql/");
             if (url == null) {
                 throw new IllegalStateException("SQL directory not found");
             }
@@ -96,7 +98,9 @@ public class QueryLoader {
         return result;
     }
 
-    /** Handles both regular filesystem and JAR filesystem for resource loading. */
+    /**
+     * Handles both regular filesystem and JAR filesystem for resource loading.
+     */
     private FileSystem getOrCreateFileSystem(URI uri) throws IOException {
         try {
             return FileSystems.getFileSystem(uri);
