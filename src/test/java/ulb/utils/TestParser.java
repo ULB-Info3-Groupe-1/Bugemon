@@ -83,9 +83,9 @@ public class TestParser {
 
     @Test
     public void testParseWithInputStreams() {
-        InputStream attacksStream = getClass().getResourceAsStream("/json/attaques.json");
-        InputStream bugemonsStream = getClass().getResourceAsStream("/json/bugemons.json");
-        InputStream itemsStream = getClass().getResourceAsStream("/json/objets.json");
+        InputStream attacksStream = TestParser.class.getResourceAsStream("/json/attaques.json");
+        InputStream bugemonsStream = TestParser.class.getResourceAsStream("/json/bugemons.json");
+        InputStream itemsStream = TestParser.class.getResourceAsStream("/json/objets.json");
 
         assertNotNull(attacksStream);
         assertNotNull(bugemonsStream);
@@ -112,7 +112,7 @@ public class TestParser {
 
     @Test
     public void testParseItems() {
-        InputStream itemsStream = getClass().getResourceAsStream("/json/objets.json");
+        InputStream itemsStream = TestParser.class.getResourceAsStream("/json/objets.json");
 
         assertNotNull(itemsStream);
 

@@ -67,7 +67,7 @@ public class TestBugemon {
     public void testCorrectPathSprite() {
         Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
         String path = bugemon.getSpriteURL();
-        URL resource = getClass().getResource(path);
+        URL resource = TestBugemon.class.getResource(path);
         assertNotNull(resource);
     }
 

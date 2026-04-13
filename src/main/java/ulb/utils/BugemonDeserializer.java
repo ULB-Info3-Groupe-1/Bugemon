@@ -42,7 +42,7 @@ public class BugemonDeserializer implements JsonDeserializer<CreateBugemonDTO> {
         boolean starter = obj.get("starter").getAsBoolean();
 
         String resourcePath = "/png/" + sprite;
-        URL spriteUrl = getClass().getResource(resourcePath);
+        URL spriteUrl = BugemonDeserializer.class.getResource(resourcePath);
 
         if (spriteUrl == null) {
             throw new JsonParseException("The sprite file could not be found at : " + resourcePath);
