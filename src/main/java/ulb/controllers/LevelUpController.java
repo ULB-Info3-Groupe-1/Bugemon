@@ -1,7 +1,5 @@
 package ulb.controllers;
 
-import javafx.stage.Stage;
-
 import ulb.models.level_up.LevelUp;
 import ulb.models.level_up.Upgrade;
 import ulb.services.BugemonService;
@@ -46,8 +44,8 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
     }
 
     @Override
-    protected void show(Stage stage) {
+    protected void show() {
         this.updateDisplayedLevelUp();
-        super.show(stage);
+        super.show();
     }
 }
