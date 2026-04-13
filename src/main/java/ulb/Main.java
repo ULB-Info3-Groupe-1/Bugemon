@@ -16,6 +16,7 @@ import ulb.repositories.PlayerRepository;
 import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.PlayerService;
 
 /** JavaFX entry point — bootstraps the Bugemon game. */
@@ -50,7 +51,8 @@ public class Main extends Application {
 
         PlayerService playerService = new PlayerService(playerRepository, "default_player");
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerService);
-        MetaController controller = new MetaController(stage, bugemonService, playerService);
+        CombatService combatService = new CombatService(bugemonService);
+        MetaController controller = new MetaController(stage, bugemonService, playerService, combatService);
         controller.switchTo(Window.MAIN_MENU);
     }
 }

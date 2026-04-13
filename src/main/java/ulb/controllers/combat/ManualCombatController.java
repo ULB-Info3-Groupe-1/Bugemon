@@ -7,12 +7,11 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
-import ulb.models.combat.Combat.EndOfCombatAction;
-import ulb.models.combat.CombatXpDistributor;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
@@ -31,8 +30,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      *
      */
     public ManualCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService) {
-        super(metaController, playerService, bugemonService, ViewLoader.load(ManualCombatView::new));
+            BugemonService bugemonService, CombatService combatService) {
+        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
         this.view.setListener(this);
     }
 
@@ -47,11 +46,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
 
-        EndOfCombatAction endOfCombatCb = shouldRestoreHp ? EndOfCombatAction.RESTORE_HP : EndOfCombatAction.NO_OP;
-
-        // TODO: move the CombatXpDistributor creation
-        CombatXpDistributor combatxpDistributor = new CombatXpDistributor(this.bugemonService);
-        this.combat = new Combat(combatxpDistributor, this.playerTrainer, opponentTrainer, endOfCombatCb);
+        this.combat = this.combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
         this.pendingSteps = Collections.emptyIterator();

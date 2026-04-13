@@ -35,17 +35,19 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected final CombatAnimationController animationController;
     protected final PlayerService playerService;
     protected final BugemonService bugemonService;
+    protected final CombatService combatService;
 
     protected Combat combat;
     protected Trainer playerTrainer;
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
 
     protected CombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService, V view) {
+            BugemonService bugemonService, CombatService combatService, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
         this.playerService = playerService;
         this.bugemonService = bugemonService;
+        this.combatService = combatService;
 
         this.view.setNextListener(this);
     }
