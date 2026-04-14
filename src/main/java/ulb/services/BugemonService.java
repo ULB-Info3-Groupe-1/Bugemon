@@ -25,24 +25,17 @@ public class BugemonService {
     private Queue<LevelUp> levelUps = new ArrayDeque<>();
 
     // Cache for all default Bugemons to avoid multiple database calls
-    private List<Bugemon> allDefaultBugemonsCache;
+    private final List<Bugemon> allDefaultBugemonsCache;
 
     public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
             PlayerService playerService) {
         this.staticDataRepository = staticDataRepository;
         this.playerRepository = playerRepository;
         this.playerService = playerService;
+        this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
     }
 
-    /**
-     * Get all default Bugemons from the database. Cached after the first call.
-     *
-     * @return (List<Bugemon>) List of default Bugemons
-     */
     public List<Bugemon> getAllDefaultBugemons() {
-        if (this.allDefaultBugemonsCache == null) {
-            this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
-        }
         return this.allDefaultBugemonsCache;
     }
 
@@ -57,11 +50,11 @@ public class BugemonService {
     public void saveBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
         this.staticDataRepository.saveBugemon(bugemon);
-        this.getAllDefaultBugemons().add(BugemonFactory.createBugemon(bugemon));
+        this.allDefaultBugemonsCache.add(BugemonFactory.createBugemon(bugemon));
     }
 
     public Bugemon getBugemonByName(String name) {
-        return this.getAllDefaultBugemons().stream().filter(b -> b.getName().equals(name)).findFirst().orElse(null);
+        return this.allDefaultBugemonsCache.stream().filter(b -> b.getName().equals(name)).findFirst().orElse(null);
     }
 
     /**
