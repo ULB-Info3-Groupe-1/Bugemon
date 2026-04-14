@@ -1,49 +1,36 @@
 package ulb.repositories;
 
-import java.io.IOException;
+import java.io.File;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 
 public class DatabaseConnection {
-    private static final String DB_URL;
-    private static final String DB_USER;
-    private static final String DB_PASSWORD;
+    private static final Dotenv DOTENV = loadDotenv();
 
-    static {
-        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        String envUrl = dotenv.get("DB_URL");
-
-        if (envUrl != null) {
-            DB_URL = envUrl;
-            DB_USER = dotenv.get("DB_USER");
-            DB_PASSWORD = dotenv.get("DB_PASSWORD");
-        } else {
-            String[] credentials = startEmbeddedPostgres();
-            DB_URL = credentials[0];
-            DB_USER = credentials[1];
-            DB_PASSWORD = credentials[2];
+    private static Dotenv loadDotenv() {
+        // 1. Current working directory (where the user runs "java -jar")
+        if (new File(System.getProperty("user.dir"), ".env").exists()) {
+            return Dotenv.configure().directory(System.getProperty("user.dir")).load();
         }
-    }
 
-    private static String[] startEmbeddedPostgres() {
+        // 2. Directory containing the JAR file
         try {
-            EmbeddedPostgres pg = EmbeddedPostgres.start();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    pg.close();
-                } catch (IOException e) {
-                    // ignore on shutdown
-                }
-            }));
-            return new String[]{pg.getJdbcUrl("postgres", "postgres"), "postgres", ""};
-        } catch (IOException e) {
-            throw new ExceptionInInitializerError(e);
+            URI location = DatabaseConnection.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+            File source = new File(location);
+            if (source.isFile() && new File(source.getParent(), ".env").exists()) {
+                return Dotenv.configure().directory(source.getParent()).load();
+            }
+        } catch (Exception e) {
+            // ignore, fall through
         }
+
+        // 3. System environment variables only (no .env file)
+        return Dotenv.configure().ignoreIfMissing().load();
     }
 
     private Connection connection;
@@ -53,9 +40,13 @@ public class DatabaseConnection {
     }
 
     private void getConnection() {
+        String url = DOTENV.get("DB_URL");
+        String user = DOTENV.get("DB_USER");
+        String password = DOTENV.get("DB_PASSWORD");
+
         try {
             if (this.connection == null || this.connection.isClosed()) {
-                this.connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                this.connection = DriverManager.getConnection(url, user, password);
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Failed to reconnect to database", e);
