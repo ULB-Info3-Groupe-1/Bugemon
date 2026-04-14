@@ -57,7 +57,7 @@ public class BugemonService {
     public void saveBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
         this.staticDataRepository.saveBugemon(bugemon);
-        this.allDefaultBugemonsCache.add(BugemonFactory.createBugemon(bugemon));
+        this.getAllDefaultBugemons().add(BugemonFactory.createBugemon(bugemon));
     }
 
     public Bugemon getBugemonByName(String name) {
