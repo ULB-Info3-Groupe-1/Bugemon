@@ -32,6 +32,7 @@ public class QueryLoader {
 
     /**
      * Returns a Map of SQL queries that have been loaded from the SQL files and cannot be modified.
+     *
      * @return the Map of SQL queries
      */
     public static synchronized Map<String, String> getQueries() {
@@ -65,7 +66,7 @@ public class QueryLoader {
     }
 
     private static void saveQueriesFromFile(InputStream is, String filePath) {
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line;
             String currentQueryName = null;
             StringBuilder currentSql = new StringBuilder();
