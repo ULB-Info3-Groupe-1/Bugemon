@@ -12,7 +12,6 @@ import ulb.models.player.exceptions.NoActiveTeamException;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamMemberDTO;
-import ulb.repositories.exceptions.PlayernameIsEmptyException;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
@@ -23,13 +22,9 @@ public class PlayerService {
     private final Player player;
     private final PlayerRepository playerRepository;
 
-    public PlayerService(PlayerRepository playerRepository, String playername) throws PlayernameIsEmptyException {
+    public PlayerService(PlayerRepository playerRepository, Player player) {
         this.playerRepository = playerRepository;
-
-        int playerId = this.playerRepository.getPlayerIdOrCreatePlayer(playername);
-        // TODO: probably connect to db the inventory
-        this.player = new Player(this.playerRepository.getPlayerIdOrCreatePlayer(playername),
-                this.playerRepository.loadTeams(playerId), InventoryService.addStarterItems(new Inventory()));
+        this.player = player;
     }
 
     // --- Getters ---
@@ -113,7 +108,7 @@ public class PlayerService {
                 b.getName(), team.getSlotPosition(b))));
         this.persistActiveTeamMembers(team);
         this.playerRepository.modifyTeam(this.player.getId(), this.player.getActiveTeamName(), members);
-        this.updatePlayerCacheWithActiveTeam();
+        this.player.updateCacheWithActiveTeam();
     }
 
     /**
@@ -172,15 +167,6 @@ public class PlayerService {
         this.playerRepository.deleteTeam(this.player.getId(), this.player.getActiveTeamName());
         this.player.deleteActiveTeamFromCache();
         this.player.clearActiveTeam();
-    }
-
-    /**
-     * Updates the player cache with the active team when the active team has changed so it's different from the cache.
-     *
-     * @throws NoActiveTeamException
-     */
-    public void updatePlayerCacheWithActiveTeam() throws NoActiveTeamException {
-        this.player.updateCacheWithActiveTeam();
     }
 
     // --- Private Helpers ---

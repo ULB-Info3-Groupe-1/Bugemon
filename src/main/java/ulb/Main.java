@@ -11,12 +11,14 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
+import ulb.models.bugemon.Inventory;
+import ulb.models.player.Player;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.PlayerRepository;
-import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
+import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 
 /** JavaFX entry point — bootstraps the Bugemon game. */
@@ -43,14 +45,18 @@ public class Main extends Application {
         scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
         stage.setScene(scene);
 
-        QueryLoader loader = new QueryLoader();
         DatabaseConnection dbConnection = new DatabaseConnection();
-        StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, staticDataRepository,
-                loader.getQueries());
+        StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection);
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, staticDataRepository);
 
-        PlayerService playerService = new PlayerService(playerRepository, "default_player");
-        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerService);
+        String playername = "default_player";
+        int playerId = playerRepository.getPlayerIdOrCreatePlayer(playername);
+        // TODO: probably connect to db the inventory
+        Player player = new Player(playerId, playerRepository.loadTeams(playerId),
+                InventoryService.addStarterItems(new Inventory()));
+
+        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, player);
+        PlayerService playerService = new PlayerService(playerRepository, player);
         CombatService combatService = new CombatService(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, playerService, combatService);
         controller.switchTo(Window.MAIN_MENU);

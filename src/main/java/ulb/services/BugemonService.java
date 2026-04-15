@@ -10,6 +10,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.models.level_up.LevelUp;
+import ulb.models.player.Player;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -20,18 +21,17 @@ public class BugemonService {
 
     private final StaticDataRepository staticDataRepository;
     private final PlayerRepository playerRepository;
-    private final PlayerService playerService;
+    private final Player player;
 
     private Queue<LevelUp> levelUps = new ArrayDeque<>();
 
     // Cache for all default Bugemons to avoid multiple database calls
     private List<Bugemon> allDefaultBugemonsCache;
 
-    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
-            PlayerService playerService) {
+    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository, Player player) {
         this.staticDataRepository = staticDataRepository;
         this.playerRepository = playerRepository;
-        this.playerService = playerService;
+        this.player = player;
     }
 
     /**
@@ -82,11 +82,11 @@ public class BugemonService {
      *            the bugemon to save
      */
     public void saveBugemonState(Bugemon bugemon) {
-        this.playerRepository.updatePlayerBugemon(new PlayerBugemonDTO(this.playerService.getPlayerId(),
-                bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(),
-                bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+        this.playerRepository.updatePlayerBugemon(
+                new PlayerBugemonDTO(this.player.getId(), bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
+                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
 
-        this.playerService.updatePlayerCacheWithActiveTeam();
+        this.player.updateCacheWithActiveTeam();
     }
 
     public int numPendingLevelUps() {

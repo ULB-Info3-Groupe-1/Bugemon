@@ -26,9 +26,8 @@ public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
     private final StaticDataRepository staticDataRepository;
 
-    public PlayerRepository(DatabaseConnection dbConnection, StaticDataRepository staticDataRepository,
-            Map<String, String> queries) {
-        super(dbConnection, queries);
+    public PlayerRepository(DatabaseConnection dbConnection, StaticDataRepository staticDataRepository) {
+        super(dbConnection);
         this.staticDataRepository = staticDataRepository;
     }
 

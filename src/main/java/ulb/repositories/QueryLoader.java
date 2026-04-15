@@ -23,19 +23,29 @@ import java.util.stream.Stream;
 public class QueryLoader {
 
     // Queries Map (Request Name -> SQL Code)
-    private final Map<String, String> queries = new HashMap<>();
+    private static final Map<String, String> QUERIES = new HashMap<>();
+    private static boolean isLoaded = false;
 
-    /**
-     * Loads SQL queries, creates the schema if absent, and bootstraps static game data.
-     */
-    public QueryLoader() {
-        this.loadSQLQueries();
+    private QueryLoader() {
+        // private constructor to prevent instantiation
     }
 
-    private void loadSQLQueries() {
-        List<String> sqlFiles = this.getSqlFiles();
+    /**
+     * Returns a Map of SQL queries that have been loaded from the SQL files and cannot be modified.
+     * @return the Map of SQL queries
+     */
+    public static synchronized Map<String, String> getQueries() {
+        if (!isLoaded) {
+            loadSQLQueries();
+            isLoaded = true;
+        }
+        return Collections.unmodifiableMap(QUERIES);
+    }
+
+    private static void loadSQLQueries() {
+        List<String> sqlFiles = getSqlFiles();
         for (String file : sqlFiles) {
-            this.loadQueriesFromFile(file);
+            loadQueriesFromFile(file);
         }
     }
 
@@ -43,12 +53,19 @@ public class QueryLoader {
      * Parses a SQL file and populates {@code queries}. See {@code team/rules.md} for the required file format
      * ({@code -- Query ...} / {@code -- QueryName} / SQL body).
      */
-    private void loadQueriesFromFile(String filePath) {
+    private static void loadQueriesFromFile(String filePath) {
         try (InputStream is = QueryLoader.class.getResourceAsStream(filePath)) {
             if (is == null) {
                 throw new IllegalArgumentException("SQL file not found: " + filePath);
             }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            saveQueriesFromFile(is, filePath);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error loading queries from " + filePath, e);
+        }
+    }
+
+    private static void saveQueriesFromFile(InputStream is, String filePath) {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line;
             String currentQueryName = null;
             StringBuilder currentSql = new StringBuilder();
@@ -56,10 +73,7 @@ public class QueryLoader {
             // see rules.md for the format of the SQL files
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("-- Query")) {
-                    if (currentQueryName != null && !currentSql.isEmpty()) {
-                        this.queries.put(currentQueryName, currentSql.toString().trim());
-                        currentSql.setLength(0); // We reset the StringBuilder for the next query
-                    }
+                    saveCurrentQuery(currentQueryName, currentSql);
                     currentQueryName = null;
                 } else if (currentQueryName == null && line.startsWith("-- ")) {
                     currentQueryName = line.substring(3).trim();
@@ -67,16 +81,23 @@ public class QueryLoader {
                     currentSql.append(line).append("\n");
                 }
             }
-            // Don't forget to save the last query after the loop
-            if (currentQueryName != null && !currentSql.isEmpty()) {
-                this.queries.put(currentQueryName, currentSql.toString().trim());
-            }
-        } catch (Exception e) {
+            saveCurrentQuery(currentQueryName, currentSql);
+        } catch (IOException e) {
             throw new IllegalStateException("Error loading queries from " + filePath, e);
         }
     }
 
-    private List<String> getSqlFiles() {
+    private static void saveCurrentQuery(String name, StringBuilder sql) {
+        if (name != null && !sql.isEmpty()) {
+            if (QUERIES.containsKey(name)) {
+                throw new IllegalStateException("Duplicate query name: " + name);
+            }
+            QUERIES.put(name, sql.toString().trim());
+            sql.setLength(0);
+        }
+    }
+
+    private static List<String> getSqlFiles() {
         List<String> result = new ArrayList<>();
         try {
             URL url = QueryLoader.class.getResource("/sql/");
@@ -85,11 +106,11 @@ public class QueryLoader {
             }
             URI uri = url.toURI();
             if ("jar".equals(uri.getScheme())) {
-                try (FileSystem fs = this.getOrCreateFileSystem(uri)) {
-                    this.walkAndAddFiles(fs.getPath("/sql"), result);
+                try (FileSystem fs = getOrCreateFileSystem(uri)) {
+                    walkAndAddFiles(fs.getPath("/sql"), result);
                 }
             } else {
-                this.walkAndAddFiles(Paths.get(uri), result);
+                walkAndAddFiles(Paths.get(uri), result);
             }
 
         } catch (Exception e) {
@@ -101,7 +122,7 @@ public class QueryLoader {
     /**
      * Handles both regular filesystem and JAR filesystem for resource loading.
      */
-    private FileSystem getOrCreateFileSystem(URI uri) throws IOException {
+    private static FileSystem getOrCreateFileSystem(URI uri) throws IOException {
         try {
             return FileSystems.getFileSystem(uri);
         } catch (FileSystemNotFoundException e) {
@@ -109,28 +130,10 @@ public class QueryLoader {
         }
     }
 
-    private void walkAndAddFiles(Path path, List<String> result) throws IOException {
+    private static void walkAndAddFiles(Path path, List<String> result) throws IOException {
         try (Stream<Path> walk = Files.walk(path, 1)) {
             walk.filter(p -> p.toString().endsWith(".sql"))
                     .forEach(p -> result.add("/sql/" + p.getFileName().toString()));
         }
-    }
-
-    /**
-     * Returns the SQL string for the given query name.
-     *
-     * @throws IllegalArgumentException
-     *             if the query name is not found
-     */
-    public String getSql(String queryName) {
-        String sql = this.queries.get(queryName);
-        if (sql == null) {
-            throw new IllegalArgumentException("SQL query not found in Map : " + queryName);
-        }
-        return sql;
-    }
-
-    public Map<String, String> getQueries() {
-        return this.queries;
     }
 }

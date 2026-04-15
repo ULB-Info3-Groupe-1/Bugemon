@@ -12,9 +12,9 @@ public abstract class AbstractRepository {
     private final Map<String, String> queries;
     protected final DatabaseConnection dbConnection;
 
-    protected AbstractRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
+    protected AbstractRepository(DatabaseConnection dbConnection) {
         this.dbConnection = dbConnection;
-        this.queries = queries;
+        this.queries = QueryLoader.getQueries();
     }
 
     /**
