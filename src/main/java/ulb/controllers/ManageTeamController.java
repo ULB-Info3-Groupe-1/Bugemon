@@ -3,13 +3,13 @@ package ulb.controllers;
 import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.player.exceptions.NoActiveTeamException;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 

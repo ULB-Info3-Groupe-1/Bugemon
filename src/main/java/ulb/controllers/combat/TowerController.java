@@ -10,6 +10,7 @@ import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
 import ulb.models.combat.Combat;
+import ulb.models.player.exceptions.NoActiveTeamException;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.Tower;
@@ -21,7 +22,6 @@ import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.PlayerService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
 

@@ -3,7 +3,6 @@ package ulb.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,9 +18,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.player.exceptions.NoActiveTeamException;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.exceptions.TeamNotFoundException;
-import ulb.services.exceptions.NoActiveTeamException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestPlayerService {
@@ -146,14 +145,21 @@ public class TestPlayerService {
     }
 
     @Test
-    public void shouldUpdateEveryBugemonInDb_whenSavingState() throws Exception {
+    public void shouldUpdateTeamsNames() throws Exception {
         Bugemon b1 = new BugemonBuilder().name("P1").build();
-        Bugemon b2 = new BugemonBuilder().name("P2").build();
         this.playerService.addOrRemoveBugemonOfActiveTeam(b1);
-        this.playerService.addOrRemoveBugemonOfActiveTeam(b2);
+        this.playerService.saveTeam("team1");
 
-        this.playerService.saveBugemonStateOfActiveTeam();
+        assertEquals("team1", this.playerService.getTeamNames().get(0));
 
-        verify(this.playerRepository, times(2)).updatePlayerBugemon(org.mockito.ArgumentMatchers.any());
+        this.playerService.saveTeam("team2");
+
+        assertEquals(2, this.playerService.getTeamNames().size());
+        assertEquals("team2", this.playerService.getTeamNames().get(1));
+
+        this.playerService.deleteActiveTeam();
+
+        assertEquals(1, this.playerService.getTeamNames().size());
+        assertEquals("team1", this.playerService.getTeamNames().get(0));
     }
 }

@@ -1,4 +1,4 @@
-package ulb.services.exceptions;
+package ulb.models.player.exceptions;
 
 /**
  * Thrown when the player does not have an active team.
