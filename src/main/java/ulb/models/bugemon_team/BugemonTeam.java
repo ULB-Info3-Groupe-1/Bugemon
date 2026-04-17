@@ -160,6 +160,10 @@ public class BugemonTeam implements Iterable<Bugemon> {
         this.team.forEach(Bugemon::restoreHp);
     }
 
+    public void updateBugemon(Bugemon bugemon) {
+        this.team.replaceAll(obj -> obj.equals(bugemon) ? bugemon : obj);
+    }
+
     /**
      * @throws BugemonNotInTeamException
      *             if the Bugemon is not in the team

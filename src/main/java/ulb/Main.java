@@ -11,7 +11,6 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
 import ulb.controllers.MetaController.Window;
-import ulb.models.bugemon.Inventory;
 import ulb.models.player.Player;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.PlayerRepository;
@@ -52,13 +51,14 @@ public class Main extends Application {
         String playername = "default_player";
         int playerId = playerRepository.getPlayerIdOrCreatePlayer(playername);
         // TODO: probably connect to db the inventory
-        Player player = new Player(playerId, playerRepository.loadTeams(playerId),
-                InventoryService.addStarterItems(new Inventory()));
+        Player player = new Player(playerId);
 
+        InventoryService inventoryService = new InventoryService();
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, player);
         PlayerService playerService = new PlayerService(playerRepository, player);
         CombatService combatService = new CombatService(bugemonService);
-        MetaController controller = new MetaController(stage, bugemonService, playerService, combatService);
+        MetaController controller = new MetaController(stage, inventoryService, bugemonService, playerService,
+                combatService);
         controller.switchTo(Window.MAIN_MENU);
     }
 }

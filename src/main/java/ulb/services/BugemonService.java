@@ -86,7 +86,7 @@ public class BugemonService {
                 new PlayerBugemonDTO(this.player.getId(), bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
 
-        this.player.updateCacheWithActiveTeam();
+        this.player.updateBugemonOfActiveTeam(bugemon);
     }
 
     public int numPendingLevelUps() {

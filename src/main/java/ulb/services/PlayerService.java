@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.player.Player;
 import ulb.models.player.exceptions.NoActiveTeamException;
@@ -21,10 +20,12 @@ public class PlayerService {
 
     private final Player player;
     private final PlayerRepository playerRepository;
+    private final List<BugemonTeam> teams;
 
     public PlayerService(PlayerRepository playerRepository, Player player) {
         this.playerRepository = playerRepository;
         this.player = player;
+        this.teams = new ArrayList<>(playerRepository.loadTeams(this.player.getId()));
     }
 
     // --- Getters ---
@@ -33,12 +34,8 @@ public class PlayerService {
         return this.player.getActiveTeam();
     }
 
-    public Inventory getInventory() {
-        return this.player.getInventory();
-    }
-
     public List<String> getTeamNames() {
-        return this.player.getTeams().stream().map(BugemonTeam::getName).toList();
+        return this.teams.stream().map(BugemonTeam::getName).toList();
     }
 
     public int getPlayerId() {
@@ -56,9 +53,9 @@ public class PlayerService {
      *             if the team does not exist
      */
     public void setActiveTeam(String teamName) throws TeamNotFoundException {
-        BugemonTeam team = this.player.getTeams().stream().filter(t -> t.getName().equals(teamName)).findFirst()
+        BugemonTeam team = this.teams.stream().filter(t -> t.getName().equals(teamName)).findFirst()
                 .orElseThrow(() -> new TeamNotFoundException("Team not found: " + teamName));
-        this.player.setActiveTeam(team);
+        this.player.setActiveTeam(new BugemonTeam(team));
     }
 
     /**
@@ -88,7 +85,7 @@ public class PlayerService {
         this.playerRepository.createTeam(this.player.getId(), teamName);
         this.persistActiveTeamMembers(this.player.getActiveTeam().orElseThrow(() -> new NoActiveTeamException(
                 "The player team to save doesn't exist. The active team should exist now ")));
-        this.player.addActiveTeamToCache();
+        this.teams.add(new BugemonTeam(this.player.getActiveTeam().orElseThrow(this.player.noActiveTeamException())));
     }
 
     /**
@@ -108,7 +105,8 @@ public class PlayerService {
                 b.getName(), team.getSlotPosition(b))));
         this.persistActiveTeamMembers(team);
         this.playerRepository.modifyTeam(this.player.getId(), this.player.getActiveTeamName(), members);
-        this.player.updateCacheWithActiveTeam();
+        this.teams.remove(this.player.getActiveTeam().orElseThrow(this.player.noActiveTeamException()));
+        this.teams.add(new BugemonTeam(this.player.getActiveTeam().orElseThrow(this.player.noActiveTeamException())));
     }
 
     /**
@@ -128,7 +126,7 @@ public class PlayerService {
     public void renameTeam(String oldName, String newName) throws TeamNotFoundException, TeamNameAlreadyExistsException,
             NoActiveTeamException, TeamNameEmptyException {
         this.playerRepository.renameTeam(this.player.getId(), oldName, newName);
-        this.player.renameTeamInCache(oldName, newName);
+        this.teams.stream().filter(t -> t.getName().equals(oldName)).findFirst().ifPresent(t -> t.setName(newName));
         this.player.setActiveTeamName(newName);
     }
 
@@ -141,11 +139,7 @@ public class PlayerService {
     }
 
     public boolean isActiveTeamSaved() {
-        return this.player.isActiveTeamSaved();
-    }
-
-    public void restoreHpActiveTeam() throws NoActiveTeamException {
-        this.player.restoreHp();
+        return this.player.getActiveTeam().map(this.teams::contains).orElse(false);
     }
 
     public void addOrRemoveBugemonOfActiveTeam(Bugemon bugemon) {
@@ -165,7 +159,7 @@ public class PlayerService {
      */
     public void deleteActiveTeam() throws NoActiveTeamException, TeamNotFoundException, TeamNameEmptyException {
         this.playerRepository.deleteTeam(this.player.getId(), this.player.getActiveTeamName());
-        this.player.deleteActiveTeamFromCache();
+        this.teams.remove(this.player.getActiveTeam().orElseThrow(this.player.noActiveTeamException()));
         this.player.clearActiveTeam();
     }
 

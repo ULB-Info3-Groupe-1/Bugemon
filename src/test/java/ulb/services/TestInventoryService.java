@@ -16,7 +16,6 @@ import ulb.models.bugemon.effect.EffectTarget;
 
 public class TestInventoryService {
     private Inventory expectedInventory;
-    private Inventory inventory;
     private Item baieRevigorante;
     private Item baieTonique;
     private Item gelDefensif;
@@ -25,7 +24,6 @@ public class TestInventoryService {
     @Before
     public void setUp() {
         this.expectedInventory = new Inventory();
-        this.inventory = new Inventory();
 
         this.baieRevigorante = new Item("baie_revigorante", "Baie Revigorante", "Restaure 20 PV au Bugémon actif.",
                 Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
@@ -46,12 +44,13 @@ public class TestInventoryService {
 
     @Test
     public void testAddStarterItem() {
-        InventoryService.addStarterItems(this.inventory);
-        assertEquals(this.expectedInventory.getMap(), this.inventory.getMap());
+        InventoryService inventoryService = new InventoryService();
+        assertEquals(this.expectedInventory.getMap(), inventoryService.getInventory().getMap());
 
         for (Item item : this.expectedInventory.getMap().keySet()) {
-            assertTrue(this.inventory.hasItem(item));
-            assertEquals((int) this.expectedInventory.getMap().get(item), (int) this.inventory.getMap().get(item));
+            assertTrue(inventoryService.getInventory().hasItem(item));
+            assertEquals((int) this.expectedInventory.getMap().get(item),
+                    (int) inventoryService.getInventory().getMap().get(item));
         }
     }
 }

@@ -12,6 +12,7 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
+import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
@@ -23,6 +24,7 @@ import ulb.views.combat.ManualCombatView;
  * of view layout.
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
+    private final InventoryService inventoryService;
     private ManualTrainer manualPlayerTrainer;
 
     /**
@@ -30,8 +32,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      *
      */
     public ManualCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService, CombatService combatService) {
+            BugemonService bugemonService, InventoryService inventoryService, CombatService combatService) {
         super(metaController, playerService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+        this.inventoryService = inventoryService;
         this.view.setListener(this);
     }
 
@@ -41,7 +44,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.manualPlayerTrainer = new ManualTrainer(
                 this.playerService.getActiveTeam().orElseThrow(
                         () -> new IllegalStateException("No active team for player when starting Manual combat")),
-                this.playerService.getInventory());
+                this.inventoryService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
