@@ -191,7 +191,6 @@ public class MetaController {
         if (transition == null) {
             throw new IllegalArgumentException("Unknown window: " + window);
         }
-        this.musicPlayer.stopMusic();
         transition.run();
     }
 
