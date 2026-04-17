@@ -11,8 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manages music playback; holds a list of registered tracks and plays them via
- * JavaFX {@link MediaPlayer}.
+ * Manages music playback; holds a list of registered tracks and plays them via JavaFX {@link MediaPlayer}.
  */
 public class MusicPlayer {
     private static final Logger LOG = LoggerFactory.getLogger(MusicPlayer.class);
@@ -41,7 +40,7 @@ public class MusicPlayer {
      * Plays the given music. If the given music is already playing, does nothing.
      *
      * @param music
-     *              the music
+     *            the music
      */
     private void playMusic(Music music) {
         if (this.currentMusic.isPresent() && this.currentMusic.get().ambiance() == music.ambiance()
@@ -72,7 +71,7 @@ public class MusicPlayer {
      * Plays the given music as a sound effect.
      *
      * @param music
-     *              the music to play as a sound effect
+     *            the music to play as a sound effect
      */
     public void playSoundEffect(Music music) {
         Optional<MediaPlayer> soundEffectPlayer = Optional.empty();
@@ -92,7 +91,7 @@ public class MusicPlayer {
      * Plays a random music track according to the given ambiance.
      *
      * @param ambiance
-     *                 the ambiance of the music track to play.
+     *            the ambiance of the music track to play.
      */
     public void playAmbiance(Ambiance ambiance, boolean isSoundEffect) {
         List<Music> matchingMusics = this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
@@ -112,8 +111,7 @@ public class MusicPlayer {
     }
 
     /**
-     * Stops the currently playing music track if there is one by calling the stop
-     * method on the MediaPlayer instance.
+     * Stops the currently playing music track if there is one by calling the stop method on the MediaPlayer instance.
      */
     public void stopMusic() {
         this.mediaPlayer.ifPresent(MediaPlayer::stop);
