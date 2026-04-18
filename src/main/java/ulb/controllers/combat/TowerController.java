@@ -34,7 +34,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private final BugemonService bugemonService;
     private final InventoryService inventoryService;
 
-    public TowerController(MetaController metaController, TeamService playerService, BugemonService bugemonService, InventoryService inventoryService) {
+    public TowerController(MetaController metaController, TeamService playerService, BugemonService bugemonService,
+            InventoryService inventoryService) {
         super(metaController, ViewLoader.load(FloorView::new));
         this.playerService = playerService;
         this.bugemonService = bugemonService;
@@ -131,8 +132,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
         if (this.tower.isEmpty()) {
             LOG.info("Starting new tower run");
-            this.tower = Optional
-                    .of(new Tower(this.playerService.getActiveTeam().get(), this.inventoryService.getInventory(), this.bugemonService));
+            this.tower = Optional.of(new Tower(this.playerService.getActiveTeam().get(),
+                    this.inventoryService.getInventory(), this.bugemonService));
 
         }
 

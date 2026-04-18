@@ -73,8 +73,7 @@ public class MetaController {
      *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService playerService,
-            InventoryService inventoryService,
-            CombatService combatService) throws IOException {
+            InventoryService inventoryService, CombatService combatService) throws IOException {
         this.bugemonService = bugemonService;
 
         this.stage = primaryStage;
@@ -85,7 +84,8 @@ public class MetaController {
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, playerService,
                 bugemonService);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
-        this.manualCombatController = new ManualCombatController(this, playerService, bugemonService, inventoryService, combatService);
+        this.manualCombatController = new ManualCombatController(this, playerService, bugemonService, inventoryService,
+                combatService);
         this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService,
                 combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
