@@ -86,8 +86,6 @@ public class MusicLoader {
     public void loadAllResources(MusicPlayer musicPlayer) throws IOException {
         this.loadFromDirectory(Configuration.Music.MUSIC_PATH_COMBAT, Ambiance.COMBAT).forEach(musicPlayer::addMusic);
         this.loadFromDirectory(Configuration.Music.MUSIC_PATH_MENU, Ambiance.MENU).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_CREATE_TEAM, Ambiance.CREATE_TEAM)
-                .forEach(musicPlayer::addMusic);
         this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_VICTORY, Ambiance.VICTORY)
                 .forEach(musicPlayer::addMusic);
         this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_DEFEAT, Ambiance.DEFEAT)

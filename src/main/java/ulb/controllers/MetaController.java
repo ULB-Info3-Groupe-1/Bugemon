@@ -140,11 +140,11 @@ public class MetaController {
             this.mainMenuController.show();
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
-            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
             this.createTeamController.show();
         });
         this.transitions.put(Window.EDIT_TEAM, () -> {
-            this.musicPlayer.playAmbiance(Ambiance.CREATE_TEAM, false);
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
             this.editTeamController.show();
         });
         this.transitions.put(Window.CREATE_BUGEMON, () -> {
