@@ -130,7 +130,7 @@ public class MetaController {
         this.switchTo(Window.MAIN_MENU);
     }
 
-    public void onLevelUpfinished() {
+    public void onAllPendingLevelUpsConsumed() {
         if (this.isTowerActive()) {
             this.switchTo(Window.NOTOWER);
         } else {
