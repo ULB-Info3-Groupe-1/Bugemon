@@ -30,12 +30,10 @@ public class TestTeamService {
     private PlayerRepository playerRepository;
 
     private TeamService playerService;
-    private static final String PLAYER_NAME = "Player";
     private static final int PLAYER_ID = 1;
 
     @Before
     public void setUp() throws Exception {
-        when(this.playerRepository.getPlayerIdOrCreatePlayer(PLAYER_NAME)).thenReturn(PLAYER_ID);
         when(this.playerRepository.loadTeams(PLAYER_ID)).thenReturn(new ArrayList<>());
 
         this.playerService = new TeamService(this.playerRepository, PLAYER_ID);
