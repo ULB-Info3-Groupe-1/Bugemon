@@ -7,11 +7,11 @@ import ulb.views.ViewLoader;
 
 /** Controller for the main menu screen. */
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
-    private final TeamService playerService;
+    private final TeamService teamService;
 
-    public MainMenuController(MetaController metaController, TeamService playerService) {
+    public MainMenuController(MetaController metaController, TeamService teamService) {
         super(metaController, ViewLoader.load(MainMenuView::new));
-        this.playerService = playerService;
+        this.teamService = teamService;
         this.view.setListener(this);
     }
 
@@ -59,7 +59,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     private boolean isActiveTeamEmpty() {
-        if (this.playerService.isActiveTeamEmpty()) {
+        if (this.teamService.isActiveTeamEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
             return true;
         }

@@ -31,9 +31,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      * Constructs a {@code ManualCombatController} and wires itself as the view listener.
      *
      */
-    public ManualCombatController(MetaController metaController, TeamService playerService,
-            BugemonService bugemonService, InventoryService inventoryService, CombatService combatService) {
-        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+    public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
+            InventoryService inventoryService, CombatService combatService) {
+        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
         this.inventoryService = inventoryService;
         this.view.setListener(this);
     }
@@ -42,7 +42,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     @Override
     public void startCombat(boolean shouldRestoreHp) {
         this.manualPlayerTrainer = new ManualTrainer(
-                this.playerService.getActiveTeam().orElseThrow(
+                this.teamService.getActiveTeam().orElseThrow(
                         () -> new IllegalStateException("No active team for player when starting Manual combat")),
                 this.inventoryService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;

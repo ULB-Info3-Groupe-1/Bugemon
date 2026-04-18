@@ -33,7 +33,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
     protected final CombatAnimationController animationController;
-    protected final TeamService playerService;
+    protected final TeamService teamService;
     protected final BugemonService bugemonService;
     protected final CombatService combatService;
 
@@ -42,11 +42,11 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
     private Trainer pendingWinner = null;
 
-    protected CombatController(MetaController metaController, TeamService playerService, BugemonService bugemonService,
+    protected CombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
             CombatService combatService, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
-        this.playerService = playerService;
+        this.teamService = teamService;
         this.bugemonService = bugemonService;
         this.combatService = combatService;
 

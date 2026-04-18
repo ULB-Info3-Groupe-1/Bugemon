@@ -72,24 +72,24 @@ public class MetaController {
      * @throws IOException
      *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService playerService,
+    public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
             InventoryService inventoryService, CombatService combatService) throws IOException {
         this.bugemonService = bugemonService;
 
         this.stage = primaryStage;
 
-        this.mainMenuController = new MainMenuController(this, playerService);
+        this.mainMenuController = new MainMenuController(this, teamService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                playerService, bugemonService);
-        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, playerService,
+                teamService, bugemonService);
+        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
                 bugemonService);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
-        this.manualCombatController = new ManualCombatController(this, playerService, bugemonService, inventoryService,
+        this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
                 combatService);
-        this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService,
+        this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
                 combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
-        this.towerController = new TowerController(this, playerService, bugemonService, inventoryService);
+        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();

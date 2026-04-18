@@ -54,10 +54,10 @@ public class Main extends Application {
         int playerId = playerRepository.getPlayerIdOrCreatePlayer(playerName);
 
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerId);
-        TeamService playerService = new TeamService(playerRepository, playerId);
+        TeamService teamService = new TeamService(playerRepository, playerId);
         InventoryService inventoryService = new InventoryService();
         CombatService combatService = new CombatService(bugemonService);
-        MetaController controller = new MetaController(stage, bugemonService, playerService, inventoryService,
+        MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
                 combatService);
         controller.switchTo(Window.MAIN_MENU);
     }

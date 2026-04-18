@@ -23,14 +23,14 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @param metaController
      *            the application-level controller used for navigation.
      */
-    public AutomaticCombatController(MetaController metaController, TeamService playerService,
+    public AutomaticCombatController(MetaController metaController, TeamService teamService,
             BugemonService bugemonService, CombatService combatService) {
-        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
+        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
     }
 
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam().orElseThrow(
+        AutoTrainer autoPlayer = new AutoTrainer(this.teamService.getActiveTeam().orElseThrow(
                 () -> new IllegalStateException("No active team for player when starting Automatic combat")));
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
