@@ -26,14 +26,17 @@ public class InventoryService {
 
     public InventoryService() {
         this.inventory = new Inventory();
-        this.inventory.addItem(BAIE_REVIGORANTE, 3);
-        this.inventory.addItem(BAIE_TONIQUE, 2);
-        this.inventory.addItem(GEL_DEFENSIF, 1);
-        this.inventory.addItem(SERUM_OFFENSIF, 1);
+        this.addStarterItems();
     }
 
     public Inventory getInventory() {
         return this.inventory;
     }
 
+    private void addStarterItems() {
+        this.inventory.addItem(BAIE_REVIGORANTE, 3);
+        this.inventory.addItem(BAIE_TONIQUE, 2);
+        this.inventory.addItem(GEL_DEFENSIF, 1);
+        this.inventory.addItem(SERUM_OFFENSIF, 1);
+    }
 }

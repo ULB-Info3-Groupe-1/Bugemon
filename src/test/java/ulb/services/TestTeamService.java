@@ -24,7 +24,7 @@ import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.exceptions.NoActiveTeamException;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestPlayerService {
+public class TestTeamService {
 
     @Mock
     private PlayerRepository playerRepository;
@@ -38,7 +38,7 @@ public class TestPlayerService {
         when(this.playerRepository.getPlayerIdOrCreatePlayer(PLAYER_NAME)).thenReturn(PLAYER_ID);
         when(this.playerRepository.loadTeams(PLAYER_ID)).thenReturn(new ArrayList<>());
 
-        this.playerService = new TeamService(this.playerRepository, PLAYER_NAME);
+        this.playerService = new TeamService(this.playerRepository, PLAYER_ID);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestPlayerService {
         BugemonTeam team = new BugemonTeam(teamName);
 
         when(this.playerRepository.loadTeams(PLAYER_ID)).thenReturn(List.of(team));
-        this.playerService = new TeamService(this.playerRepository, PLAYER_NAME);
+        this.playerService = new TeamService(this.playerRepository, PLAYER_ID);
 
         this.playerService.setActiveTeam(teamName);
 
@@ -84,7 +84,7 @@ public class TestPlayerService {
         BugemonTeam team = new BugemonTeam();
         team.setName("ToDelete");
         when(this.playerRepository.loadTeams(PLAYER_ID)).thenReturn(new ArrayList<>(List.of(team)));
-        this.playerService = new TeamService(this.playerRepository, PLAYER_NAME);
+        this.playerService = new TeamService(this.playerRepository, PLAYER_ID);
         this.playerService.setActiveTeam("ToDelete");
 
         this.playerService.deleteActiveTeam();
@@ -103,7 +103,7 @@ public class TestPlayerService {
         team.addOrRemoveBugemon(bugemon);
 
         when(this.playerRepository.loadTeams(PLAYER_ID)).thenReturn(List.of(team));
-        this.playerService = new TeamService(this.playerRepository, PLAYER_NAME);
+        this.playerService = new TeamService(this.playerRepository, PLAYER_ID);
         this.playerService.setActiveTeam("TeamA");
 
         assertTrue("L'équipe devrait être considérée comme sauvegardée", this.playerService.isActiveTeamSaved());
@@ -117,7 +117,7 @@ public class TestPlayerService {
         team.setName(oldName);
 
         when(this.playerRepository.loadTeams(PLAYER_ID)).thenReturn(new ArrayList<>(List.of(team)));
-        this.playerService = new TeamService(this.playerRepository, PLAYER_NAME);
+        this.playerService = new TeamService(this.playerRepository, PLAYER_ID);
         this.playerService.setActiveTeam(oldName);
 
         this.playerService.renameTeam(oldName, newName);
@@ -136,7 +136,7 @@ public class TestPlayerService {
         teamInDb.add(b1);
 
         when(this.playerRepository.loadTeams(PLAYER_ID)).thenReturn(List.of(teamInDb));
-        this.playerService = new TeamService(this.playerRepository, PLAYER_NAME);
+        this.playerService = new TeamService(this.playerRepository, PLAYER_ID);
         this.playerService.setActiveTeam("TeamA");
 
         this.playerService.addOrRemoveBugemonOfActiveTeam(b2);
