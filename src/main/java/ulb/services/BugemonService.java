@@ -20,19 +20,18 @@ public class BugemonService {
 
     private final StaticDataRepository staticDataRepository;
     private final PlayerRepository playerRepository;
-    private final PlayerService playerService;
+    private final int playerId;
 
     private Queue<LevelUp> levelUps = new ArrayDeque<>();
 
     // Cache for all default Bugemons to avoid multiple database calls
     private final List<Bugemon> allDefaultBugemonsCache;
 
-    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
-            PlayerService playerService) {
+    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository, int playerId) {
         this.staticDataRepository = staticDataRepository;
         this.playerRepository = playerRepository;
-        this.playerService = playerService;
         this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
+        this.playerId = playerId;
     }
 
     public List<Bugemon> getAllDefaultBugemons() {
@@ -75,11 +74,9 @@ public class BugemonService {
      *            the bugemon to save
      */
     public void saveBugemonState(Bugemon bugemon) {
-        this.playerRepository.updatePlayerBugemon(new PlayerBugemonDTO(this.playerService.getPlayerId(),
-                bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(),
-                bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
-
-        this.playerService.updateLocalTeams();
+        this.playerRepository.updatePlayerBugemon(
+                new PlayerBugemonDTO(this.playerId, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
+                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
 
     public int numPendingLevelUps() {

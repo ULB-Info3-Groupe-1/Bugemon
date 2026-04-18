@@ -50,7 +50,8 @@ public class Main extends Application {
                 loader.getQueries());
 
         PlayerService playerService = new PlayerService(playerRepository, "default_player");
-        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerService);
+        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository,
+                playerService.getPlayerId());
         CombatService combatService = new CombatService(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, playerService, combatService);
         controller.switchTo(Window.MAIN_MENU);
