@@ -6,7 +6,6 @@ package ulb.controllers.music;
 public enum Ambiance {
     COMBAT,
     MENU,
-    CREATE_TEAM,
     VICTORY,
     DEFEAT
 }

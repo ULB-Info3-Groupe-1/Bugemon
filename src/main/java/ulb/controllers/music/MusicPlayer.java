@@ -10,19 +10,23 @@ import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Manages music playback; holds a list of registered tracks and plays them via JavaFX {@link MediaPlayer}. */
+/**
+ * Manages music playback; holds a list of registered tracks and plays them via JavaFX {@link MediaPlayer}.
+ */
 public class MusicPlayer {
     private static final Logger LOG = LoggerFactory.getLogger(MusicPlayer.class);
 
     // NOTE: This is optional because a MediaPlayer's constructor needs a Media
     // instance, but there is no media to play when constructing the MusicPlayer.
     private Optional<MediaPlayer> mediaPlayer;
+    private Optional<Music> currentMusic;
 
     private List<Music> musics;
 
     public MusicPlayer() {
         this.musics = new ArrayList<>();
         this.mediaPlayer = Optional.empty();
+        this.currentMusic = Optional.empty();
     }
 
     /**
@@ -33,12 +37,18 @@ public class MusicPlayer {
     }
 
     /**
-     * Plays the given music.
+     * Plays the given music. If the given music is already playing, does nothing.
      *
      * @param music
      *            the music
      */
     private void playMusic(Music music) {
+        if (this.currentMusic.isPresent() && this.currentMusic.get().ambiance() == music.ambiance()
+                && this.mediaPlayer.isPresent()) {
+            LOG.debug("Music already playing for ambiance {}, keeping current track", music.ambiance());
+            return;
+        }
+
         this.stopMusic();
 
         try {
@@ -49,6 +59,7 @@ public class MusicPlayer {
             this.mediaPlayer.ifPresent(player -> {
                 player.setCycleCount(MediaPlayer.INDEFINITE);
                 player.play();
+                this.currentMusic = Optional.of(music);
                 LOG.debug("Now playing music: {}", music.ambiance());
             });
         } catch (Exception e) {
@@ -105,5 +116,6 @@ public class MusicPlayer {
     public void stopMusic() {
         this.mediaPlayer.ifPresent(MediaPlayer::stop);
         this.mediaPlayer = Optional.empty();
+        this.currentMusic = Optional.empty();
     }
 }

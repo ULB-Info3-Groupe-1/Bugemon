@@ -63,7 +63,6 @@ public abstract class Configuration {
 
         public static final String MUSIC_PATH_COMBAT = "/musics/combat";
         public static final String MUSIC_PATH_MENU = "/musics/menu";
-        public static final String MUSIC_PATH_CREATE_TEAM = "/musics/create_team";
         public static final String SOUND_EFFECTS_PATH_VICTORY = "/sound_effects/victory";
         public static final String SOUND_EFFECTS_PATH_DEFEAT = "/sound_effects/defeat";
 
