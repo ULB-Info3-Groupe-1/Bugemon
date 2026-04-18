@@ -1,6 +1,5 @@
 package ulb.controllers;
 
-import ulb.controllers.MetaController.Window;
 import ulb.services.PlayerService;
 import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
@@ -17,18 +16,18 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
 
     @Override
     public void onCreateTeam() {
-        this.metaController.switchTo(Window.CREATE_TEAM);
+        this.metaController.onCreateTeam();
     }
 
     @Override
     public void onCreateBugemon() {
-        this.metaController.switchTo(Window.CREATE_BUGEMON);
+        this.metaController.onCreateBugemon();
     }
 
     @Override
     public void onNoTower() {
         if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.NOTOWER);
+            this.metaController.onTower();
         }
     }
 
@@ -41,7 +40,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     @Override
     public void onStartAutomaticCombat() {
         if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
+            this.metaController.onStartAutomaticCombat();
         }
     }
 
@@ -49,13 +48,13 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     @Override
     public void onStartManualCombat() {
         if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.MANUAL_COMBAT);
+            this.metaController.onStartManualCombat();
         }
     }
 
     @Override
     public void onEditTeam() {
-        this.metaController.switchTo(Window.EDIT_TEAM);
+        this.metaController.onEditTeam();
     }
 
     private boolean isActiveTeamEmpty() {

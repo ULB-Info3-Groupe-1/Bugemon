@@ -1,6 +1,5 @@
 package ulb.controllers;
 
-import ulb.controllers.MetaController.Window;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repositories.exceptions.TeamEmptyException;
@@ -141,27 +140,31 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
     }
 
-    private void launchCombat(Window window) {
+    @Override
+    public void onStartAutomaticCombat() {
         if (this.playerService.isActiveTeamEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
         } else {
-            this.metaController.switchTo(window);
+            this.metaController.onStartAutomaticCombat();
         }
     }
 
     @Override
-    public void onStartAutomaticCombat() {
-        this.launchCombat(Window.AUTOMATIC_COMBAT);
-    }
-
-    @Override
     public void onStartManualCombat() {
-        this.launchCombat(Window.MANUAL_COMBAT);
+        if (this.playerService.isActiveTeamEmpty()) {
+            this.view.showAlertChooseTeamToLaunchCombat();
+        } else {
+            this.metaController.onStartManualCombat();
+        }
     }
 
     @Override
     public void onStartNOTowerCombat() {
-        this.launchCombat(Window.NOTOWER);
+        if (this.playerService.isActiveTeamEmpty()) {
+            this.view.showAlertChooseTeamToLaunchCombat();
+        } else {
+            this.metaController.onTower();
+        }
     }
 
     @Override
@@ -174,7 +177,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
 
         if (canLeave) {
-            this.metaController.switchTo(MetaController.Window.MAIN_MENU);
+            this.metaController.onReturnToMainMenu();
         }
     }
 }
