@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
@@ -17,20 +16,17 @@ import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.exceptions.NoActiveTeamException;
 
-public class PlayerService {
+public class TeamService {
     private final int playerId;
     private final PlayerRepository playerRepository;
 
     private Optional<BugemonTeam> activeTeam;
     private List<BugemonTeam> playerTeams;
-    private Inventory inventory;
 
-    public PlayerService(PlayerRepository playerRepository, String playername) throws PlayernameIsEmptyException {
+    public TeamService(PlayerRepository playerRepository, int playerId) throws PlayernameIsEmptyException {
+        this.playerId = playerId;
         this.activeTeam = Optional.empty();
         this.playerRepository = playerRepository;
-        this.playerId = this.playerRepository.getPlayerIdOrCreatePlayer(playername);
-        // TODO: probably connect to db
-        this.inventory = InventoryService.addStarterItems(new Inventory());
         this.playerTeams = this.playerRepository.loadTeams(this.playerId);
     }
 
@@ -38,10 +34,6 @@ public class PlayerService {
 
     public Optional<BugemonTeam> getActiveTeam() {
         return this.activeTeam;
-    }
-
-    public Inventory getInventory() {
-        return this.inventory;
     }
 
     public List<String> getTeamNames() {

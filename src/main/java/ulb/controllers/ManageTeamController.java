@@ -7,7 +7,7 @@ import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
-import ulb.services.PlayerService;
+import ulb.services.TeamService;
 import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
@@ -18,7 +18,7 @@ import ulb.views.ViewLoader;
  * controller never pushes data into the view.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
-    private final PlayerService playerService;
+    private final TeamService playerService;
     private final BugemonService bugemonService;
 
     public enum TeamFormMode {
@@ -31,7 +31,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
      * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
      *
      */
-    public ManageTeamController(TeamFormMode mode, MetaController metaController, PlayerService playerService,
+    public ManageTeamController(TeamFormMode mode, MetaController metaController, TeamService playerService,
             BugemonService bugemonService) {
         super(metaController, ViewLoader.load(() -> new ManageTeamView(mode)));
         this.playerService = playerService;

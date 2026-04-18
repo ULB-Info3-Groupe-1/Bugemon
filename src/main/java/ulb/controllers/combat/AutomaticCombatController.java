@@ -5,7 +5,7 @@ import ulb.models.combat.Combat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.PlayerService;
+import ulb.services.TeamService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
 
@@ -23,7 +23,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @param metaController
      *            the application-level controller used for navigation.
      */
-    public AutomaticCombatController(MetaController metaController, PlayerService playerService,
+    public AutomaticCombatController(MetaController metaController, TeamService playerService,
             BugemonService bugemonService, CombatService combatService) {
         super(metaController, playerService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
     }

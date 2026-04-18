@@ -1,14 +1,15 @@
 package ulb.controllers;
 
-import ulb.services.PlayerService;
+import ulb.controllers.MetaController.Window;
+import ulb.services.TeamService;
 import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
 
 /** Controller for the main menu screen. */
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
-    private final PlayerService playerService;
+    private final TeamService playerService;
 
-    public MainMenuController(MetaController metaController, PlayerService playerService) {
+    public MainMenuController(MetaController metaController, TeamService playerService) {
         super(metaController, ViewLoader.load(MainMenuView::new));
         this.playerService = playerService;
         this.view.setListener(this);

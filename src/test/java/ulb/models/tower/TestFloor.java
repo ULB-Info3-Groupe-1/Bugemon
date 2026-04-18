@@ -20,12 +20,12 @@ import ulb.models.tower.room.Room;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
-import ulb.services.PlayerService;
+import ulb.services.TeamService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestFloor {
 
-    private static final PlayerService PLAYER_SERVICE_MOCK = mock(PlayerService.class);
+    private static final TeamService PLAYER_SERVICE_MOCK = mock(TeamService.class);
     private static final BugemonService BUGEMON_SERVICE_MOCK = mock(BugemonService.class);
 
     @Before

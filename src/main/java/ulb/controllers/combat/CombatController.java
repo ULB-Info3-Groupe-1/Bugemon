@@ -17,7 +17,7 @@ import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.PlayerService;
+import ulb.services.TeamService;
 import ulb.views.combat.CombatView;
 
 /**
@@ -33,7 +33,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
     protected final CombatAnimationController animationController;
-    protected final PlayerService playerService;
+    protected final TeamService playerService;
     protected final BugemonService bugemonService;
     protected final CombatService combatService;
 
@@ -42,7 +42,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
     private Trainer pendingWinner = null;
 
-    protected CombatController(MetaController metaController, PlayerService playerService,
+    protected CombatController(MetaController metaController, TeamService playerService,
             BugemonService bugemonService, CombatService combatService, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
