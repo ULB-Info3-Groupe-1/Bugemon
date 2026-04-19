@@ -115,10 +115,18 @@ public class MetaController {
     }
 
     public void onCombatDefeatRetry() {
+        this.onCreateTeam();
+    }
+
+    public void onCreateTeam() {
         this.switchTo(Window.CREATE_TEAM);
     }
 
-    public void onCombatDefeatReturnToMainMenu() {
+    public void onCreateBugemon() {
+        this.switchTo(Window.CREATE_BUGEMON);
+    }
+
+    public void onReturnToMainMenu() {
         this.switchTo(Window.MAIN_MENU);
     }
 
@@ -128,6 +136,22 @@ public class MetaController {
         } else {
             this.switchTo(Window.MAIN_MENU);
         }
+    }
+
+    public void onStartManualCombat() {
+        this.switchTo(Window.MANUAL_COMBAT);
+    }
+
+    public void onStartAutomaticCombat() {
+        this.switchTo(Window.AUTOMATIC_COMBAT);
+    }
+
+    public void onTower() {
+        this.switchTo(Window.NOTOWER);
+    }
+
+    public void onEditTeam() {
+        this.switchTo(Window.EDIT_TEAM);
     }
 
     private void initializeMusicResources() throws IOException {

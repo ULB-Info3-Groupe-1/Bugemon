@@ -84,7 +84,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         LOG.info("Player returned to main menu from tower");
         this.tower = Optional.empty();
         this.metaController.endTowerFlow();
-        this.metaController.switchTo(Window.MAIN_MENU);
+        this.metaController.onReturnToMainMenu();
     }
 
     public void onTowerCombatFinished(boolean playerWon) {
