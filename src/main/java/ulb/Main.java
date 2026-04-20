@@ -57,5 +57,6 @@ public class Main extends Application {
         InventoryService inventoryService = new InventoryService();
         CombatService combatService = new CombatService(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService, towerService, combatService);
+        controller.start();
     }
 }
