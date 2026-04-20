@@ -3,7 +3,6 @@ package ulb.repositories;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -26,7 +25,6 @@ import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
-import ulb.repositories.exceptions.PlayernameIsEmptyException;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
@@ -44,90 +42,69 @@ public class PlayerRepository extends AbstractRepository {
 
     // --- PLAYERS ---
 
-    /**
-     * Returns the player id or creates a new player and returns its id
-     *
-     * @param playername
-     *            the player name to create or retrieve
-     * @return (int) the player id
-     * @throws PlayernameIsEmptyException
-     *             if the playername is null or empty
-     */
-    public int getPlayerIdOrCreatePlayer(String playername) throws PlayernameIsEmptyException {
-        if (playername == null || playername.isEmpty()) {
-            throw new PlayernameIsEmptyException("Playername cannot be null or empty");
-        }
-        Optional<Integer> playerId = executeQuery("GetPlayerByPlayername", rs -> rs.getInt(DatabaseColumns.COL_ID),
-                playername).stream().findFirst();
-        if (playerId.isEmpty()) {
-            return this.createPlayer(playername);
-        }
-        return playerId.get();
-    }
-
-    private int createPlayer(String playername) {
-        int playerId = executeQuery("CreatePlayer", rs -> rs.getInt(DatabaseColumns.COL_ID), playername).stream()
-                .findFirst().orElseThrow(() -> new IllegalStateException("No ID returned"));
-        this.addDefaultInventory(playerId);
-        return playerId;
+    public void createPlayer(String playername) {
+        this.executeUpdate("CreatePlayer", playername);
     }
 
     // --- BUGEMONS ---
 
     public void savePlayerBugemon(PlayerBugemonDTO d) {
         LOG.debug("Saving player bugemon: {}", d);
-        executeUpdate("SavePlayerBugemon", d.playerId(), d.bugemonName(), d.currentDefense(), d.currentAttackPower(),
+        executeUpdate("SavePlayerBugemon", d.playername(), d.bugemonName(), d.currentDefense(), d.currentAttackPower(),
                 d.currentInitiative(), d.currentMaxHp(), d.currentXp(), d.currentLevel());
     }
 
     public void updatePlayerBugemon(PlayerBugemonDTO d) {
         LOG.debug("Updating player bugemon: {}", d);
         executeUpdate("UpdatePlayerBugemon", d.currentDefense(), d.currentAttackPower(), d.currentInitiative(),
-                d.currentMaxHp(), d.currentXp(), d.currentLevel(), d.playerId(), d.bugemonName());
+                d.currentMaxHp(), d.currentXp(), d.currentLevel(), d.playername(), d.bugemonName());
     }
 
-    public List<PlayerBugemonDTO> getPlayerBugemons(int playerId) {
-        LOG.debug("Getting bugemons for playerId: {}", playerId);
-        return executeQuery("GetPlayerBugemons", rs -> new PlayerBugemonDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
-                rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
-                rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK), rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
-                rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
-                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)), playerId);
+    public List<PlayerBugemonDTO> getPlayerBugemons(String playername) {
+        LOG.debug("Getting bugemons for playername: {}", playername);
+        return executeQuery("GetPlayerBugemons",
+                rs -> new PlayerBugemonDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),
+                        rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
+                playername);
     }
 
     // --- TEAMS ---
 
-    public void createTeam(int playerId, String teamName)
+    public void createTeam(String playername, String teamName)
             throws TeamNameAlreadyExistsException, TeamNameEmptyException {
+        LOG.debug("Creating team '{}' for playername: {}", teamName, playername);
         this.checkValidName(teamName);
-        if (this.teamNameAlreadyExists(playerId, teamName)) {
+        if (this.teamNameAlreadyExists(playername, teamName)) {
             throw new TeamNameAlreadyExistsException(" Team name already exists: " + teamName);
         }
-        LOG.debug("Creating team '{}' for playerId: {}", teamName, playerId);
-        executeUpdate("CreateTeam", playerId, teamName);
+        executeUpdate("CreateTeam", playername, teamName);
     }
 
     /**
      * Delete a team and its members
      *
-     * @param playerId
-     *            the player's ID who owns the team
+     * @param playername
+     *            the player's name who owns the team
      * @param teamName
      *            the team's name to delete
      */
-    public void deleteTeam(int playerId, String teamName) throws TeamNotFoundException, TeamNameEmptyException {
+    public void deleteTeam(String playername, String teamName) throws TeamNotFoundException, TeamNameEmptyException {
+        LOG.debug("Deleting team '{}' for playername: {}", teamName, playername);
         this.checkValidName(teamName);
-        this.checkTeamExists(playerId, teamName);
-        LOG.debug("Deleting team '{}' for playerId: {}", teamName, playerId);
-        executeUpdate("DeleteTeamMembers", playerId, teamName);
-        executeUpdate("DeleteTeam", playerId, teamName);
+        this.checkTeamExists(playername, teamName);
+        executeUpdate("DeleteTeamMembers", playername, teamName);
+        executeUpdate("DeleteTeam", playername, teamName);
     }
 
     /**
      * Rename a team
      *
-     * @param playerId
-     *            the player's ID who owns the team to rename
+     * @param playername
+     *            the player's name who owns the team to rename
      * @param oldTeamName
      *            the team's name to rename
      * @param newTeamName
@@ -137,49 +114,49 @@ public class PlayerRepository extends AbstractRepository {
      * @throws TeamNotFoundException
      *             if the old team name does not exist
      */
-    public void renameTeam(int playerId, String oldTeamName, String newTeamName)
+    public void renameTeam(String playername, String oldTeamName, String newTeamName)
             throws TeamNameAlreadyExistsException, TeamNotFoundException, TeamNameEmptyException {
-        if (this.teamNameAlreadyExists(playerId, newTeamName)) {
+        LOG.debug("Renaming team for playername: {} from '{}' to '{}'", playername, oldTeamName, newTeamName);
+        if (this.teamNameAlreadyExists(playername, newTeamName)) {
             throw new TeamNameAlreadyExistsException(" Team name already exists: " + newTeamName);
         }
-        this.checkTeamExists(playerId, oldTeamName);
+        this.checkTeamExists(playername, oldTeamName);
         this.checkValidName(newTeamName);
-        LOG.debug("Renaming team for playerId: {} from '{}' to '{}'", playerId, oldTeamName, newTeamName);
-        executeUpdate("RenameTeam", newTeamName, playerId, oldTeamName);
+        executeUpdate("RenameTeam", newTeamName, playername, oldTeamName);
     }
 
-    public void modifyTeam(int playerId, String teamName, List<TeamMemberDTO> members)
+    public void modifyTeam(String playername, String teamName, List<TeamMemberDTO> members)
             throws TeamEmptyException, TeamNotFoundException {
         if (members.isEmpty()) {
             throw new TeamEmptyException("Team is empty");
         }
-        this.checkTeamExists(playerId, teamName);
-        executeUpdate("RemoveTeamComposition", playerId, teamName);
+        this.checkTeamExists(playername, teamName);
+        executeUpdate("RemoveTeamComposition", playername, teamName);
         members.forEach(this::addTeamMember);
     }
 
     /**
      * Load all teams for a player
      *
-     * @param playerId
-     *            the player's ID who owns the teams
+     * @param playername
+     *            the player's name who owns the teams
      * @return (List<BugemonTeam>) the teams of the player to be loaded
      * @throws TeamNotFoundException
      *             if the player has no teams
      */
-    public List<BugemonTeam> loadTeams(int playerId) {
+    public List<BugemonTeam> loadTeams(String playername) {
         List<BugemonTeam> playerTeams = new ArrayList<>();
 
-        List<PlayerBugemonDTO> allPlayerBugemons = this.getPlayerBugemons(playerId);
+        List<PlayerBugemonDTO> allPlayerBugemons = this.getPlayerBugemons(playername);
 
         Map<String, Bugemon> defaultBugemonsMap = this.staticDataRepository.getAllDefaultBugemons().stream()
                 .collect(Collectors.toMap(Bugemon::getName, b -> b));
 
-        for (TeamDTO teamDto : this.getPlayerTeams(playerId)) {
+        for (TeamDTO teamDto : this.getPlayerTeams(playername)) {
             BugemonTeam team = new BugemonTeam();
             team.setName(teamDto.teamName());
 
-            this.getTeamMembers(playerId, teamDto.teamName()).forEach(member -> allPlayerBugemons.stream()
+            this.getTeamMembers(playername, teamDto.teamName()).forEach(member -> allPlayerBugemons.stream()
                     .filter(pb -> pb.bugemonName().equals(member.bugemonName())).findFirst().ifPresent(pb -> {
                         Bugemon base = defaultBugemonsMap.get(pb.bugemonName());
                         if (base != null) {
@@ -193,36 +170,36 @@ public class PlayerRepository extends AbstractRepository {
         return playerTeams;
     }
 
-    private List<TeamDTO> getPlayerTeams(int playerId) {
-        LOG.debug("Getting teams for playerId: {}", playerId);
+    private List<TeamDTO> getPlayerTeams(String playername) {
+        LOG.debug("Getting teams for playername: {}", playername);
         return executeQuery("GetPlayerTeams",
-                rs -> new TeamDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID), rs.getString(DatabaseColumns.COL_NAME)),
-                playerId);
+                rs -> new TeamDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME), rs.getString(DatabaseColumns.COL_NAME)),
+                playername);
     }
 
     // --- TEAM MEMBERS ---
 
     public void addTeamMember(TeamMemberDTO dto) {
-        executeUpdate("AddTeamMember", dto.playerId(), dto.teamName(), dto.bugemonName(), dto.slotPosition());
+        executeUpdate("AddTeamMember", dto.playername(), dto.teamName(), dto.bugemonName(), dto.slotPosition());
     }
 
-    public void removeTeamMember(int playerId, String teamName, String bugemonName) throws TeamNotFoundException {
-        this.checkTeamExists(playerId, teamName);
-        executeUpdate("RemoveTeamMember", playerId, teamName, bugemonName);
+    public void removeTeamMember(String playername, String teamName, String bugemonName) throws TeamNotFoundException {
+        this.checkTeamExists(playername, teamName);
+        executeUpdate("RemoveTeamMember", playername, teamName, bugemonName);
     }
 
-    public List<TeamMemberDTO> getTeamMembers(int playerId, String teamName) {
+    public List<TeamMemberDTO> getTeamMembers(String playername, String teamName) {
         return executeQuery("GetTeamMembers",
-                rs -> new TeamMemberDTO(rs.getInt(DatabaseColumns.COL_PLAYER_ID),
+                rs -> new TeamMemberDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),
                         rs.getString(DatabaseColumns.COL_TEAM_NAME), rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
                         rs.getInt(DatabaseColumns.COL_SLOT_POSITION)),
-                playerId, teamName);
+                playername, teamName);
     }
 
     // --- Items/Inventory ---
 
-    public Inventory getPlayerInventory(int playerId) {
-        LOG.debug("Getting inventory for playerId: {}", playerId);
+    public Inventory getPlayerInventory(String playername) {
+        LOG.debug("Getting inventory for playername: {}", playername);
         Inventory inventory = new Inventory();
         executeQuery("GetPlayerInventory", rs -> {
             String effectType = rs.getString("effect_type");
@@ -232,7 +209,7 @@ public class PlayerRepository extends AbstractRepository {
                     ItemType.valueOf(rs.getString(DatabaseColumns.COL_CATEGORY)), effect);
             inventory.addItem(item, rs.getInt(DatabaseColumns.COL_AMOUNT));
             return null;
-        }, playerId);
+        }, playername);
         return inventory;
     }
 
@@ -248,30 +225,30 @@ public class PlayerRepository extends AbstractRepository {
         };
     }
 
-    public void addItemToPlayer(int playerId, String itemId, int quantity) {
-        LOG.debug("Adding {}x {} to playerId: {}", quantity, itemId, playerId);
-        executeUpdate("CreateItemPlayer", playerId, itemId, quantity);
+    public void addItemToPlayer(String playername, String itemId, int quantity) {
+        LOG.debug("Adding {}x {} to playerId: {}", quantity, itemId, playername);
+        executeUpdate("CreateItemPlayer", playername, itemId, quantity);
     }
 
-    public void updateItemAmount(int playerId, String itemId, int newAmount) {
-        LOG.debug("Updating item {} amount to {} for playerId: {}", itemId, newAmount, playerId);
-        executeUpdate("UpdateItemAmount", newAmount, playerId, itemId);
+    public void updateItemAmount(String playername, String itemId, int newAmount) {
+        LOG.debug("Updating item {} amount to {} for playerId: {}", itemId, newAmount, playername);
+        executeUpdate("UpdateItemAmount", newAmount, playername, itemId);
     }
 
-    private void addDefaultInventory(int playerId) {
+    private void addDefaultInventory(String playername) {
         Inventory defaultInventory = this.staticDataRepository.getDefaultInventory();
         defaultInventory.getMap()
-                .forEach((item, quantity) -> executeUpdate("CreateItemPlayer", playerId, item.id(), quantity));
+                .forEach((item, quantity) -> executeUpdate("CreateItemPlayer", playername, item.id(), quantity));
     }
 
     // --- Utils ---
 
-    private boolean teamNameAlreadyExists(int playerId, String teamName) {
-        return !executeQuery("TeamNameAlreadyExists", rs -> true, playerId, teamName).isEmpty();
+    private boolean teamNameAlreadyExists(String playername, String teamName) {
+        return !executeQuery("TeamNameAlreadyExists", rs -> true, playername, teamName).isEmpty();
     }
 
-    private void checkTeamExists(int playerId, String teamName) throws TeamNotFoundException {
-        if (this.getPlayerTeams(playerId).stream().noneMatch(team -> team.teamName().equals(teamName))) {
+    private void checkTeamExists(String playername, String teamName) throws TeamNotFoundException {
+        if (this.getPlayerTeams(playername).stream().noneMatch(team -> team.teamName().equals(teamName))) {
             throw new TeamNotFoundException(" Team name does not exist: " + teamName);
         }
     }
