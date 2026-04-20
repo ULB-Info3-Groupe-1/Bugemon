@@ -5,7 +5,7 @@ import ulb.models.combat.Combat;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.PlayerService;
+import ulb.services.TeamService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
 
@@ -23,14 +23,14 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      * @param metaController
      *            the application-level controller used for navigation.
      */
-    public AutomaticCombatController(MetaController metaController, PlayerService playerService,
+    public AutomaticCombatController(MetaController metaController, TeamService teamService,
             BugemonService bugemonService, CombatService combatService) {
-        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
+        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
     }
 
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam().orElseThrow(
+        AutoTrainer autoPlayer = new AutoTrainer(this.teamService.getActiveTeam().orElseThrow(
                 () -> new IllegalStateException("No active team for player when starting Automatic combat")));
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());

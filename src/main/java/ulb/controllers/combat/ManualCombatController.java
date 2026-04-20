@@ -12,7 +12,8 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.PlayerService;
+import ulb.services.InventoryService;
+import ulb.services.TeamService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
 
@@ -24,14 +25,16 @@ import ulb.views.combat.ManualCombatView;
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
     private ManualTrainer manualPlayerTrainer;
+    private final InventoryService inventoryService;
 
     /**
      * Constructs a {@code ManualCombatController} and wires itself as the view listener.
      *
      */
-    public ManualCombatController(MetaController metaController, PlayerService playerService,
-            BugemonService bugemonService, CombatService combatService) {
-        super(metaController, playerService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+    public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
+            InventoryService inventoryService, CombatService combatService) {
+        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+        this.inventoryService = inventoryService;
         this.view.setListener(this);
     }
 
@@ -39,9 +42,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     @Override
     public void startCombat(boolean shouldRestoreHp) {
         this.manualPlayerTrainer = new ManualTrainer(
-                this.playerService.getActiveTeam().orElseThrow(
+                this.teamService.getActiveTeam().orElseThrow(
                         () -> new IllegalStateException("No active team for player when starting Manual combat")),
-                this.playerService.getInventory());
+                this.inventoryService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());

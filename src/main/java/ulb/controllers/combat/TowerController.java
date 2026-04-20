@@ -20,7 +20,8 @@ import ulb.models.tower.room.Room;
 import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
-import ulb.services.PlayerService;
+import ulb.services.InventoryService;
+import ulb.services.TeamService;
 import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
@@ -29,13 +30,16 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private static final Logger LOG = LoggerFactory.getLogger(TowerController.class);
 
     private Optional<Tower> tower;
-    private final PlayerService playerService;
+    private final TeamService teamService;
     private final BugemonService bugemonService;
+    private final InventoryService inventoryService;
 
-    public TowerController(MetaController metaController, PlayerService playerService, BugemonService bugemonService) {
+    public TowerController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
+            InventoryService inventoryService) {
         super(metaController, ViewLoader.load(FloorView::new));
-        this.playerService = playerService;
+        this.teamService = teamService;
         this.bugemonService = bugemonService;
+        this.inventoryService = inventoryService;
         this.tower = Optional.empty();
 
         this.view.setListener(this);
@@ -63,8 +67,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     public void visitCombatRoom(CombatRoom combatRoom) {
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
         Combat combat = combatRoom.getCombat(new ManualTrainer(
-                this.playerService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
-                this.playerService.getInventory()));
+                this.teamService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
+                this.inventoryService.getInventory()));
         this.metaController.startTowerCombat(combat);
     }
 
@@ -92,7 +96,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         if (!playerWon) {
             this.tower = Optional.empty();
             try {
-                this.playerService.restoreHpActiveTeam();
+                this.teamService.restoreHpActiveTeam();
             } catch (NoActiveTeamException e) {
                 throw new IllegalStateException("No active team when combat ended is not possible", e);
             }
@@ -121,15 +125,15 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      * immediately; combat rooms continue via callback.
      */
     public void runTower() {
-        if (this.playerService.getActiveTeam().isEmpty()) {
+        if (this.teamService.getActiveTeam().isEmpty()) {
             LOG.warn("runTower called with no active team, aborting");
             return;
         }
 
         if (this.tower.isEmpty()) {
             LOG.info("Starting new tower run");
-            this.tower = Optional
-                    .of(new Tower(this.playerService.getActiveTeam().get(), this.playerService, this.bugemonService));
+            this.tower = Optional.of(new Tower(this.teamService.getActiveTeam().get(),
+                    this.inventoryService.getInventory(), this.bugemonService));
 
         }
 

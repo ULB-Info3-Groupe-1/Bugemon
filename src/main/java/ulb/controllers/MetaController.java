@@ -19,7 +19,8 @@ import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.PlayerService;
+import ulb.services.InventoryService;
+import ulb.services.TeamService;
 import ulb.views.View;
 
 /**
@@ -71,23 +72,24 @@ public class MetaController {
      * @throws IOException
      *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
-            CombatService combatService) throws IOException {
+    public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
+            InventoryService inventoryService, CombatService combatService) throws IOException {
         this.bugemonService = bugemonService;
 
         this.stage = primaryStage;
 
-        this.mainMenuController = new MainMenuController(this, playerService);
+        this.mainMenuController = new MainMenuController(this, teamService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                playerService, bugemonService);
-        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, playerService,
+                teamService, bugemonService);
+        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
                 bugemonService);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
-        this.manualCombatController = new ManualCombatController(this, playerService, bugemonService, combatService);
-        this.automaticCombatController = new AutomaticCombatController(this, playerService, bugemonService,
+        this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
+                combatService);
+        this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
                 combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
-        this.towerController = new TowerController(this, playerService, bugemonService);
+        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
