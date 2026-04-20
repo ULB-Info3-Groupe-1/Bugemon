@@ -1,6 +1,5 @@
 package ulb.controllers;
 
-import ulb.controllers.MetaController.Window;
 import ulb.services.TeamService;
 import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
