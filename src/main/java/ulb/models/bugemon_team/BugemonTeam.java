@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.models.bugemon_team.exceptions.BugemonAlreadyPresentInTeamException;
 import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
@@ -52,16 +52,16 @@ public class BugemonTeam implements Iterable<Bugemon> {
     /**
      * @throws TeamAlreadyFullException
      *             if the team already has {@value #MAX_SIZE} members
-     * @throws BugemonAlreadyExistsException
-     *             if a Bugemon with the same ID is already in the team
+     * @throws BugemonAlreadyPresentInTeamException
+     *             if a Bugemon with the same name is already in the team
      */
-    public void add(Bugemon bugemon) throws TeamAlreadyFullException, BugemonAlreadyExistsException {
+    public void add(Bugemon bugemon) throws TeamAlreadyFullException, BugemonAlreadyPresentInTeamException {
         if (this.isFull()) {
             throw new TeamAlreadyFullException("Team already full!");
         }
 
         if (this.contains(bugemon)) {
-            throw new BugemonAlreadyExistsException("This Bugemon already in the team!");
+            throw new BugemonAlreadyPresentInTeamException("This Bugemon already in the team!");
         }
 
         this.team.add(bugemon);

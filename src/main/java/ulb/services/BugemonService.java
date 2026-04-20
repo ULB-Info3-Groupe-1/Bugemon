@@ -8,13 +8,13 @@ import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.models.level_up.LevelUp;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
+import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 
 public class BugemonService {
 
@@ -46,8 +46,16 @@ public class BugemonService {
      * @throws BugemonNameIsEmptyException
      *             if the name of the bugemon is empty
      */
-    public void saveBugemon(CreateBugemonDTO bugemon)
-            throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
+    public void saveNewBugemon(CreateBugemonDTO bugemon)
+            throws BugemonNameIsEmptyException, BugemonNameAlreadyExistsException {
+        if (bugemon.name().isEmpty()) {
+            throw new BugemonNameIsEmptyException("Bugemon name cannot be empty!");
+        }
+
+        if (this.allDefaultBugemonsCache.stream().anyMatch(b -> b.getName().equals(bugemon.name()))) {
+            throw new BugemonNameAlreadyExistsException("Bugemon name already exists!");
+        }
+
         this.staticDataRepository.saveBugemon(bugemon);
         this.allDefaultBugemonsCache.add(BugemonFactory.createBugemon(bugemon));
     }

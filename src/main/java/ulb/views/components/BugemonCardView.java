@@ -76,6 +76,9 @@ public class BugemonCardView extends ComponentView {
     }
 
     public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            name = EMPTY_NAME;
+        }
         this.nameLabel.setText(name);
     }
 
