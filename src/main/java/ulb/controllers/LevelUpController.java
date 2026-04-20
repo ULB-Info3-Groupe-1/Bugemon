@@ -34,7 +34,7 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
         if (this.bugemonService.hasPendingLevelUps()) {
             this.updateDisplayedLevelUp();
         } else {
-            this.metaController.onLevelUpfinished();
+            this.metaController.onAllPendingLevelUpsConsumed();
         }
     }
 
