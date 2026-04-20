@@ -50,11 +50,9 @@ public class Main extends Application {
                 loader.getQueries());
 
         String playerName = "default_player";
-        int playerId = playerRepository.getPlayerIdOrCreatePlayer(playerName);
-
-        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerId);
-        TeamService teamService = new TeamService(playerRepository, playerId);
-        InventoryService inventoryService = new InventoryService(playerRepository, playerId);
+        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerName);
+        TeamService teamService = new TeamService(playerRepository, playerName);
+        InventoryService inventoryService = new InventoryService(playerRepository, playerName);
         CombatService combatService = new CombatService(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
                 combatService);

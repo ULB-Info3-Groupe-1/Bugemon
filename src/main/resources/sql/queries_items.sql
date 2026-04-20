@@ -5,9 +5,9 @@ VALUES (?, ?, ?, ?, ?);
 
 -- Query
 -- CreateItemPlayer
-INSERT INTO item_player (player_id, item_id, amount)
+INSERT INTO item_player (playername, item_id, amount)
 VALUES (?, ?, ?)
-ON CONFLICT (player_id, item_id) DO NOTHING;
+ON CONFLICT (playername, item_id) DO NOTHING;
 
 -- Query to retrieve the player inventory with their amount and item effect
 -- GetPlayerInventory
@@ -27,7 +27,7 @@ SELECT
 FROM items i
 INNER JOIN item_player ip ON i.item_id = ip.item_id
 LEFT JOIN item_effects ie ON i.item_id = ie.item_id
-WHERE ip.player_id = ?
+WHERE ip.playername = ?
 ORDER BY i.name;
 
 -- Query
@@ -37,4 +37,4 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
 
 -- Query
 -- UpdateItemAmount
-UPDATE item_player SET amount = ? WHERE player_id = ? AND item_id = ?;
+UPDATE item_player SET amount = ? WHERE playername = ? AND item_id = ?;

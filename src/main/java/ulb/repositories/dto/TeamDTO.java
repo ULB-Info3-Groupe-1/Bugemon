@@ -1,4 +1,4 @@
 package ulb.repositories.dto;
 
-public record TeamDTO(int playerId, String teamName) {
+public record TeamDTO(String playername, String teamName) {
 }

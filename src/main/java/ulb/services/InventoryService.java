@@ -7,13 +7,13 @@ import ulb.repositories.PlayerRepository;
 public class InventoryService {
 
     private final PlayerRepository playerRepository;
-    private final int playerId;
+    private final String playername;
     private final Inventory inventory;
 
-    public InventoryService(PlayerRepository playerRepository, int playerId) {
+    public InventoryService(PlayerRepository playerRepository, String playername) {
         this.playerRepository = playerRepository;
-        this.playerId = playerId;
-        this.inventory = playerRepository.getPlayerInventory(playerId);
+        this.playername = playername;
+        this.inventory = playerRepository.getPlayerInventory(playername);
     }
 
     public Inventory getInventory() {
@@ -22,11 +22,11 @@ public class InventoryService {
 
     public void saveInventory() {
         this.inventory.getMap().forEach(
-                (item, quantity) -> this.playerRepository.updateItemAmount(this.playerId, item.id(), quantity));
+                (item, quantity) -> this.playerRepository.updateItemAmount(this.playername, item.id(), quantity));
     }
 
     public void addItem(Item item, int quantity) {
-        this.playerRepository.addItemToPlayer(this.playerId, item.id(), quantity);
+        this.playerRepository.addItemToPlayer(this.playername, item.id(), quantity);
         this.inventory.addItem(item, quantity);
     }
 }
