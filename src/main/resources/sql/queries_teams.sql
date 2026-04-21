@@ -29,7 +29,7 @@ WHERE playername = ? AND team_name = ? AND bugemon_name = ?;
 
 -- Query
 -- GetTeamMembers
-SELECT * FROM team_members WHERE playername = ? AND team_name = ?;
+SELECT * FROM team_members WHERE playername = ? AND team_name = ? ORDER BY slot_position;
 
 -- Query
 -- RenameTeam
