@@ -182,7 +182,9 @@ public class PlayerRepository extends AbstractRepository {
 
     /**
      * Load the current team for a player if it exists, otherwise return an empty optional
-     * @param playername (String) the player's name who owns the current team
+     *
+     * @param playername
+     *            (String) the player's name who owns the current team
      * @return (Optional<BugemonTeam>) the current team of the player if it exists, otherwise an empty optional
      */
     public Optional<BugemonTeam> loadCurrentTeam(String playername) {
