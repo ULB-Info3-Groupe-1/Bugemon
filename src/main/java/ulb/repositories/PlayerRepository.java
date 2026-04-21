@@ -3,6 +3,8 @@ package ulb.repositories;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -147,7 +149,8 @@ public class PlayerRepository extends AbstractRepository {
     public List<BugemonTeam> loadTeams(String playername) {
         List<BugemonTeam> playerTeams = new ArrayList<>();
 
-        List<PlayerBugemonDTO> allPlayerBugemons = this.getPlayerBugemons(playername);
+        Map<String, PlayerBugemonDTO> bugemonStatsMap = this.getPlayerBugemons(playername).stream()
+                .collect(Collectors.toMap(PlayerBugemonDTO::bugemonName, pb -> pb));
 
         Map<String, Bugemon> defaultBugemonsMap = this.staticDataRepository.getAllDefaultBugemons().stream()
                 .collect(Collectors.toMap(Bugemon::getName, b -> b));
@@ -156,15 +159,16 @@ public class PlayerRepository extends AbstractRepository {
             BugemonTeam team = new BugemonTeam();
             team.setName(teamDto.teamName());
 
-            this.getTeamMembers(playername, teamDto.teamName()).forEach(member -> allPlayerBugemons.stream()
-                    .filter(pb -> pb.bugemonName().equals(member.bugemonName())).findFirst().ifPresent(pb -> {
-                        Bugemon base = defaultBugemonsMap.get(pb.bugemonName());
-                        if (base != null) {
-                            StaticBugemonDataDTO staticDto = new StaticBugemonDataDTO(base.getName(),
-                                    base.getType().name(), base.getSpriteURL(), base.getAttackList(), base.isStarter());
-                            team.add(BugemonFactory.createBugemon(staticDto, pb));
-                        }
-                    }));
+            this.getTeamMembers(playername, teamDto.teamName()).forEach(member -> {
+                PlayerBugemonDTO pb = bugemonStatsMap.get(member.bugemonName());
+                Bugemon base = defaultBugemonsMap.get(member.bugemonName());
+
+                if (pb != null && base != null) {
+                    StaticBugemonDataDTO staticDto = new StaticBugemonDataDTO(base.getName(), base.getType().name(),
+                            base.getSpriteURL(), base.getAttackList(), base.isStarter());
+                    team.add(BugemonFactory.createBugemon(staticDto, pb));
+                }
+            });
             playerTeams.add(team);
         }
         return playerTeams;
@@ -172,9 +176,62 @@ public class PlayerRepository extends AbstractRepository {
 
     private List<TeamDTO> getPlayerTeams(String playername) {
         LOG.debug("Getting teams for playername: {}", playername);
-        return executeQuery("GetPlayerTeams",
-                rs -> new TeamDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME), rs.getString(DatabaseColumns.COL_NAME)),
+        return executeQuery("GetPlayerTeams", rs -> new TeamDTO(playername, rs.getString(DatabaseColumns.COL_NAME)),
                 playername);
+    }
+
+    /**
+     * Load the current team for a player if it exists, otherwise return an empty optional
+     * @param playername (String) the player's name who owns the current team
+     * @return (Optional<BugemonTeam>) the current team of the player if it exists, otherwise an empty optional
+     */
+    public Optional<BugemonTeam> loadCurrentTeam(String playername) {
+        LOG.debug("Getting current team for playername: {}", playername);
+
+        if (!this.hasActiveTeam(playername)) {
+            LOG.debug("No current team for playername: {}", playername);
+            return Optional.empty();
+        }
+
+        List<PlayerBugemonDTO> teamMembers = executeQuery("GetPlayerCurrentTeam",
+                rs -> new PlayerBugemonDTO(playername, rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE), rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
+                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
+                playername);
+
+        Map<String, Bugemon> defaultBugemonsMap = this.staticDataRepository.getAllDefaultBugemons().stream()
+                .collect(Collectors.toMap(Bugemon::getName, b -> b));
+
+        BugemonTeam currentTeam = executeQuery("GetPlayerCurrentTeamName",
+                rs -> new BugemonTeam(rs.getString(DatabaseColumns.COL_CURRENT_TEAM)), playername).get(0);
+
+        for (PlayerBugemonDTO pb : teamMembers) {
+            Bugemon base = defaultBugemonsMap.get(pb.bugemonName());
+            if (base != null) {
+                StaticBugemonDataDTO staticDto = new StaticBugemonDataDTO(base.getName(), base.getType().name(),
+                        base.getSpriteURL(), base.getAttackList(), base.isStarter());
+                currentTeam.add(BugemonFactory.createBugemon(staticDto, pb));
+            }
+        }
+
+        return Optional.of(currentTeam);
+    }
+
+    public void setPlayerCurrentTeam(String playername, String teamName) {
+        LOG.debug("Setting current team for {} to '{}'", playername, teamName);
+        executeUpdate("SetPlayerCurrentTeam", teamName, playername);
+    }
+
+    public void unsetPlayerCurrentTeam(String playername) {
+        LOG.debug("Unsetting current team for playername: {}", playername);
+        executeUpdate("UnsetPlayerCurrentTeam", playername);
+    }
+
+    private boolean hasActiveTeam(String playername) {
+        return executeQuery("GetPlayerCurrentTeamName", rs -> rs.getString("current_team"), playername).stream()
+                .anyMatch(Objects::nonNull);
     }
 
     // --- TEAM MEMBERS ---

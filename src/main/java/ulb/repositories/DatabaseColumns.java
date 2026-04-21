@@ -8,6 +8,7 @@ public class DatabaseColumns {
 
     public static final String COL_PLAYERNAME = "playername";
     public static final String COL_BUGEMON_NAME = "bugemon_name";
+    public static final String COL_CURRENT_TEAM = "current_team";
     public static final String COL_CURRENT_DEFENSE = "current_defense";
     public static final String COL_CURRENT_ATTACK = "current_attack";
     public static final String COL_CURRENT_INITIATIVE = "current_initiative";

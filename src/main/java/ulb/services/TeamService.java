@@ -30,8 +30,10 @@ public class TeamService {
     public TeamService(PlayerRepository playerRepository, String playername) {
         this.playername = playername;
         this.playerRepository = playerRepository;
-        this.activeTeam = Optional.empty();
+
+        this.playerRepository.createPlayer(this.playername);
         this.playerTeams = this.playerRepository.loadTeams(this.playername);
+        this.activeTeam = this.playerRepository.loadCurrentTeam(playername);
     }
 
     // --- Getters ---
@@ -66,7 +68,7 @@ public class TeamService {
         BugemonTeam team = this.playerTeams.stream().filter(t -> t.getName().equals(teamName)).findFirst()
                 .orElseThrow(() -> new TeamNotFoundException("Team not found: " + teamName));
         this.activeTeam = Optional.of(new BugemonTeam(team));
-        this.workingTeam = new BugemonTeam(team);
+        this.playerRepository.setPlayerCurrentTeam(this.playername, teamName);
     }
 
     /**
@@ -133,7 +135,9 @@ public class TeamService {
             throw new NoActiveTeamException("Player does not have an active team.");
         }
 
+        this.playerRepository.unsetPlayerCurrentTeam(oldName); // Unset the old team because it's a foreign key
         this.playerRepository.renameTeam(this.playername, oldName, newName);
+        this.playerRepository.setPlayerCurrentTeam(this.playername, newName);
         this.playerTeams.stream().filter(t -> t.getName().equals(oldName)).forEach(t -> t.setName(newName));
         this.activeTeam.get().setName(newName);
     }
@@ -142,8 +146,9 @@ public class TeamService {
         return this.activeTeam.isEmpty() || this.activeTeam.get().isEmpty();
     }
 
-    public void clearWorkingTeam() {
-        this.workingTeam.clear();
+    public void clearActiveTeam() {
+        this.activeTeam = Optional.empty();
+        this.playerRepository.unsetPlayerCurrentTeam(this.playername);
     }
 
     /**
@@ -240,7 +245,7 @@ public class TeamService {
         }
     }
 
-    public void updateLocalTeams() {
+    private void updateLocalTeams() {
         this.activeTeam.ifPresent(current -> {
             this.playerTeams.removeIf(t -> t.getName().equals(current.getName()));
             this.playerTeams.add(new BugemonTeam(current));
