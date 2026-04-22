@@ -18,9 +18,9 @@ public class Skill {
 
     private Effect effect; // TODO: is it the right effect ?
 
-    private Position position; // Position in the skill tree UI => TODO: should this be in the view instead ?
-                               // It is not really a property of the skill itself, but it is easier to keep it
-                               // here for now
+    // Position in the skill tree UI => TODO: should this be in the view instead ? It is not really a property of the
+    // skill itself, but it is easier to keep it here for now
+    private Position position;
 
     private List<String> prerequisites; // List of skill IDs that must be unlocked before this skill can be unlocked
 
