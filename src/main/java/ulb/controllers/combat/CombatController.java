@@ -19,7 +19,8 @@ import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.PlayerService;
 import ulb.views.combat.CombatView;
-
+import ulb.models.bugemon.Inventory;
+import ulb.models.trainer.MiniMax;
 /**
  * Abstract base controller for all combat screens. Manages the step-by-step iteration of a {@link TurnResult}: each
  * call to {@link #advanceStep()} resolves the current step (KO reactions, end-of-combat detection) then delegates to
@@ -188,7 +189,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
         return new AutoTrainer(
-                CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTeamSize));
+                CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTeamSize), new MiniMax(3), new Inventory());
     }
 
     @Override

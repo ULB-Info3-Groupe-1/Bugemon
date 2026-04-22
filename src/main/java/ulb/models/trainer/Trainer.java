@@ -2,11 +2,13 @@ package ulb.models.trainer;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon_team.BugemonTeam;
 
@@ -21,6 +23,9 @@ import ulb.models.bugemon_team.BugemonTeam;
 public abstract class Trainer {
     protected final BugemonTeam team;
     protected Bugemon currentBugemon;
+    protected Inventory inventory;
+    protected Optional<TurnAction> pendingAction = Optional.empty();
+    protected Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
     Set<Bugemon> participatedBugemons = new HashSet<>();
 
     /**
@@ -29,9 +34,10 @@ public abstract class Trainer {
      * @param team
      *            must not be {@code null} and must contain at least one Bugemon
      */
-    protected Trainer(BugemonTeam team) {
+    protected Trainer(BugemonTeam team, Inventory inventory) {
         this.team = team;
         this.currentBugemon = team.getFirst();
+        this.inventory = inventory;
     }
 
     /**

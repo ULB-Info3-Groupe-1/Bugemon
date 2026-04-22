@@ -18,16 +18,11 @@ import ulb.models.bugemon_team.BugemonTeam;
  * (deferred, picked up by {@link #reactToKo}).
  */
 public class ManualTrainer extends Trainer {
-    private Optional<TurnAction> pendingAction = Optional.empty();
-    private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
-    private Inventory inventory;
-
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
 
     public ManualTrainer(BugemonTeam team, Inventory inventory) {
-        super(team);
-        this.inventory = inventory;
+        super(team, inventory);
     }
 
     /**

@@ -1,10 +1,12 @@
 package ulb.models.trainer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 
 /**
@@ -16,9 +18,11 @@ import ulb.models.bugemon_team.BugemonTeam;
  */
 public class AutoTrainer extends Trainer {
     private static final Random RAND = new Random();
+    private MiniMax miniMax;
 
-    public AutoTrainer(BugemonTeam team) {
-        super(team);
+    public AutoTrainer(BugemonTeam team, MiniMax miniMax, Inventory inventory) {
+        super(team, inventory);
+        this.miniMax = miniMax;
     }
 
     // ── Trainer contract ──────────────────────────────────────────────────────

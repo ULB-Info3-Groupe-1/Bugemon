@@ -8,6 +8,8 @@ import ulb.services.CombatService;
 import ulb.services.PlayerService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
+import ulb.models.bugemon.Inventory;
+import ulb.models.trainer.MiniMax;
 
 /**
  * Controller for the automatic combat screen.
@@ -31,7 +33,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     @Override
     public void startCombat(boolean shouldRestoreHp) {
         AutoTrainer autoPlayer = new AutoTrainer(this.playerService.getActiveTeam().orElseThrow(
-                () -> new IllegalStateException("No active team for player when starting Automatic combat")));
+                () -> new IllegalStateException("No active team for player when starting Automatic combat")), new MiniMax(3), new Inventory());
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 
