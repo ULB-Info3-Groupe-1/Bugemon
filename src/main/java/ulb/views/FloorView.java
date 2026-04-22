@@ -91,7 +91,7 @@ public class FloorView extends View {
     }
 
     public void setFloorNumber(int floorNumber) {
-        this.floorNumberLabel.setText("Étage " + floorNumber);
+        this.floorNumberLabel.setText("NO" + floorNumber);
     }
 
     public void setInstruction() {

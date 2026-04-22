@@ -21,6 +21,7 @@ import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
+import ulb.services.TowerService;
 import ulb.views.View;
 
 /**
@@ -73,7 +74,8 @@ public class MetaController {
      *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
-            InventoryService inventoryService, CombatService combatService) throws IOException {
+            InventoryService inventoryService, TowerService towerService, CombatService combatService)
+            throws IOException {
         this.bugemonService = bugemonService;
 
         this.stage = primaryStage;
@@ -89,15 +91,17 @@ public class MetaController {
         this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
                 combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
-        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService);
+        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
         this.initTransitions();
+    }
 
-        this.switchTo(Window.MAIN_MENU);
+    public void start() {
+        this.switchTo(Window.SAVE_MENU);
     }
 
     public void onCombatFinished(boolean won) {

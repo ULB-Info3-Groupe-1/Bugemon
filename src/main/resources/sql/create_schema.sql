@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS "bugemons" (
 CREATE TABLE IF NOT EXISTS "players" (
   "playername" varchar PRIMARY KEY,
   "current_team" varchar,
-  "tower_level" integer
+  "current_tower_floor" integer DEFAULT 2
 );
 
 CREATE TABLE IF NOT EXISTS "player_bugemons" (

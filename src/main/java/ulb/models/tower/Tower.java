@@ -15,14 +15,15 @@ import ulb.services.BugemonService;
 public class Tower {
 
     private static final int MAX_FLOORS = 9;
-    private int currentFloor = 0;
+    private int currentFloor;
     private final ArrayList<Floor> floors = new ArrayList<>();
     private final Trainer playerTrainer;
     private boolean isFinished = false;
 
-    public Tower(BugemonTeam playerTeam, Inventory inventory, BugemonService bugemonService) {
+    public Tower(BugemonTeam playerTeam, Inventory inventory, BugemonService bugemonService, int currentFloor) {
+        this.currentFloor = currentFloor;
         this.playerTrainer = new ManualTrainer(playerTeam, inventory);
-        for (int i = 0; i < MAX_FLOORS; i++) {
+        for (int i = 2; i < MAX_FLOORS; i++) {
             this.floors.add(new Floor(this.playerTrainer, bugemonService, i));
         }
     }

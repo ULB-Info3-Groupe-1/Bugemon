@@ -18,6 +18,7 @@ import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
+import ulb.services.TowerService;
 
 /** JavaFX entry point — bootstraps the Bugemon game. */
 public class Main extends Application {
@@ -53,8 +54,8 @@ public class Main extends Application {
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerName);
         TeamService teamService = new TeamService(playerRepository, playerName);
         InventoryService inventoryService = new InventoryService(playerRepository, playerName);
+        TowerService towerService = new TowerService(playerRepository, playerName);
         CombatService combatService = new CombatService(bugemonService);
-        MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
-                combatService);
+        MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService, towerService, combatService);
     }
 }
