@@ -43,3 +43,19 @@ JOIN player_bugemons pb ON tm.playername = pb.playername AND tm.bugemon_name = p
 JOIN bugemons b ON pb.bugemon_name = b.name
 WHERE p.playername = ?
 ORDER BY tm.slot_position ASC;
+
+-- Query
+-- GetPlayerCurrentTowerFloor
+SELECT current_tower_floor FROM players WHERE playername = ?;
+
+-- Query
+-- SetPlayerCurrentTowerFloor
+UPDATE players 
+SET current_tower_floor = ? 
+WHERE playername = ?;
+
+-- Query
+-- ResetPlayerCurrentTowerFloor
+UPDATE players
+SET current_tower_floor = DEFAULT
+WHERE playername = ?;

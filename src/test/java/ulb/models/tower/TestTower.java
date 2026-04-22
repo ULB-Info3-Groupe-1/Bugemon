@@ -58,12 +58,12 @@ public class TestTower {
     public void testNOTowerInitialization() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK, 2);
 
-        assertEquals(0, noTower.getCurrentFloorNumber());
+        assertEquals(2, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFloorComplete());
 
-        for (int expectedFloor = 1; expectedFloor <= 8; expectedFloor++) {
+        for (int expectedFloor = 3; expectedFloor <= 8; expectedFloor++) {
             this.completeCurrentFloor(noTower);
             assertTrue(noTower.isFloorComplete());
             noTower.goToNextFloor();
@@ -80,7 +80,7 @@ public class TestTower {
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK, 2);
 
         assertFalse(noTower.isFloorComplete());
     }
@@ -89,7 +89,7 @@ public class TestTower {
     public void testGoToNextFloorThrowsWhenCurrentFloorIncomplete() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK, 2);
 
         assertThrows(IllegalStateException.class, noTower::goToNextFloor);
     }

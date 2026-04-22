@@ -15,6 +15,7 @@ public class DatabaseColumns {
     public static final String COL_CURRENT_MAX_HP = "current_max_hp";
     public static final String COL_CURRENT_XP = "current_xp";
     public static final String COL_CURRENT_LEVEL = "current_level";
+    public static final String COL_CURRENT_TOWER_FLOOR = "current_tower_floor";
     public static final String COL_TEAM_NAME = "team_name";
     public static final String COL_SLOT_POSITION = "slot_position";
     public static final String COL_NAME = "name";

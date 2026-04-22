@@ -32,6 +32,21 @@ public class PlayerRepository extends AbstractRepository {
         this.staticDataRepository = staticDataRepository;
     }
 
+    // --- TOWER FLOOR ---
+
+    public void setPlayerCurrentFloor(String playername, int floorNumber) {
+        this.executeUpdate("SetPlayerCurrentTowerFloor", floorNumber, playername);
+    }
+
+    public int getPlayerCurrentFloor(String playername) {
+        return executeQuery("GetPlayerCurrentTowerFloor", rs -> rs.getInt(DatabaseColumns.COL_CURRENT_TOWER_FLOOR),
+                playername).get(0);
+    }
+
+    public void resetPlayerCurrentFloor(String playername) {
+        this.executeUpdate("ResetPlayerCurrentTowerFloor", playername);
+    }
+
     // --- PLAYERS ---
 
     public void createPlayer(String playername) {
