@@ -294,11 +294,14 @@ public class CreateBugemonView extends View {
         this.showInfoAlert("Bugemon sauvegardé", "Le Bugemon " + name + " a bien été sauvegardé.");
     }
 
-    public void showSaveErrorAlert(String message) {
-        this.showWarningAlert("Erreur de sauvegarde ", message);
+    public void showBugemonNameEmptyAlert() {
+        this.showWarningAlert(INVALID_FORM, "Le nom du Bugemon ne peut pas être vide.");
     }
 
-    // public void setModel()
+    public void showBugemonNameAlreadyUsedAlert() {
+        this.showWarningAlert("Nom de Bugemon deja utilisé",
+                "Le nom du Bugemon que vous avez choisi est deja utilisé.");
+    }
 
     public interface Listener {
         void onTypeSelected(BugemonType selectedType);

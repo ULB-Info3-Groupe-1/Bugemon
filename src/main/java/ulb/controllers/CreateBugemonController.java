@@ -5,10 +5,10 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.BugemonService;
+import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 
@@ -60,11 +60,13 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
                 initiative, hp, false, attack1, attack2, attack3);
 
         try {
-            this.bugemonService.saveBugemon(bugemonToCreate);
-            this.view.showSaveSuccessAlert(bugemonName);
-        } catch (BugemonNameIsEmptyException | BugemonAlreadyExistsException | IllegalArgumentException e) {
-            this.view.showSaveErrorAlert(e.getMessage());
+            this.bugemonService.saveNewBugemon(bugemonToCreate);
+        } catch (BugemonNameIsEmptyException e) {
+            this.view.showBugemonNameEmptyAlert();
+        } catch (BugemonNameAlreadyExistsException e) {
+            this.view.showBugemonNameAlreadyUsedAlert();
         }
+        this.view.showSaveSuccessAlert(bugemonName);
     }
 
     @Override

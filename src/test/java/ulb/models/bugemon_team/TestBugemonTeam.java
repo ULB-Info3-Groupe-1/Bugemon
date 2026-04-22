@@ -18,7 +18,7 @@ import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
-import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
+import ulb.models.bugemon_team.exceptions.BugemonAlreadyPresentInTeamException;
 import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
@@ -71,7 +71,7 @@ public class TestBugemonTeam {
 
         team.add(expectedBugemon);
 
-        assertThrows(BugemonAlreadyExistsException.class, () -> {
+        assertThrows(BugemonAlreadyPresentInTeamException.class, () -> {
             team.add(expectedBugemonDuplicate);
         });
     }
