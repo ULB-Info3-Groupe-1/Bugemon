@@ -75,7 +75,7 @@ public class TestCombat {
         for (Bugemon b : bugemons) {
             team.add(b);
         }
-        return new AutoTrainer(team);
+        return new AutoTrainer(team, null, null);
     }
 
     // ── Attack steps ──────────────────────────────────────────────────────────

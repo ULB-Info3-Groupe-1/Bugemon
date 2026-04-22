@@ -11,7 +11,7 @@ public class TestTrainer {
     @Test
     public void testIsDefeated() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(true);
-        Trainer trainer = new AutoTrainer(team);
+        Trainer trainer = new AutoTrainer(team, null, null);
         assertTrue(trainer.isDefeated());
     }
 }

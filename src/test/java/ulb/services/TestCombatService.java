@@ -44,8 +44,8 @@ public class TestCombatService {
         BugemonTeam fastTeam = new BugemonTeam();
         fastTeam.add(fastBugemon);
 
-        Trainer fasterTrainer = new AutoTrainer(fastTeam);
-        Trainer slowTrainer = new AutoTrainer(slowTeam);
+        Trainer fasterTrainer = new AutoTrainer(fastTeam, null, null);
+        Trainer slowTrainer = new AutoTrainer(slowTeam, null, null);
 
         assertEquals(fasterTrainer, CombatService.attackPriority(fasterTrainer, slowTrainer));
     }

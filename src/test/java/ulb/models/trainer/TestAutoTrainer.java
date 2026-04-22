@@ -23,7 +23,7 @@ public class TestAutoTrainer {
     @Test
     public void testSelectRandomBugemon() {
         BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        AutoTrainer trainer = new AutoTrainer(team);
+        AutoTrainer trainer = new AutoTrainer(team, null, null);
         TestUtilsBugemons.killBugemon(team, "1");
         trainer.selectRandomBugemon();
         assertTrue(trainer.isCurrentBugemonAlive());

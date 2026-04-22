@@ -7,6 +7,6 @@ public class TestUtilsTrainer {
     }
 
     public static AutoTrainer createDefaultAutoTrainer() {
-        return new AutoTrainer(TestUtilsBugemonTeam.createDefaultBugemonTeam(false));
+        return new AutoTrainer(TestUtilsBugemonTeam.createDefaultBugemonTeam(false), null, null);
     }
 }
