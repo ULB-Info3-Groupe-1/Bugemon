@@ -104,6 +104,5 @@ ALTER TABLE "player_bugemons" ADD FOREIGN KEY ("bugemon_name") REFERENCES "bugem
 ALTER TABLE "teams" ADD FOREIGN KEY ("player_id") REFERENCES "players" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "team_members" ADD FOREIGN KEY ("player_id", "team_name") REFERENCES "teams" ("player_id", "name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "team_members" ADD FOREIGN KEY ("player_id", "bugemon_name") REFERENCES "player_bugemons" ("player_id", "bugemon_name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "items" ADD FOREIGN KEY ("item_id") REFERENCES "item_effects" ("item_id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "item_player" ADD FOREIGN KEY ("player_id") REFERENCES "players"("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "item_player" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_id") DEFERRABLE INITIALLY IMMEDIATE;

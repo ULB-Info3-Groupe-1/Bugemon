@@ -23,6 +23,8 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
@@ -36,35 +38,44 @@ import ulb.utils.Parser;
 
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 10;
+    private Inventory defaultInventory;
 
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         super(dbConnection, queries);
-        this.prepareDatabase();
+        Parser parser = new Parser();
+        parser.parse();
+        this.defaultInventory = parser.getInventory();
+        this.prepareDatabase(parser);
     }
 
     // --- DATABASE INIT ---
 
-    private void prepareDatabase() {
+    private void prepareDatabase(Parser parser) {
         Integer tableCount = executeQuery("areTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
                 .findFirst().orElse(0);
 
         if (tableCount < CRITICAL_TABLES_COUNT) {
             executeUpdate("CreateSchema");
-            this.addDefaultGameData();
+            this.addDefaultGameData(parser);
             return;
         }
 
         Integer rowCount = executeQuery("IsDataEmpty", rs -> rs.getInt("total_rows")).stream().findFirst().orElse(0);
         if (rowCount == 0) {
-            this.addDefaultGameData();
+            this.addDefaultGameData(parser);
+            return;
+        }
+
+        Integer itemCount = executeQuery("IsItemsEmpty", rs -> rs.getInt("item_count")).stream().findFirst().orElse(0);
+        if (itemCount == 0) {
+            parser.getItems().forEach(this::saveItem);
         }
     }
 
-    private void addDefaultGameData() {
-        Parser parser = new Parser();
-        parser.parse();
+    private void addDefaultGameData(Parser parser) {
         parser.getAttacks().values().forEach(this::saveAttackFull);
         parser.getBugemons().forEach(this::saveBugemon);
+        parser.getItems().forEach(this::saveItem);
     }
 
     private void saveAttackFull(Attack attack) {
@@ -82,6 +93,26 @@ public class StaticDataRepository extends AbstractRepository {
             } catch (SQLException e) {
                 throw new IllegalStateException("Error saving effects for " + attack.id(), e);
             }
+        }
+    }
+
+    private void saveItem(Item item) {
+        executeUpdate("CreateItem", item.id(), item.name(), item.description(), item.type().name(), item.id() + ".png");
+        if (item.effect() != null) {
+            this.saveItemEffect(item.id(), item.effect());
+        }
+    }
+
+    private void saveItemEffect(String itemId, Effect effect) {
+        switch (effect) {
+            case EffectHeal heal -> executeUpdate("SaveItemEffect", itemId, "EffectHeal", heal.target().name(),
+                    heal.amount(), null, null, null);
+            case EffectStatModifier modifier -> executeUpdate("SaveItemEffect", itemId, "EffectStatModifier",
+                    modifier.target().name(), null, modifier.stat() != null ? modifier.stat().name() : null,
+                    modifier.modifier(), modifier.duration() == EffectDuration.PERMANENT ? 0 : 1);
+            case EffectResetMalus resetMalus -> executeUpdate("SaveItemEffect", itemId, "EffectResetMalus",
+                    resetMalus.target().name(), null, null, null, null);
+            default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
         }
     }
 
@@ -148,6 +179,13 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     // --- UTILS FOR CLASS USING THIS REPO --
+
+    /**
+     * Returns the default starting inventory as defined in objets.json.
+     */
+    public Inventory getDefaultInventory() {
+        return this.defaultInventory;
+    }
 
     /**
      * Retrieves all default Bugemons.
