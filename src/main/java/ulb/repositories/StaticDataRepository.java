@@ -35,7 +35,7 @@ import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
 public class StaticDataRepository extends AbstractRepository {
-    private static final int CRITICAL_TABLES_COUNT = 7;
+    private static final int CRITICAL_TABLES_COUNT = 10;
 
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         super(dbConnection, queries);
