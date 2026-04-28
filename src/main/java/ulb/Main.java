@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
-import ulb.controllers.MetaController.Window;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.QueryLoader;
@@ -59,6 +58,5 @@ public class Main extends Application {
         CombatService combatService = new CombatService(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
                 combatService);
-        controller.switchTo(Window.MAIN_MENU);
     }
 }

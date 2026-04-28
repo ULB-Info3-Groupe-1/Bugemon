@@ -96,6 +96,8 @@ public class MetaController {
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
         this.initTransitions();
+
+        this.switchTo(Window.MAIN_MENU);
     }
 
     public void onCombatFinished(boolean won) {
