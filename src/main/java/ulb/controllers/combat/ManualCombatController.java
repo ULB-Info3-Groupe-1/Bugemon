@@ -5,9 +5,10 @@ import java.util.Collections;
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
-import ulb.models.trainer.AutoTrainer;
+import ulb.models.trainer.AITrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
@@ -24,6 +25,8 @@ import ulb.views.combat.ManualCombatView;
  * of view layout.
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
+    private static final int DEFAULT_MINIMAX_DEPTH = 2;
+
     private ManualTrainer manualPlayerTrainer;
     private final InventoryService inventoryService;
 
@@ -47,7 +50,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
                 this.inventoryService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 
-        AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
+        AITrainer opponentTrainer = new AITrainer(CombatService
+                .createRandomTeam(this.bugemonService.getAllDefaultBugemons(), this.manualPlayerTrainer.getTeamSize()),
+                new Inventory(), DEFAULT_MINIMAX_DEPTH);
 
         this.combat = this.combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
 
