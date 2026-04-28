@@ -212,7 +212,7 @@ public class MetaController {
      * @throws IllegalArgumentException
      *             if the window is invalid
      */
-    public final void switchTo(Window window) {
+    private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
         if (transition == null) {
             throw new IllegalArgumentException("Unknown window: " + window);
