@@ -71,6 +71,6 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
     @Override
     public void onReturnToMainMenu() {
-        this.metaController.onReturnToMainMenu();
+        this.metaController.onMainMenu();
     }
 }

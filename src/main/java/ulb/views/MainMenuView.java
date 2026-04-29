@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import ulb.Configuration;
 
 /**
- * View for the main menu screen. Dispatches player interactions to the controller exclusively through callbacks
+ * View for the combat menu screen. Dispatches player interactions to the controller exclusively through callbacks
  * registered via setters. The view holds no reference to any concrete controller class.
  */
 public class MainMenuView extends View {
@@ -14,20 +14,6 @@ public class MainMenuView extends View {
 
     public void setListener(Listener listener) {
         this.listener = listener;
-    }
-
-    @FXML
-    private void onNewGameClicked() {
-        if (this.showAlertWithTwoButtons("Start New Game",
-                "Êtes-vous sûr de vouloir commencer une nouvelle partie ? Cela effacera votre progression actuelle.",
-                "Oui", "Non").equals("Oui")) {
-            this.listener.onNewGame();
-        }
-    }
-
-    @FXML
-    private void onContinueClicked() {
-        this.listener.onContinue();
     }
 
     @FXML
@@ -46,8 +32,23 @@ public class MainMenuView extends View {
     }
 
     @FXML
-    private void onQuitClicked() {
-        this.listener.onQuit();
+    private void onStartManualCombatClicked() {
+        this.listener.onStartManualCombat();
+    }
+
+    @FXML
+    private void onStartAutomaticCombatClicked() {
+        this.listener.onStartAutomaticCombat();
+    }
+
+    @FXML
+    private void onNoTowerClicked() {
+        this.listener.onNoTower();
+    }
+
+    @FXML
+    private void onReturnSaveMenuClicked() {
+        this.listener.onReturnToSaveMenu();
     }
 
     @Override
@@ -61,16 +62,18 @@ public class MainMenuView extends View {
     }
 
     public interface Listener {
-        void onNewGame();
-
-        void onContinue();
-
         void onCreateTeam();
 
         void onCreateBugemon();
 
-        void onQuit();
-
         void onEditTeam();
+
+        void onNoTower();
+
+        void onStartManualCombat();
+
+        void onStartAutomaticCombat();
+
+        void onReturnToSaveMenu();
     }
 }
