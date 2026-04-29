@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
-import ulb.controllers.MetaController.Window;
 import ulb.models.combat.Combat;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
@@ -93,31 +92,29 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
+
         if (!playerWon) {
-            this.tower = Optional.empty();
             try {
                 this.teamService.restoreHpActiveTeam();
             } catch (NoActiveTeamException e) {
                 throw new IllegalStateException("No active team when combat ended is not possible", e);
             }
-            this.metaController.endTowerFlow();
-            this.metaController.switchTo(Window.COMBAT_DEFEAT);
+            this.finishTowerFlow(playerWon);
             return;
         }
 
         if (this.tower.get().isCompleted()) {
             LOG.info("Tower completed, switching to victory screen");
-            this.tower = Optional.empty();
-            this.metaController.endTowerFlow();
-            this.metaController.switchTo(Window.COMBAT_VICTORY);
+            this.finishTowerFlow(playerWon);
             return;
         }
+    }
 
-        if (this.bugemonService.hasPendingLevelUps()) {
-            this.metaController.switchTo(Window.LEVEL_UP);
-        } else {
-            this.metaController.switchTo(Window.NOTOWER);
-        }
+    // TODO: name is bad
+    private void finishTowerFlow(boolean playerWon) {
+        this.tower = Optional.empty();
+        this.metaController.endTowerFlow();
+        this.metaController.onCombatFinished(playerWon);
     }
 
     /**
