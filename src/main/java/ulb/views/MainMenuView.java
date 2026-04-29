@@ -17,6 +17,20 @@ public class MainMenuView extends View {
     }
 
     @FXML
+    private void onNewGameClicked() {
+        if (this.showAlertWithTwoButtons("Start New Game",
+                "Êtes-vous sûr de vouloir commencer une nouvelle partie ? Cela effacera votre progression actuelle.",
+                "Oui", "Non").equals("Oui")) {
+            this.listener.onNewGame();
+        }
+    }
+
+    @FXML
+    private void onContinueClicked() {
+        this.listener.onContinue();
+    }
+
+    @FXML
     private void onCreateTeamClicked() {
         this.listener.onCreateTeam();
     }
@@ -62,6 +76,10 @@ public class MainMenuView extends View {
     }
 
     public interface Listener {
+        void onNewGame();
+
+        void onContinue();
+
         void onCreateTeam();
 
         void onCreateBugemon();
