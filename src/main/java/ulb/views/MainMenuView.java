@@ -17,6 +17,20 @@ public class MainMenuView extends View {
     }
 
     @FXML
+    private void onNewGameClicked() {
+        if (this.showAlertWithTwoButtons("Start New Game",
+                "Êtes-vous sûr de vouloir commencer une nouvelle partie ? Cela effacera votre progression actuelle.",
+                "Oui", "Non").equals("Oui")) {
+            this.listener.onNewGame();
+        }
+    }
+
+    @FXML
+    private void onContinueClicked() {
+        this.listener.onContinue();
+    }
+
+    @FXML
     private void onCreateTeamClicked() {
         this.listener.onCreateTeam();
     }
@@ -32,23 +46,8 @@ public class MainMenuView extends View {
     }
 
     @FXML
-    private void onNoTowerClicked() {
-        this.listener.onNoTower();
-    }
-
-    @FXML
     private void onQuitClicked() {
         this.listener.onQuit();
-    }
-
-    @FXML
-    private void onStartManualCombatClicked() {
-        this.listener.onStartManualCombat();
-    }
-
-    @FXML
-    private void onStartAutomaticCombatClicked() {
-        this.listener.onStartAutomaticCombat();
     }
 
     @Override
@@ -62,17 +61,15 @@ public class MainMenuView extends View {
     }
 
     public interface Listener {
+        void onNewGame();
+
+        void onContinue();
+
         void onCreateTeam();
 
         void onCreateBugemon();
 
-        void onNoTower();
-
         void onQuit();
-
-        void onStartManualCombat();
-
-        void onStartAutomaticCombat();
 
         void onEditTeam();
     }

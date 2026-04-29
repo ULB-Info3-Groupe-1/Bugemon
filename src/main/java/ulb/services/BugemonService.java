@@ -120,4 +120,9 @@ public class BugemonService {
 
         this.saveBugemonState(bugemon);
     }
+
+    public void clearAllPlayerBugemons() {
+        this.playerRepository.removeAllPlayerBugemon(this.playername);
+    }
+
 }

@@ -65,6 +65,11 @@ public class PlayerRepository extends AbstractRepository {
 
     // --- BUGEMONS ---
 
+    public void removeAllPlayerBugemon(String playername) {
+        LOG.debug("Removing all bugemons for playername: {}", playername);
+        this.executeUpdate("RemoveAllPlayerBugemons", playername);
+    }
+
     public void savePlayerBugemon(PlayerBugemonDTO d) {
         LOG.debug("Saving player bugemon: {}", d);
         executeUpdate("SavePlayerBugemon", d.playername(), d.bugemonName(), d.currentDefense(), d.currentAttackPower(),
@@ -90,6 +95,12 @@ public class PlayerRepository extends AbstractRepository {
     }
 
     // --- TEAMS ---
+
+    public void clearTeams(String playername) {
+        LOG.debug("Clearing teams for playername: {}", playername);
+        executeUpdate("ClearTeamMembers", playername);
+        executeUpdate("ClearTeams", playername);
+    }
 
     public void createTeam(String playername, String teamName)
             throws TeamNameAlreadyExistsException, TeamNameEmptyException {

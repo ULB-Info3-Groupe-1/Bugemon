@@ -114,7 +114,6 @@ ALTER TABLE "item_player" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_i
 
 ALTER TABLE "teams" ADD FOREIGN KEY ("playername") REFERENCES "players" ("playername") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "team_members" ADD FOREIGN KEY ("playername", "team_name") REFERENCES "teams" ("playername", "name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "team_members" ADD FOREIGN KEY ("playername", "bugemon_name") REFERENCES "player_bugemons" ("playername", "bugemon_name") ON UPDATE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "team_members" ADD CONSTRAINT "team_members_playername_bugemon_name_fkey" FOREIGN KEY ("playername", "bugemon_name") REFERENCES "player_bugemons" ("playername", "bugemon_name") ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "players" ADD FOREIGN KEY ("playername", "current_team") REFERENCES "teams" ("playername", "name") DEFERRABLE INITIALLY IMMEDIATE;

@@ -47,3 +47,11 @@ WHERE playername = ? AND team_name = ?;
 -- Query
 -- TeamNameAlreadyExists
 SELECT * FROM teams WHERE playername = ? AND name = ?;
+
+-- Query
+-- ClearTeams
+DELETE FROM teams WHERE playername = ?;
+
+-- Query
+-- ClearTeamMembers
+DELETE FROM team_members WHERE playername = ?;
