@@ -27,6 +27,6 @@
         text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="returnSaveMenuButton"
         onAction="#onReturnSaveMenuClicked" text="Retour menu de sauvegarde"
-        styleClass="btn,btn-primary,btn-nav" />
+        styleClass="btn,btn-secondary,btn-nav" />
 
 </VBox>
