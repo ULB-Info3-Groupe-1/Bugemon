@@ -5,6 +5,9 @@ import ulb.repositories.PlayerRepository;
 
 public class TowerService {
 
+    // TODO: add and connect method to save the current floor in the database when the player finishes a floor and moves
+    // to the next one !
+
     private final String playername;
     private final PlayerRepository playerRepository;
 
