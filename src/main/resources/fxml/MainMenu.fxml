@@ -5,15 +5,11 @@
 <?import javafx.scene.control.Label?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="40"
-    styleClass="main-menu">
+    fx:controller="ulb.views.MainMenuView" alignment="CENTER"
+    spacing="40" styleClass="main-menu">
 
-    <Label text="BUGÉMON" styleClass="main-title" />
+    <Label text="MENU PRINCIPAL" styleClass="main-title" />
 
-    <Button fx:id="newGameButton" onAction="#onNewGameClicked"
-        text="Nouvelle partie" styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="continueButton" onAction="#onContinueClicked"
-        text="Continuer" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="createTeamButton" onAction="#onCreateTeamClicked"
         text="Créer une équipe" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="editTeamButton" onAction="#onEditTeamClicked"
@@ -21,7 +17,16 @@
     <Button fx:id="createBugemonButton"
         onAction="#onCreateBugemonClicked" text="Ajouter des Bugémons"
         styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="quitButton" onAction="#onQuitClicked"
-        text="Quitter" styleClass="btn,btn-danger,btn-nav" />
+    <Button fx:id="startAutomaticCombatButton"
+        onAction="#onStartAutomaticCombatClicked"
+        text="Lancer combat automatique" styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="startManualCombatButton"
+        onAction="#onStartManualCombatClicked" text="Lancer combat manuel"
+        styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="noTowerButton" onAction="#onNoTowerClicked"
+        text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="returnSaveMenuButton"
+        onAction="#onReturnSaveMenuClicked" text="Retour menu de sauvegarde"
+        styleClass="btn,btn-primary,btn-nav" />
 
 </VBox>
