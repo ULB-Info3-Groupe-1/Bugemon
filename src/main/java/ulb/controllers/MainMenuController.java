@@ -1,8 +1,6 @@
 package ulb.controllers;
 
-import ulb.services.BugemonService;
 import ulb.services.TeamService;
-import ulb.services.TowerService;
 import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
 
@@ -10,32 +8,12 @@ import ulb.views.ViewLoader;
  * Controller for the combat menu screen.
  */
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
-
-    BugemonService bugemonService;
     TeamService teamService;
-    TowerService towerService;
 
-    public MainMenuController(MetaController metaController, BugemonService bugemonService, TeamService teamService,
-            TowerService towerService) {
+    public MainMenuController(MetaController metaController, TeamService teamService) {
         super(metaController, ViewLoader.load(MainMenuView::new));
-        this.bugemonService = bugemonService;
         this.teamService = teamService;
-        this.towerService = towerService;
         this.view.setListener(this);
-    }
-
-    @Override
-    public void onNewGame() {
-        this.bugemonService.clearAllPlayerBugemons();
-        this.teamService.clearTeamsAndActiveTeam();
-        this.towerService.clearTowerProgress();
-    }
-
-    @Override
-    public void onContinue() {
-        this.teamService.loadTeamsAndActiveTeam();
-        this.towerService.loadTowerProgress();
-        this.metaController.onCombatMenu();
     }
 
     @Override
@@ -79,5 +57,13 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     @Override
     public void onReturnToSaveMenu() {
         this.metaController.onSaveMenu();
+    }
+
+    private boolean isActiveTeamEmpty() {
+        if (this.teamService.isActiveTeamEmpty()) {
+            this.view.showAlertChooseTeamToLaunchCombat();
+            return true;
+        }
+        return false;
     }
 }
