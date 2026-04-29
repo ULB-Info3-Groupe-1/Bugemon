@@ -30,10 +30,6 @@ public class InventoryService {
         this.loadInventory();
     }
 
-    public void loadInventory() {
-        this.inventory = this.playerRepository.getPlayerInventory(this.playername);
-    }
-
     public void saveInventory() {
         this.playerRepository.saveInventory(this.playername, this.inventory);
     }
