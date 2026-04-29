@@ -186,7 +186,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
 
         if (canLeave) {
-            this.metaController.onReturnToMainMenu();
+            this.metaController.onMainMenu();
         }
     }
 }
