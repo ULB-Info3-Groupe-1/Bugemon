@@ -5,15 +5,11 @@
 <?import javafx.scene.control.Label?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="40"
-    styleClass="main-menu">
+    fx:controller="ulb.views.MainMenuView" alignment="CENTER"
+    spacing="40" styleClass="main-menu">
 
     <Label text="MENU PRINCIPAL" styleClass="main-title" />
 
-    <Button fx:id="newGameButton" onAction="#onNewGameClicked"
-        text="Nouvelle partie" styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="continueButton" onAction="#onContinueClicked"
-        text="Continuer" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="createTeamButton" onAction="#onCreateTeamClicked"
         text="Créer une équipe" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="editTeamButton" onAction="#onEditTeamClicked"
