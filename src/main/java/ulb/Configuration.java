@@ -42,6 +42,7 @@ public abstract class Configuration {
             public static final String MAIN_MENU_VIEW = "/fxml/MainMenu.fxml";
             public static final String MANAGE_TEAM_VIEW = "/fxml/ManageTeam.fxml";
             public static final String CREATE_BUGEMON_VIEW = "/fxml/CreateBugemon.fxml";
+            public static final String COMBAT_MENU_VIEW = "/fxml/CombatMenu.fxml";
 
         }
     }

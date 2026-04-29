@@ -10,6 +10,8 @@ import ulb.models.bugemon.effect.EffectTarget;
 
 public class InventoryService {
 
+    // TODO: add a method te reset and to load the inventory when starting a new game ?
+
     // TODO: hardcoded items to move to database
     private static final Item BAIE_REVIGORANTE = new Item("baie_revigorante", "Baie Revigorante",
             "Restaure 20 PV au Bugémon actif.", Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));

@@ -25,10 +25,9 @@ public class TeamService {
     public TeamService(PlayerRepository playerRepository, String playername) {
         this.playername = playername;
         this.playerRepository = playerRepository;
-
         this.playerRepository.createPlayer(this.playername);
-        this.playerTeams = this.playerRepository.loadTeams(this.playername);
-        this.activeTeam = this.playerRepository.loadCurrentTeam(playername);
+        this.activeTeam = Optional.empty();
+        this.playerTeams = new ArrayList<>();
     }
 
     // --- Getters ---
@@ -42,6 +41,26 @@ public class TeamService {
     }
 
     // --- Team Management ---
+
+    /**
+     * Loads the teams of the player from the database and sets the active team. If the player does not have an active
+     * team, the active team is set to empty. It also clears the local list of teams before loading them from the
+     * database to avoid duplicates in case this method is called multiple times.
+     */
+    public void loadTeamsAndActiveTeam() {
+        this.playerTeams.clear();
+        this.playerTeams.addAll(this.playerRepository.loadTeams(this.playername));
+        this.activeTeam = this.playerRepository.loadCurrentTeam(this.playername);
+    }
+
+    /**
+     * Deletes all teams of the player from the database and clears the active team.
+     */
+    public void clearTeamsAndActiveTeam() {
+        this.clearActiveTeam();
+        this.playerRepository.clearTeams(this.playername);
+        this.playerTeams.clear();
+    }
 
     /**
      * Sets the active team for the player.
@@ -59,7 +78,7 @@ public class TeamService {
     }
 
     /**
-     * Saves the active team to the database.
+     * Saves the active team to the database. It needs the name to give to the active team to save it in db.
      *
      * @param teamName
      *            the name of the team to be saved
