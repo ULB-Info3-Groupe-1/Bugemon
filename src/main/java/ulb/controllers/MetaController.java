@@ -36,6 +36,7 @@ public class MetaController {
      */
     public enum Window {
         MAIN_MENU,
+        COMBAT_MENU,
         CREATE_TEAM,
         EDIT_TEAM,
         CREATE_BUGEMON,
@@ -52,6 +53,7 @@ public class MetaController {
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final MainMenuController mainMenuController;
+    private final CombatMenuController combatMenuController;
     private final ManageTeamController createTeamController;
     private final ManageTeamController editTeamController;
     private final CreateBugemonController createBugemonController;
@@ -80,7 +82,8 @@ public class MetaController {
 
         this.stage = primaryStage;
 
-        this.mainMenuController = new MainMenuController(this, teamService);
+        this.mainMenuController = new MainMenuController(this, bugemonService, teamService, towerService);
+        this.combatMenuController = new CombatMenuController(this, teamService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
@@ -162,6 +165,10 @@ public class MetaController {
         this.switchTo(Window.EDIT_TEAM);
     }
 
+    public void onCombatMenu() {
+        this.switchTo(Window.COMBAT_MENU);
+    }
+
     private void initializeMusicResources() throws IOException {
         this.musicLoader.loadAllResources(this.musicPlayer);
     }
@@ -170,6 +177,10 @@ public class MetaController {
         this.transitions.put(Window.MAIN_MENU, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
             this.mainMenuController.show();
+        });
+        this.transitions.put(Window.COMBAT_MENU, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
+            this.combatMenuController.show();
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
