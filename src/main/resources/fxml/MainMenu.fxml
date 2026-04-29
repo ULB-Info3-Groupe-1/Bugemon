@@ -5,8 +5,8 @@
 <?import javafx.scene.control.Label?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.MainMenuView" alignment="CENTER"
-    spacing="40" styleClass="main-menu">
+    fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="40"
+    styleClass="main-menu">
 
     <Label text="MENU PRINCIPAL" styleClass="main-title" />
 
