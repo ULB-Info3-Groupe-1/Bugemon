@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.CombatMenuView" alignment="CENTER"
+    spacing="40" styleClass="main-menu">
+
+    <Label text="MENU DE COMBAT" styleClass="main-title" />
+
+    <Button fx:id="startAutomaticCombatButton"
+        onAction="#onStartAutomaticCombatClicked"
+        text="Lancer combat automatique" styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="startManualCombatButton"
+        onAction="#onStartManualCombatClicked" text="Lancer combat manuel"
+        styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="noTowerButton" onAction="#onNoTowerClicked"
+        text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="returnMainMenuButton"
+        onAction="#onReturnMainMenuClicked" text="Retour au menu principal"
+        styleClass="btn,btn-primary,btn-nav" />
+
+</VBox>

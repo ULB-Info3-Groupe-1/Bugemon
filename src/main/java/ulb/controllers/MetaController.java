@@ -54,6 +54,7 @@ public class MetaController {
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final SaveMenuController saveMenuController;
     private final MainMenuController mainMenuController;
+    private final CombatMenuController combatMenuController;
     private final ManageTeamController createTeamController;
     private final ManageTeamController editTeamController;
     private final CreateBugemonController createBugemonController;
@@ -82,9 +83,8 @@ public class MetaController {
 
         this.stage = primaryStage;
 
-        this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
-                inventoryService);
-        this.mainMenuController = new MainMenuController(this, teamService);
+        this.mainMenuController = new MainMenuController(this, bugemonService, teamService, towerService);
+        this.combatMenuController = new CombatMenuController(this, teamService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
@@ -168,6 +168,10 @@ public class MetaController {
 
     public void onEditTeam() {
         this.switchTo(Window.EDIT_TEAM);
+    }
+
+    public void onCombatMenu() {
+        this.switchTo(Window.COMBAT_MENU);
     }
 
     private void initializeMusicResources() throws IOException {
