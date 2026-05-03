@@ -110,7 +110,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         if (this.tower.get().isCompleted()) {
             LOG.info("Tower completed, switching to victory screen");
             this.finishTowerFlow(playerWon);
-            return;
         }
     }
 

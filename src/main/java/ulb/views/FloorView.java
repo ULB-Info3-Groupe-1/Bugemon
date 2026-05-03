@@ -16,7 +16,6 @@ import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 import ulb.models.tower.FloorNode;
-import ulb.models.tower.FloorNode.RoomPosition;
 import ulb.views.components.RoomView;
 
 /**
@@ -180,12 +179,7 @@ public class FloorView extends View {
         roomView.setLayoutY(y);
 
         // Register listener to propagate events to FloorMapView's listener
-        roomView.setListener(new RoomView.Listener() {
-            @Override
-            public void onRoomClicked(RoomPosition position) {
-                FloorView.this.listener.onRoomClicked(floorNode);
-            }
-        });
+        roomView.setListener(position -> FloorView.this.listener.onRoomClicked(floorNode));
 
         this.roomNodesByFloorNode.put(floorNode, roomView);
         this.innerMapPane.getChildren().add(roomView);

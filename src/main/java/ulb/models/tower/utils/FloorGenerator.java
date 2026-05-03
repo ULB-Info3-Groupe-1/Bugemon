@@ -35,7 +35,6 @@ public class FloorGenerator {
 
     private final Random random;
     private final CombatFactory combatFactory;
-    private final int floorLevel;
 
     private FloorNode root;
     private FloorNode bossNode;
@@ -47,9 +46,8 @@ public class FloorGenerator {
 
     private Set<FloorNode> visitedNode;
 
-    public FloorGenerator(CombatFactory combatFactory, int floorLevel) {
+    public FloorGenerator(CombatFactory combatFactory) {
         this.combatFactory = combatFactory;
-        this.floorLevel = floorLevel;
         this.random = new Random();
         this.generateNewFloor();
     }
@@ -147,7 +145,7 @@ public class FloorGenerator {
     }
 
     private boolean placeInterestPoints() {
-        this.bossNode.setRoom(new CombatRoom(this.combatFactory, this.floorLevel, true));
+        this.bossNode.setRoom(new CombatRoom(this.combatFactory, true));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();
 
@@ -175,7 +173,7 @@ public class FloorGenerator {
         while (it.hasNext() && combatNodes.size() < this.combatCount) {
             FloorNode node = it.next();
             if (!node.equals(this.bossNode)) {
-                node.setRoom(new CombatRoom(this.combatFactory, this.floorLevel, false));
+                node.setRoom(new CombatRoom(this.combatFactory, false));
                 combatNodes.add(node);
                 it.remove();
             }
@@ -192,7 +190,9 @@ public class FloorGenerator {
             if (placed >= this.rewardCount) {
                 break;
             }
-            if (combatSet.contains(node.getParent().get()) && !node.equals(this.bossNode)) {
+
+            if (node.getParent().isPresent() && combatSet.contains(node.getParent().orElseThrow())
+                    && !node.equals(this.bossNode)) {
                 node.setRoom(new RewardRoom());
                 placed++;
             }

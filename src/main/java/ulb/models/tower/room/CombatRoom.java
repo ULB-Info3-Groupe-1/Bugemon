@@ -5,19 +5,17 @@ import ulb.models.tower.utils.CombatFactory;
 import ulb.models.trainer.Trainer;
 
 public final class CombatRoom extends Room {
-    private final int floorLevel;
     private final boolean isBoss;
     private final CombatFactory combatFactory;
 
-    public CombatRoom(CombatFactory combatFactory, int floorLevel, boolean isBoss) {
+    public CombatRoom(CombatFactory combatFactory, boolean isBoss) {
         this.combatFactory = combatFactory;
-        this.floorLevel = floorLevel;
         this.isBoss = isBoss;
     }
 
     public Combat getCombat(Trainer playerTrainer) {
         // Not a real getter but lazily creates the combat :))) <3 Love
-        return this.combatFactory.create(playerTrainer, this.floorLevel, this.isBoss);
+        return this.combatFactory.create(playerTrainer);
     }
 
     public boolean isBoss() {

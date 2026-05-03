@@ -94,63 +94,62 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * post-animation view update, keeping them in sync.
      */
     private void handleStep(TurnStep step) {
-        switch (step) {
+        Runnable animationCallback = switch (step) {
+
             case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
-                Trainer winner = trainerKo == this.playerTrainer ? this.combat.getOpponentTrainer()
-                        : this.playerTrainer;
-                LOG.info("Combat ended – winner: {}", winner.getCurrentBugemonName());
-                this.pendingWinner = winner;
-                this.showNextStep(step, () -> {
-                });
+                processEndCombat(trainerKo, "Combat ended");
+                yield () -> {
+                };
             }
 
             case TurnStep.ForfeitStep(Trainer trainer) -> {
-                Trainer winner = trainer == this.playerTrainer ? this.combat.getOpponentTrainer() : this.playerTrainer;
-                LOG.info("Combat ended by forfeit – winner: {}", winner.getCurrentBugemonName());
-                this.pendingWinner = winner;
-                this.showNextStep(step, () -> {
-                });
+                processEndCombat(trainer, "Combat ended by forfeit");
+                yield () -> {
+                };
             }
 
-            // reactToKo() and view update are deferred into the animation callback so the
-            // death animation plays on the dead Bugemon. After the fade-out, only the KO'd
-            // side updates: makeReappear() fades the new Bugemon in from opacity 0.
-            // refreshMenuState() handles the forced-switch menu without touching the other
-            // side.
-            case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> this.showNextStep(step, () -> {
+            case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> () -> {
                 trainer.reactToKo();
-                if (trainer == this.playerTrainer) {
-                    this.view.updateTrainerBugemon(trainer.getCurrentBugemon());
-                } else {
-                    this.view.updateOpponentBugemon(trainer.getCurrentBugemon());
-                }
+                updateBugemonView(trainer);
                 this.view.refreshMenuState();
-            });
+            };
 
-            case TurnStep.AttackStep s -> this.showNextStep(step, () -> {
-                Trainer defender = s.attacker() == this.playerTrainer ? this.combat.getOpponentTrainer()
-                        : this.playerTrainer;
-                this.updateInfoForTrainer(defender);
+            case TurnStep.AttackStep s -> () -> {
+                updateInfoForTrainer(getOpponentOf(s.attacker()));
+
                 boolean selfHpEffect = s.getAttackEffects().stream()
                         .anyMatch(e -> e.target() == EffectTarget.THROWER && e instanceof EffectHeal);
                 if (selfHpEffect) {
-                    this.updateInfoForTrainer(s.attacker());
+                    updateInfoForTrainer(s.attacker());
                 }
-            });
+            };
 
-            case TurnStep.SwitchStep s -> this.showNextStep(step, () -> {
-                if (s.trainer() == this.playerTrainer) {
-                    this.view.updateTrainerBugemon(s.trainer().getCurrentBugemon());
-                } else {
-                    this.view.updateOpponentBugemon(s.trainer().getCurrentBugemon());
-                }
-            });
+            case TurnStep.SwitchStep s -> () -> updateBugemonView(s.trainer());
 
-            case TurnStep.ItemStep s -> this.showNextStep(step, () -> this.updateInfoForTrainer(s.trainer()));
+            case TurnStep.ItemStep s -> () -> updateInfoForTrainer(s.trainer());
 
-            default -> this.showNextStep(step, () -> {
-            });
+            default -> () -> {
+            };
+        };
+        this.showNextStep(step, animationCallback);
+    }
+
+    private void processEndCombat(Trainer defeatedTrainer, String logPrefix) {
+        Trainer winner = getOpponentOf(defeatedTrainer);
+        LOG.info("{} – winner: {}", logPrefix, winner.getCurrentBugemonName());
+        this.pendingWinner = winner;
+    }
+
+    private void updateBugemonView(Trainer trainer) {
+        if (trainer == this.playerTrainer) {
+            this.view.updateTrainerBugemon(trainer.getCurrentBugemon());
+        } else {
+            this.view.updateOpponentBugemon(trainer.getCurrentBugemon());
         }
+    }
+
+    private Trainer getOpponentOf(Trainer trainer) {
+        return trainer == this.playerTrainer ? this.combat.getOpponentTrainer() : this.playerTrainer;
     }
 
     private void updateInfoForTrainer(Trainer trainer) {
