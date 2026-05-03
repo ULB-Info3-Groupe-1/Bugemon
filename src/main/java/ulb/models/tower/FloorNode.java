@@ -59,7 +59,7 @@ public class FloorNode {
     public int getBranchCount() {
         FloorNode n = this;
         while (n.getDepth() > 1 && n.getParent().isPresent()) {
-            n = n.getParent().get();
+            n = n.getParent().orElseThrow();
         }
         return this.countSubtree(n);
     }

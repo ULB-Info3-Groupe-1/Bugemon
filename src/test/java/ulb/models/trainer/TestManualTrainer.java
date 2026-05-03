@@ -49,7 +49,8 @@ public class TestManualTrainer {
         TestUtilsBugemons.killBugemon(team, "2");
         ManualTrainer trainer = new ManualTrainer(team, this.inventory);
 
-        assertThrows(IllegalArgumentException.class, () -> trainer.registerSwitch(team.get("2").get()));
+        Bugemon target = team.get("2").get();
+        assertThrows(IllegalArgumentException.class, () -> trainer.registerSwitch(target));
     }
 
     @Test
@@ -144,6 +145,7 @@ public class TestManualTrainer {
         ManualTrainer trainer = new ManualTrainer(team, this.inventory);
         TestUtilsBugemons.killBugemon(team, "2");
 
-        assertThrows(IllegalArgumentException.class, () -> trainer.switchAfterKO(team.get("2").get()));
+        Bugemon replacement = team.get("2").get();
+        assertThrows(IllegalArgumentException.class, () -> trainer.switchAfterKO(replacement));
     }
 }

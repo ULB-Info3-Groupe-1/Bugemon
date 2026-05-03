@@ -15,8 +15,8 @@ public class CombatFactory {
         this.bugemonService = bugemonService;
     }
 
-    public Combat create(Trainer playerTrainer, int floorNumber, boolean isBoss) {
-        // Later will handle the floor difficulty
+    public Combat create(Trainer playerTrainer) {
+        // Later will handle the floor difficulty and boss ?
         AutoTrainer opponentTrainer = new AutoTrainer(CombatService
                 .createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
 

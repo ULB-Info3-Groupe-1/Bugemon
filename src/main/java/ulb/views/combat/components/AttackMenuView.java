@@ -52,12 +52,8 @@ public class AttackMenuView extends ComponentView {
                 buttons[i].getStyleClass().setAll("btn", "attack-" + attack.type().toString());
                 buttons[i].setVisible(true);
                 buttons[i].setManaged(true);
-                buttons[i].setOnMouseEntered(e -> {
-                    this.listener.onAttackHovered(attack);
-                });
-                buttons[i].setOnMouseExited(e -> {
-                    this.listener.onAttackLeft();
-                });
+                buttons[i].setOnMouseEntered(e -> this.listener.onAttackHovered(attack));
+                buttons[i].setOnMouseExited(e -> this.listener.onAttackLeft());
             } else {
                 this.attacks[i] = null;
                 buttons[i].setVisible(false);

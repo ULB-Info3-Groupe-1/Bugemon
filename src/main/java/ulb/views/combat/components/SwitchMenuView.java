@@ -44,9 +44,7 @@ public class SwitchMenuView extends ComponentView {
             back.getStyleClass().addAll("btn", "btn-secondary", "menu-btn-min");
             back.setMaxWidth(Double.MAX_VALUE);
             back.setWrapText(true);
-            back.setOnAction(e -> {
-                this.listener.onBack();
-            });
+            back.setOnAction(e -> this.listener.onBack());
             this.getChildren().add(back);
         }
     }
@@ -66,9 +64,7 @@ public class SwitchMenuView extends ComponentView {
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setWrapText(true);
         HBox.setHgrow(btn, Priority.ALWAYS);
-        btn.setOnAction(e -> {
-            this.listener.onSwitch(b);
-        });
+        btn.setOnAction(e -> this.listener.onSwitch(b));
 
         row.getChildren().addAll(sprite, btn);
         return row;
