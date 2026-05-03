@@ -84,6 +84,17 @@ public abstract class Configuration {
 
     }
 
+    public static final class Skill {
+        private Skill() {
+            // Private constructor to prevent instantiation
+        }
+
+        public static final String DEFAULT_ID = "start";
+        public static final String DEFAULT_NAME = "départ";
+        public static final String DEFAULT_DESCRIPTION = "Point de départ de l'arbre";
+
+    }
+
     public static final class Json {
 
         private Json() {
