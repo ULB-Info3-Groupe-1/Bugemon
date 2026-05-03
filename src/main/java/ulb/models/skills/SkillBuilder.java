@@ -21,11 +21,9 @@ public final class SkillBuilder {
 
     private static final Effect DEFAULT_EFFECT = null;
 
-    // private static final Position
-    // TODO: Position class => unique class ?
-    // Effect ? how should I handle it ? with the object's complexity, what value
+    // TODO: Effect ? how should I handle it ? with the object's complexity, what
+    // value
     // should I put as default ? null ?
-    private static final Position DEFAULT_POSITION = Configuration.Skill.DEFAULT_POSITION;
 
     private static final List<String> DEFAULT_PREREQUISITES = new ArrayList<>();
 

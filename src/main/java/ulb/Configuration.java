@@ -94,7 +94,7 @@ public abstract class Configuration {
         public static final String DEFAULT_ID = "start";
         public static final String DEFAULT_NAME = "départ";
         public static final String DEFAULT_DESCRIPTION = "Point de départ de l'arbre";
-        public static final Position DEFAULT_POSITION = new Position(0, 0);
+    
     }
 
     public static final class Json {

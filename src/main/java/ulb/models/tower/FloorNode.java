@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javafx.geometry.Pos;
 import ulb.models.tower.room.Room;
 import ulb.models.utils.Position;
 
