@@ -25,7 +25,7 @@ public class Floor {
         this.playerTrainer = playerTrainer;
         this.floorLevel = floorLevel;
         CombatFactory combatFactory = new CombatFactory(bugemonService);
-        this.floorGenerator = new FloorGenerator(combatFactory, this.floorLevel);
+        this.floorGenerator = new FloorGenerator(combatFactory);
         this.currentPosition = this.floorGenerator.getRoot();
         this.floorRoot = this.floorGenerator.getRoot();
     }

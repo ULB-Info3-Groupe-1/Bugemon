@@ -2,6 +2,7 @@ package ulb.models.combat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class TestCombat {
 
         @Override
         public void distributeXp(CombatContext combatCtx) {
+            // no-op, we don't want to test XP distribution here
         }
 
     }
@@ -262,6 +264,6 @@ public class TestCombat {
         TurnResult r1 = combat.turn();
         TurnResult r2 = combat.turn();
 
-        assertFalse(r1 == r2);
+        assertNotSame(r1, r2);
     }
 }

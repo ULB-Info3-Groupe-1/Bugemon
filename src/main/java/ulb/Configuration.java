@@ -34,6 +34,7 @@ public abstract class Configuration {
             public static final String COMPONENT_DIALOG_ZONE = "/fxml/components/DialogZone.fxml";
             public static final String COMPONENT_HOVER_INFO = "/fxml/components/HoverInfo.fxml";
             public static final String COMPONENT_ROOM_NODE = "/fxml/components/RoomNode.fxml";
+            public static final String COMPONENT_ROOM = "/fxml/components/Room.fxml";
 
             public static final String COMBAT_VIEW = "/fxml/Combat.fxml";
             public static final String COMBAT_VICTORY_VIEW = "/fxml/CombatVictory.fxml";

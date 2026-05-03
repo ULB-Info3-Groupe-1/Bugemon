@@ -1,5 +1,6 @@
 package ulb.models.tower.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -32,7 +33,7 @@ public class TestFloorGenerator {
 
     @Before
     public void setup() {
-        this.floorGenerator = new FloorGenerator(COMBAT_FACTORY_MOCK, 0);
+        this.floorGenerator = new FloorGenerator(COMBAT_FACTORY_MOCK);
         this.root = this.floorGenerator.getRoot();
 
         this.allNodes = new ArrayList<>();
@@ -101,7 +102,7 @@ public class TestFloorGenerator {
     public void testOnlyOneBossRoom() {
         long bossCount = this.allNodes.stream().filter(n -> n.getRoom() instanceof CombatRoom cr && cr.isBoss())
                 .count();
-        assertTrue("Expected exactly 1 boss room, found " + bossCount, bossCount == 1);
+        assertEquals(1, bossCount);
     }
 
     @Test
