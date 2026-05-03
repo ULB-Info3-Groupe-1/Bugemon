@@ -50,8 +50,9 @@ public class TestLevelUp {
         this.bugemon = TestUtilsBugemons.createDefaultBugemon("1");
         LevelUp levelUp = new LevelUp(this.bugemon);
 
+        int invalidIndex = levelUp.numUpgrades();
         assertThrows(IndexOutOfBoundsException.class, () -> {
-            levelUp.get(levelUp.numUpgrades());
+            levelUp.get(invalidIndex);
         });
     }
 }

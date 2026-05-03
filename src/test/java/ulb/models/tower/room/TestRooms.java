@@ -15,7 +15,7 @@ public class TestRooms {
     @Test
     public void testCombatRoomCompletionAndType() {
         CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom combatRoom = new CombatRoom(combatFactory, 2, false);
+        CombatRoom combatRoom = new CombatRoom(combatFactory, false);
 
         assertEquals(RoomType.COMBAT, combatRoom.getType());
     }
@@ -23,7 +23,7 @@ public class TestRooms {
     @Test
     public void testBossCombatRoomType() {
         CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom bossRoom = new CombatRoom(combatFactory, 5, true);
+        CombatRoom bossRoom = new CombatRoom(combatFactory, true);
 
         assertEquals(RoomType.BOSS, bossRoom.getType());
         assertTrue(bossRoom.isBoss());
@@ -39,7 +39,7 @@ public class TestRooms {
     @Test
     public void testVisitDelegatesToTowerController() {
         CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom combatRoom = new CombatRoom(combatFactory, 1, false);
+        CombatRoom combatRoom = new CombatRoom(combatFactory, false);
         RewardRoom rewardRoom = new RewardRoom();
         EmptyRoom emptyRoom = new EmptyRoom();
         TowerController towerController = mock(TowerController.class);

@@ -1,8 +1,6 @@
 package ulb.models.tower.room;
 
 public final class EmptyRoom extends Room {
-    public EmptyRoom() {
-    }
 
     @Override
     public void visit(RoomVisitor roomVisitor) {
