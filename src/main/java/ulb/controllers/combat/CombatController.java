@@ -120,7 +120,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
                 boolean selfHpEffect = s.getAttackEffects().stream()
                         .anyMatch(e -> e.target() == EffectTarget.THROWER && e instanceof EffectHeal);
                 if (selfHpEffect) {
-                    this.updateInfoForTrainer(s.attacker());
+                    updateInfoForTrainer(s.attacker());
                 }
             };
 
