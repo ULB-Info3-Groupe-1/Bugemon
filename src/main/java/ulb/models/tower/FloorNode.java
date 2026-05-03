@@ -4,19 +4,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javafx.geometry.Pos;
 import ulb.models.tower.room.Room;
+import ulb.models.utils.Position;
 
 public class FloorNode {
-    private final int x;
-    private final int y;
+    private final Position position;
     private final int depth;
     private final List<FloorNode> children;
     private final Optional<FloorNode> parent;
     private Room room;
 
-    public FloorNode(int x, int y, Room room, List<FloorNode> children, FloorNode parent, int depth) {
-        this.x = x;
-        this.y = y;
+    public FloorNode(Position position, Room room, List<FloorNode> children, FloorNode parent, int depth) {
+        this.position = position;
         this.depth = depth;
         this.room = room;
         this.children = children;
@@ -25,15 +25,15 @@ public class FloorNode {
 
     // Getters
     public int getX() {
-        return this.x;
+        return this.position.x();
     }
 
     public int getY() {
-        return this.y;
+        return this.position.y();
     }
 
     public RoomPosition getPosition() {
-        return new RoomPosition(this.x, this.y);
+        return new RoomPosition(this.position.x(), this.position.y());
     }
 
     public int getDepth() {
@@ -91,12 +91,12 @@ public class FloorNode {
             return false;
         }
         FloorNode other = (FloorNode) obj;
-        return this.x == other.x && this.y == other.y;
+        return this.getPosition() == other.getPosition();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.x, this.y);
+        return Objects.hash(this.position.x(), this.position.y());
     }
 
     public record RoomPosition(int row, int col) {

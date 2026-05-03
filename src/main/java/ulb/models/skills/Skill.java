@@ -3,6 +3,7 @@ package ulb.models.skills;
 import java.util.List;
 
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.utils.Position;
 
 public class Skill {
 
@@ -25,9 +26,6 @@ public class Skill {
     private List<String> prerequisites; // List of skill IDs that must be unlocked before this skill can be unlocked
 
     private boolean isUnlocked;
-
-    record Position(int x, int y) {
-    }
 
     public Skill(String id, String name, String description, int cost, int maxLevel, Effect effect, Position position,
             List<String> prerequisites) {
