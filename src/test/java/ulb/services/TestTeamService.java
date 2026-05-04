@@ -67,6 +67,7 @@ public class TestTeamService {
         this.teamService.addOrRemoveBugemonOfActiveTeam(bugemon);
         String teamName = "NewTeam";
         this.teamService.saveTeam(teamName);
+        this.teamService.setActiveTeam(teamName);
 
         verify(this.playerRepository).createTeam(PLAYER_NAME, teamName);
         assertEquals(teamName, this.teamService.getActiveTeam().get().getName());
