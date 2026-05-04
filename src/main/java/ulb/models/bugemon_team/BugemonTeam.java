@@ -84,6 +84,22 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     /**
+     * Adds all the given Bugemon to the team.
+     *
+     * @param bugemons
+     *            (BugemonTeam) the Bugemon to be added to the team
+     * @throws TeamAlreadyFullException
+     *             if adding the given Bugemon would exceed the team's capacity
+     * @throws BugemonAlreadyPresentInTeamException
+     *             if any of the given Bugemon is already in the team
+     */
+    public void addAll(BugemonTeam team) throws TeamAlreadyFullException, BugemonAlreadyPresentInTeamException {
+        for (Bugemon bugemon : team) {
+            this.add(bugemon);
+        }
+    }
+
+    /**
      * Returns the select Bugemon with the given name if it's in the team.
      *
      * @param name

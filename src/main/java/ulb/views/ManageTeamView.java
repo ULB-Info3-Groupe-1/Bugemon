@@ -2,7 +2,6 @@ package ulb.views;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -62,7 +61,7 @@ public class ManageTeamView extends View {
 
     private final TeamFormMode mode;
     private Listener listener;
-    private Optional<BugemonTeam> bugemonTeam;
+    private BugemonTeam bugemonTeam;
     private boolean isBugemonTeamSaved;
     private List<Bugemon> availableBugemons;
 
@@ -119,7 +118,7 @@ public class ManageTeamView extends View {
 
         void onLoad(String teamName);
 
-        void onDelete();
+        void onDelete(String teamName);
 
         void onRename(String oldName, String newName);
 
@@ -127,7 +126,7 @@ public class ManageTeamView extends View {
 
         void onBugemonSelected(Bugemon bugemon);
 
-        void onModifyTeam();
+        void onModifyTeam(String teamName);
 
         void onStartAutomaticCombat();
 
@@ -140,27 +139,19 @@ public class ManageTeamView extends View {
 
     @Override
     public void refresh() {
-        HashSet<Bugemon> activeSet = this.bugemonTeam.map(team -> new HashSet<>(team.getAll())).orElseGet(HashSet::new);
-        this.allBugemonsGridView.showAll(this.availableBugemons, activeSet);
-        this.bugemonTeam.ifPresentOrElse(this::updateActiveTeamUI, this::clearUI);
+        this.allBugemonsGridView.showAll(this.availableBugemons, new HashSet<>(this.bugemonTeam.getAll()));
+        this.updateTeamUI();
     }
 
-    private void updateActiveTeamUI(BugemonTeam team) {
-        this.bugemonsTeamView.showTeam(team);
-        if (team.isEmpty()) {
+    private void updateTeamUI() {
+        this.bugemonsTeamView.showTeam(this.bugemonTeam);
+        if (this.bugemonTeam.isEmpty()) {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
         } else if (this.isBugemonTeamSaved) {
-            this.selectedTeamName.setText(team.getName());
-            this.teamListView.getSelectionModel().select(team.getName());
+            this.selectedTeamName.setText(this.bugemonTeam.getName());
         } else {
             this.selectedTeamName.setText(TEAM_NOT_SAVED_MESSAGE);
         }
-    }
-
-    private void clearUI() {
-        this.bugemonsTeamView.clearBugemons();
-        this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        this.teamListView.getSelectionModel().clearSelection();
     }
 
     // --- Utils ---
@@ -169,8 +160,8 @@ public class ManageTeamView extends View {
         this.saveTeamNameInput.setText("");
     }
 
-    public void setIsActiveTeamSaved(boolean isActiveTeamSaved) {
-        this.isBugemonTeamSaved = isActiveTeamSaved;
+    public void setIsTeamSaved(boolean isTeamSaved) {
+        this.isBugemonTeamSaved = isTeamSaved;
     }
 
     // --- Actions to perform when clicked ---
@@ -187,7 +178,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onDeleteClicked() {
-        this.listener.onDelete();
+        this.listener.onDelete(this.getTeamNameToLoad());
         this.selectedTeamName.setText(NO_TEAM_SELECTED);
     }
 
@@ -203,7 +194,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onModifyTeamClicked() {
-        this.listener.onModifyTeam();
+        this.listener.onModifyTeam(this.getTeamNameToLoad());
     }
 
     @FXML
@@ -234,12 +225,22 @@ public class ManageTeamView extends View {
 
     // --- Setters ---
 
-    public void setTeam(Optional<BugemonTeam> team) {
+    public void setTeam(BugemonTeam team) {
         this.bugemonTeam = team;
     }
 
     public void setAvailableBugemons(List<Bugemon> allBugemons) {
         this.availableBugemons = allBugemons;
+    }
+
+    /**
+     * Selects the team with the given name in the team list. If the team is not found, no team is selected.
+     *
+     * @param teamName
+     *            the name of the team to select
+     */
+    public void setTeamListSelected(String teamName) {
+        this.teamListView.getSelectionModel().select(teamName);
     }
 
     public void setTeamList(List<String> teamNames) {
@@ -278,7 +279,11 @@ public class ManageTeamView extends View {
         this.showWarningAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
     }
 
-    public void showDeletTeamNoActiveTeamAlert() {
+    public void showSelectTeamToRenameAlert() {
+        this.showWarningAlert(TEAM_NAME_NOT_FOUND, "Veuillez sélectionner une équipe à renommer.");
+    }
+
+    public void showDeleteTeamNoActiveTeamAlert() {
         this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez supprimer.");
     }
 
@@ -287,7 +292,7 @@ public class ManageTeamView extends View {
     }
 
     public void showAlertChooseTeamToModify() {
-        this.showNoActiveTeamAlert("Veuillez choisir une equipe à modifier.");
+        this.showNoActiveTeamAlert("Veuillez choisir une équipe à modifier.");
     }
 
     /**

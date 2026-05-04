@@ -22,7 +22,7 @@ public class DatabaseHelper {
         try {
             return Enum.valueOf(enumClass, value);
         } catch (IllegalArgumentException e) {
-            LOG.error("Valeur Enum invalide pour la colonne {} : {}'", columnName, value);
+            LOG.error("Enum Value invalid for column {}: {}", columnName, value);
             return null;
         }
     }

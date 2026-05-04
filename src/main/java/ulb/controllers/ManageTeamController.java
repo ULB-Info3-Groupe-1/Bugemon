@@ -8,7 +8,6 @@ import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.TeamService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
@@ -43,20 +42,25 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     @Override
     protected void show() {
         this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
-        this.refresh();
+        this.teamService.getActiveTeam().ifPresentOrElse(team -> {
+            this.teamService.setWorkingTeamEqualsActiveTeam();
+            this.view.setTeam(team);
+            this.view.setTeamListSelected(team.getName());
+            this.view.setTeamList(this.teamService.getTeamNames());
+        }, this::refresh);
         super.show();
     }
 
     private void refresh() {
-        this.view.setTeam(this.teamService.getActiveTeam());
-        this.view.setIsActiveTeamSaved(this.teamService.isActiveTeamSaved());
+        this.view.setTeam(this.teamService.getWorkingTeam());
+        this.view.setIsTeamSaved(this.teamService.isWorkingTeamSaved());
         this.view.setTeamList(this.teamService.getTeamNames());
         this.view.refresh();
     }
 
     @Override
     public void onBugemonSelected(Bugemon bugemon) {
-        this.teamService.addOrRemoveBugemonOfActiveTeam(bugemon);
+        this.teamService.addOrRemoveBugemon(bugemon);
         this.refresh();
     }
 
@@ -64,80 +68,73 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     public void onSave(String teamName) {
         try {
             this.teamService.saveTeam(teamName);
-            this.refresh();
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
-        } catch (NoActiveTeamException e) {
-            throw new IllegalStateException(
-                    "The player team to save doesn't exist. The active team should exist now and be modified.");
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
+        this.refresh();
     }
 
     @Override
     public void onLoad(String teamName) {
         try {
             this.teamService.setActiveTeam(teamName);
-            this.refresh();
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
+        this.refresh();
     }
 
     @Override
-    public void onDelete() {
+    public void onDelete(String teamName) {
         try {
-            this.teamService.deleteActiveTeam();
-            this.refresh();
-        } catch (NoActiveTeamException e) {
-            this.view.showDeletTeamNoActiveTeamAlert();
+            this.teamService.deleteTeam(teamName);
         } catch (TeamNotFoundException e) {
-            this.teamService.getActiveTeam().ifPresentOrElse(team -> this.view.showTeamNotFoundAlert(team.getName()),
-                    this.view::showDeletTeamNoActiveTeamAlert);
+            this.view.showDeleteTeamNoActiveTeamAlert();
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamAlert();
         }
+        this.refresh();
     }
 
     @Override
     public void onRename(String oldName, String newName) {
         try {
             this.teamService.renameTeam(oldName, newName);
-            this.refresh();
         } catch (TeamNotFoundException e) {
-            this.view.showTeamNotFoundAlert(oldName);
+            this.view.showSelectTeamToRenameAlert();
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showTeamNameAlreadyExistsAlert(newName);
-        } catch (NoActiveTeamException e) {
-            this.view.showRenameTeamNoActiveTeamAlert();
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
+        this.refresh();
     }
 
     @Override
     public void onAddNewTeam() {
-        this.teamService.clearActiveTeam();
+        this.teamService.clearWorkingTeam();
         this.view.clearTeamNameToSave();
         this.refresh();
     }
 
     @Override
-    public void onModifyTeam() {
+    public void onModifyTeam(String teamName) {
+        if (teamName == null || teamName.isEmpty()) {
+            this.view.showAlertChooseTeamToModify();
+            return;
+        }
         try {
-            this.teamService.modifyActiveTeam();
-            this.refresh();
+            this.teamService.modifyTeam(teamName);
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
-        } catch (NoActiveTeamException e) {
-            this.view.showAlertChooseTeamToModify();
         } catch (TeamNotFoundException e) {
-            this.teamService.getActiveTeam().ifPresentOrElse(team -> this.view.showTeamNotFoundAlert(team.getName()),
-                    this.view::showAlertChooseTeamToModify);
+            this.view.showTeamNotFoundAlert(teamName);
         }
+        this.refresh();
     }
 
     @Override
@@ -169,10 +166,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onReturnToMainMenu() {
-        boolean canLeave = this.teamService.isActiveTeamSaved();
+        boolean canLeave = this.teamService.isWorkingTeamSaved();
 
         if (!canLeave && this.view.showAlertTeamChangesNotSave()) {
-            this.teamService.clearActiveTeam();
+            this.teamService.clearWorkingTeam();
             canLeave = true;
         }
 
