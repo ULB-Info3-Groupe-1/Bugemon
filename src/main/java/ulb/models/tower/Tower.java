@@ -4,13 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
+import ulb.services.InventoryService;
 
 public class Tower {
 
@@ -19,9 +19,10 @@ public class Tower {
     private int currentFloor;
     private boolean isFinished = false;
 
-    public Tower(BugemonTeam playerTeam, Inventory inventory, BugemonService bugemonService, int currentFloor) {
+    public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
+            int currentFloor) {
         this.currentFloor = currentFloor;
-        this.playerTrainer = new ManualTrainer(playerTeam, inventory);
+        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService);
 
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {

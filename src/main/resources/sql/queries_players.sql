@@ -1,8 +1,6 @@
 -- Query to create a player
 -- CreatePlayer
-INSERT INTO players (playername) VALUES (?)
-ON CONFLICT (playername) DO NOTHING;
-
+INSERT INTO players (playername) VALUES (?);
 -- Query
 -- GetPlayerByPlayername
 SELECT id FROM players WHERE playername = ?;

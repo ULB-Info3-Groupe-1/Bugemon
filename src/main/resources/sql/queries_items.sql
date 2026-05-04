@@ -3,12 +3,6 @@
 INSERT INTO items (item_id, name, description, category, sprite)
 VALUES (?, ?, ?, ?, ?);
 
--- Query
--- CreateItemPlayer
-INSERT INTO item_player (playername, item_id, amount)
-VALUES (?, ?, ?)
-ON CONFLICT (playername, item_id) DO NOTHING;
-
 -- Query to retrieve the player inventory with their amount and item effect
 -- GetPlayerInventory
 SELECT
@@ -36,5 +30,10 @@ INSERT INTO item_effects (item_id, type, target, value, stat, modifier, duration
 VALUES (?, ?, ?, ?, ?, ?, ?);
 
 -- Query
--- UpdateItemAmount
-UPDATE item_player SET amount = ? WHERE playername = ? AND item_id = ?;
+-- SaveItemForPlayer
+INSERT INTO item_player (playername, item_id, amount)
+VALUES (?, ?, ?);
+
+-- Query
+-- RemoveItemsOfPlayer
+DELETE FROM item_player WHERE playername = ?;
