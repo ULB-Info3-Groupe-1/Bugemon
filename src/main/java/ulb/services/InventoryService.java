@@ -1,5 +1,7 @@
 package ulb.services;
 
+import java.util.Map;
+
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.repositories.PlayerRepository;
@@ -15,21 +17,31 @@ public class InventoryService {
         this.playername = playername;
     }
 
-    public Inventory getInventory() {
-        return this.inventory;
-    }
-
     public void loadInventory() {
         this.inventory = this.playerRepository.getPlayerInventory(this.playername);
     }
 
-    public void saveInventory() {
-        this.inventory.getMap().forEach(
-                (item, quantity) -> this.playerRepository.updateItemAmount(this.playername, item.id(), quantity));
+    /**
+     * Resets the player's inventory to a default state with the default items.
+     */
+    public void resetInventory() {
+        this.playerRepository.addDefaultInventory(this.playername);
+        this.loadInventory();
     }
 
-    public void addItem(Item item, int quantity) {
-        this.playerRepository.addItemToPlayer(this.playername, item.id(), quantity);
-        this.inventory.addItem(item, quantity);
+    public void saveInventory() {
+        this.playerRepository.saveInventory(this.playername, this.inventory);
+    }
+
+    public void useItem(Item item) {
+        this.inventory.useItem(item);
+    }
+
+    public Map<Item, Integer> getInventoryMap() {
+        return this.inventory.getMap();
+    }
+
+    public boolean hasItem(Item item) {
+        return this.inventory.hasItem(item);
     }
 }

@@ -44,7 +44,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.manualPlayerTrainer = new ManualTrainer(
                 this.teamService.getActiveTeam().orElseThrow(
                         () -> new IllegalStateException("No active team for player when starting Manual combat")),
-                this.inventoryService.getInventory());
+                this.inventoryService);
         this.playerTrainer = this.manualPlayerTrainer;
 
         AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());

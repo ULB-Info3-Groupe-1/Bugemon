@@ -1,5 +1,8 @@
 package ulb.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
@@ -9,6 +12,8 @@ import ulb.views.ViewLoader;
 
 /** Controller for the main menu screen. */
 public class SaveMenuController extends Controller<SaveMenuView> implements SaveMenuView.Listener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SaveMenuController.class);
 
     private final BugemonService bugemonService;
     private final TeamService teamService;
@@ -27,15 +32,17 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
 
     @Override
     public void onNewGame() {
+        LOG.info("Starting new game - clearing player data");
         this.bugemonService.clearAllPlayerBugemons();
         this.teamService.clearTeamsAndActiveTeam();
         this.towerService.clearTowerProgress();
-        this.inventoryService.loadInventory(); // TODO: check if needed or recreate a new inventory ?
+        this.inventoryService.resetInventory();
         this.metaController.onMainMenu();
     }
 
     @Override
     public void onContinue() {
+        LOG.info("Continuing game - loading player data");
         this.teamService.loadTeamsAndActiveTeam();
         this.towerService.loadTowerProgress();
         this.inventoryService.loadInventory();
