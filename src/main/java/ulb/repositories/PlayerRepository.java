@@ -11,6 +11,16 @@ import org.slf4j.LoggerFactory;
 
 import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
+import ulb.models.bugemon.Item.ItemType;
+import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectDuration;
+import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectResetMalus;
+import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.bugemon.effect.EffectStatModifier;
+import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
@@ -56,8 +66,10 @@ public class PlayerRepository extends AbstractRepository {
     }
 
     private int createPlayer(String playername) {
-        return executeQuery("CreatePlayer", rs -> rs.getInt(DatabaseColumns.COL_ID), playername).stream().findFirst()
-                .orElseThrow(() -> new IllegalStateException("No ID returned"));
+        int playerId = executeQuery("CreatePlayer", rs -> rs.getInt(DatabaseColumns.COL_ID), playername).stream()
+                .findFirst().orElseThrow(() -> new IllegalStateException("No ID returned"));
+        this.addDefaultInventory(playerId);
+        return playerId;
     }
 
     // --- BUGEMONS ---
@@ -205,6 +217,51 @@ public class PlayerRepository extends AbstractRepository {
                         rs.getString(DatabaseColumns.COL_TEAM_NAME), rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
                         rs.getInt(DatabaseColumns.COL_SLOT_POSITION)),
                 playerId, teamName);
+    }
+
+    // --- Items/Inventory ---
+
+    public Inventory getPlayerInventory(int playerId) {
+        LOG.debug("Getting inventory for playerId: {}", playerId);
+        Inventory inventory = new Inventory();
+        executeQuery("GetPlayerInventory", rs -> {
+            String effectType = rs.getString("effect_type");
+            Effect effect = effectType != null ? this.buildItemEffect(rs, effectType) : null;
+            Item item = new Item(rs.getString(DatabaseColumns.COL_ITEM_ID), rs.getString(DatabaseColumns.COL_NAME),
+                    rs.getString(DatabaseColumns.COL_DESCRIPTION),
+                    ItemType.valueOf(rs.getString(DatabaseColumns.COL_CATEGORY)), effect);
+            inventory.addItem(item, rs.getInt(DatabaseColumns.COL_AMOUNT));
+            return null;
+        }, playerId);
+        return inventory;
+    }
+
+    private Effect buildItemEffect(java.sql.ResultSet rs, String effectType) throws java.sql.SQLException {
+        EffectTarget target = EffectTarget.valueOf(rs.getString("effect_target"));
+        return switch (effectType) {
+            case "EffectHeal" -> new EffectHeal(target, rs.getInt("effect_value"));
+            case "EffectStatModifier" -> new EffectStatModifier(target, EffectStat.valueOf(rs.getString("effect_stat")),
+                    rs.getInt("effect_modifier"),
+                    rs.getInt("effect_duration") == 0 ? EffectDuration.PERMANENT : EffectDuration.ONE_TURN);
+            case "EffectResetMalus" -> new EffectResetMalus(target);
+            default -> throw new IllegalStateException("Unknown item effect type: " + effectType);
+        };
+    }
+
+    public void addItemToPlayer(int playerId, String itemId, int quantity) {
+        LOG.debug("Adding {}x {} to playerId: {}", quantity, itemId, playerId);
+        executeUpdate("CreateItemPlayer", playerId, itemId, quantity);
+    }
+
+    public void updateItemAmount(int playerId, String itemId, int newAmount) {
+        LOG.debug("Updating item {} amount to {} for playerId: {}", itemId, newAmount, playerId);
+        executeUpdate("UpdateItemAmount", newAmount, playerId, itemId);
+    }
+
+    private void addDefaultInventory(int playerId) {
+        Inventory defaultInventory = this.staticDataRepository.getDefaultInventory();
+        defaultInventory.getMap()
+                .forEach((item, quantity) -> executeUpdate("CreateItemPlayer", playerId, item.id(), quantity));
     }
 
     // --- Utils ---

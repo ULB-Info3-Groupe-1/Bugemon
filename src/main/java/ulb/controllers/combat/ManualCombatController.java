@@ -123,6 +123,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     // ── CombatController hooks ────────────────────────────────────────────────
 
     @Override
+    protected void onCombatEnded(ulb.models.trainer.Trainer winner) {
+        this.inventoryService.saveInventory();
+        super.onCombatEnded(winner);
+    }
+
     protected void onStepsExhausted() {
         if (!this.manualPlayerTrainer.isCurrentBugemonAlive()) {
             this.manualPlayerTrainer.setForcedSwitch(true);

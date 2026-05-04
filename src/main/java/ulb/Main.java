@@ -54,7 +54,7 @@ public class Main extends Application {
 
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerId);
         TeamService teamService = new TeamService(playerRepository, playerId);
-        InventoryService inventoryService = new InventoryService();
+        InventoryService inventoryService = new InventoryService(playerRepository, playerId);
         CombatService combatService = new CombatService(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
                 combatService);

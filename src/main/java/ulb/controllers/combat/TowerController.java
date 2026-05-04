@@ -92,7 +92,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
-
+        this.inventoryService.saveInventory();
         if (!playerWon) {
             try {
                 this.teamService.restoreHpActiveTeam();

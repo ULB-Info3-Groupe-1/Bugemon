@@ -18,5 +18,5 @@ SELECT
     e.duration as effect_duration,
     e.amount as effect_amount
 FROM attacks a
-LEFT JOIN effects e ON a.id = e.attack_id
+LEFT JOIN attack_effects e ON a.id = e.attack_id
 ORDER BY a.id, e.id;
