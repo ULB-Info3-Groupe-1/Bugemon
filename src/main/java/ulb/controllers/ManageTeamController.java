@@ -42,6 +42,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     protected void show() {
+        this.view.clearTeamNameToSave();
         this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
         this.refresh();
         super.show();
