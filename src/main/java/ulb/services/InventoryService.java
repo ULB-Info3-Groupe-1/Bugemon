@@ -8,16 +8,19 @@ public class InventoryService {
 
     private final PlayerRepository playerRepository;
     private final String playername;
-    private final Inventory inventory;
+    private Inventory inventory;
 
     public InventoryService(PlayerRepository playerRepository, String playername) {
         this.playerRepository = playerRepository;
         this.playername = playername;
-        this.inventory = playerRepository.getPlayerInventory(playername);
     }
 
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    public void loadInventory() {
+        this.inventory = this.playerRepository.getPlayerInventory(this.playername);
     }
 
     public void saveInventory() {
