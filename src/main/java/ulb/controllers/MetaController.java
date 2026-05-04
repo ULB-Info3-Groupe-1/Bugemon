@@ -82,7 +82,8 @@ public class MetaController {
 
         this.stage = primaryStage;
 
-        this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService);
+        this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
+                inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);

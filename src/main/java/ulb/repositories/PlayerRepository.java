@@ -61,6 +61,7 @@ public class PlayerRepository extends AbstractRepository {
 
     public void createPlayer(String playername) {
         this.executeUpdate("CreatePlayer", playername);
+        this.addDefaultInventory(playername);
     }
 
     // --- BUGEMONS ---
