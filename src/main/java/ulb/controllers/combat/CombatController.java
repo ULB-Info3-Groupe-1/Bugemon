@@ -97,36 +97,36 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         Runnable animationCallback = switch (step) {
 
             case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
-                processEndCombat(trainerKo, "Combat ended");
+                this.processEndCombat(trainerKo, "Combat ended");
                 yield () -> {
                 };
             }
 
             case TurnStep.ForfeitStep(Trainer trainer) -> {
-                processEndCombat(trainer, "Combat ended by forfeit");
+                this.processEndCombat(trainer, "Combat ended by forfeit");
                 yield () -> {
                 };
             }
 
             case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> () -> {
                 trainer.reactToKo();
-                updateBugemonView(trainer);
+                this.updateBugemonView(trainer);
                 this.view.refreshMenuState();
             };
 
             case TurnStep.AttackStep s -> () -> {
-                updateInfoForTrainer(getOpponentOf(s.attacker()));
+                this.updateInfoForTrainer(this.getOpponentOf(s.attacker()));
 
                 boolean selfHpEffect = s.getAttackEffects().stream()
                         .anyMatch(e -> e.target() == EffectTarget.THROWER && e instanceof EffectHeal);
                 if (selfHpEffect) {
-                    updateInfoForTrainer(s.attacker());
+                    this.updateInfoForTrainer(s.attacker());
                 }
             };
 
-            case TurnStep.SwitchStep s -> () -> updateBugemonView(s.trainer());
+            case TurnStep.SwitchStep s -> () -> this.updateBugemonView(s.trainer());
 
-            case TurnStep.ItemStep s -> () -> updateInfoForTrainer(s.trainer());
+            case TurnStep.ItemStep s -> () -> this.updateInfoForTrainer(s.trainer());
 
             default -> () -> {
             };
@@ -135,7 +135,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     }
 
     private void processEndCombat(Trainer defeatedTrainer, String logPrefix) {
-        Trainer winner = getOpponentOf(defeatedTrainer);
+        Trainer winner = this.getOpponentOf(defeatedTrainer);
         LOG.info("{} – winner: {}", logPrefix, winner.getCurrentBugemonName());
         this.pendingWinner = winner;
     }
