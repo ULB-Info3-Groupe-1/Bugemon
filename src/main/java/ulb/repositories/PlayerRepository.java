@@ -27,6 +27,7 @@ import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
@@ -59,8 +60,18 @@ public class PlayerRepository extends AbstractRepository {
 
     // --- PLAYERS ---
 
-    public void createPlayer(String playername) {
-        this.executeUpdate("CreatePlayer", playername);
+    public void createPlayer(String playername) throws PlayernameAlreadyExistsException {
+        LOG.debug("Creating player with name: {}", playername);
+        try {
+            this.executeUpdate("CreatePlayer", playername);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("duplicate key")
+                    || (e.getCause() != null && e.getCause().getMessage().contains("duplicate key"))) {
+                LOG.warn("Player creation failed due to duplicate playername: {}", playername);
+                throw new PlayernameAlreadyExistsException("Player name already exists: " + playername);
+            }
+            throw e; // rethrow any other unexpected exceptions
+        }
         this.addDefaultInventory(playername);
     }
 
@@ -311,20 +322,42 @@ public class PlayerRepository extends AbstractRepository {
         };
     }
 
-    public void addItemToPlayer(String playername, String itemId, int quantity) {
-        LOG.debug("Adding {}x {} to playerId: {}", quantity, itemId, playername);
-        executeUpdate("CreateItemPlayer", playername, itemId, quantity);
+    /**
+     * Update the player's inventory by first removing all existing items and then adding the items from the provided
+     * inventory.
+     *
+     * @param playername
+     *            the player's name whose inventory is to be updated
+     * @param inventory
+     *            the inventory containing the items to be saved for the player
+     */
+    public void saveInventory(String playername, Inventory inventory) {
+        LOG.debug("Saving inventory for playerId: {}", playername);
+        this.clearInventory(playername);
+        this.addIventoryItems(playername, inventory);
     }
 
-    public void updateItemAmount(String playername, String itemId, int newAmount) {
-        LOG.debug("Updating item {} amount to {} for playerId: {}", itemId, newAmount, playername);
-        executeUpdate("UpdateItemAmount", newAmount, playername, itemId);
-    }
-
-    private void addDefaultInventory(String playername) {
+    /**
+     * Reset the player's inventory to a default state by first clearing the existing inventory and then adding the
+     * default items.
+     *
+     * @param playername
+     *            the player's name whose inventory is to be reset
+     */
+    public void addDefaultInventory(String playername) {
         Inventory defaultInventory = this.staticDataRepository.getDefaultInventory();
-        defaultInventory.getMap()
-                .forEach((item, quantity) -> executeUpdate("CreateItemPlayer", playername, item.id(), quantity));
+        this.clearInventory(playername);
+        this.addIventoryItems(playername, defaultInventory);
+    }
+
+    private void clearInventory(String playername) {
+        LOG.debug("Clearing inventory for playername: {}", playername);
+        executeUpdate("RemoveItemsOfPlayer", playername);
+    }
+
+    private void addIventoryItems(String playername, Inventory inventory) {
+        inventory.getMap()
+                .forEach((item, quantity) -> executeUpdate("SaveItemForPlayer", playername, item.id(), quantity));
     }
 
     // --- Utils ---

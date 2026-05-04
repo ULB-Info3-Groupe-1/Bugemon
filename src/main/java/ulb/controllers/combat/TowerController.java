@@ -71,7 +71,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
         Combat combat = combatRoom.getCombat(new ManualTrainer(
                 this.teamService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
-                this.inventoryService.getInventory()));
+                this.inventoryService));
         this.metaController.startTowerCombat(combat);
     }
 
@@ -134,7 +134,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             LOG.info("Starting new tower run");
             BugemonTeam activeTeam = this.teamService.getActiveTeam()
                     .orElseThrow(() -> new NoActiveTeamException("No active team is not possible here"));
-            this.tower = Optional.of(new Tower(activeTeam, this.inventoryService.getInventory(), this.bugemonService,
+            this.tower = Optional.of(new Tower(activeTeam, this.bugemonService, this.inventoryService,
                     this.towerService.getCurrentFloor()));
 
         }

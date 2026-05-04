@@ -9,6 +9,7 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
@@ -25,9 +26,15 @@ public class TeamService {
     public TeamService(PlayerRepository playerRepository, String playername) {
         this.playername = playername;
         this.playerRepository = playerRepository;
-        this.playerRepository.createPlayer(this.playername);
         this.activeTeam = Optional.empty();
         this.playerTeams = new ArrayList<>();
+
+        try {
+            this.playerRepository.createPlayer(this.playername);
+        } catch (PlayernameAlreadyExistsException e) {
+            // We do nothing because whitout client/server architecture, the database is local and we don't have a login
+            // system, so the playername used is 'default_player' and is always the same.
+        }
     }
 
     // --- Getters ---
@@ -103,6 +110,10 @@ public class TeamService {
         this.playerRepository.createTeam(this.playername, teamName);
         this.persistActiveTeamMembers(this.activeTeam.get());
         this.playerTeams.add(new BugemonTeam(this.activeTeam.get()));
+
+        // Clear the active team after saving it to force the player to set an active team again if they want to modify,
+        // delete, rename or play with it.
+        this.activeTeam = Optional.empty();
     }
 
     /**

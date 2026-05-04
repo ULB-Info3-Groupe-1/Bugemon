@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
@@ -31,7 +30,6 @@ public class TestTower {
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
         when(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons()).thenReturn(testBugemons);
-        when(INVENTORY_SERVICE_MOCK.getInventory()).thenReturn(new Inventory());
     }
 
     private void completeCurrentFloor(Tower noTower) {
@@ -59,7 +57,7 @@ public class TestTower {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
         // No tower structure with floor NO2, NO3, NO4, NO5, NO6, NO7, NO8
-        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK, 2);
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, 2);
 
         assertEquals(2, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFloorComplete());
@@ -81,7 +79,7 @@ public class TestTower {
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK, 2);
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, 2);
 
         assertFalse(noTower.isFloorComplete());
     }
@@ -90,7 +88,7 @@ public class TestTower {
     public void testGoToNextFloorThrowsWhenCurrentFloorIncomplete() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
-        Tower noTower = new Tower(playerTeam, INVENTORY_SERVICE_MOCK.getInventory(), BUGEMON_SERVICE_MOCK, 2);
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, 2);
 
         assertThrows(IllegalStateException.class, noTower::goToNextFloor);
     }
