@@ -41,6 +41,10 @@ public class TeamService {
         return this.activeTeam;
     }
 
+    public Optional<String> getActiveTeamName() {
+        return this.activeTeam.map(BugemonTeam::getName);
+    }
+
     public BugemonTeam getWorkingTeam() {
         return this.workingTeam;
     }

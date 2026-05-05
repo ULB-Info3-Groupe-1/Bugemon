@@ -1,5 +1,8 @@
 package ulb.controllers;
 
+import java.util.List;
+import java.util.Optional;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repositories.exceptions.TeamEmptyException;
@@ -41,24 +44,40 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     protected void show() {
-        this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
         this.teamService.getActiveTeam().ifPresent(team -> this.teamService.setWorkingTeamEqualsActiveTeam());
-        this.refresh();
+        this.view.refresh();
         super.show();
     }
 
-    private void refresh() {
-        this.view.setTeam(this.teamService.getWorkingTeam());
-        this.view.setIsTeamSaved(this.teamService.isWorkingTeamSaved());
-        this.view.setTeamList(this.teamService.getTeamNames());
-        this.teamService.getActiveTeam().ifPresent(team -> this.view.setTeamListSelected(team.getName()));    
-        this.view.refresh();
+    @Override
+    public List<Bugemon> getAvailableBugemons() {
+        return this.bugemonService.getAllDefaultBugemons();
+    }
+
+    @Override
+    public BugemonTeam getWorkingTeam() {
+        return this.teamService.getWorkingTeam();
+    }
+
+    @Override
+    public boolean isWorkingTeamSaved() {
+        return this.teamService.isWorkingTeamSaved();
+    }
+
+    @Override
+    public List<String> getTeamNames() {
+        return this.teamService.getTeamNames();
+    }
+
+    @Override
+    public Optional<String> getActiveTeamName() {
+        return this.teamService.getActiveTeamName();
     }
 
     @Override
     public void onBugemonSelected(Bugemon bugemon) {
         this.teamService.addOrRemoveBugemon(bugemon);
-        this.refresh();
+        this.view.refresh();
     }
 
     @Override
@@ -72,17 +91,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
-        this.refresh();
-    }
-
-    @Override
-    public void onLoad(String teamName) {
-        try {
-            this.teamService.setActiveTeam(teamName);
-        } catch (TeamNotFoundException e) {
-            this.view.showTeamNotFoundAlert(teamName);
-        }
-        this.refresh();
+        this.view.refresh();
     }
 
     @Override
@@ -94,7 +103,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamAlert();
         }
-        this.refresh();
+        this.view.refresh();
     }
 
     @Override
@@ -108,14 +117,14 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
-        this.refresh();
+        this.view.refresh();
     }
 
     @Override
     public void onAddNewTeam() {
         this.teamService.clearWorkingTeam();
         this.view.clearTeamNameToSave();
-        this.refresh();
+        this.view.refresh();
     }
 
     @Override
@@ -131,33 +140,39 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
-        this.refresh();
+        this.view.refresh();
+    }
+
+    @Override
+    public void onTeamSelected(String teamName) {
+        try {
+            this.teamService.setActiveTeam(teamName);
+        } catch (TeamNotFoundException e) {
+            this.view.showTeamNotFoundAlert(teamName);
+        }
+        this.view.refresh();
     }
 
     @Override
     public void onStartAutomaticCombat() {
-        if (this.teamService.isActiveTeamEmpty()) {
-            this.view.showAlertChooseTeamToLaunchCombat();
-        } else {
-            this.metaController.onStartAutomaticCombat();
-        }
+        this.executeIfActiveTeamNotEmpty(this.metaController::onStartAutomaticCombat);
     }
 
     @Override
     public void onStartManualCombat() {
-        if (this.teamService.isActiveTeamEmpty()) {
-            this.view.showAlertChooseTeamToLaunchCombat();
-        } else {
-            this.metaController.onStartManualCombat();
-        }
+        this.executeIfActiveTeamNotEmpty(this.metaController::onStartManualCombat);
     }
 
     @Override
-    public void onStartNOTowerCombat() {
+    public void onStartTowerCombat() {
+        this.executeIfActiveTeamNotEmpty(this.metaController::onTower);
+    }
+
+    private void executeIfActiveTeamNotEmpty(Runnable combatAction) {
         if (this.teamService.isActiveTeamEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
         } else {
-            this.metaController.onTower();
+            combatAction.run();
         }
     }
 
