@@ -23,10 +23,10 @@
     <Button fx:id="startManualCombatButton"
         onAction="#onStartManualCombatClicked" text="Lancer combat manuel"
         styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="noTowerButton" onAction="#onNoTowerClicked"
+    <Button fx:id="noTowerButton" onAction="#onTowerClicked"
         text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="returnSaveMenuButton"
-        onAction="#onReturnSaveMenuClicked" text="Retour menu de sauvegarde"
+        onAction="#onReturnToSaveMenuClicked" text="Retour menu de sauvegarde"
         styleClass="btn,btn-secondary,btn-nav" />
 
 </VBox>

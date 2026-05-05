@@ -42,12 +42,12 @@ public class MainMenuView extends View {
     }
 
     @FXML
-    private void onNoTowerClicked() {
-        this.listener.onNoTower();
+    private void onTowerClicked() {
+        this.listener.onTower();
     }
 
     @FXML
-    private void onReturnSaveMenuClicked() {
+    private void onReturnToSaveMenuClicked() {
         this.listener.onReturnToSaveMenu();
     }
 
@@ -68,7 +68,7 @@ public class MainMenuView extends View {
 
         void onEditTeam();
 
-        void onNoTower();
+        void onTower();
 
         void onStartManualCombat();
 
