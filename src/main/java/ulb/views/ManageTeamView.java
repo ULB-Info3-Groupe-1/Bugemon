@@ -150,10 +150,10 @@ public class ManageTeamView extends View {
 
         BugemonTeam team = this.listener.getWorkingTeam();
         this.allBugemonsGridView.showAll(this.listener.getAvailableBugemons(), new HashSet<>(team.getAll()));
-        this.updateTeamUI(team, this.listener.isWorkingTeamSaved());
+        this.refreshTeam(team, this.listener.isWorkingTeamSaved());
     }
 
-    private void updateTeamUI(BugemonTeam team, boolean isTeamSaved) {
+    private void refreshTeam(BugemonTeam team, boolean isTeamSaved) {
         this.bugemonsTeamView.showTeam(team);
         if (team.isEmpty()) {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
