@@ -83,13 +83,14 @@ public class FloorNode {
     // Overrides
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof FloorNode other)) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
+        FloorNode other = (FloorNode) obj;
         return this.x == other.x && this.y == other.y;
     }
 

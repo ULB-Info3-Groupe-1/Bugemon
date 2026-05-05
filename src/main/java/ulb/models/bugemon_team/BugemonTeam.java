@@ -189,9 +189,8 @@ public class BugemonTeam implements Iterable<Bugemon> {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
         BugemonTeam other = (BugemonTeam) obj;
-        return java.util.Objects.equals(this.name, other.name) && java.util.Objects.equals(this.team, other.team);
+        return this.name.equals(other.name) && this.team.equals(other.team);
     }
 
     @Override

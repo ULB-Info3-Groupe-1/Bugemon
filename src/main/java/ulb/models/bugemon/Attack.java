@@ -39,15 +39,15 @@ public record Attack(
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof Attack)) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        Attack attack = (Attack) o;
-        return Objects.equals(this.id, attack.id);
+        Attack other = (Attack) obj;
+        return Objects.equals(this.id, other.id);
     }
 
     @Override
