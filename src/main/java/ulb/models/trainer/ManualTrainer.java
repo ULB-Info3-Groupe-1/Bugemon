@@ -1,5 +1,6 @@
 package ulb.models.trainer;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -131,7 +132,7 @@ public class ManualTrainer extends Trainer {
     }
 
     public Map<Item, Integer> getInventoryMap() {
-        return this.inventoryService.getInventoryMap();
+        return Collections.unmodifiableMap(this.inventoryService.getInventoryMap());
     }
 
     public boolean hasPendingAction() {
