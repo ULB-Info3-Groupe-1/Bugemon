@@ -12,10 +12,10 @@ public class InvalidAttackCountException extends RuntimeException {
     }
 
     public int getExpected() {
-        return expected;
+        return this.expected;
     }
 
     public int getActual() {
-        return actual;
+        return this.actual;
     }
 }
