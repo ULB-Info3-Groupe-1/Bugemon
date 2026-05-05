@@ -113,4 +113,42 @@ public class TestBugemonTeam {
 
         assertTrue(team.isEmpty());
     }
+
+    @Test
+    public void testAddAll() {
+        BugemonTeam team1 = new BugemonTeam();
+        for (int i = 1; i <= 3; i++) {
+            team1.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
+        }
+
+        BugemonTeam team2 = new BugemonTeam();
+        for (int i = 4; i <= 6; i++) {
+            team2.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
+        }
+
+        team1.addAll(team2);
+        assertEquals(6, team1.size());
+
+        Bugemon extraBugemon = TestUtilsBugemons.createDefaultBugemon("9");
+        assertThrows(TeamAlreadyFullException.class, () -> {
+            team1.add(extraBugemon);
+        });
+
+        BugemonTeam team3 = new BugemonTeam();
+        for (int i = 7; i <= 11; i++) {
+            team3.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
+        }
+        assertThrows(TeamAlreadyFullException.class, () -> {
+            team3.addAll(team2);
+        });
+
+        Bugemon pikachu = TestUtilsBugemons.createDefaultBugemon("Pikachu");
+        BugemonTeam team4 = new BugemonTeam();
+        team4.add(pikachu);
+        BugemonTeam team5 = new BugemonTeam();
+        team5.add(pikachu);
+        assertThrows(BugemonAlreadyPresentInTeamException.class, () -> {
+            team4.addAll(team5);
+        });
+    }
 }
