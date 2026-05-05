@@ -1,5 +1,6 @@
 package ulb.services;
 
+import java.util.Collections;
 import java.util.Map;
 
 import ulb.models.bugemon.Inventory;
@@ -38,7 +39,7 @@ public class InventoryService {
     }
 
     public Map<Item, Integer> getInventoryMap() {
-        return this.inventory.getMap();
+        return Collections.unmodifiableMap(this.inventory.getMap());
     }
 
     public boolean hasItem(Item item) {
