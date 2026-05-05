@@ -197,11 +197,11 @@ public class MetaController {
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();
-            this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
+            this.musicPlayer.playAmbiance(Ambiance.VICTORY, false);
         });
         this.transitions.put(Window.COMBAT_DEFEAT, () -> {
             this.combatDefeatController.show();
-            this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
+            this.musicPlayer.playAmbiance(Ambiance.DEFEAT, false);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
     }
