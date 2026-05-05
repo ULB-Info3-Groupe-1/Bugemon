@@ -59,6 +59,11 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
         this.metaController.onSaveMenu();
     }
 
+    @Override
+    public void onSkillTree() {
+        this.metaController.onSkillTree();
+    }
+
     private boolean isActiveTeamEmpty() {
         if (this.teamService.isActiveTeamEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
