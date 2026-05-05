@@ -42,12 +42,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     @Override
     protected void show() {
         this.view.setAvailableBugemons(this.bugemonService.getAllDefaultBugemons());
-        this.teamService.getActiveTeam().ifPresentOrElse(team -> {
-            this.teamService.setWorkingTeamEqualsActiveTeam();
-            this.view.setTeam(team);
-            this.view.setTeamListSelected(team.getName());
-            this.view.setTeamList(this.teamService.getTeamNames());
-        }, this::refresh);
+        this.teamService.getActiveTeam().ifPresent(team -> this.teamService.setWorkingTeamEqualsActiveTeam());
+        this.refresh();
         super.show();
     }
 
@@ -55,6 +51,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.view.setTeam(this.teamService.getWorkingTeam());
         this.view.setIsTeamSaved(this.teamService.isWorkingTeamSaved());
         this.view.setTeamList(this.teamService.getTeamNames());
+        this.teamService.getActiveTeam().ifPresent(team -> this.view.setTeamListSelected(team.getName()));    
         this.view.refresh();
     }
 
