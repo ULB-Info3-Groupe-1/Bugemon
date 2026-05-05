@@ -1,7 +1,10 @@
 package ulb.controllers;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
@@ -14,7 +17,13 @@ import ulb.views.ViewLoader;
 
 public class CreateBugemonController extends Controller<CreateBugemonView> implements CreateBugemonView.Listener {
 
+    // TODO: define (and enforce) this directly in Bugemon
+    private static final int NUM_ATTACKS_PER_BUGEMON = 3;
+
     private final BugemonService bugemonService;
+
+    private Optional<BugemonType> selectedBugemonType = Optional.empty();
+    private Optional<URL> selectedBugemonSpriteUrl = Optional.empty();
 
     public CreateBugemonController(MetaController metaController, BugemonService bugemonService) {
         super(metaController, ViewLoader.load(CreateBugemonView::new));
@@ -24,40 +33,55 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
     @Override
     public void onTypeSelected(BugemonType selectedType) {
-        List<Attack> attacks = this.bugemonService.getAttacksByType(selectedType);
-        this.view.setAvailableAttacks(attacks);
+        this.selectedBugemonType = Optional.of(selectedType);
+        this.updateAvailableAttacks();
+    }
+
+    @Override
+    public void onSpriteSelected(File selectedSpriteFile) {
+        try {
+            this.selectedBugemonSpriteUrl = Optional.of(selectedSpriteFile.toURI().toURL());
+        } catch (MalformedURLException e) {
+            this.selectedBugemonSpriteUrl = Optional.empty();
+        }
+    }
+
+    public void updateAvailableAttacks() {
+        this.selectedBugemonType.ifPresent(bugemonType -> {
+            List<Attack> attacks = this.bugemonService.getAttacksByType(bugemonType);
+            this.view.setAvailableAttacks(attacks);
+        });
     }
 
     @Override
     public void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
-            double initiativeValue) {
-        BugemonType selectedType = this.view.getSelectedType();
-        URL spriteUrl = this.view.getSelectedSpriteUrl();
-
-        if (selectedType == null) {
-            this.view.showInvalidFormChooseBugemonType();
-            return;
-        }
-        if (spriteUrl == null) {
-            this.view.showInvalidFormChooseSprite();
-            return;
-        }
-
+            double initiativeValue, List<Attack> attacks) {
         int hp = (int) Math.round(healthValue);
         int attack = (int) Math.round(attackValue);
         int defense = (int) Math.round(defenseValue);
         int initiative = (int) Math.round(initiativeValue);
-        Attack attack1 = this.view.getSelectedAttack1();
-        Attack attack2 = this.view.getSelectedAttack2();
-        Attack attack3 = this.view.getSelectedAttack3();
 
-        if (attack1 == null || attack2 == null || attack3 == null) {
+        if (attacks.size() != NUM_ATTACKS_PER_BUGEMON) {
             this.view.showInvalidFormChooseAttacks();
             return;
         }
 
-        CreateBugemonDTO bugemonToCreate = new CreateBugemonDTO(bugemonName, selectedType, spriteUrl, defense, attack,
-                initiative, hp, false, attack1, attack2, attack3);
+        Attack attack1 = attacks.get(0);
+        Attack attack2 = attacks.get(1);
+        Attack attack3 = attacks.get(2);
+
+        if (this.selectedBugemonSpriteUrl.isEmpty()) {
+            this.view.showInvalidFormChooseSprite();
+            return;
+        }
+
+        if (this.selectedBugemonType.isEmpty()) {
+            this.view.showInvalidFormChooseBugemonType();
+            return;
+        }
+
+        CreateBugemonDTO bugemonToCreate = new CreateBugemonDTO(bugemonName, this.selectedBugemonType.get(),
+                this.selectedBugemonSpriteUrl.get(), defense, attack, initiative, hp, false, attack1, attack2, attack3);
 
         try {
             this.bugemonService.saveNewBugemon(bugemonToCreate);

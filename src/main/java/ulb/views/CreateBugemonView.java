@@ -1,8 +1,6 @@
 package ulb.views;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,15 +72,12 @@ public class CreateBugemonView extends View {
     @FXML
     private ToggleGroup typeToggleGroup;
 
-    private BugemonType selectedType;
-    private URL selectedSpriteUrl;
     private final Map<String, Attack> attacksByName = new HashMap<>();
 
     @FXML
     private void initialize() {
         this.attackListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        // Permet le toggle au clic simple (sans Cmd/Ctrl) et bloque au-delà de 3 sélections.
         this.attackListView.setCellFactory(listView -> {
             ListCell<String> cell = new ListCell<>() {
                 @Override
@@ -134,6 +129,7 @@ public class CreateBugemonView extends View {
         int selectedCount = this.attackListView.getSelectionModel().getSelectedItems().size();
         this.attackCountLabel.setText("Attaques sélectionnées : " + selectedCount + "/3");
 
+        // TODO: magic variable
         if (selectedCount == 3) {
             this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE);
             this.attackCountLabel.getStyleClass().add(ATTACK_COUNT_COMPLETE);
@@ -152,19 +148,17 @@ public class CreateBugemonView extends View {
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
+            this.listener.onSpriteSelected(file);
+
+            // TODO: this should be decided by the controller, not in this func
             this.bugemonCardView.setSprite(file);
-            try {
-                this.selectedSpriteUrl = file.toURI().toURL();
-            } catch (MalformedURLException e) {
-                this.selectedSpriteUrl = null;
-            }
+
         }
     }
 
     @FXML
     private void onRemoveButtonClicked() {
         this.bugemonCardView.removeSprite();
-        this.selectedSpriteUrl = null;
     }
 
     @FXML
@@ -177,10 +171,8 @@ public class CreateBugemonView extends View {
     private void onTypeClicked(ActionEvent event) throws IllegalArgumentException {
         ToggleButton selectedButton = (ToggleButton) this.typeToggleGroup.getSelectedToggle();
         if (selectedButton != null) {
-            this.selectedType = (BugemonType) selectedButton.getUserData();
-            if (this.listener != null) {
-                this.listener.onTypeSelected(this.selectedType);
-            }
+            BugemonType selectedType = (BugemonType) selectedButton.getUserData();
+            this.listener.onTypeSelected(selectedType);
         }
 
     }
@@ -193,7 +185,9 @@ public class CreateBugemonView extends View {
         double defenseValue = this.defenseSlider.getValue();
         double initiativeValue = this.initiativeSlider.getValue();
 
-        this.listener.onAdd(bugemonName, healthValue, attackValue, defenseValue, initiativeValue);
+        List<Attack> attacks = List.of(this.getSelectedAttack1(), this.getSelectedAttack2(), this.getSelectedAttack3());
+
+        this.listener.onAdd(bugemonName, healthValue, attackValue, defenseValue, initiativeValue, attacks);
     }
 
     @FXML
@@ -209,10 +203,8 @@ public class CreateBugemonView extends View {
         this.defenseSlider.setValue(0);
         this.initiativeSlider.setValue(0);
         this.bugemonCardView.removeSprite();
-        this.selectedSpriteUrl = null;
         this.attackListView.getItems().clear();
         this.typeToggleGroup.getToggles().forEach(toggle -> toggle.setSelected(false));
-        this.selectedType = null;
         this.attackCountLabel.setText("Attaques sélectionnées : 0/3");
         this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE, ATTACK_COUNT_COMPLETE);
     }
@@ -232,14 +224,6 @@ public class CreateBugemonView extends View {
     @Override
     public void refresh() {
         //
-    }
-
-    public BugemonType getSelectedType() {
-        return this.selectedType;
-    }
-
-    public URL getSelectedSpriteUrl() {
-        return this.selectedSpriteUrl;
     }
 
     public void setAvailableAttacks(List<Attack> attacks) {
@@ -287,6 +271,7 @@ public class CreateBugemonView extends View {
     }
 
     public void showInvalidFormChooseAttacks() {
+        // TODO: replace "trois" with a number constant directly from the bugemon class
         this.showWarningAlert(INVALID_FORM, "Vous devez choisir trois attaques pour votre Bugemon.");
     }
 
@@ -306,8 +291,10 @@ public class CreateBugemonView extends View {
     public interface Listener {
         void onTypeSelected(BugemonType selectedType);
 
+        void onSpriteSelected(File selectedSprite);
+
         void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
-                double initiativeValue);
+                double initiativeValue, List<Attack> attacks);
 
         void onReturnToMainMenu();
     }
