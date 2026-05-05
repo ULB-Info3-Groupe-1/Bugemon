@@ -32,9 +32,7 @@ public class TowerFloors extends ArrayList<Floor> {
 
     @Override
     public boolean addAll(Collection<? extends Floor> c) {
-        for (Floor f : c) {
-            this.add(f);
-        }
+        c.forEach(this::add);
         return true;
     }
 
