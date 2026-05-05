@@ -18,12 +18,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.exceptions.NoActiveTeamException;
+import ulb.utils.test.TestUtilsBugemons;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestTeamService {
@@ -62,9 +62,7 @@ public class TestTeamService {
 
     @Test
     public void shouldSaveTeam_whenActiveTeamIsValid() throws Exception {
-        this.teamService.loadTeamsAndActiveTeam();
-
-        Bugemon bugemon = new BugemonBuilder().name("Pikachu").build();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         this.teamService.addOrRemoveBugemon(bugemon);
         String teamName = "NewTeam";
         this.teamService.saveTeam(teamName);
@@ -93,7 +91,7 @@ public class TestTeamService {
 
     @Test
     public void shouldReturnTrue_whenActiveTeamIsSaved() throws Exception {
-        Bugemon bugemon = new BugemonBuilder().name("Pikachu").build();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
 
         BugemonTeam team = new BugemonTeam();
         team.setName("TeamA");
@@ -129,7 +127,7 @@ public class TestTeamService {
 
     @Test
     public void shouldReturnFalse_whenActiveTeamHasUnsavedChanges() throws Exception {
-        Bugemon b1 = new BugemonBuilder().name("Pikachu").build();
+        Bugemon b1 = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         BugemonTeam teamInDb = new BugemonTeam("TeamA");
         teamInDb.add(b1);
         when(this.playerRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(teamInDb));
@@ -138,7 +136,7 @@ public class TestTeamService {
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam("TeamA");
 
-        Bugemon b2 = new BugemonBuilder().name("Bulbasaur").build();
+        Bugemon b2 = TestUtilsBugemons.createDefaultBugemon("Bulbasaur");
         this.teamService.addOrRemoveBugemon(b2);
 
         assertFalse("The team should not be considered saved after modification.",
@@ -147,10 +145,8 @@ public class TestTeamService {
 
     @Test
     public void shouldUpdateEveryBugemonInDb_whenSavingState() throws Exception {
-        this.teamService.loadTeamsAndActiveTeam();
-
-        Bugemon b1 = new BugemonBuilder().name("P1").build();
-        Bugemon b2 = new BugemonBuilder().name("P2").build();
+        Bugemon b1 = TestUtilsBugemons.createDefaultBugemon("P1");
+        Bugemon b2 = TestUtilsBugemons.createDefaultBugemon("P2");
         this.teamService.addOrRemoveBugemon(b1);
         this.teamService.addOrRemoveBugemon(b2);
         this.teamService.saveTeam("Team");
@@ -174,7 +170,7 @@ public class TestTeamService {
 
     @Test
     public void shouldSaveNewBugemonInDb_whenNotAlreadyOwned() throws Exception {
-        Bugemon newBugemon = new BugemonBuilder().name("NotOwned").build();
+        Bugemon newBugemon = TestUtilsBugemons.createDefaultBugemon("NotOwned");
         this.teamService.addOrRemoveBugemon(newBugemon);
 
         when(this.playerRepository.getPlayerBugemons(PLAYER_NAME)).thenReturn(new ArrayList<>());
@@ -187,16 +183,15 @@ public class TestTeamService {
 
     @Test
     public void shouldUpdateDbAndActiveTeam_whenModifyingTeam() throws Exception {
-        Bugemon b1 = new BugemonBuilder().name("Pikachu").build();
+        Bugemon b1 = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         this.teamService.addOrRemoveBugemon(b1);
         this.teamService.saveTeam("Original");
         this.teamService.setActiveTeam("Original");
 
         this.teamService.setWorkingTeamEqualsActiveTeam();
 
-        Bugemon b2 = new BugemonBuilder().name("Charmander").build();
+        Bugemon b2 = TestUtilsBugemons.createDefaultBugemon("Charmander");
         this.teamService.addOrRemoveBugemon(b2);
-
         this.teamService.modifyActiveTeam();
 
         verify(this.playerRepository).modifyTeam(org.mockito.ArgumentMatchers.eq(PLAYER_NAME),
@@ -206,7 +201,7 @@ public class TestTeamService {
 
     @Test
     public void shouldClearWorkingTeam_afterSaving() throws Exception {
-        Bugemon bugemon = new BugemonBuilder().name("Pikachu").build();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         this.teamService.addOrRemoveBugemon(bugemon);
 
         this.teamService.saveTeam("SomeTeam");
@@ -216,7 +211,7 @@ public class TestTeamService {
 
     @Test
     public void shouldSyncWorkingTeamWithActiveTeam() throws Exception {
-        Bugemon bugemon = new BugemonBuilder().name("Pikachu").build();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         BugemonTeam team = new BugemonTeam("Active");
         team.addOrRemoveBugemon(bugemon);
 

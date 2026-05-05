@@ -1,6 +1,5 @@
 package ulb.utils.test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ulb.models.bugemon.Attack;
@@ -8,24 +7,31 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon.effect.EffectDuration;
-import ulb.models.bugemon.effect.EffectStat;
-import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
 
 public final class TestUtilsBugemons {
     private TestUtilsBugemons() {
     }
 
-    public static Bugemon createDefaultBugemon(String name) {
-        Effect effect = new EffectStatModifier(EffectTarget.OPPONENT, EffectStat.ATTACK, 10, EffectDuration.ONE_TURN);
-        List<Effect> effects = new ArrayList<>();
-        effects.add(effect);
-        Attack attack1 = new Attack("TestAttack1", "TestAttack1", BugemonType.FLORA, "", 30, effects);
-        Attack attack2 = new Attack("TestAttack2", "TestAttack2", BugemonType.FLORA, "", 20, effects);
-        List<Attack> attackList = List.of(attack1, attack2);
+    private static final List<Effect> NO_EFFECTS = List.of();
 
+    public static Attack createAttack(String id, BugemonType type, int power) {
+        return new Attack(id, id, type, "", power, NO_EFFECTS);
+    }
+
+    /**
+     * Default 3-attacks move-set for tests.
+     *
+     * <p>
+     * Bugemons must have exactly 3 attacks; keep this helper as the single source of truth for most tests.
+     */
+    public static List<Attack> createDefaultAttackList(BugemonType type) {
+        return List.of(createAttack("TestAttack1", type, 30), createAttack("TestAttack2", type, 20),
+                createAttack("TestAttack3", type, 10));
+    }
+
+    public static Bugemon createDefaultBugemon(String name) {
+        List<Attack> attackList = createDefaultAttackList(BugemonType.FLORA);
         return new BugemonBuilder().name(name).hp(100).attack(20).defense(10).initiative(5).attackList(attackList)
                 .isStarter(false).build();
     }

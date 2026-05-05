@@ -17,6 +17,7 @@ import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.trainer.AutoTrainer;
+import ulb.utils.test.TestUtilsBugemons;
 import ulb.utils.test.TestUtilsTrainer;
 
 public class TestCombat {
@@ -62,13 +63,19 @@ public class TestCombat {
     }
 
     private Bugemon bugemonWithHp(String name, int hp, int initiative) {
-        return new BugemonBuilder().name(name).hp(hp).attack(0).defense(0).initiative(initiative)
-                .addAttack(this.defaultAttack).build();
+        List<Attack> attacks = List.of(this.defaultAttack, TestUtilsBugemons.createAttack("atk2", BugemonType.FLORA, 0),
+                TestUtilsBugemons.createAttack("atk3", BugemonType.FLORA, 0));
+        return new BugemonBuilder().name(name).hp(hp).attack(0).defense(0).initiative(initiative).attackList(attacks)
+                .build();
     }
 
     private Bugemon strongAttacker(String name) {
-        Attack powerAttack = new Attack("power", "PowerAttack", BugemonType.FLORA, "", 9999, new ArrayList<>());
-        return new BugemonBuilder().name(name).hp(100).attack(9999).defense(0).initiative(9999).addAttack(powerAttack)
+        // AutoTrainer picks randomly among attacks; keep all three lethal so tests stay deterministic.
+        Attack powerAttack1 = new Attack("power1", "PowerAttack1", BugemonType.FLORA, "", 9999, new ArrayList<>());
+        Attack powerAttack2 = new Attack("power2", "PowerAttack2", BugemonType.FLORA, "", 9999, new ArrayList<>());
+        Attack powerAttack3 = new Attack("power3", "PowerAttack3", BugemonType.FLORA, "", 9999, new ArrayList<>());
+        List<Attack> attacks = List.of(powerAttack1, powerAttack2, powerAttack3);
+        return new BugemonBuilder().name(name).hp(100).attack(9999).defense(0).initiative(9999).attackList(attacks)
                 .build();
     }
 

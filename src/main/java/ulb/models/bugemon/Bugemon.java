@@ -17,6 +17,7 @@ import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStatModifier;
+import ulb.models.bugemon.exceptions.InvalidAttackCountException;
 import ulb.models.level_up.Upgrade;
 
 /**
@@ -24,6 +25,7 @@ import ulb.models.level_up.Upgrade;
  * {@link BugemonBuilder}; equality is based on {@link #id}.
  */
 public class Bugemon implements BugemonDTO {
+    public static final int ATTACKS_COUNT = 3;
     @SerializedName("id")
     String id;
 
@@ -66,8 +68,15 @@ public class Bugemon implements BugemonDTO {
         this.initiativeComponent = new InitiativeComponent(copy.getInitiative());
         this.levelComponent = new LevelComponent(copy.getXp(), copy.getLevel());
         // Safe because Attack is immutable (record)
-        this.attackList = List.copyOf(copy.getAttackList());
+        this.attackList = validateAndCopyAttackList(copy.getAttackList());
         this.isStarter = copy.isStarter();
+    }
+
+    static List<Attack> validateAndCopyAttackList(List<Attack> attacks) {
+        if (attacks.size() != ATTACKS_COUNT) {
+            throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
+        }
+        return List.copyOf(attacks);
     }
 
     public void takeDamage(int damage) {

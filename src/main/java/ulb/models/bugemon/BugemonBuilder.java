@@ -1,6 +1,5 @@
 package ulb.models.bugemon;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +40,7 @@ public final class BugemonBuilder {
     private int xp = DEFAULT_XP;
     private int level = DEFAULT_LEVEL;
     private boolean isStarter = DEFAULT_IS_STARTER;
-    private List<Attack> attackList = new ArrayList<>();
+    private List<Attack> attackList = List.of();
 
     public BugemonBuilder name(String name) {
         this.name = Optional.of(name);
@@ -88,13 +87,7 @@ public final class BugemonBuilder {
         return this;
     }
 
-    /** Appends one attack; use {@link #attackList} to replace the whole list at once. */
-    public BugemonBuilder addAttack(Attack attack) {
-        this.attackList.add(attack);
-        return this;
-    }
-
-    /** Replaces any attacks previously added via {@link #addAttack}. */
+    /** Replaces the entire attack list. */
     public BugemonBuilder attackList(List<Attack> attackList) {
         this.attackList = attackList;
         return this;
@@ -124,7 +117,7 @@ public final class BugemonBuilder {
         bugemon.initiativeComponent = new InitiativeComponent(this.initiative);
         bugemon.levelComponent = new LevelComponent(this.xp, this.level);
 
-        bugemon.attackList = this.attackList;
+        bugemon.attackList = Bugemon.validateAndCopyAttackList(this.attackList);
         bugemon.isStarter = this.isStarter;
 
         return bugemon;

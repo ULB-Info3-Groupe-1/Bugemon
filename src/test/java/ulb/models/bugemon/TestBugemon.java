@@ -19,6 +19,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.exceptions.InvalidAttackCountException;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemon {
@@ -26,6 +27,12 @@ public class TestBugemon {
     public void testBuilderNoIdThrows() {
         BugemonBuilder builder = new BugemonBuilder();
         assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    public void testBuilderRequiresExactlyThreeAttacks() {
+        BugemonBuilder builder = new BugemonBuilder().name("1").hp(100);
+        assertThrows(InvalidAttackCountException.class, builder::build);
     }
 
     @Test
@@ -73,7 +80,7 @@ public class TestBugemon {
 
     @Test
     public void testResetBugemon() {
-        Bugemon bugemon = new BugemonBuilder().name("1").hp(100).build();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
         bugemon.takeDamage(50);
         assertEquals(50, bugemon.getHp());
         bugemon.restoreHp();
