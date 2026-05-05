@@ -37,6 +37,11 @@ public class MainMenuView extends View {
     }
 
     @FXML
+    private void onSkillTreeClicked() {
+        this.listener.onSkillTree();
+    }
+
+    @FXML
     private void onStartAutomaticCombatClicked() {
         this.listener.onStartAutomaticCombat();
     }
@@ -75,5 +80,7 @@ public class MainMenuView extends View {
         void onStartAutomaticCombat();
 
         void onSaveMenuReturnButton();
+
+        void onSkillTree();
     }
 }

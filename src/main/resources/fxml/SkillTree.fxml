@@ -9,15 +9,18 @@
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.SkillTreeView" styleClass="skill-tree-container">
+    fx:controller="ulb.views.SkillTreeView"
+    styleClass="skill-tree-container">
 
     <!-- Header -->
     <top>
-        <VBox spacing="10" alignment="CENTER" styleClass="skill-tree-header">
+        <VBox spacing="10" alignment="CENTER"
+            styleClass="skill-tree-header">
             <padding>
                 <Insets top="20" bottom="10" />
             </padding>
-            <Label text="Arbre de compétences" styleClass="skill-tree-title" />
+            <Label text="Arbre de compétences"
+                styleClass="skill-tree-title" />
         </VBox>
     </top>
 

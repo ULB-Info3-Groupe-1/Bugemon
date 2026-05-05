@@ -1,14 +1,14 @@
 package ulb.views;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+
 import ulb.Configuration;
 import ulb.views.utils.Node;
 import ulb.views.utils.TreeLayout;
-
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.HBox;
 
 public class SkillTreeView extends View {
     // Skill:
