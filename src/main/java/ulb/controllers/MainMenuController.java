@@ -48,7 +48,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     @Override
-    public void onNoTower() {
+    public void onTower() {
         if (!this.isActiveTeamEmpty()) {
             this.metaController.onTower();
         }
