@@ -10,7 +10,9 @@ import ulb.services.TowerService;
 import ulb.views.SaveMenuView;
 import ulb.views.ViewLoader;
 
-/** Controller for the main menu screen. */
+/**
+ * Controller for the save menu screen.
+ */
 public class SaveMenuController extends Controller<SaveMenuView> implements SaveMenuView.Listener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SaveMenuController.class);
