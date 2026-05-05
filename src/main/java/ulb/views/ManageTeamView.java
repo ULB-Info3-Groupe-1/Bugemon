@@ -61,10 +61,8 @@ public class ManageTeamView extends View {
     private Button startTowerCombatButton;
 
     private final TeamFormMode mode;
+
     private Listener listener;
-    private Optional<BugemonTeam> bugemonTeam;
-    private boolean isBugemonTeamSaved;
-    private List<Bugemon> availableBugemons;
 
     public ManageTeamView(TeamFormMode mode) {
         this.mode = mode;
@@ -74,9 +72,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void initialize() {
-        if (this.mode != null) {
-            this.setMode(this.mode);
-        }
+        this.setMode(this.mode);
     }
 
     /**
@@ -85,7 +81,7 @@ public class ManageTeamView extends View {
      * @param mode
      *            The mode of the view
      */
-    public void setMode(TeamFormMode mode) {
+    private void setMode(TeamFormMode mode) {
         boolean isCreate = (mode == TeamFormMode.CREATE);
         List<Button> editButtons = List.of(this.modifyTeamButton, this.renameTeamButton, this.deleteTeamButton,
                 this.startAutomaticCombatButton, this.startManualCombatButton, this.startTowerCombatButton);
@@ -105,11 +101,8 @@ public class ManageTeamView extends View {
 
     public void setListener(Listener listener) {
         this.listener = listener;
-
-        if (this.listener != null) {
-            this.allBugemonsGridView.setListener(this.listener::onBugemonSelected);
-            this.bugemonsTeamView.setListener(this.listener::onBugemonSelected);
-        }
+        this.allBugemonsGridView.setListener(this.listener::onBugemonSelected);
+        this.bugemonsTeamView.setListener(this.listener::onBugemonSelected);
     }
 
     public interface Listener {
@@ -117,9 +110,7 @@ public class ManageTeamView extends View {
 
         void onSave(String teamName);
 
-        void onLoad(String teamName);
-
-        void onDelete();
+        void onDelete(String teamName);
 
         void onRename(String oldName, String newName);
 
@@ -127,50 +118,56 @@ public class ManageTeamView extends View {
 
         void onBugemonSelected(Bugemon bugemon);
 
-        void onModifyTeam();
+        void onModifyTeam(String teamName);
 
         void onStartAutomaticCombat();
 
         void onStartManualCombat();
 
-        void onStartNOTowerCombat();
+        void onStartTowerCombat();
+
+        BugemonTeam getWorkingTeam();
+
+        boolean isWorkingTeamSaved();
+
+        List<String> getTeamNames();
+
+        Optional<String> getActiveTeamName();
+
+        List<Bugemon> getAvailableBugemons();
+
+        void onTeamSelected(String teamName);
     }
 
     // --- View refresh ---
 
     @Override
     public void refresh() {
-        HashSet<Bugemon> activeSet = this.bugemonTeam.map(team -> new HashSet<>(team.getAll())).orElseGet(HashSet::new);
-        this.allBugemonsGridView.showAll(this.availableBugemons, activeSet);
-        this.bugemonTeam.ifPresentOrElse(this::updateActiveTeamUI, this::clearUI);
+        this.teamListView.setItems(FXCollections.observableArrayList(this.listener.getTeamNames()));
+        this.listener.getActiveTeamName().ifPresentOrElse(
+                teamName -> this.teamListView.getSelectionModel().select(teamName),
+                () -> this.teamListView.getSelectionModel().clearSelection());
+
+        BugemonTeam team = this.listener.getWorkingTeam();
+        this.allBugemonsGridView.showAll(this.listener.getAvailableBugemons(), new HashSet<>(team.getAll()));
+        this.refreshTeam(team, this.listener.isWorkingTeamSaved());
     }
 
-    private void updateActiveTeamUI(BugemonTeam team) {
+    private void refreshTeam(BugemonTeam team, boolean isTeamSaved) {
         this.bugemonsTeamView.showTeam(team);
         if (team.isEmpty()) {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        } else if (this.isBugemonTeamSaved) {
+        } else if (isTeamSaved) {
             this.selectedTeamName.setText(team.getName());
-            this.teamListView.getSelectionModel().select(team.getName());
         } else {
             this.selectedTeamName.setText(TEAM_NOT_SAVED_MESSAGE);
         }
-    }
-
-    private void clearUI() {
-        this.bugemonsTeamView.clearBugemons();
-        this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        this.teamListView.getSelectionModel().clearSelection();
     }
 
     // --- Utils ---
 
     public void clearTeamNameToSave() {
         this.saveTeamNameInput.setText("");
-    }
-
-    public void setIsActiveTeamSaved(boolean isActiveTeamSaved) {
-        this.isBugemonTeamSaved = isActiveTeamSaved;
     }
 
     // --- Actions to perform when clicked ---
@@ -187,8 +184,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onDeleteClicked() {
-        this.listener.onDelete();
-        this.selectedTeamName.setText(NO_TEAM_SELECTED);
+        this.listener.onDelete(this.getTeamNameToLoad());
     }
 
     @FXML
@@ -203,18 +199,12 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onModifyTeamClicked() {
-        this.listener.onModifyTeam();
+        this.listener.onModifyTeam(this.getTeamNameToLoad());
     }
 
     @FXML
     private void onTeamSelected(MouseEvent event) {
-        String selected = this.teamListView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            this.selectedTeamName.setText(selected);
-            this.listener.onLoad(this.getTeamNameToLoad());
-        } else {
-            this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        }
+        this.listener.onTeamSelected(this.teamListView.getSelectionModel().getSelectedItem());
     }
 
     @FXML
@@ -229,25 +219,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onStartTowerCombatClicked() {
-        this.listener.onStartNOTowerCombat();
-    }
-
-    // --- Setters ---
-
-    public void setTeam(Optional<BugemonTeam> team) {
-        this.bugemonTeam = team;
-    }
-
-    public void setAvailableBugemons(List<Bugemon> allBugemons) {
-        this.availableBugemons = allBugemons;
-    }
-
-    public void setTeamList(List<String> teamNames) {
-        this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
-    }
-
-    public void setSaveTeamName(String name) {
-        this.saveTeamNameInput.setText(name);
+        this.listener.onStartTowerCombat();
     }
 
     // --- Getters ---
@@ -278,7 +250,11 @@ public class ManageTeamView extends View {
         this.showWarningAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
     }
 
-    public void showDeletTeamNoActiveTeamAlert() {
+    public void showSelectTeamToRenameAlert() {
+        this.showWarningAlert(TEAM_NAME_NOT_FOUND, "Veuillez sélectionner une équipe à renommer.");
+    }
+
+    public void showDeleteTeamNoActiveTeamAlert() {
         this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez supprimer.");
     }
 
@@ -287,7 +263,7 @@ public class ManageTeamView extends View {
     }
 
     public void showAlertChooseTeamToModify() {
-        this.showNoActiveTeamAlert("Veuillez choisir une equipe à modifier.");
+        this.showNoActiveTeamAlert("Veuillez choisir une équipe à modifier.");
     }
 
     /**

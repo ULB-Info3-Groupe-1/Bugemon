@@ -99,11 +99,11 @@ public class PlayerRepository extends AbstractRepository {
 
     public void createTeam(int playerId, String teamName)
             throws TeamNameAlreadyExistsException, TeamNameEmptyException {
-        LOG.debug("Creating team '{}' for playerId: {}", teamName, playerId);
         this.checkValidName(teamName);
         if (this.teamNameAlreadyExists(playerId, teamName)) {
             throw new TeamNameAlreadyExistsException(" Team name already exists: " + teamName);
         }
+        LOG.debug("Creating team '{}' for playerId: {}", teamName, playerId);
         executeUpdate("CreateTeam", playerId, teamName);
     }
 
@@ -116,9 +116,9 @@ public class PlayerRepository extends AbstractRepository {
      *            the team's name to delete
      */
     public void deleteTeam(int playerId, String teamName) throws TeamNotFoundException, TeamNameEmptyException {
-        LOG.debug("Deleting team '{}' for playerId: {}", teamName, playerId);
         this.checkValidName(teamName);
         this.checkTeamExists(playerId, teamName);
+        LOG.debug("Deleting team '{}' for playerId: {}", teamName, playerId);
         executeUpdate("DeleteTeamMembers", playerId, teamName);
         executeUpdate("DeleteTeam", playerId, teamName);
     }
@@ -139,12 +139,12 @@ public class PlayerRepository extends AbstractRepository {
      */
     public void renameTeam(int playerId, String oldTeamName, String newTeamName)
             throws TeamNameAlreadyExistsException, TeamNotFoundException, TeamNameEmptyException {
-        LOG.debug("Renaming team for playerId: {} from '{}' to '{}'", playerId, oldTeamName, newTeamName);
         if (this.teamNameAlreadyExists(playerId, newTeamName)) {
             throw new TeamNameAlreadyExistsException(" Team name already exists: " + newTeamName);
         }
         this.checkTeamExists(playerId, oldTeamName);
         this.checkValidName(newTeamName);
+        LOG.debug("Renaming team for playerId: {} from '{}' to '{}'", playerId, oldTeamName, newTeamName);
         executeUpdate("RenameTeam", newTeamName, playerId, oldTeamName);
     }
 
