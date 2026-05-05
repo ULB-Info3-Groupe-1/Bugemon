@@ -33,8 +33,7 @@ public class BugemonFactory {
         return new BugemonBuilder().name(bugemon.name()).type(bugemon.type()).sprite(fileName)
                 .defense(bugemon.defense()).attack(bugemon.attack()).initiative(bugemon.initiative())
                 .hp(bugemon.maxHp()).isStarter(bugemon.isStarter())
-                .attackList(java.util.List.of(bugemon.attack1(), bugemon.attack2(), bugemon.attack3()))
-                .build();
+                .attackList(java.util.List.of(bugemon.attack1(), bugemon.attack2(), bugemon.attack3())).build();
     }
 
     public static Bugemon createBugemon(StaticBugemonDataDTO defaultBugemon, PlayerBugemonDTO playerBugemon) {

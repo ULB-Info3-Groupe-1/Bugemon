@@ -125,8 +125,7 @@ public class StaticDataRepository extends AbstractRepository {
                 .attack(rs.getInt(DatabaseColumns.COL_BASE_ATTACK))
                 .initiative(rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE))
                 .hp(rs.getInt(DatabaseColumns.COL_BASE_MAX_HP))
-                .attackList(List.of(
-                        attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_1)),
+                .attackList(List.of(attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_1)),
                         attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_2)),
                         attackMap.get(rs.getString(DatabaseColumns.COL_ATTACK_ID_3))))
                 .isStarter(rs.getBoolean(DatabaseColumns.COL_IS_STARTER)).build();
