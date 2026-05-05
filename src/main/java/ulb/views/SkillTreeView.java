@@ -83,7 +83,7 @@ public class SkillTreeView extends View {
         this.innerMapPane.getChildren().add(skillNode);
 
         for (Node child : node.getChildren()) {
-            renderNode(child);
+            this.renderNode(child);
         }
     }
 
