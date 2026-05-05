@@ -104,6 +104,7 @@ public class MusicPlayer {
         Music music = matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
 
         if (isSoundEffect) {
+            this.stopMusic();
             this.playSoundEffect(music);
         } else {
             this.playMusic(music);
