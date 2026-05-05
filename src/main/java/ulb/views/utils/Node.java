@@ -19,16 +19,12 @@ public class Node {
         this.data = data;
         this.parent = parent;
 
-        int depth = 0;
-        if (this.parent != null) {
-            Node currentNode = this;
-            while (currentNode != null) {
-                depth++;
-                currentNode = currentNode.getParent();
-            }
-        }
+        // fix
+        this.y = (this.parent == null) ? 0 : this.parent.y + 1;
+    }
 
-        this.y = depth;
+    public String getData() {
+        return this.data;
     }
 
     public Node getParent() {
