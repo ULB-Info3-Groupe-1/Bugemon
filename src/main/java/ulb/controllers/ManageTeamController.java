@@ -129,12 +129,12 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onModifyTeam(String teamName) {
-        if (teamName == null || teamName.isEmpty()) {
+        if (teamName == null || teamName.isEmpty() || this.teamService.isActiveTeamEmpty()) {
             this.view.showAlertChooseTeamToModify();
             return;
         }
         try {
-            this.teamService.modifyTeam(teamName);
+            this.teamService.modifyActiveTeam();
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
         } catch (TeamNotFoundException e) {
@@ -150,6 +150,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
+        this.teamService.setWorkingTeamEqualsActiveTeam();
         this.view.refresh();
     }
 

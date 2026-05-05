@@ -192,10 +192,12 @@ public class TestTeamService {
         this.teamService.saveTeam("Original");
         this.teamService.setActiveTeam("Original");
 
+        this.teamService.setWorkingTeamEqualsActiveTeam();
+
         Bugemon b2 = new BugemonBuilder().name("Charmander").build();
         this.teamService.addOrRemoveBugemon(b2);
 
-        this.teamService.modifyTeam("Original");
+        this.teamService.modifyActiveTeam();
 
         verify(this.playerRepository).modifyTeam(org.mockito.ArgumentMatchers.eq(PLAYER_NAME),
                 org.mockito.ArgumentMatchers.eq("Original"), org.mockito.ArgumentMatchers.anyList());
@@ -227,6 +229,8 @@ public class TestTeamService {
         this.teamService.setWorkingTeamEqualsActiveTeam();
 
         assertEquals(team, this.teamService.getWorkingTeam());
+    }
+
     @Test
     public void shouldEraseAllBugemonTeamsAndClearActiveTeam_whenclearTeamsAndActiveTeam() throws Exception {
         BugemonTeam team1 = new BugemonTeam("Team1");
