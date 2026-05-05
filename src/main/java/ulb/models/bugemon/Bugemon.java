@@ -74,6 +74,7 @@ public class Bugemon implements BugemonDTO {
         this.healthComponent.decreaseHp(damage);
     }
 
+    @Override
     public boolean isAlive() {
         return this.healthComponent.getHp() > 0;
     }

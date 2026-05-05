@@ -181,10 +181,12 @@ public abstract class CombatView extends View {
     // ── Bugemon display ───────────────────────────────────────────────────────
 
     public void updateTrainerBugemon(BugemonDTO trainerBugemon) {
+        if (trainerBugemon.isAlive()) {
+            this.makeTrainerBugemonReappear();
+        }
         File file = new File(Configuration.Paths.SPRITES + trainerBugemon.getSpriteURL());
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
-        this.makeTrainerBugemonReappear();
     }
 
     public void updateOpponentBugemon(BugemonDTO opponentBugemon) {

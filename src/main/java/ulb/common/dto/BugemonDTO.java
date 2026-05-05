@@ -48,4 +48,6 @@ public interface BugemonDTO {
      * @return {@code 0.0} at the start of a level, {@code 1.0} at the threshold for the next level-up.
      */
     double getXpProgress();
+
+    boolean isAlive();
 }
