@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.views.components.BugemonCardView;
 
@@ -97,7 +98,7 @@ public class CreateBugemonView extends View {
 
                 if (selectionModel.isSelected(index)) {
                     selectionModel.clearSelection(index);
-                } else if (selectionModel.getSelectedItems().size() < 3) {
+                } else if (selectionModel.getSelectedItems().size() < Bugemon.ATTACKS_COUNT) {
                     selectionModel.select(index);
                 }
 
@@ -127,10 +128,9 @@ public class CreateBugemonView extends View {
 
     private void updateAttackCountLabel() {
         int selectedCount = this.attackListView.getSelectionModel().getSelectedItems().size();
-        this.attackCountLabel.setText("Attaques sélectionnées : " + selectedCount + "/3");
+        this.attackCountLabel.setText("Attaques sélectionnées : " + selectedCount + "/" + Bugemon.ATTACKS_COUNT);
 
-        // TODO: magic variable
-        if (selectedCount == 3) {
+        if (selectedCount == Bugemon.ATTACKS_COUNT) {
             this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE);
             this.attackCountLabel.getStyleClass().add(ATTACK_COUNT_COMPLETE);
         } else {
@@ -205,7 +205,7 @@ public class CreateBugemonView extends View {
         this.bugemonCardView.removeSprite();
         this.attackListView.getItems().clear();
         this.typeToggleGroup.getToggles().forEach(toggle -> toggle.setSelected(false));
-        this.attackCountLabel.setText("Attaques sélectionnées : 0/3");
+        this.attackCountLabel.setText("Attaques sélectionnées : 0/" + Bugemon.ATTACKS_COUNT);
         this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE, ATTACK_COUNT_COMPLETE);
     }
 

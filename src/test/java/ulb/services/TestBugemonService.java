@@ -14,12 +14,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonBuilder;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemonService {
 
@@ -45,12 +45,12 @@ public class TestBugemonService {
 
     @Test
     public void testSaveNewBugemon_DuplicateNameThrowsException() {
-        Bugemon bugemon = new BugemonBuilder().name("Pika").build();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         List<Bugemon> cache = new ArrayList<>(List.of(bugemon));
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(cache);
 
         BugemonService serviceWithData = new BugemonService(this.staticRepo, this.playerRepo, PLAYER);
-        CreateBugemonDTO dto = new CreateBugemonDTO("Pika", null, null, 10, 10, 10, 10, false, null, null, null);
+        CreateBugemonDTO dto = new CreateBugemonDTO("Pikachu", null, null, 10, 10, 10, 10, false, null, null, null);
 
         assertThrows(BugemonNameAlreadyExistsException.class, () -> serviceWithData.saveNewBugemon(dto));
     }

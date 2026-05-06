@@ -19,6 +19,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import ulb.models.bugemon.exceptions.InvalidAttackCountException;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemon {
@@ -26,6 +27,28 @@ public class TestBugemon {
     public void testBuilderNoIdThrows() {
         BugemonBuilder builder = new BugemonBuilder();
         assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    public void testBuilderRequiresExactlyThreeAttacks() {
+        Attack a1 = TestUtilsBugemons.createAttack("a1", BugemonType.FLORA, 0);
+        Attack a2 = TestUtilsBugemons.createAttack("a2", BugemonType.FLORA, 0);
+        Attack a3 = TestUtilsBugemons.createAttack("a3", BugemonType.FLORA, 0);
+        Attack a4 = TestUtilsBugemons.createAttack("a4", BugemonType.FLORA, 0);
+
+        // two (or less) attacks does not work
+        BugemonBuilder twoAttacks = new BugemonBuilder().name("two").hp(100).attackList(java.util.List.of(a1, a2));
+        assertThrows(InvalidAttackCountException.class, twoAttacks::build);
+
+        // three works
+        BugemonBuilder threeAttacks = new BugemonBuilder().name("three").hp(100)
+                .attackList(java.util.List.of(a1, a2, a3));
+        threeAttacks.build();
+
+        // four (or more) attacks does not work
+        BugemonBuilder fourAttacks = new BugemonBuilder().name("four").hp(100)
+                .attackList(java.util.List.of(a1, a2, a3, a4));
+        assertThrows(InvalidAttackCountException.class, fourAttacks::build);
     }
 
     @Test
@@ -73,7 +96,7 @@ public class TestBugemon {
 
     @Test
     public void testResetBugemon() {
-        Bugemon bugemon = new BugemonBuilder().name("1").hp(100).build();
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
         bugemon.takeDamage(50);
         assertEquals(50, bugemon.getHp());
         bugemon.restoreHp();

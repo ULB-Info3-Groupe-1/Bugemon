@@ -34,9 +34,11 @@ import ulb.utils.test.TestUtilsBugemons;
 public class TestCombatService {
     @Test
     public void testPriority() {
-        Bugemon slowBugemon = new BugemonBuilder().name("1").initiative(0).build();
+        Bugemon slowBugemon = new BugemonBuilder().name("1").initiative(0)
+                .attackList(TestUtilsBugemons.createDefaultAttackList(BugemonType.FLORA)).build();
 
-        Bugemon fastBugemon = new BugemonBuilder().name("2").initiative(1000).build();
+        Bugemon fastBugemon = new BugemonBuilder().name("2").initiative(1000)
+                .attackList(TestUtilsBugemons.createDefaultAttackList(BugemonType.FLORA)).build();
 
         BugemonTeam slowTeam = new BugemonTeam();
         slowTeam.add(slowBugemon);
@@ -54,8 +56,10 @@ public class TestCombatService {
     public void testDamageApplied() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack)
+        List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
+                TestUtilsBugemons.createAttack("3", BugemonType.FLORA, 0));
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).attackList(attacks).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
         double expectedDamage = attack.power() * ((100.0 + striker.getAttack()) / 100.0)
@@ -70,13 +74,15 @@ public class TestCombatService {
     public void testDamageMultiplicatorHigh() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack)
+        List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
+                TestUtilsBugemons.createAttack("3", BugemonType.FLORA, 0));
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).attackList(attacks).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
         double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack).type(BugemonType.AQUA)
+        defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks).type(BugemonType.AQUA)
                 .build();
 
         double highDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
@@ -88,13 +94,15 @@ public class TestCombatService {
     public void testDamageMultiplicatorLow() {
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
-        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).addAttack(attack).build();
-        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack)
+        List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
+                TestUtilsBugemons.createAttack("3", BugemonType.FLORA, 0));
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).attackList(attacks).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
         double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
 
-        defender = new BugemonBuilder().name("2").attack(20).defense(20).addAttack(attack).type(BugemonType.LITHO)
+        defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks).type(BugemonType.LITHO)
                 .build();
 
         double lowDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);

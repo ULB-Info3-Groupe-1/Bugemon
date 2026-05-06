@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon_team.exceptions.BugemonAlreadyPresentInTeamException;
 import ulb.models.bugemon_team.exceptions.BugemonNotInTeamException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
@@ -102,8 +101,8 @@ public class TestBugemonTeam {
 
     @Test
     public void testClearTeam() {
-        Bugemon expectedBugemon1 = new BugemonBuilder().name("1").hp(100).build();
-        Bugemon expectedBugemon2 = new BugemonBuilder().name("2").hp(100).build();
+        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
+        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("2");
 
         BugemonTeam team = new BugemonTeam();
         team.add(expectedBugemon1);
