@@ -7,4 +7,8 @@ public class BugemonNameAlreadyExistsException extends Exception {
     public BugemonNameAlreadyExistsException(String message) {
         super(message);
     }
+
+    public BugemonNameAlreadyExistsException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

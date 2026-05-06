@@ -5,4 +5,8 @@ public class TeamAlreadyEmptyException extends RuntimeException {
     public TeamAlreadyEmptyException(String message) {
         super(message);
     }
+
+    public TeamAlreadyEmptyException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

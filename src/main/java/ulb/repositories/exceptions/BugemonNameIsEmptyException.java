@@ -7,4 +7,8 @@ public class BugemonNameIsEmptyException extends Exception {
     public BugemonNameIsEmptyException(String message) {
         super(message);
     }
+
+    public BugemonNameIsEmptyException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
