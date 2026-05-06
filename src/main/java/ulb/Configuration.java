@@ -1,27 +1,40 @@
 package ulb;
 
+/**
+ * Static configuration values
+ */
 public abstract class Configuration {
 
     private Configuration() {
         // Private constructor to prevent instantiation
     }
 
+    /**
+     * Static paths
+     */
     public static final class Paths {
 
         private Paths() {
             // Private constructor to prevent instantiation
         }
 
+        /** The path to the sprite folder */
         public static final String SPRITES = "assets/sprites/";
+        /** The path to the default sprite */
         public static final String DEFAULT_SPRITE = "/png/unknown.png";
+        /** The path to the room folder */
         public static final String ROOM_BASE_PATH = "/png/rooms/";
 
+        /**
+         * The path to the FXML files
+         */
         public static final class Fxml {
 
             private Fxml() {
                 // Private constructor to prevent instantiation
             }
 
+            /** The path to the FXML files */
             public static final String COMPONENT_ACTION_MENU = "/fxml/components/ActionMenu.fxml";
             public static final String COMPONENT_ATTACK_MENU = "/fxml/components/AttackMenu.fxml";
             public static final String COMPONENT_BUGEMON_INFO = "/fxml/components/BugemonInfo.fxml";
@@ -48,21 +61,29 @@ public abstract class Configuration {
         }
     }
 
+    /**
+     * Static UI values
+     */
     public static final class Ui {
 
         private Ui() {
             // Private constructor to prevent instantiation
         }
 
+        /** The title of the application */
         public static final String STAGE_TITLE = "Bugemon";
     }
 
+    /**
+     * Static music and sound effect paths
+     */
     public static final class Music {
 
         private Music() {
             // Private constructor to prevent instantiation
         }
 
+        /** The path to the music and sound effects folder */
         public static final String MUSIC_PATH_COMBAT = "/musics/combat";
         public static final String MUSIC_PATH_MENU = "/musics/menu";
         public static final String SOUND_EFFECTS_PATH_VICTORY = "/sound_effects/victory";
@@ -70,26 +91,38 @@ public abstract class Configuration {
 
     }
 
+    /**
+     * Static game values
+     */
     public static final class Game {
 
         private Game() {
             // Private constructor to prevent instantiation
         }
 
+        /** The maximum size of a team */
         public static final int MAX_TEAM_SIZE = 6;
+        /** The default name of a team */
         public static final String DEFAULT_TEAM_NAME = "Unnamed Team";
+        /** The name of the boss */
         public static final String BOSS_NAME = "FinalBoss";
+
+        /** The minimum and maximum number of floors */
         public static final int FLOOR_MAX = 8; // The highest floor is NO8
         public static final int FLOOR_MIN = 2; // The lowest floor is NO2
 
     }
 
+    /**
+     * Static JSON paths
+     */
     public static final class Json {
 
         private Json() {
             // Private constructor to prevent instantiation
         }
 
+        /** The path to the JSON files */
         public static final String ATTACK_PATH = "/json/attaques.json";
         public static final String BUGEMON_PATH = "/json/bugemons.json";
         public static final String ITEMS_PATH = "/json/objets.json";
