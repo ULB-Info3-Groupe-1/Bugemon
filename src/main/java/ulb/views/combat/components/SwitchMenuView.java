@@ -14,7 +14,8 @@ import ulb.views.components.ComponentView;
 
 /**
  * Action menu listing the Bugemons available for the player to switch into. Dispatches switch selections through the
- * callback registered. When not a forced switch, a back button is shown and dispatches through the callback registered. There are in {@link #setListener(Listener)}.
+ * callback registered. When not a forced switch, a back button is shown and dispatches through the callback registered.
+ * There are in {@link #setListener(Listener)}.
  */
 public class SwitchMenuView extends ComponentView {
     /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */

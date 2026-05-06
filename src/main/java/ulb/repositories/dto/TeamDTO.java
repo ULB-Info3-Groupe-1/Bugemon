@@ -2,6 +2,7 @@ package ulb.repositories.dto;
 
 /**
  * Data transfer object for a team
+ *
  * @param playername
  *            the name of the player
  * @param teamName

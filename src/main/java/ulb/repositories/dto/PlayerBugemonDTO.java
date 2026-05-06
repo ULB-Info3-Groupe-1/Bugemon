@@ -2,6 +2,7 @@ package ulb.repositories.dto;
 
 /**
  * Data transfer object for a player's bugemon
+ *
  * @param playername
  *            the name of the player
  * @param bugemonName

@@ -7,6 +7,7 @@ import ulb.models.bugemon.BugemonType;
 
 /**
  * Data transfer object for creating a new Bugemon.
+ *
  * @param name
  *            the name of the bugemon
  * @param type

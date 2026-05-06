@@ -1,5 +1,6 @@
 /**
- * Data access layer. All database interactions go through {@link ulb.repositories.StaticDataRepository} and {@link ulb.repositories.PlayerRepository}.
+ * Data access layer. All database interactions go through {@link ulb.repositories.StaticDataRepository} and
+ * {@link ulb.repositories.PlayerRepository}.
  *
  * On construction, {@code DatabaseRepository} loads all SQL queries from {@code resources/sql/*.sql}, creates the
  * schema if absent, and bootstraps static game data. See {@code team/rules.md} for the required SQL file format.

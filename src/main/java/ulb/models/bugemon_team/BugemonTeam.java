@@ -226,7 +226,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
     /**
      * Returns a list of all the Bugemons in the team
      *
-     * @return a list of {@link Bugemon}  : all the Bugemons in the team
+     * @return a list of {@link Bugemon} : all the Bugemons in the team
      */
     public List<Bugemon> getAll() {
         return this.team;

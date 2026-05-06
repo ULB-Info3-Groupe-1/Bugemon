@@ -20,8 +20,8 @@ import ulb.views.components.BugemonTeamView;
 
 /**
  * View for the team creation screen. Holds a reference to the {@link BugemonTeam} model and reads from it directly in
- * {@link #refresh()}. Dispatches player interactions through a {@link ManageTeamView.Listener}; holds no reference to any concrete
- * controller class.
+ * {@link #refresh()}. Dispatches player interactions through a {@link ManageTeamView.Listener}; holds no reference to
+ * any concrete controller class.
  */
 public class ManageTeamView extends View {
 
