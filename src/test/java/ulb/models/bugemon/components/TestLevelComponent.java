@@ -86,4 +86,12 @@ public class TestLevelComponent {
         assertEquals(0, levelComponent.getXp());
         assertEquals(2, numLevelUps);
     }
+
+    @Test
+    public void shouldThrow_whenAddingNegativeXp() {
+        LevelComponent levelComponent = new LevelComponent(0, 1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            levelComponent.addXp(-1);
+        });
+    }
 }
