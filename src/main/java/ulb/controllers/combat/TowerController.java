@@ -132,8 +132,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
         if (this.tower.isEmpty()) {
             LOG.info("Starting new tower run");
-            BugemonTeam activeTeam = this.teamService.getActiveTeam()
-                    .orElseThrow(() -> new NoActiveTeamException("No active team is not possible here"));
+            BugemonTeam activeTeam = this.teamService.getActiveTeam().get();
             this.tower = Optional.of(new Tower(activeTeam, this.bugemonService, this.inventoryService,
                     this.towerService.getCurrentFloor()));
 

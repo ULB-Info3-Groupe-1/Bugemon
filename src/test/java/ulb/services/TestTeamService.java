@@ -119,7 +119,7 @@ public class TestTeamService {
         this.teamService.setActiveTeam(oldName);
 
         String newName = "New";
-        this.teamService.renameTeam(oldName, newName);
+        this.teamService.renameActiveTeam(newName);
 
         verify(this.playerRepository).renameTeam(PLAYER_NAME, oldName, newName);
         assertEquals(newName, this.teamService.getActiveTeam().get().getName());

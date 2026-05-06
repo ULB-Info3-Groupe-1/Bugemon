@@ -112,7 +112,7 @@ public class ManageTeamView extends View {
 
         void onDelete(String teamName);
 
-        void onRename(String oldName, String newName);
+        void onRename(String newName);
 
         void onAddNewTeam();
 
@@ -189,7 +189,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onRenameClicked() {
-        this.listener.onRename(this.getTeamNameToLoad(), this.getTeamNameToSave());
+        this.listener.onRename(this.getTeamNameToSave());
     }
 
     @FXML

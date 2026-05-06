@@ -11,6 +11,7 @@ import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.TeamService;
+import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
@@ -98,7 +99,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     public void onDelete(String teamName) {
         try {
             this.teamService.deleteTeam(teamName);
-        } catch (TeamNotFoundException e) {
+        } catch (NoActiveTeamException | TeamNotFoundException e) {
             this.view.showDeleteTeamNoActiveTeamAlert();
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamAlert();
@@ -107,10 +108,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public void onRename(String oldName, String newName) {
+    public void onRename(String newName) {
         try {
-            this.teamService.renameTeam(oldName, newName);
-        } catch (TeamNotFoundException e) {
+            this.teamService.renameActiveTeam(newName);
+        } catch (TeamNotFoundException | NoActiveTeamException e) {
             this.view.showSelectTeamToRenameAlert();
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showTeamNameAlreadyExistsAlert(newName);
@@ -137,7 +138,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.teamService.modifyActiveTeam();
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
-        } catch (TeamNotFoundException e) {
+        } catch (TeamNotFoundException | NoActiveTeamException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
         this.view.refresh();
