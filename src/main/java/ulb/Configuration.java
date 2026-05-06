@@ -34,6 +34,7 @@ public abstract class Configuration {
             public static final String COMPONENT_DIALOG_ZONE = "/fxml/components/DialogZone.fxml";
             public static final String COMPONENT_HOVER_INFO = "/fxml/components/HoverInfo.fxml";
             public static final String COMPONENT_ROOM_NODE = "/fxml/components/RoomNode.fxml";
+            public static final String COMPONENT_ROOM = "/fxml/components/Room.fxml";
 
             public static final String COMBAT_VIEW = "/fxml/Combat.fxml";
             public static final String COMBAT_VICTORY_VIEW = "/fxml/CombatVictory.fxml";
@@ -42,6 +43,7 @@ public abstract class Configuration {
             public static final String MAIN_MENU_VIEW = "/fxml/MainMenu.fxml";
             public static final String MANAGE_TEAM_VIEW = "/fxml/ManageTeam.fxml";
             public static final String CREATE_BUGEMON_VIEW = "/fxml/CreateBugemon.fxml";
+            public static final String SAVE_MENU_VIEW = "/fxml/SaveMenu.fxml";
 
         }
     }
@@ -77,6 +79,8 @@ public abstract class Configuration {
         public static final int MAX_TEAM_SIZE = 6;
         public static final String DEFAULT_TEAM_NAME = "Unnamed Team";
         public static final String BOSS_NAME = "FinalBoss";
+        public static final int FLOOR_MAX = 8; // The highest floor is NO8
+        public static final int FLOOR_MIN = 2; // The lowest floor is NO2
 
     }
 

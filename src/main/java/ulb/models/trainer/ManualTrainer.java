@@ -1,13 +1,14 @@
 package ulb.models.trainer;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.services.InventoryService;
 
 /**
  * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
@@ -20,14 +21,14 @@ import ulb.models.bugemon_team.BugemonTeam;
 public class ManualTrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
-    private Inventory inventory;
+    private final InventoryService inventoryService;
 
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
 
-    public ManualTrainer(BugemonTeam team, Inventory inventory) {
+    public ManualTrainer(BugemonTeam team, InventoryService inventoryService) {
         super(team);
-        this.inventory = inventory;
+        this.inventoryService = inventoryService;
     }
 
     /**
@@ -118,7 +119,7 @@ public class ManualTrainer extends Trainer {
      *             if the item is not in the inventory
      */
     public void registerUseItem(Item item) {
-        if (this.inventory.hasItem(item)) {
+        if (this.inventoryService.hasItem(item)) {
             this.registerAction(new TurnAction.UseItemAction(item));
         } else {
             throw new IllegalArgumentException("The player does not have the specified item.");
@@ -126,12 +127,12 @@ public class ManualTrainer extends Trainer {
     }
 
     public void useItem(Item item) {
-        this.inventory.useItem(item);
+        this.inventoryService.useItem(item);
         this.currentBugemon.apply(item.effect());
     }
 
     public Map<Item, Integer> getInventoryMap() {
-        return this.inventory.getMap();
+        return Collections.unmodifiableMap(this.inventoryService.getInventoryMap());
     }
 
     public boolean hasPendingAction() {

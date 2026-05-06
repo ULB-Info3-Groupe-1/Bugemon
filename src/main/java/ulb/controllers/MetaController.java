@@ -21,6 +21,7 @@ import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
+import ulb.services.TowerService;
 import ulb.views.View;
 
 /**
@@ -35,6 +36,7 @@ public class MetaController {
      */
     public enum Window {
         MAIN_MENU,
+        SAVE_MENU,
         CREATE_TEAM,
         EDIT_TEAM,
         CREATE_BUGEMON,
@@ -50,6 +52,7 @@ public class MetaController {
 
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
+    private final SaveMenuController saveMenuController;
     private final MainMenuController mainMenuController;
     private final ManageTeamController createTeamController;
     private final ManageTeamController editTeamController;
@@ -73,11 +76,14 @@ public class MetaController {
      *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
-            InventoryService inventoryService, CombatService combatService) throws IOException {
+            InventoryService inventoryService, TowerService towerService, CombatService combatService)
+            throws IOException {
         this.bugemonService = bugemonService;
 
         this.stage = primaryStage;
 
+        this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
+                inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);
@@ -89,15 +95,17 @@ public class MetaController {
         this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
                 combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
-        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService);
+        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
         this.initTransitions();
+    }
 
-        this.switchTo(Window.MAIN_MENU);
+    public void start() {
+        this.switchTo(Window.SAVE_MENU);
     }
 
     public void onCombatFinished(boolean won) {
@@ -130,7 +138,11 @@ public class MetaController {
         this.switchTo(Window.CREATE_BUGEMON);
     }
 
-    public void onReturnToMainMenu() {
+    public void onSaveMenu() {
+        this.switchTo(Window.SAVE_MENU);
+    }
+
+    public void onMainMenu() {
         this.switchTo(Window.MAIN_MENU);
     }
 
@@ -166,6 +178,10 @@ public class MetaController {
         this.transitions.put(Window.MAIN_MENU, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
             this.mainMenuController.show();
+        });
+        this.transitions.put(Window.SAVE_MENU, () -> {
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
+            this.saveMenuController.show();
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);

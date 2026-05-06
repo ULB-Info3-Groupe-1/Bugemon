@@ -32,9 +32,7 @@ public class ItemMenuView extends ComponentView {
         back.getStyleClass().addAll("btn", "btn-secondary", "menu-btn-min");
         back.setMaxWidth(Double.MAX_VALUE);
         back.setWrapText(true);
-        back.setOnAction(e -> {
-            this.listener.onBack();
-        });
+        back.setOnAction(e -> this.listener.onBack());
         this.getChildren().add(back);
     }
 
@@ -43,15 +41,9 @@ public class ItemMenuView extends ComponentView {
         btn.getStyleClass().addAll("btn", "btn-warning", "menu-btn-min");
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setWrapText(true);
-        btn.setOnAction(e -> {
-            this.listener.onItemSelected(item);
-        });
-        btn.setOnMouseEntered(e -> {
-            this.listener.onItemHovered(item);
-        });
-        btn.setOnMouseExited(e -> {
-            this.listener.onItemLeft();
-        });
+        btn.setOnAction(e -> this.listener.onItemSelected(item));
+        btn.setOnMouseEntered(e -> this.listener.onItemHovered(item));
+        btn.setOnMouseExited(e -> this.listener.onItemLeft());
         return btn;
     }
 

@@ -8,14 +8,14 @@
     fx:controller="ulb.views.MainMenuView" alignment="CENTER" spacing="40"
     styleClass="main-menu">
 
-    <Label text="BUGÉMON" styleClass="main-title" />
+    <Label text="MENU PRINCIPAL" styleClass="main-title" />
 
     <Button fx:id="createTeamButton" onAction="#onCreateTeamClicked"
         text="Créer une équipe" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="editTeamButton" onAction="#onEditTeamClicked"
         text="Gérer mes équipes" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="createBugemonButton"
-        onAction="#onCreateBugemonClicked" text="Créer un nouveau Bugemon"
+        onAction="#onCreateBugemonClicked" text="Ajouter des Bugémons"
         styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="startAutomaticCombatButton"
         onAction="#onStartAutomaticCombatClicked"
@@ -23,9 +23,11 @@
     <Button fx:id="startManualCombatButton"
         onAction="#onStartManualCombatClicked" text="Lancer combat manuel"
         styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="noTowerButton" onAction="#onNoTowerClicked"
+    <Button fx:id="noTowerButton" onAction="#onTowerClicked"
         text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="quitButton" onAction="#onQuitClicked"
-        text="Quitter" styleClass="btn,btn-danger,btn-nav" />
+    <Button fx:id="saveMenuReturnButton"
+        onAction="#onSaveMenuReturnButtonClicked"
+        text="Retour menu de sauvegarde"
+        styleClass="btn,btn-secondary,btn-nav" />
 
 </VBox>

@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.tower.room.Room;
 import ulb.models.trainer.ManualTrainer;
@@ -34,7 +33,6 @@ public class TestFloor {
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
         when(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons()).thenReturn(testBugemons);
-        when(INVENTORY_SERVICE_MOCK.getInventory()).thenReturn(new Inventory());
     }
 
     @Test
@@ -115,7 +113,7 @@ public class TestFloor {
 
     private Floor createFloor() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam, INVENTORY_SERVICE_MOCK.getInventory());
+        Trainer playerTrainer = new ManualTrainer(playerTeam, INVENTORY_SERVICE_MOCK);
         return new Floor(playerTrainer, BUGEMON_SERVICE_MOCK, 1);
     }
 }

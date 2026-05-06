@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
+import ulb.Configuration;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.FloorNode.RoomPosition;
 import ulb.models.tower.room.Room;
@@ -22,8 +23,6 @@ import ulb.models.tower.room.Room.RoomType;
  * Reusable component representing a single room node in the floor map. Configurable to represent different room types
  */
 public class RoomView extends StackPane {
-    private static final String FXML_PATH = "/fxml/components/Room.fxml";
-    private static final String ROOM_BASE_PATH = "/png/rooms/";
 
     @FXML
     private ImageView roomToken;
@@ -42,19 +41,19 @@ public class RoomView extends StackPane {
 
     public RoomView(FloorNode node) {
         this.node = node;
-        FXMLLoader loader = new FXMLLoader(RoomView.class.getResource(FXML_PATH));
+        FXMLLoader loader = new FXMLLoader(RoomView.class.getResource(Configuration.Paths.Fxml.COMPONENT_ROOM));
         loader.setRoot(this);
         loader.setController(this);
         try {
             loader.load();
         } catch (IOException e) {
-            throw new UncheckedIOException("Failed to load component: " + FXML_PATH, e);
+            throw new UncheckedIOException("Failed to load component: " + Configuration.Paths.Fxml.COMPONENT_ROOM, e);
         }
     }
 
     @FXML
     private void initialize() {
-        this.roomToken.setImage(this.loadImage(ROOM_BASE_PATH + "base.png"));
+        this.roomToken.setImage(this.loadImage(Configuration.Paths.ROOM_BASE_PATH + "base.png"));
         this.initRoom();
     }
 
@@ -71,7 +70,7 @@ public class RoomView extends StackPane {
             return;
         }
 
-        String iconPath = ROOM_BASE_PATH + normalizedRoomType + ".png";
+        String iconPath = Configuration.Paths.ROOM_BASE_PATH + normalizedRoomType + ".png";
         this.roomTypeIcon.setImage(this.loadImage(iconPath));
     }
 
@@ -91,21 +90,16 @@ public class RoomView extends StackPane {
             case RoomState.AVAILABLE -> {
                 this.stateLabel.setText("");
                 this.stateOverlay.setVisible(true);
-                break;
             }
             case RoomState.VISITED -> {
                 this.stateLabel.setText("✓");
                 this.stateOverlay.setVisible(true);
-                break;
             }
             case RoomState.LOCKED -> {
                 this.stateLabel.setText("");
                 this.stateOverlay.setVisible(false);
-                break;
             }
-            default -> {
-                throw new IllegalStateException("Unexpected room state: " + roomState);
-            }
+            default -> throw new IllegalStateException("Unexpected room state: " + roomState);
         }
 
         this.setDisable(roomState == RoomState.LOCKED);

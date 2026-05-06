@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
@@ -21,6 +22,7 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
+import ulb.services.TowerService;
 import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
@@ -32,13 +34,15 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private final TeamService teamService;
     private final BugemonService bugemonService;
     private final InventoryService inventoryService;
+    private final TowerService towerService;
 
     public TowerController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            InventoryService inventoryService) {
+            InventoryService inventoryService, TowerService towerService) {
         super(metaController, ViewLoader.load(FloorView::new));
         this.teamService = teamService;
         this.bugemonService = bugemonService;
         this.inventoryService = inventoryService;
+        this.towerService = towerService;
         this.tower = Optional.empty();
 
         this.view.setListener(this);
@@ -67,7 +71,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
         Combat combat = combatRoom.getCombat(new ManualTrainer(
                 this.teamService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
-                this.inventoryService.getInventory()));
+                this.inventoryService));
         this.metaController.startTowerCombat(combat);
     }
 
@@ -87,7 +91,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         LOG.info("Player returned to main menu from tower");
         this.tower = Optional.empty();
         this.metaController.endTowerFlow();
-        this.metaController.onReturnToMainMenu();
+        this.metaController.onMainMenu();
     }
 
     public void onTowerCombatFinished(boolean playerWon) {
@@ -106,7 +110,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         if (this.tower.get().isCompleted()) {
             LOG.info("Tower completed, switching to victory screen");
             this.finishTowerFlow(playerWon);
-            return;
         }
     }
 
@@ -129,8 +132,9 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
         if (this.tower.isEmpty()) {
             LOG.info("Starting new tower run");
-            this.tower = Optional.of(new Tower(this.teamService.getActiveTeam().get(),
-                    this.inventoryService.getInventory(), this.bugemonService));
+            BugemonTeam activeTeam = this.teamService.getActiveTeam().get();
+            this.tower = Optional.of(new Tower(activeTeam, this.bugemonService, this.inventoryService,
+                    this.towerService.getCurrentFloor()));
 
         }
 
@@ -143,7 +147,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private void showFloor() {
         Floor currentFloor = this.tower.get().getCurrentFloor();
 
-        this.view.setFloorNumber(this.tower.get().getCurrentFloorNumber() + 1);
+        this.view.setFloorNumber(this.tower.get().getCurrentFloorNumber());
         this.view.setInstruction();
         this.setupFloorStructure(currentFloor);
         this.view.setPlayerPosition(currentFloor.getCurrentPosition());

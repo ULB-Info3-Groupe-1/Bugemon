@@ -4,9 +4,11 @@ import ulb.services.TeamService;
 import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
 
-/** Controller for the main menu screen. */
+/**
+ * Controller for the combat menu screen.
+ */
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
-    private final TeamService teamService;
+    TeamService teamService;
 
     public MainMenuController(MetaController metaController, TeamService teamService) {
         super(metaController, ViewLoader.load(MainMenuView::new));
@@ -20,20 +22,13 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     @Override
+    public void onEditTeam() {
+        this.metaController.onEditTeam();
+    }
+
+    @Override
     public void onCreateBugemon() {
         this.metaController.onCreateBugemon();
-    }
-
-    @Override
-    public void onNoTower() {
-        if (!this.isActiveTeamEmpty()) {
-            this.metaController.onTower();
-        }
-    }
-
-    @Override
-    public void onQuit() {
-        javafx.application.Platform.exit();
     }
 
     /** Starts an automatic combat session. */
@@ -53,8 +48,15 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     @Override
-    public void onEditTeam() {
-        this.metaController.onEditTeam();
+    public void onTower() {
+        if (!this.isActiveTeamEmpty()) {
+            this.metaController.onTower();
+        }
+    }
+
+    @Override
+    public void onSaveMenuReturnButton() {
+        this.metaController.onSaveMenu();
     }
 
     private boolean isActiveTeamEmpty() {

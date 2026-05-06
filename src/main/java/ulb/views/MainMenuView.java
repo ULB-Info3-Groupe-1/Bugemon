@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import ulb.Configuration;
 
 /**
- * View for the main menu screen. Dispatches player interactions to the controller exclusively through callbacks
+ * View for the combat menu screen. Dispatches player interactions to the controller exclusively through callbacks
  * registered via setters. The view holds no reference to any concrete controller class.
  */
 public class MainMenuView extends View {
@@ -32,16 +32,6 @@ public class MainMenuView extends View {
     }
 
     @FXML
-    private void onNoTowerClicked() {
-        this.listener.onNoTower();
-    }
-
-    @FXML
-    private void onQuitClicked() {
-        this.listener.onQuit();
-    }
-
-    @FXML
     private void onStartManualCombatClicked() {
         this.listener.onStartManualCombat();
     }
@@ -49,6 +39,16 @@ public class MainMenuView extends View {
     @FXML
     private void onStartAutomaticCombatClicked() {
         this.listener.onStartAutomaticCombat();
+    }
+
+    @FXML
+    private void onTowerClicked() {
+        this.listener.onTower();
+    }
+
+    @FXML
+    private void onSaveMenuReturnButtonClicked() {
+        this.listener.onSaveMenuReturnButton();
     }
 
     @Override
@@ -66,14 +66,14 @@ public class MainMenuView extends View {
 
         void onCreateBugemon();
 
-        void onNoTower();
+        void onEditTeam();
 
-        void onQuit();
+        void onTower();
 
         void onStartManualCombat();
 
         void onStartAutomaticCombat();
 
-        void onEditTeam();
+        void onSaveMenuReturnButton();
     }
 }

@@ -1,5 +1,8 @@
 package ulb.services;
 
+import java.util.Collections;
+import java.util.Map;
+
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.repositories.PlayerRepository;
@@ -7,26 +10,39 @@ import ulb.repositories.PlayerRepository;
 public class InventoryService {
 
     private final PlayerRepository playerRepository;
-    private final int playerId;
-    private final Inventory inventory;
+    private final String playername;
+    private Inventory inventory;
 
-    public InventoryService(PlayerRepository playerRepository, int playerId) {
+    public InventoryService(PlayerRepository playerRepository, String playername) {
         this.playerRepository = playerRepository;
-        this.playerId = playerId;
-        this.inventory = playerRepository.getPlayerInventory(playerId);
+        this.playername = playername;
     }
 
-    public Inventory getInventory() {
-        return this.inventory;
+    public void loadInventory() {
+        this.inventory = this.playerRepository.getPlayerInventory(this.playername);
+    }
+
+    /**
+     * Resets the player's inventory to a default state with the default items.
+     */
+    public void resetInventory() {
+        this.playerRepository.addDefaultInventory(this.playername);
+        this.loadInventory();
     }
 
     public void saveInventory() {
-        this.inventory.getMap().forEach(
-                (item, quantity) -> this.playerRepository.updateItemAmount(this.playerId, item.id(), quantity));
+        this.playerRepository.saveInventory(this.playername, this.inventory);
     }
 
-    public void addItem(Item item, int quantity) {
-        this.playerRepository.addItemToPlayer(this.playerId, item.id(), quantity);
-        this.inventory.addItem(item, quantity);
+    public void useItem(Item item) {
+        this.inventory.useItem(item);
+    }
+
+    public Map<Item, Integer> getInventoryMap() {
+        return Collections.unmodifiableMap(this.inventory.getMap());
+    }
+
+    public boolean hasItem(Item item) {
+        return this.inventory.hasItem(item);
     }
 }

@@ -19,11 +19,13 @@ public class Floor {
     private final FloorGenerator floorGenerator;
     private FloorNode currentPosition;
     private final FloorNode floorRoot;
+    private final int floorLevel;
 
     public Floor(Trainer playerTrainer, BugemonService bugemonService, int floorLevel) {
         this.playerTrainer = playerTrainer;
+        this.floorLevel = floorLevel;
         CombatFactory combatFactory = new CombatFactory(bugemonService);
-        this.floorGenerator = new FloorGenerator(combatFactory, floorLevel);
+        this.floorGenerator = new FloorGenerator(combatFactory);
         this.currentPosition = this.floorGenerator.getRoot();
         this.floorRoot = this.floorGenerator.getRoot();
     }
@@ -66,6 +68,10 @@ public class Floor {
         reachableNodes.addAll(this.currentPosition.getChildren());
         this.currentPosition.getParent().ifPresent(reachableNodes::add);
         return reachableNodes;
+    }
+
+    public int getFloorLevel() {
+        return this.floorLevel;
     }
 
     public void moveTo(FloorNode node) {

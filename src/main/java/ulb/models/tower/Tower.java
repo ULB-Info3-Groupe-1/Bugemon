@@ -1,28 +1,31 @@
 package ulb.models.tower;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import ulb.models.bugemon.Inventory;
+import ulb.Configuration;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
+import ulb.services.InventoryService;
 
 public class Tower {
 
-    private static final int MAX_FLOORS = 9;
-    private int currentFloor = 0;
-    private final ArrayList<Floor> floors = new ArrayList<>();
+    private final TowerFloors floors;
     private final Trainer playerTrainer;
+    private int currentFloor;
     private boolean isFinished = false;
 
-    public Tower(BugemonTeam playerTeam, Inventory inventory, BugemonService bugemonService) {
-        this.playerTrainer = new ManualTrainer(playerTeam, inventory);
-        for (int i = 0; i < MAX_FLOORS; i++) {
+    public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
+            int currentFloor) {
+        this.currentFloor = currentFloor;
+        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService);
+
+        this.floors = new TowerFloors();
+        for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {
             this.floors.add(new Floor(this.playerTrainer, bugemonService, i));
         }
     }
@@ -44,11 +47,11 @@ public class Tower {
     }
 
     public boolean isFloorComplete() {
-        return this.floors.get(this.currentFloor).isComplete();
+        return this.getCurrentFloor().isComplete();
     }
 
     public Floor getCurrentFloor() {
-        return this.floors.get(this.currentFloor);
+        return this.floors.getFloorByLevel(this.currentFloor);
     }
 
     public void goToNextFloor() {
@@ -62,7 +65,7 @@ public class Tower {
     }
 
     private boolean hasNextFloor() {
-        return this.currentFloor < MAX_FLOORS - 1;
+        return this.currentFloor < Configuration.Game.FLOOR_MAX;
     }
 
     public void updateRoomsState() {
