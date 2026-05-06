@@ -16,6 +16,9 @@ import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 
+/**
+ * Service responsible for bugemon persistence.
+ */
 public class BugemonService {
 
     private final StaticDataRepository staticDataRepository;
@@ -27,6 +30,16 @@ public class BugemonService {
     // Cache for all default Bugemons to avoid multiple database calls
     private final List<Bugemon> allDefaultBugemonsCache;
 
+    /**
+     * Constructor for BugemonService.
+     *
+     * @param staticDataRepository
+     *            needed to access the database for static data
+     * @param playerRepository
+     *            needed to access the database for player data
+     * @param playername
+     *            the name of the player to access his data in the database
+     */
     public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
             String playername) {
         this.playername = playername;
@@ -35,6 +48,11 @@ public class BugemonService {
         this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
     }
 
+    /**
+     * Get all default Bugemons.
+     *
+     * @return a list of all default Bugemons
+     */
     public List<Bugemon> getAllDefaultBugemons() {
         return this.allDefaultBugemonsCache;
     }
@@ -61,6 +79,13 @@ public class BugemonService {
         this.allDefaultBugemonsCache.add(BugemonFactory.createBugemon(bugemon));
     }
 
+    /**
+     * Get a Bugemon by its name
+     *
+     * @param name
+     *            the name of the bugemon
+     * @return the bugemon with the provided name
+     */
     public Bugemon getBugemonByName(String name) {
         return this.allDefaultBugemonsCache.stream().filter(b -> b.getName().equals(name)).findFirst().orElse(null);
     }
@@ -88,18 +113,39 @@ public class BugemonService {
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
 
+    /**
+     * Get the number of pending level ups
+     *
+     * @return the number of pending level ups
+     */
     public int numPendingLevelUps() {
         return this.levelUps.size();
     }
 
+    /**
+     * Check if there are any pending level ups
+     *
+     * @return true if there are any pending level ups and false otherwise
+     */
     public boolean hasPendingLevelUps() {
         return this.numPendingLevelUps() > 0;
     }
 
+    /**
+     * Peek the next level up
+     *
+     * @return the next level up
+     */
     public LevelUp peekNextLevelUp() {
         return this.levelUps.peek();
     }
 
+    /**
+     * Apply the next level up
+     *
+     * @param upgradeIdx
+     *            the index of the upgrade
+     */
     public void applyNextLevelUp(int upgradeIdx) {
         LevelUp levelUp = this.levelUps.remove();
         levelUp.apply(upgradeIdx);
@@ -107,6 +153,14 @@ public class BugemonService {
         this.saveBugemonState(levelUp.getBugemon());
     }
 
+    /**
+     * Distribute xp to a bugemon
+     *
+     * @param bugemon
+     *            the bugemon to distribute xp
+     * @param amount
+     *            the amount of xp
+     */
     public void distributeXp(Bugemon bugemon, int amount) {
         int numLevelUps = bugemon.gainXp(amount);
 
@@ -121,6 +175,9 @@ public class BugemonService {
         this.saveBugemonState(bugemon);
     }
 
+    /**
+     * Clear all player bugemons
+     */
     public void clearAllPlayerBugemons() {
         this.playerRepository.removeAllPlayerBugemon(this.playername);
     }

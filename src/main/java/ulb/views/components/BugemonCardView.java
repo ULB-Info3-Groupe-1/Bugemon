@@ -33,10 +33,22 @@ public class BugemonCardView extends ComponentView {
         this(Optional.empty());
     }
 
+    /**
+     * Constructs a card with the given Bugemon.
+     *
+     * @param bugemon
+     *            the Bugemon
+     */
     public BugemonCardView(Bugemon bugemon) {
         this(Optional.of(bugemon));
     }
 
+    /**
+     * Constructs a card with the given Bugemon data.
+     *
+     * @param bugemonData
+     *            the Bugemon data
+     */
     private BugemonCardView(Optional<Bugemon> bugemonData) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
         this.bugemonData = bugemonData;
@@ -48,11 +60,20 @@ public class BugemonCardView extends ComponentView {
         bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopupView.show(b, e)));
     }
 
+    /**
+     * Hides the level label.
+     */
     public void hideLevelLabel() {
         this.levelLabel.setVisible(false);
         this.levelLabel.setManaged(false);
     }
 
+    /**
+     * Handles the click event.
+     *
+     * @param event
+     *            the click event
+     */
     @FXML
     private void onClick(MouseEvent event) {
         if (event.getButton() != MouseButton.PRIMARY) {
@@ -62,19 +83,40 @@ public class BugemonCardView extends ComponentView {
         this.bugemonData.ifPresent(b -> this.listener.onClick(b));
     }
 
+    /**
+     * Registers a listener to receive callbacks for card interactions.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Sets the sprite of the card.
+     *
+     * @param file
+     *            the sprite
+     */
     public void setSprite(File file) {
         Image image = new Image(file.toURI().toString());
         this.imageView.setImage(image);
     }
 
+    /**
+     * Removes the sprite from the card.
+     */
     public void removeSprite() {
         this.imageView.setImage(EMPTY_IMAGE);
     }
 
+    /**
+     * Sets the name of the card.
+     *
+     * @param name
+     *            the name
+     */
     public void setName(String name) {
         if (name == null || name.isBlank()) {
             name = EMPTY_NAME;
@@ -82,20 +124,35 @@ public class BugemonCardView extends ComponentView {
         this.nameLabel.setText(name);
     }
 
+    /**
+     * Selects the card.
+     */
     public void select() {
         this.imageView.getStyleClass().add("bugemon-image-selected");
         this.getStyleClass().remove("bugemon-cell");
         this.getStyleClass().add("bugemon-cell-selected");
     }
 
+    /**
+     * Unselects the card.
+     */
     public void unselect() {
         this.imageView.getStyleClass().remove("bugemon-image-selected");
         this.getStyleClass().remove("bugemon-cell-selected");
         this.getStyleClass().add("bugemon-cell");
     }
 
+    /**
+     * Callback interface for card interactions.
+     */
     public interface Listener {
 
+        /**
+         * Dispatches a click event to the controller.
+         *
+         * @param bugemon
+         *            the clicked Bugemon
+         */
         void onClick(Bugemon bugemon);
 
     }

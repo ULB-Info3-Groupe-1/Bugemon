@@ -89,10 +89,19 @@ public class FloorView extends View {
         }
     }
 
+    /**
+     * Sets the floor number to be displayed
+     *
+     * @param floorNumber
+     *            the floor number
+     */
     public void setFloorNumber(int floorNumber) {
         this.floorNumberLabel.setText("NO" + floorNumber);
     }
 
+    /**
+     * Sets the instruction to be displayed
+     */
     public void setInstruction() {
         this.instructionsLabel.setText("Cliquez sur une salle disponible pour continuer votre ascension");
     }
@@ -108,6 +117,12 @@ public class FloorView extends View {
         this.innerMapPane.getChildren().add(this.playerIcon);
     }
 
+    /**
+     * Sets the player's position on the map
+     *
+     * @param node
+     *            the floor node
+     */
     public void setPlayerPosition(FloorNode node) {
         RoomView roomView = this.roomNodesByFloorNode.get(node);
         if (roomView == null) {
@@ -124,6 +139,12 @@ public class FloorView extends View {
         this.playerIcon.toFront();
     }
 
+    /**
+     * Animates the player's position on the map
+     *
+     * @param node
+     *            the floor node
+     */
     public void animatePlayerTo(FloorNode node) {
         RoomView roomView = this.roomNodesByFloorNode.get(node);
         if (roomView == null) {
@@ -146,6 +167,12 @@ public class FloorView extends View {
         timeline.play();
     }
 
+    /**
+     * Sets the floor nodes to be displayed
+     *
+     * @param floorNodes
+     *            the floor nodes
+     */
     public void setFloorNodes(List<FloorNode> floorNodes) {
         this.clearMap();
 
@@ -168,6 +195,12 @@ public class FloorView extends View {
         }
     }
 
+    /**
+     * Adds a floor node to the map
+     *
+     * @param floorNode
+     *            the floor node
+     */
     public void addFloorNode(FloorNode floorNode) {
         // Calculate x,y position from row/col
         double x = this.calculateXPosition(floorNode.getX());
@@ -207,6 +240,14 @@ public class FloorView extends View {
         return MAP_OFFSET_Y + (row * (ROOM_HEIGHT + VERTICAL_SPACING));
     }
 
+    /**
+     * Adds a connection between two rooms
+     *
+     * @param source
+     *            the source room
+     * @param target
+     *            the target room
+     */
     public void addConnectionBetweenRooms(RoomView source, RoomView target) {
         // Calculate the center of each room
         double sourceX = source.getLayoutX() + ROOM_WIDTH / 2;
@@ -222,12 +263,18 @@ public class FloorView extends View {
         this.innerMapPane.getChildren().add(0, connection);
     }
 
+    /**
+     * Refreshes the state of all rooms
+     */
     public void refreshRoomStates() {
         for (RoomView roomView : this.roomNodesByFloorNode.values()) {
             roomView.setRoomState();
         }
     }
 
+    /**
+     * Removes all rooms from the map
+     */
     public void clearMap() {
         this.innerMapPane.getChildren().removeIf(node -> node != this.playerIcon);
     }
@@ -268,8 +315,18 @@ public class FloorView extends View {
      * interface.
      */
     public interface Listener {
+
+        /**
+         * Dispatches a room click action to the controller
+         *
+         * @param node
+         *            The room that was clicked
+         */
         void onRoomClicked(FloorNode node);
 
+        /**
+         * Dispatches a return to main menu action to the controller
+         */
         void onReturnToMainMenu();
     }
 }

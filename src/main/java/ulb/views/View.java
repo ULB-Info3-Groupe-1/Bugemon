@@ -14,7 +14,12 @@ import javafx.stage.Stage;
 public abstract class View {
     protected Parent root;
 
-    /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
+    /**
+     * alled by {@link ViewLoader} after the FXML root has been loaded and injected.
+     *
+     * @param newroot
+     *            the FXML root
+     */
     public void initRoot(Parent newroot) {
         this.root = newroot;
     }
@@ -28,7 +33,12 @@ public abstract class View {
      */
     public abstract void refresh();
 
-    /** Replaces the scene's root with this view's root, keeping the stage size stable. */
+    /**
+     * Replaces the scene's root with this view's root, keeping the stage size stable.
+     *
+     * @param stage
+     *            the stage to show
+     */
     public void show(Stage stage) {
         stage.getScene().setRoot(this.root);
         stage.show();
@@ -84,6 +94,9 @@ public abstract class View {
         this.showWarningAlert("Aucune équipe active", message);
     }
 
+    /**
+     * Shows an alert to inform the player that they must choose a team to launch a combat.
+     */
     public void showAlertChooseTeamToLaunchCombat() {
         this.showNoActiveTeamAlert("Veuillez choisir une equipe pour lancer un combat.");
     }

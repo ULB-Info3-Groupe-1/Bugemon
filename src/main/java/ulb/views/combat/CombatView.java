@@ -46,6 +46,7 @@ public abstract class CombatView extends View {
 
     NextListener nextListener;
 
+    /** Default constructor. */
     protected CombatView() {
     }
 
@@ -57,6 +58,12 @@ public abstract class CombatView extends View {
         this.initCombatMode();
     }
 
+    /**
+     * Sets the listener to be notified when the next button is clicked.
+     *
+     * @param listener
+     *            the next listener
+     */
     public void setNextListener(NextListener listener) {
         this.nextListener = listener;
     }
@@ -82,17 +89,34 @@ public abstract class CombatView extends View {
 
     // ── Hover info panel ──────────────────────────────────────────────────────
 
-    /** Populates and shows the hover info panel with the given title and lines. */
+    /**
+     * Populates and shows the hover info panel with the given title and lines.
+     *
+     * @param title
+     *            displayed in bold at the top
+     * @param lines
+     *            zero or more info lines shown below the title
+     */
     public void showHoverInfo(String title, String... lines) {
         this.hoverInfoView.show(title, lines);
     }
 
-    /** Applies a type-based background colour to the hover info panel. */
+    /**
+     * Applies a type-based background colour to the hover info panel.
+     *
+     * @param type
+     *            the bugemon type whose colour to apply
+     */
     public void setHoverType(BugemonType type) {
         this.hoverInfoView.setType(type);
     }
 
-    /** Shows or hides the efficiency badge on the hover info panel. */
+    /**
+     * Shows or hides the efficiency badge on the hover info panel.
+     *
+     * @param eff
+     *            the efficiency value to display
+     */
     public void setHoverEfficiency(Efficiency eff) {
         this.hoverInfoView.setEfficiency(eff);
     }
@@ -137,7 +161,14 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
-    /** Builds and displays a dialog describing the given {@code step}. */
+    /**
+     * Builds and displays a dialog describing the given {@code step}.
+     *
+     * @param step
+     *            the step to display
+     * @param playerTrainer
+     *            the player trainer that performed the step
+     */
     public void showStepDialog(TurnStep step, Trainer playerTrainer) {
         String message = switch (step) {
             case TurnStep.AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) ->
@@ -173,6 +204,9 @@ public abstract class CombatView extends View {
         };
     }
 
+    /**
+     * Hides the dialog zone from the layout.
+     */
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
@@ -180,6 +214,12 @@ public abstract class CombatView extends View {
 
     // ── Bugemon display ───────────────────────────────────────────────────────
 
+    /**
+     * Updates the trainer's Bugemon sprite and info bar.
+     *
+     * @param trainerBugemon
+     *            the trainer's Bugemon
+     */
     public void updateTrainerBugemon(BugemonDTO trainerBugemon) {
         if (trainerBugemon.isAlive()) {
             this.makeTrainerBugemonReappear();
@@ -189,6 +229,12 @@ public abstract class CombatView extends View {
         this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
     }
 
+    /**
+     * Updates the opponent's Bugemon sprite and info bar.
+     *
+     * @param opponentBugemon
+     *            the opponent's Bugemon
+     */
     public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         File file = new File(Configuration.Paths.SPRITES + opponentBugemon.getSpriteURL());
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
@@ -196,44 +242,87 @@ public abstract class CombatView extends View {
         this.makeOpponentBugemonReappear();
     }
 
-    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
+    /**
+     * Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation.
+     *
+     * @param bugemon
+     *            the bugemon to update
+     */
     public void updateTrainerInfo(BugemonDTO bugemon) {
         this.bugemonTrainerInfo.setBugemonInfo(bugemon);
     }
 
-    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
+    /**
+     * Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation.
+     *
+     * @param bugemon
+     *            the bugemon to update
+     */
     public void updateOpponentInfo(BugemonDTO bugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(bugemon);
     }
 
     // ── Attack animations ─────────────────────────────────────────────────────
 
+    /**
+     * Plays the trainer attack animation (lunge forward then back).
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playTrainerAttackAnimation(Runnable onFinished) {
         this.attackAnimationView.playTrainerAttackAnimation(onFinished);
     }
 
+    /**
+     * Plays the opponent attack animation (lunge forward then back).
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playOpponentAttackAnimation(Runnable onFinished) {
         this.attackAnimationView.playOpponentAttackAnimation(onFinished);
     }
 
+    /**
+     * Plays the death animation for the trainer's active Bugemon.
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playDeathAnimationForTrainer(Runnable onFinished) {
         this.attackAnimationView.playDeathAnimationForTrainer(onFinished);
     }
 
+    /**
+     * Plays the death animation for the opponent's active Bugemon.
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playDeathAnimationForOpponent(Runnable onFinished) {
         this.attackAnimationView.playDeathAnimationForOpponent(onFinished);
     }
 
+    /**
+     * Reveals the trainer's Bugemon sprite.
+     */
     public void makeTrainerBugemonReappear() {
         this.attackAnimationView.makeBugemonReappear(this.bugemonTrainerImage);
     }
 
+    /**
+     * Reveals the opponent's Bugemon sprite.
+     */
     public void makeOpponentBugemonReappear() {
         this.attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
     }
 
     public interface NextListener {
 
+        /**
+         * Notifies the listener that the next button has been clicked.
+         */
         void onNext();
 
     }

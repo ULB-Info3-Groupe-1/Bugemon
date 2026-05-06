@@ -20,7 +20,7 @@ import ulb.views.components.BugemonTeamView;
 
 /**
  * View for the team creation screen. Holds a reference to the {@link BugemonTeam} model and reads from it directly in
- * {@link #refresh()}. Dispatches player interactions through a {@link Listener}; holds no reference to any concrete
+ * {@link #refresh()}. Dispatches player interactions through a {@link ManageTeamView.Listener}; holds no reference to any concrete
  * controller class.
  */
 public class ManageTeamView extends View {
@@ -64,6 +64,12 @@ public class ManageTeamView extends View {
 
     private Listener listener;
 
+    /**
+     * Constructor for the view. Sets the mode of the view.
+     *
+     * @param mode
+     *            The mode of the view
+     */
     public ManageTeamView(TeamFormMode mode) {
         this.mode = mode;
     }
@@ -99,6 +105,12 @@ public class ManageTeamView extends View {
         return Configuration.Paths.Fxml.MANAGE_TEAM_VIEW;
     }
 
+    /**
+     * Sets the listener.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
         this.allBugemonsGridView.setListener(this.listener::onBugemonSelected);
@@ -106,36 +118,113 @@ public class ManageTeamView extends View {
     }
 
     public interface Listener {
+
+        /**
+         * Callback when the return to main menu button is clicked.
+         */
         void onReturnToMainMenu();
 
+        /**
+         * Callback when the save button is clicked.
+         *
+         * @param teamName
+         *            the name of the team to save
+         */
         void onSave(String teamName);
 
+        /**
+         * Callback when the delete button is clicked.
+         *
+         * @param teamName
+         *            the name of the team to delete
+         */
         void onDelete(String teamName);
 
+        /**
+         * Callback when the rename button is clicked.
+         *
+         * @param newName
+         *            the new name of the team
+         */
         void onRename(String newName);
 
+        /**
+         * Callback when the add new team button is clicked.
+         */
         void onAddNewTeam();
 
+        /**
+         * Callback when a bugemon is selected.
+         *
+         * @param bugemon
+         *            the selected bugemon
+         */
         void onBugemonSelected(Bugemon bugemon);
 
+        /**
+         * Callback when the modify team button is clicked.
+         *
+         * @param teamName
+         *            the name of the team to modify
+         */
         void onModifyTeam(String teamName);
 
+        /**
+         * Callback when the start automatic combat button is clicked.
+         */
         void onStartAutomaticCombat();
 
+        /**
+         * Callback when the start manual combat button is clicked.
+         */
         void onStartManualCombat();
 
+        /**
+         * Callback when the start tower combat button is clicked.
+         */
         void onStartTowerCombat();
 
+        /**
+         * Returns the working team
+         *
+         * @return the working team
+         */
         BugemonTeam getWorkingTeam();
 
+        /**
+         * Returns whether the working team is saved
+         *
+         * @return whether the working team is saved
+         */
         boolean isWorkingTeamSaved();
 
+        /**
+         * Returns the list of team names
+         *
+         * @return the list of team names
+         */
         List<String> getTeamNames();
 
+        /**
+         * Returns the name of the active team
+         *
+         * @return the name of the active team
+         */
         Optional<String> getActiveTeamName();
 
+        /**
+         * Returns the list of available bugemons
+         *
+         * @return the list of available bugemons
+         */
         List<Bugemon> getAvailableBugemons();
 
+        /**
+         * Callback when a team is selected
+         *
+         * @param teamName
+         *            the name of the team selected
+         */
         void onTeamSelected(String teamName);
     }
 

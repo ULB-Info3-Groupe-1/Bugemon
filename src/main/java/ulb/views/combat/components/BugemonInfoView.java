@@ -23,11 +23,19 @@ public class BugemonInfoView extends ComponentView {
     @FXML
     private Label bugemonHpLabel;
 
+    /**
+     * Default constructor.
+     */
     public BugemonInfoView() {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_INFO);
     }
 
-    /** Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class. */
+    /**
+     * Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class.
+     *
+     * @param bugemon
+     *            the {@link BugemonDTO} to display
+     */
     public void setBugemonInfo(BugemonDTO bugemon) {
         for (BugemonType type : BugemonType.values()) {
             this.getStyleClass().remove(type.toString());

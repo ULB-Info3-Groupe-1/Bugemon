@@ -5,6 +5,9 @@ import ch.qos.logback.classic.pattern.color.HighlightingCompositeConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.color.ANSIConstants;
 
+/**
+ * A custom Logback converter that sets the foreground color based on the log level.
+ */
 public class LevelColorConverter extends HighlightingCompositeConverter {
 
     @Override

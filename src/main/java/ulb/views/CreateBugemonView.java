@@ -211,6 +211,9 @@ public class CreateBugemonView extends View {
 
     /**
      * Registers the listener that receives all user interaction events from this view.
+     *
+     * @param listener
+     *            the listener to register
      */
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -226,6 +229,12 @@ public class CreateBugemonView extends View {
         //
     }
 
+    /**
+     * Sets the attacks that are available for selection.
+     *
+     * @param attacks
+     *            the attacks
+     */
     public void setAvailableAttacks(List<Attack> attacks) {
         this.attacksByName.clear();
 
@@ -238,6 +247,11 @@ public class CreateBugemonView extends View {
         this.updateAttackCountLabel();
     }
 
+    /**
+     * Returns the attack 1
+     *
+     * @return the attack 1
+     */
     public Attack getSelectedAttack1() {
         List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
         if (selectedNames.isEmpty()) {
@@ -246,6 +260,11 @@ public class CreateBugemonView extends View {
         return this.attacksByName.get(selectedNames.get(0));
     }
 
+    /**
+     * Returns the attack 2
+     *
+     * @return the attack 2
+     */
     public Attack getSelectedAttack2() {
         List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
         if (selectedNames.size() < 2) {
@@ -254,6 +273,11 @@ public class CreateBugemonView extends View {
         return this.attacksByName.get(selectedNames.get(1));
     }
 
+    /**
+     * Returns the attack 3
+     *
+     * @return the attack 3
+     */
     public Attack getSelectedAttack3() {
         List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
         if (selectedNames.size() < 3) {
@@ -262,40 +286,92 @@ public class CreateBugemonView extends View {
         return this.attacksByName.get(selectedNames.get(2));
     }
 
+    /**
+     * Show an alert to inform the player that the form is invalid because the player has not selected a bugemon type.
+     */
     public void showInvalidFormChooseBugemonType() {
         this.showWarningAlert(INVALID_FORM, "Choisissez un type pour votre Bugemon.");
     }
 
+    /**
+     * Show an alert to inform the player that the form is invalid because the player has not selected a sprite.
+     */
     public void showInvalidFormChooseSprite() {
         this.showWarningAlert(INVALID_FORM, "Choisissez un sprite pour votre Bugemon.");
     }
 
+    /**
+     * Show an alert to inform the player that the form is invalid because the player has not selected three attacks.
+     */
     public void showInvalidFormChooseAttacks() {
-        // TODO: replace "trois" with a number constant directly from the bugemon class
         this.showWarningAlert(INVALID_FORM, "Vous devez choisir trois attaques pour votre Bugemon.");
     }
 
+    /**
+     * Show an alert to inform the player that the bugemon has been successfully saved.
+     *
+     * @param name
+     *            the name of the bugemon
+     */
     public void showSaveSuccessAlert(String name) {
         this.showInfoAlert("Bugemon sauvegardé", "Le Bugemon " + name + " a bien été sauvegardé.");
     }
 
+    /**
+     * Show an alert to inform the player that the bugemon name is empty.
+     */
     public void showBugemonNameEmptyAlert() {
         this.showWarningAlert(INVALID_FORM, "Le nom du Bugemon ne peut pas être vide.");
     }
 
+    /**
+     * Show an alert to inform the player that the bugemon name is already used.
+     */
     public void showBugemonNameAlreadyUsedAlert() {
         this.showWarningAlert("Nom de Bugemon deja utilisé",
                 "Le nom du Bugemon que vous avez choisi est deja utilisé.");
     }
 
     public interface Listener {
+
+        /**
+         * Dispatches a type selection event to the controller.
+         *
+         * @param selectedType
+         *            the selected type
+         */
         void onTypeSelected(BugemonType selectedType);
 
+        /**
+         * Dispatches a sprite selection event to the controller.
+         *
+         * @param selectedSprite
+         *            the selected sprite
+         */
         void onSpriteSelected(File selectedSprite);
 
+        /**
+         * Dispatches an add event to the controller.
+         *
+         * @param bugemonName
+         *            the name of the bugemon
+         * @param healthValue
+         *            the health value
+         * @param attackValue
+         *            the attack value
+         * @param defenseValue
+         *            the defense value
+         * @param initiativeValue
+         *            the initiative value
+         * @param attacks
+         *            the attacks
+         */
         void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
                 double initiativeValue, List<Attack> attacks);
 
+        /**
+         * Dispatches a return to main menu event to the controller.
+         */
         void onReturnToMainMenu();
     }
 

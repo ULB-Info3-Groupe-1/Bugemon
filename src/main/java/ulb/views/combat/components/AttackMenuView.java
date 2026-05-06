@@ -26,10 +26,19 @@ public class AttackMenuView extends ComponentView {
     private final Attack[] attacks = new Attack[3];
     private Listener listener;
 
+    /**
+     * Default constructor.
+     */
     public AttackMenuView() {
         super(Configuration.Paths.Fxml.COMPONENT_ATTACK_MENU);
     }
 
+    /**
+     * Sets the listener to be notified when an attack is selected.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -91,12 +100,30 @@ public class AttackMenuView extends ComponentView {
 
     public interface Listener {
 
+        /**
+         * Dispatches an attack action to the controller.
+         *
+         * @param attack
+         *            the selected attack
+         */
         void onAttack(Attack attack);
 
+        /**
+         * Dispatches an attack action to the controller.
+         *
+         * @param attack
+         *            the hovered attack
+         */
         void onAttackHovered(Attack attack);
 
+        /**
+         * Dispatches an attack action to the controller.
+         */
         void onAttackLeft();
 
+        /**
+         * Dispatches a back action to the controller.
+         */
         void onBack();
     }
 }

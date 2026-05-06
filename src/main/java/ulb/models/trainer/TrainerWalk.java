@@ -26,6 +26,12 @@ public class TrainerWalk {
 
     // Constructors
 
+    /**
+     * Initializes a new instance of the TrainerWalk class.
+     *
+     * @param startPos
+     *            (Vec2) the starting position
+     */
     public TrainerWalk(Vec2 startPos) {
         this.pos = new Vec2(startPos.x(), startPos.y());
     }
@@ -273,6 +279,11 @@ public class TrainerWalk {
         return this.isMoving;
     }
 
+    /**
+     * Returns the current position of the trainer.
+     *
+     * @return (Vec2) current position.
+     */
     public Vec2 getPosition() {
         return this.pos;
     }

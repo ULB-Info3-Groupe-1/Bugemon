@@ -43,63 +43,145 @@ public final class BugemonBuilder {
     private boolean isStarter = DEFAULT_IS_STARTER;
     private List<Attack> attackList = new ArrayList<>();
 
+    /**
+     * Sets the name
+     *
+     * @param name
+     *            the name
+     * @return this
+     */
     public BugemonBuilder name(String name) {
         this.name = Optional.of(name);
         return this;
     }
 
+    /**
+     * Sets the type
+     *
+     * @param type
+     *            the type
+     * @return this
+     */
     public BugemonBuilder type(BugemonType type) {
         this.type = type;
         return this;
     }
 
+    /**
+     * Sets the sprite
+     *
+     * @param sprite
+     *            the sprite
+     * @return this
+     */
     public BugemonBuilder sprite(String sprite) {
         this.sprite = sprite;
         return this;
     }
 
+    /**
+     * Sets the HP
+     *
+     * @param hp
+     *            the HP
+     * @return this
+     */
     public BugemonBuilder hp(int hp) {
         this.hp = hp;
         return this;
     }
 
+    /**
+     * Sets the attack
+     *
+     * @param attack
+     *            the attack
+     * @return this
+     */
     public BugemonBuilder attack(int attack) {
         this.attack = attack;
         return this;
     }
 
+    /**
+     * Sets the defense
+     *
+     * @param defense
+     *            the defense
+     * @return this
+     */
     public BugemonBuilder defense(int defense) {
         this.defense = defense;
         return this;
     }
 
+    /**
+     * Sets the initiative
+     *
+     * @param initiative
+     *            the initiative
+     * @return this
+     */
     public BugemonBuilder initiative(int initiative) {
         this.initiative = initiative;
         return this;
     }
 
+    /**
+     * Sets the XP
+     *
+     * @param xp
+     *            the XP
+     * @return this
+     */
     public BugemonBuilder xp(int xp) {
         this.xp = xp;
         return this;
     }
 
+    /**
+     * Sets the level
+     *
+     * @param level
+     *            the level
+     * @return this
+     */
     public BugemonBuilder level(int level) {
         this.level = level;
         return this;
     }
 
-    /** Appends one attack; use {@link #attackList} to replace the whole list at once. */
+    /**
+     * Adds an attack to the attack list.
+     *
+     * @param attack
+     *            the attack
+     * @return this
+     */
     public BugemonBuilder addAttack(Attack attack) {
         this.attackList.add(attack);
         return this;
     }
 
-    /** Replaces any attacks previously added via {@link #addAttack}. */
+    /**
+     * Sets the attack list
+     *
+     * @param attackList
+     *            the attack list
+     * @return this
+     */
     public BugemonBuilder attackList(List<Attack> attackList) {
         this.attackList = attackList;
         return this;
     }
 
+    /**
+     * Sets the starter flag
+     *
+     * @param isStarter
+     *            the starter flag
+     * @return this
+     */
     public BugemonBuilder isStarter(boolean isStarter) {
         this.isStarter = isStarter;
         return this;
@@ -108,8 +190,9 @@ public final class BugemonBuilder {
     /**
      * @throws IllegalStateException
      *             if no {@code name} was provided
+     * @return the built {@link Bugemon}
      */
-    public Bugemon build() {
+    public Bugemon build() throws IllegalStateException {
         Bugemon bugemon = new Bugemon();
 
         // NOTE: name has no default value

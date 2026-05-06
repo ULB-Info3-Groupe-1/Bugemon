@@ -43,6 +43,12 @@ public class BugemonDetailPopupView extends ComponentView {
     @FXML
     private VBox attacksContainer;
 
+    /**
+     * Creates a new {@link BugemonDetailPopupView} for the given {@link Bugemon}.
+     *
+     * @param bugemon
+     *            the Bugemon to display
+     */
     private BugemonDetailPopupView(Bugemon bugemon) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_DETAIL_POPUP);
         File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.getSpriteURL());
@@ -63,7 +69,14 @@ public class BugemonDetailPopupView extends ComponentView {
         }
     }
 
-    /** Builds and shows a transparent popup with the Bugemon's details, closing it when it loses focus. */
+    /**
+     * Builds and shows a transparent popup with the Bugemon's details, closing it when it loses focus.
+     *
+     * @param bugemon
+     *            the Bugemon to display
+     * @param event
+     *            the ContextMenuEvent that triggered the popup
+     */
     public static void show(Bugemon bugemon, ContextMenuEvent event) {
         Node source = (Node) event.getSource();
         Window owner = source.getScene().getWindow();

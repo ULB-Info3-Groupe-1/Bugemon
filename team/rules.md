@@ -236,3 +236,23 @@ public int calculateDamage(Bugemon attacker, Bugemon defender) { ... }
 - Pas de duplication de code
 - Méthodes courtes (< 80 lignes)
 - Une seule responsabilité par classe
+
+## JavaDoc
+
+Pour générer la Javadoc :
+
+```sh
+mvn javadoc:javadoc
+```
+
+Pour voir la Javadoc :
+
+```sh
+mvn javadoc:jar
+```
+
+Pour voir le diagramme UML de la Javadoc :
+
+```sh
+mvn javadoc:javadoc -P uml
+```

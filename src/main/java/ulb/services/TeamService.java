@@ -74,18 +74,38 @@ public class TeamService {
 
     // --- Getters ---
 
+    /**
+     * Returns the active team of the player.
+     *
+     * @return the active team
+     */
     public Optional<BugemonTeam> getActiveTeam() {
         return this.activeTeam;
     }
 
+    /**
+     * Returns the name of the active team of the player.
+     *
+     * @return the name of the active team
+     */
     public Optional<String> getActiveTeamName() {
         return this.activeTeam.map(BugemonTeam::getName);
     }
 
+    /**
+     * Returns the working team of the player
+     *
+     * @return the working team
+     */
     public BugemonTeam getWorkingTeam() {
         return this.workingTeam;
     }
 
+    /**
+     * Returns the names of the teams of the player
+     *
+     * @return the names of the teams
+     */
     public List<String> getTeamNames() {
         return this.playerTeams.stream().map(BugemonTeam::getName).toList();
     }
@@ -152,8 +172,6 @@ public class TeamService {
     /**
      * Modifies the active team in the database.
      *
-     * @param teamName
-     *            the name of the team to be modified
      * @throws TeamEmptyException
      *             if the active team is empty
      * @throws TeamNotFoundException
@@ -231,15 +249,26 @@ public class TeamService {
 
     }
 
+    /**
+     * Checks if the active team is empty.
+     *
+     * @return (boolean) true if the active team is empty, false otherwise
+     */
     public boolean isActiveTeamEmpty() {
         return this.activeTeam.isEmpty() || this.activeTeam.get().isEmpty();
     }
 
+    /**
+     * Clears the active team.
+     */
     public void clearActiveTeam() {
         this.activeTeam = Optional.empty();
         this.playerRepository.unsetPlayerCurrentTeam(this.playername);
     }
 
+    /**
+     * Clears the working team.
+     */
     public void clearWorkingTeam() {
         this.workingTeam.clear();
     }
@@ -257,6 +286,12 @@ public class TeamService {
         return this.playerTeams.stream().anyMatch(pt -> pt.equals(this.workingTeam));
     }
 
+    /**
+     * Restores the HP of all the bugemons of the active team to their maximum HP.
+     *
+     * @throws NoActiveTeamException
+     *             if the player does not have an active team
+     */
     public void restoreHpActiveTeam() throws NoActiveTeamException {
         this.checkActiveTeamIsPresent();
         this.activeTeam.get().restoreHp();

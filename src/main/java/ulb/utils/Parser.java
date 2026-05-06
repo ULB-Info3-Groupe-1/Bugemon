@@ -95,18 +95,38 @@ public class Parser {
         LOG.info("Finished parsing data");
     }
 
+    /**
+     * Getter for the list of {@link CreateBugemonDTO} objects.
+     *
+     * @return the list of {@link CreateBugemonDTO}
+     */
     public final List<CreateBugemonDTO> getBugemons() {
         return bugemons;
     }
 
+    /**
+     * Getter for the list of {@link Item} objects.
+     *
+     * @return the list of {@link Item}
+     */
     public final List<Item> getItems() {
         return items;
     }
 
+    /**
+     * Getter for the {@link Inventory} object.
+     *
+     * @return the {@link Inventory} object
+     */
     public final Inventory getInventory() {
         return inventory;
     }
 
+    /**
+     * Getter for the map of {@link Attack} objects.
+     *
+     * @return the map of {@link Attack}
+     */
     public final Map<String, Attack> getAttacks() {
         return attacks;
     }

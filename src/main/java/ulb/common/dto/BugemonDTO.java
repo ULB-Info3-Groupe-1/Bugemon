@@ -9,18 +9,29 @@ import ulb.models.bugemon.BugemonType;
  * @see ulb.models.bugemon.Bugemon
  */
 public interface BugemonDTO {
-    /** Classpath-relative resource path to the sprite image (e.g., {@code "png/florachu.png"}). */
+    /**
+     * Classpath-relative resource path to the sprite image (e.g., {@code "png/florachu.png"}).
+     *
+     * @return the sprite path
+     */
     String getSpriteURL();
 
-    /** Stable, opaque identifier that uniquely distinguishes one Bugemon from another (e.g., {@code "001"}). */
+    /**
+     * Stable, opaque identifier that uniquely distinguishes one Bugemon from another (e.g., {@code "001"}).
+     *
+     * @return the ID
+     */
     String getId();
 
-    /** Human-readable label shown in the UI (e.g., {@code "Florachu"}). */
+    /**
+     * Human-readable label shown in the UI (e.g., {@code "Florachu"}).
+     *
+     * @return the name
+     */
     String getName();
 
     /**
-     * Elemental type of this Bugemon. Affects combat effectiveness — see
-     * {@link ulb.services.CombatService#compareBugemonType} for matchup rules.
+     * Elemental type of this Bugemon.
      *
      * @return the {@link BugemonType}; never {@code null}.
      */
@@ -29,17 +40,31 @@ public interface BugemonDTO {
     /**
      * Current HP. When it reaches zero the Bugemon is considered defeated and
      * {@link ulb.models.bugemon.Bugemon#isAlive()} returns {@code false}.
+     *
+     * @return the current HP
      */
     int getHp();
 
+    /**
+     * Maximum HP.
+     *
+     * @return the maximum HP
+     */
     int getMaxHp();
 
     /**
      * Current level. Starts at {@code 1} and increases when the Bugemon accumulates enough XP via
      * {@link ulb.models.bugemon.Bugemon#gainXp(int)}.
+     *
+     * @return the current level
      */
     int getLevel();
 
+    /**
+     * Current XP.
+     *
+     * @return the current XP
+     */
     int getXp();
 
     /**
@@ -49,5 +74,10 @@ public interface BugemonDTO {
      */
     double getXpProgress();
 
+    /**
+     * Whether this Bugemon is still alive.
+     *
+     * @return {@code true} if alive, {@code false} otherwise
+     */
     boolean isAlive();
 }

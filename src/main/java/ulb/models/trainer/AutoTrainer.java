@@ -17,6 +17,12 @@ import ulb.models.bugemon_team.BugemonTeam;
 public class AutoTrainer extends Trainer {
     private static final Random RAND = new Random();
 
+    /**
+     * Constructs a new AutoTrainer.
+     *
+     * @param team
+     *            (BugemonTeam) the team controlled by the trainer
+     */
     public AutoTrainer(BugemonTeam team) {
         super(team);
     }
@@ -26,8 +32,7 @@ public class AutoTrainer extends Trainer {
     /**
      * Always returns a {@link TurnAction.AttackAction} wrapping a randomly chosen attack; never switches or forfeits.
      *
-     * @throws IllegalArgumentException
-     *             if the active Bugemon has no attacks.
+     * @return a {@link TurnAction.AttackAction} wrapping a randomly chosen attack
      */
     @Override
     public TurnAction getAction() {
@@ -43,10 +48,7 @@ public class AutoTrainer extends Trainer {
     // ── Public helpers ────────────────────────────────────────────────────────
 
     /**
-     * Returns a uniformly random {@link Attack} from the active Bugemon's move-set.
-     *
-     * @throws IllegalArgumentException
-     *             if the active Bugemon has no attacks.
+     * @return a uniformly random {@link Attack} from the active Bugemon's move-set.
      */
     public Attack getRandomAttack() {
         List<Attack> attacks = currentBugemon.getAttackList();

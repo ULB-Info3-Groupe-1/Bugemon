@@ -12,6 +12,12 @@ public class MainMenuView extends View {
 
     private Listener listener;
 
+    /**
+     * Registers the listener.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -62,18 +68,40 @@ public class MainMenuView extends View {
     }
 
     public interface Listener {
+
+        /**
+         * Calls the controller when the create team button is clicked.
+         */
         void onCreateTeam();
 
+        /**
+         * Calls the controller when the create bugemon button is clicked.
+         */
         void onCreateBugemon();
 
+        /**
+         * Calls the controller when the edit team button is clicked.
+         */
         void onEditTeam();
 
+        /**
+         * Calls the controller when the tower button is clicked.
+         */
         void onTower();
 
+        /**
+         * Calls the controller when the start manual combat button is clicked.
+         */
         void onStartManualCombat();
 
+        /**
+         * Calls the controller when the start automatic combat button is clicked.
+         */
         void onStartAutomaticCombat();
 
+        /**
+         * Calls the controller when the save menu return button is clicked.
+         */
         void onSaveMenuReturnButton();
     }
 }

@@ -26,6 +26,12 @@ import ulb.repositories.dto.CreateBugemonDTO;
 public class BugemonDeserializer implements JsonDeserializer<CreateBugemonDTO> {
     private final Map<String, Attack> attacksMap;
 
+    /**
+     * Constructor for {@link BugemonDeserializer}
+     *
+     * @param attacksMap
+     *            The map of attacks
+     */
     public BugemonDeserializer(Map<String, Attack> attacksMap) {
         this.attacksMap = attacksMap;
     }

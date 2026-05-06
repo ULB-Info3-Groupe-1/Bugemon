@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 
 import ulb.Configuration;
 
-/** View for the combat victory screen, dispatching actions through the {@link Listener} interface. */
+/**
+ * View for the combat victory screen, dispatching actions through the {@link CombatVictoryView.Listener} interface.
+ */
 public class CombatVictoryView extends View {
 
     private Listener listener;
@@ -14,6 +16,12 @@ public class CombatVictoryView extends View {
         return Configuration.Paths.Fxml.COMBAT_VICTORY_VIEW;
     }
 
+    /**
+     * Sets the listener to be notified when the continue button is clicked.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -30,7 +38,9 @@ public class CombatVictoryView extends View {
 
     public interface Listener {
 
+        /**
+         * Dispatches a continue action to the controller.
+         */
         void onContinue();
-
     }
 }

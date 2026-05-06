@@ -26,17 +26,35 @@ public class CombatAnimationView {
     private final ImageView trainerSprite;
     private final ImageView opponentSprite;
 
+    /**
+     * Creates a new CombatAnimationView.
+     *
+     * @param trainerSprite
+     *            the trainer bugemon sprite
+     * @param opponentSprite
+     *            the opponent bugemon sprite
+     */
     public CombatAnimationView(ImageView trainerSprite, ImageView opponentSprite) {
         this.trainerSprite = trainerSprite;
         this.opponentSprite = opponentSprite;
     }
 
-    /** Plays the trainer attack animation (lunge forward then back). */
+    /**
+     * Plays the trainer attack animation (lunge forward then back).
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playTrainerAttackAnimation(Runnable onFinished) {
         this.playLungeAnimation(this.trainerSprite, ATTACK_LUNGE_DISTANCE, onFinished);
     }
 
-    /** Plays the opponent attack animation (lunge forward then back). */
+    /**
+     * Plays the opponent attack animation (lunge forward then back).
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playOpponentAttackAnimation(Runnable onFinished) {
         this.playLungeAnimation(this.opponentSprite, -ATTACK_LUNGE_DISTANCE, onFinished);
     }
@@ -52,12 +70,22 @@ public class CombatAnimationView {
         seq.play();
     }
 
-    /** Plays the death animation for the trainer's active Bugemon. */
+    /**
+     * Plays the death animation for the trainer's active Bugemon.
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playDeathAnimationForTrainer(Runnable onFinished) {
         this.playDeathAnimation(this.trainerSprite, onFinished);
     }
 
-    /** Plays the death animation for the opponent's active Bugemon. */
+    /**
+     * Plays the death animation for the opponent's active Bugemon.
+     *
+     * @param onFinished
+     *            callback executed after the animation completes
+     */
     public void playDeathAnimationForOpponent(Runnable onFinished) {
         this.playDeathAnimation(this.opponentSprite, onFinished);
     }
@@ -94,7 +122,12 @@ public class CombatAnimationView {
         sequence.play();
     }
 
-    /** Resets {@code sprite} to its default visible, full-size, untranslated state. */
+    /**
+     * Resets {@code sprite} to its default visible, full-size, untranslated state.
+     *
+     * @param sprite
+     *            the sprite
+     */
     public void makeBugemonReappear(ImageView sprite) {
         sprite.setOpacity(DEFAULT_OPACITY);
         sprite.setScaleX(DEFAULT_SCALE);

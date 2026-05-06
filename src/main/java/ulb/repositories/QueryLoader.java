@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Loads SQL queries from classpath resources.
+ */
 public class QueryLoader {
 
     // Queries Map (Request Name -> SQL Code)
@@ -130,6 +133,11 @@ public class QueryLoader {
         return sql;
     }
 
+    /**
+     * Returns the queries Map
+     *
+     * @return queries
+     */
     public Map<String, String> getQueries() {
         return this.queries;
     }

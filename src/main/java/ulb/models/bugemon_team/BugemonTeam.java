@@ -14,44 +14,78 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 
 /**
- * A team of up to {@value #MAX_SIZE} {@link Bugemon}s. Enforces capacity and uniqueness (by ID). Implements
- * {@link Iterable} for use in enhanced for-loops.
+ * A team of up to {@value Configuration.Game#MAX_TEAM_SIZE} {@link Bugemon}s. Enforces capacity and uniqueness (by ID).
+ * Implements {@link Iterable} for use in enhanced for-loops.
  */
 public class BugemonTeam implements Iterable<Bugemon> {
 
     private final ArrayList<Bugemon> team;
     private String name;
 
+    /**
+     * Creates a new empty team with the default name
+     */
     public BugemonTeam() {
         this.name = Configuration.Game.DEFAULT_TEAM_NAME;
         this.team = new ArrayList<>();
     }
 
+    /**
+     * Creates a new team with the given name
+     *
+     * @param name
+     *            the name of the team
+     */
     public BugemonTeam(String name) {
         this.name = name;
         this.team = new ArrayList<>();
     }
 
+    /**
+     * Copies the given team
+     *
+     * @param other
+     *            the team to copy
+     */
     public BugemonTeam(BugemonTeam other) {
         this.name = other.name;
         this.team = new ArrayList<>(other.team);
     }
 
+    /**
+     * Returns the number of Bugemons in the team
+     *
+     * @return (int) the number of Bugemons
+     */
     public int size() {
         return this.team.size();
     }
 
+    /**
+     * Returns whether the team is full
+     *
+     * @return (boolean) whether the team is full
+     */
     public boolean isFull() {
         return this.size() == Configuration.Game.MAX_TEAM_SIZE;
     }
 
+    /**
+     * Returns whether the team is empty
+     *
+     * @return (boolean) whether the team is empty
+     */
     public boolean isEmpty() {
         return this.team.isEmpty();
     }
 
     /**
+     * Adds a Bugemon to the team
+     *
+     * @param bugemon
+     *            (Bugemon) the Bugemon to add
      * @throws TeamAlreadyFullException
-     *             if the team already has {@value #MAX_SIZE} members
+     *             if the team already has {@value ulb.Configuration.Game#MAX_TEAM_SIZE} members
      * @throws BugemonAlreadyPresentInTeamException
      *             if a Bugemon with the same name is already in the team
      */
@@ -68,6 +102,10 @@ public class BugemonTeam implements Iterable<Bugemon> {
     }
 
     /**
+     * Removes a Bugemon from the team
+     *
+     * @param bugemon
+     *            (Bugemon) the Bugemon to remove
      * @throws TeamAlreadyEmptyException
      *             if the team is already empty
      * @throws BugemonNotInTeamException
@@ -89,7 +127,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
      * @param otherTeam
      *            (BugemonTeam) the other team to add the Bugemons from
      * @throws TeamAlreadyFullException
-     *             if the team already has {@value #MAX_SIZE} members
+     *             if the team already has {@value ulb.Configuration.Game#MAX_TEAM_SIZE} members
      * @throws BugemonAlreadyPresentInTeamException
      *             if a Bugemon with the same name is already in the team
      */
@@ -102,7 +140,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
     /**
      * Returns the select Bugemon with the given name if it's in the team.
      *
-     * @param name
+     * @param bugemonName
      *            (String) the ID of the Bugemon to be returned
      * @return (Bugemon) the Bugemon with the given name
      */
@@ -140,23 +178,44 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return this.team.iterator();
     }
 
+    /**
+     * Returns a stream of all the Bugemons in the team
+     *
+     * @return a stream of all the Bugemons in the team
+     */
     public Stream<Bugemon> stream() {
         return this.team.stream();
     }
 
+    /**
+     * Returns a stream of all the alive Bugemons in the team
+     *
+     * @return a stream of all the alive Bugemons in the team
+     */
     public Stream<Bugemon> aliveStream() {
         return this.team.stream().filter(Bugemon::isAlive);
     }
 
+    /**
+     * Returns an iterator of all the alive Bugemons in the team
+     *
+     * @return an iterator of all the alive Bugemons in the team
+     */
     public Iterator<Bugemon> aliveIterator() {
         return this.team.stream().filter(Bugemon::isAlive).iterator();
     }
 
+    /**
+     * Removes all the Bugemons from the team
+     */
     public void clear() {
         this.team.clear();
     }
 
     /**
+     * Returns the first Bugemon in the team
+     *
+     * @return (Bugemon) the first Bugemon
      * @throws java.util.NoSuchElementException
      *             if the team is empty
      */
@@ -164,23 +223,37 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return this.team.getFirst();
     }
 
+    /**
+     * Returns a list of all the Bugemons in the team
+     *
+     * @return a list of {@link Bugemon}  : all the Bugemons in the team
+     */
     public List<Bugemon> getAll() {
         return this.team;
     }
 
+    /**
+     * Kills all the Bugemons in the team
+     */
     public void killAll() {
         this.team.forEach(Bugemon::kill);
     }
 
+    /**
+     * Restores the HP of all the Bugemons in the team
+     */
     public void restoreHp() {
         this.team.forEach(Bugemon::restoreHp);
     }
 
     /**
+     * Returns the position of the given Bugemon in the team
+     *
+     * @return (int) the position of the Bugemon
      * @throws BugemonNotInTeamException
      *             if the Bugemon is not in the team
      */
-    public int getSlotPosition(Bugemon bugemon) {
+    public int getSlotPosition(Bugemon bugemon) throws BugemonNotInTeamException {
         int slot = this.team.indexOf(bugemon);
         if (slot == -1) {
             throw new BugemonNotInTeamException(
@@ -189,10 +262,21 @@ public class BugemonTeam implements Iterable<Bugemon> {
         return slot;
     }
 
+    /**
+     * Returns the name of the team
+     *
+     * @return (String) the name
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Sets the name of the team
+     *
+     * @param name
+     *            (String) the name
+     */
     public void setName(String name) {
         this.name = name;
     }

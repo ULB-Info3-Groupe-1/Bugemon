@@ -39,6 +39,12 @@ public class RoomView extends StackPane {
     private final FloorNode node;
     private Listener listener;
 
+    /**
+     * Construct a new room view from a floor node
+     *
+     * @param node
+     *            Floor node to represent
+     */
     public RoomView(FloorNode node) {
         this.node = node;
         FXMLLoader loader = new FXMLLoader(RoomView.class.getResource(Configuration.Paths.Fxml.COMPONENT_ROOM));
@@ -57,6 +63,9 @@ public class RoomView extends StackPane {
         this.initRoom();
     }
 
+    /**
+     * Configure the visual state of the room. Applies the appropriate CSS styles and overlays.
+     */
     public void initRoom() {
         this.getStyleClass().removeAll("room-start", "room-combat", "room-boss", "room-reward", "room-empty");
         Room room = this.node.getRoom();
@@ -78,6 +87,8 @@ public class RoomView extends StackPane {
      * Configure the visual state of the room (CURRENT, AVAILABLE, VISITED, LOCKED). Applies the appropriate CSS styles
      * and overlays.
      *
+     * @throws IllegalStateException
+     *             if the room state is unexpected
      */
     public void setRoomState() throws IllegalStateException {
         this.getStyleClass().removeAll("current", "available", "visited", "locked");
@@ -132,6 +143,12 @@ public class RoomView extends StackPane {
      */
     public interface Listener {
 
+        /**
+         * Dispatches a room click event to the controller
+         *
+         * @param position
+         *            The position of the clicked room
+         */
         void onRoomClicked(RoomPosition position);
     }
 

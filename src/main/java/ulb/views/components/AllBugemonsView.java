@@ -16,15 +16,31 @@ public class AllBugemonsView extends ComponentView {
 
     private Listener listener;
 
+    /**
+     * Default constructor.
+     */
     public AllBugemonsView() {
         super(Configuration.Paths.Fxml.COMPONENT_ALL_BUGEMONS);
     }
 
+    /**
+     * Sets the listener to be notified when a Bugemon is clicked.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the grid with the given list of Bugemons. */
+    /**
+     * Clears and repopulates the grid with the given list of Bugemons.
+     *
+     * @param bugemonList
+     *            the list of Bugemons to display
+     * @param selectedBugemons
+     *            the set of selected Bugemons
+     */
     public void showAll(List<Bugemon> bugemonList, Set<Bugemon> selectedBugemons) {
         this.flowPane.getChildren().clear();
 
@@ -52,6 +68,12 @@ public class AllBugemonsView extends ComponentView {
 
     public interface Listener {
 
+        /**
+         * Dispatches a click event to the controller.
+         *
+         * @param bugemon
+         *            the clicked Bugemon
+         */
         void onBugemonClicked(Bugemon bugemon);
 
     }

@@ -26,6 +26,14 @@ public class ManualTrainer extends Trainer {
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
 
+    /**
+     * Creates a new trainer.
+     *
+     * @param team
+     *            the team of the trainer to control
+     * @param inventoryService
+     *            the inventory service to use
+     */
     public ManualTrainer(BugemonTeam team, InventoryService inventoryService) {
         super(team);
         this.inventoryService = inventoryService;
@@ -36,7 +44,7 @@ public class ManualTrainer extends Trainer {
      *             if no action has been queued
      */
     @Override
-    public TurnAction getAction() {
+    public TurnAction getAction() throws IllegalStateException {
         return this.pendingAction.map(a -> {
             this.pendingAction = Optional.empty();
             return a;
@@ -66,6 +74,9 @@ public class ManualTrainer extends Trainer {
     /**
      * Immediately replaces the active Bugemon after a KO, bypassing the turn queue.
      *
+     * @param target
+     *            the bugemon to switch to
+     *
      * @throws IllegalArgumentException
      *             if target is not alive
      */
@@ -76,12 +87,20 @@ public class ManualTrainer extends Trainer {
         currentBugemon = target;
     }
 
-    /** Overwrites any previously queued action. Prefer typed convenience methods. */
+    /**
+     * Overwrites any previously queued action. Prefer typed convenience methods.
+     *
+     * @param action
+     *            the action to queue
+     */
     public void registerAction(TurnAction action) {
         this.pendingAction = Optional.of(action);
     }
 
     /**
+     * @param attack
+     *            the attack to queue
+     *
      * @throws IllegalArgumentException
      *             if the attack is not in the active Bugemon's move-set
      */
@@ -95,6 +114,9 @@ public class ManualTrainer extends Trainer {
     /**
      * Queues a voluntary switch (consumes the turn; opponent still attacks).
      *
+     * @param target
+     *            the bugemon to switch to
+     *
      * @throws IllegalArgumentException
      *             if target is not alive
      */
@@ -105,16 +127,27 @@ public class ManualTrainer extends Trainer {
         this.registerAction(new TurnAction.SwitchAction(target));
     }
 
+    /**
+     * Queues a forfeit (consumes the turn; opponent still attacks).
+     */
     public void registerForfeit() {
         this.registerAction(new TurnAction.ForfeitAction());
     }
 
-    /** Pre-registers a KO switch target to be applied by {@link #reactToKo}. */
+    /**
+     * Pre-registers a KO switch target to be applied by {@link #reactToKo}.
+     *
+     * @param target
+     *            the bugemon to switch to
+     */
     public void registerSwitchAfterKO(Bugemon target) {
         this.bugemonTargetForSwitch = Optional.of(target);
     }
 
     /**
+     * @param item
+     *            the item to use
+     *
      * @throws IllegalArgumentException
      *             if the item is not in the inventory
      */
@@ -126,35 +159,77 @@ public class ManualTrainer extends Trainer {
         }
     }
 
+    /**
+     * Consumes an item and applies its effect to the active Bugemon.
+     *
+     * @param item
+     *            the item to use
+     */
     public void useItem(Item item) {
         this.inventoryService.useItem(item);
         this.currentBugemon.apply(item.effect());
     }
 
+    /**
+     * @see InventoryService#getInventoryMap()
+     * @return a copy of the player's inventory
+     */
     public Map<Item, Integer> getInventoryMap() {
         return Collections.unmodifiableMap(this.inventoryService.getInventoryMap());
     }
 
+    /**
+     * Checks if an action has been queued.
+     *
+     * @return true if an action has been queued
+     */
     public boolean hasPendingAction() {
         return this.pendingAction.isPresent();
     }
 
+    /**
+     * Checks if the trainer has been forced to switch this turn.
+     *
+     * @return true if the trainer has been forced to switch
+     */
     public boolean isForcedToSwitch() {
         return this.forcedSwitch;
     }
 
+    /**
+     * Sets whether the trainer has been forced to switch this turn.
+     *
+     * @param value
+     *            true if the trainer has been forced to switch
+     */
     public void setForcedSwitch(boolean value) {
         this.forcedSwitch = value;
     }
 
+    /**
+     * Checks if the trainer has switched this turn.
+     *
+     * @return true if the trainer has switched
+     */
     public boolean hasSwitchedThisTurn() {
         return this.switchedThisTurn;
     }
 
+    /**
+     * Sets whether the trainer has switched this turn.
+     *
+     * @param value
+     *            true if the trainer has switched
+     */
     public void setHasSwitchedThisTurn(boolean value) {
         this.switchedThisTurn = value;
     }
 
+    /**
+     * Checks if the trainer can voluntarily switch this turn.
+     *
+     * @return true if the trainer can voluntarily switch
+     */
     public boolean canVoluntarilySwitch() {
         return !this.forcedSwitch && !this.switchedThisTurn;
     }

@@ -15,12 +15,17 @@ import ulb.repositories.dto.StaticBugemonDataDTO;
  */
 public class BugemonFactory {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private BugemonFactory() {
+        // Private constructor to prevent instantiation.
     }
 
+    /**
+     * Create a {@link ulb.models.bugemon.Bugemon} instance from a {@link CreateBugemonDTO}.
+     *
+     * @param bugemon
+     *            the {@link CreateBugemonDTO} object containing the bugemon data
+     * @return the created {@link ulb.models.bugemon.Bugemon}
+     */
     public static Bugemon createBugemon(CreateBugemonDTO bugemon) {
         String fileName;
         try {
@@ -36,6 +41,16 @@ public class BugemonFactory {
                 .addAttack(bugemon.attack2()).addAttack(bugemon.attack3()).build();
     }
 
+    /**
+     * Create a {@link ulb.models.bugemon.Bugemon} instance from a {@link StaticBugemonDataDTO} and a
+     * {@link PlayerBugemonDTO}.
+     *
+     * @param defaultBugemon
+     *            the {@link StaticBugemonDataDTO} object containing the default bugemon data
+     * @param playerBugemon
+     *            the {@link PlayerBugemonDTO} object containing the player bugemon data
+     * @return the created {@link ulb.models.bugemon.Bugemon}
+     */
     public static Bugemon createBugemon(StaticBugemonDataDTO defaultBugemon, PlayerBugemonDTO playerBugemon) {
         return new BugemonBuilder().name(defaultBugemon.name()).type(BugemonType.valueOf(defaultBugemon.type()))
                 .sprite(defaultBugemon.spriteUrl()).hp(playerBugemon.currentMaxHp())
@@ -45,6 +60,13 @@ public class BugemonFactory {
                 .isStarter(defaultBugemon.isStarter()).build();
     }
 
+    /**
+     * Create a {@link StaticBugemonDataDTO} instance from a {@link ulb.models.bugemon.Bugemon}.
+     *
+     * @param bugemon
+     *            the {@link ulb.models.bugemon.Bugemon} object containing the bugemon data
+     * @return the created {@link StaticBugemonDataDTO}
+     */
     public static StaticBugemonDataDTO createStaticBugemonData(Bugemon bugemon) {
         return new StaticBugemonDataDTO(bugemon.getName(), bugemon.getType().name(), bugemon.getSpriteURL(),
                 bugemon.getAttackList(), bugemon.isStarter());

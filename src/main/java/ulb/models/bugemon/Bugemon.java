@@ -55,6 +55,12 @@ public class Bugemon implements BugemonDTO {
     Bugemon() {
     }
 
+    /**
+     * Copy constructor.
+     *
+     * @param copy
+     *            the {@link Bugemon} to copy
+     */
     public Bugemon(Bugemon copy) {
         this.id = copy.getId();
         this.name = copy.getName();
@@ -70,6 +76,12 @@ public class Bugemon implements BugemonDTO {
         this.isStarter = copy.isStarter();
     }
 
+    /**
+     * Decrease the health of this bugemon.
+     *
+     * @param damage
+     *            the amount of damage
+     */
     public void takeDamage(int damage) {
         this.healthComponent.decreaseHp(damage);
     }
@@ -113,38 +125,83 @@ public class Bugemon implements BugemonDTO {
         return this.name;
     }
 
+    /**
+     * Get the type of this bugemon.
+     *
+     * @return the type
+     */
     public BugemonType getType() {
         return this.type;
     }
 
+    /**
+     * Get the URL to the sprite of this bugemon.
+     *
+     * @return the URL
+     */
     public String getSpriteURL() {
         return this.sprite;
     }
 
+    /**
+     * Get the list of attacks this bugemon can perform.
+     *
+     * @return the list of attacks
+     */
     public List<Attack> getAttackList() {
         return Collections.unmodifiableList(this.attackList);
     }
 
+    /**
+     * Get the current HP of this bugemon.
+     *
+     * @return the current HP
+     */
     public int getHp() {
         return this.healthComponent.getHp();
     }
 
+    /**
+     * Get the maximum HP of this bugemon.
+     *
+     * @return the maximum HP
+     */
     public int getMaxHp() {
         return this.healthComponent.getMaxHp();
     }
 
+    /**
+     * Get the attack of this bugemon.
+     *
+     * @return the attack
+     */
     public int getAttack() {
         return this.attackComponent.getAttack();
     }
 
+    /**
+     * Get the defense of this bugemon.
+     *
+     * @return the defense
+     */
     public int getDefense() {
         return this.defenseComponent.getDefense();
     }
 
+    /**
+     * Get the initiative of this bugemon.
+     *
+     * @return the initiative
+     */
     public int getInitiative() {
         return this.initiativeComponent.getInitiative();
     }
 
+    /**
+     * Returns if this bugemon is starter or not
+     *
+     * @return true if this bugemon is starter and false otherwise
+     */
     public boolean isStarter() {
         return this.isStarter;
     }
@@ -162,10 +219,18 @@ public class Bugemon implements BugemonDTO {
         return this.levelComponent.getLevel();
     }
 
+    /**
+     * Restores the HP of this bugemon to its maximum.
+     */
     public void restoreHp() {
         this.healthComponent.restoreHp();
     }
 
+    /**
+     * Get the current XP of this bugemon.
+     *
+     * @return the current XP
+     */
     public int getXp() {
         return this.levelComponent.getXp();
     }
@@ -178,12 +243,21 @@ public class Bugemon implements BugemonDTO {
     /**
      * Adds XP and returns the number of levels crossed.
      *
+     * @param xp
+     *            the amount of XP to add
+     *
      * @return number of level-ups that just occurred
      */
     public int gainXp(int xp) {
         return this.levelComponent.addXp(xp);
     }
 
+    /**
+     * Applies the upgrade to the bugemon.
+     *
+     * @param upgrade
+     *            the upgrade
+     */
     public void applyUpgrade(Upgrade upgrade) {
         this.healthComponent.increaseMaxHp(upgrade.hp());
         this.attackComponent.increaseAttack(upgrade.attack());
@@ -191,10 +265,22 @@ public class Bugemon implements BugemonDTO {
         this.initiativeComponent.increaseInitiative(upgrade.initiative());
     }
 
+    /**
+     * Applies the effect to the bugemon.
+     *
+     * @param effect
+     *            the effect
+     */
     public void apply(Effect effect) {
         effect.applyTo(this);
     }
 
+    /**
+     * Applies the stat modifier effect to the bugemon.
+     *
+     * @param e
+     *            stat modifier effect
+     */
     public void apply(EffectStatModifier e) {
         Modifier m = (e.duration() == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1)
                 : new Modifier(e.modifier());
@@ -207,18 +293,38 @@ public class Bugemon implements BugemonDTO {
         }
     }
 
+    /**
+     * Applies the heal effect to the bugemon.
+     *
+     * @param e
+     *            heal effect
+     */
     public void apply(EffectHeal e) {
         this.healthComponent.increaseHp(e.amount());
     }
 
+    /**
+     * Applies the resetMalus effect to the bugemon.
+     *
+     * @param e
+     *            resetMalus effect
+     */
     public void apply(EffectResetMalus e) {
         this.resetMalus();
     }
 
+    /**
+     * Kills the bugemon.
+     */
     public void kill() {
         this.takeDamage(this.getHp());
     }
 
+    /**
+     * Get the list of attacks ids
+     *
+     * @return the list of attacks ids
+     */
     public List<String> getListAttacksId() {
         return this.attackList.stream().map(Attack::id).toList();
     }

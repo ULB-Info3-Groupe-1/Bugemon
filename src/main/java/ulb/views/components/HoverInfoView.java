@@ -22,6 +22,9 @@ public class HoverInfoView extends ComponentView {
     @FXML
     private Label efficiencyLabel;
 
+    /**
+     * Default constructor.
+     */
     public HoverInfoView() {
         super(Configuration.Paths.Fxml.COMPONENT_HOVER_INFO);
     }

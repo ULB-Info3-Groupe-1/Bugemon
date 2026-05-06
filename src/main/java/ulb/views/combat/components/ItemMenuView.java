@@ -12,15 +12,29 @@ public class ItemMenuView extends ComponentView {
 
     private Listener listener;
 
+    /**
+     * Default constructor.
+     */
     public ItemMenuView() {
         super(Configuration.Paths.Fxml.COMPONENT_ITEM_MENU);
     }
 
+    /**
+     * Sets the listener to be notified when an item is selected.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the menu with the given inventory entries. */
+    /**
+     * Clears and repopulates the menu with the given inventory entries.
+     *
+     * @param inventory
+     *            the inventory to display
+     */
     public void show(Map<Item, Integer> inventory) {
         this.getChildren().clear();
 
@@ -49,12 +63,30 @@ public class ItemMenuView extends ComponentView {
 
     public interface Listener {
 
+        /**
+         * Dispatches an item selection event to the controller.
+         *
+         * @param item
+         *            the selected item
+         */
         void onItemSelected(Item item);
 
+        /**
+         * Dispatches an item hover event to the controller.
+         *
+         * @param item
+         *            the hovered item
+         */
         void onItemHovered(Item item);
 
+        /**
+         * Dispatches an item left event to the controller.
+         */
         void onItemLeft();
 
+        /**
+         * Dispatches a back event to the controller.
+         */
         void onBack();
 
     }

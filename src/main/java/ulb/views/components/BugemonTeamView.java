@@ -17,15 +17,29 @@ public class BugemonTeamView extends ComponentView {
 
     private Listener listener;
 
+    /**
+     * Default constructor.
+     */
     public BugemonTeamView() {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_TEAM);
     }
 
+    /**
+     * Sets the listener to be notified when a Bugemon is clicked.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the grid with the alive members of the given team. */
+    /**
+     * Clears and repopulates the grid with the alive members of the given team.
+     *
+     * @param bugemonTeam
+     *            the team to display
+     */
     public void showTeam(BugemonTeam bugemonTeam) {
         this.clearBugemons();
 
@@ -46,6 +60,12 @@ public class BugemonTeamView extends ComponentView {
 
     public interface Listener {
 
+        /**
+         * Dispatches a click event to the controller.
+         *
+         * @param bugemon
+         *            the clicked Bugemon
+         */
         void onBugemonClicked(Bugemon bugemon);
 
     }

@@ -35,6 +35,9 @@ public class DatabaseConnection {
 
     private Connection connection;
 
+    /**
+     * Initializes the database connection.
+     */
     public DatabaseConnection() {
         this.getConnection();
     }

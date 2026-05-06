@@ -31,10 +31,22 @@ public class LevelUpView extends View {
 
     private Listener listener;
 
+    /**
+     * Sets the LevelUp to be displayed.
+     *
+     * @param levelUp
+     *            the LevelUp
+     */
     public void setLevelUp(LevelUp levelUp) {
         this.levelUp = levelUp;
     }
 
+    /**
+     * Sets the listener.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -78,6 +90,12 @@ public class LevelUpView extends View {
 
     public interface Listener {
 
+        /**
+         * Dispatches an upgrade choice to the controller.
+         *
+         * @param optionIdx
+         *            the option index
+         */
         void onUpgradeChosen(int optionIdx);
 
     }

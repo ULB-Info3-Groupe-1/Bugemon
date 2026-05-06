@@ -12,6 +12,12 @@ public class SaveMenuView extends View {
 
     private Listener listener;
 
+    /**
+     * Registers the listener.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -46,10 +52,20 @@ public class SaveMenuView extends View {
     }
 
     public interface Listener {
+
+        /**
+         * Dispatches a new game action to the controller.
+         */
         void onNewGame();
 
+        /**
+         * Dispatches a continue action to the controller.
+         */
         void onContinue();
 
+        /**
+         * Dispatches a quit action to the controller.
+         */
         void onQuit();
     }
 }

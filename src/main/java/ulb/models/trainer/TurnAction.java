@@ -30,7 +30,12 @@ public sealed interface TurnAction {
         }
     }
 
-    /** The switching trainer does not deal damage this turn, but the opponent still attacks. */
+    /**
+     * The switching trainer does not deal damage this turn, but the opponent still attacks.
+     *
+     * @param target
+     *            the bugemon to switch to
+     */
     record SwitchAction(Bugemon target) implements TurnAction {
         @Override
         public boolean isAttack() {

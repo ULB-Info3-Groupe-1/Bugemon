@@ -33,10 +33,23 @@ import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 
+/**
+ * Repository for player data
+ */
 public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
     private final StaticDataRepository staticDataRepository;
 
+    /**
+     * Constructor
+     *
+     * @param dbConnection
+     *            the database connection
+     * @param staticDataRepository
+     *            the static data repository to use for bugemon data
+     * @param queries
+     *            the queries to use for the repository
+     */
     public PlayerRepository(DatabaseConnection dbConnection, StaticDataRepository staticDataRepository,
             Map<String, String> queries) {
         super(dbConnection, queries);
@@ -45,21 +58,50 @@ public class PlayerRepository extends AbstractRepository {
 
     // --- TOWER FLOOR ---
 
+    /**
+     * Set the current floor for a player
+     *
+     * @param playername
+     *            the name of the player
+     * @param floorNumber
+     *            the floor number
+     */
     public void setPlayerCurrentFloor(String playername, int floorNumber) {
         this.executeUpdate("SetPlayerCurrentTowerFloor", floorNumber, playername);
     }
 
+    /**
+     * Get the current floor for a player
+     *
+     * @param playername
+     *            the name of the player
+     * @return the current floor
+     */
     public int getPlayerCurrentFloor(String playername) {
         return executeQuery("GetPlayerCurrentTowerFloor", rs -> rs.getInt(DatabaseColumns.COL_CURRENT_TOWER_FLOOR),
                 playername).get(0);
     }
 
+    /**
+     * Reset the current floor for a player
+     *
+     * @param playername
+     *            the name of the player
+     */
     public void resetPlayerCurrentFloor(String playername) {
         this.executeUpdate("ResetPlayerCurrentTowerFloor", playername);
     }
 
     // --- PLAYERS ---
 
+    /**
+     * Create a player
+     *
+     * @param playername
+     *            the name of the player to create
+     * @throws PlayernameAlreadyExistsException
+     *             if the playername already exists
+     */
     public void createPlayer(String playername) throws PlayernameAlreadyExistsException {
         LOG.debug("Creating player with name: {}", playername);
         try {
@@ -77,23 +119,48 @@ public class PlayerRepository extends AbstractRepository {
 
     // --- BUGEMONS ---
 
+    /**
+     * Remove all bugemons for a player
+     *
+     * @param playername
+     *            the name of the player
+     */
     public void removeAllPlayerBugemon(String playername) {
         LOG.debug("Removing all bugemons for playername: {}", playername);
         this.executeUpdate("RemoveAllPlayerBugemons", playername);
     }
 
+    /**
+     * Save a player bugemon
+     *
+     * @param d
+     *            the player bugemon
+     */
     public void savePlayerBugemon(PlayerBugemonDTO d) {
         LOG.debug("Saving player bugemon: {}", d);
         executeUpdate("SavePlayerBugemon", d.playername(), d.bugemonName(), d.currentDefense(), d.currentAttackPower(),
                 d.currentInitiative(), d.currentMaxHp(), d.currentXp(), d.currentLevel());
     }
 
+    /**
+     * Update a player bugemon
+     *
+     * @param d
+     *            the player bugemon
+     */
     public void updatePlayerBugemon(PlayerBugemonDTO d) {
         LOG.debug("Updating player bugemon: {}", d);
         executeUpdate("UpdatePlayerBugemon", d.currentDefense(), d.currentAttackPower(), d.currentInitiative(),
                 d.currentMaxHp(), d.currentXp(), d.currentLevel(), d.playername(), d.bugemonName());
     }
 
+    /**
+     * Get all the bugemons for a player
+     *
+     * @param playername
+     *            the name of the player
+     * @return a list of bugemons
+     */
     public List<PlayerBugemonDTO> getPlayerBugemons(String playername) {
         LOG.debug("Getting bugemons for playername: {}", playername);
         return executeQuery("GetPlayerBugemons",
@@ -180,9 +247,7 @@ public class PlayerRepository extends AbstractRepository {
      *
      * @param playername
      *            the player's name who owns the teams
-     * @return (List<BugemonTeam>) the teams of the player to be loaded
-     * @throws TeamNotFoundException
-     *             if the player has no teams
+     * @return a {@code List} of {@link BugemonTeam} the teams of the player to be loaded
      */
     public List<BugemonTeam> loadTeams(String playername) {
         List<BugemonTeam> playerTeams = new ArrayList<>();
@@ -223,7 +288,7 @@ public class PlayerRepository extends AbstractRepository {
      *
      * @param playername
      *            (String) the player's name who owns the current team
-     * @return (Optional<BugemonTeam>) the current team of the player if it exists, otherwise an empty optional
+     * @return a {@code Optional<BugemonTeam>} the current team of the player if it exists, otherwise an empty optional
      */
     public Optional<BugemonTeam> loadCurrentTeam(String playername) {
         LOG.debug("Getting current team for playername: {}", playername);
@@ -259,11 +324,25 @@ public class PlayerRepository extends AbstractRepository {
         return Optional.of(currentTeam);
     }
 
+    /**
+     * Set the current team for a player
+     *
+     * @param playername
+     *            the name of the player
+     * @param teamName
+     *            the name of the team
+     */
     public void setPlayerCurrentTeam(String playername, String teamName) {
         LOG.debug("Setting current team for {} to '{}'", playername, teamName);
         executeUpdate("SetPlayerCurrentTeam", teamName, playername);
     }
 
+    /**
+     * Unset the current team for a player
+     *
+     * @param playername
+     *            the name of the player
+     */
     public void unsetPlayerCurrentTeam(String playername) {
         LOG.debug("Unsetting current team for playername: {}", playername);
         executeUpdate("UnsetPlayerCurrentTeam", playername);
@@ -276,15 +355,42 @@ public class PlayerRepository extends AbstractRepository {
 
     // --- TEAM MEMBERS ---
 
+    /**
+     * Add a team member
+     *
+     * @param dto
+     *            the team member
+     */
     public void addTeamMember(TeamMemberDTO dto) {
         executeUpdate("AddTeamMember", dto.playername(), dto.teamName(), dto.bugemonName(), dto.slotPosition());
     }
 
+    /**
+     * Remove a team member
+     *
+     * @param playername
+     *            the name of the player
+     * @param teamName
+     *            the name of the team
+     * @param bugemonName
+     *            the name of the bugemon
+     * @throws TeamNotFoundException
+     *             if the team does not exist
+     */
     public void removeTeamMember(String playername, String teamName, String bugemonName) throws TeamNotFoundException {
         this.checkTeamExists(playername, teamName);
         executeUpdate("RemoveTeamMember", playername, teamName, bugemonName);
     }
 
+    /**
+     * Get the members of a team
+     *
+     * @param playername
+     *            the name of the player
+     * @param teamName
+     *            the name of the team
+     * @return a list of team members
+     */
     public List<TeamMemberDTO> getTeamMembers(String playername, String teamName) {
         return executeQuery("GetTeamMembers",
                 rs -> new TeamMemberDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),
@@ -295,6 +401,13 @@ public class PlayerRepository extends AbstractRepository {
 
     // --- Items/Inventory ---
 
+    /**
+     * Get the inventory of a player
+     *
+     * @param playername
+     *            the name of the player
+     * @return the inventory
+     */
     public Inventory getPlayerInventory(String playername) {
         LOG.debug("Getting inventory for playername: {}", playername);
         Inventory inventory = new Inventory();

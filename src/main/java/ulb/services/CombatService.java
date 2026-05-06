@@ -23,6 +23,12 @@ public class CombatService {
 
     public final BugemonService bugemonService;
 
+    /**
+     * Constructor
+     *
+     * @param bugemonService
+     *            the bugemon service used to retrieve bugemons
+     */
     public CombatService(BugemonService bugemonService) {
         this.bugemonService = bugemonService;
     }
@@ -31,6 +37,12 @@ public class CombatService {
      * Creates a combat.
      *
      * At the end of the combat, HPs are restored and XP is distributed.
+     *
+     * @param playerTrainer
+     *            the player trainer of the combat
+     * @param opponentTrainer
+     *            the opponent trainer of the combat
+     * @return the created combat
      */
     public Combat createUniqueCombat(Trainer playerTrainer, Trainer opponentTrainer) {
         EndOfCombatAction endOfCombatCb = EndOfCombatAction.RESTORE_HP;
@@ -91,6 +103,14 @@ public class CombatService {
     /**
      * Overload of {@link #calculateDamage(Attack, Bugemon, Bugemon, double)} with a random crit factor (10% chance of
      * 1.5×).
+     *
+     * @param attack
+     *            the attack being used
+     * @param offenderBugemon
+     *            the attacking Bugemon, used to access its attack stat
+     * @param defenderBugemon
+     *            the defending Bugemon, used to access its defense stat and type
+     * @return the computed damage as a double
      */
     public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon,
             final Bugemon defenderBugemon) {
@@ -128,10 +148,10 @@ public class CombatService {
      * Given {@code delta = (offensiveIdx - defensiveIdx) mod cycleSize}: delta 1 → {@link Efficiency#LOW} (weak); delta
      * {@code cycleSize - 1} → {@link Efficiency#HIGH} (strong); any other → {@link Efficiency#NEUTRAL}.
      *
-     * @param offensiveType
-     *            the type of the attacking Bugemon or attack
-     * @param defensiveType
-     *            the type of the defending Bugemon
+     * @param bugemonList
+     *            list of available Bugemons
+     * @param teamSize
+     *            size of the team to create
      * @return {@link Efficiency#HIGH} if the offensive type is strong against the defensive type,
      *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
      */
@@ -146,6 +166,13 @@ public class CombatService {
         return team;
     }
 
+    /**
+     * Creates a team with a single boss Bugemon
+     *
+     * @param bugemonList
+     *            the list of available Bugemons
+     * @return the boss team
+     */
     public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
         final Optional<Bugemon> bossBugemon = bugemonList.stream()
                 .filter(obj -> obj.getName().equals(Configuration.Game.BOSS_NAME)).findFirst();

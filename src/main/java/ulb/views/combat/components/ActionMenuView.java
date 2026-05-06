@@ -18,14 +18,29 @@ public class ActionMenuView extends ComponentView {
 
     private Listener listener;
 
+    /**
+     * Default constructor.
+     */
     public ActionMenuView() {
         super(Configuration.Paths.Fxml.COMPONENT_ACTION_MENU);
     }
 
+    /**
+     * Sets the listener to be notified when an action is selected.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Refreshes the action menu.
+     *
+     * @param canSwitch
+     *            whether a voluntary switch is available
+     */
     public void refresh(boolean canSwitch) {
         this.topRightButton.setDisable(!canSwitch);
     }
@@ -52,12 +67,24 @@ public class ActionMenuView extends ComponentView {
 
     public interface Listener {
 
+        /**
+         * Dispatches an attack action to the controller.
+         */
         void onAttack();
 
+        /**
+         * Dispatches a switch action to the controller.
+         */
         void onSwitch();
 
+        /**
+         * Dispatches an inventory action to the controller.
+         */
         void onInventory();
 
+        /**
+         * Dispatches a forfeit action to the controller.
+         */
         void onForfeit();
 
     }

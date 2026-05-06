@@ -1,9 +1,20 @@
 package ulb.models.bugemon.components;
 
+/**
+ * The level component of a Bugemon
+ */
 public class LevelComponent {
     private int xp;
     private int level;
 
+    /**
+     * Create a new LevelComponent
+     *
+     * @param xp
+     *            the initial XP
+     * @param level
+     *            the initial level
+     */
     public LevelComponent(int xp, int level) {
         if (xp < 0) {
             throw new IllegalArgumentException("xp must be positive");
@@ -16,10 +27,20 @@ public class LevelComponent {
         this.level = level;
     }
 
+    /**
+     * Get the current XP of this bugemon.
+     *
+     * @return
+     */
     public int getXp() {
         return this.xp;
     }
 
+    /**
+     * Get the current level of this bugemon.
+     *
+     * @return the current level
+     */
     public int getLevel() {
         return this.level;
     }
@@ -43,7 +64,11 @@ public class LevelComponent {
         return numLevelUps;
     }
 
-    /** Returns XP progress toward the next level as a value in {@code [0.0, 1.0]}. */
+    /**
+     * Returns XP progress toward the next level as a value in {@code [0.0, 1.0]}.
+     *
+     * @return XP progress
+     */
     public double getXpProgress() {
         return (double) this.xp / this.getXpRequiredForNextLevel(this.level);
     }

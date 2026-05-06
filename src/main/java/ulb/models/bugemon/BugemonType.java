@@ -4,13 +4,24 @@ import java.util.Map;
 
 /** Elemental type of a Bugemon; used for type-matchup calculations during combat. */
 public enum BugemonType {
+    /** Flora type */
     FLORA,
+    /** Aqua type */
     AQUA,
+    /** Pyro type */
     PYRO,
+    /** Litho type */
     LITHO;
 
     private static Map<BugemonType, Map<BugemonType, Efficiency>> strongAgainst;
 
+    /**
+     * Returns the efficiency of this type against the given opponent type
+     *
+     * @param opponentType
+     *            the type of the opponent
+     * @return the efficiency
+     */
     public Efficiency getEfficiencyAgainst(BugemonType opponentType) {
         return strongAgainst.get(this).get(opponentType);
     }

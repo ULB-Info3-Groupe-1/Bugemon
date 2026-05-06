@@ -13,6 +13,14 @@ public class TowerService {
 
     private int currentFloor;
 
+    /**
+     * Constructor for the TowerService class.
+     *
+     * @param playerRepository
+     *            the player repository used to access the database
+     * @param playername
+     *            the player's name used to access the database
+     */
     public TowerService(PlayerRepository playerRepository, String playername) {
         this.playername = playername;
         this.playerRepository = playerRepository;
@@ -33,6 +41,11 @@ public class TowerService {
         this.playerRepository.setPlayerCurrentFloor(this.playername, this.currentFloor);
     }
 
+    /**
+     * Get the current floor of the tower.
+     *
+     * @return the current floor
+     */
     public int getCurrentFloor() {
         return this.currentFloor;
     }

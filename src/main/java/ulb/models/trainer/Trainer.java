@@ -37,8 +37,7 @@ public abstract class Trainer {
     /**
      * Returns the action chosen for this turn. Called once per turn by {@link ulb.models.combat.Combat#turn()}.
      *
-     * @throws IllegalStateException
-     *             if {@link ManualTrainer} has no action queued
+     * @return a {@link TurnAction}
      */
     public abstract TurnAction getAction();
 
@@ -53,62 +52,129 @@ public abstract class Trainer {
         this.team.killAll();
     }
 
+    /**
+     * Applies the passive action of a {@link TurnAction.SwitchAction}.
+     *
+     * @param action
+     *            must be a {@link TurnAction.SwitchAction}
+     */
     public void applyPassiveAction(TurnAction action) {
         if (action instanceof TurnAction.SwitchAction(Bugemon target)) {
             this.setCurrentBugemon(target);
         }
     }
 
+    /**
+     * Checks if the entire team is defeated.
+     *
+     * @return true if the entire team is defeated
+     */
     public boolean isDefeated() {
         return this.team.stream().allMatch(b -> !b.isAlive());
     }
 
+    /**
+     * Checks if the current Bugemon is alive.
+     *
+     * @return true if the current Bugemon is alive
+     */
     public boolean isCurrentBugemonAlive() {
         return this.currentBugemon.isAlive();
     }
 
+    /**
+     * Checks if the current Bugemon has the given attack
+     *
+     * @param attack
+     *            the attack
+     * @return true if the current Bugemon has the given attack
+     */
     public boolean checkCurrentBugemonHasAttack(Attack attack) {
         List<Attack> attackList = this.currentBugemon.getAttackList();
         return attackList.contains(attack);
     }
 
+    /**
+     * Returns the current Bugemon's initiative
+     *
+     * @return the current Bugemon's initiative
+     */
     public int getCurrentBugemonInitiative() {
         return this.currentBugemon.getInitiative();
     }
 
+    /**
+     * Returns the current Bugemon
+     *
+     * @return the current Bugemon
+     */
     public Bugemon getCurrentBugemon() {
         return this.currentBugemon;
     }
 
+    /**
+     * Returns the current Bugemon's attack list
+     *
+     * @return the current Bugemon's attack list
+     */
     public List<Attack> getCurrentBugemonAttackList() {
         return this.currentBugemon.getAttackList();
     }
 
+    /**
+     * Returns the current Bugemon's name
+     *
+     * @return the current Bugemon's name
+     */
     public String getCurrentBugemonName() {
         return this.currentBugemon.getName();
     }
 
+    /**
+     * Returns the current Bugemon's health
+     *
+     * @return the current Bugemon's health
+     */
     public int getCurrentBugemonHp() {
         return this.currentBugemon.getHp();
     }
 
+    /**
+     * Returns the current Bugemon's type
+     *
+     * @return the current Bugemon's type
+     */
     public BugemonType getCurrentBugemonType() {
         return this.currentBugemon.getType();
     }
 
+    /**
+     * Returns the team
+     *
+     * @return the team
+     */
     public BugemonTeam getTeam() {
         return this.team;
     }
 
+    /**
+     * Returns the size of the team
+     *
+     * @return the size of the team
+     */
     public int getTeamSize() {
         return this.team.size();
     }
 
     /**
+     * Decrease the health of the active Bugemon.
+     *
+     * @param damage
+     *            the amount of damage
      * @throws IllegalArgumentException
      *             if damage is negative
      */
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage) throws IllegalArgumentException {
         if (damage < 0) {
             throw new IllegalArgumentException("damage must be positive");
         }
@@ -123,25 +189,43 @@ public abstract class Trainer {
     }
 
     /**
-     * Records the current Bugemon as having participated — used by {@link ulb.services.LevelUpService} to distribute XP
-     * only to Bugemons that actually fought.
+     * Records the current Bugemon as having participated — used to distribute XP only to Bugemons that actually fought.
      */
     public void markCurrentBugemonParticipation() {
         this.participatedBugemons.add(this.currentBugemon);
     }
 
+    /**
+     * Returns the Bugemons that have participated
+     *
+     * @return the Bugemons that have participated
+     */
     public Set<Bugemon> getParticipatingBugemons() {
         return this.participatedBugemons;
     }
 
+    /**
+     * Returns the Bugemons in the team
+     *
+     * @return the Bugemons in the team
+     */
     public List<Bugemon> getBugemons() {
         return this.team.getAll();
     }
 
+    /**
+     * Restores the health of all the Bugemons in the team
+     */
     public void restoreTeamHp() {
         this.team.restoreHp();
     }
 
+    /**
+     * Applies the given effect to all the Bugemons in the team
+     *
+     * @param effect
+     *            the effect
+     */
     public void applyEffectToCurrentTeam(Effect effect) {
         this.team.forEach(b -> b.apply(effect));
     }

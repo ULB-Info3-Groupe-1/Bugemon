@@ -137,6 +137,9 @@ public class ManualCombatView extends CombatView {
         this.initItemMenuListener();
     }
 
+    /**
+     * Default constructor.
+     */
     public ManualCombatView() {
         super();
 
@@ -148,6 +151,12 @@ public class ManualCombatView extends CombatView {
         this.initListeners();
     }
 
+    /**
+     * Sets the listener to be notified when an action is selected.
+     *
+     * @param listener
+     *            the listener
+     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
@@ -162,7 +171,14 @@ public class ManualCombatView extends CombatView {
         this.hideActionMenu();
     }
 
-    /** Gives the view the model objects it reads from in {@link #refresh()}. */
+    /**
+     * Gives the view the model objects it reads from in {@link #refresh()}.
+     *
+     * @param newPlayer
+     *            the player trainer
+     * @param newOpponent
+     *            the opponent trainer
+     */
     public void setModel(ManualTrainer newPlayer, Trainer newOpponent) {
         this.player = newPlayer;
         this.opponent = newOpponent;
@@ -238,12 +254,34 @@ public class ManualCombatView extends CombatView {
 
     /** Callback interface for all player combat actions dispatched by this view. */
     public interface Listener {
+
+        /**
+         * Dispatches an attack action to the controller.
+         *
+         * @param attack
+         *            the selected attack
+         */
         void onAttack(Attack attack);
 
+        /**
+         * Dispatches a switch action to the controller.
+         *
+         * @param bugemon
+         *            the selected bugemon
+         */
         void onSwitch(Bugemon bugemon);
 
+        /**
+         * Dispatches a forfeit action to the controller.
+         */
         void onForfeit();
 
+        /**
+         * Dispatches an item selection event to the controller.
+         *
+         * @param item
+         *            the selected item
+         */
         void onItemSelected(Item item);
     }
 }

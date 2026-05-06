@@ -7,7 +7,22 @@ import com.google.gson.annotations.SerializedName;
 
 import ulb.models.bugemon.effect.Effect;
 
-/** Immutable record representing an attack a {@link Bugemon} can use in battle. Equality is based on {@link #id}. */
+/**
+ * Immutable record representing an attack a {@link Bugemon} can use in battle. Equality is based on {@link #id}.
+ *
+ * @param id
+ *            The unique identifier of the attack
+ * @param name
+ *            The display name of the attack
+ * @param type
+ *            The {@link BugemonType} elemental type of the attack
+ * @param description
+ *            A brief description of the attack's behavior
+ * @param power
+ *            The base power or damage of the attack
+ * @param effects
+ *            The list of {@link Effect}s applied by this attack
+ */
 public record Attack(
 
         String id,
@@ -28,6 +43,13 @@ public record Attack(
         effects = (effects == null) ? List.of() : List.copyOf(effects);
     }
 
+    /**
+     * Checks if this attack contains the given effect
+     *
+     * @param effect
+     *            the effect
+     * @return true if this attack contains the given effect and false otherwise
+     */
     public boolean containsEffect(Effect effect) {
         return this.effects.contains(effect);
     }
@@ -55,10 +77,24 @@ public record Attack(
         return Objects.hash(this.id);
     }
 
+    /**
+     * Returns the efficiency of this attack against the given opponent type
+     *
+     * @param opponentType
+     *            the type of the opponent
+     * @return the efficiency
+     */
     public Efficiency getEfficiencyAgainst(BugemonType opponentType) {
         return this.type.getEfficiencyAgainst(opponentType);
     }
 
+    /**
+     * Returns the efficiency of this attack against the given opponent
+     *
+     * @param opponent
+     *            the opponent
+     * @return the efficiency
+     */
     public Efficiency getEfficiencyAgainst(Bugemon opponent) {
         return this.getEfficiencyAgainst(opponent.getType());
     }

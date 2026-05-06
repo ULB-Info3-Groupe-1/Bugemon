@@ -36,10 +36,21 @@ import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
 
+/**
+ * Repository for static data
+ */
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 10;
     private Inventory defaultInventory;
 
+    /**
+     * Constructor
+     *
+     * @param dbConnection
+     *            the database connection
+     * @param queries
+     *            the queries
+     */
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         super(dbConnection, queries);
         Parser parser = new Parser();
@@ -182,6 +193,8 @@ public class StaticDataRepository extends AbstractRepository {
 
     /**
      * Returns the default starting inventory as defined in objets.json.
+     *
+     * @return the default starting inventory
      */
     public Inventory getDefaultInventory() {
         return this.defaultInventory;
@@ -190,7 +203,7 @@ public class StaticDataRepository extends AbstractRepository {
     /**
      * Retrieves all default Bugemons.
      *
-     * @return (List<Bugemon>) List of default Bugemons of the game
+     * @return a {@code List} of {@link Bugemon} List of default Bugemons of the game
      */
     public List<Bugemon> getAllDefaultBugemons() {
         Map<String, Attack> attackMap = this.getAllAttacks();
@@ -214,7 +227,7 @@ public class StaticDataRepository extends AbstractRepository {
     /**
      * Retrieves all attacks with their effects.
      *
-     * @return (Map<String, Attack>) Map of attacks.
+     * @return {@code (Map<String, Attack>)} Map of attacks.
      */
     public Map<String, Attack> getAllAttacks() {
         Map<String, AttackInfo> infos = new LinkedHashMap<>();
