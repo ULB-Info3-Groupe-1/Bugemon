@@ -5,4 +5,8 @@ public class TeamNameAlreadyExistsException extends Exception {
     public TeamNameAlreadyExistsException(String message) {
         super(message);
     }
+
+    public TeamNameAlreadyExistsException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

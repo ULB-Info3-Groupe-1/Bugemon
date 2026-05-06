@@ -2,6 +2,7 @@ package ulb.controllers.music;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -64,7 +65,7 @@ public class MusicLoader {
 
         try {
             return url.toURI();
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             throw new IllegalStateException("Invalid resource URI for path: " + resourceDir, e);
         }
     }

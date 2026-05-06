@@ -7,4 +7,8 @@ public class TeamEmptyException extends Exception {
     public TeamEmptyException(String message) {
         super(message);
     }
+
+    public TeamEmptyException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -101,7 +101,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             try {
                 this.teamService.restoreHpActiveTeam();
             } catch (NoActiveTeamException e) {
-                throw new IllegalStateException("No active team when combat ended is not possible", e);
+                throw new IllegalStateException(
+                        "attempted to restore health of active team but there was no active team", e);
             }
             this.finishTowerFlow(playerWon);
             return;
