@@ -30,8 +30,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        AutoTrainer autoPlayer = new AutoTrainer(this.teamService.getActiveTeam().orElseThrow(
-                () -> new IllegalStateException("No active team for player when starting Automatic combat")));
+        AutoTrainer autoPlayer = new AutoTrainer(this.teamService.getRequiredActiveTeam());
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 

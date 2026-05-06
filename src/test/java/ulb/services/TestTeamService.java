@@ -2,6 +2,8 @@ package ulb.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,8 +52,8 @@ public class TestTeamService {
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam(teamName);
 
-        assertTrue(this.teamService.getActiveTeam().isPresent());
-        assertEquals(teamName, this.teamService.getActiveTeam().get().getName());
+        assertNotNull(this.teamService.getRequiredActiveTeam());
+        assertEquals(teamName, this.teamService.getRequiredActiveTeam().getName());
     }
 
     @Test(expected = TeamNotFoundException.class)
@@ -69,7 +71,7 @@ public class TestTeamService {
         this.teamService.setActiveTeam(teamName);
 
         verify(this.playerRepository).createTeam(PLAYER_NAME, teamName);
-        assertEquals(teamName, this.teamService.getActiveTeam().get().getName());
+        assertEquals(teamName, this.teamService.getRequiredActiveTeam().getName());
         assertTrue(this.teamService.getTeamNames().contains(teamName));
     }
 
@@ -85,7 +87,7 @@ public class TestTeamService {
         this.teamService.deleteTeam("ToDelete");
 
         verify(this.playerRepository).deleteTeam(PLAYER_NAME, "ToDelete");
-        assertTrue(this.teamService.getActiveTeam().isEmpty());
+        assertThrows(NoActiveTeamException.class, () -> this.teamService.getRequiredActiveTeam());
         assertFalse(this.teamService.getTeamNames().contains("ToDelete"));
     }
 
@@ -120,7 +122,7 @@ public class TestTeamService {
         this.teamService.renameActiveTeam(newName);
 
         verify(this.playerRepository).renameTeam(PLAYER_NAME, oldName, newName);
-        assertEquals(newName, this.teamService.getActiveTeam().get().getName());
+        assertEquals(newName, this.teamService.getRequiredActiveTeam().getName());
         assertTrue(this.teamService.getTeamNames().contains(newName));
         assertFalse(this.teamService.getTeamNames().contains(oldName));
     }
@@ -188,7 +190,7 @@ public class TestTeamService {
         this.teamService.saveTeam("Original");
         this.teamService.setActiveTeam("Original");
 
-        this.teamService.setWorkingTeamEqualsActiveTeam();
+        this.teamService.setWorkingTeamAsActiveTeam();
 
         Bugemon b2 = TestUtilsBugemons.createDefaultBugemon("Charmander");
         this.teamService.addOrRemoveBugemon(b2);
@@ -196,7 +198,7 @@ public class TestTeamService {
 
         verify(this.playerRepository).modifyTeam(org.mockito.ArgumentMatchers.eq(PLAYER_NAME),
                 org.mockito.ArgumentMatchers.eq("Original"), org.mockito.ArgumentMatchers.anyList());
-        assertEquals(2, this.teamService.getActiveTeam().get().size());
+        assertEquals(2, this.teamService.getRequiredActiveTeam().size());
     }
 
     @Test
@@ -221,7 +223,7 @@ public class TestTeamService {
 
         this.teamService.clearWorkingTeam();
 
-        this.teamService.setWorkingTeamEqualsActiveTeam();
+        this.teamService.setWorkingTeamAsActiveTeam();
 
         assertEquals(team, this.teamService.getWorkingTeam());
     }
@@ -239,7 +241,7 @@ public class TestTeamService {
         this.teamService.clearTeamsAndActiveTeam();
 
         verify(this.playerRepository).clearTeams(PLAYER_NAME);
-        assertTrue(this.teamService.getActiveTeam().isEmpty());
+        assertThrows(NoActiveTeamException.class, () -> this.teamService.getRequiredActiveTeam());
         assertTrue(this.teamService.getTeamNames().isEmpty());
     }
 
@@ -249,12 +251,12 @@ public class TestTeamService {
         BugemonTeam team2 = new BugemonTeam("Team2");
 
         when(this.playerRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(team1, team2));
-        when(this.playerRepository.loadCurrentTeam(PLAYER_NAME)).thenReturn(Optional.of(team1));
+        when(this.playerRepository.loadCurrentTeam(PLAYER_NAME)).thenReturn(Optional.ofNullable(team1));
 
         this.teamService.loadTeamsAndActiveTeam();
 
-        assertTrue(this.teamService.getActiveTeam().isPresent());
-        assertEquals("Team1", this.teamService.getActiveTeam().get().getName());
+        assertNotNull(this.teamService.getRequiredActiveTeam());
+        assertEquals("Team1", this.teamService.getRequiredActiveTeam().getName());
         assertTrue(this.teamService.getTeamNames().contains("Team1"));
         assertTrue(this.teamService.getTeamNames().contains("Team2"));
     }

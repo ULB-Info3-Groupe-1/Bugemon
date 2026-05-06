@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
@@ -69,9 +68,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void visitCombatRoom(CombatRoom combatRoom) {
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
-        Combat combat = combatRoom.getCombat(new ManualTrainer(
-                this.teamService.getActiveTeam().orElseThrow(() -> new IllegalStateException("No active team")),
-                this.inventoryService));
+        Combat combat = combatRoom
+                .getCombat(new ManualTrainer(this.teamService.getRequiredActiveTeam(), this.inventoryService));
         this.metaController.startTowerCombat(combat);
     }
 
@@ -125,17 +123,10 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      * immediately; combat rooms continue via callback.
      */
     public void runTower() {
-        if (this.teamService.getActiveTeam().isEmpty()) {
-            LOG.warn("runTower called with no active team, aborting");
-            return;
-        }
-
         if (this.tower.isEmpty()) {
             LOG.info("Starting new tower run");
-            BugemonTeam activeTeam = this.teamService.getActiveTeam().get();
-            this.tower = Optional.of(new Tower(activeTeam, this.bugemonService, this.inventoryService,
-                    this.towerService.getCurrentFloor()));
-
+            this.tower = Optional.of(new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService,
+                    this.inventoryService, this.towerService.getCurrentFloor()));
         }
 
         this.showFloor();
