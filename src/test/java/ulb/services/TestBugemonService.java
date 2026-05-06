@@ -45,7 +45,7 @@ public class TestBugemonService {
 
     @Test
     public void testSaveNewBugemon_DuplicateNameThrowsException() {
-        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu"); 
+        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         List<Bugemon> cache = new ArrayList<>(List.of(bugemon));
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(cache);
 
