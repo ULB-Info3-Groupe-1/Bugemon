@@ -55,7 +55,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     @Override
-    public void onReturnToSaveMenu() {
+    public void onSaveMenuReturnButton() {
         this.metaController.onSaveMenu();
     }
 

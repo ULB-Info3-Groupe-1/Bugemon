@@ -47,8 +47,8 @@ public class MainMenuView extends View {
     }
 
     @FXML
-    private void onReturnToSaveMenuClicked() {
-        this.listener.onReturnToSaveMenu();
+    private void onSaveMenuReturnButtonClicked() {
+        this.listener.onSaveMenuReturnButton();
     }
 
     @Override
@@ -74,6 +74,6 @@ public class MainMenuView extends View {
 
         void onStartAutomaticCombat();
 
-        void onReturnToSaveMenu();
+        void onSaveMenuReturnButton();
     }
 }

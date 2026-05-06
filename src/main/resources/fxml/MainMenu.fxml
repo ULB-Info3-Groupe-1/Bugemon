@@ -25,8 +25,9 @@
         styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="noTowerButton" onAction="#onTowerClicked"
         text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
-    <Button fx:id="returnSaveMenuButton"
-        onAction="#onReturnToSaveMenuClicked" text="Retour menu de sauvegarde"
+    <Button fx:id="saveMenuReturnButton"
+        onAction="#onSaveMenuReturnButtonClicked"
+        text="Retour menu de sauvegarde"
         styleClass="btn,btn-secondary,btn-nav" />
 
 </VBox>
