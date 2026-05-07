@@ -184,7 +184,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onDeleteClicked() {
-        this.listener.onDelete(this.getTeamNameToLoad());
+        this.listener.onDelete(this.getSelectedTeamName());
     }
 
     @FXML
@@ -199,7 +199,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onModifyTeamClicked() {
-        this.listener.onModifyTeam(this.getTeamNameToLoad());
+        this.listener.onModifyTeam(this.getSelectedTeamName());
     }
 
     @FXML
@@ -228,7 +228,7 @@ public class ManageTeamView extends View {
         return this.saveTeamNameInput.getText();
     }
 
-    private String getTeamNameToLoad() {
+    private String getSelectedTeamName() {
         return this.selectedTeamName.getText();
     }
 
