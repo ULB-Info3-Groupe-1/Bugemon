@@ -188,7 +188,7 @@ public abstract class CombatView extends View {
         this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
         this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
     }
-
+    // TODO: duplication de code et nombes magiques de BZ
     public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
         File file = new File(Configuration.Paths.SPRITES + opponentBugemon.getSpriteURL());
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);

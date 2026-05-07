@@ -114,7 +114,6 @@ public class MetaController {
             this.towerController.onTowerCombatFinished(won);
             return;
         }
-
         this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
     }
 
@@ -213,10 +212,13 @@ public class MetaController {
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();
+            this.musicPlayer.stopMusic();
             this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
         });
         this.transitions.put(Window.COMBAT_DEFEAT, () -> {
             this.combatDefeatController.show();
+            this.musicPlayer.stopMusic();
+            // TODO : le stops en dehors de soundeffect
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);

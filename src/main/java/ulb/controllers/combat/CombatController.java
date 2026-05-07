@@ -81,6 +81,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected void advanceStep() {
         if (!this.pendingSteps.hasNext()) {
+            
             this.onStepsExhausted();
             return;
         }
