@@ -103,13 +103,22 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             } catch (NoActiveTeamException e) {
                 throw new IllegalStateException("No active team when combat ended is not possible", e);
             }
-            this.finishTowerFlow(playerWon);
+            this.finishTowerFlow(false);
             return;
         }
 
-        if (this.tower.get().isCompleted()) {
-            LOG.info("Tower completed, switching to victory screen");
-            this.finishTowerFlow(playerWon);
+        if (this.tower.get().isFloorComplete()) {
+            if (this.tower.get().isCompleted()) {
+                LOG.info("Tower completed, switching to victory screen");
+                this.finishTowerFlow(true);
+            } else {
+                LOG.info("Floor completed, moving to next floor");
+                this.towerService.nextFloorAndSave();
+                this.tower.get().goToNextFloor();
+                this.showFloor();
+            }
+        } else {
+            this.showFloor();
         }
     }
 

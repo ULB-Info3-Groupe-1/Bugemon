@@ -5,9 +5,6 @@ import ulb.repositories.PlayerRepository;
 
 public class TowerService {
 
-    // TODO: add and connect method to save the current floor in the database when the player finishes a floor and moves
-    // to the next one !
-
     private final String playername;
     private final PlayerRepository playerRepository;
 
@@ -35,5 +32,13 @@ public class TowerService {
 
     public int getCurrentFloor() {
         return this.currentFloor;
+    }
+
+    /**
+     * Increment the current floor to go to the next floor and save it in the database
+     */
+    public void nextFloorAndSave() {
+        this.currentFloor++;
+        this.playerRepository.setPlayerCurrentFloor(this.playername, this.currentFloor);
     }
 }
