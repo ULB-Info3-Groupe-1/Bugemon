@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import ulb.models.tower.room.Room;
-import ulb.models.tower.utils.CombatFactory;
 import ulb.models.tower.utils.FloorGenerator;
+import ulb.models.tower.utils.TowerCombatFactory;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 
@@ -24,8 +24,8 @@ public class Floor {
     public Floor(Trainer playerTrainer, BugemonService bugemonService, int floorLevel) {
         this.playerTrainer = playerTrainer;
         this.floorLevel = floorLevel;
-        CombatFactory combatFactory = new CombatFactory(bugemonService);
-        this.floorGenerator = new FloorGenerator(combatFactory);
+        TowerCombatFactory combatFactory = new TowerCombatFactory(bugemonService);
+        this.floorGenerator = new FloorGenerator(combatFactory, bugemonService);
         this.currentPosition = this.floorGenerator.getRoot();
         this.floorRoot = this.floorGenerator.getRoot();
     }

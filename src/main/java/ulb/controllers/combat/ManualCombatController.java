@@ -7,11 +7,11 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
+import ulb.models.combat.factory.CombatFactory;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
 import ulb.views.ViewLoader;
@@ -32,26 +32,19 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      *
      */
     public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            InventoryService inventoryService, CombatService combatService) {
-        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+            InventoryService inventoryService, CombatFactory combatFactory) {
+        super(metaController, teamService, bugemonService, combatFactory, ViewLoader.load(ManualCombatView::new));
         this.inventoryService = inventoryService;
         this.view.setListener(this);
     }
 
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
-    public void startCombat(boolean shouldRestoreHp) {
-        this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(), this.inventoryService);
-        this.playerTrainer = this.manualPlayerTrainer;
-
-        AutoTrainer opponentTrainer = createRandomOpponent(this.manualPlayerTrainer.getTeamSize());
-
-        this.combat = this.combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
-
-        this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
-        this.pendingSteps = Collections.emptyIterator();
-        this.view.hideDialog();
-        this.view.refresh();
+    public void startCombat() {
+        ManualTrainer player = new ManualTrainer(this.teamService.getRequiredActiveTeam(), this.inventoryService);
+        AutoTrainer opponentTrainer = createRandomOpponent(player.getTeamSize());
+        Combat combat = this.combatFactory.create(player, opponentTrainer);
+        this.startCombat(combat);
     }
 
     /**

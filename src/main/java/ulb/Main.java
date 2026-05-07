@@ -10,12 +10,12 @@ import javafx.stage.Stage;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
+import ulb.models.combat.factory.StandaloneCombatFactory;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -55,9 +55,9 @@ public class Main extends Application {
         TeamService teamService = new TeamService(playerRepository, playerName);
         InventoryService inventoryService = new InventoryService(playerRepository, playerName);
         TowerService towerService = new TowerService(playerRepository, playerName);
-        CombatService combatService = new CombatService(bugemonService);
+        StandaloneCombatFactory standaloneCombatFactory = new StandaloneCombatFactory(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
-                towerService, combatService);
+                towerService, standaloneCombatFactory);
         controller.start();
     }
 }
