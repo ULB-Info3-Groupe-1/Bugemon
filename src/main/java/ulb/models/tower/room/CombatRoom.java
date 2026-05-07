@@ -1,29 +1,42 @@
 package ulb.models.tower.room;
 
 import ulb.models.combat.Combat;
-import ulb.models.tower.utils.CombatFactory;
+import ulb.models.tower.utils.TowerCombatFactory;
+import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
+import ulb.services.BugemonService;
+import ulb.services.CombatService;
 
 public final class CombatRoom extends Room {
     private final boolean isBoss;
-    private final CombatFactory combatFactory;
+    private final TowerCombatFactory combatFactory;
+    private final BugemonService bugemonService;
 
-    private final Combat combat;
+    private Combat combat;
 
-    public CombatRoom(CombatFactory combatFactory, Trainer playerTrainer, boolean isBoss) {
+    public CombatRoom(TowerCombatFactory combatFactory, BugemonService bugemonService, boolean isBoss) {
         this.combatFactory = combatFactory;
+        this.bugemonService = bugemonService;
         this.isBoss = isBoss;
-        this.combat = this.combatFactory.create(playerTrainer, this.isBoss);
     }
 
     public Combat getCombat() {
-        // Not a real getter but lazily creates the combat :))) <3 Love
-        return this.combat;
+        if (this.combat != null) {
+            return this.combat;
+        }
+        throw new IllegalStateException("CombatRoom combat not initialised yet; call getCombat(Trainer) first");
     }
 
-    @Override
-    public boolean hasPlayerWon() {
-        return this.combat.hasPlayerWon();
+    public Combat getCombat(Trainer playerTrainer) {
+        if (this.combat == null) {
+            AutoTrainer opponentTrainer = new AutoTrainer(this.isBoss
+                    ? CombatService.createRandomBossTeam(this.bugemonService.getAllDefaultBugemons(),
+                            playerTrainer.getTeamSize())
+                    : CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(),
+                            playerTrainer.getTeamSize()));
+            this.combat = this.combatFactory.create(playerTrainer, opponentTrainer);
+        }
+        return this.combat;
     }
 
     public boolean isBoss() {

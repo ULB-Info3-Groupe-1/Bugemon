@@ -17,9 +17,11 @@ import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
+import ulb.services.BugemonService;
 
 public class TestFloorGenerator {
-    private static final CombatFactory COMBAT_FACTORY_MOCK = mock(CombatFactory.class);
+    private static final TowerCombatFactory COMBAT_FACTORY_MOCK = mock(TowerCombatFactory.class);
+    private static final BugemonService BUGEMON_SERVICE_MOCK = mock(BugemonService.class);
 
     private FloorGenerator floorGenerator;
     private FloorNode root;
@@ -33,7 +35,8 @@ public class TestFloorGenerator {
 
     @Before
     public void setup() {
-        this.floorGenerator = new FloorGenerator(COMBAT_FACTORY_MOCK, null);
+        this.floorGenerator = new FloorGenerator(COMBAT_FACTORY_MOCK, BUGEMON_SERVICE_MOCK,
+                mock(ulb.models.trainer.Trainer.class));
         this.root = this.floorGenerator.getRoot();
 
         this.allNodes = new ArrayList<>();

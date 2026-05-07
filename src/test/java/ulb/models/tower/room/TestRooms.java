@@ -9,21 +9,24 @@ import org.junit.Test;
 
 import ulb.controllers.TowerController;
 import ulb.models.tower.room.Room.RoomType;
-import ulb.models.tower.utils.CombatFactory;
+import ulb.models.tower.utils.TowerCombatFactory;
+import ulb.services.BugemonService;
 
 public class TestRooms {
     @Test
     public void testCombatRoomCompletionAndType() {
-        CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom combatRoom = new CombatRoom(combatFactory, null, false);
+        TowerCombatFactory combatFactory = mock(TowerCombatFactory.class);
+        BugemonService bugemonService = mock(BugemonService.class);
+        CombatRoom combatRoom = new CombatRoom(combatFactory, bugemonService, false);
 
         assertEquals(RoomType.COMBAT, combatRoom.getType());
     }
 
     @Test
     public void testBossCombatRoomType() {
-        CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom bossRoom = new CombatRoom(combatFactory, null, true);
+        TowerCombatFactory combatFactory = mock(TowerCombatFactory.class);
+        BugemonService bugemonService = mock(BugemonService.class);
+        CombatRoom bossRoom = new CombatRoom(combatFactory, bugemonService, true);
 
         assertEquals(RoomType.BOSS, bossRoom.getType());
         assertTrue(bossRoom.isBoss());
@@ -38,8 +41,9 @@ public class TestRooms {
 
     @Test
     public void testVisitDelegatesToTowerController() {
-        CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom combatRoom = new CombatRoom(combatFactory, null, false);
+        TowerCombatFactory combatFactory = mock(TowerCombatFactory.class);
+        BugemonService bugemonService = mock(BugemonService.class);
+        CombatRoom combatRoom = new CombatRoom(combatFactory, bugemonService, false);
         RewardRoom rewardRoom = new RewardRoom();
         EmptyRoom emptyRoom = new EmptyRoom();
         TowerController towerController = mock(TowerController.class);

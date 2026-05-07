@@ -2,9 +2,9 @@ package ulb.controllers.combat;
 
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
+import ulb.models.combat.factory.CombatFactory;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.TeamService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
@@ -23,17 +23,17 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *            the application-level controller used for navigation.
      */
     public AutomaticCombatController(MetaController metaController, TeamService teamService,
-            BugemonService bugemonService, CombatService combatService) {
-        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
+            BugemonService bugemonService, CombatFactory combatFactory) {
+        super(metaController, teamService, bugemonService, combatFactory, ViewLoader.load(AutomaticCombatView::new));
     }
 
     @Override
-    public void startCombat(boolean shouldRestoreHp) {
+    public void startCombat() {
         AutoTrainer autoPlayer = new AutoTrainer(this.teamService.getRequiredActiveTeam());
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 
-        this.combat = combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
+        this.combat = this.combatFactory.create(this.playerTrainer, opponentTrainer);
 
         this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();

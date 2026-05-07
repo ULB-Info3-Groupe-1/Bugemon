@@ -49,7 +49,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void visitCombatRoom(CombatRoom combatRoom) {
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
-        Combat combat = combatRoom.getCombat();
+        Combat combat = combatRoom.getCombat(this.tower.getCurrentFloor().getPlayerTrainer());
         this.metaController.startTowerCombat(combat);
     }
 

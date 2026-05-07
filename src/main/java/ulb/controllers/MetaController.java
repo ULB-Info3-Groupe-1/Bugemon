@@ -16,8 +16,8 @@ import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
+import ulb.models.combat.factory.StandaloneCombatFactory;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -75,8 +75,7 @@ public class MetaController {
      *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
-            InventoryService inventoryService, TowerService towerService, CombatService combatService)
-            throws IOException {
+            InventoryService inventoryService, TowerService towerService) throws IOException {
         this.bugemonService = bugemonService;
 
         this.stage = primaryStage;
@@ -89,10 +88,12 @@ public class MetaController {
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
                 bugemonService);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
+
+        StandaloneCombatFactory standaloneCombatFactory = new StandaloneCombatFactory(this.bugemonService);
         this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
-                combatService);
+                standaloneCombatFactory);
         this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
-                combatService);
+                standaloneCombatFactory);
         this.levelUpController = new LevelUpController(this, bugemonService);
         this.towerController = new TowerController(this, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
@@ -196,12 +197,12 @@ public class MetaController {
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.manualCombatController.startCombat(true);
+            this.manualCombatController.startCombat();
             this.manualCombatController.show();
         });
         this.transitions.put(Window.AUTOMATIC_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.automaticCombatController.startCombat(true);
+            this.automaticCombatController.startCombat();
             this.automaticCombatController.show();
             this.automaticCombatController.startAutoRun();
         });

@@ -13,6 +13,7 @@ import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.combat.Combat;
 import ulb.models.combat.TurnResult;
 import ulb.models.combat.TurnStep;
+import ulb.models.combat.factory.CombatFactory;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
@@ -36,7 +37,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected final CombatAnimationController animationController;
     protected final TeamService teamService;
     protected final BugemonService bugemonService;
-    protected final CombatService combatService;
+    protected final CombatFactory combatFactory;
 
     protected Combat combat;
     protected Trainer playerTrainer;
@@ -44,17 +45,17 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     private Trainer pendingWinner = null;
 
     protected CombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            CombatService combatService, V view) {
+            CombatFactory combatFactory, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
         this.teamService = teamService;
         this.bugemonService = bugemonService;
-        this.combatService = combatService;
+        this.combatFactory = combatFactory;
 
         this.view.setNextListener(this);
     }
 
-    public abstract void startCombat(boolean shouldRestoreHp);
+    public abstract void startCombat();
 
     // ── Step iteration ────────────────────────────────────────────────────────
 

@@ -18,7 +18,6 @@ import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.TeamRepository;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -65,9 +64,8 @@ public class Main extends Application {
         InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
                 inventoryService);
-        CombatService combatService = new CombatService(bugemonService);
         MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
-                towerService, combatService);
+                towerService);
         controller.start();
     }
 }
