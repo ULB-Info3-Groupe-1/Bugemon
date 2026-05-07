@@ -1,6 +1,7 @@
 package ulb.models.bugemon_team;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -195,6 +196,13 @@ public class BugemonTeam implements Iterable<Bugemon> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Randomly permutes the order of the Bugemons in the team (slot positions)
+     */
+    public void shuffle() {
+        Collections.shuffle(this.team);
     }
 
     @Override

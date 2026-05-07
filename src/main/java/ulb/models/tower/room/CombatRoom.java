@@ -15,7 +15,7 @@ public final class CombatRoom extends Room {
 
     public Combat getCombat(Trainer playerTrainer) {
         // Not a real getter but lazily creates the combat :))) <3 Love
-        return this.combatFactory.create(playerTrainer);
+        return this.combatFactory.create(playerTrainer, this.isBoss);
     }
 
     public boolean isBoss() {

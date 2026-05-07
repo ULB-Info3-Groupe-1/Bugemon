@@ -15,11 +15,13 @@ public class CombatFactory {
         this.bugemonService = bugemonService;
     }
 
-    public Combat create(Trainer playerTrainer) {
+    public Combat create(Trainer playerTrainer, boolean isBoss) {
         // Later will handle the floor difficulty and boss ?
-        AutoTrainer opponentTrainer = new AutoTrainer(CombatService
-                .createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTrainer.getTeamSize()));
-
+        AutoTrainer opponentTrainer = new AutoTrainer(isBoss
+                ? CombatService.createRandomBossTeam(this.bugemonService.getAllDefaultBugemons(),
+                        playerTrainer.getTeamSize())
+                : CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(),
+                        playerTrainer.getTeamSize()));
         CombatXpDistributor combatxpDistributor = new CombatXpDistributor(this.bugemonService);
         return new Combat(combatxpDistributor, playerTrainer, opponentTrainer, EndOfCombatAction.RESTORE_HP);
     }

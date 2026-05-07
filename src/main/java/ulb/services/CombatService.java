@@ -3,12 +3,10 @@ package ulb.services;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
@@ -121,21 +119,14 @@ public class CombatService {
     }
 
     /**
-     * Determines the type effectiveness of an offensive type against a defensive type. Types follow a fixed cycle
-     * defined by the {@link BugemonType} enum declaration order: each type is strong against the type immediately
-     * before it (wrapping around) and weak against the type immediately after it.
+     * Creates a random team of Bugemons from a list of Bugemons and a team size.
      *
-     * Given {@code delta = (offensiveIdx - defensiveIdx) mod cycleSize}: delta 1 → {@link Efficiency#LOW} (weak); delta
-     * {@code cycleSize - 1} → {@link Efficiency#HIGH} (strong); any other → {@link Efficiency#NEUTRAL}.
-     *
-     * @param offensiveType
-     *            the type of the attacking Bugemon or attack
-     * @param defensiveType
-     *            the type of the defending Bugemon
-     * @return {@link Efficiency#HIGH} if the offensive type is strong against the defensive type,
-     *         {@link Efficiency#LOW} if it is weak, or {@link Efficiency#NEUTRAL} otherwise
+     * @param bugemonList
+     *            all Bugemons that can be in the team
+     * @param teamSize
+     *            the size of the team
+     * @return the created team
      */
-
     public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
         List<Bugemon> pool = new ArrayList<>(bugemonList);
         Collections.shuffle(pool);
@@ -146,13 +137,27 @@ public class CombatService {
         return team;
     }
 
-    public static BugemonTeam createBossTeam(List<Bugemon> bugemonList) {
-        final Optional<Bugemon> bossBugemon = bugemonList.stream()
-                .filter(obj -> obj.getName().equals(Configuration.Game.BOSS_NAME)).findFirst();
-        BugemonTeam bossTeam = new BugemonTeam();
+    /**
+     * Creates a random team with one boss.
+     *
+     * @param bugemonList
+     *            all Bugemons that can be in the team
+     * @param teamSize
+     *            the size of the team
+     * @return the created team
+     */
+    public static BugemonTeam createRandomBossTeam(final List<Bugemon> bugemonList, final int teamSize)
+            throws RuntimeException {
+        final Bugemon bossBugemon = bugemonList.stream()
+                .filter(obj -> obj.getName().equals(Configuration.Game.BOSS_NAME)).findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        "Boss Bugemon with name '" + Configuration.Game.BOSS_NAME + "' not found in the list."));
+        List<Bugemon> listWithoutBoss = new ArrayList<>(bugemonList);
+        listWithoutBoss.remove(bossBugemon);
 
-        bossTeam.add(bossBugemon.orElseThrow(() -> new RuntimeException(
-                "Boss Bugemon with name '" + Configuration.Game.BOSS_NAME + "' not found in the list.")));
+        BugemonTeam bossTeam = createRandomTeam(listWithoutBoss, teamSize - 1);
+        bossTeam.add(bossBugemon);
+        bossTeam.shuffle();
 
         return bossTeam;
     }
