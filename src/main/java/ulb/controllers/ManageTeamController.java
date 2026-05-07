@@ -45,7 +45,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     protected void show() {
-        this.teamService.getActiveTeam().ifPresent(team -> this.teamService.setWorkingTeamEqualsActiveTeam());
+        this.teamService.setWorkingTeamAsActiveTeam();
         this.view.refresh();
         super.show();
     }
@@ -151,7 +151,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
-        this.teamService.setWorkingTeamEqualsActiveTeam();
+        this.teamService.setWorkingTeamAsActiveTeam();
         this.view.refresh();
     }
 
