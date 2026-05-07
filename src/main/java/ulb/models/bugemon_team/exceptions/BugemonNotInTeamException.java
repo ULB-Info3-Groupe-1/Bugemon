@@ -5,4 +5,8 @@ public class BugemonNotInTeamException extends RuntimeException {
     public BugemonNotInTeamException(String message) {
         super(message);
     }
+
+    public BugemonNotInTeamException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
