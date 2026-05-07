@@ -2,7 +2,6 @@ package ulb.views.combat.components;
 
 import java.io.File;
 import java.util.List;
-import java.util.function.Consumer;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,8 +14,8 @@ import ulb.views.components.ComponentView;
 
 /**
  * Action menu listing the Bugemons available for the player to switch into. Dispatches switch selections through the
- * callback registered via {@link #setOnSwitch(Consumer)}. When not a forced switch, a back button is shown and
- * dispatches through the callback registered via {@link #setOnBack(Runnable)}.
+ * callback registered via {@link Listener#onSwitch(Bugemon)}. When not a forced switch, a back button is shown and
+ * dispatches through the callback registered via {@link Listener#onBack()}.
  */
 public class SwitchMenuView extends ComponentView {
     /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */

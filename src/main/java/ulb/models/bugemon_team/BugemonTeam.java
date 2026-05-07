@@ -15,8 +15,8 @@ import ulb.models.bugemon_team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.bugemon_team.exceptions.TeamAlreadyFullException;
 
 /**
- * A team of up to {@value #MAX_SIZE} {@link Bugemon}s. Enforces capacity and uniqueness (by ID). Implements
- * {@link Iterable} for use in enhanced for-loops.
+ * A team of up to {@value Configuration.Game#MAX_TEAM_SIZE} {@link Bugemon}s. Enforces capacity and uniqueness (by ID).
+ * Implements {@link Iterable} for use in enhanced for-loops.
  */
 public class BugemonTeam implements Iterable<Bugemon> {
 
@@ -52,7 +52,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
 
     /**
      * @throws TeamAlreadyFullException
-     *             if the team already has {@value #MAX_SIZE} members
+     *             if the team already has {@value Configuration.Game#MAX_TEAM_SIZE} members
      * @throws BugemonAlreadyPresentInTeamException
      *             if a Bugemon with the same name is already in the team
      */
@@ -90,7 +90,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
      * @param otherTeam
      *            (BugemonTeam) the other team to add the Bugemons from
      * @throws TeamAlreadyFullException
-     *             if the team already has {@value #MAX_SIZE} members
+     *             if the team already has {@value Configuration.Game#MAX_TEAM_SIZE} members
      * @throws BugemonAlreadyPresentInTeamException
      *             if a Bugemon with the same name is already in the team
      */
@@ -103,8 +103,8 @@ public class BugemonTeam implements Iterable<Bugemon> {
     /**
      * Returns the select Bugemon with the given name if it's in the team.
      *
-     * @param name
-     *            (String) the ID of the Bugemon to be returned
+     * @param bugemonName
+     *            (String) the ID/name of the Bugemon to be returned
      * @return (Bugemon) the Bugemon with the given name
      */
     public Optional<Bugemon> get(String bugemonName) {

@@ -214,7 +214,7 @@ public class StaticDataRepository extends AbstractRepository {
     /**
      * Retrieves all attacks with their effects.
      *
-     * @return (Map<String, Attack>) Map of attacks.
+     * @return map of attacks (keyed by attack id)
      */
     public Map<String, Attack> getAllAttacks() {
         Map<String, AttackInfo> infos = new LinkedHashMap<>();

@@ -23,8 +23,9 @@ import ulb.views.combat.CombatView;
 /**
  * Abstract base controller for all combat screens. Manages the step-by-step iteration of a {@link TurnResult}: each
  * call to {@link #advanceStep()} resolves the current step (KO reactions, end-of-combat detection) then delegates to
- * {@link #showNextStep()} for the next animation and dialog. Subclasses implement {@link #onStepsExhausted()} (what to
- * do when a turn is fully displayed) and {@link #onCombatEnded(Trainer)} (navigation on combat end).
+ * {@link #showNextStep(TurnStep step, Runnable viewRefresh)} for the next animation and dialog. Subclasses implement
+ * {@link #onStepsExhausted()} (what to do when a turn is fully displayed) and {@link #onCombatEnded(Trainer)}
+ * (navigation on combat end).
  *
  * @param <V>
  *            the concrete {@link CombatView} subtype managed by this controller.
