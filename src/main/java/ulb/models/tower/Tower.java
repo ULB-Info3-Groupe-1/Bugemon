@@ -36,6 +36,7 @@ public class Tower {
             }
             this.floors.add(newFloor);
         }
+        this.updateRoomsState();
     }
 
     public boolean isFinished() {

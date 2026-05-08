@@ -45,7 +45,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     @Override
     public void onRoomClicked(FloorNode node) {
-        System.out.println("Room clicked: " + node);
         this.towerService.movePlayer(this.tower, node, this);
         this.view.animatePlayerTo(node);
         this.view.refreshRoomStates();
@@ -112,10 +111,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.view.setInstruction();
         this.setupFloorStructure(this.tower.getCurrentFloor());
         this.view.setPlayerPosition(this.tower.getPlayerPosition());
-
-        // Room states drive interactivity (LOCKED rooms are disabled), so ensure they are computed
-        // before refreshing UI state.
-        this.tower.updateRoomsState();
         this.view.refreshRoomStates();
         this.show();
     }
