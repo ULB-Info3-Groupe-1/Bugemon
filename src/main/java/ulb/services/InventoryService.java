@@ -23,6 +23,19 @@ public class InventoryService {
     }
 
     /**
+     * Returns the currently loaded inventory.
+     *
+     * @throws IllegalStateException
+     *             if {@link #loadInventory()} (or {@link #resetInventory()}) has not been called yet.
+     */
+    public Inventory getRequiredInventory() {
+        if (this.inventory == null) {
+            throw new IllegalStateException("Inventory not loaded. Call loadInventory() first.");
+        }
+        return this.inventory;
+    }
+
+    /**
      * Resets the player's inventory to a default state with the default items.
      */
     public void resetInventory() {

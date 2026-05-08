@@ -68,8 +68,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void visitCombatRoom(CombatRoom combatRoom) {
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
-        Combat combat = combatRoom
-                .getCombat(new ManualTrainer(this.teamService.getRequiredActiveTeam(), this.inventoryService));
+        Combat combat = combatRoom.getCombat(new ManualTrainer(this.teamService.getRequiredActiveTeam(),
+                this.inventoryService.getRequiredInventory()));
         this.metaController.startTowerCombat(combat);
     }
 
@@ -136,7 +136,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         if (this.tower.isEmpty()) {
             LOG.info("Starting new tower run");
             this.tower = Optional.of(new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService,
-                    this.inventoryService, this.towerService.getCurrentFloor()));
+                    this.inventoryService.getRequiredInventory(), this.towerService.getCurrentFloor()));
         }
 
         this.showFloor();

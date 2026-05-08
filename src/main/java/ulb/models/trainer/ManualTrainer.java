@@ -6,9 +6,9 @@ import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.services.InventoryService;
 
 /**
  * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
@@ -21,14 +21,14 @@ import ulb.services.InventoryService;
 public class ManualTrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
-    private final InventoryService inventoryService;
+    private final Inventory inventory;
 
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
 
-    public ManualTrainer(BugemonTeam team, InventoryService inventoryService) {
+    public ManualTrainer(BugemonTeam team, Inventory inventory) {
         super(team);
-        this.inventoryService = inventoryService;
+        this.inventory = inventory;
     }
 
     /**
@@ -119,7 +119,7 @@ public class ManualTrainer extends Trainer {
      *             if the item is not in the inventory
      */
     public void registerUseItem(Item item) {
-        if (this.inventoryService.hasItem(item)) {
+        if (this.inventory.hasItem(item)) {
             this.registerAction(new TurnAction.UseItemAction(item));
         } else {
             throw new IllegalArgumentException("The player does not have the specified item.");
@@ -127,12 +127,12 @@ public class ManualTrainer extends Trainer {
     }
 
     public void useItem(Item item) {
-        this.inventoryService.useItem(item);
+        this.inventory.useItem(item);
         this.currentBugemon.apply(item.effect());
     }
 
     public Map<Item, Integer> getInventoryMap() {
-        return Collections.unmodifiableMap(this.inventoryService.getInventoryMap());
+        return Collections.unmodifiableMap(this.inventory.getMap());
     }
 
     public boolean hasPendingAction() {
