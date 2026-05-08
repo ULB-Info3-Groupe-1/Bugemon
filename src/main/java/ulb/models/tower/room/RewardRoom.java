@@ -3,8 +3,10 @@ package ulb.models.tower.room;
 public final class RewardRoom extends Room {
 
     @Override
-    public void visit(RoomVisitor roomVisitor) {
+    public void visitIfNotVisited(RoomVisitor roomVisitor) {
+        System.out.println("Reward room visited");
         roomVisitor.visitRewardRoom(this);
+        this.setVisited();
     }
 
     @Override

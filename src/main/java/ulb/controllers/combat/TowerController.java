@@ -1,7 +1,6 @@
 package ulb.controllers.combat;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,25 +14,24 @@ import ulb.models.tower.Tower;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
-import ulb.models.tower.room.Room;
 import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
 
 public class TowerController extends Controller<FloorView> implements FloorView.Listener, RoomVisitor {
     private static final Logger LOG = LoggerFactory.getLogger(TowerController.class);
 
-    private Optional<Tower> tower;
     private final TeamService teamService;
     private final BugemonService bugemonService;
     private final InventoryService inventoryService;
     private final TowerService towerService;
+
+    private Tower tower;
 
     public TowerController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
             InventoryService inventoryService, TowerService towerService) {
@@ -42,28 +40,15 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.bugemonService = bugemonService;
         this.inventoryService = inventoryService;
         this.towerService = towerService;
-        this.tower = Optional.empty();
-
         this.view.setListener(this);
     }
 
     @Override
     public void onRoomClicked(FloorNode node) {
-        Floor currentFloor = this.tower.get().getCurrentFloor();
-
-        currentFloor.moveTo(node);
-
-        FloorNode nextNode = currentFloor.getCurrentPosition();
-        Room selectedRoom = nextNode.getRoom();
-        LOG.debug("Player moved to node at position {}", nextNode.getPosition());
-        this.view.animatePlayerTo(nextNode);
-
-        if (!selectedRoom.isVisited()) {
-            LOG.debug("Visiting unvisited room of type {}", selectedRoom.getType());
-            selectedRoom.visit(this);
-            selectedRoom.setVisited();
-        }
-        this.refreshFloorViewState();
+        System.out.println("Room clicked: " + node);
+        this.towerService.movePlayer(this.tower, node, this);
+        this.view.animatePlayerTo(node);
+        this.view.refreshRoomStates();
     }
 
     public void visitCombatRoom(CombatRoom combatRoom) {
@@ -87,7 +72,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     @Override
     public void onReturnToMainMenu() {
         LOG.info("Player returned to main menu from tower");
-        this.tower = Optional.empty();
         this.metaController.endTowerFlow();
         this.metaController.onMainMenu();
     }
@@ -95,35 +79,17 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
         this.inventoryService.saveInventory();
-        if (!playerWon) {
-            try {
-                this.teamService.restoreHpActiveTeam();
-            } catch (NoActiveTeamException e) {
-                throw new IllegalStateException(
-                        "attempted to restore health of active team but there was no active team", e);
-            }
-            this.finishTowerFlow(false);
-            return;
-        }
 
-        if (this.tower.get().isFloorComplete()) {
-            if (this.tower.get().isCompleted()) {
-                LOG.info("Tower completed, switching to victory screen");
-                this.finishTowerFlow(true);
-            } else {
-                LOG.info("Floor completed, moving to next floor");
-                this.towerService.nextFloorAndSave();
-                this.tower.get().goToNextFloor();
-                this.showFloor();
-            }
+        if (!playerWon || this.tower.isFinished()) {
+            this.teamService.restoreHpActiveTeam();
+            this.endTowerFlow(playerWon);
         } else {
             this.showFloor();
         }
     }
 
-    // TODO: name is bad
-    private void finishTowerFlow(boolean playerWon) {
-        this.tower = Optional.empty();
+    private void endTowerFlow(boolean playerWon) {
+        this.tower = null;
         this.metaController.endTowerFlow();
         this.metaController.onCombatFinished(playerWon);
     }
@@ -133,12 +99,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      * immediately; combat rooms continue via callback.
      */
     public void runTower() {
-        if (this.tower.isEmpty()) {
-            LOG.info("Starting new tower run");
-            this.tower = Optional.of(new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService,
-                    this.inventoryService, this.towerService.getCurrentFloor()));
-        }
-
+        this.tower = new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService,
+                this.towerService);
         this.showFloor();
     }
 
@@ -146,14 +108,12 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      * Shows the floor map before continuing the run.
      */
     private void showFloor() {
-        Floor currentFloor = this.tower.get().getCurrentFloor();
-
-        this.view.setFloorNumber(this.tower.get().getCurrentFloorNumber());
+        this.view.setFloorNumber(this.tower.getCurrentFloorNumber());
         this.view.setInstruction();
-        this.setupFloorStructure(currentFloor);
-        this.view.setPlayerPosition(currentFloor.getCurrentPosition());
+        this.setupFloorStructure(this.tower.getCurrentFloor());
+        this.view.setPlayerPosition(this.tower.getPlayerPosition());
 
-        this.refreshFloorViewState();
+        this.view.refreshRoomStates();
         this.show();
     }
 
@@ -161,10 +121,5 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         List<FloorNode> floorNodes = currentFloor.getFloorNodes();
 
         this.view.setFloorNodes(floorNodes);
-    }
-
-    private void refreshFloorViewState() {
-        this.tower.get().updateRoomsState();
-        this.view.refreshRoomStates();
     }
 }

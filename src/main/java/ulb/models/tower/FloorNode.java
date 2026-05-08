@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import ulb.models.tower.room.Room;
 import ulb.models.utils.Position;
+import ulb.models.tower.room.RoomVisitor;
 
 public class FloorNode {
     private final Position position;
@@ -96,6 +97,10 @@ public class FloorNode {
     @Override
     public int hashCode() {
         return Objects.hash(this.position.x(), this.position.y());
+    }
+
+    public void visitIfNotVisited(RoomVisitor roomVisitor) {
+        this.room.visitIfNotVisited(roomVisitor);
     }
 
     public record RoomPosition(int row, int col) {
