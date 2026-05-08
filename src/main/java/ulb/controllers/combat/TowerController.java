@@ -113,6 +113,9 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.setupFloorStructure(this.tower.getCurrentFloor());
         this.view.setPlayerPosition(this.tower.getPlayerPosition());
 
+        // Room states drive interactivity (LOCKED rooms are disabled), so ensure they are computed
+        // before refreshing UI state.
+        this.tower.updateRoomsState();
         this.view.refreshRoomStates();
         this.show();
     }
