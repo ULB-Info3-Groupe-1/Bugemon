@@ -1,10 +1,6 @@
 package ulb.services;
 
-import java.util.Collections;
-import java.util.Map;
-
 import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon.Item;
 import ulb.repositories.PlayerRepository;
 
 public class InventoryService {
@@ -45,17 +41,5 @@ public class InventoryService {
 
     public void saveInventory() {
         this.playerRepository.saveInventory(this.playername, this.inventory);
-    }
-
-    public void useItem(Item item) {
-        this.inventory.useItem(item);
-    }
-
-    public Map<Item, Integer> getInventoryMap() {
-        return Collections.unmodifiableMap(this.inventory.getMap());
-    }
-
-    public boolean hasItem(Item item) {
-        return this.inventory.hasItem(item);
     }
 }
