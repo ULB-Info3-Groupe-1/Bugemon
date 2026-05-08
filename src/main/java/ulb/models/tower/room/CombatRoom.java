@@ -28,8 +28,10 @@ public final class CombatRoom extends Room {
     }
 
     @Override
-    public void visit(RoomVisitor roomVisitor) {
+    public void visitIfNotVisited(RoomVisitor roomVisitor) {
+        System.out.println("Combat room visited");
         roomVisitor.visitCombatRoom(this);
+        this.setVisited();
     }
 
     @Override

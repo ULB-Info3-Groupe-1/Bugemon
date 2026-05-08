@@ -26,16 +26,13 @@ public class TestTowerService {
     @Test
     public void testLoadTowerProgress() {
         when(this.playerRepo.getPlayerCurrentFloor(PLAYER)).thenReturn(5);
-
-        this.towerService.loadTowerProgress();
-
         assertEquals(5, this.towerService.getCurrentFloor());
     }
 
     @Test
     public void testClearTowerProgress() {
+        when(this.playerRepo.getPlayerCurrentFloor(PLAYER)).thenReturn(Configuration.Game.FLOOR_MIN);
         this.towerService.clearTowerProgress();
-
         assertEquals(Configuration.Game.FLOOR_MIN, this.towerService.getCurrentFloor());
         verify(this.playerRepo).setPlayerCurrentFloor(PLAYER, Configuration.Game.FLOOR_MIN);
     }

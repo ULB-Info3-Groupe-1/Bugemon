@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import ulb.models.tower.room.Room;
+import ulb.models.tower.room.RoomVisitor;
 import ulb.models.tower.utils.CombatFactory;
 import ulb.models.tower.utils.FloorGenerator;
 import ulb.models.trainer.Trainer;
@@ -92,5 +93,9 @@ public class Floor {
 
     public Trainer getPlayerTrainer() {
         return this.playerTrainer;
+    }
+
+    public void visitCurrentRoomIfNotVisited(RoomVisitor roomVisitor) {
+        this.currentPosition.visitIfNotVisited(roomVisitor);
     }
 }

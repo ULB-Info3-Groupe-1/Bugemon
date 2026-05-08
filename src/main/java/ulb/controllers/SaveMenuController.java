@@ -46,7 +46,6 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
     public void onContinue() {
         LOG.info("Continuing game - loading player data");
         this.teamService.loadTeamsAndActiveTeam();
-        this.towerService.loadTowerProgress();
         this.inventoryService.loadInventory();
         this.metaController.onMainMenu();
     }
