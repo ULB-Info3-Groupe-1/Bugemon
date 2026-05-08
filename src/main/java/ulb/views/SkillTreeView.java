@@ -59,7 +59,7 @@ public class SkillTreeView extends View {
         this.renderNode(root);
 
         // AI fix to place the screen at the center
-        float[] maxCoords = new float[] { 0, 0 };
+        float[] maxCoords = new float[]{0, 0};
         this.collectMaxCoords(root, maxCoords);
         double treeWidth = (maxCoords[0] + 1) * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
         double treeHeight = (maxCoords[1] + 1) * (NODE_HEIGHT + VERTICAL_SPACING) - VERTICAL_SPACING;
@@ -110,9 +110,6 @@ public class SkillTreeView extends View {
     }
 
     private void renderNode(Node node) {
-        double pixelX = node.x * (NODE_WIDTH + HORIZONTAL_SPACING);
-        double pixelY = node.y * (NODE_HEIGHT + VERTICAL_SPACING);
-
         // seen as a box
         HBox skillBox = new HBox();
         skillBox.getStyleClass().add("action-menu");
@@ -125,6 +122,9 @@ public class SkillTreeView extends View {
         label.getStyleClass().add("section-label");
 
         // placing it properly
+        double pixelX = node.x * (NODE_WIDTH + HORIZONTAL_SPACING);
+        double pixelY = node.y * (NODE_HEIGHT + VERTICAL_SPACING);
+
         StackPane skillNode = new StackPane(skillBox, label);
         skillNode.setPrefSize(NODE_WIDTH, NODE_HEIGHT);
         skillNode.setLayoutX(pixelX);
