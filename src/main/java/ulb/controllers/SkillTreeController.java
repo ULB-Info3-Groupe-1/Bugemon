@@ -25,7 +25,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
 
     @Override
     public void onReturnToMainMenu() {
-        this.metaController.onReturnToMainMenu();
+        this.metaController.onMainMenu();
     }
 
     private Node buildDummyTree() {

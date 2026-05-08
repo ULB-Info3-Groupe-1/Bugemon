@@ -56,6 +56,11 @@ public class MainMenuView extends View {
         this.listener.onSaveMenuReturnButton();
     }
 
+    @FXML
+    private void onQuitClicked() {
+        this.listener.onQuit();
+    }
+
     @Override
     public String getPath() {
         return Configuration.Paths.Fxml.MAIN_MENU_VIEW;
@@ -82,5 +87,7 @@ public class MainMenuView extends View {
         void onSaveMenuReturnButton();
 
         void onSkillTree();
+
+        void onQuit();
     }
 }
