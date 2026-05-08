@@ -4,7 +4,9 @@ public final class RewardRoom extends Room {
 
     @Override
     public void visitIfNotVisited(RoomVisitor roomVisitor) {
-        System.out.println("Reward room visited");
+        if (this.isVisited()) {
+            return;
+        }
         roomVisitor.visitRewardRoom(this);
         this.setVisited();
     }

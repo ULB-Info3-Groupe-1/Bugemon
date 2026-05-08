@@ -4,7 +4,9 @@ public final class EmptyRoom extends Room {
 
     @Override
     public void visitIfNotVisited(RoomVisitor roomVisitor) {
-        System.out.println("Empty room visited");
+        if (this.isVisited()) {
+            return;
+        }
         roomVisitor.visitEmptyRoom(this);
         this.setVisited();
     }

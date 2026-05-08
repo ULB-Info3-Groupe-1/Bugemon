@@ -102,7 +102,14 @@ public class Tower {
         return this.getCurrentFloorNumber() < Configuration.Game.FLOOR_MAX;
     }
 
-    private void updateRoomsState() {
+    /**
+     * Recomputes every room's {@link RoomState} based on the current player position.
+     *
+     * <p>
+     * The view disables interaction for {@code LOCKED} rooms, so this must be called at least once before the floor is
+     * displayed.
+     */
+    public void updateRoomsState() {
         Floor floor = this.currentFloor;
         Set<FloorNode> reachableNodes = new HashSet<>(floor.getReachableNodes());
 
