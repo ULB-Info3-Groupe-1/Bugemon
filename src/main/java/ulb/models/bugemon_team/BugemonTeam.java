@@ -62,7 +62,7 @@ public class BugemonTeam implements Iterable<Bugemon> {
         }
 
         if (this.contains(bugemon)) {
-            throw new BugemonAlreadyPresentInTeamException("This Bugemon already in the team!");
+            throw new BugemonAlreadyPresentInTeamException("This Bugemon is already in the team!");
         }
 
         this.team.add(bugemon);
