@@ -3,7 +3,6 @@ package ulb.models.skills;
 import java.util.List;
 
 import ulb.models.bugemon.effect.Effect;
-import ulb.models.utils.Position;
 
 public class Skill {
 

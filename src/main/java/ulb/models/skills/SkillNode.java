@@ -3,7 +3,7 @@ package ulb.models.skills;
 import ulb.models.utils.Position;
 
 public class SkillNode {
-    
+
     private Skill skill;
 
     private Position position;
@@ -21,9 +21,8 @@ public class SkillNode {
         return this.position;
     }
 
-
     // setters
-    
+
     public void setSkill(Skill skill) {
         this.skill = skill;
     }

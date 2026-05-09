@@ -5,7 +5,6 @@ import java.util.List;
 
 import ulb.Configuration;
 import ulb.models.bugemon.effect.Effect;
-import ulb.models.utils.Position;
 
 public final class SkillBuilder {
 

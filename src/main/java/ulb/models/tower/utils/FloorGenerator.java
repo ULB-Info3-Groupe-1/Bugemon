@@ -32,7 +32,7 @@ public class FloorGenerator {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final Random random;
     private final CombatFactory combatFactory;
