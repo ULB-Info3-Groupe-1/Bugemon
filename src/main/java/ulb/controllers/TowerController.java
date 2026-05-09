@@ -1,12 +1,10 @@
-package ulb.controllers.combat;
+package ulb.controllers;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.controllers.Controller;
-import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;

@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 
-import ulb.controllers.combat.TowerController;
+import ulb.controllers.TowerController;
 import ulb.models.tower.room.Room.RoomType;
 import ulb.models.tower.utils.CombatFactory;
 
