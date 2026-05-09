@@ -127,7 +127,7 @@ public class MetaController {
     }
 
     public void onCombatDefeatRetry() {
-        this.onCreateTeam();
+        this.onEditTeam();
     }
 
     public void onCreateTeam() {
