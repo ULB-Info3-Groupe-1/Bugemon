@@ -37,7 +37,12 @@ public class DatabaseColumns {
     public static final String COL_ATTACK_ID_1 = "attack_1_id";
     public static final String COL_ATTACK_ID_2 = "attack_2_id";
     public static final String COL_ATTACK_ID_3 = "attack_3_id";
+    public static final String COL_EFFECT_TYPE = "effect_type";
     public static final String COL_EFFECT_TARGET = "effect_target";
+    public static final String COL_EFFECT_VALUE = "effect_value";
+    public static final String COL_EFFECT_STAT = "effect_stat";
+    public static final String COL_EFFECT_MODIFIER = "effect_modifier";
+    public static final String COL_EFFECT_DURATION = "effect_duration";
     public static final String COL_ITEM_ID = "item_id";
     public static final String COL_CATEGORY = "category";
     public static final String COL_VALUE = "value";

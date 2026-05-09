@@ -233,7 +233,7 @@ public class StaticDataRepository extends AbstractRepository {
                 }
             });
 
-            String effType = rs.getString("effect_type");
+            String effType = rs.getString(DatabaseColumns.COL_EFFECT_TYPE);
             if (effType != null) {
                 effects.get(id).add(this.buildEffect(rs, effType));
             }
@@ -251,10 +251,11 @@ public class StaticDataRepository extends AbstractRepository {
         switch (effectType) {
             case "EffectStatModifier" :
                 target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                EffectStat stat = DatabaseHelper.getEnumOrNull(rs, "effect_stat", EffectStat.class);
-                String duration = (rs.getString("effect_duration") != null) ? rs.getString("effect_duration")
+                EffectStat stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, EffectStat.class);
+                String duration = (rs.getString(DatabaseColumns.COL_EFFECT_DURATION) != null)
+                        ? rs.getString(DatabaseColumns.COL_EFFECT_DURATION)
                         : "0_tour";
-                return new EffectStatModifier(target, stat, rs.getInt("effect_modifier"),
+                return new EffectStatModifier(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
                         EffectDuration.fromLabel(duration));
 
             case "EffectHeal" :

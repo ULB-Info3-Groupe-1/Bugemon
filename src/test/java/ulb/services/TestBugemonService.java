@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.repositories.BugemonRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -26,15 +27,17 @@ public class TestBugemonService {
     private static final String PLAYER = "Player1";
     private StaticDataRepository staticRepo;
     private PlayerRepository playerRepo;
+    private BugemonRepository bugemonRepo;
     private BugemonService bugemonService;
 
     @Before
     public void setUp() {
         this.staticRepo = mock(StaticDataRepository.class);
         this.playerRepo = mock(PlayerRepository.class);
+        this.bugemonRepo = mock(BugemonRepository.class);
 
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(new ArrayList<>());
-        this.bugemonService = new BugemonService(this.staticRepo, this.playerRepo, PLAYER);
+        this.bugemonService = new BugemonService(this.staticRepo, this.playerRepo, this.bugemonRepo, PLAYER);
     }
 
     @Test
@@ -49,7 +52,7 @@ public class TestBugemonService {
         List<Bugemon> cache = new ArrayList<>(List.of(bugemon));
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(cache);
 
-        BugemonService serviceWithData = new BugemonService(this.staticRepo, this.playerRepo, PLAYER);
+        BugemonService serviceWithData = new BugemonService(this.staticRepo, this.playerRepo, this.bugemonRepo, PLAYER);
         CreateBugemonDTO dto = new CreateBugemonDTO("Pikachu", null, null, 10, 10, 10, 10, false, null, null, null);
 
         assertThrows(BugemonNameAlreadyExistsException.class, () -> serviceWithData.saveNewBugemon(dto));
@@ -64,7 +67,7 @@ public class TestBugemonService {
 
         assertTrue(this.bugemonService.hasPendingLevelUps());
         verify(bugemon).restoreHp();
-        verify(this.playerRepo).updatePlayerBugemon(any());
+        verify(this.bugemonRepo).updatePlayerBugemon(any());
     }
 
 }

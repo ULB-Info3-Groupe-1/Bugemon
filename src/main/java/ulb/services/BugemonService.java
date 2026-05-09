@@ -9,6 +9,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.level_up.LevelUp;
+import ulb.repositories.BugemonRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -19,7 +20,7 @@ import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 public class BugemonService {
 
     private final StaticDataRepository staticDataRepository;
-    private final PlayerRepository playerRepository;
+    private final BugemonRepository bugemonRepository;
     private final String playername;
 
     private Queue<LevelUp> levelUps = new ArrayDeque<>();
@@ -28,10 +29,10 @@ public class BugemonService {
     private final List<Bugemon> allDefaultBugemonsCache;
 
     public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
-            String playername) {
+            BugemonRepository bugemonRepository, String playername) {
         this.playername = playername;
         this.staticDataRepository = staticDataRepository;
-        this.playerRepository = playerRepository;
+        this.bugemonRepository = bugemonRepository;
         this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
     }
 
@@ -83,7 +84,7 @@ public class BugemonService {
      *            the bugemon to save
      */
     public void saveBugemonState(Bugemon bugemon) {
-        this.playerRepository.updatePlayerBugemon(
+        this.bugemonRepository.updatePlayerBugemon(
                 new PlayerBugemonDTO(this.playername, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
@@ -122,7 +123,7 @@ public class BugemonService {
     }
 
     public void clearAllPlayerBugemons() {
-        this.playerRepository.removeAllPlayerBugemon(this.playername);
+        this.bugemonRepository.removeAllPlayerBugemon(this.playername);
     }
 
 }
