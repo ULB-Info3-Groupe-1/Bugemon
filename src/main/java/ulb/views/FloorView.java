@@ -15,11 +15,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
+import ulb.Configuration;
 import ulb.models.tower.FloorNode;
 import ulb.views.components.RoomView;
 
 /**
- * View for the map of a NO Tower floor. Displays the layout of rooms and connections, and allows the player to click on
+ * View for the map of a Tower floor. Displays the layout of rooms and connections, and allows the player to click on
  * rooms.
  */
 public class FloorView extends View {
@@ -90,7 +91,7 @@ public class FloorView extends View {
     }
 
     public void setFloorNumber(int floorNumber) {
-        this.floorNumberLabel.setText("NO" + floorNumber);
+        this.floorNumberLabel.setText(Configuration.Ui.FLOOR_PREFIX + floorNumber);
     }
 
     public void setInstruction() {

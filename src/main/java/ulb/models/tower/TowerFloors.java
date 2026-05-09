@@ -7,7 +7,7 @@ import ulb.models.tower.exceptions.FloorLevelAlreadyExistsException;
 import ulb.models.tower.exceptions.FloorLevelNotFoundException;
 
 /**
- * A list of {@link Floor}s. It enforces unique floor levels, ensuring that a specific level (such as NO2 or NO3) cannot
+ * A list of {@link Floor}s. It enforces unique floor levels, ensuring that a specific level (such as 2 or 3) cannot
  * appear more than once in the tower.
  */
 public class TowerFloors extends ArrayList<Floor> {

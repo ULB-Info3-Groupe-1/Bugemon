@@ -42,7 +42,7 @@ public class MetaController {
         CREATE_BUGEMON,
         MANUAL_COMBAT,
         AUTOMATIC_COMBAT,
-        NOTOWER,
+        TOWER,
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
         LEVEL_UP,
@@ -148,7 +148,7 @@ public class MetaController {
 
     public void onAllPendingLevelUpsConsumed() {
         if (this.isTowerActive()) {
-            this.switchTo(Window.NOTOWER);
+            this.switchTo(Window.TOWER);
         } else {
             this.switchTo(Window.MAIN_MENU);
         }
@@ -163,7 +163,7 @@ public class MetaController {
     }
 
     public void onTower() {
-        this.switchTo(Window.NOTOWER);
+        this.switchTo(Window.TOWER);
     }
 
     public void onEditTeam() {
@@ -206,7 +206,7 @@ public class MetaController {
             this.automaticCombatController.show();
             this.automaticCombatController.startAutoRun();
         });
-        this.transitions.put(Window.NOTOWER, () -> {
+        this.transitions.put(Window.TOWER, () -> {
             this.isTowerActive = true;
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
             this.towerController.runTower();
