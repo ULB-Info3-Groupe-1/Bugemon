@@ -30,6 +30,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
     private ManualTrainer manualPlayerTrainer;
     private final InventoryService inventoryService;
+    private final SkillService skillService;
 
     /**
      * Constructs a {@code ManualCombatController} and wires itself as the view listener.
@@ -40,6 +41,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         super(metaController, teamService, bugemonService, combatService, skillService.getSkills(StatBonusEffect.class),
                 ViewLoader.load(ManualCombatView::new));
         this.inventoryService = inventoryService;
+        this.skillService = skillService;
         this.view.setListener(this);
     }
 
@@ -76,6 +78,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         }
 
         this.manualPlayerTrainer = playerManualTrainer;
+        this.manualPlayerTrainer.setUnlockedSkills(this.skillService.getSkills(StatBonusEffect.class));
         this.playerTrainer = this.manualPlayerTrainer;
         this.combat = newCombat;
         Trainer opponentTrainer = this.combat.getOpponentTrainer();

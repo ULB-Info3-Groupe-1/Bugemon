@@ -20,7 +20,7 @@ public class TestTowerService {
     @Before
     public void setUp() {
         this.playerRepo = mock(PlayerRepository.class);
-        this.towerService = new TowerService(this.playerRepo, PLAYER, null, null, null);
+        this.towerService = new TowerService(this.playerRepo, PLAYER, null, null, null, null);
     }
 
     @Test
