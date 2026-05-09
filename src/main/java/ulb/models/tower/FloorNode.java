@@ -95,7 +95,7 @@ public class FloorNode {
             return false;
         }
         FloorNode other = (FloorNode) obj;
-        return this.getPosition() == other.getPosition();
+        return this.position.equals(other.position);
     }
 
     @Override

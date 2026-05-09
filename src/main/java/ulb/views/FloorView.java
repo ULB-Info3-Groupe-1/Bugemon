@@ -208,7 +208,7 @@ public class FloorView extends View {
         return MAP_OFFSET_Y + (row * (ROOM_HEIGHT + VERTICAL_SPACING));
     }
 
-    public void addConnectionBetweenRooms(RoomView source, RoomView target) {
+    private void addConnectionBetweenRooms(RoomView source, RoomView target) {
         // Calculate the center of each room
         double sourceX = source.getLayoutX() + ROOM_WIDTH / 2;
         double sourceY = source.getLayoutY() + ROOM_HEIGHT / 2;
