@@ -14,6 +14,7 @@ import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
+import ulb.models.utils.Position;
 
 public class FloorGenerator {
 
@@ -80,7 +81,8 @@ public class FloorGenerator {
         this.bossNode = null;
         this.visitedNode = new HashSet<>();
 
-        this.root = new FloorNode(GRID_SIZE / 2, GRID_SIZE / 2, new EmptyRoom(), new ArrayList<>(), null, 0);
+        this.root = new FloorNode(new Position(GRID_SIZE / 2, GRID_SIZE / 2), new EmptyRoom(), new ArrayList<>(), null,
+                0);
     }
 
     private void generateFloor() {
@@ -91,7 +93,8 @@ public class FloorGenerator {
 
         for (int i = 0; i < this.branchCount && i < rootNeighbors.size(); i++) {
             FloorNode tmp = rootNeighbors.get(i);
-            FloorNode child = new FloorNode(tmp.getX(), tmp.getY(), null, new ArrayList<>(), this.root, 1);
+            FloorNode child = new FloorNode(new Position(tmp.getX(), tmp.getY()), null, new ArrayList<>(), this.root,
+                    1);
             this.visitedNode.add(child);
             this.root.addChild(child);
         }
@@ -135,7 +138,8 @@ public class FloorGenerator {
             int nextY = y + dir[1];
 
             if (nextX >= 0 && nextX < GRID_SIZE && nextY >= 0 && nextY < GRID_SIZE) {
-                FloorNode neighbor = new FloorNode(nextX, nextY, null, new ArrayList<>(), node, node.getDepth() + 1);
+                FloorNode neighbor = new FloorNode(new Position(nextX, nextY), null, new ArrayList<>(), node,
+                        node.getDepth() + 1);
                 if (!this.visitedNode.contains(neighbor)) {
                     neighbors.add(neighbor);
                 }
