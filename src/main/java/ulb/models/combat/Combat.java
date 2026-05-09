@@ -10,8 +10,8 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.trainer.AITrainer;
 import ulb.models.trainer.AutoTrainer;
-import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.models.trainer.TurnAction;
 import ulb.services.CombatService;
@@ -59,6 +59,8 @@ public class Combat {
         LOG.debug("New turn — player: {} ({}hp) vs opponent: {} ({}hp)", this.playerTrainer.getCurrentBugemonName(),
                 this.playerTrainer.getCurrentBugemonHp(), this.opponentTrainer.getCurrentBugemonName(),
                 this.opponentTrainer.getCurrentBugemonHp());
+
+        this.syncOpponentAiState();
 
         this.markParticipation();
 
@@ -131,11 +133,11 @@ public class Combat {
 
     private void resolveItem(TurnAction playerAction, TurnAction opponentAction) {
         if (playerAction instanceof TurnAction.UseItemAction(Item useItemAction)) {
-            this.handleItem((ManualTrainer) this.playerTrainer, useItemAction);
+            this.handleItem(this.playerTrainer, useItemAction);
             this.turnResult.addStep(new TurnStep.ItemStep(this.playerTrainer, useItemAction));
         }
         if (opponentAction instanceof TurnAction.UseItemAction(Item useItemAction)) {
-            this.handleItem((ManualTrainer) this.opponentTrainer, useItemAction);
+            this.handleItem(this.opponentTrainer, useItemAction);
             this.turnResult.addStep(new TurnStep.ItemStep(this.opponentTrainer, useItemAction));
         }
     }
@@ -191,8 +193,8 @@ public class Combat {
         }
     }
 
-    private void handleItem(ManualTrainer trainer, Item item) {
-        trainer.useItem(item);
+    private void handleItem(Trainer trainer, Item item) {
+        trainer.applyPassiveAction(new TurnAction.UseItemAction(item));
     }
 
     private void handleSwitch(Trainer trainer, Bugemon bugemon) {
@@ -263,6 +265,18 @@ public class Combat {
 
     private Trainer getOtherTrainer(Trainer trainer) {
         return trainer.equals(this.playerTrainer) ? this.opponentTrainer : this.playerTrainer;
+    }
+
+    /**
+     * Synchronizes the opponent AI trainer with the current player state.
+     *
+     * In manual combat, the player side is a ManualTrainer and only the opponent can be AI.
+     */
+    private void syncOpponentAiState() {
+        if (this.opponentTrainer instanceof AITrainer aiTrainer) {
+            aiTrainer.setOpponentTrainer(this.playerTrainer);
+            aiTrainer.setOpponentActiveBugemon(this.playerTrainer.getCurrentBugemon());
+        }
     }
 
     @FunctionalInterface

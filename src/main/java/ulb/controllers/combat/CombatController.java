@@ -186,6 +186,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      *            the size of the player's team, used to size the opponent's team.
      */
     protected AutoTrainer createRandomOpponent(int playerTeamSize) {
+        // TODO: not used in ManualCombatController anymore
         return new AutoTrainer(
                 CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTeamSize));
     }
