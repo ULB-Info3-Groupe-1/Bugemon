@@ -1,6 +1,8 @@
 package ulb.models.trainer;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,6 +11,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.Skill;
 
 /**
  * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
@@ -22,6 +25,7 @@ public class ManualTrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
     private final Inventory inventory;
+    private final List<Skill> unlockedStatBonusSkills = new ArrayList<>();
 
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
@@ -29,6 +33,12 @@ public class ManualTrainer extends Trainer {
     public ManualTrainer(BugemonTeam team, Inventory inventory) {
         super(team);
         this.inventory = inventory;
+    }
+
+    public ManualTrainer(BugemonTeam team, Inventory inventory, List<Skill> unlockedStatBonusSkills) {
+        super(team);
+        this.inventory = inventory;
+        this.unlockedStatBonusSkills.addAll(unlockedStatBonusSkills);
     }
 
     /**
@@ -159,5 +169,12 @@ public class ManualTrainer extends Trainer {
 
     public Map<Item, Integer> getInventoryMap() {
         return Collections.unmodifiableMap(this.inventory.getMap());
+    }
+
+    // Skill management
+
+    public void setUnlockedSkills(List<Skill> unlockedSkills) {
+        this.unlockedStatBonusSkills.clear();
+        this.unlockedStatBonusSkills.addAll(unlockedSkills);
     }
 }

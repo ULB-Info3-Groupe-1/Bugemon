@@ -71,7 +71,7 @@ public class Main extends Application {
         InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName,
                 skillService);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
-                inventoryService);
+                inventoryService, skillService);
         CombatService combatService = new CombatService(bugemonService, skillService);
         MetaController controller = new MetaController(stage, bugemonService, playerService, teamService, towerService,
                 inventoryService, combatService, skillService);

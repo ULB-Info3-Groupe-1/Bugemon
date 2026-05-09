@@ -74,7 +74,7 @@ public class AITrainer extends Trainer {
     }
 
     public void useItem(Item item) {
-        this.inventoryService.useItem(item);
+        this.inventoryService.getInventory().useItem(item);
         this.currentBugemon.apply(item.effect());
     }
 
