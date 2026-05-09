@@ -7,27 +7,36 @@ import ulb.Configuration;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
+import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
+import ulb.services.TowerService;
 
 public class Tower {
 
+    private final TowerService towerService;
     private final TowerFloors floors;
     private final Trainer playerTrainer;
-    private int currentFloor;
+    private Floor currentFloor;
     private boolean isFinished = false;
 
     public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
-            int currentFloor) {
-        this.currentFloor = currentFloor;
+            TowerService towerService) {
+        this.towerService = towerService;
         this.playerTrainer = new ManualTrainer(playerTeam, inventoryService);
 
+        int currentFloorLevel = this.towerService.getCurrentFloor();
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {
-            this.floors.add(new Floor(this.playerTrainer, bugemonService, i));
+            Floor newFloor = new Floor(this.playerTrainer, bugemonService, i);
+            if (i == currentFloorLevel) {
+                this.currentFloor = newFloor;
+            }
+            this.floors.add(newFloor);
         }
+        this.updateRoomsState();
     }
 
     public boolean isFinished() {
@@ -35,41 +44,78 @@ public class Tower {
     }
 
     public boolean isCompleted() {
-        return this.isFloorComplete() && !this.hasNextFloor();
+        return this.isCurrentFloorComplete() && !this.hasNextFloor();
     }
 
-    public Trainer getPlayerTrainer() {
-        return this.playerTrainer;
-    }
-
-    public int getCurrentFloorNumber() {
-        return this.currentFloor;
-    }
-
-    public boolean isFloorComplete() {
-        return this.getCurrentFloor().isComplete();
+    public FloorNode getPlayerPosition() {
+        return this.currentFloor.getCurrentPosition();
     }
 
     public Floor getCurrentFloor() {
-        return this.floors.getFloorByLevel(this.currentFloor);
+        return this.currentFloor;
     }
 
-    public void goToNextFloor() {
-        if (!this.getCurrentFloor().isComplete()) {
+    public int getCurrentFloorNumber() {
+        return this.currentFloor.getFloorLevel();
+    }
+
+    /**
+     * Move the player to the given node from the floor it is currently on
+     *
+     * @param node
+     *            The node to move the player to
+     */
+    public void currentFloorMoveTo(FloorNode node) {
+        this.currentFloor.moveTo(node);
+    }
+
+    /**
+     * Visit the current room if it has not been visited yet
+     */
+    public void visitCurrentRoom(RoomVisitor roomVisitor) {
+        this.currentFloor.visitCurrentRoom(roomVisitor);
+        this.updateRoomsState();
+    }
+
+    public void checkFloorCompletion() {
+        if (this.isCurrentFloorComplete()) {
+            if (this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
+                this.isFinished = true;
+            } else {
+                this.goToNextFloor();
+            }
+        }
+        this.updateRoomsState();
+    }
+
+    boolean isCurrentFloorComplete() {
+        return this.currentFloor.isComplete();
+    }
+
+    void goToNextFloor() {
+        if (!this.isCurrentFloorComplete()) {
             throw new IllegalStateException("Current floor is not complete");
         }
         if (!this.hasNextFloor()) {
             throw new IllegalStateException("No more floors");
         }
-        this.currentFloor++;
+        this.currentFloor = this.floors.getFloorByLevel(this.getCurrentFloorNumber() + 1);
+        this.towerService.saveFloor(this.getCurrentFloorNumber());
     }
 
     private boolean hasNextFloor() {
-        return this.currentFloor < Configuration.Game.FLOOR_MAX;
+        return this.getCurrentFloorNumber() < Configuration.Game.FLOOR_MAX;
     }
 
-    public void updateRoomsState() {
-        Floor floor = this.getCurrentFloor();
+    /**
+     * Recomputes every room's {@link RoomState} based on the current player position.
+     *
+     * <p>
+     * The view disables interaction for {@code LOCKED} rooms, so this must be called at least once before the floor is
+     * displayed.
+     */
+    private void updateRoomsState() {
+        Floor floor = this.currentFloor;
         Set<FloorNode> reachableNodes = new HashSet<>(floor.getReachableNodes());
 
         for (FloorNode node : floor.getFloorNodes()) {

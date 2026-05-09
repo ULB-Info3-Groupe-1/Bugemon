@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 
-import ulb.controllers.combat.TowerController;
+import ulb.controllers.TowerController;
 import ulb.models.tower.room.Room.RoomType;
 import ulb.models.tower.utils.CombatFactory;
 
@@ -15,7 +15,7 @@ public class TestRooms {
     @Test
     public void testCombatRoomCompletionAndType() {
         CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom combatRoom = new CombatRoom(combatFactory, false);
+        CombatRoom combatRoom = new CombatRoom(combatFactory, null, false);
 
         assertEquals(RoomType.COMBAT, combatRoom.getType());
     }
@@ -23,7 +23,7 @@ public class TestRooms {
     @Test
     public void testBossCombatRoomType() {
         CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom bossRoom = new CombatRoom(combatFactory, true);
+        CombatRoom bossRoom = new CombatRoom(combatFactory, null, true);
 
         assertEquals(RoomType.BOSS, bossRoom.getType());
         assertTrue(bossRoom.isBoss());
@@ -39,14 +39,20 @@ public class TestRooms {
     @Test
     public void testVisitDelegatesToTowerController() {
         CombatFactory combatFactory = mock(CombatFactory.class);
-        CombatRoom combatRoom = new CombatRoom(combatFactory, false);
+        CombatRoom combatRoom = new CombatRoom(combatFactory, null, false);
         RewardRoom rewardRoom = new RewardRoom();
         EmptyRoom emptyRoom = new EmptyRoom();
         TowerController towerController = mock(TowerController.class);
 
-        combatRoom.visit(towerController);
-        rewardRoom.visit(towerController);
-        emptyRoom.visit(towerController);
+        if (!combatRoom.isVisited()) {
+            combatRoom.visit(towerController);
+        }
+        if (!rewardRoom.isVisited()) {
+            rewardRoom.visit(towerController);
+        }
+        if (!emptyRoom.isVisited()) {
+            emptyRoom.visit(towerController);
+        }
 
         verify(towerController).visitCombatRoom(combatRoom);
         verify(towerController).visitRewardRoom(rewardRoom);

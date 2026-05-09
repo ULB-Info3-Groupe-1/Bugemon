@@ -12,7 +12,6 @@ import ulb.controllers.combat.AutomaticCombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
-import ulb.controllers.combat.TowerController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
@@ -95,7 +94,7 @@ public class MetaController {
         this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
                 combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
-        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService, towerService);
+        this.towerController = new TowerController(this, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
@@ -209,7 +208,7 @@ public class MetaController {
         this.transitions.put(Window.TOWER, () -> {
             this.isTowerActive = true;
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.towerController.runTower();
+            this.towerController.show();
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();

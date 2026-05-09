@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import ulb.models.tower.room.Room;
+import ulb.models.tower.room.RoomVisitor;
 import ulb.models.tower.utils.CombatFactory;
 import ulb.models.tower.utils.FloorGenerator;
 import ulb.models.trainer.Trainer;
@@ -25,13 +26,13 @@ public class Floor {
         this.playerTrainer = playerTrainer;
         this.floorLevel = floorLevel;
         CombatFactory combatFactory = new CombatFactory(bugemonService);
-        this.floorGenerator = new FloorGenerator(combatFactory);
+        this.floorGenerator = new FloorGenerator(combatFactory, playerTrainer);
         this.currentPosition = this.floorGenerator.getRoot();
         this.floorRoot = this.floorGenerator.getRoot();
     }
 
     public boolean isComplete() {
-        return this.currentPosition.equals(this.floorGenerator.getBossNode());
+        return this.floorGenerator.hasPlayerWon();
     }
 
     public List<Room> getNextRooms() {
@@ -92,5 +93,13 @@ public class Floor {
 
     public Trainer getPlayerTrainer() {
         return this.playerTrainer;
+    }
+
+    public void visitCurrentRoom(RoomVisitor roomVisitor) {
+        Room room = this.getCurrentRoom();
+        if (room.isVisited()) {
+            return;
+        }
+        this.currentPosition.visit(roomVisitor);
     }
 }

@@ -14,6 +14,7 @@ import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
+import ulb.models.trainer.Trainer;
 import ulb.models.utils.Position;
 
 public class FloorGenerator {
@@ -47,17 +48,17 @@ public class FloorGenerator {
 
     private Set<FloorNode> visitedNode;
 
-    public FloorGenerator(CombatFactory combatFactory) {
+    public FloorGenerator(CombatFactory combatFactory, Trainer playerTrainer) {
         this.combatFactory = combatFactory;
         this.random = new Random();
-        this.generateNewFloor();
+        this.generateNewFloor(playerTrainer);
     }
 
-    public void generateNewFloor() {
+    public void generateNewFloor(Trainer playerTrainer) {
         for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
             this.initialize();
             this.generateFloor();
-            if (this.placeInterestPoints()) {
+            if (this.placeInterestPoints(playerTrainer)) {
                 return;
             }
         }
@@ -69,8 +70,8 @@ public class FloorGenerator {
         return this.root;
     }
 
-    public FloorNode getBossNode() {
-        return this.bossNode;
+    public boolean hasPlayerWon() {
+        return this.bossNode.hasPlayerWon();
     }
 
     private void initialize() {
@@ -148,12 +149,12 @@ public class FloorGenerator {
         return neighbors;
     }
 
-    private boolean placeInterestPoints() {
-        this.bossNode.setRoom(new CombatRoom(this.combatFactory, true));
+    private boolean placeInterestPoints(Trainer playerTrainer) {
+        this.bossNode.setRoom(new CombatRoom(this.combatFactory, playerTrainer, true));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();
 
-        List<FloorNode> combatNodes = this.placeCombatRooms(remaining);
+        List<FloorNode> combatNodes = this.placeCombatRooms(remaining, playerTrainer);
         int rewardPlaced = this.placeRewardRooms(remaining, combatNodes);
         this.fillEmptyRooms(remaining);
 
@@ -170,14 +171,14 @@ public class FloorGenerator {
         return nodes;
     }
 
-    private List<FloorNode> placeCombatRooms(List<FloorNode> remaining) {
+    private List<FloorNode> placeCombatRooms(List<FloorNode> remaining, Trainer playerTrainer) {
         List<FloorNode> combatNodes = new ArrayList<>();
         Iterator<FloorNode> it = remaining.iterator();
 
         while (it.hasNext() && combatNodes.size() < this.combatCount) {
             FloorNode node = it.next();
             if (!node.equals(this.bossNode)) {
-                node.setRoom(new CombatRoom(this.combatFactory, false));
+                node.setRoom(new CombatRoom(this.combatFactory, playerTrainer, false));
                 combatNodes.add(node);
                 it.remove();
             }

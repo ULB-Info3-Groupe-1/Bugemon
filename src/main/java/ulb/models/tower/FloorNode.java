@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import ulb.models.tower.room.Room;
+import ulb.models.tower.room.RoomVisitor;
 import ulb.models.utils.Position;
 
 public class FloorNode {
@@ -20,6 +21,10 @@ public class FloorNode {
         this.room = room;
         this.children = children;
         this.parent = Optional.ofNullable(parent);
+    }
+
+    public boolean hasPlayerWon() {
+        return this.room.hasPlayerWon();
     }
 
     // Getters
@@ -96,6 +101,10 @@ public class FloorNode {
     @Override
     public int hashCode() {
         return Objects.hash(this.position.x(), this.position.y());
+    }
+
+    public void visit(RoomVisitor roomVisitor) {
+        this.room.visit(roomVisitor);
     }
 
     public record RoomPosition(int row, int col) {

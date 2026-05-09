@@ -3,6 +3,10 @@ package ulb.models.tower.room;
 public abstract class Room {
     RoomState state = RoomState.LOCKED; // default state
 
+    public boolean hasPlayerWon() {
+        return false;
+    }
+
     public RoomState getState() {
         return this.state;
     }
