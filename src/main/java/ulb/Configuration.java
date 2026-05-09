@@ -55,6 +55,8 @@ public abstract class Configuration {
         }
 
         public static final String STAGE_TITLE = "Bugemon";
+
+        public static final String FLOOR_PREFIX = "NO";
     }
 
     public static final class Music {
@@ -79,8 +81,8 @@ public abstract class Configuration {
         public static final int MAX_TEAM_SIZE = 6;
         public static final String DEFAULT_TEAM_NAME = "Unnamed Team";
         public static final String BOSS_NAME = "FinalBoss";
-        public static final int FLOOR_MAX = 8; // The highest floor is NO8
-        public static final int FLOOR_MIN = 2; // The lowest floor is NO2
+        public static final int FLOOR_MAX = 8; // The highest floor is 8
+        public static final int FLOOR_MIN = 2; // The lowest floor is 2
 
     }
 
