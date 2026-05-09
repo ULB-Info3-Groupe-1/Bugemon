@@ -104,8 +104,8 @@ public class FloorNode {
         return Objects.hash(this.x, this.y);
     }
 
-    public void visitIfNotVisited(RoomVisitor roomVisitor) {
-        this.room.visitIfNotVisited(roomVisitor);
+    public void visit(RoomVisitor roomVisitor) {
+        this.room.visit(roomVisitor);
     }
 
     public record RoomPosition(int row, int col) {

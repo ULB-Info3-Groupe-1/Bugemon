@@ -44,9 +44,15 @@ public class TestRooms {
         EmptyRoom emptyRoom = new EmptyRoom();
         TowerController towerController = mock(TowerController.class);
 
-        combatRoom.visitIfNotVisited(towerController);
-        rewardRoom.visitIfNotVisited(towerController);
-        emptyRoom.visitIfNotVisited(towerController);
+        if (!combatRoom.isVisited()) {
+            combatRoom.visit(towerController);
+        }
+        if (!rewardRoom.isVisited()) {
+            rewardRoom.visit(towerController);
+        }
+        if (!emptyRoom.isVisited()) {
+            emptyRoom.visit(towerController);
+        }
 
         verify(towerController).visitCombatRoom(combatRoom);
         verify(towerController).visitRewardRoom(rewardRoom);

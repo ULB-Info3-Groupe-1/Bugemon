@@ -47,7 +47,7 @@ public class TestTower {
                     }
 
                     @Override
-                    public void visitIfNotVisited(RoomVisitor roomVisitor) {
+                    public void visit(RoomVisitor roomVisitor) {
                         // Do nothing for this test
                     }
 
