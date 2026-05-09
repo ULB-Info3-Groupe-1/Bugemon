@@ -17,9 +17,10 @@ public class SkillNode {
 
     private Position position;
 
-    public SkillNode(Skill skill, Position position) {
+    public SkillNode(Skill skill, Position position, List<SkillNode> parents) {
         this.skill = skill;
         this.position = position;
+        this.parents = Optional.of(parents);
     }
 
     public Skill getSkill() {

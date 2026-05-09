@@ -107,6 +107,7 @@ public abstract class Configuration {
         public static final String ATTACK_PATH = "/json/attaques.json";
         public static final String BUGEMON_PATH = "/json/bugemons.json";
         public static final String ITEMS_PATH = "/json/objets.json";
+        public static final String SKILL_TREE_PATH = "/json/skill_tree.json";
 
     }
 }

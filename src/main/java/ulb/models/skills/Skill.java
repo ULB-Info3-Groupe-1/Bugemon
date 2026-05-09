@@ -63,5 +63,4 @@ public class Skill {
     public void unlock() {
         this.isUnlocked = true;
     }
-
 }
