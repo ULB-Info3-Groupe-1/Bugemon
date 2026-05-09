@@ -167,8 +167,4 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.tower.get().updateRoomsState();
         this.view.refreshRoomStates();
     }
-
-    public boolean hasActiveRun() {
-        return this.tower.isPresent();
-    }
 }
