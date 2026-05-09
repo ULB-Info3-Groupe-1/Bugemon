@@ -10,10 +10,13 @@ import javafx.stage.Stage;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
+import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
+import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
+import ulb.repositories.TeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
@@ -47,13 +50,19 @@ public class Main extends Application {
         QueryLoader loader = new QueryLoader();
         DatabaseConnection dbConnection = new DatabaseConnection();
         StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, staticDataRepository,
+        BugemonRepository bugemonRepository = new BugemonRepository(dbConnection, loader.getQueries());
+        InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, staticDataRepository,
+                loader.getQueries());
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
+                loader.getQueries());
+        TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, bugemonRepository,
                 loader.getQueries());
 
         String playerName = "default_player";
-        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, playerName);
-        TeamService teamService = new TeamService(playerRepository, playerName);
-        InventoryService inventoryService = new InventoryService(playerRepository, playerName);
+        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, bugemonRepository,
+                playerName);
+        TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName);
+        InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
                 inventoryService);
         CombatService combatService = new CombatService(bugemonService);
