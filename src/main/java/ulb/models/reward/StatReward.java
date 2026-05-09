@@ -23,6 +23,6 @@ public class StatReward implements Reward {
 
     @Override
     public String getSummary() {
-        return "Bonus stat: " + this.upgrade.toString();
+        return "Bonus stat : " + this.upgrade.toString();
     }
 }
