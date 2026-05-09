@@ -38,8 +38,12 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     @Override
     public void onRoomClicked(FloorNode node) {
+        FloorNode before = this.tower.getPlayerPosition();
         this.towerService.movePlayer(this.tower, node, this);
-        this.view.animatePlayerTo(node);
+        FloorNode after = this.tower.getPlayerPosition();
+        if (!after.equals(before)) {
+            this.view.animatePlayerTo(after);
+        }
         this.view.refreshRoomStates();
     }
 

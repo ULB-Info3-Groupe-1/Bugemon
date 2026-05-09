@@ -80,7 +80,7 @@ public class RoomView extends StackPane {
      *
      */
     public void setRoomState() throws IllegalStateException {
-        this.getStyleClass().removeAll("current", "available", "visited", "locked");
+        this.getStyleClass().removeAll("current", "available", "visited", "locked", "visited_available");
 
         RoomState roomState = this.node.getRoom().getState();
         this.getStyleClass().add(roomState.toString().toLowerCase());
@@ -92,6 +92,10 @@ public class RoomView extends StackPane {
                 this.stateOverlay.setVisible(true);
             }
             case RoomState.VISITED -> {
+                this.stateLabel.setText("✓");
+                this.stateOverlay.setVisible(true);
+            }
+            case RoomState.VISITED_AVAILABLE -> {
                 this.stateLabel.setText("✓");
                 this.stateOverlay.setVisible(true);
             }

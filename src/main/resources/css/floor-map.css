@@ -131,6 +131,18 @@
   -fx-opacity: 0.6;
 }
 
+/* Visited + available: was here, can return */
+.room-node.visited_available {
+  -fx-cursor: hand;
+  -fx-opacity: 0.75;
+}
+
+.room-node.visited_available:hover {
+  -fx-scale-x: 1.1;
+  -fx-scale-y: 1.1;
+  -fx-effect: dropshadow(gaussian, #2ecc71, 15, 0.5, 0, 0);
+}
+
 /* Locked room: disabled */
 .room-node.locked {
   -fx-opacity: 0.3;

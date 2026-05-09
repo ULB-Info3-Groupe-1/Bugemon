@@ -2,6 +2,7 @@ package ulb.models.tower.room;
 
 public abstract class Room {
     RoomState state = RoomState.LOCKED; // default state
+    private boolean visited = false;
 
     public boolean hasPlayerWon() {
         return false;
@@ -12,10 +13,11 @@ public abstract class Room {
     }
 
     public boolean isVisited() {
-        return this.state.equals(RoomState.VISITED);
+        return this.visited;
     }
 
     public void setVisited() {
+        this.visited = true;
         this.state = RoomState.VISITED;
     }
 
@@ -30,6 +32,7 @@ public abstract class Room {
     public enum RoomState {
         AVAILABLE,
         VISITED,
+        VISITED_AVAILABLE,
         LOCKED
     }
 
