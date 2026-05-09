@@ -37,7 +37,7 @@ public class TestTower {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
         // No tower structure with floor NO2, NO3, NO4, NO5, NO6, NO7, NO8
-        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor, List.of());
 
         assertEquals(2, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isFinished());
@@ -47,14 +47,17 @@ public class TestTower {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
+
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor, List.of());
+
         assertFalse(noTower.isFinished());
     }
 
     @Test
     public void testGoToNextFloorThrowsWhenCurrentFloorIncomplete() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor, List.of());
+
         assertThrows(IllegalStateException.class, noTower::goToNextFloor);
     }
 }

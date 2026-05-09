@@ -1,6 +1,7 @@
 package ulb;
 
 import java.io.InputStream;
+import java.util.List;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -21,6 +22,7 @@ import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
@@ -58,17 +60,19 @@ public class Main extends Application {
                 loader.getQueries());
         TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, bugemonRepository,
                 loader.getQueries());
-
         String playerName = "default_player";
+        SkillService skillService = new SkillService(List.of()); // TODO: load skills from a data source
         BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName);
         PlayerService playerService = new PlayerService(staticDataRepository);
-        TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName);
-        InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName);
+        TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName,
+                skillService);
+        InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName,
+                skillService);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
-                inventoryService);
-        CombatService combatService = new CombatService(bugemonService);
+                inventoryService, skillService);
+        CombatService combatService = new CombatService(bugemonService, skillService);
         MetaController controller = new MetaController(stage, bugemonService, playerService, teamService, towerService,
-                inventoryService, combatService);
+                inventoryService, combatService, skillService);
         controller.start();
     }
 }

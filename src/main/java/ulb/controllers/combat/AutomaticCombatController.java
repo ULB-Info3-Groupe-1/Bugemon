@@ -1,7 +1,10 @@
 package ulb.controllers.combat;
 
+import java.util.List;
+
 import ulb.controllers.MetaController;
 import ulb.models.combat.Combat;
+import ulb.models.skills.Skill;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
@@ -23,8 +26,9 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *            the application-level controller used for navigation.
      */
     public AutomaticCombatController(MetaController metaController, TeamService teamService,
-            BugemonService bugemonService, CombatService combatService) {
-        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(AutomaticCombatView::new));
+            BugemonService bugemonService, CombatService combatService, List<Skill> statBonusSkills) {
+        super(metaController, teamService, bugemonService, combatService, statBonusSkills,
+                ViewLoader.load(AutomaticCombatView::new));
     }
 
     @Override

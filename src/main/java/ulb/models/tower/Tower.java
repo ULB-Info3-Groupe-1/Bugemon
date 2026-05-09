@@ -1,10 +1,12 @@
 package ulb.models.tower;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import ulb.Configuration;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.tower.room.RoomVisitor;
@@ -20,8 +22,8 @@ public class Tower {
     private Floor currentFloor;
 
     public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
-            int currentFloorLevel) {
-        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService);
+            int currentFloorLevel, List<Skill> statBonusSkills) {
+        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService.getInventory(), statBonusSkills);
 
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {

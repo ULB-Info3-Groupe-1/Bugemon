@@ -40,6 +40,7 @@ import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.skills.Skill;
+import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.utils.Position;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -267,7 +268,7 @@ public class Parser {
 
                 List<SkillNode> prerequisites = new ArrayList<>();
                 // TODO: combat effects != skill effects
-                Effect effect = null;
+                SkillEffect effect = null;
 
                 Skill skill = new Skill(id, name, description, cost, maxLevel, effect, isUnlocked);
 

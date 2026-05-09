@@ -1,14 +1,16 @@
 package ulb.models.trainer;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.services.InventoryService;
+import ulb.models.skills.Skill;
 
 /**
  * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
@@ -21,14 +23,16 @@ import ulb.services.InventoryService;
 public class ManualTrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
-    private final InventoryService inventoryService;
+    private final Inventory inventory;
+    private final List<Skill> unlockedStatBonusSkills;
 
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
 
-    public ManualTrainer(BugemonTeam team, InventoryService inventoryService) {
+    public ManualTrainer(BugemonTeam team, Inventory inventory, List<Skill> unlockedStatBonusSkills) {
         super(team);
-        this.inventoryService = inventoryService;
+        this.inventory = inventory;
+        this.unlockedStatBonusSkills = unlockedStatBonusSkills;
     }
 
     /**
@@ -76,7 +80,9 @@ public class ManualTrainer extends Trainer {
         currentBugemon = target;
     }
 
-    /** Overwrites any previously queued action. Prefer typed convenience methods. */
+    /**
+     * Overwrites any previously queued action. Prefer typed convenience methods.
+     */
     public void registerAction(TurnAction action) {
         this.pendingAction = Optional.of(action);
     }
@@ -119,7 +125,7 @@ public class ManualTrainer extends Trainer {
      *             if the item is not in the inventory
      */
     public void registerUseItem(Item item) {
-        if (this.inventoryService.hasItem(item)) {
+        if (this.inventory.hasItem(item)) {
             this.registerAction(new TurnAction.UseItemAction(item));
         } else {
             throw new IllegalArgumentException("The player does not have the specified item.");
@@ -127,12 +133,8 @@ public class ManualTrainer extends Trainer {
     }
 
     public void useItem(Item item) {
-        this.inventoryService.useItem(item);
+        this.inventory.useItem(item);
         this.currentBugemon.apply(item.effect());
-    }
-
-    public Map<Item, Integer> getInventoryMap() {
-        return Collections.unmodifiableMap(this.inventoryService.getInventoryMap());
     }
 
     public boolean hasPendingAction() {
@@ -157,5 +159,16 @@ public class ManualTrainer extends Trainer {
 
     public boolean canVoluntarilySwitch() {
         return !this.forcedSwitch && !this.switchedThisTurn;
+    }
+
+    public Map<Item, Integer> getInventoryMap() {
+        return Collections.unmodifiableMap(this.inventory.getMap());
+    }
+
+    // Skill management
+
+    public void setUnlockedSkills(List<Skill> unlockedSkills) {
+        this.unlockedStatBonusSkills.clear();
+        this.unlockedStatBonusSkills.addAll(unlockedSkills);
     }
 }
