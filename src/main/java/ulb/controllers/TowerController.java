@@ -33,7 +33,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     @Override
     protected void show() {
         this.tower = this.towerService.createTower();
-        this.showFloor();
+        this.udpateDisplayedFloor();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         if (this.tower.isFinished() || !playerWon) {
             this.endTowerFlow(playerWon);
         } else {
-            this.showFloor();
+            this.udpateDisplayedFloor();
         }
     }
 
@@ -88,18 +88,17 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     /**
      * Shows the floor map before continuing the run.
      */
-    private void showFloor() {
+    private void udpateDisplayedFloor() {
         this.view.setFloorNumber(this.tower.getCurrentFloorNumber());
         this.view.setInstruction();
-        this.setupFloorStructure(this.tower.getCurrentFloor());
+        this.updateDisplayedFloorStructure(this.tower.getCurrentFloor());
         this.view.setPlayerPosition(this.tower.getPlayerPosition());
         this.view.refreshRoomStates();
         super.show();
     }
 
-    private void setupFloorStructure(Floor currentFloor) {
+    private void updateDisplayedFloorStructure(Floor currentFloor) {
         List<FloorNode> floorNodes = currentFloor.getFloorNodes();
-
         this.view.setFloorNodes(floorNodes);
     }
 }
