@@ -8,14 +8,22 @@ public final class CombatRoom extends Room {
     private final boolean isBoss;
     private final CombatFactory combatFactory;
 
-    public CombatRoom(CombatFactory combatFactory, boolean isBoss) {
+    private final Combat combat;
+
+    public CombatRoom(CombatFactory combatFactory, Trainer playerTrainer, boolean isBoss) {
         this.combatFactory = combatFactory;
         this.isBoss = isBoss;
+        this.combat = this.combatFactory.create(playerTrainer, this.isBoss);
     }
 
-    public Combat getCombat(Trainer playerTrainer) {
+    public Combat getCombat() {
         // Not a real getter but lazily creates the combat :))) <3 Love
-        return this.combatFactory.create(playerTrainer, this.isBoss);
+        return this.combat;
+    }
+
+    @Override
+    public boolean hasPlayerWon() {
+        return this.combat.hasPlayerWon();
     }
 
     public boolean isBoss() {

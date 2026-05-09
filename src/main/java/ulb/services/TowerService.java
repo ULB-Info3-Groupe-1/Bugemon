@@ -10,10 +10,17 @@ public class TowerService {
 
     private final String playername;
     private final PlayerRepository playerRepository;
+    private final BugemonService bugemonService;
+    private final TeamService teamService;
+    private final InventoryService inventoryService;
 
-    public TowerService(PlayerRepository playerRepository, String playername) {
+    public TowerService(PlayerRepository playerRepository, String playername, BugemonService bugemonService,
+            TeamService teamService, InventoryService inventoryService) {
         this.playername = playername;
         this.playerRepository = playerRepository;
+        this.bugemonService = bugemonService;
+        this.teamService = teamService;
+        this.inventoryService = inventoryService;
     }
 
     /**
@@ -41,7 +48,6 @@ public class TowerService {
      *            the controller
      */
     public void movePlayer(Tower tower, FloorNode node, TowerController controller) {
-        System.out.println("Moving player to " + node);
         tower.currentFloorMoveTo(node);
         tower.visitCurrentRoomIfNotVisited(controller);
     }
@@ -51,5 +57,23 @@ public class TowerService {
      */
     public void saveFloor(int currentFloor) {
         this.playerRepository.setPlayerCurrentFloor(this.playername, currentFloor);
+    }
+
+    public void handleCombatEnd(Tower tower, boolean playerWon) {
+        this.inventoryService.saveInventory();
+        if (playerWon) {
+            tower.checkFloorCompletion();
+        } else {
+            this.teamService.restoreHpActiveTeam();
+        }
+    }
+
+    /**
+     * Create a new tower and return it
+     *
+     * @return the new tower
+     */
+    public Tower createTower() {
+        return new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService, this);
     }
 }

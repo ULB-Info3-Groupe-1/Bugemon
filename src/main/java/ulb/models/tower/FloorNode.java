@@ -23,6 +23,10 @@ public class FloorNode {
         this.parent = Optional.ofNullable(parent);
     }
 
+    public boolean hasPlayerWon() {
+        return this.room.hasPlayerWon();
+    }
+
     // Getters
     public int getX() {
         return this.position.x();

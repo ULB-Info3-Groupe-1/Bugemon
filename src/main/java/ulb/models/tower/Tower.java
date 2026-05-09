@@ -74,12 +74,16 @@ public class Tower {
      */
     public void visitCurrentRoomIfNotVisited(RoomVisitor roomVisitor) {
         this.currentFloor.visitCurrentRoomIfNotVisited(roomVisitor);
-        if (this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX && this.isCurrentFloorComplete()) {
-            this.isFinished = true;
-        }
+        this.updateRoomsState();
+    }
 
+    public void checkFloorCompletion() {
         if (this.isCurrentFloorComplete()) {
-            this.goToNextFloor();
+            if (this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
+                this.isFinished = true;
+            } else {
+                this.goToNextFloor();
+            }
         }
         this.updateRoomsState();
     }
@@ -110,7 +114,7 @@ public class Tower {
      * The view disables interaction for {@code LOCKED} rooms, so this must be called at least once before the floor is
      * displayed.
      */
-    public void updateRoomsState() {
+    private void updateRoomsState() {
         Floor floor = this.currentFloor;
         Set<FloorNode> reachableNodes = new HashSet<>(floor.getReachableNodes());
 

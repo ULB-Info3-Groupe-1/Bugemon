@@ -15,6 +15,8 @@ import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.tower.room.Room;
+import ulb.models.tower.room.RoomVisitor;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.TowerService;
@@ -37,22 +39,27 @@ public class TestTower {
 
     private void completeCurrentFloor(Tower noTower) {
         Floor floor = noTower.getCurrentFloor();
-        this.navigateToBoss(floor);
-    }
+        for (FloorNode node : floor.getFloorNodes()) {
+            if (node.getRoom() != null && node.getRoom().getType() == Room.RoomType.BOSS) {
+                node.setRoom(new Room() {
+                    @Override
+                    public boolean hasPlayerWon() {
+                        return true;
+                    }
 
-    private boolean navigateToBoss(Floor floor) {
-        if (floor.isComplete()) {
-            return true;
-        }
-        FloorNode current = floor.getCurrentPosition();
-        for (FloorNode child : current.getChildren()) {
-            floor.moveTo(child);
-            if (this.navigateToBoss(floor)) {
-                return true;
+                    @Override
+                    public void visitIfNotVisited(RoomVisitor roomVisitor) {
+                        // Do nothing for this test
+                    }
+
+                    @Override
+                    public RoomType getType() {
+                        return RoomType.BOSS;
+                    }
+                });
+                break;
             }
-            floor.moveTo(current);
         }
-        return false;
     }
 
     @Test
