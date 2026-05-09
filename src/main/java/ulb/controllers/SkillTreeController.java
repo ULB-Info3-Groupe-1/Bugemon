@@ -1,26 +1,33 @@
 package ulb.controllers;
 
+import java.util.List;
+
+import ulb.models.skills.SkillNode;
+import ulb.services.PlayerService;
 import ulb.views.SkillTreeView;
 import ulb.views.ViewLoader;
 import ulb.views.utils.Node;
 
-/** Controller for the skill tree screen. Hardcoded tree for now. */
+/** Controller for the skill tree screen. */
 public class SkillTreeController extends Controller<SkillTreeView> implements SkillTreeView.Listener {
 
-    public SkillTreeController(MetaController metaController) {
+    private final PlayerService playerService;
+
+    public SkillTreeController(MetaController metaController, PlayerService playerService) {
         super(metaController, ViewLoader.load(SkillTreeView::new));
         this.view.setListener(this);
+        this.playerService = playerService;
     }
 
     @Override
     public void show() {
-        this.view.renderTree(this.buildDummyTree());
+        this.view.renderTree(this.buildTree());
         super.show();
     }
 
     @Override
     public void onSkillClicked(Node node) {
-        // TODO: handle skill selection
+        // TODO: handle skill selection and apply effects
     }
 
     @Override
@@ -28,30 +35,22 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
         this.metaController.onMainMenu();
     }
 
-    private Node buildDummyTree() {
-        // AI hardcoded Dummy tree to test <3
-        Node root = new Node("Combat", null);
+    private Node buildTree() {
+        List<SkillNode> skillNodes = this.playerService.getSkillTree();
+        SkillNode rootNode = skillNodes.stream().filter(n -> "start".equals(n.getSkill().getId())).findFirst()
+                .orElseThrow(() -> new IllegalStateException("Start node is missing"));
 
-        Node attack = new Node("Attaque", root);
-        Node defense = new Node("Défense", root);
-        Node speed = new Node("Vitesse", root);
-        root.addChild(attack);
-        root.addChild(defense);
-        root.addChild(speed);
+        return this.buildViewNode(rootNode, null);
+    }
 
-        Node superAttack = new Node("Super Attaque", attack);
-        Node criticalHit = new Node("Coup Critique", attack);
-        attack.addChild(superAttack);
-        attack.addChild(criticalHit);
-
-        Node shield = new Node("Bouclier", defense);
-        defense.addChild(shield);
-
-        Node dodge = new Node("Esquive", speed);
-        Node dash = new Node("Dash", speed);
-        speed.addChild(dodge);
-        speed.addChild(dash);
-
-        return root;
+    private Node buildViewNode(SkillNode currentNode, Node parentView) {
+        Node currentView = new Node(currentNode.getSkill().getName(), parentView);
+        if (parentView != null) {
+            parentView.addChild(currentView);
+        }
+        for (SkillNode childNode : currentNode.getChildren()) {
+            this.buildViewNode(childNode, currentView);
+        }
+        return currentView;
     }
 }

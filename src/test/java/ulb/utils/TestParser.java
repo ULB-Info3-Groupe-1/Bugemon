@@ -163,9 +163,8 @@ public class TestParser {
         List<SkillNode> skillNodes = parser.getSkillNodes();
         assertNotNull(skillNodes);
 
-        SkillNode startNode = skillNodes.stream()
-                .filter(n -> "start".equals(n.getSkill().getId()))
-                .findFirst().orElseThrow();
+        SkillNode startNode = skillNodes.stream().filter(n -> "start".equals(n.getSkill().getId())).findFirst()
+                .orElseThrow();
         assertEquals("Départ", startNode.getSkill().getName());
         assertEquals(0, startNode.getSkill().getCost());
         assertEquals(1, startNode.getSkill().getMaxLevel());
@@ -173,9 +172,8 @@ public class TestParser {
         assertEquals(0, startNode.getPosition().x());
         assertEquals(0, startNode.getPosition().y());
 
-        SkillNode hpNode = skillNodes.stream()
-                .filter(n -> "hp_1".equals(n.getSkill().getId()))
-                .findFirst().orElseThrow();
+        SkillNode hpNode = skillNodes.stream().filter(n -> "hp_1".equals(n.getSkill().getId())).findFirst()
+                .orElseThrow();
         assertEquals("+10 HP", hpNode.getSkill().getName());
         assertEquals(1, hpNode.getSkill().getCost());
         assertEquals(false, hpNode.getSkill().isUnlocked());

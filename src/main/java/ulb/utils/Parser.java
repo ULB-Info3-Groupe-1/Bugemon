@@ -247,52 +247,49 @@ public class Parser {
         }
     }
 
-        private static void parseSkills(Reader reader) {
+    private static void parseSkills(Reader reader) {
         LOG.debug("Parsing Skill Tree");
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray nodesArray = root.getAsJsonObject("skill_tree").getAsJsonArray("nodes");
-            
+
             skillNodes = new ArrayList<>();
 
             for (JsonElement nodeElement : nodesArray) {
                 JsonObject nodeObj = nodeElement.getAsJsonObject();
-                
+
                 String id = nodeObj.get("id").getAsString();
                 String name = nodeObj.get("nom").getAsString();
                 String description = nodeObj.get("description").getAsString();
                 int cost = nodeObj.get("cout").getAsInt();
                 int maxLevel = nodeObj.get("max_niveau").getAsInt();
                 boolean isUnlocked = nodeObj.get("deverrouille").getAsBoolean();
-                
+
                 List<SkillNode> prerequisites = new ArrayList<>();
+                // TODO: combat effects != skill effects
+                Effect effect = null;
+
+                Skill skill = new Skill(id, name, description, cost, maxLevel, effect, isUnlocked);
+
+                JsonObject posObj = nodeObj.getAsJsonObject("position");
+                Position position = new Position(posObj.get("x").getAsInt(), posObj.get("y").getAsInt());
+
+                SkillNode skillNode = new SkillNode(skill, position, prerequisites);
                 for (JsonElement req : nodeObj.getAsJsonArray("prerequis")) {
                     String reqId = req.getAsString();
                     // Assuming skillNodes are being built in the right order
                     skillNodes.stream().filter(n -> n.getSkill().getId().equals(reqId)).findFirst()
-                            .ifPresent(prerequisites::add);
+                            .ifPresent(parent -> {
+                                prerequisites.add(parent);
+                                parent.addChild(skillNode);
+                            });
                 }
-                
-                // TODO: combat effects != skill effects
-                Effect effect = null; 
-                
-                Skill skill = new Skill(
-                    id, name, description, cost, maxLevel, effect, isUnlocked);
-                
-                JsonObject posObj = nodeObj.getAsJsonObject("position");
-                Position position = new Position(
-                    posObj.get("x").getAsInt(), 
-                    posObj.get("y").getAsInt()
-                );
-                
-                SkillNode skillNode = new SkillNode(skill, position, prerequisites);
                 skillNodes.add(skillNode);
             }
             reader.close();
-            
+
         } catch (Exception e) {
             LOG.error("Error when parsing skill tree: {}", e.getMessage());
         }
     }
-
 }

@@ -19,9 +19,9 @@ public class SkillTreeView extends View {
     // Node should have colors and unlocked or not...
     // Drawing the link between node ? Spline or straight line ?? Reingold–Tilford layout
 
-    private static final double NODE_WIDTH = 160.0;
-    private static final double NODE_HEIGHT = 100.0;
-    private static final double HORIZONTAL_SPACING = 100.0;
+    private static final double NODE_WIDTH = 120.0;
+    private static final double NODE_HEIGHT = 80.0;
+    private static final double HORIZONTAL_SPACING = 50.0;
     private static final double VERTICAL_SPACING = 100.0;
 
     @FXML

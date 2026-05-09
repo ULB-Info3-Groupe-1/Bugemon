@@ -49,4 +49,8 @@ public class SkillNode {
     public void setSkill(Skill skill) {
         this.skill = skill;
     }
+
+    public void addChild(SkillNode child) {
+        this.children.add(child);
+    }
 }
