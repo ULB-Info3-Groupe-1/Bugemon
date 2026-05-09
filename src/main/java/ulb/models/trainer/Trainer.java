@@ -123,8 +123,8 @@ public abstract class Trainer {
     }
 
     /**
-     * Records the current Bugemon as having participated — used by {@link ulb.services.LevelUpService} to distribute XP
-     * only to Bugemons that actually fought.
+     * Records the current Bugemon as having participated, so that XP distribution only applies to Bugemons that
+     * actually fought.
      */
     public void markCurrentBugemonParticipation() {
         this.participatedBugemons.add(this.currentBugemon);

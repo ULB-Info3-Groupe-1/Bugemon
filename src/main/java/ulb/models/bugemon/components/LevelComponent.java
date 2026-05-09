@@ -12,7 +12,7 @@ public class LevelComponent {
      * @param level
      *            the current level (must be at least 1)
      * @throws IllegalArgumentException
-     *             if xp < 0 or level < 1
+     *             if xp &lt; 0 or level &lt; 1
      */
     public LevelComponent(int xp, int level) {
         if (xp < 0) {
@@ -38,6 +38,9 @@ public class LevelComponent {
      * Adds XP, updates level if needed.
      *
      * @return number of level-ups that just occurred
+     *
+     * @throws IllegalArgumentException
+     *             if xpToAdd &lt; 0
      */
     public int addXp(int xpToAdd) {
         if (xpToAdd < 0) {

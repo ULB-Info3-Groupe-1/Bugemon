@@ -19,8 +19,7 @@ public interface BugemonDTO {
     String getName();
 
     /**
-     * Elemental type of this Bugemon. Affects combat effectiveness — see
-     * {@link ulb.services.CombatService#compareBugemonType} for matchup rules.
+     * Elemental type of this Bugemon.
      *
      * @return the {@link BugemonType}; never {@code null}.
      */

@@ -123,7 +123,7 @@ public class TeamService {
      * Sets the active team for the player.
      *
      * @param teamName
-     *            the name of the team to be set
+     *            the name of the team to set
      * @throws TeamNotFoundException
      *             if the team does not exist
      */
@@ -159,8 +159,6 @@ public class TeamService {
     /**
      * Modifies the active team in the database.
      *
-     * @param teamName
-     *            the name of the team to be modified
      * @throws TeamEmptyException
      *             if the active team is empty
      * @throws TeamNotFoundException

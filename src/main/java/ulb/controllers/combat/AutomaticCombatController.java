@@ -13,8 +13,7 @@ import ulb.views.combat.AutomaticCombatView;
  * Controller for the automatic combat screen.
  *
  * Drives the {@link Combat} loop one step at a time, gated by the player's "Next" clicks. Each step triggers its
- * animation and dialog before the next one is unlocked. Implements {@link AutomaticCombatView.Listener} to receive
- * those events.
+ * animation and dialog before the next one is unlocked.
  */
 public class AutomaticCombatController extends CombatController<AutomaticCombatView> {
     /**
