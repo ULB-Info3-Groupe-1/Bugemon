@@ -2,6 +2,7 @@ package ulb.controllers;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import javafx.stage.Stage;
 
@@ -16,6 +17,7 @@ import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
+import ulb.models.level_up.LevelUp;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
@@ -49,8 +51,6 @@ public class MetaController {
         SKILL_TREE,
     }
 
-    private final BugemonService bugemonService;
-
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
     private final SaveMenuController saveMenuController;
@@ -77,25 +77,23 @@ public class MetaController {
      * @throws IOException
      *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage, PlayerService playerService, BugemonService bugemonService,
-            TeamService teamService, InventoryService inventoryService, TowerService towerService,
+    public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
+            TeamService teamService, TowerService towerService, InventoryService inventoryService,
             CombatService combatService) throws IOException {
-        this.bugemonService = bugemonService;
-
         this.stage = primaryStage;
 
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
+        this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
+                combatService);
+        this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
+                combatService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
                 bugemonService);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
-        this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
-                combatService);
-        this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
-                combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
         this.towerController = new TowerController(this, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
@@ -122,7 +120,7 @@ public class MetaController {
     }
 
     public void onCombatVictoryFinished() {
-        if (this.bugemonService.hasPendingLevelUps()) {
+        if (this.levelUpController.hasWorkToDo()) {
             this.switchTo(Window.LEVEL_UP);
         } else {
             this.switchTo(Window.MAIN_MENU);
@@ -155,6 +153,10 @@ public class MetaController {
         } else {
             this.switchTo(Window.MAIN_MENU);
         }
+    }
+
+    public void receiveCombatResults(List<LevelUp> levels) {
+        this.levelUpController.addLevelUps(levels);
     }
 
     public void onStartManualCombat() {

@@ -1,7 +1,11 @@
 package ulb.models.combat;
 
+import java.util.List;
+
+import ulb.models.level_up.LevelUp;
+
 public interface ICombatXpDistributor {
 
-    void distributeXp(CombatContext combatCtx);
+    List<LevelUp> distributeXp(CombatContext combatCtx);
 
 }
