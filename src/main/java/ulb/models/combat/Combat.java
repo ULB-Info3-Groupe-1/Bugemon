@@ -45,8 +45,6 @@ public class Combat {
         this.opponentTrainer = opponentTrainer;
         this.endOfCombatAction = endOfCombatAction;
         this.xpDistributor = xpDistributor;
-        LOG.info("Combat started — player: {} vs opponent: {}", playerTrainer.getCurrentBugemonName(),
-                opponentTrainer.getCurrentBugemonName());
     }
 
     /**
@@ -111,6 +109,13 @@ public class Combat {
         }
 
         return this.playerTrainer.isDefeated() ? this.opponentTrainer : this.playerTrainer;
+    }
+
+    public boolean hasPlayerWon() {
+        if (!this.isCompleted) {
+            return false;
+        }
+        return this.getWinner().equals(this.playerTrainer);
     }
 
     private void endTurn() {

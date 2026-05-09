@@ -33,7 +33,7 @@ public class TestFloorGenerator {
 
     @Before
     public void setup() {
-        this.floorGenerator = new FloorGenerator(COMBAT_FACTORY_MOCK);
+        this.floorGenerator = new FloorGenerator(COMBAT_FACTORY_MOCK, null);
         this.root = this.floorGenerator.getRoot();
 
         this.allNodes = new ArrayList<>();
@@ -95,8 +95,10 @@ public class TestFloorGenerator {
 
     @Test
     public void testBossAtDeepestLevel() {
-        assertTrue("Boss node must be among the deepest nodes",
-                this.deepestNodes.contains(this.floorGenerator.getBossNode()));
+        FloorNode bossNode = this.allNodes.stream().filter(n -> n.getRoom() instanceof CombatRoom cr && cr.isBoss())
+                .findFirst().orElse(null);
+        assertNotNull("Boss node must exist", bossNode);
+        assertTrue("Boss node must be among the deepest nodes", this.deepestNodes.contains(bossNode));
     }
 
     public void testOnlyOneBossRoom() {

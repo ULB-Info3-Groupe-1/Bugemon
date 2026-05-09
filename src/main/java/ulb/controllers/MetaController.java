@@ -95,7 +95,7 @@ public class MetaController {
         this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
                 combatService);
         this.levelUpController = new LevelUpController(this, bugemonService);
-        this.towerController = new TowerController(this, teamService, bugemonService, inventoryService, towerService);
+        this.towerController = new TowerController(this, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();

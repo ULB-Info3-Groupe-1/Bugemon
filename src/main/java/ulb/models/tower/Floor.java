@@ -26,13 +26,13 @@ public class Floor {
         this.playerTrainer = playerTrainer;
         this.floorLevel = floorLevel;
         CombatFactory combatFactory = new CombatFactory(bugemonService);
-        this.floorGenerator = new FloorGenerator(combatFactory);
+        this.floorGenerator = new FloorGenerator(combatFactory, playerTrainer);
         this.currentPosition = this.floorGenerator.getRoot();
         this.floorRoot = this.floorGenerator.getRoot();
     }
 
     public boolean isComplete() {
-        return this.currentPosition.equals(this.floorGenerator.getBossNode());
+        return this.floorGenerator.hasPlayerWon();
     }
 
     public List<Room> getNextRooms() {

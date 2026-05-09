@@ -15,10 +15,6 @@ import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.RoomVisitor;
-import ulb.models.trainer.ManualTrainer;
-import ulb.services.BugemonService;
-import ulb.services.InventoryService;
-import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
@@ -26,19 +22,12 @@ import ulb.views.ViewLoader;
 public class TowerController extends Controller<FloorView> implements FloorView.Listener, RoomVisitor {
     private static final Logger LOG = LoggerFactory.getLogger(TowerController.class);
 
-    private final TeamService teamService;
-    private final BugemonService bugemonService;
-    private final InventoryService inventoryService;
     private final TowerService towerService;
 
     private Tower tower;
 
-    public TowerController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            InventoryService inventoryService, TowerService towerService) {
+    public TowerController(MetaController metaController, TowerService towerService) {
         super(metaController, ViewLoader.load(FloorView::new));
-        this.teamService = teamService;
-        this.bugemonService = bugemonService;
-        this.inventoryService = inventoryService;
         this.towerService = towerService;
         this.view.setListener(this);
     }
@@ -52,8 +41,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void visitCombatRoom(CombatRoom combatRoom) {
         LOG.info("Entering combat room (boss={})", combatRoom.isBoss());
-        Combat combat = combatRoom
-                .getCombat(new ManualTrainer(this.teamService.getRequiredActiveTeam(), this.inventoryService));
+        Combat combat = combatRoom.getCombat();
         this.metaController.startTowerCombat(combat);
     }
 
@@ -77,10 +65,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
-        this.inventoryService.saveInventory();
-
-        if (!playerWon || this.tower.isFinished()) {
-            this.teamService.restoreHpActiveTeam();
+        this.towerService.handleCombatEnd(this.tower, playerWon);
+        if (this.tower.isFinished() || !playerWon) {
             this.endTowerFlow(playerWon);
         } else {
             this.showFloor();
@@ -88,6 +74,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     private void endTowerFlow(boolean playerWon) {
+        // reset tower progress because the player has finished the tower or lost
+        this.towerService.clearTowerProgress();
         this.tower = null;
         this.metaController.endTowerFlow();
         this.metaController.onCombatFinished(playerWon);
@@ -98,8 +86,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      * immediately; combat rooms continue via callback.
      */
     public void runTower() {
-        this.tower = new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService,
-                this.towerService);
+        this.tower = this.towerService.createTower();
         this.showFloor();
     }
 
