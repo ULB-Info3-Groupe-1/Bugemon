@@ -87,6 +87,18 @@ CREATE TABLE IF NOT EXISTS "item_effects" (
 
 );
 
+CREATE TABLE IF NOT EXISTS "player_skills" (
+  "playername" varchar REFERENCES "players"("playername") ON DELETE CASCADE,
+  "skill_id" varchar,
+  "skill_name" varchar,
+  "description" varchar,
+  "cost" integer,
+  "max_level" integer,
+  "effect_id" varchar, -- TODO: what is an effect in the database ? please tell me dear sugar daddies
+  "is_unlocked" boolean,
+  PRIMARY KEY ("skill_id")
+)
+
 CREATE TABLE IF NOT EXISTS "item_player" (
   "playername" varchar REFERENCES "players"("playername") ON DELETE CASCADE, 
   "item_id" varchar REFERENCES "items"("item_id") ON DELETE CASCADE,
