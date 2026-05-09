@@ -6,6 +6,7 @@ import java.util.List;
 import ulb.Configuration;
 import ulb.models.bugemon.effect.Effect;
 
+@SuppressWarnings("checkstyle:HiddenField")
 public final class SkillBuilder {
 
     private static final String DEFAULT_ID = Configuration.Skill.DEFAULT_ID;
@@ -67,6 +68,7 @@ public final class SkillBuilder {
     }
 
     public Skill build() {
-        return new Skill(id, name, description, cost, maxLevel, effect, prerequisites);
+        return new Skill(this.id, this.name, this.description, this.cost, this.maxLevel, this.effect,
+                this.prerequisites);
     }
 }
