@@ -121,10 +121,14 @@ public class Tower {
         for (FloorNode node : floor.getFloorNodes()) {
             RoomState state;
             Room room = node.getRoom();
-            if (node.equals(floor.getCurrentPosition()) || room.isVisited()) {
+            if (node.equals(floor.getCurrentPosition())) {
                 state = RoomState.VISITED;
+            } else if (reachableNodes.contains(node) && room.isVisited()) {
+                state = RoomState.VISITED_AVAILABLE;
             } else if (reachableNodes.contains(node)) {
                 state = RoomState.AVAILABLE;
+            } else if (room.isVisited()) {
+                state = RoomState.VISITED;
             } else {
                 state = RoomState.LOCKED;
             }
