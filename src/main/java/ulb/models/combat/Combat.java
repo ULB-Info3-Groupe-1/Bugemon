@@ -30,6 +30,8 @@ public class Combat {
 
     private final EndOfCombatAction endOfCombatAction;
 
+    private final CombatService combatService;
+
     private TurnResult turnResult;
 
     private boolean isCompleted = false;
@@ -42,6 +44,15 @@ public class Combat {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
         this.endOfCombatAction = endOfCombatAction;
+        this.combatService = null;
+    }
+
+    public Combat(Trainer playerTrainer, Trainer opponentTrainer, EndOfCombatAction endOfCombatAction,
+            CombatService combatService) {
+        this.playerTrainer = playerTrainer;
+        this.opponentTrainer = opponentTrainer;
+        this.endOfCombatAction = endOfCombatAction;
+        this.combatService = combatService;
     }
 
     /**
@@ -227,7 +238,10 @@ public class Combat {
     }
 
     private void applyAttack(Trainer attacker, Trainer defender, Attack attack) {
-        int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
+        int damage = this.combatService != null
+                ? this.combatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon(),
+                        attacker == this.playerTrainer)
+                : CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
         this.applyAttackEffects(attack.effects(), attacker);

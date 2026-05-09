@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +22,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.Skill;
+import ulb.models.skills.SkillBuilder;
+import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.TeamRepository;
@@ -46,7 +50,7 @@ public class TestTeamService {
     public void setUp() {
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>());
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
-                PLAYER_NAME);
+                PLAYER_NAME, mock(SkillService.class));
     }
 
     @Test
@@ -56,7 +60,7 @@ public class TestTeamService {
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(team));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
-                PLAYER_NAME);
+                PLAYER_NAME, mock(SkillService.class));
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam(teamName);
 
@@ -89,7 +93,7 @@ public class TestTeamService {
         team.setName("ToDelete");
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
-                PLAYER_NAME);
+                PLAYER_NAME, mock(SkillService.class));
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam("ToDelete");
 
@@ -110,7 +114,7 @@ public class TestTeamService {
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(team));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
-                PLAYER_NAME);
+                PLAYER_NAME, mock(SkillService.class));
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam("TeamA");
 
@@ -125,7 +129,7 @@ public class TestTeamService {
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
-                PLAYER_NAME);
+                PLAYER_NAME, mock(SkillService.class));
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam(oldName);
 
@@ -146,7 +150,7 @@ public class TestTeamService {
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(teamInDb));
 
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
-                PLAYER_NAME);
+                PLAYER_NAME, mock(SkillService.class));
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam("TeamA");
 
@@ -175,6 +179,58 @@ public class TestTeamService {
     @Test(expected = TeamEmptyException.class)
     public void shouldThrowException_whenSavingEmptyWorkingTeam() throws Exception {
         this.teamService.saveTeam("EmptyTeam");
+    }
+
+    @Test(expected = NoActiveTeamException.class)
+    public void shouldThrowException_whenRestoringHpWithoutActiveTeam() throws Exception {
+        this.teamService.regenHpActiveTeamPostCombat();
+    }
+
+    @Test
+    public void regenHpActiveTeamPostCombat_shouldHealEachBugemonByPercentOfMaxHp() throws Exception {
+        SkillService skillService = mock(SkillService.class);
+        Skill regenSkill = new SkillBuilder().effect(new RegenPostCombatEffect(0.30)).build();
+        when(skillService.getSkills(RegenPostCombatEffect.class)).thenReturn(List.of(regenSkill));
+
+        Bugemon damaged = TestUtilsBugemons.createDefaultBugemon("Damaged"); // hp=100, maxHp=100
+        damaged.takeDamage(50);
+        BugemonTeam team = new BugemonTeam("Squad");
+        team.addOrRemoveBugemon(damaged);
+        when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
+
+        this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
+                PLAYER_NAME, skillService);
+        this.teamService.loadTeamsAndActiveTeam();
+        this.teamService.setActiveTeam("Squad");
+
+        this.teamService.regenHpActiveTeamPostCombat();
+
+        // active team is a copy; assert via the active team to avoid coupling on
+        // internal team identity.
+        Bugemon healed = this.teamService.getRequiredActiveTeam().getFirst();
+        assertEquals(50 + 30, healed.getHp());
+    }
+
+    @Test
+    public void regenHpActiveTeamPostCombat_shouldDoNothing_whenNoRegenSkillUnlocked() throws Exception {
+        SkillService skillService = mock(SkillService.class);
+        when(skillService.getSkills(RegenPostCombatEffect.class)).thenReturn(List.of());
+
+        Bugemon damaged = TestUtilsBugemons.createDefaultBugemon("Damaged");
+        damaged.takeDamage(40);
+        BugemonTeam team = new BugemonTeam("Squad");
+        team.addOrRemoveBugemon(damaged);
+        when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
+
+        this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
+                PLAYER_NAME, skillService);
+        this.teamService.loadTeamsAndActiveTeam();
+        this.teamService.setActiveTeam("Squad");
+
+        this.teamService.regenHpActiveTeamPostCombat();
+
+        Bugemon untouched = this.teamService.getRequiredActiveTeam().getFirst();
+        assertEquals(60, untouched.getHp());
     }
 
     @Test
@@ -242,7 +298,7 @@ public class TestTeamService {
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team1, team2)));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
-                PLAYER_NAME);
+                PLAYER_NAME, mock(SkillService.class));
         this.teamService.loadTeamsAndActiveTeam();
         this.teamService.setActiveTeam("Team1");
 

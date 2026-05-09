@@ -2,6 +2,7 @@ package ulb.services;
 
 import ulb.Configuration;
 import ulb.controllers.TowerController;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.Tower;
 import ulb.repositories.PlayerRepository;
@@ -13,14 +14,16 @@ public class TowerService {
     private final BugemonService bugemonService;
     private final TeamService teamService;
     private final InventoryService inventoryService;
+    private final SkillService skillService;
 
     public TowerService(PlayerRepository playerRepository, String playername, BugemonService bugemonService,
-            TeamService teamService, InventoryService inventoryService) {
+            TeamService teamService, InventoryService inventoryService, SkillService skillService) {
         this.playername = playername;
         this.playerRepository = playerRepository;
         this.bugemonService = bugemonService;
         this.teamService = teamService;
         this.inventoryService = inventoryService;
+        this.skillService = skillService;
     }
 
     /**
@@ -67,6 +70,7 @@ public class TowerService {
             this.clearTowerProgress();
         } else {
             this.saveFloor(tower.getCurrentFloorNumber());
+            this.teamService.regenHpActiveTeamPostCombat();
         }
     }
 
@@ -76,7 +80,8 @@ public class TowerService {
      * @return the new tower
      */
     public Tower createTower() {
+
         return new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService,
-                this.getCurrentFloor());
+                this.getCurrentFloor(), this.skillService.getSkills(StatBonusEffect.class));
     }
 }

@@ -7,12 +7,14 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.models.trainer.AITrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
@@ -28,22 +30,26 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
     private ManualTrainer manualPlayerTrainer;
     private final InventoryService inventoryService;
+    private final SkillService skillService;
 
     /**
      * Constructs a {@code ManualCombatController} and wires itself as the view listener.
      *
      */
     public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            InventoryService inventoryService, CombatService combatService) {
-        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+            InventoryService inventoryService, CombatService combatService, SkillService skillService) {
+        super(metaController, teamService, bugemonService, combatService, skillService.getSkills(StatBonusEffect.class),
+                ViewLoader.load(ManualCombatView::new));
         this.inventoryService = inventoryService;
+        this.skillService = skillService;
         this.view.setListener(this);
     }
 
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(), this.inventoryService);
+        this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(),
+                this.inventoryService.getInventory(), this.skillService.getSkills(StatBonusEffect.class));
         this.playerTrainer = this.manualPlayerTrainer;
 
         AITrainer opponentTrainer = new AITrainer(CombatService
@@ -72,6 +78,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         }
 
         this.manualPlayerTrainer = playerManualTrainer;
+        this.manualPlayerTrainer.setUnlockedSkills(this.skillService.getSkills(StatBonusEffect.class));
         this.playerTrainer = this.manualPlayerTrainer;
         this.combat = newCombat;
         Trainer opponentTrainer = this.combat.getOpponentTrainer();

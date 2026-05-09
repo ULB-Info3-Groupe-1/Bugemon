@@ -17,6 +17,7 @@ import ulb.models.combat.CombatXpDistributor;
 import ulb.models.combat.TurnResult;
 import ulb.models.combat.TurnStep;
 import ulb.models.level_up.LevelUp;
+import ulb.models.skills.Skill;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
@@ -42,18 +43,21 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected final BugemonService bugemonService;
     protected final CombatService combatService;
 
+    protected final List<Skill> statBonusSkills;
+
     protected Combat combat;
     protected Trainer playerTrainer;
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
     private Trainer pendingWinner = null;
 
     protected CombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            CombatService combatService, V view) {
+            CombatService combatService, List<Skill> statBonusSkills, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
         this.teamService = teamService;
         this.bugemonService = bugemonService;
         this.combatService = combatService;
+        this.statBonusSkills = statBonusSkills;
 
         this.view.setNextListener(this);
     }
@@ -182,7 +186,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         if (won) {
             CombatContext ctx = new CombatContext(winner, this.getOpponentOf(winner));
             CombatXpDistributor xpDistributor = new CombatXpDistributor();
-            List<LevelUp> generatedLevelUps = xpDistributor.distributeXp(ctx);
+            List<LevelUp> generatedLevelUps = xpDistributor.distributeXp(ctx, this.statBonusSkills);
             winner.getParticipatingBugemons().forEach(this.bugemonService::saveBugemonState);
             if (!generatedLevelUps.isEmpty()) {
                 this.metaController.receiveCombatResults(generatedLevelUps);

@@ -1,27 +1,27 @@
 package ulb.models.skills;
 
-import ulb.models.bugemon.effect.Effect;
-
 /**
  * Represents a skill that can be unlocked in the skill tree.
  */
 public class Skill {
 
-    private String id;
+    private final String id;
 
-    private String name;
+    private final String name;
 
-    private String description;
+    private final String description;
 
-    private int cost;
+    private final int cost;
 
-    private int maxLevel;
+    private int currentLevel;
 
-    private Effect effect;
+    private final int maxLevel;
+
+    private final SkillEffect effect;
 
     private boolean isUnlocked;
 
-    public Skill(String id, String name, String description, int cost, int maxLevel, Effect effect,
+    public Skill(String id, String name, String description, int cost, int maxLevel, SkillEffect effect,
             boolean isUnlocked) {
         this.id = id;
         this.name = name;
@@ -30,6 +30,7 @@ public class Skill {
         this.maxLevel = maxLevel;
         this.effect = effect;
         this.isUnlocked = isUnlocked;
+        this.currentLevel = isUnlocked ? 1 : 0;
     }
 
     public String getId() {
@@ -48,11 +49,21 @@ public class Skill {
         return this.cost;
     }
 
+    public int getCurrentLevel() {
+        return this.currentLevel;
+    }
+
+    public void incrementLevel() {
+        if (this.currentLevel < this.maxLevel) {
+            this.currentLevel++;
+        }
+    }
+
     public int getMaxLevel() {
         return this.maxLevel;
     }
 
-    public Effect getEffect() {
+    public SkillEffect getEffect() {
         return this.effect;
     }
 
@@ -61,6 +72,7 @@ public class Skill {
     }
 
     public void unlock() {
+        this.incrementLevel();
         this.isUnlocked = true;
     }
 }
