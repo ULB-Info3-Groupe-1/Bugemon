@@ -1,5 +1,6 @@
 package ulb.models.bugemon;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,6 +78,12 @@ public class Bugemon implements BugemonDTO {
             throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
         }
         return List.copyOf(attacks);
+    }
+
+    public void learnAttack(int index, Attack newAttack) {
+        List<Attack> newAttackList = new ArrayList<>(this.attackList);
+        newAttackList.set(index, newAttack);
+        this.attackList = validateAndCopyAttackList(newAttackList);
     }
 
     public void takeDamage(int damage) {
