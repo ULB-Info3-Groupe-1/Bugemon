@@ -21,7 +21,7 @@ public class ItemReward implements Reward {
 
     @Override
     public String getSummary() {
-        return "Bonus item" + this.item.name();
+        return "Bonus : Nouvel objet : " + this.item.name();
     }
 
     @Override

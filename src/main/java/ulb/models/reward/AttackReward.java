@@ -31,6 +31,6 @@ public class AttackReward implements Reward {
 
     @Override
     public String getSummary() {
-        return "Bonus : New attack :" + this.newAttack.toString();
+        return "Bonus : Nouvelle attaque :" + this.newAttack.toString();
     }
 }
