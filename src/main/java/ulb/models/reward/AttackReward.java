@@ -24,8 +24,9 @@ public class AttackReward implements Reward {
 
     @Override
     public void applyReward(Bugemon target) {
-        if (this.indexToReplace == -1)
+        if (this.indexToReplace == -1) {
             throw new IllegalStateException("Cannot apply reward: No attack selected for replacement");
+        }
         target.learnAttack(this.indexToReplace, this.newAttack);
     }
 

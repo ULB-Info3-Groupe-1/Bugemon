@@ -25,7 +25,7 @@ public class PostCombatReward {
         this.availableAttacks = availableAttacks;
         this.availableItems = availableItems;
         this.random = new Random();
-        generateRewards();
+        this.generateRewards();
     }
 
     public void generateRewards() {
