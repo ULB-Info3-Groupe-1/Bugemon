@@ -1,7 +1,7 @@
 package ulb.services;
 
 import ulb.Configuration;
-import ulb.controllers.combat.TowerController;
+import ulb.controllers.TowerController;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.Tower;
 import ulb.repositories.PlayerRepository;
