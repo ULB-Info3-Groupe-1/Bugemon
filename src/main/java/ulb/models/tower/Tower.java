@@ -72,8 +72,8 @@ public class Tower {
     /**
      * Visit the current room if it has not been visited yet
      */
-    public void visitCurrentRoomIfNotVisited(RoomVisitor roomVisitor) {
-        this.currentFloor.visitCurrentRoomIfNotVisited(roomVisitor);
+    public void visitCurrentRoom(RoomVisitor roomVisitor) {
+        this.currentFloor.visitCurrentRoom(roomVisitor);
         this.updateRoomsState();
     }
 

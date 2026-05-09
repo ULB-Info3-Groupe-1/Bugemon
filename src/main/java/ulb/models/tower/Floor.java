@@ -95,7 +95,11 @@ public class Floor {
         return this.playerTrainer;
     }
 
-    public void visitCurrentRoomIfNotVisited(RoomVisitor roomVisitor) {
-        this.currentPosition.visitIfNotVisited(roomVisitor);
+    public void visitCurrentRoom(RoomVisitor roomVisitor) {
+        Room room = this.getCurrentRoom();
+        if (room.isVisited()) {
+            return;
+        }
+        this.currentPosition.visit(roomVisitor);
     }
 }

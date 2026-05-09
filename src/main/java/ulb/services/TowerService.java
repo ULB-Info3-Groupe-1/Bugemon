@@ -49,7 +49,7 @@ public class TowerService {
      */
     public void movePlayer(Tower tower, FloorNode node, TowerController controller) {
         tower.currentFloorMoveTo(node);
-        tower.visitCurrentRoomIfNotVisited(controller);
+        tower.visitCurrentRoom(controller);
     }
 
     /**
