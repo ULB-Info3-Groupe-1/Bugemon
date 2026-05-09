@@ -31,6 +31,12 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     @Override
+    protected void show() {
+        this.tower = this.towerService.createTower();
+        this.showFloor();
+    }
+
+    @Override
     public void onRoomClicked(FloorNode node) {
         this.towerService.movePlayer(this.tower, node, this);
         this.view.animatePlayerTo(node);
@@ -80,15 +86,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     /**
-     * Runs the Tower flow until a combat starts, the run ends, or the tower is completed. Reward rooms are resolved
-     * immediately; combat rooms continue via callback.
-     */
-    public void runTower() {
-        this.tower = this.towerService.createTower();
-        this.showFloor();
-    }
-
-    /**
      * Shows the floor map before continuing the run.
      */
     private void showFloor() {
@@ -97,7 +94,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.setupFloorStructure(this.tower.getCurrentFloor());
         this.view.setPlayerPosition(this.tower.getPlayerPosition());
         this.view.refreshRoomStates();
-        this.show();
+        super.show();
     }
 
     private void setupFloorStructure(Floor currentFloor) {

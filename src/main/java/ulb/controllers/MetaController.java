@@ -208,7 +208,7 @@ public class MetaController {
         this.transitions.put(Window.TOWER, () -> {
             this.isTowerActive = true;
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.towerController.runTower();
+            this.towerController.show();
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();
