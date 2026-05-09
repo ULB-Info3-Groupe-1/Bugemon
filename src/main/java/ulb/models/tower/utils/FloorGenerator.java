@@ -14,8 +14,8 @@ import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
-import ulb.models.utils.Position;
 import ulb.models.trainer.Trainer;
+import ulb.models.utils.Position;
 
 public class FloorGenerator {
 

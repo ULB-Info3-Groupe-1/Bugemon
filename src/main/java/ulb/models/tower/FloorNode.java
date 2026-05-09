@@ -5,8 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import ulb.models.tower.room.Room;
-import ulb.models.utils.Position;
 import ulb.models.tower.room.RoomVisitor;
+import ulb.models.utils.Position;
 
 public class FloorNode {
     private final Position position;
