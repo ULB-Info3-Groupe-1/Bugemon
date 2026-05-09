@@ -44,7 +44,10 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     }
 
     private Node buildViewNode(SkillNode currentNode, Node parentView) {
-        Node currentView = new Node(currentNode.getSkill().getName(), parentView);
+        String name = currentNode.getSkill().getName();
+        String description = currentNode.getSkill().getDescription();
+
+        Node currentView = new Node(name, description, parentView);
         if (parentView != null) {
             parentView.addChild(currentView);
         }

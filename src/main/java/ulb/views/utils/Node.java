@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Node {
     // Data struct
     private String data;
+    private String description;
     private Node parent;
     private ArrayList<Node> children = new ArrayList<>();
 
@@ -15,8 +16,9 @@ public class Node {
     public float y;
     public float mod;
 
-    public Node(String data, Node parent) {
+    public Node(String data, String description, Node parent) {
         this.data = data;
+        this.description = description;
         this.parent = parent;
 
         // fix
@@ -25,6 +27,10 @@ public class Node {
 
     public String getData() {
         return this.data;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     public Node getParent() {

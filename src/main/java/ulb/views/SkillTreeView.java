@@ -2,11 +2,13 @@ package ulb.views;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 
 import ulb.Configuration;
 import ulb.views.utils.Node;
@@ -130,6 +132,10 @@ public class SkillTreeView extends View {
         skillNode.setLayoutX(pixelX);
         skillNode.setLayoutY(pixelY);
         skillNode.getStyleClass().add("skill-node"); // TODO: add styling <3
+
+        Tooltip tooltip = new Tooltip(node.getDescription());
+        tooltip.setShowDelay(Duration.millis(300));
+        Tooltip.install(skillNode, tooltip);
 
         this.innerMapPane.getChildren().add(skillNode);
 
