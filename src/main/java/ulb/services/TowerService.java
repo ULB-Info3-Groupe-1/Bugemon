@@ -63,8 +63,7 @@ public class TowerService {
         this.inventoryService.saveInventory();
         if (!playerWon || tower.isFinished()) {
             this.clearTowerProgress();
-        } else if (tower.isCurrentFloorComplete()) {
-            tower.goToNextFloor();
+        } else {
             this.saveFloor(tower.getCurrentFloorNumber());
         }
     }
