@@ -80,7 +80,7 @@ public class Bugemon implements BugemonDTO {
         return List.copyOf(attacks);
     }
 
-    public void learnAttack(int index, Attack newAttack) {
+    public void replaceAttack(int index, Attack newAttack) {
         List<Attack> newAttackList = new ArrayList<>(this.attackList);
         newAttackList.set(index, newAttack);
         this.attackList = validateAndCopyAttackList(newAttackList);
