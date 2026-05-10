@@ -2,11 +2,19 @@ package ulb.models.reward;
 
 import ulb.models.bugemon.Bugemon;
 
-public interface Reward {
+public abstract class Reward {
 
-    RewardType getRewardType();
+    private final RewardType type;
 
-    String getSummary();
+    protected Reward(RewardType type) {
+        this.type = type;
+    }
 
-    void applyReward(Bugemon target);
+    public RewardType getRewardType() {
+        return this.type;
+    }
+
+    public abstract String getSummary();
+
+    public abstract void applyReward(Bugemon target);
 }

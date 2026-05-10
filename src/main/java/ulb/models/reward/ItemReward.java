@@ -4,19 +4,15 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 
-public class ItemReward implements Reward {
+public class ItemReward extends Reward {
 
     private final Item item;
     private final Inventory inventory;
 
     public ItemReward(Item item, Inventory inventory) {
+        super(RewardType.ITEM);
         this.item = item;
         this.inventory = inventory;
-    }
-
-    @Override
-    public RewardType getRewardType() {
-        return RewardType.ITEM;
     }
 
     @Override
