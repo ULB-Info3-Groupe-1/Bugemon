@@ -55,7 +55,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void visitRewardRoom(RewardRoom rewardRoom) {
         LOG.info("Entering reward room");
-        // NOT IMPLEMENTED
+        this.metaController.onGoToRewards();
     }
 
     public void visitEmptyRoom(EmptyRoom emptyRoom) {
@@ -74,6 +74,9 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
         this.towerService.handleCombatEnd(this.tower, playerWon);
+        if (playerWon) {
+            this.metaController.onGoToRewards();
+        }
         if (this.tower.isFinished() || !playerWon) {
             this.endTowerFlow(playerWon);
         } else {

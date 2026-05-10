@@ -28,14 +28,16 @@ import ulb.services.TowerService;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is
+ * the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
+     * transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -50,6 +52,7 @@ public class MetaController {
         COMBAT_DEFEAT,
         LEVEL_UP,
         SKILL_TREE,
+        REWARD_CHOICE
     }
 
     private final Stage stage;
@@ -68,21 +71,21 @@ public class MetaController {
     private final SkillTreeController skillTreeController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
+    private final RewardController rewardController;
     private boolean isTowerActive;
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *            main JavaFX stage of the application
+     *                     main JavaFX stage of the application
      * @throws IOException
-     *             if the music fails to be initialized
+     *                     if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService,
             SkillService skillService) throws IOException {
         this.stage = primaryStage;
-
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
@@ -102,6 +105,7 @@ public class MetaController {
         this.skillTreeController = new SkillTreeController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
+        this.rewardController = new RewardController(this);
         this.initializeMusicResources();
         this.initTransitions();
     }
@@ -180,6 +184,10 @@ public class MetaController {
         this.switchTo(Window.SKILL_TREE);
     }
 
+    public void onGoToRewards() {
+        this.switchTo(Window.REWARD_CHOICE);
+    }
+
     private void initializeMusicResources() throws IOException {
         this.musicLoader.loadAllResources(this.musicPlayer);
     }
@@ -229,6 +237,11 @@ public class MetaController {
             this.combatDefeatController.show();
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
+        this.transitions.put(Window.REWARD_CHOICE, () -> {
+            this.rewardController.show();
+            this.rewardController.startRewardPhase();
+            this.musicPlayer.playAmbiance(Ambiance.VICTORY, false);
+        });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
         this.transitions.put(Window.SKILL_TREE, this.skillTreeController::show);
     }
@@ -237,9 +250,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *            target screen to display
+     *               target screen to display
      * @throws IllegalArgumentException
-     *             if the window is invalid
+     *                                  if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
