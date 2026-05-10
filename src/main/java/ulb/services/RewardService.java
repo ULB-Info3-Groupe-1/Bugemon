@@ -1,7 +1,6 @@
 package ulb.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -15,8 +14,6 @@ import ulb.models.reward.Reward;
 import ulb.models.reward.StatReward;
 
 public class RewardService {
-
-    private static final int NUM_REWARDS = 3;
     private Random random;
     private List<Reward> options;
     private Inventory inventory;
@@ -55,4 +52,7 @@ public class RewardService {
         return options;
     }
 
+    public List<Reward> getOptions() {
+        return this.options;
+    }
 }

@@ -2,10 +2,7 @@ package ulb.controllers;
 
 import java.util.List;
 
-import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.reward.Reward;
 import ulb.services.BugemonService;
@@ -32,7 +29,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
 
     @Override
     public void onRewardChosen(int optionId) {
-        Reward selectedReward = this.rewardService.generateRewards().get(optionId);
+        Reward selectedReward = this.rewardService.getOptions().get(optionId);
         BugemonTeam activeBugemon = teamService.getWorkingTeam();
         List<Bugemon> bugemons = activeBugemon.getAll();
         switch (selectedReward.getRewardType()) {
@@ -68,7 +65,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
         if (this.rewardService == null)
             return; // Sécurité
 
-        List<Reward> options = this.rewardService.generateRewards();
+        List<Reward> options = this.rewardService.getOptions();
         this.view.setRewardTexts(options.get(0).getSummary(), options.get(1).getSummary(), options.get(2).getSummary());
     }
 }
