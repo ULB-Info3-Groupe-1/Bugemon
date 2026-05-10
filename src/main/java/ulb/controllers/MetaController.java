@@ -16,11 +16,7 @@ import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
-import ulb.services.BugemonService;
-import ulb.services.CombatService;
-import ulb.services.InventoryService;
-import ulb.services.TeamService;
-import ulb.services.TowerService;
+import ulb.services.*;
 import ulb.views.View;
 
 /**
@@ -45,6 +41,7 @@ public class MetaController {
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
         LEVEL_UP,
+        REWARD_CHOICE
     }
 
     private final BugemonService bugemonService;
@@ -64,6 +61,7 @@ public class MetaController {
     private final LevelUpController levelUpController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
+    private final RewardController rewardController;
     private boolean isTowerActive;
 
     /**
@@ -78,9 +76,7 @@ public class MetaController {
             InventoryService inventoryService, TowerService towerService, CombatService combatService)
             throws IOException {
         this.bugemonService = bugemonService;
-
         this.stage = primaryStage;
-
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
@@ -99,6 +95,7 @@ public class MetaController {
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
+        this.rewardController = new RewardController(this);
         this.initializeMusicResources();
         this.initTransitions();
     }
@@ -169,6 +166,10 @@ public class MetaController {
         this.switchTo(Window.EDIT_TEAM);
     }
 
+    public void onGoToRewards() {
+        this.switchTo(Window.REWARD_CHOICE);
+    }
+
     private void initializeMusicResources() throws IOException {
         this.musicLoader.loadAllResources(this.musicPlayer);
     }
@@ -217,6 +218,11 @@ public class MetaController {
         this.transitions.put(Window.COMBAT_DEFEAT, () -> {
             this.combatDefeatController.show();
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
+        });
+        this.transitions.put(Window.REWARD_CHOICE, () -> {
+            this.rewardController.show();
+            this.rewardController.startRewardPhase();
+            this.musicPlayer.playAmbiance(Ambiance.VICTORY, false);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
     }
