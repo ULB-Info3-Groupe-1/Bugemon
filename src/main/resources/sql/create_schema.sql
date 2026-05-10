@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS "items" (
   "name" varchar,
   "description" varchar,
   "category" varchar,
-  "sprite" varchar, 
+  "sprite" varchar,
   PRIMARY KEY ("item_id")
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS "item_effects" (
 );
 
 CREATE TABLE IF NOT EXISTS "item_player" (
-  "playername" varchar REFERENCES "players"("playername") ON DELETE CASCADE, 
+  "playername" varchar REFERENCES "players"("playername") ON DELETE CASCADE,
   "item_id" varchar REFERENCES "items"("item_id") ON DELETE CASCADE,
   "amount" integer,
   PRIMARY KEY ("playername", "item_id")

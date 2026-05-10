@@ -12,13 +12,18 @@ import ulb.views.RewardView;
 import ulb.views.ViewLoader;
 
 public class RewardController extends Controller<RewardView> implements RewardView.Listener {
-    private RewardService rewardService;
+    private RewardService rewardService = new RewardService();
     private TeamService teamService;
     private BugemonService bugemonService;
     private Reward pendingReward;
 
-    public RewardController(MetaController metaController) {
+    public RewardController(MetaController metaController, RewardService rewardService,
+                            TeamService teamService, BugemonService bugemonService) {
         super(metaController, ViewLoader.load(RewardView::new));
+        this.rewardService = rewardService;
+        this.teamService = teamService;
+        this.bugemonService = bugemonService;
+
         this.view.setListener(this);
     }
 
