@@ -17,4 +17,9 @@ public class PlayerService {
         return this.skillTree;
     }
 
+    // temporary placeholder — replace once the player model tracks available skill points
+    public int getAvailableSkillPoints() {
+        return 0;
+    }
+
 }

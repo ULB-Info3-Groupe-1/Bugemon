@@ -21,12 +21,20 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
 
     @Override
     public void show() {
+        this.view.setAvailablePoints(this.playerService.getAvailableSkillPoints());
         this.view.renderTree(this.buildTree());
         super.show();
     }
 
     @Override
-    public void onSkillClicked(Node node) {
+    public void onSkillLeftClicked(Node node) {
+        // Add a point
+        // TODO: handle skill selection and apply effects
+    }
+
+    @Override
+    public void onSkillRightClicked(Node node) {
+        // Delete a point
         // TODO: handle skill selection and apply effects
     }
 
@@ -48,6 +56,15 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
         String description = currentNode.getSkill().getDescription();
 
         Node currentView = new Node(name, description, parentView);
+
+        if (currentNode.getSkill().isUnlocked()) {
+            currentView.setState(Node.NodeState.ACTIVE);
+        } else if (currentNode.isUnlockable()) {
+            currentView.setState(Node.NodeState.AVAILABLE);
+        } else {
+            currentView.setState(Node.NodeState.LOCKED);
+        }
+
         if (parentView != null) {
             parentView.addChild(currentView);
         }

@@ -4,11 +4,17 @@ import java.util.ArrayList;
 
 // Dummy class while waiting a skill node...
 public class Node {
+
+    public enum NodeState {
+        ACTIVE, AVAILABLE, LOCKED
+    }
+
     // Data struct
     private String data;
     private String description;
     private Node parent;
     private ArrayList<Node> children = new ArrayList<>();
+    private NodeState state = NodeState.LOCKED;
 
     // Visual part for the layout
     // Public to avoid useless getter for now
@@ -43,6 +49,14 @@ public class Node {
 
     public ArrayList<Node> getChildren() {
         return this.children;
+    }
+
+    public NodeState getState() {
+        return this.state;
+    }
+
+    public void setState(NodeState state) {
+        this.state = state;
     }
 
     public boolean isLeftMost() {
