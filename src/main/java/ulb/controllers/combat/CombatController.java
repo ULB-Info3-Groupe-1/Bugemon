@@ -183,7 +183,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             CombatContext ctx = new CombatContext(winner, this.getOpponentOf(winner));
             CombatXpDistributor xpDistributor = new CombatXpDistributor();
             List<LevelUp> generatedLevelUps = xpDistributor.distributeXp(ctx);
-            winner.getParticipatingBugemons().forEach(bugemonService::saveBugemonState);
+            winner.getParticipatingBugemons().forEach(this.bugemonService::saveBugemonState);
             if (!generatedLevelUps.isEmpty()) {
                 this.metaController.receiveCombatResults(generatedLevelUps);
             }
