@@ -12,7 +12,7 @@ import ulb.views.RewardView;
 import ulb.views.ViewLoader;
 
 public class RewardController extends Controller<RewardView> implements RewardView.Listener {
-    private RewardService rewardService = new RewardService();
+    private RewardService rewardService;
     private TeamService teamService;
     private BugemonService bugemonService;
     private Reward pendingReward;
