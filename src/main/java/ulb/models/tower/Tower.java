@@ -12,22 +12,18 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
-import ulb.services.TowerService;
 
 public class Tower {
 
-    private final TowerService towerService;
     private final TowerFloors floors;
     private final Trainer playerTrainer;
     private Floor currentFloor;
     private boolean isFinished = false;
 
     public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
-            TowerService towerService) {
-        this.towerService = towerService;
+            int currentFloorLevel) {
         this.playerTrainer = new ManualTrainer(playerTeam, inventoryService);
 
-        int currentFloorLevel = this.towerService.getCurrentFloor();
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {
             Floor newFloor = new Floor(this.playerTrainer, bugemonService, i);
@@ -41,6 +37,10 @@ public class Tower {
 
     public boolean isFinished() {
         return this.isFinished;
+    }
+
+    public void setTowerFinished() {
+        this.isFinished = true;
     }
 
     public boolean isCompleted() {
@@ -77,22 +77,11 @@ public class Tower {
         this.updateRoomsState();
     }
 
-    public void checkFloorCompletion() {
-        if (this.isCurrentFloorComplete()) {
-            if (this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
-                this.isFinished = true;
-            } else {
-                this.goToNextFloor();
-            }
-        }
-        this.updateRoomsState();
-    }
-
-    boolean isCurrentFloorComplete() {
+    public boolean isCurrentFloorComplete() {
         return this.currentFloor.isComplete();
     }
 
-    void goToNextFloor() {
+    public void goToNextFloor() {
         if (!this.isCurrentFloorComplete()) {
             throw new IllegalStateException("Current floor is not complete");
         }
@@ -100,7 +89,7 @@ public class Tower {
             throw new IllegalStateException("No more floors");
         }
         this.currentFloor = this.floors.getFloorByLevel(this.getCurrentFloorNumber() + 1);
-        this.towerService.saveFloor(this.getCurrentFloorNumber());
+        this.updateRoomsState();
     }
 
     private boolean hasNextFloor() {

@@ -83,7 +83,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     private void endTowerFlow(boolean playerWon) {
         // reset tower progress because the player has finished the tower or lost
-        this.towerService.clearTowerProgress();
         this.tower = null;
         this.metaController.endTowerFlow();
         this.metaController.onCombatFinished(playerWon);

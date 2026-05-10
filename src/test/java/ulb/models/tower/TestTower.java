@@ -19,14 +19,13 @@ import ulb.models.tower.room.Room;
 import ulb.models.tower.room.RoomVisitor;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
-import ulb.services.TowerService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestTower {
 
     private static final BugemonService BUGEMON_SERVICE_MOCK = mock(BugemonService.class);
     private static final InventoryService INVENTORY_SERVICE_MOCK = mock(InventoryService.class);
-    private static final TowerService TOWER_SERVICE_MOCK = mock(TowerService.class);
+    private static int currentFloor = 2;
 
     @Before
     public void addBossBugemon() {
@@ -34,7 +33,6 @@ public class TestTower {
         // Add boss Bugemon required by Floor.initBossCombatRoom()
         testBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
         when(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons()).thenReturn(testBugemons);
-        when(TOWER_SERVICE_MOCK.getCurrentFloor()).thenReturn(2);
     }
 
     private void completeCurrentFloor(Tower noTower) {
@@ -67,7 +65,7 @@ public class TestTower {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
         // No tower structure with floor NO2, NO3, NO4, NO5, NO6, NO7, NO8
-        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, TOWER_SERVICE_MOCK);
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
 
         assertEquals(2, noTower.getCurrentFloorNumber());
         assertFalse(noTower.isCompleted());
@@ -88,18 +86,14 @@ public class TestTower {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-
-        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, TOWER_SERVICE_MOCK);
-
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
         assertFalse(noTower.isCompleted());
     }
 
     @Test
     public void testGoToNextFloorThrowsWhenCurrentFloorIncomplete() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        when(TOWER_SERVICE_MOCK.getCurrentFloor()).thenReturn(2);
-        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, TOWER_SERVICE_MOCK);
-
+        Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
         assertThrows(IllegalStateException.class, noTower::goToNextFloor);
     }
 }
