@@ -25,12 +25,13 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     private BugemonService bugemonService;
     private Reward pendingReward;
 
-    public RewardController(MetaController metaController, RewardService rewardService, TeamService teamService,
-            BugemonService bugemonService) {
+    public RewardController(MetaController metaController, RewardService rewardService,
+                            TeamService teamService, BugemonService bugemonService) {
         super(metaController, ViewLoader.load(RewardView::new));
         this.rewardService = rewardService;
         this.teamService = teamService;
         this.bugemonService = bugemonService;
+
         this.view.setListener(this);
     }
 

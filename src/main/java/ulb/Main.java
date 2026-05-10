@@ -31,39 +31,40 @@ import ulb.services.TowerService;
  */
 public class Main extends Application {
 
-    public static void main(String[] args) {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
-        if (fontStream != null) {
-            Font.loadFont(fontStream, 16);
+        public static void main(String[] args) {
+                SLF4JBridgeHandler.removeHandlersForRootLogger();
+                SLF4JBridgeHandler.install();
+                launch(args);
         }
 
-        stage.setTitle(Configuration.Ui.STAGE_TITLE);
-        stage.setMaximized(true);
+        @Override
+        public void start(Stage stage) throws Exception {
+                InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
+                if (fontStream != null) {
+                        Font.loadFont(fontStream, 16);
+                }
 
-        Scene scene = new Scene(new StackPane());
-        scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
-        stage.setScene(scene);
+                stage.setTitle(Configuration.Ui.STAGE_TITLE);
+                stage.setMaximized(true);
 
-        QueryLoader loader = new QueryLoader();
-        DatabaseConnection dbConnection = new DatabaseConnection();
-        StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
-        BugemonRepository bugemonRepository = new BugemonRepository(dbConnection, loader.getQueries());
-        InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, staticDataRepository,
-                loader.getQueries());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
-                loader.getQueries());
-        TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, bugemonRepository,
-                loader.getQueries());
-        String playerName = "default_player";
-        PlayerService playerService = new PlayerService(staticDataRepository, playerRepository, playerName);
+                Scene scene = new Scene(new StackPane());
+                scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
+                scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
+                stage.setScene(scene);
+
+                QueryLoader loader = new QueryLoader();
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
+                BugemonRepository bugemonRepository = new BugemonRepository(dbConnection, loader.getQueries());
+                InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, staticDataRepository,
+                                loader.getQueries());
+                PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
+                                loader.getQueries());
+                TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository,
+                                bugemonRepository,
+                                loader.getQueries());
+                String playerName = "default_player";
+                PlayerService playerService = new PlayerService(staticDataRepository, playerRepository, playerName);
         SkillService skillService = new SkillService(playerService.getUnlockedSkills());
         BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName,
                 skillService.getSkills(StatBonusEffect.class));

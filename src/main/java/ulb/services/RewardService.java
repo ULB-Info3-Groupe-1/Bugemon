@@ -42,6 +42,7 @@ public class RewardService {
         this.random = new Random();
     }
 
+
     public List<Reward> generateRewards() {
         this.options = new ArrayList<>();
 
