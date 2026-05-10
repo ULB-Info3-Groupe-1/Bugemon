@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.RewardView">
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="ulb.views.RewardView">
+
     <center>
         <VBox alignment="CENTER" spacing="28">
             <padding>
@@ -16,24 +13,24 @@
             </padding>
 
             <Label fx:id="rewardText" styleClass="level-up-title" />
-            <Label text="Choisis ta récompense"
-                styleClass="level-up-subtitle" />
-
+            <Label text="Choisis ta récompense" styleClass="level-up-subtitle" />
         </VBox>
     </center>
+
     <bottom>
-        <HBox alignment="CENTER" spacing="56">
+        <StackPane>
             <padding>
                 <Insets top="28" right="28" bottom="28" left="28" />
             </padding>
-            <Button fx:id="choice0Button"
-                styleClass="btn,btn-success,btn-choice" onAction="#onChoice0Clicked" />
-            <Button fx:id="choice1Button"
-                styleClass="btn,btn-warning,btn-choice" onAction="#onChoice1Clicked" />
-            <Button fx:id="choice2Button"
-                styleClass="btn,btn-primary,btn-choice" onAction="#onChoice2Clicked" />
-        </HBox>
-        <HBox fx:id="teamContainer" alignment="CENTER" spacing="15"
-            visible="false" managed="false" />
+
+            <HBox fx:id="rewardsContainer" alignment="CENTER" spacing="56">
+                <Button fx:id="choice0Button" styleClass="btn,btn-success,btn-choice" onAction="#onChoice0Clicked" />
+                <Button fx:id="choice1Button" styleClass="btn,btn-warning,btn-choice" onAction="#onChoice1Clicked" />
+                <Button fx:id="choice2Button" styleClass="btn,btn-primary,btn-choice" onAction="#onChoice2Clicked" />
+            </HBox>
+            <HBox fx:id="teamContainer" alignment="CENTER" spacing="15" visible="false" managed="false" />
+
+        </StackPane>
     </bottom>
+
 </BorderPane>
