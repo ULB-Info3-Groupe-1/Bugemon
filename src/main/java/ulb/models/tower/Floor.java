@@ -32,7 +32,7 @@ public class Floor {
     }
 
     public boolean isComplete() {
-        return this.floorGenerator.hasPlayerWon();
+        return this.floorGenerator.hasPlayerWonBossCombat();
     }
 
     public List<Room> getNextRooms() {

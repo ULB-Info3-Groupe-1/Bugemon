@@ -71,7 +71,7 @@ public class Tower {
     public void visitCurrentRoom(RoomVisitor roomVisitor) {
         this.currentFloor.visitCurrentRoom(roomVisitor);
         this.updateRoomsState();
-        if (this.isCurrentFloorComplete() && this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
+        if (this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX && this.isCurrentFloorComplete()) {
             this.isFinished = true;
         }
     }
