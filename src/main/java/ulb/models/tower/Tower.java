@@ -39,10 +39,6 @@ public class Tower {
         return this.isFinished;
     }
 
-    public void setTowerFinished() {
-        this.isFinished = true;
-    }
-
     public boolean isCompleted() {
         return this.isCurrentFloorComplete() && !this.hasNextFloor();
     }
@@ -75,6 +71,9 @@ public class Tower {
     public void visitCurrentRoom(RoomVisitor roomVisitor) {
         this.currentFloor.visitCurrentRoom(roomVisitor);
         this.updateRoomsState();
+        if (this.isCurrentFloorComplete() && this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
+            this.isFinished = true;
+        }
     }
 
     public boolean isCurrentFloorComplete() {

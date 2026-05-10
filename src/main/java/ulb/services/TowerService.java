@@ -61,20 +61,11 @@ public class TowerService {
 
     public void handleCombatEnd(Tower tower, boolean playerWon) {
         this.inventoryService.saveInventory();
-
-        if (!playerWon) {
+        if (!playerWon || tower.isFinished()) {
             this.clearTowerProgress();
-            return;
-        }
-
-        if (tower.isCurrentFloorComplete()) {
-            if (tower.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
-                tower.setTowerFinished();
-                this.clearTowerProgress();
-            } else {
-                tower.goToNextFloor();
-                this.saveFloor(tower.getCurrentFloorNumber());
-            }
+        } else if (tower.isCurrentFloorComplete()) {
+            tower.goToNextFloor();
+            this.saveFloor(tower.getCurrentFloorNumber());
         }
     }
 
