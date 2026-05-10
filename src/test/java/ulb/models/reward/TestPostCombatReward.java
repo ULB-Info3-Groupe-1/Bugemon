@@ -1,15 +1,17 @@
 package ulb.models.reward;
 
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import ulb.models.bugemon.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon.Item;
 
 class TestPostCombatReward {
 
@@ -17,14 +19,13 @@ class TestPostCombatReward {
     private List<Attack> attacks;
     private List<Item> items;
 
-
     @Test
     void testRewardsAreCorrectlyGenerated() {
         this.inventory = new Inventory();
         this.attacks = List.of(new Attack("atk-01", "TestAttack", BugemonType.FLORA, "Description", 50, null));
-        this.items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING,null));
+        this.items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING, null));
 
-        PostCombatReward pcr = new PostCombatReward(inventory, attacks, items);
+        PostCombatReward pcr = new PostCombatReward(this.inventory, this.attacks, this.items);
         List<Reward> options = pcr.getOptions();
 
         Assertions.assertEquals(3, options.size(), "On devrait avoir exactement 3 récompenses");
@@ -37,13 +38,11 @@ class TestPostCombatReward {
     void testStatRewardIsNotEmpty() {
         this.inventory = new Inventory();
         this.attacks = List.of(new Attack("atk", "TestAttack", BugemonType.FLORA, "", 30, new ArrayList<>()));
-        this.items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING,null));
+        this.items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING, null));
 
-        PostCombatReward pcr = new PostCombatReward(inventory, attacks, items);
+        PostCombatReward pcr = new PostCombatReward(this.inventory, this.attacks, this.items);
 
-        StatReward statReward = (StatReward) pcr.getOptions().stream()
-                .filter(r -> r instanceof StatReward)
-                .findFirst()
+        StatReward statReward = (StatReward) pcr.getOptions().stream().filter(r -> r instanceof StatReward).findFirst()
                 .orElseThrow();
 
         assertTrue(statReward.getSummary().contains("+"), "Stat bonus should display a +");
@@ -59,7 +58,3 @@ class TestPostCombatReward {
         assertTrue(fakeInventory.hasItem(fakeItem), "Not in inventory!");
     }
 }
-
-
-
-
