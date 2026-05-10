@@ -6,7 +6,9 @@ import java.util.ArrayList;
 public class Node {
 
     public enum NodeState {
-        ACTIVE, AVAILABLE, LOCKED
+        ACTIVE,
+        AVAILABLE,
+        LOCKED
     }
 
     // Data struct

@@ -2,7 +2,6 @@ package ulb.views;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -11,8 +10,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.Group;
 
 import ulb.Configuration;
 import ulb.views.utils.Node;
@@ -50,12 +47,12 @@ public class SkillTreeView extends View {
         // Those method are an AI solution from multiple forum adaptation
         // I could have used ScrollPane but add also some struggle and It's the
         // best version/solution so far that I have found!
-        mapContainer.setOnScroll(e -> {
+        this.mapContainer.setOnScroll(e -> {
             if (e.getDeltaY() == 0) {
                 return;
             }
 
-            double oldScale = mapContainer.getScaleX();
+            double oldScale = this.mapContainer.getScaleX();
 
             double zoomFactor;
             if (e.getDeltaY() > 0) {
@@ -67,26 +64,26 @@ public class SkillTreeView extends View {
             double newScale = oldScale * zoomFactor;
             newScale = Math.max(0.2, Math.min(5.0, newScale));
 
-            mapContainer.setScaleX(newScale);
-            mapContainer.setScaleY(newScale);
+            this.mapContainer.setScaleX(newScale);
+            this.mapContainer.setScaleY(newScale);
 
             e.consume();
         });
 
-        mapContainer.setOnMousePressed(e -> {
-            lastMouse[0] = e.getSceneX();
-            lastMouse[1] = e.getSceneY();
+        this.mapContainer.setOnMousePressed(e -> {
+            this.lastMouse[0] = e.getSceneX();
+            this.lastMouse[1] = e.getSceneY();
         });
 
-        mapContainer.setOnMouseDragged(e -> {
-            double dx = e.getSceneX() - lastMouse[0];
-            double dy = e.getSceneY() - lastMouse[1];
+        this.mapContainer.setOnMouseDragged(e -> {
+            double dx = e.getSceneX() - this.lastMouse[0];
+            double dy = e.getSceneY() - this.lastMouse[1];
 
-            mapContainer.setTranslateX(mapContainer.getTranslateX() + dx);
-            mapContainer.setTranslateY(mapContainer.getTranslateY() + dy);
+            this.mapContainer.setTranslateX(this.mapContainer.getTranslateX() + dx);
+            this.mapContainer.setTranslateY(this.mapContainer.getTranslateY() + dy);
 
-            lastMouse[0] = e.getSceneX();
-            lastMouse[1] = e.getSceneY();
+            this.lastMouse[0] = e.getSceneX();
+            this.lastMouse[1] = e.getSceneY();
 
             e.consume();
         });
@@ -99,8 +96,9 @@ public class SkillTreeView extends View {
 
     @Override
     public void refresh() {
-        if (this.treeRoot == null)
+        if (this.treeRoot == null) {
             return;
+        }
         this.doRender();
     }
 
@@ -133,7 +131,7 @@ public class SkillTreeView extends View {
         this.renderConnections(this.treeRoot);
         this.renderNode(this.treeRoot);
 
-        float[] maxCoords = new float[] { 0, 0 };
+        float[] maxCoords = new float[]{0, 0};
         this.collectMaxCoords(this.treeRoot, maxCoords);
 
         double treeWidth = (maxCoords[0] + 1) * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
@@ -216,11 +214,11 @@ public class SkillTreeView extends View {
         }
     }
 
-    private String stateClass(Node.NodeState state) {
+    String stateClass(Node.NodeState state) {
         return switch (state) {
-        case ACTIVE -> "skill-node-active";
-        case AVAILABLE -> "skill-node-available";
-        case LOCKED -> "skill-node-locked";
+            case ACTIVE -> "skill-node-active";
+            case AVAILABLE -> "skill-node-available";
+            case LOCKED -> "skill-node-locked";
         };
     }
 
