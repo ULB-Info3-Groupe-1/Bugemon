@@ -26,8 +26,8 @@ class TestRewardService {
         List<Attack> attacks = List.of(new Attack("atk-01", "TestAttack", BugemonType.FLORA, "Description", 50, null));
         List<Item> items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING, null));
 
-        RewardService service = new RewardService();
-        List<Reward> options = service.generateRewards(inventory, attacks, items);
+        RewardService service = new RewardService(inventory, attacks, items);
+        List<Reward> options = service.generateRewards();
 
         Assertions.assertEquals(3, options.size(), "We should have exactly 3 reward options");
         assertTrue(options.stream().anyMatch(r -> r instanceof StatReward), "StatReward Missing");
@@ -41,8 +41,8 @@ class TestRewardService {
         List<Attack> attacks = List.of(new Attack("atk", "TestAttack", BugemonType.FLORA, "", 30, new ArrayList<>()));
         List<Item> items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING, null));
 
-        RewardService service = new RewardService();
-        List<Reward> options = service.generateRewards(inventory, attacks, items);
+        RewardService service = new RewardService(inventory, attacks, items);
+        List<Reward> options = service.generateRewards();
         StatReward statReward = (StatReward) options.stream().filter(r -> r instanceof StatReward).findFirst()
                 .orElseThrow();
 

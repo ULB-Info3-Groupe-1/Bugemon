@@ -30,7 +30,9 @@ public class Bugemon implements BugemonDTO {
     @SerializedName("id")
     String id;
 
-    /** Display name of this bugemon. Serialised as {@code "nom"}. */
+    /**
+     * Display name of this bugemon. Serialised as {@code "nom"}.
+     */
     @SerializedName("nom")
     String name;
 
@@ -54,7 +56,9 @@ public class Bugemon implements BugemonDTO {
     @SerializedName("attaques")
     List<Attack> attackList;
 
-    /** Use {@link BugemonBuilder} to construct instances. */
+    /**
+     * Use {@link BugemonBuilder} to construct instances.
+     */
     Bugemon() {
     }
 
@@ -165,7 +169,9 @@ public class Bugemon implements BugemonDTO {
         return this.isStarter;
     }
 
-    /** Clears all active modifiers on every stat component. */
+    /**
+     * Clears all active modifiers on every stat component.
+     */
     public void resetMalus() {
         this.healthComponent.resetMalus();
         this.attackComponent.resetMalus();
