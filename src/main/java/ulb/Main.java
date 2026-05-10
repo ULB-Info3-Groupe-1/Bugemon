@@ -1,6 +1,7 @@
 package ulb;
 
 import java.io.InputStream;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -23,7 +24,9 @@ import ulb.services.InventoryService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
-/** JavaFX entry point — bootstraps the Bugemon game. */
+/**
+ * JavaFX entry point — bootstraps the Bugemon game.
+ */
 public class Main extends Application {
 
     public static void main(String[] args) {

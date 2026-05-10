@@ -25,12 +25,14 @@ public class RewardService {
     private static final int MAX_HP_BONUS = 10;
     private static final int MAX_STAT_BONUS = 5;
 
+
     public RewardService(Inventory inventory, List<Attack> availableAttacks, List<Item> availableItems) {
         this.inventory = inventory;
         this.availableAttacks = availableAttacks;
         this.availableItems = availableItems;
         this.random = new Random();
     }
+
 
     public List<Reward> generateRewards() {
         this.options = new ArrayList<>();

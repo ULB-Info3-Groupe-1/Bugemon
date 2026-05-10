@@ -3,6 +3,7 @@ package ulb.controllers;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
+
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -67,13 +68,11 @@ public class MetaController {
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
-     * @param primaryStage
-     *            main JavaFX stage of the application
-     * @throws IOException
-     *             if the music fails to be initialized
+     * @param primaryStage main JavaFX stage of the application
+     * @throws IOException if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
-            InventoryService inventoryService, TowerService towerService, CombatService combatService)
+                          InventoryService inventoryService, TowerService towerService, CombatService combatService, RewardService rewardService)
             throws IOException {
         this.bugemonService = bugemonService;
         this.stage = primaryStage;
@@ -95,7 +94,7 @@ public class MetaController {
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        this.rewardController = new RewardController(this);
+        this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
         this.initializeMusicResources();
         this.initTransitions();
     }
@@ -230,10 +229,8 @@ public class MetaController {
     /**
      * Switches the current screen to the specified window.
      *
-     * @param window
-     *            target screen to display
-     * @throws IllegalArgumentException
-     *             if the window is invalid
+     * @param window target screen to display
+     * @throws IllegalArgumentException if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
