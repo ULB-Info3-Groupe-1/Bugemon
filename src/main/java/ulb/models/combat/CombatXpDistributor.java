@@ -8,7 +8,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.Trainer;
 
-public class CombatXpDistributor implements ICombatXpDistributor {
+public class CombatXpDistributor {
 
     /** XP formula: {@code 30 * floorLevel * multiplier * opponentCount}. */
     public int xpGain(final int floorLevel, final int multiplier, final int opponentCount) {

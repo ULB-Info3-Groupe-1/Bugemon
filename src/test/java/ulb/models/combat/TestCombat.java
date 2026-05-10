@@ -16,23 +16,11 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.utils.test.TestUtilsBugemons;
 import ulb.utils.test.TestUtilsTrainer;
 
 public class TestCombat {
-
-    public class FakeCombatXpDistributor implements ICombatXpDistributor {
-
-        @Override
-        public List<LevelUp> distributeXp(CombatContext combatCtx) {
-            // no-op, we don't want to test XP distribution here
-            return new ArrayList<>();
-        }
-
-    }
-
     private Attack defaultAttack;
 
     @Before
