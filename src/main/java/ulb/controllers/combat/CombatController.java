@@ -46,6 +46,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     protected final List<Skill> statBonusSkills;
 
     protected Combat combat;
+    protected boolean shouldRestoreHp;
     protected Trainer playerTrainer;
     protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
     private Trainer pendingWinner = null;
@@ -62,7 +63,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         this.view.setNextListener(this);
     }
 
-    public abstract void startCombat(boolean shouldRestoreHp);
+    public abstract void startCombat(boolean restoreHp);
 
     // ── Step iteration ────────────────────────────────────────────────────────
 
@@ -108,6 +109,13 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
                 this.processEndCombat(trainerKo, "Combat ended");
                 yield () -> {
+                    if (trainerKo == this.playerTrainer) {
+                        this.view.playDeathAnimationForTrainer(() -> {
+                        });
+                    } else {
+                        this.view.playDeathAnimationForOpponent(() -> {
+                        });
+                    }
                 };
             }
 
@@ -191,6 +199,9 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             if (!generatedLevelUps.isEmpty()) {
                 this.metaController.receiveCombatResults(generatedLevelUps);
             }
+        }
+        if (this.shouldRestoreHp) {
+            this.playerTrainer.restoreTeamHp();
         }
         this.metaController.onCombatFinished(won);
     }

@@ -47,6 +47,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat(boolean shouldRestoreHp) {
+        this.shouldRestoreHp = shouldRestoreHp;
+
         this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(),
                 this.inventoryService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
@@ -71,7 +73,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      * @throws IllegalArgumentException
      *             if the player trainer is not a ManualTrainer.
      */
-    public void startCombat(Combat newCombat) {
+    public void startCombat(Combat newCombat, boolean shouldRestoreHp) {
+        this.shouldRestoreHp = shouldRestoreHp;
+
         if (!(newCombat.getPlayerTrainer() instanceof ManualTrainer playerManualTrainer)) {
             throw new IllegalArgumentException("Manual combat requires a ManualTrainer as ally");
         }
@@ -142,6 +146,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         }
         this.manualPlayerTrainer.setHasSwitchedThisTurn(false);
         this.view.hideDialog();
-        this.view.refreshMenuState();
+        this.view.refresh();
     }
 }
