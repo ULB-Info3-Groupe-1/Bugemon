@@ -1,6 +1,7 @@
 package ulb.views;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,9 +186,14 @@ public class CreateBugemonView extends View {
         double defenseValue = this.defenseSlider.getValue();
         double initiativeValue = this.initiativeSlider.getValue();
 
-        // getSelectedAttack can return null -> filter them out
-        List<Attack> attacks = List.of(this.getSelectedAttack(0), this.getSelectedAttack(1), this.getSelectedAttack(2));
-        attacks.removeIf(attack -> attack == null);
+        // getSelectedAttack can return null
+        List<Attack> attacks = new ArrayList<>(Bugemon.ATTACKS_COUNT);
+        for (int i = 0; i < Bugemon.ATTACKS_COUNT; i++) {
+            Attack attack = this.getSelectedAttack(i);
+            if (attack != null) {
+                attacks.add(attack);
+            }
+        }
 
         this.listener.onAdd(bugemonName, healthValue, attackValue, defenseValue, initiativeValue, attacks);
     }
