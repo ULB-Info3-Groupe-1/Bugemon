@@ -173,8 +173,9 @@ public class TeamService {
         this.teamRepository.createTeam(this.playername, teamName);
         this.persistTeamMembers();
         this.playerTeams.add(new BugemonTeam(this.workingTeam));
-        this.workingTeam.clear(); // Clear because the working team is saved so by clearing it we can create a new
-                                  // team
+        // Clear because the working team is saved so by clearing it we can create a new
+        // team
+        this.workingTeam.clear();
     }
 
     /**
