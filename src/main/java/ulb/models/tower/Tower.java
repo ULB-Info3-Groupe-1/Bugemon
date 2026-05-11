@@ -1,12 +1,13 @@
 package ulb.models.tower;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.List;
+
+import ulb.models.skills.Skill;
 
 import ulb.Configuration;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.tower.room.RoomVisitor;

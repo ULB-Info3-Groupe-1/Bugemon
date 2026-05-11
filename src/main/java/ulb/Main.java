@@ -26,7 +26,6 @@ import ulb.services.PlayerService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
-import ulb.models.skills.SkillEffect.StatBonusEffect;
 
 /** JavaFX entry point — bootstraps the Bugemon game. */
 public class Main extends Application {

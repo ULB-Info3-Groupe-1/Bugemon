@@ -2,9 +2,10 @@ package ulb.services;
 
 import ulb.Configuration;
 import ulb.controllers.TowerController;
-import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.Tower;
+import ulb.services.SkillService;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.repositories.PlayerRepository;
 
 public class TowerService {
@@ -84,6 +85,6 @@ public class TowerService {
     public Tower createTower() {
 
         return new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService,
-                this.getCurrentFloor(), this.skillService.getSkills(StatBonusEffect.class));
+            this.getCurrentFloor(), this.skillService.getSkills(StatBonusEffect.class));
     }
 }
