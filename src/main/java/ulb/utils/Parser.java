@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,13 +161,13 @@ public class Parser {
             EffectTarget target = context.deserialize(effectObject.get("cible"), EffectTarget.class);
 
             return switch (effectType) {
-            case "stat_modifier" -> new EffectStatModifier(target,
-                    context.deserialize(effectObject.get("stat"), EffectStat.class),
-                    effectObject.get("modificateur").getAsInt(),
-                    context.deserialize(effectObject.get("duree"), EffectDuration.class));
-            case "soin" -> new EffectHeal(target, effectObject.get("valeur").getAsInt());
-            case "reset_malus" -> new EffectResetMalus(target);
-            default -> throw new JsonParseException("Unknown effect type: " + effectType);
+                case "stat_modifier" ->
+                    new EffectStatModifier(target, context.deserialize(effectObject.get("stat"), EffectStat.class),
+                            effectObject.get("modificateur").getAsInt(),
+                            context.deserialize(effectObject.get("duree"), EffectDuration.class));
+                case "soin" -> new EffectHeal(target, effectObject.get("valeur").getAsInt());
+                case "reset_malus" -> new EffectResetMalus(target);
+                default -> throw new JsonParseException("Unknown effect type: " + effectType);
             };
         }
     }

@@ -8,15 +8,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 import ulb.Configuration;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillNodeState;
-import ulb.models.skills.SkillTree;
-import ulb.views.utils.Node;
-import ulb.views.utils.TreeLayout;
 
 public class SkillTreeView extends View {
     // Skill:
@@ -146,7 +144,7 @@ public class SkillTreeView extends View {
         this.renderConnections(this.treeRoot);
         this.renderNode(this.treeRoot);
 
-        int[] max = { 0, 0 };
+        int[] max = {0, 0};
         this.collectMaxCoords(this.treeRoot, max);
         double treeWidth = (max[0] - minX + 1) * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
         double treeHeight = (max[1] + 1) * (NODE_HEIGHT + VERTICAL_SPACING) - VERTICAL_SPACING;
@@ -202,14 +200,20 @@ public class SkillTreeView extends View {
         });
 
         // adding data
-        Label label = new Label(node.getName());
-        label.getStyleClass().add("section-label");
+        Label name = new Label(node.getName());
+        name.getStyleClass().add("section-label");
+
+        Label info = new Label(node.getCurrentLevel() + "/" + node.getMaxLevel());
+
+        Label cost = new Label(Integer.toString(node.getCost()));
+
+        VBox skillInfo = new VBox(10, name, info, cost);
 
         // placing it properly
         double pixelX = node.getPosition().x() * (NODE_WIDTH + HORIZONTAL_SPACING);
         double pixelY = node.getPosition().y() * (NODE_HEIGHT + VERTICAL_SPACING);
 
-        StackPane skillNode = new StackPane(skillBox, label);
+        StackPane skillNode = new StackPane(skillBox, skillInfo);
         skillNode.setPrefSize(NODE_WIDTH, NODE_HEIGHT);
         skillNode.setLayoutX(pixelX);
         skillNode.setLayoutY(pixelY);
@@ -229,9 +233,9 @@ public class SkillTreeView extends View {
 
     String stateClass(SkillNodeState state) {
         return switch (state) {
-        case ACTIVE -> "skill-node-active";
-        case AVAILABLE -> "skill-node-available";
-        case LOCKED -> "skill-node-locked";
+            case ACTIVE -> "skill-node-active";
+            case AVAILABLE -> "skill-node-available";
+            case LOCKED -> "skill-node-locked";
         };
     }
 

@@ -1,7 +1,6 @@
 package ulb.models.skills;
 
 import ulb.Configuration;
-import ulb.models.bugemon.effect.Effect;
 
 @SuppressWarnings("checkstyle:HiddenField")
 public final class SkillBuilder {

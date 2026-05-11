@@ -2,10 +2,6 @@ package ulb.models.skills;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
-import java.util.Map;
-
-import ulb.models.utils.Position;
 
 public class SkillTree {
     private static String ROOT_ID = "start";

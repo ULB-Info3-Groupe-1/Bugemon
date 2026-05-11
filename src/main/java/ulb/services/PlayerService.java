@@ -1,14 +1,12 @@
 package ulb.services;
 
-import java.util.List;
-
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.StaticDataRepository;
 
 public class PlayerService {
 
-    private int availablePoints = 0; // TODO: persistence into db
+    private int availablePoints = 100; // TODO: persistence into db
     private SkillTree skillTree;
 
     public PlayerService(StaticDataRepository staticDataRepository) {

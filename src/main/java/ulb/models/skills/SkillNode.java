@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulb.models.utils.Position;
-import ulb.views.utils.Node.NodeState;
 
 /**
  * Represents a node in the skill tree, containing a skill and its relationships to other skills.
@@ -66,6 +65,18 @@ public class SkillNode {
 
     public String getName() {
         return this.skill.getName();
+    }
+
+    public int getCost() {
+        return this.skill.getCost();
+    }
+
+    public int getCurrentLevel() {
+        return this.skill.getCurrentLevel();
+    }
+
+    public int getMaxLevel() {
+        return this.skill.getMaxLevel();
     }
 
     // setters

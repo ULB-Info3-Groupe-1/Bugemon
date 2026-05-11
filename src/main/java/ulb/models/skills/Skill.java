@@ -1,7 +1,5 @@
 package ulb.models.skills;
 
-import ulb.models.bugemon.effect.Effect;
-
 /**
  * Represents a skill that can be unlocked in the skill tree.
  */
