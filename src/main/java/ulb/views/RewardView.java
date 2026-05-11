@@ -1,10 +1,6 @@
 package ulb.views;
 
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,8 +8,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.Configuration;
-import ulb.controllers.RewardController;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.views.components.BugemonTeamView;
@@ -23,6 +21,8 @@ public class RewardView extends View {
     private static final Logger LOG = LoggerFactory.getLogger(RewardView.class);
 
     private Listener listener;
+
+    private Bugemon selectedBugemon;
 
     @FXML
     private Label rewardLabel;
@@ -44,6 +44,8 @@ public class RewardView extends View {
     private VBox attackSelectionContainer;
     @FXML
     private ListView<String> bugemonAttackListView;
+    @FXML
+    private Button confirmAttackChangeButton;
 
     @FXML
     private void onChoiceStatClicked() {
@@ -60,9 +62,28 @@ public class RewardView extends View {
         this.listener.onRewardChosen(2);
     }
 
+    @FXML
+    private void onConfirmAttackChangeClicked() {
+
+        int selectedAttackIndex = this.bugemonAttackListView
+                .getSelectionModel()
+                .getSelectedIndex();
+
+        if (selectedAttackIndex < 0 || selectedBugemon == null) {
+            return;
+        }
+
+        this.listener.onAttackChosen(
+                this.selectedBugemon,
+                selectedAttackIndex);
+    }
+
     public void setListener(Listener listener) {
         this.listener = listener;
-        this.bugemonsTeamView.setListener(this.listener::onBugemonClicked);
+        this.bugemonsTeamView.setListener(bugemon -> {
+            this.selectedBugemon = bugemon;
+            this.listener.onBugemonClicked(bugemon);
+        });
     }
 
     public void setRewardLabels(String descriptionChoice0, String descriptionChoice1, String descriptionChoice2) {
@@ -147,5 +168,7 @@ public class RewardView extends View {
         void onRewardChosen(int optionIdx);
 
         void onBugemonClicked(Bugemon bugemon);
+
+        void onAttackChosen(Bugemon bugemon, int attackIndex);
     }
 }
