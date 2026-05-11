@@ -22,4 +22,3 @@ record SimAction(SimActionKind kind, int index, Item item) {
         return new SimAction(SimActionKind.NONE, -1, null);
     }
 }
-

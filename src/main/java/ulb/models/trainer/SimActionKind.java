@@ -9,4 +9,3 @@ enum SimActionKind {
     ITEM,
     NONE
 }
-
