@@ -44,7 +44,8 @@
 
             </VBox>
 
-            <VBox fx:id="teamContainer" alignment="CENTER" spacing="28" visible="false" managed="false">
+            <VBox fx:id="teamContainer" alignment="CENTER" spacing="28"
+                visible="false" managed="false">
                 <Label text="Sur quel Bugemon appliquer le bonus ?" />
                 <BugemonTeamView fx:id="bugemonsTeamView" />
             </VBox>

@@ -3,7 +3,6 @@ package ulb.views;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -79,7 +78,8 @@ public class ManageTeamView extends View {
     /**
      * Sets the mode of the view and displays the appropriate buttons.
      *
-     * @param mode The mode of the view
+     * @param mode
+     *            The mode of the view
      */
     private void setMode(TeamFormMode mode) {
         boolean isCreate = (mode == TeamFormMode.CREATE);
