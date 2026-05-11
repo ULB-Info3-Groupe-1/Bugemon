@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -253,6 +252,7 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * <<<<<<< HEAD
+     * <<<<<<< HEAD
      *
      * @param window
      *               target screen to display
@@ -262,6 +262,12 @@ public class MetaController {
      * @param window target screen to display
      * @throws IllegalArgumentException if the window is invalid
      *                                  >>>>>>> eccfc14c (wip(fixing bugs)
+     *                                  =======
+     * @param window
+     *               target screen to display
+     * @throws IllegalArgumentException
+     *                                  if the window is invalid
+     *                                  >>>>>>> 891ecd68 (formatting)
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);

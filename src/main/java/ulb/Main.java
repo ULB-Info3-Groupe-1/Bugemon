@@ -76,7 +76,7 @@ public class Main extends Application {
                                 inventoryService, skillService);
                 MetaController controller = new MetaController(stage, bugemonService, playerService, teamService,
                                 towerService,
-                                inventoryService, skillService);
+                                inventoryService, skillService, rewardService);
                 controller.start();
         }
 }
