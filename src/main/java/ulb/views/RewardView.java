@@ -3,7 +3,6 @@ package ulb.views;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
@@ -69,7 +68,7 @@ public class RewardView extends View {
         this.rewardsContainer.setManaged(false);
         this.bugemonsTeamView.setVisible(true);
         this.bugemonsTeamView.setManaged(true);
-        this.bugemonsTeamView.showTeam(team);
+        this.bugemonsTeamView.showTeam(team, false);
     }
 
     @Override
