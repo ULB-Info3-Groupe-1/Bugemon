@@ -5,13 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.services.InventoryService;
 import ulb.services.InventoryService;
 import ulb.utils.test.TestUtilsBugemonTeam;
 
