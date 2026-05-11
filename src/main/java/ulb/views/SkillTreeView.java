@@ -12,6 +12,9 @@ import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 import ulb.Configuration;
+import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillNodeState;
+import ulb.models.skills.SkillTree;
 import ulb.views.utils.Node;
 import ulb.views.utils.TreeLayout;
 
@@ -39,7 +42,7 @@ public class SkillTreeView extends View {
     private Label availablePoints;
 
     private Listener listener;
-    private Node treeRoot;
+    private SkillNode treeRoot;
     private int availablePointsCount = 0;
 
     @FXML
@@ -118,64 +121,74 @@ public class SkillTreeView extends View {
         }
     }
 
-    public void renderTree(Node root) {
+    public void renderTree(SkillNode root) {
         this.treeRoot = root;
         this.doRender();
+    }
+
+    private int computeMinX(SkillNode node) {
+        int min = node.getPosition().x();
+        for (SkillNode child : node.getChildren()) {
+            min = Math.min(min, computeMinX(child));
+        }
+        return min;
     }
 
     private void doRender() {
         this.innerMapPane.getChildren().clear();
         this.availablePoints.setText("Points disponibles: " + this.availablePointsCount);
 
-        TreeLayout.applyLayout(this.treeRoot);
+        int minX = computeMinX(this.treeRoot);
+
+        // this.renderConnections(this.treeRoot, minX);
+        // this.renderNode(this.treeRoot, minX);
+
         this.renderConnections(this.treeRoot);
         this.renderNode(this.treeRoot);
 
-        float[] maxCoords = new float[]{0, 0};
-        this.collectMaxCoords(this.treeRoot, maxCoords);
-
-        double treeWidth = (maxCoords[0] + 1) * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
-        double treeHeight = (maxCoords[1] + 1) * (NODE_HEIGHT + VERTICAL_SPACING) - VERTICAL_SPACING;
-
+        int[] max = { 0, 0 };
+        this.collectMaxCoords(this.treeRoot, max);
+        double treeWidth = (max[0] - minX + 1) * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
+        double treeHeight = (max[1] + 1) * (NODE_HEIGHT + VERTICAL_SPACING) - VERTICAL_SPACING;
         this.innerMapPane.setPrefSize(treeWidth, treeHeight);
         this.innerMapPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     }
 
     // AI fix to place the tree at the center
-    private void collectMaxCoords(Node node, float[] maxCoords) {
-        maxCoords[0] = Math.max(maxCoords[0], node.x);
-        maxCoords[1] = Math.max(maxCoords[1], node.y);
-        for (Node child : node.getChildren()) {
+    private void collectMaxCoords(SkillNode node, int[] maxCoords) {
+        maxCoords[0] = Math.max(maxCoords[0], node.getPosition().x());
+        maxCoords[1] = Math.max(maxCoords[1], node.getPosition().y());
+        for (SkillNode child : node.getChildren()) {
             this.collectMaxCoords(child, maxCoords);
         }
     }
 
-    private void renderConnections(Node node) {
-        for (Node child : node.getChildren()) {
+    private void renderConnections(SkillNode node) {
+        for (SkillNode child : node.getChildren()) {
             this.addConnection(node, child);
             this.renderConnections(child);
         }
     }
 
-    private void addConnection(Node parent, Node child) {
-        double parentCenterX = parent.x * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
-        double parentBottomY = parent.y * (NODE_HEIGHT + VERTICAL_SPACING) + NODE_HEIGHT;
-        double childCenterX = child.x * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
-        double childTopY = child.y * (NODE_HEIGHT + VERTICAL_SPACING);
+    private void addConnection(SkillNode parent, SkillNode child) {
+        double parentCenterX = parent.getPosition().x() * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
+        double parentBottomY = parent.getPosition().y() * (NODE_HEIGHT + VERTICAL_SPACING) + NODE_HEIGHT;
+        double childCenterX = child.getPosition().x() * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
+        double childTopY = child.getPosition().y() * (NODE_HEIGHT + VERTICAL_SPACING);
 
         Line join = new Line(parentCenterX, parentBottomY, childCenterX, childTopY);
         join.getStyleClass().add("skill-connection");
 
-        if (parent.getState() == Node.NodeState.ACTIVE && child.getState() == Node.NodeState.ACTIVE) {
+        if (parent.getState() == SkillNodeState.ACTIVE && child.getState() == SkillNodeState.ACTIVE) {
             join.getStyleClass().add("skill-connection-active");
-        } else if (parent.getState() == Node.NodeState.ACTIVE) {
+        } else if (parent.getState() == SkillNodeState.ACTIVE) {
             join.getStyleClass().add("skill-connection-available");
         }
 
         this.innerMapPane.getChildren().add(join);
     }
 
-    private void renderNode(Node node) {
+    private void renderNode(SkillNode node) {
         // seen as a box
         HBox skillBox = new HBox();
         skillBox.getStyleClass().add("action-menu");
@@ -189,12 +202,12 @@ public class SkillTreeView extends View {
         });
 
         // adding data
-        Label label = new Label(node.getData());
+        Label label = new Label(node.getName());
         label.getStyleClass().add("section-label");
 
         // placing it properly
-        double pixelX = node.x * (NODE_WIDTH + HORIZONTAL_SPACING);
-        double pixelY = node.y * (NODE_HEIGHT + VERTICAL_SPACING);
+        double pixelX = node.getPosition().x() * (NODE_WIDTH + HORIZONTAL_SPACING);
+        double pixelY = node.getPosition().y() * (NODE_HEIGHT + VERTICAL_SPACING);
 
         StackPane skillNode = new StackPane(skillBox, label);
         skillNode.setPrefSize(NODE_WIDTH, NODE_HEIGHT);
@@ -209,23 +222,23 @@ public class SkillTreeView extends View {
 
         this.innerMapPane.getChildren().add(skillNode);
 
-        for (Node child : node.getChildren()) {
+        for (SkillNode child : node.getChildren()) {
             this.renderNode(child);
         }
     }
 
-    String stateClass(Node.NodeState state) {
+    String stateClass(SkillNodeState state) {
         return switch (state) {
-            case ACTIVE -> "skill-node-active";
-            case AVAILABLE -> "skill-node-available";
-            case LOCKED -> "skill-node-locked";
+        case ACTIVE -> "skill-node-active";
+        case AVAILABLE -> "skill-node-available";
+        case LOCKED -> "skill-node-locked";
         };
     }
 
     public interface Listener {
-        void onSkillLeftClicked(Node node);
+        void onSkillLeftClicked(SkillNode node);
 
-        void onSkillRightClicked(Node node);
+        void onSkillRightClicked(SkillNode node);
 
         void onReturnToMainMenu();
     }

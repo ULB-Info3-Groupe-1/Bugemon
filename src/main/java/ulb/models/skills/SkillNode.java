@@ -2,9 +2,9 @@ package ulb.models.skills;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import ulb.models.utils.Position;
+import ulb.views.utils.Node.NodeState;
 
 /**
  * Represents a node in the skill tree, containing a skill and its relationships to other skills.
@@ -12,23 +12,34 @@ import ulb.models.utils.Position;
 public class SkillNode {
 
     private Skill skill;
+    private List<SkillNode> parents = new ArrayList<>();
     private List<SkillNode> children = new ArrayList<>();
-    private Optional<List<SkillNode>> parents = Optional.empty();
 
     private Position position;
 
-    public SkillNode(Skill skill, Position position, List<SkillNode> parents) {
+    public SkillNode(Skill skill, Position position) {
         this.skill = skill;
         this.position = position;
-        this.parents = Optional.of(parents);
     }
 
     public Skill getSkill() {
         return this.skill;
     }
 
+    public List<SkillNode> getParents() {
+        return this.parents;
+    }
+
+    public List<SkillNode> getChildren() {
+        return this.children;
+    }
+
     public Position getPosition() {
         return this.position;
+    }
+
+    public String getDescription() {
+        return this.skill.getDescription();
     }
 
     public boolean isUnlockable() {
@@ -38,11 +49,23 @@ public class SkillNode {
         if (this.parents.isEmpty()) {
             return true; // no prerequisites
         }
-        return this.parents.get().stream().allMatch(parent -> parent.getSkill().isUnlocked());
+
+        // FIX au moins un des parents doivent être unlock pas nécessairement tous...
+        return this.parents.stream().anyMatch(parent -> parent.getSkill().isUnlocked());
     }
 
-    public List<SkillNode> getChildren() {
-        return this.children;
+    public SkillNodeState getState() {
+        if (this.skill.isUnlocked()) {
+            return SkillNodeState.ACTIVE;
+        }
+        if (this.isUnlockable()) {
+            return SkillNodeState.AVAILABLE;
+        }
+        return SkillNodeState.LOCKED;
+    }
+
+    public String getName() {
+        return this.skill.getName();
     }
 
     // setters

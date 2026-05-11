@@ -33,6 +33,7 @@ import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillTree;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
@@ -40,14 +41,14 @@ import ulb.utils.Parser;
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 10;
     private Inventory defaultInventory;
-    private List<SkillNode> skillTree;
+    private SkillTree skillTree;
 
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         super(dbConnection, queries);
         Parser parser = new Parser();
         parser.parse();
         this.defaultInventory = parser.getInventory();
-        this.skillTree = parser.getSkillNodes();
+        this.skillTree = parser.getSkillTree();
         this.prepareDatabase(parser);
     }
 
@@ -108,14 +109,14 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void saveItemEffect(String itemId, Effect effect) {
         switch (effect) {
-            case EffectHeal heal -> executeUpdate("SaveItemEffect", itemId, "EffectHeal", heal.target().name(),
-                    heal.amount(), null, null, null);
-            case EffectStatModifier modifier -> executeUpdate("SaveItemEffect", itemId, "EffectStatModifier",
-                    modifier.target().name(), null, modifier.stat() != null ? modifier.stat().name() : null,
-                    modifier.modifier(), modifier.duration() == EffectDuration.PERMANENT ? 0 : 1);
-            case EffectResetMalus resetMalus -> executeUpdate("SaveItemEffect", itemId, "EffectResetMalus",
-                    resetMalus.target().name(), null, null, null, null);
-            default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
+        case EffectHeal heal -> executeUpdate("SaveItemEffect", itemId, "EffectHeal", heal.target().name(),
+                heal.amount(), null, null, null);
+        case EffectStatModifier modifier -> executeUpdate("SaveItemEffect", itemId, "EffectStatModifier",
+                modifier.target().name(), null, modifier.stat() != null ? modifier.stat().name() : null,
+                modifier.modifier(), modifier.duration() == EffectDuration.PERMANENT ? 0 : 1);
+        case EffectResetMalus resetMalus -> executeUpdate("SaveItemEffect", itemId, "EffectResetMalus",
+                resetMalus.target().name(), null, null, null, null);
+        default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
         }
     }
 
@@ -136,20 +137,20 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void setEffectParameters(PreparedStatement psEffect, Effect effect) throws SQLException {
         switch (effect) {
-            case EffectStatModifier modifier :
-                this.setStatModifierParameters(psEffect, modifier);
-                break;
+        case EffectStatModifier modifier:
+            this.setStatModifierParameters(psEffect, modifier);
+            break;
 
-            case EffectHeal heal :
-                this.setHealParameters(psEffect, heal);
-                break;
+        case EffectHeal heal:
+            this.setHealParameters(psEffect, heal);
+            break;
 
-            case EffectResetMalus resetMalus :
-                this.setResetMalusParameters(psEffect, resetMalus);
-                break;
+        case EffectResetMalus resetMalus:
+            this.setResetMalusParameters(psEffect, resetMalus);
+            break;
 
-            default :
-                break;
+        default:
+            break;
         }
     }
 
@@ -183,7 +184,7 @@ public class StaticDataRepository extends AbstractRepository {
 
     // --- UTILS FOR CLASS USING THIS REPO --
 
-    public List<SkillNode> getSkillTree() {
+    public SkillTree getSkillTree() {
         return this.skillTree;
     }
 
@@ -256,33 +257,32 @@ public class StaticDataRepository extends AbstractRepository {
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
         EffectTarget target;
         switch (effectType) {
-            case "EffectStatModifier" :
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                EffectStat stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, EffectStat.class);
-                String duration = (rs.getString(DatabaseColumns.COL_EFFECT_DURATION) != null)
-                        ? rs.getString(DatabaseColumns.COL_EFFECT_DURATION)
-                        : "0_tour";
-                return new EffectStatModifier(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
-                        EffectDuration.fromLabel(duration));
+        case "EffectStatModifier":
+            target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
+            EffectStat stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, EffectStat.class);
+            String duration = (rs.getString(DatabaseColumns.COL_EFFECT_DURATION) != null)
+                    ? rs.getString(DatabaseColumns.COL_EFFECT_DURATION)
+                    : "0_tour";
+            return new EffectStatModifier(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
+                    EffectDuration.fromLabel(duration));
 
-            case "EffectHeal" :
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                return new EffectHeal(target, rs.getInt("effect_amount"));
+        case "EffectHeal":
+            target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
+            return new EffectHeal(target, rs.getInt("effect_amount"));
 
-            case "EffectResetMalus" :
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                return new EffectResetMalus(target);
+        case "EffectResetMalus":
+            target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
+            return new EffectResetMalus(target);
 
-            default :
-                throw new IllegalStateException("Unknown effect type: " + effectType);
+        default:
+            throw new IllegalStateException("Unknown effect type: " + effectType);
         }
     }
 
     /**
      * Saves a Bugemon to the database.
      *
-     * @param b
-     *            (CreateBugemonDTO) the bugemon to be saved
+     * @param b (CreateBugemonDTO) the bugemon to be saved
      */
     public void saveBugemon(CreateBugemonDTO b) {
         String fileName = b.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";

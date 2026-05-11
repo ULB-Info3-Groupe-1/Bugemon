@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -40,8 +41,8 @@ import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.skills.Skill;
-import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillTree;
 import ulb.models.utils.Position;
 import ulb.repositories.dto.CreateBugemonDTO;
 
@@ -54,6 +55,8 @@ import ulb.repositories.dto.CreateBugemonDTO;
  * @see BugemonDeserializer
  */
 public class Parser {
+    private static final String SKILL_ROOT_ID = "start";
+
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
     // Constants for the paths to the JSON data files within the resources
@@ -67,7 +70,7 @@ public class Parser {
     private static List<CreateBugemonDTO> bugemons;
     private static List<Item> items;
     private static Inventory inventory;
-    private static List<SkillNode> skillNodes;
+    private static SkillTree skillTree; // represent the tree data structure
 
     /**
      * Parses all JSON resource files and populates the static data fields. Must be called once before any
@@ -120,8 +123,8 @@ public class Parser {
         return attacks;
     }
 
-    public final List<SkillNode> getSkillNodes() {
-        return skillNodes;
+    public final SkillTree getSkillTree() {
+        return skillTree;
     }
 
     /**
@@ -159,13 +162,13 @@ public class Parser {
             EffectTarget target = context.deserialize(effectObject.get("cible"), EffectTarget.class);
 
             return switch (effectType) {
-                case "stat_modifier" ->
-                    new EffectStatModifier(target, context.deserialize(effectObject.get("stat"), EffectStat.class),
-                            effectObject.get("modificateur").getAsInt(),
-                            context.deserialize(effectObject.get("duree"), EffectDuration.class));
-                case "soin" -> new EffectHeal(target, effectObject.get("valeur").getAsInt());
-                case "reset_malus" -> new EffectResetMalus(target);
-                default -> throw new JsonParseException("Unknown effect type: " + effectType);
+            case "stat_modifier" -> new EffectStatModifier(target,
+                    context.deserialize(effectObject.get("stat"), EffectStat.class),
+                    effectObject.get("modificateur").getAsInt(),
+                    context.deserialize(effectObject.get("duree"), EffectDuration.class));
+            case "soin" -> new EffectHeal(target, effectObject.get("valeur").getAsInt());
+            case "reset_malus" -> new EffectResetMalus(target);
+            default -> throw new JsonParseException("Unknown effect type: " + effectType);
             };
         }
     }
@@ -249,12 +252,14 @@ public class Parser {
     }
 
     private static void parseSkills(Reader reader) {
+        Map<String, SkillNode> skillNodes = new HashMap<>();
+
         LOG.debug("Parsing Skill Tree");
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray nodesArray = root.getAsJsonObject("skill_tree").getAsJsonArray("nodes");
 
-            skillNodes = new ArrayList<>();
+            skillNodes = new HashMap<>();
 
             for (JsonElement nodeElement : nodesArray) {
                 JsonObject nodeObj = nodeElement.getAsJsonObject();
@@ -264,29 +269,35 @@ public class Parser {
                 String description = nodeObj.get("description").getAsString();
                 int cost = nodeObj.get("cout").getAsInt();
                 int maxLevel = nodeObj.get("max_niveau").getAsInt();
-                boolean isUnlocked = nodeObj.get("deverrouille").getAsBoolean();
 
-                List<SkillNode> prerequisites = new ArrayList<>();
+                // we don't use this as it is stupid to check that as we need just
+                // to know the point given on the f*cking node... THAT WILL tell if the node
+                // is unlocked or not and we'll handle the special case of the root node <3
+                // thanks for you understanding...
+                int initialLevel = id.equals(SKILL_ROOT_ID) ? 1 : 0;
+
                 // TODO: combat effects != skill effects
-                SkillEffect effect = null;
+                // Effect effect = null;
 
-                Skill skill = new Skill(id, name, description, cost, maxLevel, effect, isUnlocked);
+                Skill skill = new Skill(id, name, description, cost, maxLevel, initialLevel);
 
                 JsonObject posObj = nodeObj.getAsJsonObject("position");
                 Position position = new Position(posObj.get("x").getAsInt(), posObj.get("y").getAsInt());
 
-                SkillNode skillNode = new SkillNode(skill, position, prerequisites);
+                SkillNode skillNode = new SkillNode(skill, position);
+
+                skillNodes.put(id, skillNode);
+
+                // Assuming skillNodes are being built in the right order
                 for (JsonElement req : nodeObj.getAsJsonArray("prerequis")) {
                     String reqId = req.getAsString();
-                    // Assuming skillNodes are being built in the right order
-                    skillNodes.stream().filter(n -> n.getSkill().getId().equals(reqId)).findFirst()
-                            .ifPresent(parent -> {
-                                prerequisites.add(parent);
-                                parent.addChild(skillNode);
-                            });
+                    SkillNode parent = skillNodes.get(reqId);
+                    parent.addChild(skillNode);
                 }
-                skillNodes.add(skillNode);
             }
+
+            skillTree = new SkillTree(skillNodes.get(SKILL_ROOT_ID));
+
             reader.close();
 
         } catch (Exception e) {

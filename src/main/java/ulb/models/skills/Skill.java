@@ -1,36 +1,34 @@
 package ulb.models.skills;
 
+import ulb.models.bugemon.effect.Effect;
+
 /**
  * Represents a skill that can be unlocked in the skill tree.
  */
 public class Skill {
 
-    private final String id;
+    private String id;
 
-    private final String name;
+    private String name;
 
-    private final String description;
+    private String description;
 
-    private final int cost;
+    private int cost;
+
+    private int maxLevel;
+
+    // private Effect effect;
 
     private int currentLevel;
 
-    private final int maxLevel;
-
-    private final SkillEffect effect;
-
-    private boolean isUnlocked;
-
-    public Skill(String id, String name, String description, int cost, int maxLevel, SkillEffect effect,
-            boolean isUnlocked) {
+    public Skill(String id, String name, String description, int cost, int maxLevel, int currentLevel) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.cost = cost;
         this.maxLevel = maxLevel;
-        this.effect = effect;
-        this.isUnlocked = isUnlocked;
-        this.currentLevel = isUnlocked ? 1 : 0;
+        // this.effect = effect;
+        this.currentLevel = currentLevel;
     }
 
     public String getId() {
@@ -49,30 +47,28 @@ public class Skill {
         return this.cost;
     }
 
+    public int getMaxLevel() {
+        return this.maxLevel;
+    }
+
+    // public Effect getEffect() {
+    // return this.effect;
+    // }
+
+    public boolean isUnlocked() {
+        return this.currentLevel > 0;
+    }
+
     public int getCurrentLevel() {
         return this.currentLevel;
     }
 
     public void incrementLevel() {
-        if (this.currentLevel < this.maxLevel) {
-            this.currentLevel++;
-        }
+        this.currentLevel++;
     }
 
-    public int getMaxLevel() {
-        return this.maxLevel;
-    }
-
-    public SkillEffect getEffect() {
-        return this.effect;
-    }
-
-    public boolean isUnlocked() {
-        return this.isUnlocked;
-    }
-
-    public void unlock() {
-        this.incrementLevel();
-        this.isUnlocked = true;
+    public void decrementLevel() {
+        if (this.currentLevel > 0)
+            this.currentLevel--;
     }
 }
