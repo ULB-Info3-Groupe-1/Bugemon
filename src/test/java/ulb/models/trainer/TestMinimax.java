@@ -122,9 +122,9 @@ public class TestMinimax {
         assertNotNull(action1);
         assertNotNull(action2);
         assertTrue(action1 instanceof TurnAction.AttackAction || action1 instanceof TurnAction.SwitchAction
-            || action1 instanceof TurnAction.UseItemAction);
+                || action1 instanceof TurnAction.UseItemAction);
         assertTrue(action2 instanceof TurnAction.AttackAction || action2 instanceof TurnAction.SwitchAction
-            || action2 instanceof TurnAction.UseItemAction);
+                || action2 instanceof TurnAction.UseItemAction);
     }
 
     @Test
