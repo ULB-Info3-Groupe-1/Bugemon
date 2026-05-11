@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
@@ -15,7 +16,9 @@ public class RewardView extends View {
     private Listener listener;
 
     @FXML
-    private Label rewardText;
+    private Label rewardLabel;
+    @FXML
+    private VBox rewardsContainer;
     @FXML
     private Button choiceStatButton;
     @FXML
@@ -23,9 +26,9 @@ public class RewardView extends View {
     @FXML
     private Button choiceItemButton;
     @FXML
-    private BugemonTeamView bugemonsTeamView;
+    private VBox teamContainer;
     @FXML
-    private HBox rewardsContainer;
+    private BugemonTeamView bugemonsTeamView;
 
     @FXML
     private void onChoiceStatClicked() {
@@ -44,17 +47,21 @@ public class RewardView extends View {
 
     public void setListener(Listener listener) {
         this.listener = listener;
-        // this.bugemonsTeamView.setListener(this.listener::onBugemonChosen);
+        this.bugemonsTeamView.setListener(this.listener::onBugemonChosen);
     }
 
-    public void setRewardTexts(String descriptionChoice0, String descriptionChoice1, String descriptionChoice2) {
+    public void setRewardLabels(String descriptionChoice0, String descriptionChoice1, String descriptionChoice2) {
         this.choiceStatButton.setText(descriptionChoice0);
         this.choiceAttackButton.setText(descriptionChoice1);
         this.choiceItemButton.setText(descriptionChoice2);
 
+        this.rewardLabel.setText("Choisissez votre récompense :");
+
         this.rewardsContainer.setVisible(true);
         this.rewardsContainer.setManaged(true);
-        this.rewardText.setText("Choisissez votre récompense :");
+
+        this.teamContainer.setVisible(false);
+        this.teamContainer.setManaged(false);
     }
 
     public void showTeamSelection(BugemonTeam team) {
@@ -63,7 +70,6 @@ public class RewardView extends View {
         this.bugemonsTeamView.setVisible(true);
         this.bugemonsTeamView.setManaged(true);
         this.bugemonsTeamView.showTeam(team);
-        this.rewardText.setText("Sur quel Bugemon appliquer le bonus ?");
     }
 
     @Override
