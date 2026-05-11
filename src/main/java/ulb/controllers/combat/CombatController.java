@@ -63,7 +63,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         this.view.setNextListener(this);
     }
 
-    public abstract void startCombat(boolean shouldRestoreHp);
+    public abstract void startCombat(boolean restoreHp);
 
     // ── Step iteration ────────────────────────────────────────────────────────
 
