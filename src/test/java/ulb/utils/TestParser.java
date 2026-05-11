@@ -18,6 +18,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.skills.SkillNode;
 import ulb.repositories.dto.CreateBugemonDTO;
 
 public class TestParser {
@@ -152,5 +153,31 @@ public class TestParser {
         assertEquals(2, toniqueCount);
         assertEquals(1, gelCount);
         assertEquals(1, serumCount);
+    }
+
+    @Test
+    public void testParseSkills() {
+        Parser parser = new Parser();
+        parser.parse();
+
+        List<SkillNode> skillNodes = parser.getSkillNodes();
+        assertNotNull(skillNodes);
+
+        SkillNode startNode = skillNodes.stream().filter(n -> "start".equals(n.getSkill().getId())).findFirst()
+                .orElseThrow();
+        assertEquals("Départ", startNode.getSkill().getName());
+        assertEquals(0, startNode.getSkill().getCost());
+        assertEquals(1, startNode.getSkill().getMaxLevel());
+        assertEquals(true, startNode.getSkill().isUnlocked());
+        assertEquals(0, startNode.getPosition().x());
+        assertEquals(0, startNode.getPosition().y());
+
+        SkillNode hpNode = skillNodes.stream().filter(n -> "hp_1".equals(n.getSkill().getId())).findFirst()
+                .orElseThrow();
+        assertEquals("+10 HP", hpNode.getSkill().getName());
+        assertEquals(1, hpNode.getSkill().getCost());
+        assertEquals(false, hpNode.getSkill().isUnlocked());
+        assertEquals(-1, hpNode.getPosition().x());
+        assertEquals(1, hpNode.getPosition().y());
     }
 }

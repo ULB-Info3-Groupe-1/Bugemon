@@ -59,6 +59,16 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
         this.metaController.onSaveMenu();
     }
 
+    @Override
+    public void onSkillTree() {
+        this.metaController.onSkillTree();
+    }
+
+    @Override
+    public void onQuit() {
+        javafx.application.Platform.exit();
+    }
+
     private boolean isActiveTeamEmpty() {
         if (this.teamService.isActiveTeamEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();

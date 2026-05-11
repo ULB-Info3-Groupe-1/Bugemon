@@ -32,6 +32,7 @@ import ulb.models.bugemon.effect.EffectResetMalus;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.skills.SkillNode;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.utils.DatabaseHelper;
 import ulb.utils.Parser;
@@ -39,12 +40,14 @@ import ulb.utils.Parser;
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 10;
     private Inventory defaultInventory;
+    private List<SkillNode> skillTree;
 
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         super(dbConnection, queries);
         Parser parser = new Parser();
         parser.parse();
         this.defaultInventory = parser.getInventory();
+        this.skillTree = parser.getSkillNodes();
         this.prepareDatabase(parser);
     }
 
@@ -179,6 +182,10 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     // --- UTILS FOR CLASS USING THIS REPO --
+
+    public List<SkillNode> getSkillTree() {
+        return this.skillTree;
+    }
 
     /**
      * Returns the default starting inventory as defined in objets.json.

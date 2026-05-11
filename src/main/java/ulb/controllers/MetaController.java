@@ -19,6 +19,7 @@ import ulb.models.combat.Combat;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
+import ulb.services.PlayerService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.views.View;
@@ -45,6 +46,7 @@ public class MetaController {
         COMBAT_VICTORY,
         COMBAT_DEFEAT,
         LEVEL_UP,
+        SKILL_TREE,
     }
 
     private final BugemonService bugemonService;
@@ -62,6 +64,7 @@ public class MetaController {
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
+    private final SkillTreeController skillTreeController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
     private boolean isTowerActive;
@@ -74,9 +77,9 @@ public class MetaController {
      * @throws IOException
      *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
-            InventoryService inventoryService, TowerService towerService, CombatService combatService)
-            throws IOException {
+    public MetaController(Stage primaryStage, PlayerService playerService, BugemonService bugemonService,
+            TeamService teamService, InventoryService inventoryService, TowerService towerService,
+            CombatService combatService) throws IOException {
         this.bugemonService = bugemonService;
 
         this.stage = primaryStage;
@@ -97,6 +100,7 @@ public class MetaController {
         this.towerController = new TowerController(this, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
+        this.skillTreeController = new SkillTreeController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
@@ -169,6 +173,10 @@ public class MetaController {
         this.switchTo(Window.EDIT_TEAM);
     }
 
+    public void onSkillTree() {
+        this.switchTo(Window.SKILL_TREE);
+    }
+
     private void initializeMusicResources() throws IOException {
         this.musicLoader.loadAllResources(this.musicPlayer);
     }
@@ -219,6 +227,7 @@ public class MetaController {
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
+        this.transitions.put(Window.SKILL_TREE, this.skillTreeController::show);
     }
 
     /**

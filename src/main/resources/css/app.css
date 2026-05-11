@@ -637,5 +637,6 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 8, 0, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
-    -fx-border-width: 0; 
+    -fx-border-width: 0;
 }
+
