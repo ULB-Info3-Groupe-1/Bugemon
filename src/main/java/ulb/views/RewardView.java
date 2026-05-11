@@ -1,6 +1,5 @@
 package ulb.views;
 
-import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,34 +7,36 @@ import javafx.scene.layout.HBox;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.views.components.BugemonTeamView;
 
 public class RewardView extends View {
 
     @FXML
     private Label rewardText;
     @FXML
-    private Button choice0Button;
+    private Button choiceStatButton;
     @FXML
-    private Button choice1Button;
+    private Button choiceAttackButton;
     @FXML
-    private Button choice2Button;
+    private Button choiceItemButton;
     @FXML
-    private HBox teamContainer;
+    private BugemonTeamView bugemonsTeamView;
     @FXML
     private HBox rewardsContainer;
 
     @FXML
-    private void onChoice0Clicked() {
+    private void onChoiceStatClicked() {
         this.listener.onRewardChosen(0);
     }
 
     @FXML
-    private void onChoice1Clicked() {
+    private void onChoiceAttackClicked() {
         this.listener.onRewardChosen(1);
     }
 
     @FXML
-    private void onChoice2Clicked() {
+    private void onChoiceItemClicked() {
         this.listener.onRewardChosen(2);
     }
 
@@ -43,42 +44,26 @@ public class RewardView extends View {
 
     public void setListener(RewardView.Listener listener) {
         this.listener = listener;
+        this.bugemonsTeamView.setListener(this.listener::onBugemonChosen);
     }
 
     public void setRewardTexts(String descriptionChoice0, String descriptionChoice1, String descriptionChoice2) {
-        choice0Button.setText(descriptionChoice0);
-        choice1Button.setText(descriptionChoice1);
-        choice2Button.setText(descriptionChoice2);
+        this.choiceStatButton.setText(descriptionChoice0);
+        this.choiceAttackButton.setText(descriptionChoice1);
+        this.choiceItemButton.setText(descriptionChoice2);
 
-        rewardsContainer.setVisible(true);
-        rewardsContainer.setManaged(true);
-        teamContainer.setVisible(false);
-        teamContainer.setManaged(false);
-        rewardText.setText("Choisissez votre récompense :");
+        this.rewardsContainer.setVisible(true);
+        this.rewardsContainer.setManaged(true);
+        this.rewardText.setText("Choisissez votre récompense :");
     }
 
-    public void showTeamSelection(List<Bugemon> team) {
-        rewardsContainer.setVisible(false);
-        rewardsContainer.setManaged(false);
-
-        teamContainer.setVisible(true);
-        teamContainer.setManaged(true);
-        teamContainer.getChildren().clear();
-
-        rewardText.setText("Choisissez le Bugemon qui recevra le bonus :");
-
-        for (Bugemon bugemon : team) {
-            Button bugemonButton = new Button(bugemon.getName());
-            bugemonButton.setStyle("-fx-font-size: 14px; -fx-padding: 10px;");
-
-            bugemonButton.setOnAction(event -> {
-                if (this.listener != null) {
-                    this.listener.onBugemonChosen(bugemon);
-                }
-            });
-
-            teamContainer.getChildren().add(bugemonButton);
-        }
+    public void showTeamSelection(BugemonTeam team) {
+        this.rewardsContainer.setVisible(false);
+        this.rewardsContainer.setManaged(false);
+        this.bugemonsTeamView.setVisible(true);
+        this.bugemonsTeamView.setManaged(true);
+        this.bugemonsTeamView.showTeam(team);
+        this.rewardText.setText("Sur quel Bugemon appliquer le bonus ?");
     }
 
     @Override

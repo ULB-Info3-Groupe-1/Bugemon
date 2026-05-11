@@ -2,10 +2,7 @@ package ulb.controllers;
 
 import java.util.List;
 
-import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.reward.Reward;
 import ulb.services.BugemonService;
@@ -20,13 +17,8 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     private BugemonService bugemonService;
     private Reward pendingReward;
 
-    public RewardController(MetaController metaController, RewardService rewardService,
-                            TeamService teamService, BugemonService bugemonService) {
+    public RewardController(MetaController metaController) {
         super(metaController, ViewLoader.load(RewardView::new));
-        this.rewardService = rewardService;
-        this.teamService = teamService;
-        this.bugemonService = bugemonService;
-
         this.view.setListener(this);
     }
 
@@ -37,42 +29,47 @@ public class RewardController extends Controller<RewardView> implements RewardVi
 
     @Override
     public void onRewardChosen(int optionId) {
-        Reward selectedReward = this.rewardService.generateRewards().get(optionId);
-        BugemonTeam activeBugemon = teamService.getWorkingTeam();
-        List<Bugemon> bugemons = activeBugemon.getAll();
+        List<Reward> currentOptions = this.rewardService.getCurrentRewardOptions();
+        Reward selectedReward = currentOptions.get(optionId);
+        BugemonTeam activeBugemonTeam = this.teamService.getWorkingTeam();
         switch (selectedReward.getRewardType()) {
             case ITEM -> {
                 selectedReward.applyReward(null);
-                if (metaController.isTowerActive()) {
-                    this.metaController.onTower();
-                } else {
-                    this.metaController.onMainMenu();
-                }
+                this.quitRewardScreen();
             }
             case STAT, ATTACK -> {
                 this.pendingReward = selectedReward;
-                this.view.showTeamSelection(bugemons);
+                this.view.showTeamSelection(activeBugemonTeam);
             }
+            default -> {
+                //
+            }
+
         }
     }
 
     @Override
     public void onBugemonChosen(Bugemon bugemon) {
-        if (this.pendingReward != null) {
-            this.pendingReward.applyReward(bugemon);
-            this.bugemonService.saveBugemonState(bugemon);
-            if (metaController.isTowerActive()) {
-                this.metaController.onTower();
-            } else {
-                this.metaController.onMainMenu();
-            }
+        if (this.pendingReward == null) {
+            throw new IllegalStateException("Impossible to assign a null reward to" + bugemon.getName());
+        }
+        this.pendingReward.applyReward(bugemon);
+        this.bugemonService.saveBugemonState(bugemon);
+        this.quitRewardScreen();
+    }
+
+    private void quitRewardScreen() {
+        if (metaController.isTowerActive()) {
+            this.metaController.onTower();
+        } else {
+            throw new IllegalStateException("Tower is not active");
         }
     }
 
     public void updateDisplay() {
-        if (this.rewardService == null)
-            return; // Sécurité
-
+        if (this.rewardService == null) {
+            throw new IllegalStateException("No reward service");
+        }
         List<Reward> options = this.rewardService.generateRewards();
         this.view.setRewardTexts(options.get(0).getSummary(), options.get(1).getSummary(), options.get(2).getSummary());
     }

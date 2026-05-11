@@ -17,7 +17,12 @@ import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
-import ulb.services.*;
+import ulb.services.BugemonService;
+import ulb.services.InventoryService;
+import ulb.services.TowerService;
+import ulb.services.CombatService;
+import ulb.services.TeamService;
+
 import ulb.views.View;
 
 /**
@@ -72,7 +77,7 @@ public class MetaController {
      * @throws IOException if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
-                          InventoryService inventoryService, TowerService towerService, CombatService combatService, RewardService rewardService)
+                          InventoryService inventoryService, TowerService towerService, CombatService combatService)
             throws IOException {
         this.bugemonService = bugemonService;
         this.stage = primaryStage;
@@ -94,7 +99,7 @@ public class MetaController {
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
+        this.rewardController = new RewardController(this);
         this.initializeMusicResources();
         this.initTransitions();
     }
