@@ -1,12 +1,13 @@
 package ulb.services;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -17,17 +18,28 @@ import ulb.models.reward.AttackReward;
 import ulb.models.reward.ItemReward;
 import ulb.models.reward.Reward;
 import ulb.models.reward.StatReward;
+import ulb.repositories.InventoryRepository;
+import ulb.repositories.StaticDataRepository;
 import ulb.utils.test.TestUtilsBugemons;
 
 class TestRewardService {
+
+    private static final String PLAYERNAME = "default_player";
+    private StaticDataRepository staticDataRepository;
+    private InventoryRepository inventoryRepository;
+    private RewardService rewardService;
+
+    @Before
+    public void setUp() {
+        this.staticDataRepository = mock(StaticDataRepository.class);
+        this.inventoryRepository = mock(InventoryRepository.class);
+
+        this.rewardService = new RewardService(this.staticDataRepository, this.inventoryRepository, PLAYERNAME);
+    }
+
     @Test
     void testRewardsAreCorrectlyGenerated() {
-        Inventory inventory = new Inventory();
-        List<Attack> attacks = List.of(new Attack("atk-01", "TestAttack", BugemonType.FLORA, "Description", 50, null));
-        List<Item> items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING, null));
-
-        RewardService service = new RewardService(inventory, attacks, items);
-        List<Reward> options = service.generateRewards();
+        List<Reward> options = this.rewardService.generateRewards();
 
         Assertions.assertEquals(3, options.size(), "We should have exactly 3 reward options");
         assertTrue(options.stream().anyMatch(r -> r instanceof StatReward), "StatReward Missing");
@@ -37,12 +49,7 @@ class TestRewardService {
 
     @Test
     void testStatRewardIsNotEmpty() {
-        Inventory inventory = new Inventory();
-        List<Attack> attacks = List.of(new Attack("atk", "TestAttack", BugemonType.FLORA, "", 30, new ArrayList<>()));
-        List<Item> items = List.of(new Item("item-01", "soin", "Restaure des PV", Item.ItemType.HEALING, null));
-
-        RewardService service = new RewardService(inventory, attacks, items);
-        List<Reward> options = service.generateRewards();
+        List<Reward> options = this.rewardService.generateRewards();
         StatReward statReward = (StatReward) options.stream().filter(r -> r instanceof StatReward).findFirst()
                 .orElseThrow();
 
