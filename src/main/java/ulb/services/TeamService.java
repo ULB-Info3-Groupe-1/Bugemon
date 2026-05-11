@@ -7,7 +7,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.effect.EffectHeal;
+import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.TeamRepository;
@@ -38,6 +41,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
 
     private final BugemonRepository bugemonRepository;
+    private final SkillService skillService;
 
     /**
      * The team that the player is currently modifying. It is used to keep track of the changes made to the team before
@@ -64,18 +68,20 @@ public class TeamService {
      *            the name of the player to use to interact with the database
      */
     public TeamService(PlayerRepository playerRepository, TeamRepository teamRepository,
-            BugemonRepository bugemonRepository, String playername) {
+            BugemonRepository bugemonRepository, String playername, SkillService skillService) {
         this.playername = playername;
         this.workingTeam = new BugemonTeam();
         this.playerRepository = playerRepository;
         this.teamRepository = teamRepository;
         this.bugemonRepository = bugemonRepository;
+        this.skillService = skillService;
         this.playerTeams = new ArrayList<>();
 
         try {
             this.playerRepository.createPlayer(this.playername);
         } catch (PlayernameAlreadyExistsException e) {
-            // We do nothing because whitout client/server architecture, the database is local and we don't have a login
+            // We do nothing because whitout client/server architecture, the database is
+            // local and we don't have a login
             // system, so the playername used is 'default_player' and is always the same.
         }
     }
@@ -162,7 +168,9 @@ public class TeamService {
         this.teamRepository.createTeam(this.playername, teamName);
         this.persistTeamMembers();
         this.playerTeams.add(new BugemonTeam(this.workingTeam));
-        this.workingTeam.clear(); // Clear because the working team is saved so by clearing it we can create a new team
+        // Clear because the working team is saved so by clearing it we can create a new
+        // team
+        this.workingTeam.clear();
     }
 
     /**
@@ -262,6 +270,23 @@ public class TeamService {
             return true;
         }
         return this.playerTeams.stream().anyMatch(pt -> pt.equals(this.workingTeam));
+    }
+
+    /**
+     * Heals every Bugemon of the active team by the cumulative percent of max HP granted by every unlocked
+     * {@link RegenPostCombatEffect} skill — meant to be invoked at the end of combat.
+     */
+    public void regenHpActiveTeamPostCombat() throws NoActiveTeamException {
+        this.checkActiveTeamIsPresent();
+        double totalPercent = this.skillService.getSkills(RegenPostCombatEffect.class).stream()
+                .mapToDouble(s -> ((RegenPostCombatEffect) s.getEffect()).percent()).sum();
+        if (totalPercent <= 0) {
+            return;
+        }
+        for (Bugemon b : this.activeTeam) {
+            int healAmount = (int) Math.round(b.getMaxHp() * totalPercent);
+            b.apply(new EffectHeal(EffectTarget.TEAM, healAmount));
+        }
     }
 
     /**

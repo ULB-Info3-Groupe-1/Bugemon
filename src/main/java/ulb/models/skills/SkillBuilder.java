@@ -1,7 +1,6 @@
 package ulb.models.skills;
 
 import ulb.Configuration;
-import ulb.models.bugemon.effect.Effect;
 
 @SuppressWarnings("checkstyle:HiddenField")
 public final class SkillBuilder {
@@ -11,7 +10,7 @@ public final class SkillBuilder {
     private static final String DEFAULT_DESCRIPTION = Configuration.Skill.DEFAULT_DESCRIPTION;
     private static final int DEFAULT_COST = 0;
     private static final int DEFAULT_MAX_LEVEL = 1;
-    private static final Effect DEFAULT_EFFECT = null;
+    private static final SkillEffect DEFAULT_EFFECT = null;
     private static final boolean DEFAULT_IS_UNLOCKED = true; // the default skill is unlocked by default
 
     private String id = DEFAULT_ID;
@@ -19,7 +18,7 @@ public final class SkillBuilder {
     private String description = DEFAULT_DESCRIPTION;
     private int cost = DEFAULT_COST;
     private int maxLevel = DEFAULT_MAX_LEVEL;
-    private Effect effect = DEFAULT_EFFECT;
+    private SkillEffect effect = DEFAULT_EFFECT;
     private boolean isUnlocked = DEFAULT_IS_UNLOCKED;
 
     public SkillBuilder id(String id) {
@@ -47,7 +46,7 @@ public final class SkillBuilder {
         return this;
     }
 
-    public SkillBuilder effect(Effect effect) {
+    public SkillBuilder effect(SkillEffect effect) {
         this.effect = effect;
         return this;
     }

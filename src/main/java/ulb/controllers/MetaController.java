@@ -18,10 +18,12 @@ import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.views.View;
@@ -79,16 +81,16 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService,
-            CombatService combatService) throws IOException {
+            CombatService combatService, SkillService skillService) throws IOException {
         this.stage = primaryStage;
 
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
         this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
-                combatService);
-        this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
-                combatService);
+                combatService, skillService);
+        this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService, combatService,
+                skillService.getSkills(StatBonusEffect.class));
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,

@@ -8,9 +8,16 @@ import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Efficiency;
+import ulb.models.bugemon.effect.EffectDuration;
+import ulb.models.bugemon.effect.EffectStatModifier;
+import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.combat.Combat.EndOfCombatAction;
+import ulb.models.skills.Skill;
+import ulb.models.skills.SkillEffect.CritBonusEffect;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
+import ulb.models.skills.SkillEffect.TypeMultiplierEffect;
 import ulb.models.trainer.Trainer;
 
 /**
@@ -19,9 +26,11 @@ import ulb.models.trainer.Trainer;
 public class CombatService {
 
     public final BugemonService bugemonService;
+    private final SkillService skillService;
 
-    public CombatService(BugemonService bugemonService) {
+    public CombatService(BugemonService bugemonService, SkillService skillService) {
         this.bugemonService = bugemonService;
+        this.skillService = skillService;
     }
 
     /**
@@ -31,30 +40,21 @@ public class CombatService {
      */
     public Combat createUniqueCombat(Trainer playerTrainer, Trainer opponentTrainer) {
         EndOfCombatAction endOfCombatCb = EndOfCombatAction.RESTORE_HP;
+        this.applyStatBonusSkills(playerTrainer);
         return new Combat(playerTrainer, opponentTrainer, endOfCombatCb);
     }
 
     /**
-     * Determines which trainer's Bugemon attacks first based on initiative. In case of a tie, the winner is chosen
-     * randomly.
-     *
-     * @param trainer1
-     *            the first trainer
-     * @param trainer2
-     *            the second trainer
-     * @return the trainer whose Bugemon attacks first
+     * Skill-aware damage calculation. When {@code isPlayerAttacking} is true, every unlocked
+     * {@link TypeMultiplierEffect} matching the attack's type is applied to the damage, and every unlocked
+     * {@link CritBonusEffect} adds to the base 10% crit chance.
      */
-    public static Trainer attackPriority(final Trainer trainer1, final Trainer trainer2) {
-        final int initiative1 = trainer1.getCurrentBugemonInitiative();
-        final int initiative2 = trainer2.getCurrentBugemonInitiative();
-
-        if (initiative1 < initiative2) {
-            return trainer2;
-        } else if (initiative1 > initiative2) {
-            return trainer1;
-        } else {
-            return Math.random() <= 0.5 ? trainer1 : trainer2;
-        }
+    public int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon,
+            final boolean isPlayerAttacking) {
+        final double critFactor = this.computeCritFactor(isPlayerAttacking);
+        final double skillTypeMultiplier = isPlayerAttacking ? this.computeTypeMultiplier(attack) : 1.0;
+        return (int) Math
+                .ceil(calculateDamage(attack, offenderBugemon, defenderBugemon, critFactor) * skillTypeMultiplier);
     }
 
     /**
@@ -92,6 +92,63 @@ public class CombatService {
             final Bugemon defenderBugemon) {
         final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
         return calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
+    }
+
+    private double computeCritFactor(boolean isPlayerAttacking) {
+        double critChance = Configuration.Game.BASE_CRIT_CHANCE;
+        if (isPlayerAttacking) {
+            for (Skill skill : this.skillService.getSkills(CritBonusEffect.class)) {
+                critChance += ((CritBonusEffect) skill.getEffect()).extraChance();
+            }
+        }
+        return Math.random() <= critChance ? Configuration.Game.CRIT_DAMAGE_FACTOR : 1.0;
+    }
+
+    private double computeTypeMultiplier(Attack attack) {
+        double mult = 1.0;
+        for (Skill skill : this.skillService.getSkills(TypeMultiplierEffect.class)) {
+            TypeMultiplierEffect effect = (TypeMultiplierEffect) skill.getEffect();
+            if (effect.type() == attack.type()) {
+                mult *= effect.mult();
+            }
+        }
+        return mult;
+    }
+
+    /**
+     * Applies every unlocked {@link StatBonusEffect} skill as a permanent {@link EffectStatModifier} on each Bugemon of
+     * the player's team — these bonuses are re-applied at the start of every combat.
+     */
+    private void applyStatBonusSkills(Trainer playerTrainer) {
+        for (Skill skill : this.skillService.getSkills(StatBonusEffect.class)) {
+            StatBonusEffect bonus = (StatBonusEffect) skill.getEffect();
+            EffectStatModifier modifier = new EffectStatModifier(EffectTarget.TEAM, bonus.stat(), bonus.bonus(),
+                    EffectDuration.PERMANENT);
+            playerTrainer.applyEffectToCurrentTeam(modifier);
+        }
+    }
+
+    /**
+     * Determines which trainer's Bugemon attacks first based on initiative. In case of a tie, the winner is chosen
+     * randomly.
+     *
+     * @param trainer1
+     *            the first trainer
+     * @param trainer2
+     *            the second trainer
+     * @return the trainer whose Bugemon attacks first
+     */
+    public static Trainer attackPriority(final Trainer trainer1, final Trainer trainer2) {
+        final int initiative1 = trainer1.getCurrentBugemonInitiative();
+        final int initiative2 = trainer2.getCurrentBugemonInitiative();
+
+        if (initiative1 < initiative2) {
+            return trainer2;
+        } else if (initiative1 > initiative2) {
+            return trainer1;
+        } else {
+            return Math.random() <= 0.5 ? trainer1 : trainer2;
+        }
     }
 
     /**

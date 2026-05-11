@@ -8,12 +8,14 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.models.trainer.AITrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
@@ -35,8 +37,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      *
      */
     public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            InventoryService inventoryService, CombatService combatService) {
-        super(metaController, teamService, bugemonService, combatService, ViewLoader.load(ManualCombatView::new));
+            InventoryService inventoryService, CombatService combatService, SkillService skillService) {
+        super(metaController, teamService, bugemonService, combatService, skillService.getSkills(StatBonusEffect.class),
+                ViewLoader.load(ManualCombatView::new));
         this.inventoryService = inventoryService;
         this.view.setListener(this);
     }
@@ -44,7 +47,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     /** Initialises and starts a new manual combat session for the given player. */
     @Override
     public void startCombat(boolean shouldRestoreHp) {
-        this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(), this.inventoryService);
+        this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(),
+                this.inventoryService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 
         AITrainer opponentTrainer = new AITrainer(CombatService
@@ -109,7 +113,9 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         }
     }
 
-    /** Registers a forfeit action, resolves the turn, and navigates to the outcome screen immediately. */
+    /**
+     * Registers a forfeit action, resolves the turn, and navigates to the outcome screen immediately.
+     */
     @Override
     public void onForfeit() {
         this.manualPlayerTrainer.registerForfeit();

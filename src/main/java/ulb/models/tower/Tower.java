@@ -21,7 +21,7 @@ public class Tower {
 
     public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
             int currentFloorLevel) {
-        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService);
+        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService.getInventory());
 
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {

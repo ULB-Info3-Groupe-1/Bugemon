@@ -1,6 +1,7 @@
 package ulb;
 
 import java.io.InputStream;
+import java.util.List;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
@@ -21,6 +23,7 @@ import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
@@ -58,17 +61,20 @@ public class Main extends Application {
                 loader.getQueries());
         TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, bugemonRepository,
                 loader.getQueries());
-
         String playerName = "default_player";
-        BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName);
+        SkillService skillService = new SkillService(List.of()); // TODO: load skills from a data source
+        BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName,
+                skillService.getSkills(StatBonusEffect.class));
         PlayerService playerService = new PlayerService(staticDataRepository);
-        TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName);
-        InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName);
+        TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName,
+                skillService);
+        InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName,
+                skillService);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
                 inventoryService);
-        CombatService combatService = new CombatService(bugemonService);
+        CombatService combatService = new CombatService(bugemonService, skillService);
         MetaController controller = new MetaController(stage, bugemonService, playerService, teamService, towerService,
-                inventoryService, combatService);
+                inventoryService, combatService, skillService);
         controller.start();
     }
 }

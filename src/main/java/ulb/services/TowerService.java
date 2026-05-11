@@ -67,6 +67,7 @@ public class TowerService {
             this.clearTowerProgress();
         } else {
             this.saveFloor(tower.getCurrentFloorNumber());
+            this.teamService.regenHpActiveTeamPostCombat();
         }
     }
 
@@ -76,6 +77,7 @@ public class TowerService {
      * @return the new tower
      */
     public Tower createTower() {
+
         return new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService,
                 this.getCurrentFloor());
     }

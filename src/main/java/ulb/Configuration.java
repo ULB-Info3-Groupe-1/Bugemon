@@ -84,6 +84,8 @@ public abstract class Configuration {
         public static final String BOSS_NAME = "FinalBoss";
         public static final int FLOOR_MAX = 9; // The highest floor is 9
         public static final int FLOOR_MIN = 2; // The lowest floor is 2
+        public static final double BASE_CRIT_CHANCE = 0.10;
+        public static final double CRIT_DAMAGE_FACTOR = 1.5;
 
     }
 

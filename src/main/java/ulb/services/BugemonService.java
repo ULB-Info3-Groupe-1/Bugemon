@@ -6,6 +6,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.level_up.LevelUp;
+import ulb.models.skills.Skill;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -18,12 +19,14 @@ public class BugemonService {
     private final String playername;
     private final StaticDataRepository staticDataRepository;
     private final BugemonRepository bugemonRepository;
+    private final List<Skill> statBonusSkills;
 
     public BugemonService(StaticDataRepository staticDataRepository, BugemonRepository bugemonRepository,
-            String playername) {
+            String playername, List<Skill> statBonusSkills) {
         this.playername = playername;
         this.staticDataRepository = staticDataRepository;
         this.bugemonRepository = bugemonRepository;
+        this.statBonusSkills = statBonusSkills;
     }
 
     public List<Bugemon> getAllDefaultBugemons() {
@@ -90,6 +93,10 @@ public class BugemonService {
 
     public void clearAllPlayerBugemons() {
         this.bugemonRepository.removeAllPlayerBugemon(this.playername);
+    }
+
+    public List<Skill> getStatBonusSkills() {
+        return this.statBonusSkills;
     }
 
 }

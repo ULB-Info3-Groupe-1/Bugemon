@@ -99,7 +99,6 @@ public class TestMinimax {
         int aliveCount = (int) team.aliveStream().count();
 
         if (aliveCount >= 2) {
-            Bugemon currentActive = this.aiTrainer.getCurrentBugemon();
             Bugemon switched = this.miniMax.chooseBestSwitchAfterKo(this.aiTrainer, this.opponent);
 
             if (switched != null) {
@@ -131,7 +130,8 @@ public class TestMinimax {
 
         assertNotNull(action1);
         assertNotNull(action2);
-        // Both should be valid actions (may or may not be the same due to state changes)
+        // Both should be valid actions (may or may not be the same due to state
+        // changes)
         assertTrue(action1 instanceof TurnAction.AttackAction || action1 instanceof TurnAction.SwitchAction
                 || action1 instanceof TurnAction.UseItemAction);
         assertTrue(action2 instanceof TurnAction.AttackAction || action2 instanceof TurnAction.SwitchAction

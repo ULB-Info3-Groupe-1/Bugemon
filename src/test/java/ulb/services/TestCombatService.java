@@ -15,6 +15,8 @@ package ulb.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,13 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.Skill;
+import ulb.models.skills.SkillBuilder;
+import ulb.models.skills.SkillEffect.CritBonusEffect;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
+import ulb.models.skills.SkillEffect.TypeMultiplierEffect;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.utils.test.TestUtilsBugemons;
@@ -118,5 +126,98 @@ public class TestCombatService {
         }
         BugemonTeam teamOfSix = CombatService.createRandomTeam(bugemons, 6);
         assertEquals(6, teamOfSix.size());
+    }
+
+    // ── Skill effects ─────────────────────────────────────────────────────────
+
+    @Test
+    public void createUniqueCombat_shouldApplyStatBonusSkillsToPlayerTeam() {
+        SkillService skillService = mock(SkillService.class);
+        Skill statBonusSkill = new SkillBuilder().effect(new StatBonusEffect(EffectStat.ATTACK, 10)).build();
+        when(skillService.getSkills(StatBonusEffect.class)).thenReturn(List.of(statBonusSkill));
+
+        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+
+        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        int initialAttack = playerTeam.getFirst().getAttack();
+        Trainer playerTrainer = new AutoTrainer(playerTeam);
+        Trainer opponentTrainer = new AutoTrainer(TestUtilsBugemons.createDefaultTeam(1));
+
+        combatService.createUniqueCombat(playerTrainer, opponentTrainer);
+
+        for (Bugemon b : playerTeam) {
+            assertEquals(initialAttack + 10, b.getAttack());
+        }
+    }
+
+    @Test
+    public void calculateDamage_shouldApplyTypeMultiplier_whenPlayerAttacksWithMatchingType() {
+        SkillService skillService = mock(SkillService.class);
+        Skill typeBoostSkill = new SkillBuilder().effect(new TypeMultiplierEffect(BugemonType.FLORA, 2.0)).build();
+        when(skillService.getSkills(TypeMultiplierEffect.class)).thenReturn(List.of(typeBoostSkill));
+        when(skillService.getSkills(CritBonusEffect.class)).thenReturn(List.of());
+
+        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+
+        Attack floraAttack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
+        List<Attack> attacks = List.of(floraAttack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
+                TestUtilsBugemons.createAttack("3", BugemonType.FLORA, 0));
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).attackList(attacks).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
+                .type(BugemonType.PYRO).build();
+
+        // With or without crit, boosted damage (×2) always exceeds raw damage (max 1.5× from crit).
+        for (int i = 0; i < 50; i++) {
+            int boosted = combatService.calculateDamage(floraAttack, striker, defender, true);
+            int raw = combatService.calculateDamage(floraAttack, striker, defender, false);
+            assertTrue("boosted=" + boosted + " should be > raw=" + raw, boosted > raw);
+        }
+    }
+
+    @Test
+    public void calculateDamage_shouldNotApplyTypeMultiplier_whenAttackTypeDoesNotMatch() {
+        SkillService skillService = mock(SkillService.class);
+        Skill pyroBoost = new SkillBuilder().effect(new TypeMultiplierEffect(BugemonType.PYRO, 2.0)).build();
+        when(skillService.getSkills(TypeMultiplierEffect.class)).thenReturn(List.of(pyroBoost));
+        when(skillService.getSkills(CritBonusEffect.class)).thenReturn(List.of());
+
+        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+
+        Attack floraAttack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
+        List<Attack> attacks = List.of(floraAttack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
+                TestUtilsBugemons.createAttack("3", BugemonType.FLORA, 0));
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).attackList(attacks).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
+                .type(BugemonType.PYRO).build();
+
+        int playerDamage = CombatService.calculateDamage(floraAttack, striker, defender, 1.0);
+        int boosted = combatService.calculateDamage(floraAttack, striker, defender, true);
+
+        // Skill bumps PYRO attacks; FLORA attack is unaffected — only the crit factor (≥1.0) can change the result.
+        assertTrue(boosted >= playerDamage);
+        assertTrue(boosted <= (int) Math.ceil(playerDamage * 1.5));
+    }
+
+    @Test
+    public void calculateDamage_shouldAlwaysCrit_whenCritBonusGuaranteesIt() {
+        SkillService skillService = mock(SkillService.class);
+        Skill maxCritSkill = new SkillBuilder().effect(new CritBonusEffect(1.0)).build();
+        when(skillService.getSkills(TypeMultiplierEffect.class)).thenReturn(List.of());
+        when(skillService.getSkills(CritBonusEffect.class)).thenReturn(List.of(maxCritSkill));
+
+        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+
+        Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
+        List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
+                TestUtilsBugemons.createAttack("3", BugemonType.FLORA, 0));
+        Bugemon striker = new BugemonBuilder().name("1").attack(50).defense(30).attackList(attacks).build();
+        Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
+                .type(BugemonType.PYRO).build();
+
+        int critDamage = CombatService.calculateDamage(attack, striker, defender, 1.5);
+        for (int i = 0; i < 50; i++) {
+            int actual = combatService.calculateDamage(attack, striker, defender, true);
+            assertEquals(critDamage, actual);
+        }
     }
 }

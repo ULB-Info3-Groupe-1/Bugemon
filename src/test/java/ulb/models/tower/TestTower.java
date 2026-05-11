@@ -47,7 +47,9 @@ public class TestTower {
     @Test
     public void testFloorCompletion() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+
         Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
+
         assertFalse(noTower.isFinished());
     }
 
@@ -55,6 +57,7 @@ public class TestTower {
     public void testGoToNextFloorThrowsWhenCurrentFloorIncomplete() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Tower noTower = new Tower(playerTeam, BUGEMON_SERVICE_MOCK, INVENTORY_SERVICE_MOCK, currentFloor);
+
         assertThrows(IllegalStateException.class, noTower::goToNextFloor);
     }
 }
