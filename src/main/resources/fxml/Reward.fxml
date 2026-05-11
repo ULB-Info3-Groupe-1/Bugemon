@@ -44,19 +44,22 @@
                 </HBox>
 
             </VBox>
-            <HBox fx:id="bugemonSelectionContainer" alignment="CENTER" spacing="28"
-                visible="false" managed="false">
-                
+            <HBox fx:id="bugemonSelectionContainer" alignment="CENTER"
+                spacing="28" visible="false" managed="false">
+
                 <VBox fx:id="teamContainer" alignment="CENTER" spacing="28"
                     visible="false" managed="false">
                     <Label text="Sur quel Bugemon appliquer le bonus ?" />
                     <BugemonTeamView fx:id="bugemonsTeamView" />
                 </VBox>
 
-                <VBox alignment="CENTER" spacing="28" visible="false" managed="false"   fx:id="attackSelectionContainer">
+                <VBox alignment="CENTER" spacing="28" visible="false"
+                    managed="false" fx:id="attackSelectionContainer">
                     <Label text="Choisissez une attaque à remplacer :" />
                     <ListView fx:id="bugemonAttackListView" prefHeight="200"
                         styleClass="attack-list-view" />
+                    <Button text="Confirmer" styleClass="btn,btn-success"
+                        onAction="#onConfirmAttackChangeClicked" />
                 </VBox>
             </HBox>
 
