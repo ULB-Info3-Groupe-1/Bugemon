@@ -4,6 +4,7 @@ import java.util.List;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
+import ulb.models.combat.CombatDamageCalculator;
 import ulb.models.skills.Skill;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
@@ -19,7 +20,8 @@ public class CombatFactory {
         AutoTrainer opponentTrainer = new AutoTrainer(
                 isBoss ? TeamFactory.createRandomBossTeam(allBugemons, playerTrainer.getTeamSize())
                         : TeamFactory.createRandomTeam(allBugemons, playerTrainer.getTeamSize()));
-        return new Combat(playerTrainer, opponentTrainer, skills);
+        CombatDamageCalculator combatDamageCalculator = new CombatDamageCalculator(skills);
+        return new Combat(playerTrainer, opponentTrainer, combatDamageCalculator);
     }
 
 }

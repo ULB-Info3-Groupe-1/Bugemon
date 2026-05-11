@@ -11,7 +11,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.EffectHeal;
-import ulb.services.CombatService;
+import ulb.models.combat.CombatDamageCalculator;
 
 /**
  * MiniMax with alpha-beta pruning used by {@link AITrainer}. The search explores attack/switch/item actions and
@@ -23,7 +23,7 @@ public class MiniMax {
     private static final double NEGATIVE_INF = -1.0e15;
     private static final double POSITIVE_INF = 1.0e15;
 
-    private final CombatService combatService = new CombatService();
+    private final CombatDamageCalculator combatDamageCalculator = new CombatDamageCalculator(List.of());
     private final int maxDepth;
 
     public MiniMax(int maxDepth) {
@@ -318,7 +318,7 @@ public class MiniMax {
         }
 
         Attack attack = attacks.get(action.index());
-        int damage = this.combatService.calculateDamage(attack, attacker, defender, 1.0);
+        int damage = this.combatDamageCalculator.calculateDamage(attack, attacker, defender, 1.0);
         defender.takeDamage(damage);
 
         this.applySelfHealFromAttack(attack, attacker);
@@ -465,7 +465,7 @@ public class MiniMax {
     private int bestAttackDamage(Bugemon attacker, Bugemon defender) {
         int best = 0;
         for (Attack attack : attacker.getAttackList()) {
-            int damage = this.combatService.calculateDamage(attack, attacker, defender, 1.0);
+            int damage = this.combatDamageCalculator.calculateDamage(attack, attacker, defender, 1.0);
             if (damage > best) {
                 best = damage;
             }
