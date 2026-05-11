@@ -23,6 +23,7 @@ import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.SkillService;
+import ulb.services.RewardService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
@@ -74,6 +75,8 @@ public class Main extends Application {
                 InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
                 TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
                                 inventoryService, skillService);
+                RewardService rewardService = new RewardService(staticDataRepository, inventoryRepository, playerName);
+
                 MetaController controller = new MetaController(stage, bugemonService, playerService, teamService,
                                 towerService,
                                 inventoryService, skillService, rewardService);

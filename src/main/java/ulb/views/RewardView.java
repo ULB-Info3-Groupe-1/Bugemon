@@ -12,6 +12,8 @@ import ulb.views.components.BugemonTeamView;
 
 public class RewardView extends View {
 
+    private Listener listener;
+
     @FXML
     private Label rewardText;
     @FXML
@@ -40,11 +42,9 @@ public class RewardView extends View {
         this.listener.onRewardChosen(2);
     }
 
-    private Listener listener;
-
-    public void setListener(RewardView.Listener listener) {
+    public void setListener(Listener listener) {
         this.listener = listener;
-        this.bugemonsTeamView.setListener(this.listener::onBugemonChosen);
+        // this.bugemonsTeamView.setListener(this.listener::onBugemonChosen);
     }
 
     public void setRewardTexts(String descriptionChoice0, String descriptionChoice1, String descriptionChoice2) {

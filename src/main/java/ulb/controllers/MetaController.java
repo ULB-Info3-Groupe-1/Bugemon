@@ -20,10 +20,11 @@ import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
-import ulb.services.InventoryService;
+import ulb.services.InventoryService;<<<<<<<HEAD
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
-import ulb.services.SkillService;
+import ulb.services.SkillService;=======
+import ulb.services.RewardService;>>>>>>>215d 660 a(Cleaned up reward service and linked it properly to main and metacontroller)
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
@@ -107,7 +108,7 @@ public class MetaController {
         this.skillTreeController = new SkillTreeController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        this.rewardController = new RewardController(this);
+        this.rewardController = new RewardController(this, rewardService);
         this.initializeMusicResources();
         this.initTransitions();
     }
