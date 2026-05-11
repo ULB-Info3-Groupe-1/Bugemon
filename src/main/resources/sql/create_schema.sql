@@ -49,6 +49,9 @@ CREATE TABLE IF NOT EXISTS "player_bugemons" (
   "current_max_hp" integer,
   "current_xp" integer DEFAULT 0,
   "current_level" integer DEFAULT 1,
+  "attack_1_id" varchar,
+  "attack_2_id" varchar,
+  "attack_3_id" varchar
   PRIMARY KEY ("playername", "bugemon_name")
 );
 

@@ -44,9 +44,9 @@ public class BugemonService {
      * Save a new bugemon in the database.
      *
      * @param bugemon
-     *            (CreateBugemonDTO) the bugemon to be saved
+     *                (CreateBugemonDTO) the bugemon to be saved
      * @throws BugemonNameIsEmptyException
-     *             if the name of the bugemon is empty
+     *                                     if the name of the bugemon is empty
      */
     public void saveNewBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonNameAlreadyExistsException {
@@ -70,7 +70,7 @@ public class BugemonService {
      * Get all attacks matching a specific Bugemon type.
      *
      * @param type
-     *            type used to filter attacks
+     *             type used to filter attacks
      * @return attacks for the provided type
      */
     public List<Attack> getAttacksByType(BugemonType type) {
@@ -81,12 +81,14 @@ public class BugemonService {
      * Saves the state of a single bugemon to the database.
      *
      * @param bugemon
-     *            the bugemon to save
+     *                the bugemon to save
      */
     public void saveBugemonState(Bugemon bugemon) {
+        List<Attack> attacks = bugemon.getAttackList();
         this.bugemonRepository.updatePlayerBugemon(
                 new PlayerBugemonDTO(this.playername, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
-                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
+                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel(),
+                        attacks.get(0).id(), attacks.get(1).id(), attacks.get(2).id()));
     }
 
     public int numPendingLevelUps() {
