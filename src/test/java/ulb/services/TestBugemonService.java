@@ -1,10 +1,7 @@
 package ulb.services;
 
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -37,7 +34,7 @@ public class TestBugemonService {
         this.bugemonRepo = mock(BugemonRepository.class);
 
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(new ArrayList<>());
-        this.bugemonService = new BugemonService(this.staticRepo, this.playerRepo, this.bugemonRepo, PLAYER);
+        this.bugemonService = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER);
     }
 
     @Test
@@ -52,22 +49,9 @@ public class TestBugemonService {
         List<Bugemon> cache = new ArrayList<>(List.of(bugemon));
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(cache);
 
-        BugemonService serviceWithData = new BugemonService(this.staticRepo, this.playerRepo, this.bugemonRepo, PLAYER);
+        BugemonService serviceWithData = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER);
         CreateBugemonDTO dto = new CreateBugemonDTO("Pikachu", null, null, 10, 10, 10, 10, false, null, null, null);
 
         assertThrows(BugemonNameAlreadyExistsException.class, () -> serviceWithData.saveNewBugemon(dto));
     }
-
-    @Test
-    public void testDistributeXp_TriggersLevelUp() {
-        Bugemon bugemon = mock(Bugemon.class);
-        when(bugemon.gainXp(100)).thenReturn(1);
-
-        this.bugemonService.distributeXp(bugemon, 100);
-
-        assertTrue(this.bugemonService.hasPendingLevelUps());
-        verify(bugemon).restoreHp();
-        verify(this.bugemonRepo).updatePlayerBugemon(any());
-    }
-
 }

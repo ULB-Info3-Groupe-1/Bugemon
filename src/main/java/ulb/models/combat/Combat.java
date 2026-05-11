@@ -29,22 +29,19 @@ public class Combat {
     private final Trainer opponentTrainer;
 
     private final EndOfCombatAction endOfCombatAction;
-    private final ICombatXpDistributor xpDistributor;
 
     private TurnResult turnResult;
 
     private boolean isCompleted = false;
 
-    public Combat(ICombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer) {
-        this(xpDistributor, playerTrainer, opponentTrainer, EndOfCombatAction.NO_OP);
+    public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
+        this(playerTrainer, opponentTrainer, EndOfCombatAction.NO_OP);
     }
 
-    public Combat(ICombatXpDistributor xpDistributor, Trainer playerTrainer, Trainer opponentTrainer,
-            EndOfCombatAction endOfCombatAction) {
+    public Combat(Trainer playerTrainer, Trainer opponentTrainer, EndOfCombatAction endOfCombatAction) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
         this.endOfCombatAction = endOfCombatAction;
-        this.xpDistributor = xpDistributor;
     }
 
     /**
@@ -126,13 +123,6 @@ public class Combat {
 
         if (this.isCompleted) {
             this.endOfCombatAction.execute(new CombatContext(this.playerTrainer, this.opponentTrainer));
-
-            Trainer winner = this.getWinner();
-            Trainer loser = this.getOtherTrainer(winner);
-
-            CombatContext combatCtx = new CombatContext(winner, loser);
-
-            this.xpDistributor.distributeXp(combatCtx);
         }
     }
 
@@ -240,7 +230,7 @@ public class Combat {
         int damage = CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
         defender.takeDamage(damage);
 
-        this.applyAttackEffects(attack.effects(), attacker, defender);
+        this.applyAttackEffects(attack.effects(), attacker);
 
         Efficiency efficiency = attack.getEfficiencyAgainst(defender.getCurrentBugemon());
         LOG.debug("{} used {} on {} — {} dmg [{}]", attacker.getCurrentBugemonName(), attack.name(),
@@ -249,7 +239,7 @@ public class Combat {
         this.turnResult.addStep(new TurnStep.AttackStep(attacker, attack, efficiency));
     }
 
-    private void applyAttackEffects(List<Effect> effects, Trainer attacker, Trainer defender) {
+    private void applyAttackEffects(List<Effect> effects, Trainer attacker) {
         effects.forEach(e -> {
             switch (e.target()) {
                 case OPPONENT -> attacker.getCurrentBugemon().apply(e);
@@ -266,10 +256,6 @@ public class Combat {
 
     public Trainer getOpponentTrainer() {
         return this.opponentTrainer;
-    }
-
-    private Trainer getOtherTrainer(Trainer trainer) {
-        return trainer.equals(this.playerTrainer) ? this.opponentTrainer : this.playerTrainer;
     }
 
     /**

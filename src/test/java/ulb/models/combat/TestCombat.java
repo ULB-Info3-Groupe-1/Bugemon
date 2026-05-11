@@ -21,24 +21,11 @@ import ulb.utils.test.TestUtilsBugemons;
 import ulb.utils.test.TestUtilsTrainer;
 
 public class TestCombat {
-
-    public class FakeCombatXpDistributor implements ICombatXpDistributor {
-
-        @Override
-        public void distributeXp(CombatContext combatCtx) {
-            // no-op, we don't want to test XP distribution here
-        }
-
-    }
-
-    private FakeCombatXpDistributor fakeCombatXpDistributor;
-
     private Attack defaultAttack;
 
     @Before
     public void setUp() {
         this.defaultAttack = new Attack("atk", "TestAttack", BugemonType.FLORA, "", 30, new ArrayList<>());
-        this.fakeCombatXpDistributor = new FakeCombatXpDistributor();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -93,7 +80,7 @@ public class TestCombat {
     public void turn_shouldContainTwoAttackSteps_whenBothTrainersAttack() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(this.fakeCombatXpDistributor, t1, t2);
+        Combat combat = new Combat(t1, t2);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -105,7 +92,7 @@ public class TestCombat {
     public void turn_attackStep_shouldReduceDefenderHp() {
         AutoTrainer attacker = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer defender = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(this.fakeCombatXpDistributor, attacker, defender);
+        Combat combat = new Combat(attacker, defender);
         int initialHp = defender.getCurrentBugemonHp();
 
         combat.turn();
@@ -117,7 +104,7 @@ public class TestCombat {
     public void turn_attackStep_shouldContainCorrectAttacker() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(this.fakeCombatXpDistributor, t1, t2);
+        Combat combat = new Combat(t1, t2);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -135,7 +122,7 @@ public class TestCombat {
         Bugemon survivor = this.bugemonWithHp("survivor", 100, 0);
         AutoTrainer victim = this.autoOf(weak, survivor);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(this.fakeCombatXpDistributor, attacker, victim);
+        Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -149,7 +136,7 @@ public class TestCombat {
         Bugemon survivor = this.bugemonWithHp("survivor", 100, 0);
         AutoTrainer victim = this.autoOf(weak, survivor);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(this.fakeCombatXpDistributor, attacker, victim);
+        Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -163,7 +150,7 @@ public class TestCombat {
         Bugemon weak = this.bugemonWithHp("weak", 1, 0);
         AutoTrainer victim = this.autoOf(weak);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(this.fakeCombatXpDistributor, attacker, victim);
+        Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -181,7 +168,7 @@ public class TestCombat {
         // attacks
         AutoTrainer victim = this.autoOf(weak, survivor);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(this.fakeCombatXpDistributor, attacker, victim);
+        Combat combat = new Combat(attacker, victim);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -195,7 +182,7 @@ public class TestCombat {
     public void combat_shouldEventuallyEndWithTrainerKoStep() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(this.fakeCombatXpDistributor, t1, t2);
+        Combat combat = new Combat(t1, t2);
 
         TurnResult lastResult = null;
         boolean ended = false;
@@ -215,7 +202,7 @@ public class TestCombat {
     public void combat_winner_shouldBeNonDefeatedTrainer_afterTrainerKoStep() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(this.fakeCombatXpDistributor, t1, t2);
+        Combat combat = new Combat(t1, t2);
 
         TurnResult lastResult = null;
         boolean ended = false;
@@ -243,7 +230,7 @@ public class TestCombat {
         Bugemon weak = this.bugemonWithHp("weak", 1, 0);
         AutoTrainer victim = this.autoOf(weak);
         AutoTrainer killer = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(this.fakeCombatXpDistributor, killer, victim);
+        Combat combat = new Combat(killer, victim);
 
         TurnResult result = combat.turn();
 
@@ -254,7 +241,7 @@ public class TestCombat {
     public void combat_participationTracking_shouldMarkCurrentBugemon() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(this.fakeCombatXpDistributor, t1, t2);
+        Combat combat = new Combat(t1, t2);
 
         combat.turn();
 
@@ -266,7 +253,7 @@ public class TestCombat {
     public void turn_shouldReturnDifferentResultEachCall() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(this.fakeCombatXpDistributor, t1, t2);
+        Combat combat = new Combat(t1, t2);
 
         TurnResult r1 = combat.turn();
         TurnResult r2 = combat.turn();

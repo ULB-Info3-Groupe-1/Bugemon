@@ -11,7 +11,6 @@ import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.combat.Combat.EndOfCombatAction;
-import ulb.models.combat.CombatXpDistributor;
 import ulb.models.trainer.Trainer;
 
 /**
@@ -32,8 +31,7 @@ public class CombatService {
      */
     public Combat createUniqueCombat(Trainer playerTrainer, Trainer opponentTrainer) {
         EndOfCombatAction endOfCombatCb = EndOfCombatAction.RESTORE_HP;
-        CombatXpDistributor combatxpDistributor = new CombatXpDistributor(this.bugemonService);
-        return new Combat(combatxpDistributor, playerTrainer, opponentTrainer, endOfCombatCb);
+        return new Combat(playerTrainer, opponentTrainer, endOfCombatCb);
     }
 
     /**

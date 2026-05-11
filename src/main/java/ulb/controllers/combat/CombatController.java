@@ -2,6 +2,7 @@ package ulb.controllers.combat;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,11 @@ import ulb.controllers.MetaController;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.combat.Combat;
+import ulb.models.combat.CombatContext;
+import ulb.models.combat.CombatXpDistributor;
 import ulb.models.combat.TurnResult;
 import ulb.models.combat.TurnStep;
+import ulb.models.level_up.LevelUp;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
@@ -175,6 +179,15 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      */
     protected void onCombatEnded(Trainer winner) {
         boolean won = winner == this.playerTrainer;
+        if (won) {
+            CombatContext ctx = new CombatContext(winner, this.getOpponentOf(winner));
+            CombatXpDistributor xpDistributor = new CombatXpDistributor();
+            List<LevelUp> generatedLevelUps = xpDistributor.distributeXp(ctx);
+            winner.getParticipatingBugemons().forEach(this.bugemonService::saveBugemonState);
+            if (!generatedLevelUps.isEmpty()) {
+                this.metaController.receiveCombatResults(generatedLevelUps);
+            }
+        }
         this.metaController.onCombatFinished(won);
     }
 

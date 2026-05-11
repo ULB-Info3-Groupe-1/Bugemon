@@ -60,16 +60,15 @@ public class Main extends Application {
                 loader.getQueries());
 
         String playerName = "default_player";
-        BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, bugemonRepository,
-                playerName);
+        BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName);
+        PlayerService playerService = new PlayerService(staticDataRepository);
         TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName);
         InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
                 inventoryService);
         CombatService combatService = new CombatService(bugemonService);
-        PlayerService playerService = new PlayerService(staticDataRepository);
-        MetaController controller = new MetaController(stage, playerService, bugemonService, teamService,
-                inventoryService, towerService, combatService);
+        MetaController controller = new MetaController(stage, bugemonService, playerService, teamService, towerService,
+                inventoryService, combatService);
         controller.start();
     }
 }
