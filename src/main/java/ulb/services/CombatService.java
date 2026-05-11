@@ -13,7 +13,6 @@ import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
-import ulb.models.combat.Combat.EndOfCombatAction;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillEffect.CritBonusEffect;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
@@ -39,9 +38,8 @@ public class CombatService {
      * At the end of the combat, HPs are restored and XP is distributed.
      */
     public Combat createUniqueCombat(Trainer playerTrainer, Trainer opponentTrainer) {
-        EndOfCombatAction endOfCombatCb = EndOfCombatAction.RESTORE_HP;
         this.applyStatBonusSkills(playerTrainer);
-        return new Combat(playerTrainer, opponentTrainer, endOfCombatCb);
+        return new Combat(playerTrainer, opponentTrainer);
     }
 
     /**

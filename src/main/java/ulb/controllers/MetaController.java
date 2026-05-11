@@ -265,7 +265,7 @@ public class MetaController {
     public void startTowerCombat(Combat combat) {
         this.musicPlayer.stopMusic();
         this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-        this.manualCombatController.startCombat(combat);
+        this.manualCombatController.startCombat(combat, false);
         this.manualCombatController.show();
     }
 }

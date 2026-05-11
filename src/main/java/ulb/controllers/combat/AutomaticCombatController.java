@@ -33,6 +33,8 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
 
     @Override
     public void startCombat(boolean shouldRestoreHp) {
+        this.shouldRestoreHp = shouldRestoreHp;
+
         AutoTrainer autoPlayer = new AutoTrainer(this.teamService.getRequiredActiveTeam());
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());

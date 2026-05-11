@@ -28,8 +28,6 @@ public class Combat {
     private final Trainer playerTrainer;
     private final Trainer opponentTrainer;
 
-    private final EndOfCombatAction endOfCombatAction;
-
     private final CombatService combatService;
 
     private TurnResult turnResult;
@@ -37,21 +35,14 @@ public class Combat {
     private boolean isCompleted = false;
 
     public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
-        this(playerTrainer, opponentTrainer, EndOfCombatAction.NO_OP);
-    }
-
-    public Combat(Trainer playerTrainer, Trainer opponentTrainer, EndOfCombatAction endOfCombatAction) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
-        this.endOfCombatAction = endOfCombatAction;
         this.combatService = null;
     }
 
-    public Combat(Trainer playerTrainer, Trainer opponentTrainer, EndOfCombatAction endOfCombatAction,
-            CombatService combatService) {
+    public Combat(Trainer playerTrainer, Trainer opponentTrainer, CombatService combatService) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
-        this.endOfCombatAction = endOfCombatAction;
         this.combatService = combatService;
     }
 
@@ -131,10 +122,6 @@ public class Combat {
     private void endTurn() {
         this.updateTrainerStatus(this.playerTrainer);
         this.updateTrainerStatus(this.opponentTrainer);
-
-        if (this.isCompleted) {
-            this.endOfCombatAction.execute(new CombatContext(this.playerTrainer, this.opponentTrainer));
-        }
     }
 
     private void resolveItem(TurnAction playerAction, TurnAction opponentAction) {
@@ -282,21 +269,5 @@ public class Combat {
             aiTrainer.setOpponentTrainer(this.playerTrainer);
             aiTrainer.setOpponentActiveBugemon(this.playerTrainer.getCurrentBugemon());
         }
-    }
-
-    @FunctionalInterface
-    public interface EndOfCombatAction {
-        void execute(CombatContext ctx);
-
-        /**
-         * No action (as in does nothing).
-         */
-        EndOfCombatAction NO_OP = ctx -> {
-        };
-
-        EndOfCombatAction RESTORE_HP = ctx -> {
-            ctx.winner().restoreTeamHp();
-            ctx.loser().restoreTeamHp();
-        };
     }
 }
