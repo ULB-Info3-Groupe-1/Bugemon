@@ -61,18 +61,14 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     }
 
     @Override
-    public void onBugemonChosen(Bugemon bugemon) {
+    public void onBugemonClicked(Bugemon bugemon) {
+        LOG.info("Applying reward to " + bugemon.getName());
         if (this.pendingReward == null) {
             throw new IllegalStateException("Impossible to assign a null reward to" + bugemon.getName());
         }
         this.pendingReward.applyReward(bugemon);
         this.bugemonService.saveBugemonState(bugemon);
         this.quitRewardScreen();
-    }
-
-    @Override
-    public void onBugemonClicked(Bugemon bugemon) {
-        // No action needed when clicking a Bugemon in the reward screen
     }
 
     private void quitRewardScreen() {

@@ -46,7 +46,7 @@ public class RewardView extends View {
 
     public void setListener(Listener listener) {
         this.listener = listener;
-        this.bugemonsTeamView.setListener(this.listener::onBugemonChosen);
+        this.bugemonsTeamView.setListener(this.listener::onBugemonClicked);
     }
 
     public void setRewardLabels(String descriptionChoice0, String descriptionChoice1, String descriptionChoice2) {
@@ -91,6 +91,6 @@ public class RewardView extends View {
     public interface Listener {
         void onRewardChosen(int optionIdx);
 
-        void onBugemonChosen(Bugemon bugemon);
+        void onBugemonClicked(Bugemon bugemon);
     }
 }
