@@ -12,22 +12,18 @@ import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
-import ulb.services.TowerService;
 
 public class Tower {
 
-    private final TowerService towerService;
     private final TowerFloors floors;
     private final Trainer playerTrainer;
     private Floor currentFloor;
     private boolean isFinished = false;
 
     public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
-            TowerService towerService) {
-        this.towerService = towerService;
+            int currentFloorLevel) {
         this.playerTrainer = new ManualTrainer(playerTeam, inventoryService);
 
-        int currentFloorLevel = this.towerService.getCurrentFloor();
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {
             Floor newFloor = new Floor(this.playerTrainer, bugemonService, i);
@@ -41,10 +37,6 @@ public class Tower {
 
     public boolean isFinished() {
         return this.isFinished;
-    }
-
-    public boolean isCompleted() {
-        return this.isCurrentFloorComplete() && !this.hasNextFloor();
     }
 
     public FloorNode getPlayerPosition() {
@@ -75,20 +67,13 @@ public class Tower {
     public void visitCurrentRoom(RoomVisitor roomVisitor) {
         this.currentFloor.visitCurrentRoom(roomVisitor);
         this.updateRoomsState();
-    }
-
-    public void checkFloorCompletion() {
-        if (this.isCurrentFloorComplete()) {
-            if (this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
-                this.isFinished = true;
-            } else {
-                this.goToNextFloor();
-            }
+        this.isFinished = this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX && this.isCurrentFloorComplete();
+        if (!this.isFinished && this.isCurrentFloorComplete()) {
+            this.goToNextFloor();
         }
-        this.updateRoomsState();
     }
 
-    boolean isCurrentFloorComplete() {
+    private boolean isCurrentFloorComplete() {
         return this.currentFloor.isComplete();
     }
 
@@ -96,15 +81,11 @@ public class Tower {
         if (!this.isCurrentFloorComplete()) {
             throw new IllegalStateException("Current floor is not complete");
         }
-        if (!this.hasNextFloor()) {
+        if (this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX) {
             throw new IllegalStateException("No more floors");
         }
         this.currentFloor = this.floors.getFloorByLevel(this.getCurrentFloorNumber() + 1);
-        this.towerService.saveFloor(this.getCurrentFloorNumber());
-    }
-
-    private boolean hasNextFloor() {
-        return this.getCurrentFloorNumber() < Configuration.Game.FLOOR_MAX;
+        this.updateRoomsState();
     }
 
     /**

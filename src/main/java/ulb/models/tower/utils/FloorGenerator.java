@@ -70,7 +70,7 @@ public class FloorGenerator {
         return this.root;
     }
 
-    public boolean hasPlayerWon() {
+    public boolean hasPlayerWonBossCombat() {
         return this.bossNode.hasPlayerWon();
     }
 

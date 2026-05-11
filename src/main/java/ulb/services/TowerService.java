@@ -26,7 +26,7 @@ public class TowerService {
     /**
      * Get the current floor by getting it from the database and setting it in the service.
      */
-    public int getCurrentFloor() {
+    int getCurrentFloor() {
         return this.playerRepository.getPlayerCurrentFloor(this.playername);
     }
 
@@ -55,16 +55,16 @@ public class TowerService {
     /**
      * Save the current floor in the database
      */
-    public void saveFloor(int currentFloor) {
+    private void saveFloor(int currentFloor) {
         this.playerRepository.setPlayerCurrentFloor(this.playername, currentFloor);
     }
 
     public void handleCombatEnd(Tower tower, boolean playerWon) {
         this.inventoryService.saveInventory();
-        if (playerWon) {
-            tower.checkFloorCompletion();
+        if (!playerWon || tower.isFinished()) {
+            this.clearTowerProgress();
         } else {
-            this.teamService.restoreHpActiveTeam();
+            this.saveFloor(tower.getCurrentFloorNumber());
         }
     }
 
@@ -74,6 +74,7 @@ public class TowerService {
      * @return the new tower
      */
     public Tower createTower() {
-        return new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService, this);
+        return new Tower(this.teamService.getRequiredActiveTeam(), this.bugemonService, this.inventoryService,
+                this.getCurrentFloor());
     }
 }

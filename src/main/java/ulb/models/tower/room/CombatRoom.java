@@ -17,7 +17,6 @@ public final class CombatRoom extends Room {
     }
 
     public Combat getCombat() {
-        // Not a real getter but lazily creates the combat :))) <3 Love
         return this.combat;
     }
 
