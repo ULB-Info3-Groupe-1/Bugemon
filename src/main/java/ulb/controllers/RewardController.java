@@ -1,7 +1,5 @@
 package ulb.controllers;
 
-import static org.junit.jupiter.api.DynamicTest.stream;
-
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.reward.AttackReward;
 import ulb.models.reward.Reward;
@@ -105,10 +102,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     }
 
     private void updateAttackSelection(Bugemon bugemon) {
-        List<String> updatedAttacks = bugemon.getAttackList()
-                .stream()
-                .map(Attack::name)
-                .toList();
+        List<String> updatedAttacks = bugemon.getAttackList().stream().map(Attack::name).toList();
         this.view.setAttackList(updatedAttacks);
     }
 

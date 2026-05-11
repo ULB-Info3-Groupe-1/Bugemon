@@ -65,17 +65,13 @@ public class RewardView extends View {
     @FXML
     private void onConfirmAttackChangeClicked() {
 
-        int selectedAttackIndex = this.bugemonAttackListView
-                .getSelectionModel()
-                .getSelectedIndex();
+        int selectedAttackIndex = this.bugemonAttackListView.getSelectionModel().getSelectedIndex();
 
-        if (selectedAttackIndex < 0 || selectedBugemon == null) {
+        if (selectedAttackIndex < 0 || this.selectedBugemon == null) {
             return;
         }
 
-        this.listener.onAttackChosen(
-                this.selectedBugemon,
-                selectedAttackIndex);
+        this.listener.onAttackChosen(this.selectedBugemon, selectedAttackIndex);
     }
 
     public void setListener(Listener listener) {
