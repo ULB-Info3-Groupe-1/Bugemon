@@ -64,12 +64,24 @@ public class RewardView extends View {
     }
 
     public void showTeamSelection(BugemonTeam team) {
+        // 1. On cache les boutons de récompenses
         this.rewardsContainer.setVisible(false);
         this.rewardsContainer.setManaged(false);
+
+        // 2. LA CLÉ EST ICI : On affiche la VBox parente !
+        this.teamContainer.setVisible(true);
+        this.teamContainer.setManaged(true);
+
+        // (Optionnel) Tu peux t'assurer que la vue interne est aussi visible
         this.bugemonsTeamView.setVisible(true);
         this.bugemonsTeamView.setManaged(true);
+
+        // 3. On donne les données à afficher
         this.bugemonsTeamView.showTeam(team, false);
-    }
+
+        // 4. On met à jour le titre
+        this.rewardLabel.setText("Sur quel Bugemon appliquer le bonus ?");
+        }
 
     @Override
     protected String getPath() {

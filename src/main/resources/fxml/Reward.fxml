@@ -24,7 +24,7 @@
                     <Insets top="56" right="56" bottom="28" left="56" />
                 </padding>
 
-                <Label fx:id="rewardText" styleClass="level-up-title" />
+                <Label fx:id="rewardLabel" styleClass="level-up-title" />
 
                 <HBox alignment="CENTER" spacing="56">
 

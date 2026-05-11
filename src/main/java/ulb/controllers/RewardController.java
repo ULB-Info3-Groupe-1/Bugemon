@@ -41,7 +41,11 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     public void onRewardChosen(int optionId) {
         List<Reward> currentOptions = this.rewardService.getCurrentRewardOptions();
         Reward selectedReward = currentOptions.get(optionId);
-        BugemonTeam activeBugemonTeam = this.teamService.getWorkingTeam();
+        BugemonTeam activeBugemonTeam = this.teamService.getRequiredActiveTeam();
+        if (activeBugemonTeam == null) {
+            return;
+        }
+
         switch (selectedReward.getRewardType()) {
             case ITEM -> {
                 selectedReward.applyReward(null);
@@ -49,12 +53,12 @@ public class RewardController extends Controller<RewardView> implements RewardVi
             }
             case STAT, ATTACK -> {
                 this.pendingReward = selectedReward;
+                System.out.println("Équipe trouvée ! Envoi à la vue...");
                 this.view.showTeamSelection(activeBugemonTeam);
             }
             default -> {
-                //
+                System.out.println("Type de récompense non géré.");
             }
-
         }
     }
 
@@ -86,7 +90,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
         if (this.rewardService == null) {
             throw new IllegalStateException("No reward service");
         }
-        List<Reward> options = this.rewardService.generateRewards();
+        List<Reward> options = this.rewardService.getCurrentRewardOptions();
         this.view.setRewardLabels(options.get(0).getSummary(), options.get(1).getSummary(),
                 options.get(2).getSummary());
     }
