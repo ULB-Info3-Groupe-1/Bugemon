@@ -53,11 +53,9 @@ public class RewardController extends Controller<RewardView> implements RewardVi
             }
             case STAT, ATTACK -> {
                 this.pendingReward = selectedReward;
-                System.out.println("Équipe trouvée ! Envoi à la vue...");
                 this.view.showTeamSelection(activeBugemonTeam);
             }
             default -> {
-                System.out.println("Type de récompense non géré.");
             }
         }
     }

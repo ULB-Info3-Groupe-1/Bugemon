@@ -38,14 +38,11 @@ public class BugemonTeamView extends ComponentView {
                 BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
                 if (this.listener != null) {
                     card.setListener(this.listener::onBugemonClicked);
-                } else {
-                    System.out.println("Warning: Listener not set in BugemonTeamView!");
                 }
                 this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
             }
         } else {
             List<Bugemon> aliveBugemons = bugemonTeam.stream().toList();
-            System.out.println(aliveBugemons.getFirst());
             for (int i = 0; i < aliveBugemons.size(); i++) {
                 BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
                 card.setListener(this.listener::onBugemonClicked);
