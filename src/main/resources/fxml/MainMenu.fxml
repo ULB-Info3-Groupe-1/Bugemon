@@ -23,12 +23,12 @@
         styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="noTowerButton" onAction="#onTowerClicked"
         text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
+    <Button onAction="#onSkillTreeClicked"
+        text="Arbre de compétences" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="saveMenuReturnButton"
         onAction="#onSaveMenuReturnButtonClicked"
         text="Retour menu de sauvegarde"
         styleClass="btn,btn-secondary,btn-nav" />
-    <Button onAction="#onSkillTreeClicked"
-        text="Arbre de compétences" styleClass="btn,btn-primary,btn-nav" />
     <Button fx:id="quitButton" onAction="#onQuitClicked"
         text="Quitter" styleClass="btn,btn-danger,btn-nav" />
 

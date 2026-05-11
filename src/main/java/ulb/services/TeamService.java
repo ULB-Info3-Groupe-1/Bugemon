@@ -264,11 +264,6 @@ public class TeamService {
         return this.playerTeams.stream().anyMatch(pt -> pt.equals(this.workingTeam));
     }
 
-    public void restoreHpActiveTeam() throws NoActiveTeamException {
-        this.checkActiveTeamIsPresent();
-        this.activeTeam.restoreHp();
-    }
-
     /**
      * Adds a bugemon to the working team if it is not already in the team, otherwise removes it from the team.
      *
