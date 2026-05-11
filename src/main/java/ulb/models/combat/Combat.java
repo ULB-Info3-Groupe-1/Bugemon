@@ -10,6 +10,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.Effect;
+import ulb.models.skills.Skill;
 import ulb.models.trainer.AITrainer;
 import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
@@ -29,21 +30,17 @@ public class Combat {
     private final Trainer opponentTrainer;
 
     private final CombatService combatService;
+    private final List<Skill> skills;
 
     private TurnResult turnResult;
 
     private boolean isCompleted = false;
 
-    public Combat(Trainer playerTrainer, Trainer opponentTrainer) {
+    public Combat(Trainer playerTrainer, Trainer opponentTrainer, List<Skill> skills) {
         this.playerTrainer = playerTrainer;
         this.opponentTrainer = opponentTrainer;
-        this.combatService = null;
-    }
-
-    public Combat(Trainer playerTrainer, Trainer opponentTrainer, CombatService combatService) {
-        this.playerTrainer = playerTrainer;
-        this.opponentTrainer = opponentTrainer;
-        this.combatService = combatService;
+        this.skills = skills;
+        this.combatService = new CombatService();
     }
 
     /**
@@ -225,10 +222,8 @@ public class Combat {
     }
 
     private void applyAttack(Trainer attacker, Trainer defender, Attack attack) {
-        int damage = this.combatService != null
-                ? this.combatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon(),
-                        attacker == this.playerTrainer)
-                : CombatService.calculateDamage(attack, attacker.getCurrentBugemon(), defender.getCurrentBugemon());
+        int damage = this.combatService.calculateDamage(this.skills, attack, attacker.getCurrentBugemon(),
+                defender.getCurrentBugemon(), attacker == this.playerTrainer);
         defender.takeDamage(damage);
 
         this.applyAttackEffects(attack.effects(), attacker);

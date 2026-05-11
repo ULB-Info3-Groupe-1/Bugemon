@@ -20,7 +20,6 @@ import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.TeamRepository;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.SkillService;
@@ -68,13 +67,11 @@ public class Main extends Application {
         PlayerService playerService = new PlayerService(staticDataRepository);
         TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName,
                 skillService);
-        InventoryService inventoryService = new InventoryService(playerRepository, inventoryRepository, playerName,
-                skillService);
+        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
-                inventoryService);
-        CombatService combatService = new CombatService(bugemonService, skillService);
+                inventoryService, skillService);
         MetaController controller = new MetaController(stage, bugemonService, playerService, teamService, towerService,
-                inventoryService, combatService, skillService);
+                inventoryService, skillService);
         controller.start();
     }
 }

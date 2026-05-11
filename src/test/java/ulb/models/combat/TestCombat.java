@@ -16,12 +16,15 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.Skill;
 import ulb.models.trainer.AutoTrainer;
 import ulb.utils.test.TestUtilsBugemons;
 import ulb.utils.test.TestUtilsTrainer;
 
 public class TestCombat {
     private Attack defaultAttack;
+
+    private static final List<Skill> DEFAULT_SKILLS = List.of();
 
     @Before
     public void setUp() {
@@ -80,7 +83,7 @@ public class TestCombat {
     public void turn_shouldContainTwoAttackSteps_whenBothTrainersAttack() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(t1, t2);
+        Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -92,7 +95,7 @@ public class TestCombat {
     public void turn_attackStep_shouldReduceDefenderHp() {
         AutoTrainer attacker = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer defender = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(attacker, defender);
+        Combat combat = new Combat(attacker, defender, DEFAULT_SKILLS);
         int initialHp = defender.getCurrentBugemonHp();
 
         combat.turn();
@@ -104,7 +107,7 @@ public class TestCombat {
     public void turn_attackStep_shouldContainCorrectAttacker() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(t1, t2);
+        Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -122,7 +125,7 @@ public class TestCombat {
         Bugemon survivor = this.bugemonWithHp("survivor", 100, 0);
         AutoTrainer victim = this.autoOf(weak, survivor);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(attacker, victim);
+        Combat combat = new Combat(attacker, victim, DEFAULT_SKILLS);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -136,7 +139,7 @@ public class TestCombat {
         Bugemon survivor = this.bugemonWithHp("survivor", 100, 0);
         AutoTrainer victim = this.autoOf(weak, survivor);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(attacker, victim);
+        Combat combat = new Combat(attacker, victim, DEFAULT_SKILLS);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -150,7 +153,7 @@ public class TestCombat {
         Bugemon weak = this.bugemonWithHp("weak", 1, 0);
         AutoTrainer victim = this.autoOf(weak);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(attacker, victim);
+        Combat combat = new Combat(attacker, victim, DEFAULT_SKILLS);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -168,7 +171,7 @@ public class TestCombat {
         // attacks
         AutoTrainer victim = this.autoOf(weak, survivor);
         AutoTrainer attacker = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(attacker, victim);
+        Combat combat = new Combat(attacker, victim, DEFAULT_SKILLS);
 
         List<TurnStep> steps = stepsAsList(combat.turn());
 
@@ -182,7 +185,7 @@ public class TestCombat {
     public void combat_shouldEventuallyEndWithTrainerKoStep() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(t1, t2);
+        Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         TurnResult lastResult = null;
         boolean ended = false;
@@ -202,7 +205,7 @@ public class TestCombat {
     public void combat_winner_shouldBeNonDefeatedTrainer_afterTrainerKoStep() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(t1, t2);
+        Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         TurnResult lastResult = null;
         boolean ended = false;
@@ -230,7 +233,7 @@ public class TestCombat {
         Bugemon weak = this.bugemonWithHp("weak", 1, 0);
         AutoTrainer victim = this.autoOf(weak);
         AutoTrainer killer = this.autoOf(this.strongAttacker("str"));
-        Combat combat = new Combat(killer, victim);
+        Combat combat = new Combat(killer, victim, DEFAULT_SKILLS);
 
         TurnResult result = combat.turn();
 
@@ -241,7 +244,7 @@ public class TestCombat {
     public void combat_participationTracking_shouldMarkCurrentBugemon() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(t1, t2);
+        Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         combat.turn();
 
@@ -253,7 +256,7 @@ public class TestCombat {
     public void turn_shouldReturnDifferentResultEachCall() {
         AutoTrainer t1 = TestUtilsTrainer.createDefaultAutoTrainer();
         AutoTrainer t2 = TestUtilsTrainer.createDefaultAutoTrainer();
-        Combat combat = new Combat(t1, t2);
+        Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         TurnResult r1 = combat.turn();
         TurnResult r2 = combat.turn();

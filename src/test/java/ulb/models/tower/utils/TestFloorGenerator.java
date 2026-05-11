@@ -13,13 +13,21 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
+import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.Skill;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
+import ulb.models.trainer.ManualTrainer;
+import ulb.models.trainer.Trainer;
+import ulb.utils.test.TestUtilsBugemons;
 
 public class TestFloorGenerator {
-    private static final CombatFactory COMBAT_FACTORY_MOCK = mock(CombatFactory.class);
+
+    private static final List<Skill> DEFAULT_SKILLS = List.of();
 
     private FloorGenerator floorGenerator;
     private FloorNode root;
@@ -33,7 +41,12 @@ public class TestFloorGenerator {
 
     @Before
     public void setup() {
-        this.floorGenerator = new FloorGenerator(COMBAT_FACTORY_MOCK, null);
+        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
+
+        List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
+        mockBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
+        this.floorGenerator = new FloorGenerator(mockBugemons, DEFAULT_SKILLS, trainer);
         this.root = this.floorGenerator.getRoot();
 
         this.allNodes = new ArrayList<>();

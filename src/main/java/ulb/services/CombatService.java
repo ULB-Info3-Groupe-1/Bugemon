@@ -1,7 +1,5 @@
 package ulb.services;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ulb.Configuration;
@@ -11,7 +9,6 @@ import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectStatModifier;
 import ulb.models.bugemon.effect.EffectTarget;
-import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillEffect.CritBonusEffect;
@@ -24,22 +21,14 @@ import ulb.models.trainer.Trainer;
  */
 public class CombatService {
 
-    public final BugemonService bugemonService;
-    private final SkillService skillService;
-
-    public CombatService(BugemonService bugemonService, SkillService skillService) {
-        this.bugemonService = bugemonService;
-        this.skillService = skillService;
-    }
-
     /**
      * Creates a combat.
      *
      * At the end of the combat, HPs are restored and XP is distributed.
      */
-    public Combat createUniqueCombat(Trainer playerTrainer, Trainer opponentTrainer) {
-        this.applyStatBonusSkills(playerTrainer);
-        return new Combat(playerTrainer, opponentTrainer);
+    public Combat createUniqueCombat(List<Skill> skills, Trainer playerTrainer, Trainer opponentTrainer) {
+        this.applyStatBonusSkills(skills, playerTrainer);
+        return new Combat(playerTrainer, opponentTrainer, skills);
     }
 
     /**
@@ -47,12 +36,12 @@ public class CombatService {
      * {@link TypeMultiplierEffect} matching the attack's type is applied to the damage, and every unlocked
      * {@link CritBonusEffect} adds to the base 10% crit chance.
      */
-    public int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon,
-            final boolean isPlayerAttacking) {
-        final double critFactor = this.computeCritFactor(isPlayerAttacking);
-        final double skillTypeMultiplier = isPlayerAttacking ? this.computeTypeMultiplier(attack) : 1.0;
+    public int calculateDamage(List<Skill> skills, final Attack attack, final Bugemon offenderBugemon,
+            final Bugemon defenderBugemon, final boolean isPlayerAttacking) {
+        final double critFactor = this.computeCritFactor(skills, isPlayerAttacking);
+        final double skillTypeMultiplier = isPlayerAttacking ? this.computeTypeMultiplier(skills, attack) : 1.0;
         return (int) Math
-                .ceil(calculateDamage(attack, offenderBugemon, defenderBugemon, critFactor) * skillTypeMultiplier);
+                .ceil(this.calculateDamage(attack, offenderBugemon, defenderBugemon, critFactor) * skillTypeMultiplier);
     }
 
     /**
@@ -70,7 +59,7 @@ public class CombatService {
      *            the critical hit multiplier to apply (e.g. {@code 1.0} for normal, {@code 1.5} for a critical hit)
      * @return the computed damage as a double
      */
-    public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon,
+    public int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon,
             final double criticFactor) {
 
         final int basePower = attack.power();
@@ -86,28 +75,28 @@ public class CombatService {
      * Overload of {@link #calculateDamage(Attack, Bugemon, Bugemon, double)} with a random crit factor (10% chance of
      * 1.5×).
      */
-    public static int calculateDamage(final Attack attack, final Bugemon offenderBugemon,
-            final Bugemon defenderBugemon) {
+    public int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon) {
         final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
-        return calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
+        return this.calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
     }
 
-    private double computeCritFactor(boolean isPlayerAttacking) {
+    private double computeCritFactor(List<Skill> skills, boolean isPlayerAttacking) {
         double critChance = Configuration.Game.BASE_CRIT_CHANCE;
         if (isPlayerAttacking) {
-            for (Skill skill : this.skillService.getSkills(CritBonusEffect.class)) {
-                critChance += ((CritBonusEffect) skill.getEffect()).extraChance();
+            for (Skill skill : skills) {
+                if (skill.getEffect() instanceof CritBonusEffect(var extraChance)) {
+                    critChance += extraChance;
+                }
             }
         }
         return Math.random() <= critChance ? Configuration.Game.CRIT_DAMAGE_FACTOR : 1.0;
     }
 
-    private double computeTypeMultiplier(Attack attack) {
+    private double computeTypeMultiplier(List<Skill> skills, Attack attack) {
         double mult = 1.0;
-        for (Skill skill : this.skillService.getSkills(TypeMultiplierEffect.class)) {
-            TypeMultiplierEffect effect = (TypeMultiplierEffect) skill.getEffect();
-            if (effect.type() == attack.type()) {
-                mult *= effect.mult();
+        for (Skill skill : skills) {
+            if (skill.getEffect() instanceof TypeMultiplierEffect(var type, var effectMult) && type == attack.type()) {
+                mult *= effectMult;
             }
         }
         return mult;
@@ -117,8 +106,8 @@ public class CombatService {
      * Applies every unlocked {@link StatBonusEffect} skill as a permanent {@link EffectStatModifier} on each Bugemon of
      * the player's team — these bonuses are re-applied at the start of every combat.
      */
-    private void applyStatBonusSkills(Trainer playerTrainer) {
-        for (Skill skill : this.skillService.getSkills(StatBonusEffect.class)) {
+    private void applyStatBonusSkills(List<Skill> skills, Trainer playerTrainer) {
+        for (Skill skill : skills) {
             StatBonusEffect bonus = (StatBonusEffect) skill.getEffect();
             EffectStatModifier modifier = new EffectStatModifier(EffectTarget.TEAM, bonus.stat(), bonus.bonus(),
                     EffectDuration.PERMANENT);
@@ -169,49 +158,5 @@ public class CombatService {
         } else {
             return 1.00;
         }
-    }
-
-    /**
-     * Creates a random team of Bugemons from a list of Bugemons and a team size.
-     *
-     * @param bugemonList
-     *            all Bugemons that can be in the team
-     * @param teamSize
-     *            the size of the team
-     * @return the created team
-     */
-    public static BugemonTeam createRandomTeam(final List<Bugemon> bugemonList, final int teamSize) {
-        List<Bugemon> pool = new ArrayList<>(bugemonList);
-        Collections.shuffle(pool);
-        BugemonTeam team = new BugemonTeam();
-        for (int i = 0; i < teamSize; i++) {
-            team.add(new Bugemon(pool.get(i))); // Clone the Bugemon to avoid modifying the original
-        }
-        return team;
-    }
-
-    /**
-     * Creates a random team with one boss.
-     *
-     * @param bugemonList
-     *            all Bugemons that can be in the team
-     * @param teamSize
-     *            the size of the team
-     * @return the created team
-     */
-    public static BugemonTeam createRandomBossTeam(final List<Bugemon> bugemonList, final int teamSize)
-            throws RuntimeException {
-        final Bugemon bossBugemon = bugemonList.stream()
-                .filter(obj -> obj.getName().equals(Configuration.Game.BOSS_NAME)).findFirst()
-                .orElseThrow(() -> new RuntimeException(
-                        "Boss Bugemon with name '" + Configuration.Game.BOSS_NAME + "' not found in the list."));
-        List<Bugemon> listWithoutBoss = new ArrayList<>(bugemonList);
-        listWithoutBoss.remove(bossBugemon);
-
-        BugemonTeam bossTeam = createRandomTeam(listWithoutBoss, teamSize - 1);
-        bossTeam.add(bossBugemon);
-        bossTeam.shuffle();
-
-        return bossTeam;
     }
 }

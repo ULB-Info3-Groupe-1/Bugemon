@@ -1,37 +1,44 @@
 package ulb.models.tower;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import ulb.Configuration;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.tower.room.RoomVisitor;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
-import ulb.services.BugemonService;
-import ulb.services.InventoryService;
 
 public class Tower {
 
     private final TowerFloors floors;
-    private final Trainer playerTrainer;
+    private final Inventory inventory;
     private Floor currentFloor;
 
-    public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
+    public Tower(List<Bugemon> allBugemons, List<Skill> skills, BugemonTeam playerTeam, Inventory inventory,
             int currentFloorLevel) {
-        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService.getInventory());
+        this.inventory = inventory;
+        Trainer playerTrainer = new ManualTrainer(playerTeam, this.inventory);
 
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {
-            Floor newFloor = new Floor(this.playerTrainer, bugemonService, i);
+            Floor newFloor = new Floor(allBugemons, skills, playerTrainer, i);
             if (i == currentFloorLevel) {
                 this.currentFloor = newFloor;
             }
             this.floors.add(newFloor);
         }
         this.updateRoomsState();
+    }
+
+    public Inventory getInventory() {
+        return this.inventory;
     }
 
     public FloorNode getPlayerPosition() {
