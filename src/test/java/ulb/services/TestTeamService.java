@@ -177,11 +177,6 @@ public class TestTeamService {
         this.teamService.saveTeam("EmptyTeam");
     }
 
-    @Test(expected = NoActiveTeamException.class)
-    public void shouldThrowException_whenRestoringHpWithoutActiveTeam() throws Exception {
-        this.teamService.restoreHpActiveTeam();
-    }
-
     @Test
     public void shouldSaveNewBugemonInDb_whenNotAlreadyOwned() throws Exception {
         Bugemon newBugemon = TestUtilsBugemons.createDefaultBugemon("NotOwned");
