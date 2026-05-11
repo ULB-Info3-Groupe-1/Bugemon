@@ -5,32 +5,33 @@ package ulb.models.skills;
  */
 public class Skill {
 
-    private final String id;
+    private String id;
 
-    private final String name;
+    private String name;
 
-    private final String description;
+    private String description;
 
-    private final int cost;
+    private int cost;
 
-    private int currentLevel;
-
-    private final int maxLevel;
+    private int maxLevel;
 
     private final SkillEffect effect;
 
-    private boolean isUnlocked;
+    private int currentLevel;
 
-    public Skill(String id, String name, String description, int cost, int maxLevel, SkillEffect effect,
-            boolean isUnlocked) {
+    public Skill(String id, String name, String description, int cost, int maxLevel, int currentLevel) {
+        this(id, name, description, cost, maxLevel, currentLevel, null);
+    }
+
+    public Skill(String id, String name, String description, int cost, int maxLevel, int currentLevel,
+            SkillEffect effect) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.cost = cost;
         this.maxLevel = maxLevel;
+        this.currentLevel = currentLevel;
         this.effect = effect;
-        this.isUnlocked = isUnlocked;
-        this.currentLevel = isUnlocked ? 1 : 0;
     }
 
     public String getId() {
@@ -49,16 +50,6 @@ public class Skill {
         return this.cost;
     }
 
-    public int getCurrentLevel() {
-        return this.currentLevel;
-    }
-
-    public void incrementLevel() {
-        if (this.currentLevel < this.maxLevel) {
-            this.currentLevel++;
-        }
-    }
-
     public int getMaxLevel() {
         return this.maxLevel;
     }
@@ -68,11 +59,20 @@ public class Skill {
     }
 
     public boolean isUnlocked() {
-        return this.isUnlocked;
+        return this.currentLevel > 0;
     }
 
-    public void unlock() {
-        this.incrementLevel();
-        this.isUnlocked = true;
+    public int getCurrentLevel() {
+        return this.currentLevel;
+    }
+
+    public void incrementLevel() {
+        this.currentLevel++;
+    }
+
+    public void decrementLevel() {
+        if (this.currentLevel > 0) {
+            this.currentLevel--;
+        }
     }
 }
