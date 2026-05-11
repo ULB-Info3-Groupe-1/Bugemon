@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -110,21 +111,31 @@ public class CreateBugemonView extends View {
             return cell;
         });
 
+        Function<Number, String> formatHealth = healthValue -> String.format("Vie (%.0f)", healthValue);
+        Function<Number, String> formatAttack = attackValue -> String.format("Attaque (%.0f)", attackValue);
+        Function<Number, String> formatDefense = defenseValue -> String.format("Defense (%.0f)", defenseValue);
+        Function<Number, String> formatInitiative = initiativeValue -> String.format("Initiative (%.0f)",
+                initiativeValue);
+
         this.attackListView.getSelectionModel().getSelectedItems()
                 .addListener((ListChangeListener<String>) change -> this.updateAttackCountLabel());
 
         this.healthSlider.valueProperty()
-                .addListener((obs, oldVal, newVal) -> this.healthLabel.setText(String.format("Vie (%.0f)", newVal)));
+                .addListener((obs, oldVal, newVal) -> this.healthLabel.setText(formatHealth.apply(newVal)));
 
         this.attackSlider.valueProperty().addListener(
-                (obs, oldVal, newVal) -> this.attackLabel.setText(String.format("Attaque (%.0f)", newVal)));
+                (obs, oldVal, newVal) -> this.attackLabel.setText(String.format(formatAttack.apply(newVal))));
 
         this.defenseSlider.valueProperty().addListener(
-                (obs, oldVal, newVal) -> this.defenseLabel.setText(String.format("Défense (%.0f)", newVal)));
+                (obs, oldVal, newVal) -> this.defenseLabel.setText(String.format(formatDefense.apply(newVal))));
 
-        this.initiativeSlider.valueProperty().addListener(
-                (obs, oldVal, newVal) -> this.initiativeLabel.setText(String.format("Initiative (%.0f)", newVal)));
+        this.initiativeSlider.valueProperty()
+                .addListener((obs, oldVal, newVal) -> this.initiativeLabel.setText(formatInitiative.apply(newVal)));
 
+        this.attackLabel.setText(formatAttack.apply(this.attackSlider.getValue()));
+        this.healthLabel.setText(formatHealth.apply(this.healthSlider.getValue()));
+        this.defenseLabel.setText(formatDefense.apply(this.defenseSlider.getValue()));
+        this.initiativeLabel.setText(formatInitiative.apply(this.initiativeSlider.getValue()));
     }
 
     private void updateAttackCountLabel() {
