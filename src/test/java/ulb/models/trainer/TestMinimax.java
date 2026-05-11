@@ -9,22 +9,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.services.InventoryService;
 import ulb.utils.test.TestUtilsBugemonTeam;
 
 public class TestMinimax {
     private AITrainer aiTrainer;
     private Trainer opponent;
     private MiniMax miniMax;
-    private InventoryService inventoryService;
+    private Inventory inventory;
 
     @Before
     public void setUp() {
-        this.inventoryService = mock(InventoryService.class);
+        this.inventory = mock(Inventory.class);
         BugemonTeam aiTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         BugemonTeam opponentTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        this.aiTrainer = new AITrainer(aiTeam, this.inventoryService.getInventory(), 2);
+        this.aiTrainer = new AITrainer(aiTeam, this.inventory, 2);
         this.opponent = new AutoTrainer(opponentTeam);
         this.miniMax = new MiniMax(2);
     }
