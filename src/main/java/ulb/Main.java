@@ -20,6 +20,7 @@ import ulb.repositories.TeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
+import ulb.services.RewardService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
@@ -51,6 +52,8 @@ public class Main extends Application {
 
         QueryLoader loader = new QueryLoader();
         DatabaseConnection dbConnection = new DatabaseConnection();
+
+        // repositories
         StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
         BugemonRepository bugemonRepository = new BugemonRepository(dbConnection, loader.getQueries());
         InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, staticDataRepository,
@@ -61,6 +64,8 @@ public class Main extends Application {
                 loader.getQueries());
 
         String playerName = "default_player";
+
+        // services
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerRepository, bugemonRepository,
                 playerName);
         TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName);
@@ -68,8 +73,10 @@ public class Main extends Application {
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
                 inventoryService);
         CombatService combatService = new CombatService(bugemonService);
+        RewardService rewardService = new RewardService(staticDataRepository, inventoryRepository, playerName);
+
         MetaController controller = new MetaController(stage, bugemonService, teamService, inventoryService,
-                towerService, combatService);
+                towerService, combatService, rewardService);
         controller.start();
     }
 }

@@ -12,9 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,12 +36,17 @@ import ulb.utils.Parser;
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 10;
     private Inventory defaultInventory;
+    private Map<String, Attack> allAttacks;
+    private List<Item> allItems;
 
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         super(dbConnection, queries);
         Parser parser = new Parser();
         parser.parse();
         this.defaultInventory = parser.getInventory();
+        this.allAttacks = parser.getAttacks();
+        this.allItems = parser.getItems();
+
         this.prepareDatabase(parser);
     }
 
@@ -188,6 +190,24 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     /**
+     * Returns all the attacks that have been parsed.
+     *
+     * @return Map<String, Attack>
+     */
+    public Map<String, Attack> getAllAttacks() {
+        return this.allAttacks;
+    }
+
+    /**
+     * Returns all the items that have been parsed.
+     *
+     * @return List<Item>
+     */
+    public List<Item> getAllItems() {
+        return this.allItems;
+    }
+
+    /**
      * Retrieves all default Bugemons.
      *
      * @return (List<Bugemon>) List of default Bugemons of the game
@@ -209,41 +229,6 @@ public class StaticDataRepository extends AbstractRepository {
             this.description = description;
             this.power = power;
         }
-    }
-
-    /**
-     * Retrieves all attacks with their effects.
-     *
-     * @return map of attacks (keyed by attack id)
-     */
-    public Map<String, Attack> getAllAttacks() {
-        Map<String, AttackInfo> infos = new LinkedHashMap<>();
-        Map<String, List<Effect>> effects = new HashMap<>();
-
-        executeQuery("GetAllAttacksWithEffects", rs -> {
-            String id = rs.getString("attack_id");
-            infos.computeIfAbsent(id, k -> {
-                effects.put(k, new ArrayList<>());
-                try {
-                    return new AttackInfo(rs.getString("attack_name"),
-                            DatabaseHelper.getEnumOrNull(rs, "attack_type", BugemonType.class),
-                            rs.getString("attack_description"), rs.getInt("attack_power"));
-                } catch (SQLException e) {
-                    throw new IllegalStateException("Error loading attack " + id, e);
-                }
-            });
-
-            String effType = rs.getString(DatabaseColumns.COL_EFFECT_TYPE);
-            if (effType != null) {
-                effects.get(id).add(this.buildEffect(rs, effType));
-            }
-            return null;
-        });
-
-        Map<String, Attack> attackMap = new HashMap<>();
-        infos.forEach((id, info) -> attackMap.put(id,
-                new Attack(id, info.name, info.type, info.description, info.power, effects.get(id))));
-        return attackMap;
     }
 
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {

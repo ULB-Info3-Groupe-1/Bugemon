@@ -12,22 +12,34 @@ import ulb.models.reward.AttackReward;
 import ulb.models.reward.ItemReward;
 import ulb.models.reward.Reward;
 import ulb.models.reward.StatReward;
+import ulb.repositories.InventoryRepository;
+import ulb.repositories.StaticDataRepository;
 
 public class RewardService {
 
+    // constants
     private static final int NUM_REWARDS = 3;
+    private static final int MAX_HP_BONUS = 10;
+    private static final int MAX_STAT_BONUS = 5;
+
+    private final StaticDataRepository staticDatarepository;
+    private final InventoryRepository inventoryRepository;
+    private final String playerName;
     private Random random;
     private List<Reward> options;
     private Inventory inventory;
     private final List<Attack> availableAttacks;
     private final List<Item> availableItems;
-    private static final int MAX_HP_BONUS = 10;
-    private static final int MAX_STAT_BONUS = 5;
 
-    public RewardService(Inventory inventory, List<Attack> availableAttacks, List<Item> availableItems) {
-        this.inventory = inventory;
-        this.availableAttacks = availableAttacks;
-        this.availableItems = availableItems;
+    public RewardService(StaticDataRepository staticDataRepository, InventoryRepository inventoryRepository,
+            String playerName) {
+        this.staticDatarepository = staticDataRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.playerName = playerName;
+
+        this.inventory = this.inventoryRepository.getPlayerInventory(this.playerName);
+        this.availableAttacks = new ArrayList<Attack>(this.staticDatarepository.getAllAttacks().values());
+        this.availableItems = new ArrayList<Item>(this.staticDatarepository.getAllItems());
         this.random = new Random();
     }
 
