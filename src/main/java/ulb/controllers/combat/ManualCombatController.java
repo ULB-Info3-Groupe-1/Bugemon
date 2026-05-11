@@ -21,9 +21,12 @@ import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
 
 /**
- * Controller for the manual combat screen. Implements {@link ManualCombatView.Listener} to receive player combat
- * actions. Each action mutates the model, then iterates the resulting {@link ulb.models.combat.TurnResult} steps one by
- * one via the dialog zone. The controller never calls any show/hide method on the view directly, and holds no knowledge
+ * Controller for the manual combat screen. Implements
+ * {@link ManualCombatView.Listener} to receive player combat
+ * actions. Each action mutates the model, then iterates the resulting
+ * {@link ulb.models.combat.TurnResult} steps one by
+ * one via the dialog zone. The controller never calls any show/hide method on
+ * the view directly, and holds no knowledge
  * of view layout.
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
@@ -31,10 +34,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
     private ManualTrainer manualPlayerTrainer;
     private final InventoryService inventoryService;
-    private final SkillService skillService;
 
     /**
-     * Constructs a {@code ManualCombatController} and wires itself as the view listener.
+     * Constructs a {@code ManualCombatController} and wires itself as the view
+     * listener.
      *
      */
     public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
@@ -42,7 +45,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         super(metaController, teamService, bugemonService, combatService, skillService.getSkills(StatBonusEffect.class),
                 ViewLoader.load(ManualCombatView::new));
         this.inventoryService = inventoryService;
-        this.skillService = skillService;
         this.view.setListener(this);
     }
 
@@ -50,7 +52,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     @Override
     public void startCombat(boolean shouldRestoreHp) {
         this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(),
-                this.inventoryService.getInventory(), this.skillService.getSkills(StatBonusEffect.class));
+                this.inventoryService.getInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 
         AITrainer opponentTrainer = new AITrainer(CombatService
@@ -69,9 +71,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      * Starts a manual combat session using an already prepared combat instance.
      *
      * @param newCombat
-     *            the combat to drive from this controller.
+     *                  the combat to drive from this controller.
      * @throws IllegalArgumentException
-     *             if the player trainer is not a ManualTrainer.
+     *                                  if the player trainer is not a
+     *                                  ManualTrainer.
      */
     public void startCombat(Combat newCombat) {
         if (!(newCombat.getPlayerTrainer() instanceof ManualTrainer playerManualTrainer)) {
@@ -79,7 +82,6 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         }
 
         this.manualPlayerTrainer = playerManualTrainer;
-        this.manualPlayerTrainer.setUnlockedSkills(this.skillService.getSkills(StatBonusEffect.class));
         this.playerTrainer = this.manualPlayerTrainer;
         this.combat = newCombat;
         Trainer opponentTrainer = this.combat.getOpponentTrainer();
@@ -99,8 +101,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     }
 
     /**
-     * Handles a switch request. If a forced post-KO switch is pending the switch is applied immediately without
-     * consuming a turn; otherwise a normal switch action is registered and the turn is advanced.
+     * Handles a switch request. If a forced post-KO switch is pending the switch is
+     * applied immediately without
+     * consuming a turn; otherwise a normal switch action is registered and the turn
+     * is advanced.
      */
     @Override
     public void onSwitch(Bugemon target) {
@@ -117,7 +121,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     }
 
     /**
-     * Registers a forfeit action, resolves the turn, and navigates to the outcome screen immediately.
+     * Registers a forfeit action, resolves the turn, and navigates to the outcome
+     * screen immediately.
      */
     @Override
     public void onForfeit() {

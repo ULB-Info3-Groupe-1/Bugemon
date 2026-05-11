@@ -1,12 +1,10 @@
 package ulb.models.tower;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import ulb.Configuration;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
 import ulb.models.tower.room.RoomVisitor;
@@ -22,8 +20,8 @@ public class Tower {
     private Floor currentFloor;
 
     public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
-            int currentFloorLevel, List<Skill> statBonusSkills) {
-        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService.getInventory(), statBonusSkills);
+            int currentFloorLevel) {
+        this.playerTrainer = new ManualTrainer(playerTeam, inventoryService.getInventory());
 
         this.floors = new TowerFloors();
         for (int i = Configuration.Game.FLOOR_MIN; i <= Configuration.Game.FLOOR_MAX; i++) {
@@ -52,7 +50,7 @@ public class Tower {
      * Move the player to the given node from the floor it is currently on
      *
      * @param node
-     *            The node to move the player to
+     *             The node to move the player to
      */
     public void currentFloorMoveTo(FloorNode node) {
         this.currentFloor.moveTo(node);
@@ -71,7 +69,8 @@ public class Tower {
     }
 
     /**
-     * Update the tower by going to the next floor if the current floor is complete MUST be called once at every end of
+     * Update the tower by going to the next floor if the current floor is complete
+     * MUST be called once at every end of
      * combat!
      */
     public void update() {
@@ -96,10 +95,12 @@ public class Tower {
     }
 
     /**
-     * Recomputes every room's {@link RoomState} based on the current player position.
+     * Recomputes every room's {@link RoomState} based on the current player
+     * position.
      *
      * <p>
-     * The view disables interaction for {@code LOCKED} rooms, so this must be called at least once before the floor is
+     * The view disables interaction for {@code LOCKED} rooms, so this must be
+     * called at least once before the floor is
      * displayed.
      */
     private void updateRoomsState() {

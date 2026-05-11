@@ -31,7 +31,7 @@ public class TestBugemonService {
         this.bugemonRepo = mock(BugemonRepository.class);
 
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(new ArrayList<>());
-        this.bugemonService = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER);
+        this.bugemonService = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER, List.of());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class TestBugemonService {
         List<Bugemon> cache = new ArrayList<>(List.of(bugemon));
         when(this.staticRepo.getAllDefaultBugemons()).thenReturn(cache);
 
-        BugemonService serviceWithData = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER);
+        BugemonService serviceWithData = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER, List.of());
         CreateBugemonDTO dto = new CreateBugemonDTO("Pikachu", null, null, 10, 10, 10, 10, false, null, null, null);
 
         assertThrows(BugemonNameAlreadyExistsException.class, () -> serviceWithData.saveNewBugemon(dto));
