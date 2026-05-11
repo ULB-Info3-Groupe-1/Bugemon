@@ -5,12 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
-import ulb.services.InventoryService;
 import ulb.services.InventoryService;
 import ulb.utils.test.TestUtilsBugemonTeam;
 
@@ -23,10 +24,8 @@ public class TestMinimax {
     @Before
     public void setUp() {
         this.inventoryService = mock(InventoryService.class);
-        this.inventoryService = mock(InventoryService.class);
         BugemonTeam aiTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         BugemonTeam opponentTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        this.aiTrainer = new AITrainer(aiTeam, this.inventoryService, 2);
         this.aiTrainer = new AITrainer(aiTeam, this.inventoryService, 2);
         this.opponent = new AutoTrainer(opponentTeam);
         this.miniMax = new MiniMax(2);

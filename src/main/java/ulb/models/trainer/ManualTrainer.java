@@ -14,11 +14,15 @@ import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.skills.Skill;
 
 /**
- * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
- * action via {@link #registerAttack}, {@link #registerSwitch}, {@link #registerForfeit}, or {@link #registerUseItem}.
- * The action is consumed by {@link #getAction()} and cleared; a new one must be queued every turn.
+ * Human-controlled trainer. Before each
+ * {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
+ * action via {@link #registerAttack}, {@link #registerSwitch},
+ * {@link #registerForfeit}, or {@link #registerUseItem}.
+ * The action is consumed by {@link #getAction()} and cleared; a new one must be
+ * queued every turn.
  *
- * Post-KO switches bypass the turn queue: use {@link #switchAfterKO} (immediate) or {@link #registerSwitchAfterKO}
+ * Post-KO switches bypass the turn queue: use {@link #switchAfterKO}
+ * (immediate) or {@link #registerSwitchAfterKO}
  * (deferred, picked up by {@link #reactToKo}).
  */
 public class ManualTrainer extends Trainer {
@@ -43,7 +47,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * @throws IllegalStateException
-     *             if no action has been queued
+     *                               if no action has been queued
      */
     @Override
     public TurnAction getAction() {
@@ -54,7 +58,8 @@ public class ManualTrainer extends Trainer {
     }
 
     /**
-     * Switches to the target pre-registered via {@link #registerSwitchAfterKO}. Does nothing if none was registered —
+     * Switches to the target pre-registered via {@link #registerSwitchAfterKO}.
+     * Does nothing if none was registered —
      * the controller must then call {@link #switchAfterKO} directly.
      */
     @Override
@@ -77,7 +82,7 @@ public class ManualTrainer extends Trainer {
      * Immediately replaces the active Bugemon after a KO, bypassing the turn queue.
      *
      * @throws IllegalArgumentException
-     *             if target is not alive
+     *                                  if target is not alive
      */
     public void switchAfterKO(Bugemon target) {
         if (!target.isAlive()) {
@@ -95,7 +100,8 @@ public class ManualTrainer extends Trainer {
 
     /**
      * @throws IllegalArgumentException
-     *             if the attack is not in the active Bugemon's move-set
+     *                                  if the attack is not in the active Bugemon's
+     *                                  move-set
      */
     public void registerAttack(Attack attack) {
         if (!checkCurrentBugemonHasAttack(attack)) {
@@ -108,7 +114,7 @@ public class ManualTrainer extends Trainer {
      * Queues a voluntary switch (consumes the turn; opponent still attacks).
      *
      * @throws IllegalArgumentException
-     *             if target is not alive
+     *                                  if target is not alive
      */
     public void registerSwitch(Bugemon target) {
         if (!target.isAlive()) {
@@ -128,7 +134,7 @@ public class ManualTrainer extends Trainer {
 
     /**
      * @throws IllegalArgumentException
-     *             if the item is not in the inventory
+     *                                  if the item is not in the inventory
      */
     public void registerUseItem(Item item) {
         if (this.inventory.hasItem(item)) {
