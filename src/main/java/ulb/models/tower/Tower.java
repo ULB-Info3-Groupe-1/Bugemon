@@ -50,7 +50,7 @@ public class Tower {
      * Move the player to the given node from the floor it is currently on
      *
      * @param node
-     *             The node to move the player to
+     *            The node to move the player to
      */
     public void currentFloorMoveTo(FloorNode node) {
         this.currentFloor.moveTo(node);
@@ -69,8 +69,7 @@ public class Tower {
     }
 
     /**
-     * Update the tower by going to the next floor if the current floor is complete
-     * MUST be called once at every end of
+     * Update the tower by going to the next floor if the current floor is complete MUST be called once at every end of
      * combat!
      */
     public void update() {
@@ -95,12 +94,10 @@ public class Tower {
     }
 
     /**
-     * Recomputes every room's {@link RoomState} based on the current player
-     * position.
+     * Recomputes every room's {@link RoomState} based on the current player position.
      *
      * <p>
-     * The view disables interaction for {@code LOCKED} rooms, so this must be
-     * called at least once before the floor is
+     * The view disables interaction for {@code LOCKED} rooms, so this must be called at least once before the floor is
      * displayed.
      */
     private void updateRoomsState() {
