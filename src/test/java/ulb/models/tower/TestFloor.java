@@ -113,7 +113,7 @@ public class TestFloor {
 
     private Floor createFloor() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer playerTrainer = new ManualTrainer(playerTeam, INVENTORY_MOCK, List.of());
+        Trainer playerTrainer = new ManualTrainer(playerTeam, INVENTORY_MOCK);
         return new Floor(playerTrainer, BUGEMON_SERVICE_MOCK, 1);
     }
 }
