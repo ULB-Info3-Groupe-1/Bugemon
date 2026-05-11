@@ -2,8 +2,8 @@ package ulb.controllers;
 
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
@@ -13,10 +13,10 @@ import ulb.services.RewardService;
 import ulb.services.TeamService;
 import ulb.views.RewardView;
 import ulb.views.ViewLoader;
+import ulb.views.components.BugemonTeamView;
 
-public class RewardController extends Controller<RewardView> implements RewardView.Listener {
+public class RewardController extends Controller<RewardView> implements RewardView.Listener, BugemonTeamView.Listener {
     private static final Logger LOG = LoggerFactory.getLogger(RewardController.class);
-
 
     private RewardService rewardService;
     private TeamService teamService;
@@ -68,6 +68,11 @@ public class RewardController extends Controller<RewardView> implements RewardVi
         this.quitRewardScreen();
     }
 
+    @Override
+    public void onBugemonClicked(Bugemon bugemon) {
+        // No action needed when clicking a Bugemon in the reward screen
+    }
+
     private void quitRewardScreen() {
         LOG.info("Leaving reward room");
         if (this.metaController.isTowerActive()) {
@@ -82,6 +87,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
             throw new IllegalStateException("No reward service");
         }
         List<Reward> options = this.rewardService.generateRewards();
-        this.view.setRewardTexts(options.get(0).getSummary(), options.get(1).getSummary(), options.get(2).getSummary());
+        this.view.setRewardLabels(options.get(0).getSummary(), options.get(1).getSummary(),
+                options.get(2).getSummary());
     }
 }
