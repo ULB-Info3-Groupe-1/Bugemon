@@ -15,14 +15,13 @@ package ulb.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
+import ulb.factories.TeamFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
@@ -62,6 +61,7 @@ public class TestCombatService {
 
     @Test
     public void testDamageApplied() {
+        CombatService combatService = new CombatService();
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
         List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
@@ -73,13 +73,13 @@ public class TestCombatService {
         double expectedDamage = attack.power() * ((100.0 + striker.getAttack()) / 100.0)
                 * (100.0 / (100.0 + defender.getDefense())) * CombatService.getEfficiencyFactor(attack, defender);
 
-        int damage = CombatService.calculateDamage(attack, striker, defender, 1.0);
-
+        int damage = combatService.calculateDamage(attack, striker, defender, 1.0);
         assertEquals(expectedDamage, damage, expectedDamage / 2.0);
     }
 
     @Test
     public void testDamageMultiplicatorHigh() {
+        CombatService combatService = new CombatService();
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
         List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
@@ -88,18 +88,19 @@ public class TestCombatService {
         Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
-        double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
+        double neutralDamage = combatService.calculateDamage(attack, striker, defender, 1.0);
 
         defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks).type(BugemonType.AQUA)
                 .build();
 
-        double highDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
+        double highDamage = combatService.calculateDamage(attack, striker, defender, 1.0);
 
         assertTrue(neutralDamage < highDamage);
     }
 
     @Test
     public void testDamageMultiplicatorLow() {
+        CombatService combatService = new CombatService();
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
 
         List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
@@ -108,12 +109,12 @@ public class TestCombatService {
         Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
-        double neutralDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
+        double neutralDamage = combatService.calculateDamage(attack, striker, defender, 1.0);
 
         defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks).type(BugemonType.LITHO)
                 .build();
 
-        double lowDamage = CombatService.calculateDamage(attack, striker, defender, 1.0);
+        double lowDamage = combatService.calculateDamage(attack, striker, defender, 1.0);
 
         assertTrue(lowDamage < neutralDamage);
     }
@@ -124,7 +125,7 @@ public class TestCombatService {
         for (int i = 1; i <= 6; i++) {
             bugemons.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
         }
-        BugemonTeam teamOfSix = CombatService.createRandomTeam(bugemons, 6);
+        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(bugemons, 6);
         assertEquals(6, teamOfSix.size());
     }
 
@@ -132,18 +133,19 @@ public class TestCombatService {
 
     @Test
     public void createUniqueCombat_shouldApplyStatBonusSkillsToPlayerTeam() {
-        SkillService skillService = mock(SkillService.class);
+        // Plus besoin de mocker SkillService, on passe directement la liste à la méthode
         Skill statBonusSkill = new SkillBuilder().effect(new StatBonusEffect(EffectStat.ATTACK, 10)).build();
-        when(skillService.getSkills(StatBonusEffect.class)).thenReturn(List.of(statBonusSkill));
+        List<Skill> skills = List.of(statBonusSkill);
 
-        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+        CombatService combatService = new CombatService();
 
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         int initialAttack = playerTeam.getFirst().getAttack();
         Trainer playerTrainer = new AutoTrainer(playerTeam);
         Trainer opponentTrainer = new AutoTrainer(TestUtilsBugemons.createDefaultTeam(1));
 
-        combatService.createUniqueCombat(playerTrainer, opponentTrainer);
+        // On passe la liste des skills en premier paramètre
+        combatService.createUniqueCombat(skills, playerTrainer, opponentTrainer);
 
         for (Bugemon b : playerTeam) {
             assertEquals(initialAttack + 10, b.getAttack());
@@ -152,12 +154,11 @@ public class TestCombatService {
 
     @Test
     public void calculateDamage_shouldApplyTypeMultiplier_whenPlayerAttacksWithMatchingType() {
-        SkillService skillService = mock(SkillService.class);
         Skill typeBoostSkill = new SkillBuilder().effect(new TypeMultiplierEffect(BugemonType.FLORA, 2.0)).build();
-        when(skillService.getSkills(TypeMultiplierEffect.class)).thenReturn(List.of(typeBoostSkill));
-        when(skillService.getSkills(CritBonusEffect.class)).thenReturn(List.of());
+        List<Skill> skills = List.of(typeBoostSkill);
+        List<Skill> emptySkills = List.of();
 
-        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+        CombatService combatService = new CombatService();
 
         Attack floraAttack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
         List<Attack> attacks = List.of(floraAttack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
@@ -166,22 +167,19 @@ public class TestCombatService {
         Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
-        // With or without crit, boosted damage (×2) always exceeds raw damage (max 1.5× from crit).
         for (int i = 0; i < 50; i++) {
-            int boosted = combatService.calculateDamage(floraAttack, striker, defender, true);
-            int raw = combatService.calculateDamage(floraAttack, striker, defender, false);
+            int boosted = combatService.calculateDamage(skills, floraAttack, striker, defender, true);
+            int raw = combatService.calculateDamage(emptySkills, floraAttack, striker, defender, false);
             assertTrue("boosted=" + boosted + " should be > raw=" + raw, boosted > raw);
         }
     }
 
     @Test
     public void calculateDamage_shouldNotApplyTypeMultiplier_whenAttackTypeDoesNotMatch() {
-        SkillService skillService = mock(SkillService.class);
         Skill pyroBoost = new SkillBuilder().effect(new TypeMultiplierEffect(BugemonType.PYRO, 2.0)).build();
-        when(skillService.getSkills(TypeMultiplierEffect.class)).thenReturn(List.of(pyroBoost));
-        when(skillService.getSkills(CritBonusEffect.class)).thenReturn(List.of());
+        List<Skill> skills = List.of(pyroBoost);
 
-        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+        CombatService combatService = new CombatService();
 
         Attack floraAttack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
         List<Attack> attacks = List.of(floraAttack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
@@ -190,22 +188,19 @@ public class TestCombatService {
         Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
-        int playerDamage = CombatService.calculateDamage(floraAttack, striker, defender, 1.0);
-        int boosted = combatService.calculateDamage(floraAttack, striker, defender, true);
+        int playerDamage = combatService.calculateDamage(floraAttack, striker, defender, 1.0);
+        int boosted = combatService.calculateDamage(skills, floraAttack, striker, defender, true);
 
-        // Skill bumps PYRO attacks; FLORA attack is unaffected — only the crit factor (≥1.0) can change the result.
         assertTrue(boosted >= playerDamage);
         assertTrue(boosted <= (int) Math.ceil(playerDamage * 1.5));
     }
 
     @Test
     public void calculateDamage_shouldAlwaysCrit_whenCritBonusGuaranteesIt() {
-        SkillService skillService = mock(SkillService.class);
         Skill maxCritSkill = new SkillBuilder().effect(new CritBonusEffect(1.0)).build();
-        when(skillService.getSkills(TypeMultiplierEffect.class)).thenReturn(List.of());
-        when(skillService.getSkills(CritBonusEffect.class)).thenReturn(List.of(maxCritSkill));
+        List<Skill> skills = List.of(maxCritSkill);
 
-        CombatService combatService = new CombatService(mock(BugemonService.class), skillService);
+        CombatService combatService = new CombatService();
 
         Attack attack = new Attack("1", "", BugemonType.FLORA, "", 30, new ArrayList<Effect>());
         List<Attack> attacks = List.of(attack, TestUtilsBugemons.createAttack("2", BugemonType.FLORA, 0),
@@ -214,9 +209,9 @@ public class TestCombatService {
         Bugemon defender = new BugemonBuilder().name("2").attack(20).defense(20).attackList(attacks)
                 .type(BugemonType.PYRO).build();
 
-        int critDamage = CombatService.calculateDamage(attack, striker, defender, 1.5);
+        int critDamage = combatService.calculateDamage(attack, striker, defender, 1.5);
         for (int i = 0; i < 50; i++) {
-            int actual = combatService.calculateDamage(attack, striker, defender, true);
+            int actual = combatService.calculateDamage(skills, attack, striker, defender, true);
             assertEquals(critDamage, actual);
         }
     }

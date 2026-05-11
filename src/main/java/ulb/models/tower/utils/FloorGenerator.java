@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import ulb.models.bugemon.Bugemon;
+import ulb.models.skills.Skill;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
@@ -36,7 +38,8 @@ public class FloorGenerator {
     private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final Random random;
-    private final CombatFactory combatFactory;
+    private final List<Bugemon> allBugemons;
+    private final List<Skill> skills;
 
     private FloorNode root;
     private FloorNode bossNode;
@@ -48,8 +51,9 @@ public class FloorGenerator {
 
     private Set<FloorNode> visitedNode;
 
-    public FloorGenerator(CombatFactory combatFactory, Trainer playerTrainer) {
-        this.combatFactory = combatFactory;
+    public FloorGenerator(List<Bugemon> allBugemons, List<Skill> skills, Trainer playerTrainer) {
+        this.allBugemons = allBugemons;
+        this.skills = skills;
         this.random = new Random();
         this.generateNewFloor(playerTrainer);
     }
@@ -150,7 +154,7 @@ public class FloorGenerator {
     }
 
     private boolean placeInterestPoints(Trainer playerTrainer) {
-        this.bossNode.setRoom(new CombatRoom(this.combatFactory, playerTrainer, true));
+        this.bossNode.setRoom(new CombatRoom(this.allBugemons, this.skills, playerTrainer, true));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();
 
@@ -178,7 +182,7 @@ public class FloorGenerator {
         while (it.hasNext() && combatNodes.size() < this.combatCount) {
             FloorNode node = it.next();
             if (!node.equals(this.bossNode)) {
-                node.setRoom(new CombatRoom(this.combatFactory, playerTrainer, false));
+                node.setRoom(new CombatRoom(this.allBugemons, this.skills, playerTrainer, false));
                 combatNodes.add(node);
                 it.remove();
             }

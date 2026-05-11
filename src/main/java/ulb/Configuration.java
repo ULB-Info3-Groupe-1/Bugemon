@@ -80,6 +80,8 @@ public abstract class Configuration {
         }
 
         public static final int MAX_TEAM_SIZE = 6;
+        // TODO: define (and enforce) this directly in Bugemon
+        public static final int NUM_ATTACKS_PER_BUGEMON = 3;
         public static final String DEFAULT_TEAM_NAME = "Unnamed Team";
         public static final String BOSS_NAME = "FinalBoss";
         public static final int FLOOR_MAX = 9; // The highest floor is 9

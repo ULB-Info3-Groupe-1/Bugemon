@@ -133,6 +133,10 @@ public class ManualTrainer extends Trainer {
         this.currentBugemon.apply(item.effect());
     }
 
+    public Inventory getInventory() {
+        return this.inventory;
+    }
+
     public boolean hasPendingAction() {
         return this.pendingAction.isPresent();
     }

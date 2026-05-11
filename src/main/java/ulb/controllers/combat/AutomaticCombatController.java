@@ -3,11 +3,11 @@ package ulb.controllers.combat;
 import java.util.List;
 
 import ulb.controllers.MetaController;
+import ulb.factories.TeamFactory;
 import ulb.models.combat.Combat;
 import ulb.models.skills.Skill;
 import ulb.models.trainer.AutoTrainer;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.TeamService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.AutomaticCombatView;
@@ -26,9 +26,8 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
      *            the application-level controller used for navigation.
      */
     public AutomaticCombatController(MetaController metaController, TeamService teamService,
-            BugemonService bugemonService, CombatService combatService, List<Skill> statBonusSkills) {
-        super(metaController, teamService, bugemonService, combatService, statBonusSkills,
-                ViewLoader.load(AutomaticCombatView::new));
+            BugemonService bugemonService, List<Skill> statBonusSkills) {
+        super(metaController, teamService, bugemonService, statBonusSkills, ViewLoader.load(AutomaticCombatView::new));
     }
 
     @Override
@@ -39,7 +38,7 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
         this.playerTrainer = autoPlayer;
         AutoTrainer opponentTrainer = this.createRandomOpponent(autoPlayer.getTeamSize());
 
-        this.combat = combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
+        this.combat = this.combatService.createUniqueCombat(this.statBonusSkills, this.playerTrainer, opponentTrainer);
 
         this.view.setModel(autoPlayer, opponentTrainer);
         this.view.refresh();
@@ -48,6 +47,17 @@ public class AutomaticCombatController extends CombatController<AutomaticCombatV
     /** Starts the automatic turn loop. Must be called after the view is shown. */
     public void startAutoRun() {
         this.startTurn();
+    }
+
+    /**
+     * Creates a random opponent team sized to match the given player's team.
+     *
+     * @param playerTeamSize
+     *            the size of the player's team, used to size the opponent's team.
+     */
+    private AutoTrainer createRandomOpponent(int playerTeamSize) {
+        return new AutoTrainer(
+                TeamFactory.createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTeamSize));
     }
 
     // ── CombatController hooks ────────────────────────────────────────────────

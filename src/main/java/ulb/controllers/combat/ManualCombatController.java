@@ -3,6 +3,7 @@ package ulb.controllers.combat;
 import java.util.Collections;
 
 import ulb.controllers.MetaController;
+import ulb.factories.TeamFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
@@ -13,7 +14,6 @@ import ulb.models.trainer.AITrainer;
 import ulb.models.trainer.ManualTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
@@ -37,8 +37,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      *
      */
     public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            InventoryService inventoryService, CombatService combatService, SkillService skillService) {
-        super(metaController, teamService, bugemonService, combatService, skillService.getSkills(StatBonusEffect.class),
+            InventoryService inventoryService, SkillService skillService) {
+        super(metaController, teamService, bugemonService, skillService.getSkills(StatBonusEffect.class),
                 ViewLoader.load(ManualCombatView::new));
         this.inventoryService = inventoryService;
         this.view.setListener(this);
@@ -50,14 +50,14 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.shouldRestoreHp = shouldRestoreHp;
 
         this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(),
-                this.inventoryService.getInventory());
+                this.inventoryService.loadInventory());
         this.playerTrainer = this.manualPlayerTrainer;
 
-        AITrainer opponentTrainer = new AITrainer(CombatService
+        AITrainer opponentTrainer = new AITrainer(TeamFactory
                 .createRandomTeam(this.bugemonService.getAllDefaultBugemons(), this.manualPlayerTrainer.getTeamSize()),
                 new Inventory(), DEFAULT_MINIMAX_DEPTH);
 
-        this.combat = this.combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
+        this.combat = this.combatService.createUniqueCombat(this.statBonusSkills, this.playerTrainer, opponentTrainer);
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
         this.pendingSteps = Collections.emptyIterator();
@@ -136,7 +136,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
     @Override
     protected void onCombatEnded(ulb.models.trainer.Trainer winner) {
-        this.inventoryService.saveInventory();
+        this.inventoryService.saveInventory(this.manualPlayerTrainer.getInventory());
         super.onCombatEnded(winner);
     }
 

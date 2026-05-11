@@ -8,12 +8,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ulb.models.bugemon.Bugemon;
+import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.RoomVisitor;
-import ulb.models.tower.utils.CombatFactory;
 import ulb.models.tower.utils.FloorGenerator;
 import ulb.models.trainer.Trainer;
-import ulb.services.BugemonService;
 
 public class Floor {
     private final Trainer playerTrainer;
@@ -22,11 +22,10 @@ public class Floor {
     private final FloorNode floorRoot;
     private final int floorLevel;
 
-    public Floor(Trainer playerTrainer, BugemonService bugemonService, int floorLevel) {
+    public Floor(List<Bugemon> allBugemons, List<Skill> skills, Trainer playerTrainer, int floorLevel) {
         this.playerTrainer = playerTrainer;
         this.floorLevel = floorLevel;
-        CombatFactory combatFactory = new CombatFactory(bugemonService);
-        this.floorGenerator = new FloorGenerator(combatFactory, playerTrainer);
+        this.floorGenerator = new FloorGenerator(allBugemons, skills, playerTrainer);
         this.currentPosition = this.floorGenerator.getRoot();
         this.floorRoot = this.floorGenerator.getRoot();
     }

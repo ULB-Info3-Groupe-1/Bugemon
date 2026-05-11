@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.BugemonType;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -16,9 +17,6 @@ import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 
 public class CreateBugemonController extends Controller<CreateBugemonView> implements CreateBugemonView.Listener {
-
-    // TODO: define (and enforce) this directly in Bugemon
-    private static final int NUM_ATTACKS_PER_BUGEMON = 3;
 
     private final BugemonService bugemonService;
 
@@ -61,7 +59,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
         int defense = (int) Math.round(defenseValue);
         int initiative = (int) Math.round(initiativeValue);
 
-        if (attacks.size() != NUM_ATTACKS_PER_BUGEMON) {
+        if (attacks.size() != Configuration.Game.NUM_ATTACKS_PER_BUGEMON) {
             this.view.showInvalidFormChooseAttacks();
             return;
         }

@@ -18,7 +18,6 @@ import ulb.models.combat.TurnResult;
 import ulb.models.combat.TurnStep;
 import ulb.models.level_up.LevelUp;
 import ulb.models.skills.Skill;
-import ulb.models.trainer.AutoTrainer;
 import ulb.models.trainer.Trainer;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
@@ -52,12 +51,12 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     private Trainer pendingWinner = null;
 
     protected CombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            CombatService combatService, List<Skill> statBonusSkills, V view) {
+            List<Skill> statBonusSkills, V view) {
         super(metaController, view);
         this.animationController = new CombatAnimationController(view);
         this.teamService = teamService;
         this.bugemonService = bugemonService;
-        this.combatService = combatService;
+        this.combatService = new CombatService();
         this.statBonusSkills = statBonusSkills;
 
         this.view.setNextListener(this);
@@ -207,18 +206,6 @@ public abstract class CombatController<V extends CombatView> extends Controller<
     }
 
     // ── Shared utilities ──────────────────────────────────────────────────────
-
-    /**
-     * Creates a random opponent team sized to match the given player's team.
-     *
-     * @param playerTeamSize
-     *            the size of the player's team, used to size the opponent's team.
-     */
-    protected AutoTrainer createRandomOpponent(int playerTeamSize) {
-        // TODO: not used in ManualCombatController anymore
-        return new AutoTrainer(
-                CombatService.createRandomTeam(this.bugemonService.getAllDefaultBugemons(), playerTeamSize));
-    }
 
     @Override
     public void onNext() {
