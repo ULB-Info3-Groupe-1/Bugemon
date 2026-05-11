@@ -1,6 +1,7 @@
 package ulb.views;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,7 +186,14 @@ public class CreateBugemonView extends View {
         double defenseValue = this.defenseSlider.getValue();
         double initiativeValue = this.initiativeSlider.getValue();
 
-        List<Attack> attacks = List.of(this.getSelectedAttack1(), this.getSelectedAttack2(), this.getSelectedAttack3());
+        // getSelectedAttack can return null
+        List<Attack> attacks = new ArrayList<>(Bugemon.ATTACKS_COUNT);
+        for (int i = 0; i < Bugemon.ATTACKS_COUNT; i++) {
+            Attack attack = this.getSelectedAttack(i);
+            if (attack != null) {
+                attacks.add(attack);
+            }
+        }
 
         this.listener.onAdd(bugemonName, healthValue, attackValue, defenseValue, initiativeValue, attacks);
     }
@@ -238,28 +246,14 @@ public class CreateBugemonView extends View {
         this.updateAttackCountLabel();
     }
 
-    public Attack getSelectedAttack1() {
+    public Attack getSelectedAttack(int index) {
         List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
-        if (selectedNames.isEmpty()) {
-            return null;
-        }
-        return this.attacksByName.get(selectedNames.get(0));
-    }
 
-    public Attack getSelectedAttack2() {
-        List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
-        if (selectedNames.size() < 2) {
+        if (index < 0 || index >= selectedNames.size()) {
             return null;
         }
-        return this.attacksByName.get(selectedNames.get(1));
-    }
 
-    public Attack getSelectedAttack3() {
-        List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
-        if (selectedNames.size() < 3) {
-            return null;
-        }
-        return this.attacksByName.get(selectedNames.get(2));
+        return this.attacksByName.get(selectedNames.get(index));
     }
 
     public void showInvalidFormChooseBugemonType() {
