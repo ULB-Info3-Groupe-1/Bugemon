@@ -110,9 +110,11 @@ public abstract class CombatController<V extends CombatView> extends Controller<
                 this.processEndCombat(trainerKo, "Combat ended");
                 yield () -> {
                     if (trainerKo == this.playerTrainer) {
-                        this.view.playDeathAnimationForTrainer(() -> {});
+                        this.view.playDeathAnimationForTrainer(() -> {
+                        });
                     } else {
-                        this.view.playDeathAnimationForOpponent(() -> {});
+                        this.view.playDeathAnimationForOpponent(() -> {
+                        });
                     }
                 };
             }
