@@ -84,6 +84,10 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         }
     }
 
+    public void onRewardChosen() {
+        this.udpateDisplayedFloor();
+    }
+
     private void endTowerFlow(boolean playerWon) {
         // reset tower progress because the player has finished the tower or lost
         this.tower = null;
