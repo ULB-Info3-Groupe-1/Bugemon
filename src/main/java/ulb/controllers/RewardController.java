@@ -2,6 +2,9 @@ package ulb.controllers;
 
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.reward.Reward;
@@ -12,14 +15,20 @@ import ulb.views.RewardView;
 import ulb.views.ViewLoader;
 
 public class RewardController extends Controller<RewardView> implements RewardView.Listener {
+    private static final Logger LOG = LoggerFactory.getLogger(RewardController.class);
+
+
     private RewardService rewardService;
     private TeamService teamService;
     private BugemonService bugemonService;
     private Reward pendingReward;
 
-    public RewardController(MetaController metaController, RewardService rewardService) {
+    public RewardController(MetaController metaController, RewardService rewardService, TeamService teamService,
+            BugemonService bugemonService) {
         super(metaController, ViewLoader.load(RewardView::new));
         this.rewardService = rewardService;
+        this.teamService = teamService;
+        this.bugemonService = bugemonService;
         this.view.setListener(this);
     }
 
@@ -60,8 +69,9 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     }
 
     private void quitRewardScreen() {
-        if (metaController.isTowerActive()) {
-            this.metaController.onTower();
+        LOG.info("Leaving reward room");
+        if (this.metaController.isTowerActive()) {
+            this.metaController.onRewardChoiceFinished();
         } else {
             throw new IllegalStateException("Tower is not active");
         }

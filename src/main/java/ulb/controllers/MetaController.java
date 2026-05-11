@@ -100,7 +100,7 @@ public class MetaController {
         this.combatDefeatController = new CombatDefeatController(this);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        this.rewardController = new RewardController(this, rewardService);
+        this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
         this.initializeMusicResources();
         this.initTransitions();
     }
@@ -124,6 +124,13 @@ public class MetaController {
             this.switchTo(Window.LEVEL_UP);
         } else {
             this.switchTo(Window.MAIN_MENU);
+        }
+    }
+
+    public void onRewardChoiceFinished() {
+        if (this.isTowerActive()) {
+            this.towerController.onRewardChosen();
+            return;
         }
     }
 
