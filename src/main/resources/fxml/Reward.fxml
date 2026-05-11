@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="ulb.views.RewardView">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.RewardView">
 
     <center>
         <VBox alignment="CENTER" spacing="28">
@@ -13,7 +14,6 @@
             </padding>
 
             <Label fx:id="rewardText" styleClass="level-up-title" />
-            <Label text="Choisis ta récompense" styleClass="level-up-subtitle" />
         </VBox>
     </center>
 
@@ -24,11 +24,16 @@
             </padding>
 
             <HBox fx:id="rewardsContainer" alignment="CENTER" spacing="56">
-                <Button fx:id="choice0Button" styleClass="btn,btn-success,btn-choice" onAction="#onChoice0Clicked" />
-                <Button fx:id="choice1Button" styleClass="btn,btn-warning,btn-choice" onAction="#onChoice1Clicked" />
-                <Button fx:id="choice2Button" styleClass="btn,btn-primary,btn-choice" onAction="#onChoice2Clicked" />
+                <Button fx:id="choiceStatButton"
+                    styleClass="btn,btn-success,btn-choice"
+                    onAction="#onChoiceStatClicked" />
+                <Button fx:id="choiceAttackButton"
+                    styleClass="btn,btn-warning,btn-choice"
+                    onAction="#onChoiceAttackClicked" />
+                <Button fx:id="choiceItemButton"
+                    styleClass="btn,btn-primary,btn-choice"
+                    onAction="#onChoiceItemClicked" />
             </HBox>
-            <HBox fx:id="teamContainer" alignment="CENTER" spacing="15" visible="false" managed="false" />
 
         </StackPane>
     </bottom>

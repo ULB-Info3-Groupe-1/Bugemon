@@ -21,13 +21,13 @@ import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
+
 import ulb.views.View;
 
 /**
@@ -108,7 +108,7 @@ public class MetaController {
         this.skillTreeController = new SkillTreeController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
+        this.rewardController = new RewardController(this);
         this.initializeMusicResources();
         this.initTransitions();
     }
@@ -253,7 +253,7 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * <<<<<<< HEAD
-     * 
+     *
      * @param window
      *               target screen to display
      * @throws IllegalArgumentException
