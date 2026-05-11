@@ -74,9 +74,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
         this.towerService.handleCombatEnd(this.tower, playerWon);
-        if (playerWon) {
-            this.metaController.onGoToRewards();
-        }
         if (this.tower.isFinished() || !playerWon) {
             this.endTowerFlow(playerWon);
         } else {
