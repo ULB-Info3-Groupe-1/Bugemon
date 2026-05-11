@@ -26,9 +26,7 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
-import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.utils.DatabaseHelper;
@@ -222,31 +220,6 @@ public class StaticDataRepository extends AbstractRepository {
     public List<Bugemon> getAllDefaultBugemons() {
         Map<String, Attack> attackMap = this.getAllAttacks();
         return executeQuery("GetAllDefaultBugemons", rs -> this.mapBugemon(rs, attackMap));
-    }
-
-    private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
-        EffectTarget target;
-        switch (effectType) {
-            case "EffectStatModifier":
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                EffectStat stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, EffectStat.class);
-                String duration = (rs.getString(DatabaseColumns.COL_EFFECT_DURATION) != null)
-                        ? rs.getString(DatabaseColumns.COL_EFFECT_DURATION)
-                        : "0_tour";
-                return new EffectStatModifier(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
-                        EffectDuration.fromLabel(duration));
-
-            case "EffectHeal":
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                return new EffectHeal(target, rs.getInt("effect_amount"));
-
-            case "EffectResetMalus":
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                return new EffectResetMalus(target);
-
-            default:
-                throw new IllegalStateException("Unknown effect type: " + effectType);
-        }
     }
 
     /**
