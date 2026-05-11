@@ -275,10 +275,9 @@ public class Parser {
                 // thanks for you understanding...
                 int initialLevel = id.equals(SKILL_ROOT_ID) ? 1 : 0;
 
-                // TODO: combat effects != skill effects
-                // Effect effect = null;
+                // SkillEffect effect = parseSkillEffect(nodeObj.get("effet"));
 
-                Skill skill = new Skill(id, name, description, cost, maxLevel, initialLevel);
+                Skill skill = new Skill(id, name, description, cost, maxLevel, initialLevel, null);
 
                 JsonObject posObj = nodeObj.getAsJsonObject("position");
                 Position position = new Position(posObj.get("x").getAsInt(), posObj.get("y").getAsInt());
@@ -292,6 +291,7 @@ public class Parser {
                     String reqId = req.getAsString();
                     SkillNode parent = skillNodes.get(reqId);
                     parent.addChild(skillNode);
+                    skillNode.addParent(parent);
                 }
             }
 

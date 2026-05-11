@@ -18,6 +18,7 @@ public final class SkillBuilder {
     private int cost = DEFAULT_COST;
     private int maxLevel = DEFAULT_MAX_LEVEL;
     private int currentLevel = DEFAULT_LEVEL;
+    private SkillEffect effect = null;
 
     public SkillBuilder id(String id) {
         this.id = id;
@@ -44,10 +45,10 @@ public final class SkillBuilder {
         return this;
     }
 
-    // public SkillBuilder effect(Effect effect) {
-    // this.effect = effect;
-    // return this;
-    // }
+    public SkillBuilder effect(SkillEffect effect) {
+        this.effect = effect;
+        return this;
+    }
 
     public SkillBuilder currentLevel(int level) {
         this.currentLevel = level;
@@ -55,8 +56,7 @@ public final class SkillBuilder {
     }
 
     public Skill build() {
-        // return new Skill(this.id, this.name, this.description, this.cost, this.maxLevel, this.effect,
-        // this.isUnlocked);
-        return new Skill(this.id, this.name, this.description, this.cost, this.maxLevel, this.currentLevel);
+        return new Skill(this.id, this.name, this.description, this.cost, this.maxLevel, this.currentLevel,
+                this.effect);
     }
 }

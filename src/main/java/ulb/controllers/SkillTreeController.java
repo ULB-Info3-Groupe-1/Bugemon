@@ -27,9 +27,10 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     public void onSkillLeftClicked(SkillNode node) {
         // Add a point
         // TODO: handle skill selection and apply effects
-        this.playerService.buySkillNode(node);
-        this.view.setAvailablePoints(this.playerService.getAvailableSkillPoints());
-        this.view.renderTree(this.playerService.getSkillTreeRoot());
+        if (this.playerService.unlockSkill(node)) {
+            this.view.setAvailablePoints(this.playerService.getAvailableSkillPoints());
+            this.view.refresh();
+        }
     }
 
     @Override
@@ -37,7 +38,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
         // Delete a point
         this.playerService.refundSkillNode(node);
         this.view.setAvailablePoints(this.playerService.getAvailableSkillPoints());
-        this.view.renderTree(this.playerService.getSkillTreeRoot());
+        this.view.refresh();
     }
 
     @Override

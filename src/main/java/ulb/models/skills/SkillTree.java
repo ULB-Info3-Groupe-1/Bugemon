@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class SkillTree {
-    private static String ROOT_ID = "start";
+    private static final String ROOT_ID = "start";
 
     private SkillNode root;
 
@@ -17,19 +17,24 @@ public class SkillTree {
     }
 
     public boolean canUnlock(SkillNode node, int availablePoints) {
-        return node.isUnlockable() && node.getSkill().getCurrentLevel() < node.getSkill().getMaxLevel()
-                && availablePoints >= node.getSkill().getCost();
+        if (node.getSkill().getCurrentLevel() >= node.getSkill().getMaxLevel()) {
+            return false;
+        }
+        if (availablePoints < node.getSkill().getCost()) {
+            return false;
+        }
+        if (node.getSkill().isUnlocked()) {
+            return true;
+        }
+        return node.isUnlockable();
     }
 
     public boolean canDowngrade(SkillNode node) {
-        if (!node.getSkill().isUnlocked())
+        if (!node.getSkill().isUnlocked()) {
             return false;
-        if (ROOT_ID.equals(node.getSkill().getId()))
+        }
+        if (ROOT_ID.equals(node.getSkill().getId())) {
             return false;
-        for (SkillNode child : node.getChildren()) {
-            if (child.getSkill().isUnlocked() && isOnlyActiveParent(node, child)) {
-                return false;
-            }
         }
         return true;
     }
@@ -44,7 +49,7 @@ public class SkillTree {
         if (!node.getSkill().isUnlocked()) {
             Deque<SkillNode> queue = new ArrayDeque<>();
             for (SkillNode child : node.getChildren()) {
-                if (child.getSkill().isUnlocked() && isOnlyActiveParent(node, child)) {
+                if (child.getSkill().isUnlocked() && this.isOnlyActiveParent(node, child)) {
                     queue.add(child);
                 }
             }
@@ -58,7 +63,7 @@ public class SkillTree {
                 }
 
                 for (SkillNode child : current.getChildren()) {
-                    if (child.getSkill().isUnlocked() && isOnlyActiveParent(current, child)) {
+                    if (child.getSkill().isUnlocked() && this.isOnlyActiveParent(current, child)) {
                         queue.add(child);
                     }
                 }

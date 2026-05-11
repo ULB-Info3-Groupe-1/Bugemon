@@ -21,22 +21,29 @@ public class PlayerService {
         return this.skillTree.getRoot();
     }
 
-    // temporary placeholder, replace once the player model tracks available skill points
     public int getAvailableSkillPoints() {
-        return availablePoints;
+        return this.availablePoints;
     }
 
-    public void buySkillNode(SkillNode node) {
-        if (this.skillTree.canUnlock(node, this.availablePoints)) {
-            node.getSkill().incrementLevel();
-            this.availablePoints -= node.getSkill().getCost();
-        }
+    public void addSkillPoints(int points) {
+        this.availablePoints += points;
     }
 
-    public void refundSkillNode(SkillNode node) {
-        if (this.skillTree.canDowngrade(node)) {
-            int refund = this.skillTree.downgrade(node);
-            this.availablePoints += refund;
+    public boolean unlockSkill(SkillNode node) {
+        if (!this.skillTree.canUnlock(node, this.availablePoints)) {
+            return false;
         }
+        this.availablePoints -= node.getSkill().getCost();
+        node.getSkill().incrementLevel();
+        return true;
+    }
+
+    public int refundSkillNode(SkillNode node) {
+        if (!this.skillTree.canDowngrade(node)) {
+            return 0;
+        }
+        int refund = this.skillTree.downgrade(node);
+        this.availablePoints += refund;
+        return refund;
     }
 }

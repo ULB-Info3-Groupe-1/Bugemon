@@ -15,18 +15,23 @@ public class Skill {
 
     private int maxLevel;
 
-    // private Effect effect;
+    private final SkillEffect effect;
 
     private int currentLevel;
 
     public Skill(String id, String name, String description, int cost, int maxLevel, int currentLevel) {
+        this(id, name, description, cost, maxLevel, currentLevel, null);
+    }
+
+    public Skill(String id, String name, String description, int cost, int maxLevel, int currentLevel,
+            SkillEffect effect) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.cost = cost;
         this.maxLevel = maxLevel;
-        // this.effect = effect;
         this.currentLevel = currentLevel;
+        this.effect = effect;
     }
 
     public String getId() {
@@ -49,9 +54,9 @@ public class Skill {
         return this.maxLevel;
     }
 
-    // public Effect getEffect() {
-    // return this.effect;
-    // }
+    public SkillEffect getEffect() {
+        return this.effect;
+    }
 
     public boolean isUnlocked() {
         return this.currentLevel > 0;
@@ -66,7 +71,8 @@ public class Skill {
     }
 
     public void decrementLevel() {
-        if (this.currentLevel > 0)
+        if (this.currentLevel > 0) {
             this.currentLevel--;
+        }
     }
 }

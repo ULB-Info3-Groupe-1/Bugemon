@@ -87,4 +87,8 @@ public class SkillNode {
     public void addChild(SkillNode child) {
         this.children.add(child);
     }
+
+    public void addParent(SkillNode parent) {
+        this.parents.add(parent);
+    }
 }
