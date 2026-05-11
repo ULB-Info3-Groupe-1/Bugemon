@@ -217,20 +217,6 @@ public class StaticDataRepository extends AbstractRepository {
         return executeQuery("GetAllDefaultBugemons", rs -> this.mapBugemon(rs, attackMap));
     }
 
-    private static class AttackInfo {
-        String name;
-        BugemonType type;
-        String description;
-        int power;
-
-        AttackInfo(String name, BugemonType type, String description, int power) {
-            this.name = name;
-            this.type = type;
-            this.description = description;
-            this.power = power;
-        }
-    }
-
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
         EffectTarget target;
         switch (effectType) {
