@@ -51,9 +51,13 @@ public class RewardController extends Controller<RewardView> implements RewardVi
                 selectedReward.applyReward(null);
                 this.quitRewardScreen();
             }
-            case STAT, ATTACK -> {
+            case STAT -> {
                 this.pendingReward = selectedReward;
-                this.view.showTeamSelection(activeBugemonTeam);
+                this.view.showStatSelection(activeBugemonTeam);
+            }
+            case ATTACK -> {
+                this.pendingReward = selectedReward;
+                this.view.showAttackSelection(activeBugemonTeam);
             }
             default -> {
             }
