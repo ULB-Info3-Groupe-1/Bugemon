@@ -5,7 +5,6 @@ import java.util.Collections;
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.combat.Combat;
 import ulb.models.trainer.AITrainer;
@@ -19,19 +18,23 @@ import ulb.views.ViewLoader;
 import ulb.views.combat.ManualCombatView;
 
 /**
- * Controller for the manual combat screen. Implements {@link ManualCombatView.Listener} to receive player combat
- * actions. Each action mutates the model, then iterates the resulting {@link ulb.models.combat.TurnResult} steps one by
- * one via the dialog zone. The controller never calls any show/hide method on the view directly, and holds no knowledge
+ * Controller for the manual combat screen. Implements
+ * {@link ManualCombatView.Listener} to receive player combat
+ * actions. Each action mutates the model, then iterates the resulting
+ * {@link ulb.models.combat.TurnResult} steps one by
+ * one via the dialog zone. The controller never calls any show/hide method on
+ * the view directly, and holds no knowledge
  * of view layout.
  */
 public class ManualCombatController extends CombatController<ManualCombatView> implements ManualCombatView.Listener {
-    private static final int DEFAULT_MINIMAX_DEPTH = 2;
+    private static final int DEFAULT_MINIMAX_DEPTH = 4;
 
     private ManualTrainer manualPlayerTrainer;
     private final InventoryService inventoryService;
 
     /**
-     * Constructs a {@code ManualCombatController} and wires itself as the view listener.
+     * Constructs a {@code ManualCombatController} and wires itself as the view
+     * listener.
      *
      */
     public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
@@ -49,7 +52,7 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
 
         AITrainer opponentTrainer = new AITrainer(CombatService
                 .createRandomTeam(this.bugemonService.getAllDefaultBugemons(), this.manualPlayerTrainer.getTeamSize()),
-                new Inventory(), DEFAULT_MINIMAX_DEPTH);
+                this.inventoryService, DEFAULT_MINIMAX_DEPTH);
 
         this.combat = this.combatService.createUniqueCombat(this.playerTrainer, opponentTrainer);
 
@@ -63,9 +66,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
      * Starts a manual combat session using an already prepared combat instance.
      *
      * @param newCombat
-     *            the combat to drive from this controller.
+     *                  the combat to drive from this controller.
      * @throws IllegalArgumentException
-     *             if the player trainer is not a ManualTrainer.
+     *                                  if the player trainer is not a
+     *                                  ManualTrainer.
      */
     public void startCombat(Combat newCombat) {
         if (!(newCombat.getPlayerTrainer() instanceof ManualTrainer playerManualTrainer)) {
@@ -92,8 +96,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     }
 
     /**
-     * Handles a switch request. If a forced post-KO switch is pending the switch is applied immediately without
-     * consuming a turn; otherwise a normal switch action is registered and the turn is advanced.
+     * Handles a switch request. If a forced post-KO switch is pending the switch is
+     * applied immediately without
+     * consuming a turn; otherwise a normal switch action is registered and the turn
+     * is advanced.
      */
     @Override
     public void onSwitch(Bugemon target) {
@@ -109,7 +115,10 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         }
     }
 
-    /** Registers a forfeit action, resolves the turn, and navigates to the outcome screen immediately. */
+    /**
+     * Registers a forfeit action, resolves the turn, and navigates to the outcome
+     * screen immediately.
+     */
     @Override
     public void onForfeit() {
         this.manualPlayerTrainer.registerForfeit();

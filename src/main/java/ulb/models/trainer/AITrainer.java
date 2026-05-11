@@ -1,29 +1,25 @@
 package ulb.models.trainer;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.Efficiency;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon_team.BugemonTeam;
+import ulb.services.InventoryService;
 
 public class AITrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
     private Optional<Bugemon> bugemonTargetForSwitch = Optional.empty();
-    private Inventory inventory;
+    private final InventoryService inventoryService;
     private MiniMax miniMax;
-    private boolean forcedSwitch = false;
-    private boolean switchedThisTurn = false;
     private Bugemon opponentActiveBugemon;
     private Trainer opponentTrainer;
 
-    public AITrainer(BugemonTeam team, Inventory inventory, int miniMaxDepth) {
+    public AITrainer(BugemonTeam team, InventoryService inventoryService, int miniMaxDepth) {
         super(team);
-        this.inventory = inventory;
+        this.inventoryService = inventoryService;
         this.miniMax = new MiniMax(miniMaxDepth);
     }
 
@@ -54,13 +50,6 @@ public class AITrainer extends Trainer {
     }
 
     /**
-     * Overwrites any previously queued action. Prefer typed convenience methods.
-     */
-    public void registerAction(TurnAction action) {
-        this.pendingAction = Optional.of(action);
-    }
-
-    /**
      * @throws IllegalStateException
      *             if no action has been queued
      */
@@ -84,54 +73,13 @@ public class AITrainer extends Trainer {
         }
     }
 
-    /**
-     * @throws IllegalArgumentException
-     *             if the attack is not in the active Bugemon's move-set
-     */
-    public void registerAttack(Attack attack) {
-        if (!checkCurrentBugemonHasAttack(attack)) {
-            throw new IllegalArgumentException("The selected attack is not in the current bugemon's attack list.");
-        }
-        this.registerAction(new TurnAction.AttackAction(attack));
-    }
-
-    /** Pre-registers a KO switch target to be applied by {@link #reactToKo}. */
-    public void registerSwitchAfterKO(Bugemon target) {
-        this.bugemonTargetForSwitch = Optional.of(target);
-    }
-
-    /**
-     * Queues a voluntary switch (consumes the turn; opponent still attacks).
-     *
-     * @throws IllegalArgumentException
-     *             if target is not alive
-     */
-    public void registerSwitch(Bugemon target) {
-        if (!target.isAlive()) {
-            throw new IllegalArgumentException("The target bugemon is not alive.");
-        }
-        this.registerAction(new TurnAction.SwitchAction(target));
-    }
-
-    /**
-     * @throws IllegalArgumentException
-     *             if the item is not in the inventory
-     */
-    public void registerUseItem(Item item) {
-        if (this.inventory.hasItem(item)) {
-            this.registerAction(new TurnAction.UseItemAction(item));
-        } else {
-            throw new IllegalArgumentException("The player does not have the specified item.");
-        }
-    }
-
     public void useItem(Item item) {
-        this.inventory.useItem(item);
+        this.inventoryService.useItem(item);
         this.currentBugemon.apply(item.effect());
     }
 
     public Map<Item, Integer> getInventoryMap() {
-        return this.inventory.getMap();
+        return Collections.unmodifiableMap(this.inventoryService.getInventoryMap());
     }
 
     public void setOpponentTrainer(Trainer opponentTrainer) {
@@ -143,50 +91,6 @@ public class AITrainer extends Trainer {
 
     public void setOpponentActiveBugemon(Bugemon opponentActiveBugemon) {
         this.opponentActiveBugemon = opponentActiveBugemon;
-    }
-
-    public BugemonType getOpponentActiveBugemonType() {
-        return this.opponentActiveBugemon.getType();
-    }
-
-    public boolean hasPendingAction() {
-        return this.pendingAction.isPresent();
-    }
-
-    public int getOpponentActiveBugemonHp() {
-        return this.opponentActiveBugemon.getHp();
-    }
-
-    public int getMyActiveBugemonHp() {
-        return this.currentBugemon.getHp();
-    }
-
-    public Efficiency getOpponentActiveBugemonAttackEfficiencyAgainstMine() {
-        return this.opponentActiveBugemon.getType().getEfficiencyAgainst(this.currentBugemon.getType());
-    }
-
-    public Efficiency getMyActiveBugemonAttackEfficiencyAgainstOpponent() {
-        return this.currentBugemon.getType().getEfficiencyAgainst(this.opponentActiveBugemon.getType());
-    }
-
-    public boolean isForcedToSwitch() {
-        return this.forcedSwitch;
-    }
-
-    public void setForcedSwitch(boolean value) {
-        this.forcedSwitch = value;
-    }
-
-    public boolean hasSwitchedThisTurn() {
-        return this.switchedThisTurn;
-    }
-
-    public void setHasSwitchedThisTurn(boolean value) {
-        this.switchedThisTurn = value;
-    }
-
-    public boolean canVoluntarilySwitch() {
-        return !this.forcedSwitch && !this.switchedThisTurn;
     }
 
     private TurnAction chooseActionWithMiniMax() {
