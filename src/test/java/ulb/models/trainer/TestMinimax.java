@@ -11,15 +11,14 @@ import org.junit.Test;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.services.InventoryService;
-import ulb.utils.test.TestUtilsBugemonTeam;
 import ulb.services.InventoryService;
+import ulb.utils.test.TestUtilsBugemonTeam;
 
 public class TestMinimax {
     private AITrainer aiTrainer;
     private Trainer opponent;
     private MiniMax miniMax;
     private InventoryService inventoryService;
-    
 
     @Before
     public void setUp() {
