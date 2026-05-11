@@ -85,12 +85,12 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
         try {
             this.bugemonService.saveNewBugemon(bugemonToCreate);
+            this.view.showSaveSuccessAlert(bugemonName);
         } catch (BugemonNameIsEmptyException e) {
             this.view.showBugemonNameEmptyAlert();
         } catch (BugemonNameAlreadyExistsException e) {
             this.view.showBugemonNameAlreadyUsedAlert();
         }
-        this.view.showSaveSuccessAlert(bugemonName);
     }
 
     @Override
