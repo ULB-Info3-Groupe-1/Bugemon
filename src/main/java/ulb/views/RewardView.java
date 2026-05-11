@@ -81,7 +81,7 @@ public class RewardView extends View {
 
         // 4. On met à jour le titre
         this.rewardLabel.setText("Sur quel Bugemon appliquer le bonus ?");
-        }
+    }
 
     @Override
     protected String getPath() {

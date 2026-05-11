@@ -1,7 +1,6 @@
 package ulb.views.components;
 
 import java.util.List;
-
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
@@ -54,7 +53,6 @@ public class BugemonTeamView extends ComponentView {
             }
         }
     }
-
 
     /**
      * Clears the grid of the current Bugemons selected.
