@@ -136,19 +136,19 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void setEffectParameters(PreparedStatement psEffect, Effect effect) throws SQLException {
         switch (effect) {
-            case EffectStatModifier modifier:
+            case EffectStatModifier modifier :
                 this.setStatModifierParameters(psEffect, modifier);
                 break;
 
-            case EffectHeal heal:
+            case EffectHeal heal :
                 this.setHealParameters(psEffect, heal);
                 break;
 
-            case EffectResetMalus resetMalus:
+            case EffectResetMalus resetMalus :
                 this.setResetMalusParameters(psEffect, resetMalus);
                 break;
 
-            default:
+            default :
                 break;
         }
     }
@@ -226,7 +226,7 @@ public class StaticDataRepository extends AbstractRepository {
      * Saves a Bugemon to the database.
      *
      * @param b
-     *          (CreateBugemonDTO) the bugemon to be saved
+     *            (CreateBugemonDTO) the bugemon to be saved
      */
     public void saveBugemon(CreateBugemonDTO b) {
         String fileName = b.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
