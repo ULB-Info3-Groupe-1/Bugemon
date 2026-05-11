@@ -18,7 +18,6 @@ public class Tower {
     private final TowerFloors floors;
     private final Trainer playerTrainer;
     private Floor currentFloor;
-    private boolean isFinished = false;
 
     public Tower(BugemonTeam playerTeam, BugemonService bugemonService, InventoryService inventoryService,
             int currentFloorLevel) {
@@ -33,10 +32,6 @@ public class Tower {
             this.floors.add(newFloor);
         }
         this.updateRoomsState();
-    }
-
-    public boolean isFinished() {
-        return this.isFinished;
     }
 
     public FloorNode getPlayerPosition() {
@@ -67,8 +62,18 @@ public class Tower {
     public void visitCurrentRoom(RoomVisitor roomVisitor) {
         this.currentFloor.visitCurrentRoom(roomVisitor);
         this.updateRoomsState();
-        this.isFinished = this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX && this.isCurrentFloorComplete();
-        if (!this.isFinished && this.isCurrentFloorComplete()) {
+    }
+
+    public boolean isFinished() {
+        return this.getCurrentFloorNumber() == Configuration.Game.FLOOR_MAX && this.isCurrentFloorComplete();
+    }
+
+    /**
+     * Update the tower by going to the next floor if the current floor is complete MUST be called once at every end of
+     * combat!
+     */
+    public void update() {
+        if (!this.isFinished() && this.isCurrentFloorComplete()) {
             this.goToNextFloor();
         }
     }

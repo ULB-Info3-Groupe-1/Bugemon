@@ -61,6 +61,8 @@ public class TowerService {
 
     public void handleCombatEnd(Tower tower, boolean playerWon) {
         this.inventoryService.saveInventory();
+        tower.update();
+
         if (!playerWon || tower.isFinished()) {
             this.clearTowerProgress();
         } else {
