@@ -46,7 +46,7 @@ public class CombatBugemon {
 
     public void heal(int amount) {
         if (!this.isKo()) {
-          this.currentHp = Math.min(this.getMaxHp(), this.currentHp + amount);
+            this.currentHp = Math.min(this.getMaxHp(), this.currentHp + amount);
         }
     }
 
@@ -63,10 +63,7 @@ public class CombatBugemon {
     }
 
     private int getEffectModifierSum(EffectStat stat) {
-        return this.activeEffects.stream()
-            .filter(e -> e.getStat() == stat)
-            .mapToInt(StatusEffect::getModifier)
-            .sum();
+        return this.activeEffects.stream().filter(e -> e.getStat() == stat).mapToInt(StatusEffect::getModifier).sum();
     }
 
     @Override
