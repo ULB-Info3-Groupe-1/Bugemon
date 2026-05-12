@@ -29,6 +29,14 @@ public class CombatBugemon {
         return this.runBugemon.isKo();
     }
 
+    public int getCurrentHp() {
+        return this.runBugemon.getCurrentHp();
+    }
+
+    public int getMaxHp() {
+        return this.runBugemon.getMaxHp();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

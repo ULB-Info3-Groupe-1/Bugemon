@@ -22,6 +22,14 @@ public class RunBugemon {
         return this.currentHp == 0;
     }
 
+    public int getCurrentHp() {
+        return this.currentHp;
+    }
+
+    public int getMaxHp() {
+        return this.playerBugemon.getMaxHp();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

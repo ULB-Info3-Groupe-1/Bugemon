@@ -32,6 +32,10 @@ public class PlayerBugemon {
         return this.base.name();
     }
 
+    public int getMaxHp() {
+       return this.base.hp() + this.bonusHp;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
