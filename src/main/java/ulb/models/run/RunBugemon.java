@@ -14,6 +14,10 @@ public class RunBugemon {
         this.currentHp = currentHp;
     }
 
+    public String getName() {
+        return this.playerBugemon.getName();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

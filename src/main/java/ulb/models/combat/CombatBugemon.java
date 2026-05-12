@@ -19,4 +19,26 @@ public class CombatBugemon {
     public void markAsParticipated() {
         this.participated = true;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        CombatBugemon other = (CombatBugemon) obj;
+        return this.runBugemon.equals(other.runBugemon) && (this.participated == other.participated);
+   }
+
+    @Override
+    public int hashCode() {
+        return this.runBugemon.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s PARTICIPATED:%b", this.runBugemon.getName(), this.participated);
+    }
 }
