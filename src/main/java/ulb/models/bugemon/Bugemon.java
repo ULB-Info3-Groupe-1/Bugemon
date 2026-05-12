@@ -33,8 +33,8 @@ public record Bugemon(
 
         // TODO: add checks for other fields (stats > 0, name/id not empty etc.)
 
-        attacks = List.copyOf(attacks);
         this.checkAttacks(attacks);
+        attacks = List.copyOf(attacks);
     }
 
     public Bugemon(String id, String name, int hp, int attack, int defense, int initiative, BugemonType type,
