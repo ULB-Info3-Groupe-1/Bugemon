@@ -9,11 +9,13 @@ import ulb.models.run.RunBugemon;
 public class CombatBugemon {
     private final RunBugemon runBugemon;
     private boolean participated;
+    private int currentHp;
     private final List<StatusEffect> effects;
 
     public CombatBugemon(RunBugemon runBugemon) {
         this.runBugemon = runBugemon;
         this.participated = false;
+        this.currentHp = runBugemon.getCurrentHp();
         this.effects = new ArrayList<>();
     }
 
@@ -26,15 +28,25 @@ public class CombatBugemon {
     }
 
     public boolean isKo() {
-        return this.runBugemon.isKo();
+        return this.currentHp == 0;
     }
 
     public int getCurrentHp() {
-        return this.runBugemon.getCurrentHp();
+        return this.currentHp;
     }
 
     public int getMaxHp() {
         return this.runBugemon.getMaxHp();
+    }
+
+    public void takeDamage(int amount) {
+        this.currentHp = Math.max(0, this.currentHp - amount);
+    }
+
+    public void heal(int amount) {
+        if (!this.isKo()) {
+          this.currentHp = Math.min(this.getMaxHp(), this.currentHp + amount);
+        }
     }
 
     @Override

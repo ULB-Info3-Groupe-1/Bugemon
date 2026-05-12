@@ -30,6 +30,10 @@ public class RunBugemon {
         return this.playerBugemon.getMaxHp();
     }
 
+    public void restoreHpToMax() {
+        this.currentHp = this.getMaxHp();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
