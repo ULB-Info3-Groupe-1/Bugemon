@@ -33,6 +33,6 @@ public class RunBugemon {
 
     @Override
     public String toString() {
-        return String.format("%s current-hp: %d", this.playerBugemon.getName(), this.currentHp);
+        return String.format("%s CURRENT-HP:%d", this.getName(), this.currentHp);
     }
 }
