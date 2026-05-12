@@ -1,7 +1,11 @@
 package ulb.models.skills;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SkillTree {
     private static final String ROOT_ID = "start";
@@ -14,6 +18,28 @@ public class SkillTree {
 
     public SkillNode getRoot() {
         return this.root;
+    }
+
+    public List<SkillNode> getAllNodes() {
+        // Maybe I shouldn't have made a root node as simply storing
+        // hashmap seems enough I gess... TODO: check if I'm true lol
+        // @ManuelRocca could you please do that ?
+
+        List<SkillNode> result = new ArrayList<>();
+        Set<SkillNode> visited = new HashSet<>();
+        Deque<SkillNode> queue = new ArrayDeque<>();
+
+        queue.add(this.root);
+        while (!queue.isEmpty()) {
+            SkillNode current = queue.poll();
+            if (!visited.add(current)) {
+                continue;
+            }
+            result.add(current);
+            queue.addAll(current.getChildren());
+        }
+
+        return result;
     }
 
     public boolean canUnlock(SkillNode node, int availablePoints) {
@@ -40,7 +66,8 @@ public class SkillTree {
     }
 
     public int downgrade(SkillNode node) {
-        // probably a better way in recursive call ://
+        // probably a better way with maybe a recursive call ://
+        // but I'm not a recursive expert sorry guys ...
 
         node.getSkill().decrementLevel();
         int refunded = node.getSkill().getCost();

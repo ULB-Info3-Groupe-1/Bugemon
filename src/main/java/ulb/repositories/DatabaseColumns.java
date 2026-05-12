@@ -46,4 +46,6 @@ public class DatabaseColumns {
     public static final String COL_ITEM_ID = "item_id";
     public static final String COL_CATEGORY = "category";
     public static final String COL_VALUE = "value";
+    public static final String COL_SKILL_ID = "skill_id";
+    public static final String COL_SKILL_POINTS = "skill_points";
 }

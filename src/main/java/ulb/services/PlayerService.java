@@ -1,16 +1,39 @@
 package ulb.services;
 
+import java.util.List;
+import java.util.Map;
+
+import ulb.models.skills.Skill;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
+import ulb.repositories.PlayerRepository;
 import ulb.repositories.StaticDataRepository;
 
 public class PlayerService {
-
-    private int availablePoints = 100; // TODO: persistence into db
+    private final PlayerRepository playerRepository;
     private SkillTree skillTree;
+    private String playerName;
 
-    public PlayerService(StaticDataRepository staticDataRepository) {
+    public PlayerService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
+            String playerName) {
         this.skillTree = staticDataRepository.getSkillTree();
+        this.playerName = playerName;
+        this.playerRepository = playerRepository;
+        this.loadPlayerSkills();
+    }
+
+    private void loadPlayerSkills() {
+        Map<String, Integer> saved = this.playerRepository.getPlayerSkills(this.playerName);
+        for (SkillNode node : this.skillTree.getAllNodes()) {
+            Integer level = saved.get(node.getSkill().getId());
+            if (level != null) {
+                node.getSkill().setCurrentLevel(level);
+            }
+        }
+    }
+
+    public List<Skill> getUnlockedSkills() {
+        return this.skillTree.getAllNodes().stream().map(SkillNode::getSkill).filter(Skill::isUnlocked).toList();
     }
 
     public SkillTree getSkillTree() {
@@ -22,19 +45,23 @@ public class PlayerService {
     }
 
     public int getAvailableSkillPoints() {
-        return this.availablePoints;
+        return this.playerRepository.getPlayerSkillPoints(this.playerName);
     }
 
     public void addSkillPoints(int points) {
-        this.availablePoints += points;
+        this.playerRepository.setPlayerPoints(this.getAvailableSkillPoints() + points, this.playerName);
     }
 
     public boolean unlockSkill(SkillNode node) {
-        if (!this.skillTree.canUnlock(node, this.availablePoints)) {
+        int skillPoints = this.getAvailableSkillPoints();
+        if (!this.skillTree.canUnlock(node, skillPoints)) {
             return false;
         }
-        this.availablePoints -= node.getSkill().getCost();
+        skillPoints -= node.getSkill().getCost();
         node.getSkill().incrementLevel();
+        this.playerRepository.setPlayerPoints(skillPoints, this.playerName);
+        this.playerRepository.savePlayerSkill(this.playerName, node.getSkill().getId(),
+                node.getSkill().getCurrentLevel());
         return true;
     }
 
@@ -43,7 +70,20 @@ public class PlayerService {
             return 0;
         }
         int refund = this.skillTree.downgrade(node);
-        this.availablePoints += refund;
+        this.playerRepository.setPlayerPoints(this.getAvailableSkillPoints() + refund, this.playerName);
+        this.updateSkillTree();
         return refund;
+    }
+
+    private void updateSkillTree() {
+        for (SkillNode node : this.skillTree.getAllNodes()) {
+            String id = node.getSkill().getId();
+            int level = node.getSkill().getCurrentLevel();
+            if (level > 0) {
+                this.playerRepository.savePlayerSkill(this.playerName, id, level);
+            } else {
+                this.playerRepository.deletePlayerSkill(this.playerName, id);
+            }
+        }
     }
 }
