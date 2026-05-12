@@ -1,7 +1,6 @@
 package ulb;
 
 import java.io.InputStream;
-import java.util.List;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -64,10 +63,10 @@ public class Main extends Application {
         TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, bugemonRepository,
                 loader.getQueries());
         String playerName = "default_player";
-        SkillService skillService = new SkillService(List.of()); // TODO: load skills from a data source
+        PlayerService playerService = new PlayerService(staticDataRepository, playerRepository, playerName);
+        SkillService skillService = new SkillService(playerService.getUnlockedSkills());
         BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName,
                 skillService.getSkills(StatBonusEffect.class));
-        PlayerService playerService = new PlayerService(staticDataRepository);
         TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName,
                 skillService);
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);

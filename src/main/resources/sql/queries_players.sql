@@ -7,14 +7,20 @@ SELECT id FROM players WHERE playername = ?;
 
 -- Query
 -- SetPlayerCurrentTeam
-UPDATE players 
-SET current_team = ? 
+UPDATE players
+SET current_team = ?
+WHERE playername = ?;
+
+-- Query
+-- SetPlayerSkillPoints
+UPDATE players
+SET skill_points = ?
 WHERE playername = ?;
 
 -- Query
 -- UnsetPlayerCurrentTeam
-UPDATE players 
-SET current_team = NULL 
+UPDATE players
+SET current_team = NULL
 WHERE playername = ?;
 
 -- Query
@@ -22,8 +28,12 @@ WHERE playername = ?;
 SELECT current_team FROM players WHERE playername = ?;
 
 -- Query
+-- GetPlayerSkillPoints
+SELECT skill_points FROM players WHERE playername = ?;
+
+-- Query
 -- GetPlayerCurrentTeam
-SELECT 
+SELECT
     p.current_team AS team_name,
     tm.slot_position,
     pb.bugemon_name,
@@ -48,9 +58,27 @@ SELECT current_tower_floor FROM players WHERE playername = ?;
 
 -- Query
 -- SetPlayerCurrentTowerFloor
-UPDATE players 
-SET current_tower_floor = ? 
+UPDATE players
+SET current_tower_floor = ?
 WHERE playername = ?;
+
+-- Query
+-- GetPlayerSkills
+SELECT
+  sp.skill_id,
+  sp.current_level
+FROM skills_players sp
+WHERE sp.playername = ?;
+
+-- Query
+-- AddPlayerSkill
+INSERT INTO skills_players (playername, skill_id, current_level)
+VALUES (?, ?, ?)
+ON CONFLICT (playername, skill_id) DO UPDATE SET current_level = EXCLUDED.current_level;
+
+-- Query
+-- DeletePlayerSkill
+DELETE FROM skills_players WHERE playername = ? AND skill_id = ?;
 
 -- Query
 -- ResetPlayerCurrentTowerFloor
