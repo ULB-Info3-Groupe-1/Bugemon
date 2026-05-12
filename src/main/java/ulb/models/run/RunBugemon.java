@@ -18,6 +18,10 @@ public class RunBugemon {
         return this.playerBugemon.getName();
     }
 
+    public boolean isKo() {
+        return this.currentHp == 0;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

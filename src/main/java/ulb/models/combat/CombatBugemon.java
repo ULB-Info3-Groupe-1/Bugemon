@@ -20,6 +20,10 @@ public class CombatBugemon {
         this.participated = true;
     }
 
+    public boolean isKo() {
+        return this.runBugemon.isKo();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
