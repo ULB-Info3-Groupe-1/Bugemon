@@ -28,6 +28,10 @@ public class PlayerBugemon {
         this.currentAttacks = Objects.requireNonNull(currentAttacks);
     }
 
+    public String getName() {
+        return this.base.name();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

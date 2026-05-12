@@ -13,4 +13,26 @@ public class RunBugemon {
         Bugemon.checkHp(currentHp);
         this.currentHp = currentHp;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        RunBugemon other = (RunBugemon) obj;
+        return this.playerBugemon.equals(other.playerBugemon) && (this.currentHp == other.currentHp);
+   }
+
+    @Override
+    public int hashCode() {
+        return this.playerBugemon.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s current-hp: %d", this.playerBugemon.getName(), this.currentHp);
+    }
 }
