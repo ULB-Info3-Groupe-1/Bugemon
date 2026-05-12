@@ -1,6 +1,8 @@
 package ulb;
 
 import java.io.InputStream;
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -23,6 +25,7 @@ import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
 import ulb.services.SkillService;
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
@@ -31,26 +34,26 @@ import ulb.services.TowerService;
  */
 public class Main extends Application {
 
-        public static void main(String[] args) {
-                SLF4JBridgeHandler.removeHandlersForRootLogger();
-                SLF4JBridgeHandler.install();
-                launch(args);
+    public static void main(String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
+        if (fontStream != null) {
+            Font.loadFont(fontStream, 16);
         }
 
-        @Override
-        public void start(Stage stage) throws Exception {
-                InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
-                if (fontStream != null) {
-                        Font.loadFont(fontStream, 16);
-                }
+        stage.setTitle(Configuration.Ui.STAGE_TITLE);
+        stage.setMaximized(true);
 
-                stage.setTitle(Configuration.Ui.STAGE_TITLE);
-                stage.setMaximized(true);
-
-                Scene scene = new Scene(new StackPane());
-                scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
-                scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
-                stage.setScene(scene);
+        Scene scene = new Scene(new StackPane());
+        scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
+        stage.setScene(scene);
 
                 QueryLoader loader = new QueryLoader();
                 DatabaseConnection dbConnection = new DatabaseConnection();
