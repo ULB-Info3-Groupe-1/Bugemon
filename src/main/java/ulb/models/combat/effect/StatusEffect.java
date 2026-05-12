@@ -28,6 +28,8 @@ public class StatusEffect {
     }
 
     public void tick() {
-        this.ticker.tick();
+        if (this.ticker != null) {
+            this.ticker.tick();
+        }
     }
 }
