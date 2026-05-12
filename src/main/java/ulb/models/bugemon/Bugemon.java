@@ -34,15 +34,18 @@ public record Bugemon(
         // TODO: add checks for other fields (stats > 0, name/id not empty etc.)
 
         attacks = List.copyOf(attacks);
-
-        if (attacks.size() != ATTACKS_COUNT) {
-            throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
-        }
+        this.checkAttacks(attacks);
     }
 
     public Bugemon(String id, String name, int hp, int attack, int defense, int initiative, BugemonType type,
             List<Attack> attacks, String spritePath, boolean isStarter) {
         this(id, name, hp, attack, defense, initiative, type, attacks, spritePath, isStarter, false);
+    }
+
+    public void checkAttacks(List<Attack> attacks) {
+        if (attacks.size() != ATTACKS_COUNT) {
+            throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
+        }
     }
 
     @Override
