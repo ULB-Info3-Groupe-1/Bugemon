@@ -23,13 +23,17 @@ public class StatusEffect {
         return this.modifier;
     }
 
-    private boolean isPermanent() {
-        return this.ticker == null;
+    public boolean isExpired() {
+        return this.ticker.isExpired();
     }
 
     public void tick() {
         if (this.ticker != null) {
             this.ticker.tick();
         }
+    }
+
+    public boolean isNegative() {
+        return this.modifier < 0;
     }
 }
