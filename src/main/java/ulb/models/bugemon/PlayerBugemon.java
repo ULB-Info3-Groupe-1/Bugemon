@@ -16,6 +16,7 @@ public class PlayerBugemon {
     public PlayerBugemon(Bugemon base, int level, int xp, int bonusHp, int bonusAttack, int bonusDefense,
             int bonusInitiative, List<Attack> currentAttacks) {
         this.base = Objects.requireNonNull(base);
+
         this.level = level;
         this.xp = xp;
         this.bonusHp = bonusHp;
@@ -23,7 +24,7 @@ public class PlayerBugemon {
         this.bonusDefense = bonusDefense;
         this.bonusInitiative = bonusInitiative;
 
+        Bugemon.checkAttacks(currentAttacks);
         this.currentAttacks = Objects.requireNonNull(currentAttacks);
-        base.checkAttacks(this.currentAttacks);
     }
 }

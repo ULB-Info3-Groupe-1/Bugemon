@@ -1,5 +1,6 @@
 package ulb.models.run;
 
+import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.PlayerBugemon;
 
 public class RunBugemon {
@@ -7,11 +8,9 @@ public class RunBugemon {
     private int currentHp;
 
     public RunBugemon(PlayerBugemon playerBugemon, int currentHp) {
-        if (currentHp < 0) {
-            throw new IllegalArgumentException("Bugemon's current hp must be non-negative");
-        }
-
         this.playerBugemon = playerBugemon;
+
+        Bugemon.checkHp(currentHp);
         this.currentHp = currentHp;
     }
 }
