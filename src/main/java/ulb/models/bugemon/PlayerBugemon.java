@@ -22,6 +22,8 @@ public class PlayerBugemon {
         this.bonusAttack = bonusAttack;
         this.bonusDefense = bonusDefense;
         this.bonusInitiative = bonusInitiative;
+
         this.currentAttacks = Objects.requireNonNull(currentAttacks);
+        base.checkAttacks(this.currentAttacks);
     }
 }
