@@ -15,6 +15,14 @@ public class StatusEffect {
         this.ticker = (duration == EffectDuration.PERMANENT) ? null : new Ticker(1);
     }
 
+    public EffectStat getStat() {
+        return this.stat;
+    }
+
+    public int getModifier() {
+        return this.modifier;
+    }
+
     private boolean isPermanent() {
         return this.ticker == null;
     }

@@ -36,6 +36,18 @@ public class PlayerBugemon {
        return this.base.hp() + this.bonusHp;
     }
 
+    public int getBaseAttack() {
+        return this.base.attack();
+    }
+
+    public int getBaseDefense() {
+        return this.base.defense();
+    }
+
+    public int getBaseInitiative() {
+        return this.base.initiative();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

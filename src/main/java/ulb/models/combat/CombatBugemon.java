@@ -3,6 +3,7 @@ package ulb.models.combat;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.combat.effect.StatusEffect;
 import ulb.models.run.RunBugemon;
 
@@ -10,13 +11,13 @@ public class CombatBugemon {
     private final RunBugemon runBugemon;
     private boolean participated;
     private int currentHp;
-    private final List<StatusEffect> effects;
+    private final List<StatusEffect> activeEffects;
 
     public CombatBugemon(RunBugemon runBugemon) {
         this.runBugemon = runBugemon;
         this.participated = false;
         this.currentHp = runBugemon.getCurrentHp();
-        this.effects = new ArrayList<>();
+        this.activeEffects = new ArrayList<>();
     }
 
     public boolean hasParticipated() {
@@ -47,6 +48,25 @@ public class CombatBugemon {
         if (!this.isKo()) {
           this.currentHp = Math.min(this.getMaxHp(), this.currentHp + amount);
         }
+    }
+
+    public int getEffectiveAttack() {
+        return this.runBugemon.getBaseAttack() + this.getEffectModifierSum(EffectStat.DEFENSE);
+    }
+
+    public int getEffectiveDefense() {
+        return this.runBugemon.getBaseDefense() + this.getEffectModifierSum(EffectStat.DEFENSE);
+    }
+
+    public int getEffectiveInitiative() {
+        return this.runBugemon.getBaseInitiative() + this.getEffectModifierSum(EffectStat.INITIATIVE);
+    }
+
+    private int getEffectModifierSum(EffectStat stat) {
+        return this.activeEffects.stream()
+            .filter(e -> e.getStat() == stat)
+            .mapToInt(StatusEffect::getModifier)
+            .sum();
     }
 
     @Override

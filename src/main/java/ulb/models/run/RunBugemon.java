@@ -34,6 +34,18 @@ public class RunBugemon {
         this.currentHp = this.getMaxHp();
     }
 
+    public int getBaseAttack() {
+        return this.playerBugemon.getBaseAttack();
+    }
+
+    public int getBaseDefense() {
+        return this.playerBugemon.getBaseDefense();
+    }
+
+    public int getBaseInitiative() {
+        return this.playerBugemon.getBaseInitiative();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
