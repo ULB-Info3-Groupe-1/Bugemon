@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
+import ulb.models.bugemon.effect.Effect;
+
 /** Immutable record representing an attack a {@link Bugemon} can use in battle. Equality is based on {@link #id}. */
 public record Attack(
 
@@ -17,7 +19,7 @@ public record Attack(
 
         BugemonType type,
 
-        @SerializedName("effets") List<AttackEffectData> effects
+        @SerializedName("effets") List<Effect> effects
 
 ) {
     public boolean hasEffects() {

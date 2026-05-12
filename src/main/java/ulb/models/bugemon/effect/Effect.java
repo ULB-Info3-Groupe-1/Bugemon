@@ -1,11 +1,13 @@
 package ulb.models.bugemon.effect;
 
-import ulb.models.bugemon.Bugemon;
+public abstract class Effect {
+    private final EffectTarget target;
 
-public sealed interface Effect permits EffectStatModifier, EffectHeal, EffectResetMalus {
-    // Attributes
-    EffectTarget target();
+    public Effect(EffectTarget target) {
+        this.target = target;
+    }
 
-    /** Applies this effect to the given Bugemon. */
-    void applyTo(Bugemon target);
+    public EffectTarget getTarget() {
+        return this.target;
+    }
 }
