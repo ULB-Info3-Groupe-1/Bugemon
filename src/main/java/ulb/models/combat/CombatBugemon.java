@@ -1,15 +1,20 @@
 package ulb.models.combat;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ulb.models.combat.effect.StatusEffect;
 import ulb.models.run.RunBugemon;
 
 public class CombatBugemon {
     private final RunBugemon runBugemon;
     private boolean participated;
-    // TODO: effects
+    private final List<StatusEffect> effects;
 
     public CombatBugemon(RunBugemon runBugemon) {
         this.runBugemon = runBugemon;
         this.participated = false;
+        this.effects = new ArrayList<>();
     }
 
     public boolean hasParticipated() {

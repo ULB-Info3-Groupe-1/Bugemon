@@ -1,6 +1,5 @@
 package ulb.models.bugemon.components.modifier;
 
-/** Simple countdown used to expire a {@link Modifier} after a number of ticks. */
 public class Ticker {
     private int remainingTicks;
 
@@ -16,13 +15,11 @@ public class Ticker {
 
     /** Decrements the remaining ticks down to zero. */
     public void tick() {
-        if (this.remainingTicks > 0) {
-            this.remainingTicks--;
-        }
+        this.remainingTicks = Math.min(0, this.remainingTicks - 1);
     }
 
     /** Returns true once the remaining ticks reach zero. */
     public boolean isExpired() {
-        return this.remainingTicks <= 0;
+        return this.remainingTicks == 0;
     }
 }
