@@ -18,7 +18,6 @@ import ulb.repositories.StaticDataRepository;
 public class RewardService {
 
     // constants
-    private static final int NUM_REWARDS = 3;
     private static final int MAX_HP_BONUS = 10;
     private static final int MAX_STAT_BONUS = 5;
 

@@ -11,7 +11,6 @@ import ulb.models.level_up.Upgrade;
 
 public class PostCombatReward {
 
-    private static final int NUM_REWARDS = 3;
     private Random random;
     private List<Reward> options;
     private Inventory inventory;

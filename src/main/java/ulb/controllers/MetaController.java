@@ -20,27 +20,23 @@ import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
-import ulb.services.InventoryService;<<<<<<<HEAD
+import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
-import ulb.services.SkillService;=======
-import ulb.services.RewardService;>>>>>>>215d 660 a(Cleaned up reward service and linked it properly to main and metacontroller)
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
-
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is
- * the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
-     * transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -81,9 +77,9 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *                     main JavaFX stage of the application
+     *            main JavaFX stage of the application
      * @throws IOException
-     *                     if the music fails to be initialized
+     *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService,
@@ -259,23 +255,20 @@ public class MetaController {
     /**
      * Switches the current screen to the specified window.
      *
-     * <<<<<<< HEAD
-     * <<<<<<< HEAD
+     * <<<<<<< HEAD <<<<<<< HEAD
      *
      * @param window
-     *               target screen to display
+     *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
-     *                                  =======
-     * @param window target screen to display
-     * @throws IllegalArgumentException if the window is invalid
-     *                                  >>>>>>> eccfc14c (wip(fixing bugs)
-     *                                  =======
+     *             if the window is invalid =======
      * @param window
-     *               target screen to display
+     *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
-     *                                  >>>>>>> 891ecd68 (formatting)
+     *             if the window is invalid >>>>>>> eccfc14c (wip(fixing bugs) =======
+     * @param window
+     *            target screen to display
+     * @throws IllegalArgumentException
+     *             if the window is invalid >>>>>>> 891ecd68 (formatting)
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
