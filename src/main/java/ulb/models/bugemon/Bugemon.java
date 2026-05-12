@@ -21,7 +21,8 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
 
         // TODO: add checks for other fields (stats > 0, name/id not empty etc.)
 
-        this.checkAttacks(attacks);
+        Objects.requireNonNull(attacks);
+        checkAttacks(attacks);
         attacks = List.copyOf(attacks);
     }
 
