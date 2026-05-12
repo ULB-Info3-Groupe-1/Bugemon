@@ -38,16 +38,16 @@ public class RunBugemon {
         this.currentHp = this.getMaxHp();
     }
 
-    public int getBaseAttack() {
-        return this.playerBugemon.getBaseAttack();
+    public int getAttack() {
+        return this.playerBugemon.getAttack();
     }
 
-    public int getBaseDefense() {
-        return this.playerBugemon.getBaseDefense();
+    public int getDefense() {
+        return this.playerBugemon.getDefense();
     }
 
-    public int getBaseInitiative() {
-        return this.playerBugemon.getBaseInitiative();
+    public int getInitiative() {
+        return this.playerBugemon.getInitiative();
     }
 
     @Override

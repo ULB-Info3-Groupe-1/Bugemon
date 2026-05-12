@@ -51,15 +51,15 @@ public class CombatBugemon {
     }
 
     public int getEffectiveAttack() {
-        return this.runBugemon.getBaseAttack() + this.getEffectModifierSum(EffectStat.DEFENSE);
+        return this.runBugemon.getAttack() + this.getEffectModifierSum(EffectStat.DEFENSE);
     }
 
     public int getEffectiveDefense() {
-        return this.runBugemon.getBaseDefense() + this.getEffectModifierSum(EffectStat.DEFENSE);
+        return this.runBugemon.getDefense() + this.getEffectModifierSum(EffectStat.DEFENSE);
     }
 
     public int getEffectiveInitiative() {
-        return this.runBugemon.getBaseInitiative() + this.getEffectModifierSum(EffectStat.INITIATIVE);
+        return this.runBugemon.getInitiative() + this.getEffectModifierSum(EffectStat.INITIATIVE);
     }
 
     private int getEffectModifierSum(EffectStat stat) {

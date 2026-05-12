@@ -36,16 +36,16 @@ public class PlayerBugemon {
         return this.base.hp() + this.bonusHp;
     }
 
-    public int getBaseAttack() {
-        return this.base.attack();
+    public int getAttack() {
+        return this.base.attack() + this.bonusAttack;
     }
 
-    public int getBaseDefense() {
-        return this.base.defense();
+    public int getDefense() {
+        return this.base.defense() + this.bonusDefense;
     }
 
-    public int getBaseInitiative() {
-        return this.base.initiative();
+    public int getInitiative() {
+        return this.base.initiative() + this.bonusInitiative;
     }
 
     @Override
