@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import ulb.models.bugemon.exceptions.InvalidAttackCountException;
 
-// TODO: check if we could make this become a record
-
 /**
  * Represents a Bugemon.
  */
