@@ -41,12 +41,9 @@ public class PlayerBugemon {
             return false;
         }
         PlayerBugemon other = (PlayerBugemon) obj;
-        return this.base.equals(other.base) && (this.level == other.level)
-                && this.xp == other.xp
-                && this.bonusHp == other.bonusHp
-                && this.bonusAttack == other.bonusAttack
-                && this.bonusDefense == other.bonusDefense
-                && this.bonusInitiative == other.bonusInitiative
+        return this.base.equals(other.base) && (this.level == other.level) && this.xp == other.xp
+                && this.bonusHp == other.bonusHp && this.bonusAttack == other.bonusAttack
+                && this.bonusDefense == other.bonusDefense && this.bonusInitiative == other.bonusInitiative
                 && this.currentAttacks.equals(other.currentAttacks);
     }
 

@@ -28,7 +28,7 @@ public class RunBugemon {
         }
         RunBugemon other = (RunBugemon) obj;
         return this.playerBugemon.equals(other.playerBugemon) && (this.currentHp == other.currentHp);
-   }
+    }
 
     @Override
     public int hashCode() {

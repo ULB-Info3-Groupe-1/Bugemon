@@ -10,18 +10,8 @@ import ulb.models.bugemon.exceptions.InvalidAttackCountException;
 /**
  * Represents a Bugemon.
  */
-public record Bugemon(
-        String id,
-        String name,
-        int hp,
-        int attack,
-        int defense,
-        int initiative,
-        BugemonType type,
-        List<Attack> attacks,
-        String spritePath,
-        boolean isStarter,
-        boolean isBoss) {
+public record Bugemon(String id, String name, int hp, int attack, int defense, int initiative, BugemonType type,
+        List<Attack> attacks, String spritePath, boolean isStarter, boolean isBoss) {
 
     public static final int ATTACKS_COUNT = 3;
 
@@ -47,7 +37,7 @@ public record Bugemon(
             throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
         }
     }
-    
+
     public static void checkHp(int hp) {
         if (hp < 0) {
             throw new IllegalArgumentException("Bugemon's current hp must be non-negative");

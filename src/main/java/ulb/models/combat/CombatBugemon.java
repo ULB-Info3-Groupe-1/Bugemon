@@ -30,7 +30,7 @@ public class CombatBugemon {
         }
         CombatBugemon other = (CombatBugemon) obj;
         return this.runBugemon.equals(other.runBugemon) && (this.participated == other.participated);
-   }
+    }
 
     @Override
     public int hashCode() {

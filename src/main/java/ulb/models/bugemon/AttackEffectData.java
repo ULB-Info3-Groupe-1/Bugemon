@@ -1,10 +1,6 @@
 package ulb.models.bugemon;
 
-public record AttackEffectData(
-        AttackEffectType effectType,
-        EffectTarget target,
-        StatType stat,
-        int modifier,
+public record AttackEffectData(AttackEffectType effectType, EffectTarget target, StatType stat, int modifier,
         EffectDuration duration) {
     @Override
     public String toString() {
