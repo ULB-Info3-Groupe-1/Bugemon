@@ -66,6 +66,10 @@ public class Skill {
         return this.currentLevel;
     }
 
+    public void setCurrentLevel(int level) {
+        this.currentLevel = level;
+    }
+
     public void incrementLevel() {
         this.currentLevel++;
     }

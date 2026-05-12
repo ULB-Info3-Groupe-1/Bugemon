@@ -1,5 +1,7 @@
 package ulb.repositories;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -49,4 +51,37 @@ public class PlayerRepository extends AbstractRepository {
         this.executeUpdate("ResetPlayerCurrentTowerFloor", playername);
     }
 
+    // --- SKILL PLAYER ---
+
+    public int getPlayerSkillPoints(String playername) {
+        return this.executeQuery("GetPlayerSkillPoints", rs -> rs.getInt(DatabaseColumns.COL_SKILL_POINTS), playername)
+                .get(0);
+    }
+
+    public void setPlayerPoints(int skillPoints, String playername) {
+        this.executeUpdate("SetPlayerSkillPoints", skillPoints, playername);
+    }
+
+    public void savePlayerSkill(String playername, String skillId, int level) {
+        this.executeUpdate("AddPlayerSkill", playername, skillId, level);
+    }
+
+    public void deletePlayerSkill(String playername, String skillId) {
+        this.executeUpdate("DeletePlayerSkill", playername, skillId);
+    }
+
+    // return for a skill ID its currentLevel...
+    public Map<String, Integer> getPlayerSkills(String playername) {
+        List<Map.Entry<String, Integer>> rows = this.executeQuery("GetPlayerSkills", rs -> Map
+                .entry(rs.getString(DatabaseColumns.COL_SKILL_ID), rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
+                playername);
+
+        Map<String, Integer> skills = new HashMap<>();
+
+        for (Map.Entry<String, Integer> row : rows) {
+            skills.put(row.getKey(), row.getValue());
+        }
+
+        return skills;
+    }
 }
