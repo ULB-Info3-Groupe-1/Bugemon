@@ -90,6 +90,10 @@ public class CombatBugemon {
         this.activeEffects.removeIf(StatusEffect::isNegative);
     }
 
+    public void syncToRunBugemon() {
+        this.runBugemon.setCurrentHp(this.currentHp);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

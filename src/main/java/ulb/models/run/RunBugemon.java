@@ -26,6 +26,10 @@ public class RunBugemon {
         return this.currentHp;
     }
 
+    public void setCurrentHp(int currentHp) {
+        this.currentHp = currentHp;
+    }
+
     public int getMaxHp() {
         return this.playerBugemon.getMaxHp();
     }
