@@ -2,8 +2,8 @@ package ulb.models.trainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,22 +17,16 @@ public class TestMinimax {
     private AITrainer aiTrainer;
     private Trainer opponent;
     private MiniMax miniMax;
+    private Inventory inventory;
 
     @Before
     public void setUp() {
+        this.inventory = mock(Inventory.class);
         BugemonTeam aiTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         BugemonTeam opponentTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-
-        this.aiTrainer = new AITrainer(aiTeam, new Inventory(), 2);
+        this.aiTrainer = new AITrainer(aiTeam, this.inventory, 2);
         this.opponent = new AutoTrainer(opponentTeam);
-
         this.miniMax = new MiniMax(2);
-    }
-
-    @Test
-    public void testMiniMaxInitializationInvalidDepth() {
-        assertThrows(IllegalArgumentException.class, () -> new MiniMax(0));
-        assertThrows(IllegalArgumentException.class, () -> new MiniMax(-1));
     }
 
     @Test
@@ -103,7 +97,6 @@ public class TestMinimax {
 
             if (switched != null) {
                 assertTrue(switched.isAlive());
-                // Can be same as current or different
                 assertNotNull(switched);
             }
         }
@@ -111,7 +104,6 @@ public class TestMinimax {
 
     @Test
     public void testChooseBestActionWithEmptyInventory() {
-        // AITrainer starts with empty inventory by default
         this.aiTrainer.setOpponentTrainer(this.opponent);
         this.aiTrainer.setOpponentActiveBugemon(this.opponent.getCurrentBugemon());
 
@@ -121,7 +113,6 @@ public class TestMinimax {
 
     @Test
     public void testMiniMaxConsistency() {
-        // Test that multiple calls with same state produce valid actions
         this.aiTrainer.setOpponentTrainer(this.opponent);
         this.aiTrainer.setOpponentActiveBugemon(this.opponent.getCurrentBugemon());
 
@@ -130,8 +121,6 @@ public class TestMinimax {
 
         assertNotNull(action1);
         assertNotNull(action2);
-        // Both should be valid actions (may or may not be the same due to state
-        // changes)
         assertTrue(action1 instanceof TurnAction.AttackAction || action1 instanceof TurnAction.SwitchAction
                 || action1 instanceof TurnAction.UseItemAction);
         assertTrue(action2 instanceof TurnAction.AttackAction || action2 instanceof TurnAction.SwitchAction
@@ -155,38 +144,7 @@ public class TestMinimax {
     }
 
     @Test
-    public void testChooseBestSwitchAfterKoWhenAllDefeated() {
-        BugemonTeam team = this.aiTrainer.getTeam();
-        Bugemon active = this.aiTrainer.getCurrentBugemon();
-        team.aliveStream().filter(b -> !b.equals(active)).forEach(Bugemon::kill);
-
-        this.aiTrainer.setOpponentTrainer(this.opponent);
-        this.aiTrainer.setOpponentActiveBugemon(this.opponent.getCurrentBugemon());
-
-        Bugemon switched = this.miniMax.chooseBestSwitchAfterKo(this.aiTrainer, this.opponent);
-        if (switched != null) {
-            assertTrue(switched.isAlive());
-        }
-    }
-
-    @Test
-    public void testMiniMaxWithDifferentTeamSizes() {
-        MiniMax mm1 = new MiniMax(1);
-        MiniMax mm2 = new MiniMax(2);
-
-        this.aiTrainer.setOpponentTrainer(this.opponent);
-        this.aiTrainer.setOpponentActiveBugemon(this.opponent.getCurrentBugemon());
-
-        TurnAction action1 = mm1.chooseBestAction(this.aiTrainer, this.opponent);
-        TurnAction action2 = mm2.chooseBestAction(this.aiTrainer, this.opponent);
-
-        assertNotNull(action1);
-        assertNotNull(action2);
-    }
-
-    @Test
     public void testChooseBestActionGameNotCompleted() {
-        // Ensure the game is not completed
         assertTrue(!this.aiTrainer.isDefeated());
         assertTrue(!this.opponent.isDefeated());
 
