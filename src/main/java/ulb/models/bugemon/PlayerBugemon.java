@@ -27,4 +27,32 @@ public class PlayerBugemon {
         Bugemon.checkAttacks(currentAttacks);
         this.currentAttacks = Objects.requireNonNull(currentAttacks);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        PlayerBugemon other = (PlayerBugemon) obj;
+        return this.base.equals(other.base) && (this.level == other.level)
+                && this.xp == other.xp
+                && this.bonusHp == other.bonusHp
+                && this.bonusAttack == other.bonusAttack
+                && this.bonusDefense == other.bonusDefense
+                && this.bonusInitiative == other.bonusInitiative
+                && this.currentAttacks.equals(other.currentAttacks);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.base.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s Nv.%d XP.%d", this.base.name(), this.level, this.xp);
+    }
 }

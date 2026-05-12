@@ -56,7 +56,6 @@ public record Bugemon(
 
     @Override
     public boolean equals(Object obj) {
-        // TODO: decide which equals behavior we need: instanceof vs getclass
         if (this == obj) {
             return true;
         }
@@ -64,7 +63,7 @@ public record Bugemon(
             return false;
         }
         Bugemon other = (Bugemon) obj;
-        return this.name.equals(other.name);
+        return this.id.equals(other.id);
     }
 
     @Override
