@@ -25,7 +25,7 @@ public class PlayerBugemon {
         this.bonusInitiative = bonusInitiative;
 
         Bugemon.checkAttacks(currentAttacks);
-        this.currentAttacks = Objects.requireNonNull(currentAttacks);
+        this.currentAttacks = currentAttacks;
     }
 
     public String getName() {
