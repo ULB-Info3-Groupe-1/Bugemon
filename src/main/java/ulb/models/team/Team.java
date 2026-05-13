@@ -18,7 +18,6 @@ import ulb.models.team.exceptions.TeamAlreadyFullException;
  */
 public class Team {
     private final List<Bugemon> members;
-    private String name = Configuration.Game.DEFAULT_TEAM_NAME;
 
     private static final int MAX_SIZE = Configuration.Game.MAX_TEAM_SIZE;
 
@@ -37,16 +36,7 @@ public class Team {
     }
 
     public Team(Team other) {
-        this.name = new String(other.name);
         this.members = new ArrayList<>(other.members);
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int size() {

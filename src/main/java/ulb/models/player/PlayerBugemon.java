@@ -1,7 +1,10 @@
-package ulb.models.bugemon;
+package ulb.models.player;
 
 import java.util.List;
 import java.util.Objects;
+
+import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 
 public class PlayerBugemon {
     private final Bugemon base;
