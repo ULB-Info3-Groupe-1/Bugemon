@@ -14,12 +14,12 @@ import javafx.scene.text.Text;
 import ulb.Configuration;
 import ulb.controllers.ManageTeamController.TeamFormMode;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.views.components.AllBugemonsView;
 import ulb.views.components.BugemonTeamView;
 
 /**
- * View for the team creation screen. Holds a reference to the {@link BugemonTeam} model and reads from it directly in
+ * View for the team creation screen. Holds a reference to the {@link Team} model and reads from it directly in
  * {@link #refresh()}. Dispatches player interactions through a {@link Listener}; holds no reference to any concrete
  * controller class.
  */
@@ -126,7 +126,7 @@ public class ManageTeamView extends View {
 
         void onStartTowerCombat();
 
-        BugemonTeam getWorkingTeam();
+        Team getWorkingTeam();
 
         boolean isWorkingTeamSaved();
 
@@ -148,12 +148,12 @@ public class ManageTeamView extends View {
                 teamName -> this.teamListView.getSelectionModel().select(teamName),
                 () -> this.teamListView.getSelectionModel().clearSelection());
 
-        BugemonTeam team = this.listener.getWorkingTeam();
+        Team team = this.listener.getWorkingTeam();
         this.allBugemonsGridView.showAll(this.listener.getAvailableBugemons(), new HashSet<>(team.getAll()));
         this.refreshTeam(team, this.listener.isWorkingTeamSaved());
     }
 
-    private void refreshTeam(BugemonTeam team, boolean isTeamSaved) {
+    private void refreshTeam(Team team, boolean isTeamSaved) {
         this.bugemonsTeamView.showTeam(team);
         if (team.isEmpty()) {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);

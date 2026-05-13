@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectTarget;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.PlayerRepository;
@@ -47,17 +47,17 @@ public class TeamService {
      * The team that the player is currently modifying. It is used to keep track of the changes made to the team before
      * saving it to the database.
      */
-    private final BugemonTeam workingTeam;
+    private final Team workingTeam;
 
     /**
      * The team that the player is currently using.
      */
-    private BugemonTeam activeTeam;
+    private Team activeTeam;
 
     /**
      * The list of teams that the player has.
      */
-    private List<BugemonTeam> playerTeams;
+    private List<Team> playerTeams;
 
     /**
      * Constructor for the TeamService.
@@ -70,7 +70,7 @@ public class TeamService {
     public TeamService(PlayerRepository playerRepository, TeamRepository teamRepository,
             BugemonRepository bugemonRepository, String playername, SkillService skillService) {
         this.playername = playername;
-        this.workingTeam = new BugemonTeam();
+        this.workingTeam = new Team();
         this.playerRepository = playerRepository;
         this.teamRepository = teamRepository;
         this.bugemonRepository = bugemonRepository;
@@ -95,21 +95,21 @@ public class TeamService {
      * @throws NoActiveTeamException
      *             if the player does not have an active team
      */
-    public BugemonTeam getRequiredActiveTeam() throws NoActiveTeamException {
+    public Team getRequiredActiveTeam() throws NoActiveTeamException {
         this.checkActiveTeamIsPresent();
         return this.activeTeam;
     }
 
     public Optional<String> getActiveTeamName() {
-        return Optional.ofNullable(this.activeTeam).map(BugemonTeam::getName);
+        return Optional.ofNullable(this.activeTeam).map(Team::getName);
     }
 
-    public BugemonTeam getWorkingTeam() {
+    public Team getWorkingTeam() {
         return this.workingTeam;
     }
 
     public List<String> getTeamNames() {
-        return this.playerTeams.stream().map(BugemonTeam::getName).toList();
+        return this.playerTeams.stream().map(Team::getName).toList();
     }
 
     // --- Team Management ---
@@ -122,7 +122,7 @@ public class TeamService {
     public void loadTeamsAndActiveTeam() {
         this.playerTeams.clear();
         this.playerTeams.addAll(this.teamRepository.loadTeams(this.playername));
-        this.teamRepository.loadCurrentTeam(this.playername).ifPresent(t -> this.activeTeam = new BugemonTeam(t));
+        this.teamRepository.loadCurrentTeam(this.playername).ifPresent(t -> this.activeTeam = new Team(t));
     }
 
     /**
@@ -143,9 +143,9 @@ public class TeamService {
      *             if the team does not exist
      */
     public void setActiveTeam(String teamName) throws TeamNotFoundException {
-        BugemonTeam team = this.playerTeams.stream().filter(t -> t.getName().equals(teamName)).findFirst()
+        Team team = this.playerTeams.stream().filter(t -> t.getName().equals(teamName)).findFirst()
                 .orElseThrow(() -> new TeamNotFoundException("Team not found: " + teamName));
-        this.activeTeam = new BugemonTeam(team);
+        this.activeTeam = new Team(team);
         this.teamRepository.setPlayerCurrentTeam(this.playername, teamName);
     }
 
@@ -167,7 +167,7 @@ public class TeamService {
         this.workingTeam.setName(teamName);
         this.teamRepository.createTeam(this.playername, teamName);
         this.persistTeamMembers();
-        this.playerTeams.add(new BugemonTeam(this.workingTeam));
+        this.playerTeams.add(new Team(this.workingTeam));
         // Clear because the working team is saved so by clearing it we can create a new
         // team
         this.workingTeam.clear();
@@ -189,7 +189,7 @@ public class TeamService {
 
         // Update the active team with the working team that has the modifications
         this.workingTeam.setName(this.activeTeam.getName());
-        this.activeTeam = new BugemonTeam(this.workingTeam);
+        this.activeTeam = new Team(this.workingTeam);
 
         List<TeamMemberDTO> members = new ArrayList<>();
         this.workingTeam.forEach(b -> members.add(new TeamMemberDTO(this.playername, this.workingTeam.getName(),
@@ -198,7 +198,7 @@ public class TeamService {
 
         this.teamRepository.modifyTeam(this.playername, this.workingTeam.getName(), members);
         this.playerTeams.removeIf(t -> t.getName().equals(this.workingTeam.getName()));
-        this.playerTeams.add(new BugemonTeam(this.workingTeam));
+        this.playerTeams.add(new Team(this.workingTeam));
     }
 
     /**
@@ -363,7 +363,7 @@ public class TeamService {
     private void updateLocalTeams() throws NoActiveTeamException {
         this.checkActiveTeamIsPresent();
         this.playerTeams.removeIf(t -> t.getName().equals(this.activeTeam.getName()));
-        this.playerTeams.add(new BugemonTeam(this.activeTeam));
+        this.playerTeams.add(new Team(this.activeTeam));
     }
 
     private void checkActiveTeamIsPresent() throws NoActiveTeamException {

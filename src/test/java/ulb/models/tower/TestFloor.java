@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.trainer.ManualTrainer;
@@ -114,7 +114,7 @@ public class TestFloor {
     }
 
     private Floor createFloor() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer playerTrainer = new ManualTrainer(playerTeam, INVENTORY_MOCK);
         return new Floor(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons(), DEFAULT_SKILLS, playerTrainer, 1);
     }

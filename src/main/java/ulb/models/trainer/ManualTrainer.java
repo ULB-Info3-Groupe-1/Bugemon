@@ -8,7 +8,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 
 /**
  * Human-controlled trainer. Before each {@link ulb.models.combat.Combat#turn()}, the controller enqueues exactly one
@@ -26,7 +26,7 @@ public class ManualTrainer extends Trainer {
     private boolean forcedSwitch = false;
     private boolean switchedThisTurn = false;
 
-    public ManualTrainer(BugemonTeam team, Inventory inventory) {
+    public ManualTrainer(Team team, Inventory inventory) {
         super(team);
         this.inventory = inventory;
     }

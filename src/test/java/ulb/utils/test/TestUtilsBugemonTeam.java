@@ -1,13 +1,13 @@
 package ulb.utils.test;
 
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 
 public class TestUtilsBugemonTeam {
     private TestUtilsBugemonTeam() {
     }
 
-    public static BugemonTeam createDefaultBugemonTeam(boolean isDefeated) {
-        BugemonTeam bugemonTeam = new BugemonTeam();
+    public static Team createDefaultBugemonTeam(boolean isDefeated) {
+        Team bugemonTeam = new Team();
         for (int i = 1; i <= 6; i++) {
             bugemonTeam.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
         }

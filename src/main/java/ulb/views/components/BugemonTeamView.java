@@ -6,7 +6,7 @@ import javafx.scene.layout.GridPane;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 
 /** Reusable custom component displaying a Bugemon team in a grid. */
 public class BugemonTeamView extends ComponentView {
@@ -26,7 +26,7 @@ public class BugemonTeamView extends ComponentView {
     }
 
     /** Clears and repopulates the grid with the alive members of the given team. */
-    public void showTeam(BugemonTeam bugemonTeam) {
+    public void showTeam(Team bugemonTeam) {
         this.clearBugemons();
 
         List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();

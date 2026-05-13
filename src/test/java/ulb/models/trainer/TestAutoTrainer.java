@@ -15,14 +15,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.utils.test.TestUtilsBugemonTeam;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestAutoTrainer {
     @Test
     public void testSelectRandomBugemon() {
-        BugemonTeam team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        Team team = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
         AutoTrainer trainer = new AutoTrainer(team);
         TestUtilsBugemons.killBugemon(team, "1");
         trainer.selectRandomBugemon();

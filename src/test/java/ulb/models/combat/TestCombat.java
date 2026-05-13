@@ -15,7 +15,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.Skill;
 import ulb.models.trainer.AutoTrainer;
 import ulb.utils.test.TestUtilsBugemons;
@@ -70,7 +70,7 @@ public class TestCombat {
     }
 
     private AutoTrainer autoOf(Bugemon... bugemons) {
-        BugemonTeam team = new BugemonTeam();
+        Team team = new Team();
         for (Bugemon b : bugemons) {
             team.add(b);
         }

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.repositories.dto.TeamDTO;
@@ -112,8 +112,8 @@ public class TeamRepository extends AbstractRepository {
      * @throws TeamNotFoundException
      *             if the player has no teams
      */
-    public List<BugemonTeam> loadTeams(String playername) {
-        List<BugemonTeam> playerTeams = new ArrayList<>();
+    public List<Team> loadTeams(String playername) {
+        List<Team> playerTeams = new ArrayList<>();
 
         Map<String, PlayerBugemonDTO> bugemonStatsMap = this.bugemonRepository.getPlayerBugemons(playername).stream()
                 .collect(Collectors.toMap(PlayerBugemonDTO::bugemonName, pb -> pb));
@@ -122,7 +122,7 @@ public class TeamRepository extends AbstractRepository {
                 .collect(Collectors.toMap(Bugemon::getName, b -> b));
 
         for (TeamDTO teamDto : this.getPlayerTeams(playername)) {
-            BugemonTeam team = new BugemonTeam();
+            Team team = new Team();
             team.setName(teamDto.teamName());
 
             this.getTeamMembers(playername, teamDto.teamName()).forEach(member -> {
@@ -153,7 +153,7 @@ public class TeamRepository extends AbstractRepository {
      *            (String) the player's name who owns the current team
      * @return (Optional<BugemonTeam>) the current team of the player if it exists, otherwise an empty optional
      */
-    public Optional<BugemonTeam> loadCurrentTeam(String playername) {
+    public Optional<Team> loadCurrentTeam(String playername) {
         LOG.debug("Getting current team for playername: {}", playername);
 
         if (!this.hasActiveTeam(playername)) {
@@ -172,8 +172,8 @@ public class TeamRepository extends AbstractRepository {
         Map<String, Bugemon> defaultBugemonsMap = this.staticDataRepository.getAllDefaultBugemons().stream()
                 .collect(Collectors.toMap(Bugemon::getName, b -> b));
 
-        BugemonTeam currentTeam = executeQuery("GetPlayerCurrentTeamName",
-                rs -> new BugemonTeam(rs.getString(DatabaseColumns.COL_CURRENT_TEAM)), playername).get(0);
+        Team currentTeam = executeQuery("GetPlayerCurrentTeamName",
+                rs -> new Team(rs.getString(DatabaseColumns.COL_CURRENT_TEAM)), playername).get(0);
 
         for (PlayerBugemonDTO pb : teamMembers) {
             Bugemon base = defaultBugemonsMap.get(pb.bugemonName());

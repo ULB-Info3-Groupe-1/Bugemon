@@ -7,7 +7,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 
 public final class TestUtilsBugemons {
     private TestUtilsBugemons() {
@@ -36,8 +36,8 @@ public final class TestUtilsBugemons {
                 .isStarter(false).build();
     }
 
-    public static BugemonTeam createDefaultTeam(int count) {
-        BugemonTeam bugemons = new BugemonTeam();
+    public static Team createDefaultTeam(int count) {
+        Team bugemons = new Team();
 
         for (int i = 1; i <= count; i++) {
             bugemons.add(createDefaultBugemon(String.valueOf(i)));
@@ -45,7 +45,7 @@ public final class TestUtilsBugemons {
         return bugemons;
     }
 
-    public static void killBugemon(BugemonTeam team, String name) {
+    public static void killBugemon(Team team, String name) {
         Bugemon bugemon = team.stream().filter(b -> b.getName().equals(name)).findFirst().get();
 
         bugemon.kill();

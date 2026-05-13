@@ -9,7 +9,7 @@ import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 
 public class AITrainer extends Trainer {
     private Optional<TurnAction> pendingAction = Optional.empty();
@@ -21,7 +21,7 @@ public class AITrainer extends Trainer {
     private Bugemon opponentActiveBugemon;
     private Trainer opponentTrainer;
 
-    public AITrainer(BugemonTeam team, Inventory inventory, int miniMaxDepth) {
+    public AITrainer(Team team, Inventory inventory, int miniMaxDepth) {
         super(team);
         this.inventory = inventory;
         this.miniMax = new MiniMax(miniMaxDepth);

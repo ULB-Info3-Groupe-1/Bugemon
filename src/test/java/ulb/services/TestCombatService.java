@@ -28,7 +28,7 @@ import ulb.models.bugemon.BugemonBuilder;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectStat;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillBuilder;
 import ulb.models.skills.SkillEffect.CritBonusEffect;
@@ -47,10 +47,10 @@ public class TestCombatService {
         Bugemon fastBugemon = new BugemonBuilder().name("2").initiative(1000)
                 .attackList(TestUtilsBugemons.createDefaultAttackList(BugemonType.FLORA)).build();
 
-        BugemonTeam slowTeam = new BugemonTeam();
+        Team slowTeam = new Team();
         slowTeam.add(slowBugemon);
 
-        BugemonTeam fastTeam = new BugemonTeam();
+        Team fastTeam = new Team();
         fastTeam.add(fastBugemon);
 
         Trainer fasterTrainer = new AutoTrainer(fastTeam);
@@ -125,7 +125,7 @@ public class TestCombatService {
         for (int i = 1; i <= 6; i++) {
             bugemons.add(TestUtilsBugemons.createDefaultBugemon(String.valueOf(i)));
         }
-        BugemonTeam teamOfSix = TeamFactory.createRandomTeam(bugemons, 6);
+        Team teamOfSix = TeamFactory.createRandomTeam(bugemons, 6);
         assertEquals(6, teamOfSix.size());
     }
 
@@ -139,7 +139,7 @@ public class TestCombatService {
 
         CombatService combatService = new CombatService();
 
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         int initialAttack = playerTeam.getFirst().getAttack();
         Trainer playerTrainer = new AutoTrainer(playerTeam);
         Trainer opponentTrainer = new AutoTrainer(TestUtilsBugemons.createDefaultTeam(1));

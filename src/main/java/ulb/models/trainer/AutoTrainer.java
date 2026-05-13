@@ -5,7 +5,7 @@ import java.util.Random;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 
 /**
  * AI-controlled trainer that always attacks at random and switches to a random alive team member on KO. Used both as
@@ -17,7 +17,7 @@ import ulb.models.bugemon_team.BugemonTeam;
 public class AutoTrainer extends Trainer {
     private static final Random RAND = new Random();
 
-    public AutoTrainer(BugemonTeam team) {
+    public AutoTrainer(Team team) {
         super(team);
     }
 

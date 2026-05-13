@@ -13,7 +13,7 @@ import org.junit.Test;
 import ulb.controllers.TowerController;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room.RoomType;
 import ulb.models.trainer.ManualTrainer;
@@ -26,7 +26,7 @@ public class TestRooms {
 
     @Test
     public void testCombatRoomCompletionAndType() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
 
         List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
@@ -38,7 +38,7 @@ public class TestRooms {
 
     @Test
     public void testBossCombatRoomType() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
 
         List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
@@ -58,7 +58,7 @@ public class TestRooms {
 
     @Test
     public void testVisitDelegatesToTowerController() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
 
         List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());

@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamMemberDTO;
 
@@ -90,9 +90,9 @@ public class TestPlayerRepository {
     public void shouldCreateAndRetrieveTeams_whenAddingMultipleTeams() throws Exception {
         String playername = "name";
 
-        BugemonTeam team1 = new BugemonTeam("team1");
-        BugemonTeam team2 = new BugemonTeam("team2");
-        List<BugemonTeam> expectedTeams = new ArrayList<>();
+        Team team1 = new Team("team1");
+        Team team2 = new Team("team2");
+        List<Team> expectedTeams = new ArrayList<>();
         expectedTeams.add(team1);
         expectedTeams.add(team2);
 
@@ -101,7 +101,7 @@ public class TestPlayerRepository {
         this.teamRepository.createTeam(playername, "team1");
         this.teamRepository.createTeam(playername, "team2");
 
-        List<BugemonTeam> teams = this.teamRepository.loadTeams(playername);
+        List<Team> teams = this.teamRepository.loadTeams(playername);
 
         assertEquals(expectedTeams, teams);
 
@@ -119,7 +119,7 @@ public class TestPlayerRepository {
 
         this.teamRepository.createTeam(playername, teamName);
         this.teamRepository.deleteTeam(playername, teamName);
-        List<BugemonTeam> teamsAfterDeletion = this.teamRepository.loadTeams(playername);
+        List<Team> teamsAfterDeletion = this.teamRepository.loadTeams(playername);
 
         assertEquals("L'équipe doit avoir été supprimée", 0, teamsAfterDeletion.size());
 
@@ -188,12 +188,12 @@ public class TestPlayerRepository {
         String oldTeamName = "Old_name_team";
         String newTeamName = "New_name_team";
 
-        when(this.teamRepository.loadTeams(playername)).thenReturn(List.of(new BugemonTeam(newTeamName)));
+        when(this.teamRepository.loadTeams(playername)).thenReturn(List.of(new Team(newTeamName)));
 
         this.teamRepository.createTeam(playername, oldTeamName);
         this.teamRepository.renameTeam(playername, oldTeamName, newTeamName);
 
-        List<BugemonTeam> teams = this.teamRepository.loadTeams(playername);
+        List<Team> teams = this.teamRepository.loadTeams(playername);
 
         assertEquals("L'équipe renommée doit être présente", 1, teams.size());
         assertEquals("Le nouveau nom doit être présent", newTeamName, teams.get(0).getName());

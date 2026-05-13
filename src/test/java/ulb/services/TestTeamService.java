@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillBuilder;
 import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
@@ -56,7 +56,7 @@ public class TestTeamService {
     @Test
     public void shouldSetAndGetActiveTeam_whenTeamExists() throws Exception {
         String teamName = "DreamTeam";
-        BugemonTeam team = new BugemonTeam(teamName);
+        Team team = new Team(teamName);
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(team));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
@@ -89,7 +89,7 @@ public class TestTeamService {
 
     @Test
     public void shouldDeleteActiveTeam_whenRequested() throws Exception {
-        BugemonTeam team = new BugemonTeam();
+        Team team = new Team();
         team.setName("ToDelete");
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
@@ -108,7 +108,7 @@ public class TestTeamService {
     public void shouldReturnTrue_whenActiveTeamIsSaved() throws Exception {
         Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
 
-        BugemonTeam team = new BugemonTeam();
+        Team team = new Team();
         team.setName("TeamA");
         team.addOrRemoveBugemon(bugemon);
 
@@ -124,7 +124,7 @@ public class TestTeamService {
     @Test
     public void shouldCorrectlyRenameTeam() throws Exception {
         String oldName = "Old";
-        BugemonTeam team = new BugemonTeam();
+        Team team = new Team();
         team.setName(oldName);
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
@@ -145,7 +145,7 @@ public class TestTeamService {
     @Test
     public void shouldReturnFalse_whenActiveTeamHasUnsavedChanges() throws Exception {
         Bugemon b1 = TestUtilsBugemons.createDefaultBugemon("Pikachu");
-        BugemonTeam teamInDb = new BugemonTeam("TeamA");
+        Team teamInDb = new Team("TeamA");
         teamInDb.add(b1);
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(teamInDb));
 
@@ -194,7 +194,7 @@ public class TestTeamService {
 
         Bugemon damaged = TestUtilsBugemons.createDefaultBugemon("Damaged"); // hp=100, maxHp=100
         damaged.takeDamage(50);
-        BugemonTeam team = new BugemonTeam("Squad");
+        Team team = new Team("Squad");
         team.addOrRemoveBugemon(damaged);
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
 
@@ -218,7 +218,7 @@ public class TestTeamService {
 
         Bugemon damaged = TestUtilsBugemons.createDefaultBugemon("Damaged");
         damaged.takeDamage(40);
-        BugemonTeam team = new BugemonTeam("Squad");
+        Team team = new Team("Squad");
         team.addOrRemoveBugemon(damaged);
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team)));
 
@@ -277,7 +277,7 @@ public class TestTeamService {
     @Test
     public void shouldSyncWorkingTeamWithActiveTeam() throws Exception {
         Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
-        BugemonTeam team = new BugemonTeam("Active");
+        Team team = new Team("Active");
         team.addOrRemoveBugemon(bugemon);
 
         this.teamService.addOrRemoveBugemon(bugemon);
@@ -293,8 +293,8 @@ public class TestTeamService {
 
     @Test
     public void shouldEraseAllBugemonTeamsAndClearActiveTeam_whenclearTeamsAndActiveTeam() throws Exception {
-        BugemonTeam team1 = new BugemonTeam("Team1");
-        BugemonTeam team2 = new BugemonTeam("Team2");
+        Team team1 = new Team("Team1");
+        Team team2 = new Team("Team2");
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(new ArrayList<>(List.of(team1, team2)));
         this.teamService = new TeamService(this.playerRepository, this.teamRepository, this.bugemonRepository,
@@ -311,8 +311,8 @@ public class TestTeamService {
 
     @Test
     public void shouldLoadTeamsAndActiveTeam_whenLoadTeamsAndActiveTeam() {
-        BugemonTeam team1 = new BugemonTeam("Team1");
-        BugemonTeam team2 = new BugemonTeam("Team2");
+        Team team1 = new Team("Team1");
+        Team team2 = new Team("Team2");
 
         when(this.teamRepository.loadTeams(PLAYER_NAME)).thenReturn(List.of(team1, team2));
         when(this.teamRepository.loadCurrentTeam(PLAYER_NAME)).thenReturn(Optional.ofNullable(team1));

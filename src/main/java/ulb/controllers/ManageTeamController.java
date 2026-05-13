@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
@@ -16,7 +16,7 @@ import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to player
+ * Controller responsible for the team creation screen. Mutates the {@link Team} model in response to player
  * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
  * controller never pushes data into the view.
  */
@@ -56,7 +56,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public BugemonTeam getWorkingTeam() {
+    public Team getWorkingTeam() {
         return this.teamService.getWorkingTeam();
     }
 

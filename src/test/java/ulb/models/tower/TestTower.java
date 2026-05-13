@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.Skill;
 import ulb.services.BugemonService;
 import ulb.utils.test.TestUtilsBugemons;
@@ -36,7 +36,7 @@ public class TestTower {
 
     @Test
     public void testTowerInitialization() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
 
         // No tower structure with floor NO2, NO3, NO4, NO5, NO6, NO7, NO8
         Tower noTower = new Tower(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons(), DEFAULT_SKILLS, playerTeam,
@@ -49,7 +49,7 @@ public class TestTower {
 
     @Test
     public void testFloorCompletion() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Tower noTower = new Tower(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons(), DEFAULT_SKILLS, playerTeam,
                 INVENTORY_MOCK, currentFloor);
         assertFalse(noTower.isFinished());
@@ -57,7 +57,7 @@ public class TestTower {
 
     @Test
     public void testGoToNextFloorThrowsWhenCurrentFloorIncomplete() {
-        BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
+        Team playerTeam = TestUtilsBugemons.createDefaultTeam(3);
         Tower noTower = new Tower(BUGEMON_SERVICE_MOCK.getAllDefaultBugemons(), DEFAULT_SKILLS, playerTeam,
                 INVENTORY_MOCK, currentFloor);
         assertThrows(IllegalStateException.class, noTower::goToNextFloor);

@@ -8,10 +8,10 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 
 /**
- * Abstract base for any combat participant. Holds the {@link BugemonTeam} and tracks {@code currentBugemon}. Subclasses
+ * Abstract base for any combat participant. Holds the {@link Team} and tracks {@code currentBugemon}. Subclasses
  * implement {@link #getAction()} (decision strategy) and {@link #reactToKo()} (switch logic after a KO). All resolution
  * lives in {@link ulb.models.combat.Combat}.
  *
@@ -19,7 +19,7 @@ import ulb.models.bugemon_team.BugemonTeam;
  * @see ManualTrainer
  */
 public abstract class Trainer {
-    protected final BugemonTeam team;
+    protected final Team team;
     protected Bugemon currentBugemon;
     Set<Bugemon> participatedBugemons = new HashSet<>();
 
@@ -29,7 +29,7 @@ public abstract class Trainer {
      * @param team
      *            must not be {@code null} and must contain at least one Bugemon
      */
-    protected Trainer(BugemonTeam team) {
+    protected Trainer(Team team) {
         this.team = team;
         this.currentBugemon = team.getFirst();
     }
@@ -96,7 +96,7 @@ public abstract class Trainer {
         return this.currentBugemon.getType();
     }
 
-    public BugemonTeam getTeam() {
+    public Team getTeam() {
         return this.team;
     }
 

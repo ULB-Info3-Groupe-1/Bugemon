@@ -7,7 +7,7 @@ import java.util.Set;
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomState;
@@ -21,7 +21,7 @@ public class Tower {
     private final Inventory inventory;
     private Floor currentFloor;
 
-    public Tower(List<Bugemon> allBugemons, List<Skill> skills, BugemonTeam playerTeam, Inventory inventory,
+    public Tower(List<Bugemon> allBugemons, List<Skill> skills, Team playerTeam, Inventory inventory,
             int currentFloorLevel) {
         this.inventory = inventory;
         Trainer playerTrainer = new ManualTrainer(playerTeam, this.inventory);

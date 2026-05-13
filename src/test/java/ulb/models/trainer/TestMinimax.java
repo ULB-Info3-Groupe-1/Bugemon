@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.models.bugemon_team.Team;
 import ulb.utils.test.TestUtilsBugemonTeam;
 
 public class TestMinimax {
@@ -20,8 +20,8 @@ public class TestMinimax {
 
     @Before
     public void setUp() {
-        BugemonTeam aiTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
-        BugemonTeam opponentTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        Team aiTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
+        Team opponentTeam = TestUtilsBugemonTeam.createDefaultBugemonTeam(false);
 
         this.aiTrainer = new AITrainer(aiTeam, new Inventory(), 2);
         this.opponent = new AutoTrainer(opponentTeam);
@@ -77,7 +77,7 @@ public class TestMinimax {
         this.aiTrainer.setOpponentTrainer(this.opponent);
         this.aiTrainer.setOpponentActiveBugemon(this.opponent.getCurrentBugemon());
 
-        BugemonTeam team = this.aiTrainer.getTeam();
+        Team team = this.aiTrainer.getTeam();
         int aliveBefore = (int) team.aliveStream().count();
 
         if (aliveBefore > 1) {
@@ -95,7 +95,7 @@ public class TestMinimax {
         this.aiTrainer.setOpponentTrainer(this.opponent);
         this.aiTrainer.setOpponentActiveBugemon(this.opponent.getCurrentBugemon());
 
-        BugemonTeam team = this.aiTrainer.getTeam();
+        Team team = this.aiTrainer.getTeam();
         int aliveCount = (int) team.aliveStream().count();
 
         if (aliveCount >= 2) {
@@ -156,7 +156,7 @@ public class TestMinimax {
 
     @Test
     public void testChooseBestSwitchAfterKoWhenAllDefeated() {
-        BugemonTeam team = this.aiTrainer.getTeam();
+        Team team = this.aiTrainer.getTeam();
         Bugemon active = this.aiTrainer.getCurrentBugemon();
         team.aliveStream().filter(b -> !b.equals(active)).forEach(Bugemon::kill);
 
