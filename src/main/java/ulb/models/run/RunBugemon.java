@@ -7,6 +7,13 @@ public class RunBugemon {
     private final PlayerBugemon playerBugemon;
     private int currentHp;
 
+    /**
+     * Creates a fresh RunBugemon from a PlayerBugemon (hp full).
+     */
+    public RunBugemon(PlayerBugemon playerBugemon) {
+        this(playerBugemon, playerBugemon.getMaxHp());
+    }
+
     public RunBugemon(PlayerBugemon playerBugemon, int currentHp) {
         this.playerBugemon = playerBugemon;
 
