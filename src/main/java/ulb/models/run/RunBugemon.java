@@ -1,7 +1,7 @@
 package ulb.models.run;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.PlayerBugemon;
+import ulb.models.player.PlayerBugemon;
 
 public class RunBugemon {
     private final PlayerBugemon playerBugemon;
