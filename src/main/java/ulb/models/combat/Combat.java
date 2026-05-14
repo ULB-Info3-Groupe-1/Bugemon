@@ -1,5 +1,9 @@
 package ulb.models.combat;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,5 +44,21 @@ public class Combat {
         };
 
         // TODO: send the callbacks
+    }
+
+    public List<TurnAction> resolveTurn(TurnAction playerAction, TurnAction opponentAction) {
+        List<TurnStep> steps = new ArrayList<>();
+
+        
+    }
+
+    private List<TurnAction> computeActionOrder(TurnAction playerAction, TurnAction opponentAction) {
+        List<TurnAction> actions = new ArrayList<>();
+        actions.add(playerAction);
+        actions.add(opponentAction);
+
+        Collections.sort(actions);
+
+        // TODO: edge cases like two attacks -> use initiative
     }
 }
