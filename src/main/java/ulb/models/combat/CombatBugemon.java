@@ -66,10 +66,7 @@ public class CombatBugemon {
         return this.activeEffects.stream().filter(e -> e.getStat() == stat).mapToInt(StatusEffect::getModifier).sum();
     }
 
-    /**
-     * NOTE: returns expired effects so that the view can display them.
-     */
-    public List<StatusEffect> tickEffects() {
+    public void tickEffects() {
         List<StatusEffect> expired = new ArrayList<>();
         this.activeEffects.forEach(effect -> {
             effect.tick();
@@ -79,7 +76,6 @@ public class CombatBugemon {
         });
 
         this.activeEffects.removeAll(expired);
-        return expired;
     }
 
     public void clearAllEffects() {
