@@ -41,6 +41,10 @@ public class CombatTeam {
         return this.members.size();
     }
 
+    public boolean isDefeated() {
+        return this.members.stream().allMatch(CombatBugemon::isKo);
+    }
+
     public void syncToRunTeam() {
         this.members.forEach(CombatBugemon::syncToRunBugemon);
     }

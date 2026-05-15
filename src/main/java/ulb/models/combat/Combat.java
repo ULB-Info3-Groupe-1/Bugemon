@@ -8,12 +8,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.models.trainer.TurnAction;
+import ulb.models.trainer.TurnAction.AttackAction;
+import ulb.models.trainer.TurnAction.ForfeitAction;
+import ulb.models.trainer.TurnAction.ItemAction;
+import ulb.models.trainer.TurnAction.SwitchAction;
+import ulb.models.trainer.TurnActionVisitor;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
 
     private final CombatTeam playerTeam;
     private final CombatTeam opponentTeam;
+
+    private CombatResult result;
+    private boolean finished;
 
     public Combat(CombatTeam playerTeam, CombatTeam opponentTeam) {
         this.playerTeam = playerTeam;
@@ -47,12 +55,29 @@ public class Combat {
         // TODO: send the callbacks
     }
 
-    public List<TurnAction> resolveTurn(TurnAction playerAction, TurnAction opponentAction) {
+    public List<TurnStep> resolveTurn(TurnAction playerAction, TurnAction opponentAction) {
         List<TurnStep> steps = new ArrayList<>();
 
         List<TurnAction> actions = this.computeActionOrder(playerAction, opponentAction);
 
-        // TODO: execute each action
+        // use == to avoid edge case in which both player and opponent choose the same
+        // action.
+        boolean firstIsPlayer = actions.get(0) == playerAction;
+
+        // retrieve the bugemon corresponding to the second action
+        // to later check if it died from the first action.
+        CombatTeam secondTeam = firstIsPlayer ? this.opponentTeam : this.playerTeam;
+        CombatBugemon secondActorBefore = secondTeam.getActive();
+
+        steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
+
+        if (this.checkCombatEnd(steps)) {
+            return steps;
+        }
+
+        // TODO: handle bugemon corresponding to second action KO
+
+        // TODO: execute second action (if needed)
 
         // TODO: return the list of corresponding TurnSteps
     }
@@ -62,7 +87,7 @@ public class Combat {
         CombatTeam opposingTeam = isPlayer ? this.opponentTeam : this.playerTeam;
         CombatBugemon actor = actingTeam.getActive();
 
-        if (actor.isKo()) { 
+        if (actor.isKo()) {
             return List.of();
         }
 
@@ -95,12 +120,27 @@ public class Combat {
             return (playerInitiative >= opponentInitiative)
                     ? List.of(playerAction, opponentAction)
                     : List.of(opponentAction, playerAction);
-        }  else /* order by phases priority */ {
+        } else /* order by phases priority */ {
             List<TurnAction> actions = new ArrayList<>();
             actions.add(playerAction);
             actions.add(opponentAction);
             Collections.sort(actions);
             return actions;
         }
+    }
+
+    private boolean checkCombatEnd(List<TurnStep> actions) {
+        if (this.playerTeam.isDefeated()) {
+            this.result = CombatResult.DEFEAT;
+            this.finished = true;
+            return true;
+        }
+        if (this.opponentTeam.isDefeated()) {
+            this.result = CombatResult.VICTORY;
+            this.finished = true;
+            return true;
+        }
+
+        return false;
     }
 }
