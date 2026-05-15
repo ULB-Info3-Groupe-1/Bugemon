@@ -28,7 +28,7 @@ import ulb.views.combat.CombatView;
  * Abstract base controller for all combat screens. Manages the step-by-step iteration of a {@link TurnResult}: each
  * call to {@link #advanceStep()} resolves the current step (KO reactions, end-of-combat detection) then delegates to
  * {@link #showNextStep(TurnStep step, Runnable viewRefresh)} for the next animation and dialog. Subclasses implement
- * {@link #onStepsExhausted()} (what to do when a turn is fully displayed) and {@link #onCombatEnded(Trainer)}
+ * {@link #onStepsExhausted()} (what to do when a turn is fully displayed) and {@link #onCombatFinished(Trainer)}
  * (navigation on combat end).
  *
  * @param <V>
@@ -106,7 +106,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         Runnable animationCallback = switch (step) {
 
             case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
-                this.processEndCombat(trainerKo, "Combat ended");
+                this.processEndCombat(trainerKo, "Combat finished");
                 yield () -> {
                     if (trainerKo == this.playerTrainer) {
                         this.view.playDeathAnimationForTrainer(() -> {
@@ -119,7 +119,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
             }
 
             case TurnStep.ForfeitStep(Trainer trainer) -> {
-                this.processEndCombat(trainer, "Combat ended by forfeit");
+                this.processEndCombat(trainer, "Combat finished by forfeit");
                 yield () -> {
                 };
             }
@@ -188,7 +188,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
      * @param winner
      *            the trainer who won the combat.
      */
-    protected void onCombatEnded(Trainer winner) {
+    protected void onCombatFinished(Trainer winner) {
         boolean won = winner == this.playerTrainer;
         if (won) {
             CombatContext ctx = new CombatContext(winner, this.getOpponentOf(winner));
@@ -212,7 +212,7 @@ public abstract class CombatController<V extends CombatView> extends Controller<
         if (this.pendingWinner != null) {
             Trainer winner = this.pendingWinner;
             this.pendingWinner = null;
-            this.onCombatEnded(winner);
+            this.onCombatFinished(winner);
             return;
         }
         this.advanceStep();

@@ -188,16 +188,16 @@ public class TestCombat {
         Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         TurnResult lastResult = null;
-        boolean ended = false;
+        boolean finished = false;
         int maxTurns = 1000;
 
-        while (!ended && maxTurns-- > 0) {
+        while (!finished && maxTurns-- > 0) {
             lastResult = combat.turn();
             processKoReactions(lastResult);
-            ended = hasTrainerKoStep(lastResult);
+            finished = hasTrainerKoStep(lastResult);
         }
 
-        assertTrue("Combat should end within 1000 turns", ended);
+        assertTrue("Combat should end within 1000 turns", finished);
         assertTrue(t1.isDefeated() || t2.isDefeated());
     }
 
@@ -208,16 +208,16 @@ public class TestCombat {
         Combat combat = new Combat(t1, t2, DEFAULT_SKILLS);
 
         TurnResult lastResult = null;
-        boolean ended = false;
+        boolean finished = false;
         int maxTurns = 1000;
 
-        while (!ended && maxTurns-- > 0) {
+        while (!finished && maxTurns-- > 0) {
             lastResult = combat.turn();
             processKoReactions(lastResult);
-            ended = hasTrainerKoStep(lastResult);
+            finished = hasTrainerKoStep(lastResult);
         }
 
-        assertTrue("Combat should end within 1000 turns", ended);
+        assertTrue("Combat should end within 1000 turns", finished);
 
         // The TrainerKoStep tells us who lost; the other is the winner
         final TurnResult finalResult = lastResult;
