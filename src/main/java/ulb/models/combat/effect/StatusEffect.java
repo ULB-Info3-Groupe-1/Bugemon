@@ -1,8 +1,8 @@
 package ulb.models.combat.effect;
 
-import ulb.models.bugemon.EffectDuration;
-import ulb.models.bugemon.components.modifier.Ticker;
-import ulb.models.bugemon.effect.EffectStat;
+import ulb.models.effect.EffectDuration;
+import ulb.models.effect.EffectStat;
+import ulb.models.effect.Ticker;
 
 public class StatusEffect {
     private final EffectStat stat;

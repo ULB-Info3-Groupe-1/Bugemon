@@ -1,6 +1,4 @@
-package ulb.models.combat;
-
-import ulb.models.trainer.TurnAction;
+package ulb.models.combat.turn;
 
 @FunctionalInterface
 public interface ActionCallback {

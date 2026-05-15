@@ -1,4 +1,4 @@
-package ulb.models.combat;
+package ulb.models.combat.turn;
 
 import java.util.List;
 

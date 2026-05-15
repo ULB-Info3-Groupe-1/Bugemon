@@ -1,4 +1,4 @@
-package ulb.models.bugemon;
+package ulb.models.type;
 
 public enum StatType {
     HP,

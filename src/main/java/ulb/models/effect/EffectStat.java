@@ -1,4 +1,4 @@
-package ulb.models.bugemon.effect;
+package ulb.models.effect;
 
 import com.google.gson.annotations.SerializedName;
 

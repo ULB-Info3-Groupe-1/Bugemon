@@ -1,11 +1,9 @@
-package ulb.models.trainer;
+package ulb.models.combat.turn;
 
 import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.CombatBugemon;
-import ulb.models.combat.TurnPhase;
-import ulb.models.combat.TurnStep;
 
 public sealed interface TurnAction extends Comparable<TurnAction> {
 

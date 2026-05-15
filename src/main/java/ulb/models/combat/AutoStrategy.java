@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Random;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.trainer.TurnAction;
+import ulb.models.combat.turn.ActionCallback;
+import ulb.models.combat.turn.TurnAction;
+import ulb.models.combat.utils.CombatContext;
 
 public class AutoStrategy implements CombatStrategy {
     private final Random random;

@@ -1,4 +1,4 @@
-package ulb.models.bugemon.components.modifier;
+package ulb.models.effect;
 
 public class Ticker {
     private int remainingTicks;
@@ -7,15 +7,15 @@ public class Ticker {
      * Constructs a ticker starting at {@code numTicks}.
      *
      * @param numTicks
-     *            number of ticks before expiration
+     *                 number of ticks before expiration
      */
     public Ticker(int numTicks) {
-        this.remainingTicks = numTicks;
+        this.remainingTicks = Math.max(0, numTicks);
     }
 
     /** Decrements the remaining ticks down to zero. */
     public void tick() {
-        this.remainingTicks = Math.min(0, this.remainingTicks - 1);
+        this.remainingTicks = Math.max(0, this.remainingTicks - 1);
     }
 
     /** Returns true once the remaining ticks reach zero. */

@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.combat.effect.StatusEffect;
+import ulb.models.effect.EffectStat;
 import ulb.models.run.RunBugemon;
 
 public class CombatBugemon {

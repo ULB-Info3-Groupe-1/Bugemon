@@ -1,4 +1,4 @@
-package ulb.models.bugemon;
+package ulb.models.item;
 
 import java.util.HashMap;
 import java.util.Map;

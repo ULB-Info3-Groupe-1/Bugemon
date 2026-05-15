@@ -1,4 +1,4 @@
-package ulb.models.bugemon.effect;
+package ulb.models.effect;
 
 public abstract class Effect {
     private final EffectTarget target;

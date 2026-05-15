@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import ulb.Configuration;
 import ulb.models.bugemon.exceptions.InvalidAttackCountException;
+import ulb.models.type.BugemonType;
 
 /**
  * Represents a Bugemon.
@@ -55,7 +56,8 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
         }
         Bugemon other = (Bugemon) obj;
         return this.id.equals(other.id);
-        // NOTE: no need to check equality for other member as id is supposed to be unique
+        // NOTE: no need to check equality for other member as id is supposed to be
+        // unique
     }
 
     @Override

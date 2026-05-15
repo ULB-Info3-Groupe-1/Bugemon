@@ -1,4 +1,4 @@
-package ulb.models.bugemon.effect;
+package ulb.models.effect;
 
 public enum EffectDuration {
     ONE_TURN("1_tour"),
@@ -17,7 +17,7 @@ public enum EffectDuration {
 
     /**
      * @throws IllegalArgumentException
-     *             if no value matches the label.
+     *                                  if no value matches the label.
      */
     public static EffectDuration fromLabel(String label) {
         for (EffectDuration duration : EffectDuration.values()) {

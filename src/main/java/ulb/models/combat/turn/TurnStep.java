@@ -1,9 +1,10 @@
-package ulb.models.combat;
+package ulb.models.combat.turn;
 
 import java.util.List;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.effect.Effect;
+import ulb.models.combat.CombatBugemon;
+import ulb.models.effect.Effect;
 
 public sealed interface TurnStep {
 

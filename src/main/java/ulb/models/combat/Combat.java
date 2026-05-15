@@ -8,16 +8,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.combat.TurnStep.AttackStep;
-import ulb.models.combat.TurnStep.ItemStep;
-import ulb.models.combat.TurnStep.KoStep;
-import ulb.models.combat.TurnStep.SwitchStep;
-import ulb.models.trainer.TurnAction;
-import ulb.models.trainer.TurnAction.AttackAction;
-import ulb.models.trainer.TurnAction.ForfeitAction;
-import ulb.models.trainer.TurnAction.ItemAction;
-import ulb.models.trainer.TurnAction.SwitchAction;
-import ulb.models.trainer.TurnActionVisitor;
+import ulb.models.combat.turn.ActionCallback;
+import ulb.models.combat.turn.TurnAction;
+import ulb.models.combat.turn.TurnActionVisitor;
+import ulb.models.combat.turn.TurnActionsReadyCallback;
+import ulb.models.combat.turn.TurnPhase;
+import ulb.models.combat.turn.TurnResolvedCallback;
+import ulb.models.combat.turn.TurnStep;
+import ulb.models.combat.turn.TurnAction.AttackAction;
+import ulb.models.combat.turn.TurnAction.ForfeitAction;
+import ulb.models.combat.turn.TurnAction.ItemAction;
+import ulb.models.combat.turn.TurnAction.SwitchAction;
+import ulb.models.combat.turn.TurnStep.AttackStep;
+import ulb.models.combat.turn.TurnStep.ItemStep;
+import ulb.models.combat.turn.TurnStep.KoStep;
+import ulb.models.combat.turn.TurnStep.SwitchStep;
+import ulb.models.combat.utils.CombatContext;
+import ulb.models.combat.utils.CombatResult;
+import ulb.models.combat.utils.DamageCalculator;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
@@ -89,7 +97,7 @@ public class Combat {
     public void requestForcedSwitch(CombatTeam team, ActionCallback callback) {
         boolean isPlayer = team == this.playerTeam;
 
-        CombatStrategy strategy = isPlayer ? this.playerStrategy : this.playerStrategy;
+        CombatStrategy strategy = isPlayer ? this.playerStrategy : this.opponentStrategy;
 
         CombatContext ctx = isPlayer ? this.makePlayerContext() : this.makeOpponentContext();
 

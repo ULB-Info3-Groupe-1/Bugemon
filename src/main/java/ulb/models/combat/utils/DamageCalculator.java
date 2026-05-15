@@ -1,7 +1,8 @@
-package ulb.models.combat;
+package ulb.models.combat.utils;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.CombatBugemon;
 
 public class DamageCalculator {
     AttackFactorFormula attackFactorFormula;

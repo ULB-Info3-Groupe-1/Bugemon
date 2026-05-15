@@ -1,4 +1,4 @@
-package ulb.models.bugemon.effect;
+package ulb.models.effect;
 
 public class HealEffect extends Effect {
     private final int amount;
