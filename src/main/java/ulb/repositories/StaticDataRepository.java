@@ -26,7 +26,9 @@ import ulb.models.bugemon.effect.Effect;
 import ulb.models.bugemon.effect.EffectDuration;
 import ulb.models.bugemon.effect.EffectHeal;
 import ulb.models.bugemon.effect.EffectResetMalus;
+import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.bugemon.effect.EffectStatModifier;
+import ulb.models.bugemon.effect.EffectTarget;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.utils.DatabaseHelper;
@@ -34,6 +36,19 @@ import ulb.utils.Parser;
 
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 10;
+
+    private static final int DB_DURATION_PERMANENT = 0;
+    private static final int DB_DURATION_ONE_TURN = 1;
+
+    private static final int PARAM_EFFECT_TYPE = 2;
+    private static final int PARAM_TARGET = 3;
+    private static final int PARAM_STAT = 4;
+    private static final int PARAM_MODIFIER = 5;
+    private static final int PARAM_DURATION = 6;
+    private static final int PARAM_AMOUNT = 7;
+
+    private static final String QUERY_SAVE_ITEM_EFFECT = "SaveItemEffect";
+
     private Inventory defaultInventory;
     private SkillTree skillTree;
     private Map<String, Attack> allAttacks;
@@ -108,13 +123,14 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void saveItemEffect(String itemId, Effect effect) {
         switch (effect) {
-            case EffectHeal heal -> executeUpdate("SaveItemEffect", itemId, "EffectHeal", heal.target().name(),
-                    heal.amount(), null, null, null);
-            case EffectStatModifier modifier -> executeUpdate("SaveItemEffect", itemId, "EffectStatModifier",
-                    modifier.target().name(), null, modifier.stat() != null ? modifier.stat().name() : null,
-                    modifier.modifier(), modifier.duration() == EffectDuration.PERMANENT ? 0 : 1);
-            case EffectResetMalus resetMalus -> executeUpdate("SaveItemEffect", itemId, "EffectResetMalus",
-                    resetMalus.target().name(), null, null, null, null);
+            case EffectHeal(EffectTarget target, int amount) ->
+                executeUpdate(QUERY_SAVE_ITEM_EFFECT, itemId, "EffectHeal", target.name(), amount, null, null, null);
+            case EffectStatModifier(EffectTarget target, EffectStat stat, int mod, EffectDuration duration) ->
+                executeUpdate(QUERY_SAVE_ITEM_EFFECT, itemId, "EffectStatModifier", target.name(), null,
+                        stat != null ? stat.name() : null, mod,
+                        duration == EffectDuration.PERMANENT ? DB_DURATION_PERMANENT : DB_DURATION_ONE_TURN);
+            case EffectResetMalus(EffectTarget target) -> executeUpdate(QUERY_SAVE_ITEM_EFFECT, itemId,
+                    "EffectResetMalus", target.name(), null, null, null, null);
             default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
         }
     }
@@ -155,30 +171,30 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void setStatModifierParameters(PreparedStatement psEffect, EffectStatModifier modifier)
             throws SQLException {
-        psEffect.setString(2, modifier.getClass().getSimpleName());
-        psEffect.setString(3, modifier.target().name());
-        psEffect.setObject(4, modifier.stat() != null ? modifier.stat().name() : null, Types.VARCHAR);
-        psEffect.setInt(5, modifier.modifier());
-        psEffect.setString(6, modifier.duration().toString());
-        psEffect.setNull(7, Types.INTEGER);
+        psEffect.setString(PARAM_EFFECT_TYPE, modifier.getClass().getSimpleName());
+        psEffect.setString(PARAM_TARGET, modifier.target().name());
+        psEffect.setObject(PARAM_STAT, modifier.stat() != null ? modifier.stat().name() : null, Types.VARCHAR);
+        psEffect.setInt(PARAM_MODIFIER, modifier.modifier());
+        psEffect.setString(PARAM_DURATION, modifier.duration().toString());
+        psEffect.setNull(PARAM_AMOUNT, Types.INTEGER);
     }
 
     private void setHealParameters(PreparedStatement psEffect, EffectHeal heal) throws SQLException {
-        psEffect.setString(2, heal.getClass().getSimpleName());
-        psEffect.setString(3, heal.target().name());
-        psEffect.setNull(4, Types.VARCHAR);
-        psEffect.setNull(5, Types.INTEGER);
-        psEffect.setNull(6, Types.VARCHAR);
-        psEffect.setInt(7, heal.amount());
+        psEffect.setString(PARAM_EFFECT_TYPE, heal.getClass().getSimpleName());
+        psEffect.setString(PARAM_TARGET, heal.target().name());
+        psEffect.setNull(PARAM_STAT, Types.VARCHAR);
+        psEffect.setNull(PARAM_MODIFIER, Types.INTEGER);
+        psEffect.setNull(PARAM_DURATION, Types.VARCHAR);
+        psEffect.setInt(PARAM_AMOUNT, heal.amount());
     }
 
     private void setResetMalusParameters(PreparedStatement psEffect, EffectResetMalus resetMalus) throws SQLException {
-        psEffect.setString(2, resetMalus.getClass().getSimpleName());
-        psEffect.setString(3, resetMalus.target().name());
-        psEffect.setNull(4, Types.VARCHAR);
-        psEffect.setNull(5, Types.INTEGER);
-        psEffect.setNull(6, Types.VARCHAR);
-        psEffect.setNull(7, Types.INTEGER);
+        psEffect.setString(PARAM_EFFECT_TYPE, resetMalus.getClass().getSimpleName());
+        psEffect.setString(PARAM_TARGET, resetMalus.target().name());
+        psEffect.setNull(PARAM_STAT, Types.VARCHAR);
+        psEffect.setNull(PARAM_MODIFIER, Types.INTEGER);
+        psEffect.setNull(PARAM_DURATION, Types.VARCHAR);
+        psEffect.setNull(PARAM_AMOUNT, Types.INTEGER);
     }
 
     // --- UTILS FOR CLASS USING THIS REPO --

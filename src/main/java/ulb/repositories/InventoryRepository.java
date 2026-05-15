@@ -18,6 +18,9 @@ import ulb.models.bugemon.effect.EffectTarget;
 
 public class InventoryRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(InventoryRepository.class);
+
+    private static final int DB_DURATION_PERMANENT = 0;
+
     private final StaticDataRepository staticDataRepository;
 
     public InventoryRepository(DatabaseConnection dbConnection, StaticDataRepository staticDataRepository,
@@ -50,7 +53,8 @@ public class InventoryRepository extends AbstractRepository {
             case "EffectStatModifier" ->
                 new EffectStatModifier(target, EffectStat.valueOf(rs.getString(DatabaseColumns.COL_EFFECT_STAT)),
                         rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
-                        rs.getInt(DatabaseColumns.COL_EFFECT_DURATION) == 0 ? EffectDuration.PERMANENT
+                        rs.getInt(DatabaseColumns.COL_EFFECT_DURATION) == DB_DURATION_PERMANENT
+                                ? EffectDuration.PERMANENT
                                 : EffectDuration.ONE_TURN);
             case "EffectResetMalus" -> new EffectResetMalus(target);
             default -> throw new IllegalStateException("Unknown item effect type: " + effectType);
