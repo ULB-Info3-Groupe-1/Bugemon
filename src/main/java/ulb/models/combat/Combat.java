@@ -133,8 +133,17 @@ public class Combat {
     private void handleKo(List<TurnStep> turnSteps, TurnResolvedCallback callback, boolean isPlayer) {
         CombatTeam koTeam = isPlayer ? this.playerTeam : this.opponentTeam;
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleSecondActorKo'");
+        this.requestForcedSwitch(koTeam,
+                switchAction -> {
+                    this.applyForcedSwitch(koTeam, switchAction, turnSteps);
+                    callback.onTurnResolved(turnSteps);
+                }
+        );
+    }
+
+    private void applyForcedSwitch(CombatTeam team, TurnAction action, List<TurnStep> turnSteps) {
+        boolean isPlayer = this.playerTeam == team;
+        turnSteps.addAll(this.resolveAction(action, isPlayer));
     }
 
     private List<TurnStep> resolveAction(TurnAction action, boolean isPlayer) {
