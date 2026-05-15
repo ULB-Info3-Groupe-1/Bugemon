@@ -1,5 +1,9 @@
 package ulb.models.run;
 
+import java.util.Collections;
+import java.util.List;
+
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
 
@@ -55,6 +59,10 @@ public class RunBugemon {
 
     public int getInitiative() {
         return this.playerBugemon.getInitiative();
+    }
+
+    public List<Attack> getAttacks() {
+        return Collections.unmodifiableList(this.playerBugemon.getAttacks());
     }
 
     @Override

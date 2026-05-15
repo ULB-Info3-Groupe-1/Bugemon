@@ -1,8 +1,10 @@
 package ulb.models.combat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.effect.EffectStat;
 import ulb.models.combat.effect.StatusEffect;
 import ulb.models.run.RunBugemon;
@@ -60,6 +62,10 @@ public class CombatBugemon {
 
     public int getEffectiveInitiative() {
         return this.runBugemon.getInitiative() + this.getEffectModifierSum(EffectStat.INITIATIVE);
+    }
+
+    public List<Attack> getAttacks() {
+        return Collections.unmodifiableList(this.runBugemon.getAttacks());
     }
 
     private int getEffectModifierSum(EffectStat stat) {

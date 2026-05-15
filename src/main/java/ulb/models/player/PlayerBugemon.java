@@ -1,5 +1,6 @@
 package ulb.models.player;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,6 +50,10 @@ public class PlayerBugemon {
 
     public int getInitiative() {
         return this.base.initiative() + this.bonusInitiative;
+    }
+
+    public List<Attack> getAttacks() {
+        return Collections.unmodifiableList(this.currentAttacks);
     }
 
     @Override
