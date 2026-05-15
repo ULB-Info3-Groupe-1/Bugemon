@@ -58,7 +58,7 @@ public class StaticDataRepository extends AbstractRepository {
                 .findFirst().orElse(0);
 
         if (tableCount < CRITICAL_TABLES_COUNT) {
-            executeUpdate("CreateSchema");
+            executeUpdate("CreateTables");
             this.addDefaultGameData(parser);
             return;
         }
