@@ -13,14 +13,15 @@ public class DamageCalculator {
             CombatBugemon attacker,
             CombatBugemon defender,
             Attack attack) {
-        double baseDamage; // TODO: retrieve
+
+        double power = (double) attack.power();
 
         double attackFactor = this.attackFactorFormula.evaluate(attacker.getEffectiveAttack());
         double reductionFactor = this.reductionFactorFormula.evaluate(defender.getEffectiveDefense());
 
-        // TODO: impl
+        double totalDamage = power * attackFactor * reductionFactor;
 
-        return 0;
+        return (int) Math.ceil(totalDamage);
     }
 
     @FunctionalInterface
