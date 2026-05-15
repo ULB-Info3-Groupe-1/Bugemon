@@ -3,8 +3,6 @@ package ulb.models.bugemon;
 import java.util.List;
 import java.util.Objects;
 
-import ulb.models.bugemon.exceptions.InvalidAttackCountException;
-
 /**
  * Represents a Bugemon.
  */
@@ -26,6 +24,7 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
         attacks = List.copyOf(attacks);
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public Bugemon(String id, String name, int hp, int attack, int defense, int initiative, BugemonType type,
             List<Attack> attacks, String spritePath, boolean isStarter) {
         this(id, name, hp, attack, defense, initiative, type, attacks, spritePath, isStarter, false);
@@ -33,7 +32,7 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
 
     public static void checkAttacks(List<Attack> attacks) {
         // if (attacks.size() != ATTACKS_COUNT) {
-        //     throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
+        // throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
         // }
     }
 

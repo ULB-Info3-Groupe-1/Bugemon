@@ -1,6 +1,4 @@
 package ulb.models.combat;
 
-public record CombatContext(
-                CombatTeam allyTeam,
-                CombatTeam opponentTeam) {
+public record CombatContext(CombatTeam allyTeam, CombatTeam opponentTeam) {
 }

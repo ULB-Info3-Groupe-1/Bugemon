@@ -32,10 +32,8 @@ public class Combat {
     private CombatResult result;
     private boolean finished;
 
-    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam,
-            CombatStrategy playerStrategy,
-            CombatStrategy opponentStrategy,
-            DamageCalculator damageCalculator) {
+    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, CombatStrategy playerStrategy,
+            CombatStrategy opponentStrategy, DamageCalculator damageCalculator) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
 
@@ -91,9 +89,7 @@ public class Combat {
 
         CombatStrategy strategy = isPlayer ? this.playerStrategy : this.playerStrategy;
 
-        CombatContext ctx = isPlayer
-                ? this.makePlayerContext()
-                : this.makeOpponentContext();
+        CombatContext ctx = isPlayer ? this.makePlayerContext() : this.makeOpponentContext();
 
         strategy.chooseSwitch(ctx, callback);
     }
@@ -152,11 +148,10 @@ public class Combat {
     private void handleKo(List<TurnStep> turnSteps, TurnResolvedCallback callback, boolean isPlayer) {
         CombatTeam koTeam = isPlayer ? this.playerTeam : this.opponentTeam;
 
-        this.requestForcedSwitch(koTeam,
-                switchAction -> {
-                    this.applyForcedSwitch(koTeam, switchAction, turnSteps);
-                    callback.onTurnResolved(turnSteps);
-                });
+        this.requestForcedSwitch(koTeam, switchAction -> {
+            this.applyForcedSwitch(koTeam, switchAction, turnSteps);
+            callback.onTurnResolved(turnSteps);
+        });
     }
 
     private void applyForcedSwitch(CombatTeam team, TurnAction action, List<TurnStep> turnSteps) {
@@ -196,10 +191,7 @@ public class Combat {
         });
     }
 
-    private List<TurnStep> resolveAttack(
-            CombatBugemon attacker,
-            CombatBugemon defender,
-            Attack attack) {
+    private List<TurnStep> resolveAttack(CombatBugemon attacker, CombatBugemon defender, Attack attack) {
         List<TurnStep> steps = new ArrayList<>();
 
         int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
@@ -220,8 +212,7 @@ public class Combat {
             int playerInitiative = this.playerTeam.getActive().getEffectiveInitiative();
             int opponentInitiative = this.opponentTeam.getActive().getEffectiveInitiative();
 
-            return (playerInitiative >= opponentInitiative)
-                    ? List.of(playerAction, opponentAction)
+            return (playerInitiative >= opponentInitiative) ? List.of(playerAction, opponentAction)
                     : List.of(opponentAction, playerAction);
         } else /* order by phases priority */ {
             List<TurnAction> actions = new ArrayList<>();

@@ -7,8 +7,8 @@ import ulb.models.bugemon.effect.Effect;
 
 public sealed interface TurnStep {
 
-    record AttackStep(CombatBugemon attacker, CombatBugemon defender, Attack attack,
-            int damage, int defenderHpAfter) implements TurnStep {
+    record AttackStep(CombatBugemon attacker, CombatBugemon defender, Attack attack, int damage,
+            int defenderHpAfter) implements TurnStep {
         public String getAttackName() {
             return this.attack.name();
         }

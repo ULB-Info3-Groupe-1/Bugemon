@@ -31,38 +31,16 @@ public class TestCombat {
         this.seededRandom = new Random(42);
         this.floraAttack = new Attack("fouet", "Fouet-Liane", "", 40, BugemonType.FLORA, List.of());
 
-        Bugemon playerBase = new Bugemon(
-                "p1",
-                "PlayerBug",
-                100,
-                50,
-                40,
-                70,
-                BugemonType.FLORA,
-                List.of(this.floraAttack),
-                "",
-                false);
-        Bugemon opponentBase = new Bugemon(
-                "o1",
-                "OpponentBug",
-                100,
-                50,
-                40,
-                30,
-                BugemonType.AQUA,
-                List.of(this.floraAttack),
-                "",
-                false);
+        Bugemon playerBase = new Bugemon("p1", "PlayerBug", 100, 50, 40, 70, BugemonType.FLORA,
+                List.of(this.floraAttack), "", false);
+        Bugemon opponentBase = new Bugemon("o1", "OpponentBug", 100, 50, 40, 30, BugemonType.AQUA,
+                List.of(this.floraAttack), "", false);
 
         this.playerTeam = new CombatTeam(List.of(new CombatBugemon(new RunBugemon(new PlayerBugemon(playerBase)))));
         this.opponentTeam = new CombatTeam(List.of(new CombatBugemon(new RunBugemon(new PlayerBugemon(opponentBase)))));
 
-        this.combat = new Combat(
-                this.playerTeam,
-                this.opponentTeam,
-                new AutoStrategy(this.seededRandom),
-                new AutoStrategy(this.seededRandom),
-                new DamageCalculator());
+        this.combat = new Combat(this.playerTeam, this.opponentTeam, new AutoStrategy(this.seededRandom),
+                new AutoStrategy(this.seededRandom), new DamageCalculator());
     }
 
     @Test

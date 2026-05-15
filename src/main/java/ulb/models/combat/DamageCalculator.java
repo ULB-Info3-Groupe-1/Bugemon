@@ -12,10 +12,7 @@ public class DamageCalculator {
         this.reductionFactorFormula = Configuration.Game.REDUCTION_FACTOR_FORMULA;
     }
 
-    public int calculateDamage(
-            CombatBugemon attacker,
-            CombatBugemon defender,
-            Attack attack) {
+    public int calculateDamage(CombatBugemon attacker, CombatBugemon defender, Attack attack) {
 
         double power = (double) attack.power();
 

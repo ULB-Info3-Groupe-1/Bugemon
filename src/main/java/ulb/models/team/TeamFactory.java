@@ -3,6 +3,7 @@ package ulb.models.team;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
 
@@ -23,8 +24,7 @@ public class TeamFactory {
         return team;
     }
 
-    public static Team generateBossTeam(
-            BugemonRepository repo, int size, String bossId, Random random) {
+    public static Team generateBossTeam(BugemonRepository repo, int size, String bossId, Random random) {
         Team team = new Team();
 
         repo.findById(bossId).ifPresent(team::add);

@@ -7,9 +7,9 @@ import ulb.models.bugemon.Bugemon;
 
 public interface BugemonRepository {
 
-  List<Bugemon> findAll();
+    List<Bugemon> findAll();
 
-  Optional<Bugemon> findByName(String name);
+    Optional<Bugemon> findByName(String name);
 
-  Optional<Bugemon> findById(String id);
+    Optional<Bugemon> findById(String id);
 }

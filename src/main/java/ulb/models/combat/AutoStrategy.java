@@ -1,7 +1,7 @@
 package ulb.models.combat;
 
-import java.util.Random;
 import java.util.List;
+import java.util.Random;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.trainer.TurnAction;
