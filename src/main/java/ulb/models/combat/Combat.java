@@ -28,7 +28,7 @@ public class Combat {
         this.opponentTeam = opponentTeam;
     }
 
-    public void requestActions(TurnCallback callback) {
+    public void requestActions(TurnActionsReadyCallback callback) {
         CombatContext playerCtx = new CombatContext(this.playerTeam, this.opponentTeam);
         CombatContext opponentCtx = new CombatContext(this.opponentTeam, this.playerTeam);
 
@@ -55,7 +55,7 @@ public class Combat {
         // TODO: send the callbacks
     }
 
-    public List<TurnStep> resolveTurn(TurnAction playerAction, TurnAction opponentAction) {
+    public List<TurnStep> resolveTurn(TurnAction playerAction, TurnAction opponentAction, TurnResolvedCallback callback) {
         List<TurnStep> steps = new ArrayList<>();
 
         List<TurnAction> actions = this.computeActionOrder(playerAction, opponentAction);
@@ -72,7 +72,7 @@ public class Combat {
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
 
         if (this.checkCombatEnd(steps)) {
-            return steps;
+            callback.onTurnResolved(steps);
         }
 
         // TODO: handle bugemon corresponding to second action KO
