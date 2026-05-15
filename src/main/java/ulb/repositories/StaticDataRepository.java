@@ -152,20 +152,9 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void setEffectParameters(PreparedStatement psEffect, Effect effect) throws SQLException {
         switch (effect) {
-            case EffectStatModifier modifier :
-                this.setStatModifierParameters(psEffect, modifier);
-                break;
-
-            case EffectHeal heal :
-                this.setHealParameters(psEffect, heal);
-                break;
-
-            case EffectResetMalus resetMalus :
-                this.setResetMalusParameters(psEffect, resetMalus);
-                break;
-
-            default :
-                break;
+            case EffectStatModifier modifier -> this.setStatModifierParameters(psEffect, modifier);
+            case EffectHeal heal -> this.setHealParameters(psEffect, heal);
+            case EffectResetMalus resetMalus -> this.setResetMalusParameters(psEffect, resetMalus);
         }
     }
 
