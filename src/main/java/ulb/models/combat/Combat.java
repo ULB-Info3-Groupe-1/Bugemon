@@ -28,6 +28,8 @@ public class Combat {
     private final CombatStrategy playerStrategy;
     private final CombatStrategy opponentStrategy;
 
+    private final DamageCalculator damageCalculator;
+
     private CombatResult result;
     private boolean finished;
 
@@ -186,7 +188,7 @@ public class Combat {
             Attack attack) {
         List<TurnStep> steps = new ArrayList<>();
 
-        int damage = 0; // TODO: compute actual value
+        int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
 
         defender.takeDamage(damage);
         steps.add(new AttackStep(attacker, defender, attack, damage, defender.getCurrentHp()));
