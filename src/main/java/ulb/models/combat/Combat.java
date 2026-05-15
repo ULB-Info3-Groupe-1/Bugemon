@@ -31,10 +31,15 @@ public class Combat {
         this.opponentTeam = opponentTeam;
     }
 
-    public void requestActions(TurnActionsReadyCallback callback) {
-        CombatContext playerCtx = new CombatContext(this.playerTeam, this.opponentTeam);
-        CombatContext opponentCtx = new CombatContext(this.opponentTeam, this.playerTeam);
+    private CombatContext makePlayerContext() {
+        return new CombatContext(this.playerTeam, this.opponentTeam);
+    }
 
+    private CombatContext makeOpponentContext() {
+        return new CombatContext(this.opponentTeam, this.playerTeam);
+    }
+
+    public void requestActions(TurnActionsReadyCallback callback) {
         // magic stuff to call onBothActionsReady only once both actions are ready
 
         // Single element arrays because of an odd java rule with local variables and
@@ -55,8 +60,8 @@ public class Combat {
             }
         };
 
-        this.playerStrategy.chooseAction(playerCtx, playerCb);
-        this.opponentStrategy.chooseAction(opponentCtx, opponentCb);
+        this.playerStrategy.chooseAction(this.makePlayerContext(), playerCb);
+        this.opponentStrategy.chooseAction(this.makeOpponentContext(), opponentCb);
     }
 
     /**
@@ -70,8 +75,8 @@ public class Combat {
         CombatStrategy strategy = isPlayer ? this.playerStrategy : this.playerStrategy;
 
         CombatContext ctx = isPlayer
-                ? new CombatContext(this.playerTeam, this.opponentTeam)
-                : new CombatContext(this.opponentTeam, this.playerTeam);
+                ? this.makePlayerContext()
+                : this.makeOpponentContext();
 
         strategy.chooseSwitch(ctx, callback);
     }
