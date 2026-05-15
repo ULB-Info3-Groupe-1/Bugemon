@@ -160,7 +160,7 @@ public class Combat {
         }
 
         return action.accept(new TurnActionVisitor() {
-            // TODO handle each case
+            // TODO: handle each case
             public List<TurnStep> visit(AttackAction attackAction) {
                 return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack());
             }
