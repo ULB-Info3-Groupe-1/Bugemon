@@ -76,6 +76,7 @@ public class Combat {
             }
         };
 
+        LOG.debug("Requesting actions from both strategies");
         this.playerStrategy.chooseAction(this.makePlayerContext(), playerCb);
         this.opponentStrategy.chooseAction(this.makeOpponentContext(), opponentCb);
     }
@@ -111,25 +112,28 @@ public class Combat {
         CombatTeam secondTeam = firstIsPlayer ? this.opponentTeam : this.playerTeam;
         CombatBugemon secondActorBefore = secondTeam.getActive();
 
+        LOG.debug("Resolving turn: first={}", firstIsPlayer ? "player" : "opponent");
+
         // resolve first action
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
 
-        // if no action produced, it was a forfeit.
-        if (steps.isEmpty()) {
-            this.result = CombatResult.DEFEAT;
-            this.finished = true;
+        // if combat .
+        if (this.isFinished()) {
+            LOG.info("Forfeit detected — combat ends in defeat");
             callback.onTurnResolved(steps);
             return;
         }
 
         // handle potenatial combat end
-        if (this.checkCombatEnd()) {
+        if (this.checkCombatFinished()) {
+            LOG.info("Combat ended after first action: result={}", this.result);
             callback.onTurnResolved(steps);
             return;
         }
 
         // handle potential Ko
         if (secondActorBefore.isKo()) {
+            LOG.debug("Second actor KO — requesting forced switch for {}", secondIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, secondIsPlayer);
             return;
         }
@@ -138,7 +142,8 @@ public class Combat {
         steps.addAll(this.resolveAction(actions.get(1), secondIsPlayer));
 
         // handle potenatial combat end
-        if (this.checkCombatEnd()) {
+        if (this.checkCombatFinished()) {
+            LOG.info("Combat ended after second action: result={}", this.result);
             callback.onTurnResolved(steps);
             return;
         }
@@ -147,10 +152,12 @@ public class Combat {
         CombatBugemon firstActor = firstTeam.getActive();
 
         if (firstActor.isKo()) {
+            LOG.debug("First actor KO — requesting forced switch for {}", firstIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, firstIsPlayer);
             return;
         }
 
+        LOG.debug("Turn resolved normally with {} steps", steps.size());
         callback.onTurnResolved(steps);
     }
 
@@ -206,9 +213,12 @@ public class Combat {
         int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
 
         defender.takeDamage(damage);
+        LOG.debug("{} uses {} on {} for {} damage (HP left: {})",
+                attacker, attack.name(), defender, damage, defender.getCurrentHp());
         steps.add(new AttackStep(attacker, defender, attack, damage, defender.getCurrentHp()));
 
         if (defender.isKo()) {
+            LOG.info("{} is KO", defender);
             steps.add(new KoStep(defender));
         }
 
@@ -232,7 +242,7 @@ public class Combat {
         }
     }
 
-    private boolean checkCombatEnd() {
+    private boolean checkCombatFinished() {
         if (this.playerTeam.isDefeated()) {
             this.result = CombatResult.DEFEAT;
             this.finished = true;
