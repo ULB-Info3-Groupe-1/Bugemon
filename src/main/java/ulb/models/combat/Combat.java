@@ -26,7 +26,8 @@ public class Combat {
 
         // magic stuff to call onBothActionsReady only once both actions are ready
 
-        // Single element arrays because of an odd java rule with local variables and enclosing scopes
+        // Single element arrays because of an odd java rule with local variables and
+        // enclosing scopes
         TurnAction[] playerAction = new TurnAction[1];
         TurnAction[] opponentAction = new TurnAction[1];
 
@@ -49,16 +50,23 @@ public class Combat {
     public List<TurnAction> resolveTurn(TurnAction playerAction, TurnAction opponentAction) {
         List<TurnStep> steps = new ArrayList<>();
 
-        
     }
 
     private List<TurnAction> computeActionOrder(TurnAction playerAction, TurnAction opponentAction) {
-        List<TurnAction> actions = new ArrayList<>();
-        actions.add(playerAction);
-        actions.add(opponentAction);
+        // two attacks -> order by prio
+        if (playerAction.phase().equals(TurnPhase.ATTACK) && opponentAction.phase().equals(TurnPhase.ATTACK)) {
+            int playerInitiative = this.playerTeam.getActive().getEffectiveInitiative();
+            int opponentInitiative = this.opponentTeam.getActive().getEffectiveInitiative();
 
-        Collections.sort(actions);
-
-        // TODO: edge cases like two attacks -> use initiative
+            return (playerInitiative >= opponentInitiative)
+                    ? List.of(playerAction, opponentAction)
+                    : List.of(opponentAction, playerAction);
+        }  else /* order by phases priority */ {
+            List<TurnAction> actions = new ArrayList<>();
+            actions.add(playerAction);
+            actions.add(opponentAction);
+            Collections.sort(actions);
+            return actions;
+        }
     }
 }
