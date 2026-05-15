@@ -55,7 +55,7 @@ public class Combat {
         // TODO: send the callbacks
     }
 
-    public List<TurnStep> resolveTurn(TurnAction playerAction, TurnAction opponentAction, TurnResolvedCallback callback) {
+    public void resolveTurn(TurnAction playerAction, TurnAction opponentAction, TurnResolvedCallback callback) {
         List<TurnStep> steps = new ArrayList<>();
 
         List<TurnAction> actions = this.computeActionOrder(playerAction, opponentAction);
@@ -63,23 +63,50 @@ public class Combat {
         // use == to avoid edge case in which both player and opponent choose the same
         // action.
         boolean firstIsPlayer = actions.get(0) == playerAction;
+        boolean secondIsPlayer = !firstIsPlayer;
+
+        // TODO: fix code dup with second team/actor
+        CombatTeam firstTeam = firstIsPlayer ? this.playerTeam : this.opponentTeam;
+        CombatBugemon firstActor = firstTeam.getActive();
 
         // retrieve the bugemon corresponding to the second action
         // to later check if it died from the first action.
         CombatTeam secondTeam = firstIsPlayer ? this.opponentTeam : this.playerTeam;
         CombatBugemon secondActorBefore = secondTeam.getActive();
 
+        // resolve first action
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
 
+        // handle potenatial combat end
         if (this.checkCombatEnd(steps)) {
             callback.onTurnResolved(steps);
+            return;
         }
 
-        // TODO: handle bugemon corresponding to second action KO
+        // handle potential Ko
+        if (secondActorBefore.isKo()) {
+            this.handleKo(steps, callback, secondIsPlayer);
+            return;
+        }
 
-        // TODO: execute second action (if needed)
+        // resolve second action
+        steps.addAll(this.resolveAction(actions.get(1), secondIsPlayer));
 
-        // TODO: return the list of corresponding TurnSteps
+        // handle potenatial combat end
+        if (this.checkCombatEnd(steps)) {
+            callback.onTurnResolved(steps);
+            return;
+        }
+
+        if (firstActor.isKo()) {
+            this.handleKo(steps, callback, firstIsPlayer);
+            return;
+        }
+    }
+
+    private void handleKo(List<TurnStep> turnSteps, TurnResolvedCallback callback, boolean isPlayer) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handleSecondActorKo'");
     }
 
     private List<TurnStep> resolveAction(TurnAction action, boolean isPlayer) {
