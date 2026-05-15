@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.TurnStep.AttackStep;
+import ulb.models.combat.TurnStep.ItemStep;
 import ulb.models.combat.TurnStep.KoStep;
 import ulb.models.combat.TurnStep.SwitchStep;
 import ulb.models.trainer.TurnAction;
@@ -116,8 +117,16 @@ public class Combat {
         // resolve first action
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
 
+        // if no action produced, it was a forfeit.
+        if (steps.isEmpty()) {
+            this.result = CombatResult.DEFEAT;
+            this.finished = true;
+            callback.onTurnResolved(steps);
+            return;
+        }
+
         // handle potenatial combat end
-        if (this.checkCombatEnd(steps)) {
+        if (this.checkCombatEnd()) {
             callback.onTurnResolved(steps);
             return;
         }
@@ -132,7 +141,7 @@ public class Combat {
         steps.addAll(this.resolveAction(actions.get(1), secondIsPlayer));
 
         // handle potenatial combat end
-        if (this.checkCombatEnd(steps)) {
+        if (this.checkCombatEnd()) {
             callback.onTurnResolved(steps);
             return;
         }
@@ -180,7 +189,7 @@ public class Combat {
             }
 
             public List<TurnStep> visit(ItemAction a) {
-                return List.of();
+                return List.of(new ItemStep());
             }
 
             public List<TurnStep> visit(ForfeitAction a) {
@@ -223,7 +232,7 @@ public class Combat {
         }
     }
 
-    private boolean checkCombatEnd(List<TurnStep> actions) {
+    private boolean checkCombatEnd() {
         if (this.playerTeam.isDefeated()) {
             this.result = CombatResult.DEFEAT;
             this.finished = true;
@@ -236,5 +245,16 @@ public class Combat {
         }
 
         return false;
+    }
+
+    public boolean isFinished() {
+        return this.finished;
+    }
+
+    public CombatResult getResult() {
+        if (!this.finished) {
+            throw new IllegalStateException("Combat not finished yet");
+        }
+        return this.result;
     }
 }

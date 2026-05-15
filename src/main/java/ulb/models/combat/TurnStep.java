@@ -23,4 +23,8 @@ public sealed interface TurnStep {
 
     record SwitchStep(CombatBugemon bugemon) implements TurnStep {
     }
+
+    // Placeholder for future item steps
+    record ItemStep() implements TurnStep {
+    }
 }
