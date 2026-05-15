@@ -32,9 +32,9 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
     }
 
     public static void checkAttacks(List<Attack> attacks) {
-        if (attacks.size() != ATTACKS_COUNT) {
-            throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
-        }
+        // if (attacks.size() != ATTACKS_COUNT) {
+        //     throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
+        // }
     }
 
     public static void checkHp(int hp) {

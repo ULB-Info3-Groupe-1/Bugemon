@@ -145,6 +145,8 @@ public class Combat {
             this.handleKo(steps, callback, firstIsPlayer);
             return;
         }
+
+        callback.onTurnResolved(steps);
     }
 
     private void handleKo(List<TurnStep> turnSteps, TurnResolvedCallback callback, boolean isPlayer) {

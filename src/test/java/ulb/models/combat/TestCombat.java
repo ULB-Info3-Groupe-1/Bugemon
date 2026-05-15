@@ -27,7 +27,7 @@ public class TestCombat {
     private Random seededRandom;
 
     @Before
-    void setUp() {
+    public void setUp() {
         this.seededRandom = new Random(42);
         this.floraAttack = new Attack("fouet", "Fouet-Liane", "", 40, BugemonType.FLORA, List.of());
 
@@ -66,7 +66,7 @@ public class TestCombat {
     }
 
     @Test
-    void testResolveTurnProducesActions() {
+    public void testResolveTurnProducesActions() {
         AttackAction playerAttack = new AttackAction(this.floraAttack);
         AttackAction opponentAttack = new AttackAction(this.floraAttack);
 

@@ -1,5 +1,8 @@
 package ulb;
 
+import ulb.models.combat.DamageCalculator.AttackFactorFormula;
+import ulb.models.combat.DamageCalculator.ReductionFactorFormula;
+
 public abstract class Configuration {
 
     private Configuration() {
@@ -89,6 +92,10 @@ public abstract class Configuration {
         public static final double BASE_CRIT_CHANCE = 0.10;
         public static final double CRIT_DAMAGE_FACTOR = 1.5;
 
+        public static final AttackFactorFormula ATTACK_FACTOR_FORMULA = //
+                effectiveAttack -> (100.0 + effectiveAttack) / 100.0;
+        public static final ReductionFactorFormula REDUCTION_FACTOR_FORMULA = //
+                effectiveDefense -> 100.0 / (100 + effectiveDefense);
     }
 
     public static final class Skill {

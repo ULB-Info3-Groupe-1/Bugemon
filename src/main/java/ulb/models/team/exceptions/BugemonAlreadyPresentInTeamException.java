@@ -1,4 +1,4 @@
-package ulb.models.bugemon_team.exceptions;
+package ulb.models.team.exceptions;
 
 /** Thrown when trying to add a Bugemon already present in the team. */
 public class BugemonAlreadyPresentInTeamException extends RuntimeException {

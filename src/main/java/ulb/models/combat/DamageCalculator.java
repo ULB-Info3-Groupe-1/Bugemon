@@ -1,5 +1,6 @@
 package ulb.models.combat;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 
 public class DamageCalculator {
@@ -7,6 +8,8 @@ public class DamageCalculator {
     ReductionFactorFormula reductionFactorFormula;
 
     public DamageCalculator() {
+        this.attackFactorFormula = Configuration.Game.ATTACK_FACTOR_FORMULA;
+        this.reductionFactorFormula = Configuration.Game.REDUCTION_FACTOR_FORMULA;
     }
 
     public int calculateDamage(

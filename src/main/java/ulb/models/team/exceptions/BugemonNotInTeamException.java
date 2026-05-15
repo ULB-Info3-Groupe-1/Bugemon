@@ -1,4 +1,4 @@
-package ulb.models.bugemon_team.exceptions;
+package ulb.models.team.exceptions;
 
 /** Thrown when trying to access or remove a Bugemon not present in the team. */
 public class BugemonNotInTeamException extends RuntimeException {
