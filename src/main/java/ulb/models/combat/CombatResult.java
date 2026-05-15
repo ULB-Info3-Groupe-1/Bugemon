@@ -1,4 +1,4 @@
-package ulb.models.combat.utils;
+package ulb.models.combat;
 
 public enum CombatResult {
     DEFEAT,

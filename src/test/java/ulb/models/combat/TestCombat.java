@@ -20,7 +20,6 @@ import ulb.models.combat.turn.TurnAction.ForfeitAction;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
-import ulb.models.combat.utils.CombatResult;
 import ulb.models.combat.utils.DamageCalculator;
 
 public class TestCombat {

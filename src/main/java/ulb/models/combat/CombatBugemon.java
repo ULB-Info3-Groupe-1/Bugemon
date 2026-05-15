@@ -6,7 +6,7 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.effect.StatusEffect;
-import ulb.models.effect.EffectStat;
+import ulb.common.StatType;
 import ulb.models.run.RunBugemon;
 
 public class CombatBugemon {
@@ -53,22 +53,22 @@ public class CombatBugemon {
     }
 
     public int getEffectiveAttack() {
-        return this.runBugemon.getAttack() + this.getEffectModifierSum(EffectStat.DEFENSE);
+        return this.runBugemon.getAttack() + this.getEffectModifierSum(StatType.DEFENSE);
     }
 
     public int getEffectiveDefense() {
-        return this.runBugemon.getDefense() + this.getEffectModifierSum(EffectStat.DEFENSE);
+        return this.runBugemon.getDefense() + this.getEffectModifierSum(StatType.DEFENSE);
     }
 
     public int getEffectiveInitiative() {
-        return this.runBugemon.getInitiative() + this.getEffectModifierSum(EffectStat.INITIATIVE);
+        return this.runBugemon.getInitiative() + this.getEffectModifierSum(StatType.INITIATIVE);
     }
 
     public List<Attack> getAttacks() {
         return Collections.unmodifiableList(this.runBugemon.getAttacks());
     }
 
-    private int getEffectModifierSum(EffectStat stat) {
+    private int getEffectModifierSum(StatType stat) {
         return this.activeEffects.stream().filter(e -> e.getStat() == stat).mapToInt(StatusEffect::getModifier).sum();
     }
 

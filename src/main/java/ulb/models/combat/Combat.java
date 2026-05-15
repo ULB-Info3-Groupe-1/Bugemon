@@ -24,7 +24,6 @@ import ulb.models.combat.turn.TurnStep.ItemStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
-import ulb.models.combat.utils.CombatResult;
 import ulb.models.combat.utils.DamageCalculator;
 
 public class Combat {
