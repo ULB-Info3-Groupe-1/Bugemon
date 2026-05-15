@@ -7,7 +7,7 @@ public class Ticker {
      * Constructs a ticker starting at {@code numTicks}.
      *
      * @param numTicks
-     *                 number of ticks before expiration
+     *            number of ticks before expiration
      */
     public Ticker(int numTicks) {
         this.remainingTicks = Math.max(0, numTicks);

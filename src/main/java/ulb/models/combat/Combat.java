@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
+import ulb.models.combat.turn.TurnAction.AttackAction;
+import ulb.models.combat.turn.TurnAction.ForfeitAction;
+import ulb.models.combat.turn.TurnAction.ItemAction;
+import ulb.models.combat.turn.TurnAction.SwitchAction;
 import ulb.models.combat.turn.TurnActionVisitor;
 import ulb.models.combat.turn.TurnActionsReadyCallback;
 import ulb.models.combat.turn.TurnPhase;
 import ulb.models.combat.turn.TurnResolvedCallback;
 import ulb.models.combat.turn.TurnStep;
-import ulb.models.combat.turn.TurnAction.AttackAction;
-import ulb.models.combat.turn.TurnAction.ForfeitAction;
-import ulb.models.combat.turn.TurnAction.ItemAction;
-import ulb.models.combat.turn.TurnAction.SwitchAction;
 import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.ItemStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
@@ -221,8 +221,8 @@ public class Combat {
         int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
 
         defender.takeDamage(damage);
-        LOG.debug("{} uses {} on {} for {} damage (HP left: {})",
-                attacker, attack.name(), defender, damage, defender.getCurrentHp());
+        LOG.debug("{} uses {} on {} for {} damage (HP left: {})", attacker, attack.name(), defender, damage,
+                defender.getCurrentHp());
         steps.add(new AttackStep(attacker, defender, attack, damage, defender.getCurrentHp()));
 
         if (defender.isKo()) {
