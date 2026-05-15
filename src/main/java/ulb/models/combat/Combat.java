@@ -55,7 +55,8 @@ public class Combat {
             }
         };
 
-        // TODO: send the callbacks
+        this.playerStrategy.chooseAction(playerCtx, playerCb);
+        this.opponentStrategy.chooseAction(opponentCtx, opponentCb);
     }
 
     /**
