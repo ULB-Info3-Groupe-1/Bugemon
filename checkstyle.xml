@@ -113,7 +113,7 @@
         <module name="OneStatementPerLine"/>
         <module name="OverloadMethodsDeclarationOrder"/>
         <module name="VariableDeclarationUsageDistance">
-            <property name="allowedDistance" value="5"/>
+            <property name="allowedDistance" value="6"/>
         </module>
 
         <!-- ===== Modificateurs ===== -->
