@@ -127,7 +127,7 @@ public class Combat {
 
         // if combat .
         if (this.isFinished()) {
-            LOG.info("Forfeit detected — combat ends in defeat");
+            LOG.info("Forfeit detected - combat ends in defeat");
             callback.onTurnResolved(steps);
             return;
         }
@@ -141,7 +141,7 @@ public class Combat {
 
         // handle potential Ko
         if (secondActorBefore.isKo()) {
-            LOG.debug("Second actor KO — requesting forced switch for {}", secondIsPlayer ? "player" : "opponent");
+            LOG.debug("Second actor KO - requesting forced switch for {}", secondIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, secondIsPlayer);
             return;
         }
@@ -160,7 +160,7 @@ public class Combat {
         CombatBugemon firstActor = firstTeam.getActive();
 
         if (firstActor.isKo()) {
-            LOG.debug("First actor KO — requesting forced switch for {}", firstIsPlayer ? "player" : "opponent");
+            LOG.debug("First actor KO - requesting forced switch for {}", firstIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, firstIsPlayer);
             return;
         }
