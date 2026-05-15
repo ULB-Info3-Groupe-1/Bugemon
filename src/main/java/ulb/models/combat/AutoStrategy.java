@@ -24,5 +24,13 @@ public class AutoStrategy implements CombatStrategy {
 
     @Override
     public void chooseSwitch(CombatContext ctx, ActionCallback callback) {
+        List<CombatBugemon> available = ctx.allyTeam().getAvailable();
+
+        if (available.isEmpty()) {
+            throw new IllegalStateException("AutoStrategy must switch but has no avaible bugemon.");
+        }
+
+        CombatBugemon chosen = available.get(this.random.nextInt(available.size()));
+        callback.onActionChosen(new TurnAction.SwitchAction(chosen));
     }
 }

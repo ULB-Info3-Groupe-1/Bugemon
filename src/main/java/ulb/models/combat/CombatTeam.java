@@ -45,6 +45,10 @@ public class CombatTeam {
         return this.members.stream().allMatch(CombatBugemon::isKo);
     }
 
+    public List<CombatBugemon> getAvailable() {
+        return this.members.stream().filter(b -> !b.isKo() && b != this.active).toList();
+    }
+
     public void syncToRunTeam() {
         this.members.forEach(CombatBugemon::syncToRunBugemon);
     }
