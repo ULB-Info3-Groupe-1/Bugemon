@@ -82,6 +82,7 @@ public abstract class Configuration {
             // Private constructor to prevent instantiation
         }
 
+        public static final int ATTACKS_COUNT = 3; // view can't handle more than 3 attacks for now
         public static final int MAX_TEAM_SIZE = 6;
         // TODO: define (and enforce) this directly in Bugemon
         public static final int NUM_ATTACKS_PER_BUGEMON = 3;

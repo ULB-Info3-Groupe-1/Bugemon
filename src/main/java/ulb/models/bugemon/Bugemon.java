@@ -3,13 +3,16 @@ package ulb.models.bugemon;
 import java.util.List;
 import java.util.Objects;
 
+import ulb.Configuration;
+import ulb.models.bugemon.exceptions.InvalidAttackCountException;
+
 /**
  * Represents a Bugemon.
  */
 public record Bugemon(String id, String name, int hp, int attack, int defense, int initiative, BugemonType type,
         List<Attack> attacks, String spritePath, boolean isStarter, boolean isBoss) {
 
-    public static final int ATTACKS_COUNT = 3;
+    public static final int ATTACKS_COUNT = Configuration.Game.ATTACKS_COUNT;
 
     public Bugemon {
         Objects.requireNonNull(id);
@@ -31,9 +34,9 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
     }
 
     public static void checkAttacks(List<Attack> attacks) {
-        // if (attacks.size() != ATTACKS_COUNT) {
-        // throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
-        // }
+        if (attacks.size() != ATTACKS_COUNT) {
+            throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
+        }
     }
 
     public static void checkHp(int hp) {
