@@ -68,11 +68,11 @@ public class Combat {
 
         CombatStrategy strategy = isPlayer ? this.playerStrategy : this.playerStrategy;
 
-        CombatContext combatContext = isPlayer
+        CombatContext ctx = isPlayer
                 ? new CombatContext(this.playerTeam, this.opponentTeam)
                 : new CombatContext(this.opponentTeam, this.playerTeam);
 
-        // TODO: force strategy to switch (and pass it the context and callback)
+        strategy.chooseSwitch(ctx, callback);
     }
 
     public void resolveTurn(TurnAction playerAction, TurnAction opponentAction, TurnResolvedCallback callback) {
