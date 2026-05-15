@@ -20,6 +20,9 @@ public class Combat {
     private final CombatTeam playerTeam;
     private final CombatTeam opponentTeam;
 
+    private final CombatStrategy playerStrategy;
+    private final CombatStrategy opponentStrategy;
+
     private CombatResult result;
     private boolean finished;
 
@@ -53,6 +56,23 @@ public class Combat {
         };
 
         // TODO: send the callbacks
+    }
+
+    /**
+     * Requests a switch to the given team.
+     *
+     * This is tipically used when the active bugemon of the team is ko.
+     */
+    public void requestForcedSwitch(CombatTeam team, ActionCallback callback) {
+        boolean isPlayer = team == this.playerTeam;
+
+        CombatStrategy strategy = isPlayer ? this.playerStrategy : this.playerStrategy;
+
+        CombatContext combatContext = isPlayer
+                ? new CombatContext(this.playerTeam, this.opponentTeam)
+                : new CombatContext(this.opponentTeam, this.playerTeam);
+
+        // TODO: force strategy to switch (and pass it the context and callback)
     }
 
     public void resolveTurn(TurnAction playerAction, TurnAction opponentAction, TurnResolvedCallback callback) {
@@ -105,6 +125,8 @@ public class Combat {
     }
 
     private void handleKo(List<TurnStep> turnSteps, TurnResolvedCallback callback, boolean isPlayer) {
+        CombatTeam koTeam = isPlayer ? this.playerTeam : this.opponentTeam;
+
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'handleSecondActorKo'");
     }
