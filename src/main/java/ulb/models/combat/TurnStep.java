@@ -3,7 +3,6 @@ package ulb.models.combat;
 import java.util.List;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.trainer.Trainer;
@@ -24,10 +23,7 @@ public sealed interface TurnStep {
     record KoStep(CombatBugemon koBugemon) implements TurnStep {
     }
 
-    record SwitchStep(Trainer trainer, Bugemon bugemon) implements TurnStep {
-        public Bugemon getBugemon() {
-            return this.bugemon;
-        }
+    record SwitchStep(CombatBugemon bugemon) implements TurnStep {
     }
 
     record ItemStep(Trainer trainer, Item item) implements TurnStep {

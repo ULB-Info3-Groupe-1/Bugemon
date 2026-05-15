@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.TurnStep.AttackStep;
 import ulb.models.combat.TurnStep.KoStep;
+import ulb.models.combat.TurnStep.SwitchStep;
 import ulb.models.trainer.TurnAction;
 import ulb.models.trainer.TurnAction.AttackAction;
 import ulb.models.trainer.TurnAction.ForfeitAction;
@@ -164,8 +165,9 @@ public class Combat {
                 return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack());
             }
 
-            public List<TurnStep> visit(SwitchAction a) {
-                return List.of();
+            public List<TurnStep> visit(SwitchAction switchAction) {
+                actingTeam.setActive(switchAction.target());
+                return List.of(new SwitchStep(switchAction.target()));
             }
 
             public List<TurnStep> visit(ItemAction a) {
