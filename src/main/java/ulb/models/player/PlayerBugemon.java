@@ -17,6 +17,10 @@ public class PlayerBugemon {
     private int bonusInitiative;
     private final List<Attack> currentAttacks;
 
+    public PlayerBugemon(Bugemon base) {
+        this(base, 1, 0, 0, 0, 0, 0, base.attacks());
+    }
+
     public PlayerBugemon(Bugemon base, int level, int xp, int bonusHp, int bonusAttack, int bonusDefense,
             int bonusInitiative, List<Attack> currentAttacks) {
         this.base = Objects.requireNonNull(base);
