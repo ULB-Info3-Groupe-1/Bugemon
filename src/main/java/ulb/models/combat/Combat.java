@@ -50,6 +50,40 @@ public class Combat {
     public List<TurnAction> resolveTurn(TurnAction playerAction, TurnAction opponentAction) {
         List<TurnStep> steps = new ArrayList<>();
 
+        List<TurnAction> actions = this.computeActionOrder(playerAction, opponentAction);
+
+        // TODO: execute each action
+
+        // TODO: return the list of corresponding TurnSteps
+    }
+
+    private List<TurnStep> resolveAction(TurnAction action, boolean isPlayer) {
+        CombatTeam actingTeam = isPlayer ? this.playerTeam : this.opponentTeam;
+        CombatTeam opposingTeam = isPlayer ? this.opponentTeam : this.playerTeam;
+        CombatBugemon actor = actingTeam.getActive();
+
+        if (actor.isKo()) { 
+            return List.of();
+        }
+
+        return action.accept(new TurnActionVisitor() {
+            // TODO handle each case
+            public List<TurnStep> visit(AttackAction a) {
+                return List.of();
+            }
+
+            public List<TurnStep> visit(SwitchAction a) {
+                return List.of();
+            }
+
+            public List<TurnStep> visit(ItemAction a) {
+                return List.of();
+            }
+
+            public List<TurnStep> visit(ForfeitAction a) {
+                return List.of();
+            }
+        });
     }
 
     private List<TurnAction> computeActionOrder(TurnAction playerAction, TurnAction opponentAction) {
