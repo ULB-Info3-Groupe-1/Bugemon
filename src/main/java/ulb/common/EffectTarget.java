@@ -1,4 +1,4 @@
-package ulb.models.effect;
+package ulb.common;
 
 import com.google.gson.annotations.SerializedName;
 

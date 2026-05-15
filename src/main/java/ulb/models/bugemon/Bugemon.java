@@ -5,12 +5,11 @@ import java.util.Objects;
 
 import ulb.Configuration;
 import ulb.models.bugemon.exceptions.InvalidAttackCountException;
-import ulb.models.type.BugemonType;
 
 /**
  * Represents a Bugemon.
  */
-public record Bugemon(String id, String name, int hp, int attack, int defense, int initiative, BugemonType type,
+public record Bugemon(String id, String name, int hp, int attack, int defense, int initiative, ElementType type,
         List<Attack> attacks, String spritePath, boolean isStarter, boolean isBoss) {
 
     public static final int ATTACKS_COUNT = Configuration.Game.ATTACKS_COUNT;
@@ -29,7 +28,7 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    public Bugemon(String id, String name, int hp, int attack, int defense, int initiative, BugemonType type,
+    public Bugemon(String id, String name, int hp, int attack, int defense, int initiative, ElementType type,
             List<Attack> attacks, String spritePath, boolean isStarter) {
         this(id, name, hp, attack, defense, initiative, type, attacks, spritePath, isStarter, false);
     }

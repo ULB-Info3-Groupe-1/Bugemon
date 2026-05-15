@@ -1,6 +1,6 @@
 package ulb.models.combat.effect;
 
-import ulb.models.effect.EffectDuration;
+import ulb.common.EffectDuration;
 import ulb.models.effect.EffectStat;
 import ulb.models.effect.Ticker;
 

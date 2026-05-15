@@ -21,7 +21,7 @@ import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.CombatResult;
 import ulb.models.combat.utils.DamageCalculator;
-import ulb.models.type.BugemonType;
+import ulb.models.bugemon.ElementType;
 
 public class TestCombat {
 
@@ -120,8 +120,8 @@ public class TestCombat {
     public void testDefeatWhenPlayerDefeated() {
         // Give player 1 HP so it will be KO by any attack
         // Create new combat to give more initiative to opponent
-        Attack strongAtk = new Attack("strong", "Strong", "", 200, BugemonType.AQUA, List.of());
-        Bugemon fastOpp = new Bugemon("o2", "FastOpp", 100, 100, 40, 90, BugemonType.AQUA,
+        Attack strongAtk = new Attack("strong", "Strong", "", 200, ElementType.AQUA, List.of());
+        Bugemon fastOpp = new Bugemon("o2", "FastOpp", 100, 100, 40, 90, ElementType.AQUA,
                 List.of(strongAtk, strongAtk, strongAtk), "", false);
 
         CombatTeam fastOppTeam = BugemonFixtures.teamOf(fastOpp);

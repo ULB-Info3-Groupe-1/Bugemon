@@ -1,4 +1,4 @@
-package ulb.models.type;
+package ulb.common;
 
 public enum StatType {
     HP,

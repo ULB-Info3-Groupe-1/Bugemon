@@ -1,5 +1,8 @@
 package ulb.models.effect;
 
+import ulb.common.EffectDuration;
+import ulb.common.EffectTarget;
+
 public class StatModifierEffect extends Effect {
     private final EffectStat stat;
     private final int modifier;

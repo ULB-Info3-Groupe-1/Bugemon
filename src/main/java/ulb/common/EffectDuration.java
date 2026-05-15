@@ -1,4 +1,4 @@
-package ulb.models.effect;
+package ulb.common;
 
 public enum EffectDuration {
     ONE_TURN("1_tour"),
