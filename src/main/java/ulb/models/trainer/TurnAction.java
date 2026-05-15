@@ -2,6 +2,7 @@ package ulb.models.trainer;
 
 import java.util.List;
 
+import ulb.models.bugemon.Attack;
 import ulb.models.combat.TurnPhase;
 import ulb.models.combat.TurnStep;
 
@@ -49,7 +50,7 @@ public sealed interface TurnAction extends Comparable<TurnAction> {
         }
     }
 
-    record AttackAction() implements TurnAction {
+    record AttackAction(Attack attack) implements TurnAction {
         @Override
         public TurnPhase phase() {
             return TurnPhase.ATTACK;

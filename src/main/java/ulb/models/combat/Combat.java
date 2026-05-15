@@ -1,5 +1,6 @@
 package ulb.models.combat;
 
+import java.awt.Desktop.Action;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.models.bugemon.Attack;
+import ulb.models.combat.TurnStep.AttackStep;
+import ulb.models.combat.TurnStep.KoStep;
 import ulb.models.trainer.TurnAction;
 import ulb.models.trainer.TurnAction.AttackAction;
 import ulb.models.trainer.TurnAction.ForfeitAction;
@@ -137,8 +141,7 @@ public class Combat {
                 switchAction -> {
                     this.applyForcedSwitch(koTeam, switchAction, turnSteps);
                     callback.onTurnResolved(turnSteps);
-                }
-        );
+                });
     }
 
     private void applyForcedSwitch(CombatTeam team, TurnAction action, List<TurnStep> turnSteps) {
@@ -157,8 +160,8 @@ public class Combat {
 
         return action.accept(new TurnActionVisitor() {
             // TODO handle each case
-            public List<TurnStep> visit(AttackAction a) {
-                return List.of();
+            public List<TurnStep> visit(AttackAction attackAction) {
+                return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack());
             }
 
             public List<TurnStep> visit(SwitchAction a) {
@@ -173,6 +176,24 @@ public class Combat {
                 return List.of();
             }
         });
+    }
+
+    private List<TurnStep> resolveAttack(
+            CombatBugemon attacker,
+            CombatBugemon defender,
+            Attack attack) {
+        List<TurnStep> steps = new ArrayList<>();
+
+        int damage = 0; // TODO: compute actual value
+
+        defender.takeDamage(damage);
+        steps.add(new AttackStep(attacker, defender, attack, damage, defender.getCurrentHp()));
+
+        if (defender.isKo()) {
+            steps.add(new KoStep(defender));
+        }
+
+        return steps;
     }
 
     private List<TurnAction> computeActionOrder(TurnAction playerAction, TurnAction opponentAction) {

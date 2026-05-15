@@ -4,14 +4,14 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Efficiency;
 import ulb.models.bugemon.Item;
 import ulb.models.bugemon.effect.Effect;
 import ulb.models.trainer.Trainer;
 
 public sealed interface TurnStep {
 
-    record AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) implements TurnStep {
+    record AttackStep(CombatBugemon attacker, CombatBugemon defender, Attack attack,
+            int damage, int defenderHpAfter) implements TurnStep {
         public String getAttackName() {
             return this.attack.name();
         }
@@ -19,6 +19,9 @@ public sealed interface TurnStep {
         public List<Effect> getAttackEffects() {
             return this.attack.effects();
         }
+    }
+
+    record KoStep(CombatBugemon koBugemon) implements TurnStep {
     }
 
     record SwitchStep(Trainer trainer, Bugemon bugemon) implements TurnStep {
