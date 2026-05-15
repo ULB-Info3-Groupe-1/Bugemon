@@ -14,7 +14,6 @@ import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Ambiance;
-import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
@@ -68,7 +67,6 @@ public class MetaController {
     private final LevelUpController levelUpController;
     private final SkillTreeController skillTreeController;
     private final MusicPlayer musicPlayer;
-    private final MusicLoader musicLoader;
     private final RewardController rewardController;
     private boolean isTowerActive;
 
@@ -100,9 +98,8 @@ public class MetaController {
         this.combatDefeatController = new CombatDefeatController(this);
         this.skillTreeController = new SkillTreeController(this, playerService);
         this.musicPlayer = new MusicPlayer();
-        this.musicLoader = new MusicLoader();
         this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
-        this.initializeMusicResources();
+        this.musicPlayer.loadAllMusics();
         this.initTransitions();
     }
 
@@ -188,10 +185,6 @@ public class MetaController {
 
     public void onGoToRewards() {
         this.switchTo(Window.REWARD_CHOICE);
-    }
-
-    private void initializeMusicResources() throws IOException {
-        this.musicLoader.loadAllResources(this.musicPlayer);
     }
 
     private void initTransitions() {

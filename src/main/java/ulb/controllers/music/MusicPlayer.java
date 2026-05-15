@@ -1,5 +1,6 @@
 package ulb.controllers.music;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,30 +11,37 @@ import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.repositories.MusicRepository;
+
 /**
  * Manages music playback; holds a list of registered tracks and plays them via JavaFX {@link MediaPlayer}.
  */
 public class MusicPlayer {
     private static final Logger LOG = LoggerFactory.getLogger(MusicPlayer.class);
 
+    private final MusicRepository repository;
+    private final List<MediaPlayer> activeSoundEffects;
+
     // NOTE: This is optional because a MediaPlayer's constructor needs a Media
     // instance, but there is no media to play when constructing the MusicPlayer.
     private Optional<MediaPlayer> mediaPlayer;
     private Optional<Music> currentMusic;
 
-    private List<Music> musics;
-
     public MusicPlayer() {
-        this.musics = new ArrayList<>();
+        this.repository = new MusicRepository();
+        this.activeSoundEffects = new ArrayList<>();
         this.mediaPlayer = Optional.empty();
         this.currentMusic = Optional.empty();
     }
 
     /**
-     * Adds the given music to the available music tracks.
+     * Loads all music tracks from the repository.
+     *
+     * @throws IOException
+     *             if an I/O error occurs
      */
-    public void addMusic(Music music) {
-        this.musics.add(music);
+    public void loadAllMusics() throws IOException {
+        this.repository.loadAllResources();
     }
 
     /**
@@ -74,14 +82,17 @@ public class MusicPlayer {
      *            the music to play as a sound effect
      */
     public void playSoundEffect(Music music) {
-        Optional<MediaPlayer> soundEffectPlayer = Optional.empty();
         try {
             Media track = new Media(music.url().toExternalForm());
-            soundEffectPlayer = Optional.of(new MediaPlayer(track));
-            soundEffectPlayer.ifPresent(player -> {
-                player.setCycleCount(1);
-                player.play();
+            MediaPlayer sfxPlayer = new MediaPlayer(track);
+            this.activeSoundEffects.add(sfxPlayer);
+            sfxPlayer.setCycleCount(1);
+            sfxPlayer.setOnEndOfMedia(() -> {
+                sfxPlayer.stop();
+                sfxPlayer.dispose();
+                this.activeSoundEffects.remove(sfxPlayer);
             });
+            sfxPlayer.play();
         } catch (Exception e) {
             LOG.error("Error playing sound effect: {}", e.getMessage());
         }
@@ -94,7 +105,7 @@ public class MusicPlayer {
      *            the ambiance of the music track to play.
      */
     public void playAmbiance(Ambiance ambiance, boolean isSoundEffect) {
-        List<Music> matchingMusics = this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
+        List<Music> matchingMusics = this.repository.findByAmbiance(ambiance);
 
         if (matchingMusics.isEmpty()) {
             LOG.error("Error playing music  matching ambiance {}: no match", ambiance);
@@ -115,7 +126,10 @@ public class MusicPlayer {
      * Stops the currently playing music track if there is one by calling the stop method on the MediaPlayer instance.
      */
     public void stopMusic() {
-        this.mediaPlayer.ifPresent(MediaPlayer::stop);
+        this.mediaPlayer.ifPresent(player -> {
+            player.stop();
+            player.dispose();
+        });
         this.mediaPlayer = Optional.empty();
         this.currentMusic = Optional.empty();
     }
