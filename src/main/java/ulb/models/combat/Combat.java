@@ -33,9 +33,20 @@ public class Combat {
     private CombatResult result;
     private boolean finished;
 
-    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam) {
+    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam,
+            CombatStrategy playerStrategy,
+            CombatStrategy opponentStrategy,
+            DamageCalculator damageCalculator) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
+
+        this.playerStrategy = playerStrategy;
+        this.opponentStrategy = opponentStrategy;
+
+        this.damageCalculator = damageCalculator;
+
+        this.result = null;
+        this.finished = false;
     }
 
     private CombatContext makePlayerContext() {
@@ -177,6 +188,8 @@ public class Combat {
             }
 
             public List<TurnStep> visit(ForfeitAction a) {
+                Combat.this.result = CombatResult.DEFEAT;
+                Combat.this.finished = true;
                 return List.of();
             }
         });
