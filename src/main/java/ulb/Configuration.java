@@ -115,4 +115,12 @@ public abstract class Configuration {
         public static final String SKILL_TREE_PATH = "/json/skill_tree.json";
 
     }
+
+    public static final class Ai {
+        private Ai() {
+            // Private constructor to prevent instantiation
+        }
+
+        public static final int DEFAULT_MINIMAX_DEPTH = 2;
+    }
 }
