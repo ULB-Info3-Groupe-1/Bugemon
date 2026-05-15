@@ -14,6 +14,7 @@ import org.junit.Test;
 import ulb.models.BugemonFixtures;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.turn.TurnAction.AttackAction;
 import ulb.models.combat.turn.TurnAction.ForfeitAction;
 import ulb.models.combat.turn.TurnStep;
@@ -21,7 +22,6 @@ import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.CombatResult;
 import ulb.models.combat.utils.DamageCalculator;
-import ulb.models.bugemon.ElementType;
 
 public class TestCombat {
 

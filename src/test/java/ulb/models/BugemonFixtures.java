@@ -4,11 +4,11 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatTeam;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.run.RunBugemon;
-import ulb.models.bugemon.ElementType;
 
 public final class BugemonFixtures {
 
