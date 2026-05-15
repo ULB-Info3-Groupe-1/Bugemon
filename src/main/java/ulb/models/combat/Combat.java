@@ -106,9 +106,6 @@ public class Combat {
         boolean secondIsPlayer = !firstIsPlayer;
 
         // TODO: fix code dup with second team/actor
-        CombatTeam firstTeam = firstIsPlayer ? this.playerTeam : this.opponentTeam;
-        CombatBugemon firstActor = firstTeam.getActive();
-
         // retrieve the bugemon corresponding to the second action
         // to later check if it died from the first action.
         CombatTeam secondTeam = firstIsPlayer ? this.opponentTeam : this.playerTeam;
@@ -145,6 +142,9 @@ public class Combat {
             callback.onTurnResolved(steps);
             return;
         }
+
+        CombatTeam firstTeam = firstIsPlayer ? this.playerTeam : this.opponentTeam;
+        CombatBugemon firstActor = firstTeam.getActive();
 
         if (firstActor.isKo()) {
             this.handleKo(steps, callback, firstIsPlayer);

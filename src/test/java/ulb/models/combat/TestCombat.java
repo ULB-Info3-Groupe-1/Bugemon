@@ -17,8 +17,8 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.BugemonType;
 import ulb.models.combat.TurnStep.AttackStep;
 import ulb.models.combat.TurnStep.KoStep;
-import ulb.models.trainer.TurnAction.ForfeitAction;
 import ulb.models.trainer.TurnAction.AttackAction;
+import ulb.models.trainer.TurnAction.ForfeitAction;
 
 public class TestCombat {
 
@@ -67,10 +67,7 @@ public class TestCombat {
         this.combat.resolveTurn(playerAttack, opponentAttack, steps::addAll);
 
         // First AttackStep should be from player (higher initiative)
-        AttackStep first = steps.stream()
-                .filter(s -> s instanceof AttackStep)
-                .map(s -> (AttackStep) s)
-                .findFirst()
+        AttackStep first = steps.stream().filter(s -> s instanceof AttackStep).map(s -> (AttackStep) s).findFirst()
                 .orElseThrow();
 
         assertEquals("Player with higher initiative is first to attack", playerAttack.attack(), first.attack());
@@ -79,8 +76,7 @@ public class TestCombat {
     @Test
     public void testForfeitEndsCombat() {
         List<TurnStep> steps = new ArrayList<>();
-        this.combat.resolveTurn(new ForfeitAction(), new AttackAction(this.floraAttack),
-                steps::addAll);
+        this.combat.resolveTurn(new ForfeitAction(), new AttackAction(this.floraAttack), steps::addAll);
 
         assertTrue(this.combat.isFinished());
         assertEquals(CombatResult.DEFEAT, this.combat.getResult());
@@ -122,19 +118,14 @@ public class TestCombat {
         // Give player 1 HP so it will be KO by any attack
         // Create new combat to give more initiative to opponent
         Attack strongAtk = new Attack("strong", "Strong", "", 200, BugemonType.AQUA, List.of());
-        Bugemon fastOpp = new Bugemon(
-                "o2", "FastOpp", 100, 100, 40, 90, BugemonType.AQUA, List.of(strongAtk, strongAtk, strongAtk), "",
-                false);
+        Bugemon fastOpp = new Bugemon("o2", "FastOpp", 100, 100, 40, 90, BugemonType.AQUA,
+                List.of(strongAtk, strongAtk, strongAtk), "", false);
 
         CombatTeam fastOppTeam = BugemonFixtures.teamOf(fastOpp);
         this.playerTeam.getActive().takeDamage(99);
 
-        Combat c = new Combat(
-                this.playerTeam,
-                fastOppTeam,
-                new AutoStrategy(this.seededRandom),
-                new AutoStrategy(this.seededRandom),
-                new DamageCalculator());
+        Combat c = new Combat(this.playerTeam, fastOppTeam, new AutoStrategy(this.seededRandom),
+                new AutoStrategy(this.seededRandom), new DamageCalculator());
 
         c.resolveTurn(new AttackAction(this.floraAttack), new AttackAction(strongAtk), steps -> {
         });

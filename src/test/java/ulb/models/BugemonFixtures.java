@@ -24,17 +24,16 @@ public final class BugemonFixtures {
     }
 
     public static Bugemon fastFlora() {
-        return new Bugemon("flora-1", "FloraFast", 100, 50, 40, 70,
-                BugemonType.FLORA, List.of(floraAttack(), floraAttack(), floraAttack()), "", false);
+        return new Bugemon("flora-1", "FloraFast", 100, 50, 40, 70, BugemonType.FLORA,
+                List.of(floraAttack(), floraAttack(), floraAttack()), "", false);
     }
 
     public static Bugemon slowAqua() {
-        return new Bugemon("aqua-1", "AquaSlow", 100, 50, 40, 30,
-                BugemonType.AQUA, List.of(aquaAttack(), aquaAttack(), aquaAttack()), "", false);
+        return new Bugemon("aqua-1", "AquaSlow", 100, 50, 40, 30, BugemonType.AQUA,
+                List.of(aquaAttack(), aquaAttack(), aquaAttack()), "", false);
     }
 
     public static CombatTeam teamOf(Bugemon bugemon) {
-        return new CombatTeam(List.of(
-                new CombatBugemon(new RunBugemon(new PlayerBugemon(bugemon)))));
+        return new CombatTeam(List.of(new CombatBugemon(new RunBugemon(new PlayerBugemon(bugemon)))));
     }
 }
