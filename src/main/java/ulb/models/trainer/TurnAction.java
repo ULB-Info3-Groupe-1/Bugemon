@@ -6,7 +6,7 @@ public sealed interface TurnAction extends Comparable<TurnAction> {
 
     TurnPhase phase();
 
-     @Override
+    @Override
     default int compareTo(TurnAction other) {
         return this.phase().compareTo(other.phase());
     }
