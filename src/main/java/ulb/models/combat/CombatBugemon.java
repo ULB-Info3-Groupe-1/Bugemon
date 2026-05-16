@@ -72,6 +72,10 @@ public class CombatBugemon {
         return this.activeEffects.stream().filter(e -> e.getStat() == stat).mapToInt(StatusEffect::getModifier).sum();
     }
 
+    public void addEffect(StatusEffect effect) {
+        this.activeEffects.add(effect);
+    }
+
     public void tickEffects() {
         List<StatusEffect> expired = new ArrayList<>();
         this.activeEffects.forEach(effect -> {
@@ -88,7 +92,7 @@ public class CombatBugemon {
         this.activeEffects.clear();
     }
 
-    public void clearNegativeEffects() {
+    public void clearMalusEffects() {
         this.activeEffects.removeIf(StatusEffect::isNegative);
     }
 

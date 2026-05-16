@@ -16,6 +16,18 @@ public class StatModifierEffect extends Effect {
         this.duration = duration;
     }
 
+    public StatType getStat() {
+        return this.stat;
+    }
+
+    public int getModifier() {
+        return this.modifier;
+    }
+
+    public EffectDuration getDuration() {
+        return this.duration;
+    }
+
     public void accept(EffectVisitor visitor) {
         visitor.visit(this);
     }

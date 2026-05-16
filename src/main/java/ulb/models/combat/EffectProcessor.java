@@ -6,6 +6,7 @@ import java.util.List;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.effect.StatusEffect;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.HealBugemonStep;
 import ulb.models.combat.turn.TurnStep.HealTeamStep;
@@ -57,10 +58,29 @@ public class EffectProcessor {
 
             @Override
             public void visit(ResetMalusEffect resetMalusEffect) {
+                switch (target) {
+                    case THROWER:
+                        attacker.clearMalusEffects();
+                        break;
+                    default:
+                        return;
+                }
             }
 
             @Override
             public void visit(StatModifierEffect statModifierEffect) {
+                StatusEffect effect = new StatusEffect(statModifierEffect.getStat(), statModifierEffect.getModifier(),
+                        statModifierEffect.getDuration());
+                switch (target) {
+                    case THROWER:
+                        attacker.addEffect(effect);
+                        break;
+                    case OPPONENT:
+                        defender.addEffect(effect);
+                        break;
+                    default:
+                        return;
+                }
             }
         });
 
