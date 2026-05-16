@@ -152,4 +152,31 @@ public class TestCombat {
         long attackCount = steps.stream().filter(a -> a instanceof AttackStep).count();
         assertEquals("Only the first attacker should be able to attack", 1, attackCount);
     }
+
+    @Test
+    public void testAttackWithHealForThrower() {
+        Attack hpStatModifierAtk = BugemonFixtures.floraAttackWithThrowerHeal();
+        Bugemon player = new Bugemon("p", "p", 500, 100, 40, 90, ElementType.AQUA,
+                List.of(hpStatModifierAtk, hpStatModifierAtk, hpStatModifierAtk), "", false);
+
+        CombatTeam playerTeam = BugemonFixtures.teamOf(player);
+
+        playerTeam.getActive().takeDamage(10); // decrease fastOpp hp to later check if it increased with the
+                                               // modifier of its attack
+
+        int hpBefore = playerTeam.getActive().getCurrentHp();
+
+        Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
+        Bugemon zeroPowerOppBugemon = new Bugemon("o", "o", 500, 50, 40, 30, ElementType.AQUA,
+                List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack), "", false);
+        CombatTeam opponentTeam = BugemonFixtures.teamOf(zeroPowerOppBugemon);
+
+        Combat c = new Combat(playerTeam, opponentTeam, new AutoStrategy(this.seededRandom),
+                new AutoStrategy(this.seededRandom), new DamageCalculator(), new EffectProcessor());
+
+        List<TurnStep> turnSteps = new ArrayList<>();
+        c.resolveTurn(new AttackAction(hpStatModifierAtk), new AttackAction(zeroPowerAttack), turnSteps::addAll);
+
+        assertTrue(playerTeam.getActive().getCurrentHp() > hpBefore);
+    }
 }
