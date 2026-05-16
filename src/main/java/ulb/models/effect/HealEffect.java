@@ -14,6 +14,7 @@ public class HealEffect extends Effect {
         return this.amount;
     }
 
+    @Override
     public void accept(EffectVisitor visitor) {
         visitor.visit(this);
     }

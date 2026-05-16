@@ -9,13 +9,12 @@ import ulb.models.bugemon.exceptions.InvalidAttackCountException;
 /**
  * Represents a Bugemon.
  */
-public record Bugemon(String id, String name, int hp, int attack, int defense, int initiative, ElementType type,
+public record Bugemon(String name, int hp, int attack, int defense, int initiative, ElementType type,
         List<Attack> attacks, String spritePath, boolean isStarter, boolean isBoss) {
 
     public static final int ATTACKS_COUNT = Configuration.Game.ATTACKS_COUNT;
 
     public Bugemon {
-        Objects.requireNonNull(id);
         Objects.requireNonNull(name);
         Objects.requireNonNull(type);
         Objects.requireNonNull(attacks);
@@ -28,9 +27,9 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    public Bugemon(String id, String name, int hp, int attack, int defense, int initiative, ElementType type,
-            List<Attack> attacks, String spritePath, boolean isStarter) {
-        this(id, name, hp, attack, defense, initiative, type, attacks, spritePath, isStarter, false);
+    public Bugemon(String name, int hp, int attack, int defense, int initiative, ElementType type, List<Attack> attacks,
+            String spritePath, boolean isStarter) {
+        this(name, hp, attack, defense, initiative, type, attacks, spritePath, isStarter, false);
     }
 
     public static void checkAttacks(List<Attack> attacks) {
@@ -54,14 +53,14 @@ public record Bugemon(String id, String name, int hp, int attack, int defense, i
             return false;
         }
         Bugemon other = (Bugemon) obj;
-        return this.id.equals(other.id);
+        return this.name.equals(other.name);
         // NOTE: no need to check equality for other member as id is supposed to be
         // unique
     }
 
     @Override
     public int hashCode() {
-        return this.id.hashCode();
+        return this.name.hashCode();
     }
 
     @Override

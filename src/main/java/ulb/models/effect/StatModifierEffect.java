@@ -28,6 +28,7 @@ public class StatModifierEffect extends Effect {
         return this.duration;
     }
 
+    @Override
     public void accept(EffectVisitor visitor) {
         visitor.visit(this);
     }

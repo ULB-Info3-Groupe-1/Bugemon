@@ -7,6 +7,7 @@ public class ResetMalusEffect extends Effect {
         super(target);
     }
 
+    @Override
     public void accept(EffectVisitor visitor) {
         visitor.visit(this);
     }
