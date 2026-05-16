@@ -9,7 +9,7 @@ public class PlayerTeam {
 
     public PlayerTeam(List<PlayerBugemon> members, String name) {
         this.members = List.copyOf(members);
-        this.name = new String(name);
+        this.name = name;
     }
 
     public String getName() {
