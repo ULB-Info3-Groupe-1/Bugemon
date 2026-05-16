@@ -124,14 +124,13 @@ public class Combat {
         // resolve first action
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
 
-        // if combat .
         if (this.isFinished()) {
             LOG.info("Forfeit detected - combat ends in defeat");
             callback.onTurnResolved(steps);
             return;
         }
 
-        // handle potenatial combat end
+        // handle potential combat end
         if (this.checkCombatFinished()) {
             LOG.info("Combat ended after first action: result={}", this.result);
             callback.onTurnResolved(steps);
@@ -148,7 +147,7 @@ public class Combat {
         // resolve second action
         steps.addAll(this.resolveAction(actions.get(1), secondIsPlayer));
 
-        // handle potenatial combat end
+        // handle potential combat end
         if (this.checkCombatFinished()) {
             LOG.info("Combat ended after second action: result={}", this.result);
             callback.onTurnResolved(steps);
@@ -158,6 +157,7 @@ public class Combat {
         CombatTeam firstTeam = firstIsPlayer ? this.playerTeam : this.opponentTeam;
         CombatBugemon firstActor = firstTeam.getActive();
 
+        // handle potential Ko
         if (firstActor.isKo()) {
             LOG.debug("First actor KO - requesting forced switch for {}", firstIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, firstIsPlayer);
