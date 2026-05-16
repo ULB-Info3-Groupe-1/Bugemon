@@ -21,40 +21,56 @@ public final class BugemonFixtures {
     private BugemonFixtures() {
     }
 
-    public static Attack floraAttack() {
-        return new Attack("atk-flora", "Fouet-Liane", "", 40, ElementType.FLORA, List.of());
+    // --- Attaques génériques (type NORMAL, type non pertinent) ---
+
+    public static Attack attack(int power) {
+        return new Attack("atk", "Attaque", "", power, ElementType.NORMAL, List.of());
     }
 
     public static Attack zeroPowerAttack() {
-        return new Attack("atk-flora", "Fouet-Liane", "", 0, ElementType.FLORA, List.of());
+        return attack(0);
     }
 
-    public static Attack floraAttackWithThrowerHeal() {
-        return new Attack("atk-flora", "Fouet-Liane", "", 1, ElementType.FLORA, List.of(throwerHpHealEffect()));
+    public static Attack attackWithThrowerHeal() {
+        return new Attack("atk-heal", "Soin", "", 1, ElementType.NORMAL, List.of(throwerHpHealEffect()));
     }
 
     public static HealEffect throwerHpHealEffect() {
         return new HealEffect(EffectTarget.THROWER, 10);
     }
 
-    public static Attack floraAttackWithDefenseDebuffOnOpponent() {
-        return new Attack("atk-debuff", "Morsure", "", 1, ElementType.FLORA, List
-                .of(new StatModifierEffect(EffectTarget.OPPONENT, StatType.DEFENSE, -10, EffectDuration.PERMANENT)));
+    public static Attack attackWithDefenseDebuffOnOpponent() {
+        return new Attack("atk-debuff", "Morsure", "", 1, ElementType.NORMAL,
+                List.of(new StatModifierEffect(EffectTarget.OPPONENT, StatType.DEFENSE, -10, EffectDuration.PERMANENT)));
     }
 
-    public static Attack floraAttackWithInitiativeBuffOnThrower() {
-        return new Attack("atk-buf", "Élan", "", 1, ElementType.FLORA, List
-                .of(new StatModifierEffect(EffectTarget.THROWER, StatType.INITIATIVE, 15, EffectDuration.PERMANENT)));
+    public static Attack attackWithInitiativeBuffOnThrower() {
+        return new Attack("atk-buf", "Élan", "", 1, ElementType.NORMAL,
+                List.of(new StatModifierEffect(EffectTarget.THROWER, StatType.INITIATIVE, 15, EffectDuration.PERMANENT)));
     }
 
-    public static Attack floraAttackWithResetMalus() {
-        return new Attack("atk-reset", "Purification", "", 1, ElementType.FLORA,
+    public static Attack attackWithResetMalus() {
+        return new Attack("atk-reset", "Purification", "", 1, ElementType.NORMAL,
                 List.of(new ResetMalusEffect(EffectTarget.THROWER)));
+    }
+
+    // --- Attaques typées (type pertinent pour tester l'efficacité) ---
+
+    public static Attack floraAttack() {
+        return new Attack("atk-flora", "Fouet-Liane", "", 40, ElementType.FLORA, List.of());
     }
 
     public static Attack aquaAttack() {
         return new Attack("atk-aqua", "Jet d'Eau", "", 35, ElementType.AQUA, List.of());
     }
+
+    // --- Bugémons génériques (type NORMAL, type non pertinent) ---
+
+    public static Bugemon bugemon(int hp, int attack, int defense, int initiative, List<Attack> attacks) {
+        return new Bugemon("b", "Bugémon", hp, attack, defense, initiative, ElementType.NORMAL, attacks, "", false);
+    }
+
+    // --- Bugémons typés (type pertinent pour tester l'efficacité) ---
 
     public static Bugemon fastFlora() {
         return new Bugemon("flora-1", "FloraFast", 100, 50, 40, 70, ElementType.FLORA,
@@ -65,6 +81,8 @@ public final class BugemonFixtures {
         return new Bugemon("aqua-1", "AquaSlow", 100, 50, 40, 30, ElementType.AQUA,
                 List.of(aquaAttack(), aquaAttack(), aquaAttack()), "", false);
     }
+
+    // --- Helpers ---
 
     public static CombatTeam teamOf(Bugemon bugemon) {
         return new CombatTeam(List.of(new CombatBugemon(new RunBugemon(new PlayerBugemon(bugemon)))));
