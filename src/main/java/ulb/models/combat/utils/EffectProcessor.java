@@ -1,10 +1,12 @@
-package ulb.models.combat;
+package ulb.models.combat.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ulb.common.EffectTarget;
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.CombatBugemon;
+import ulb.models.combat.CombatTeam;
 import ulb.models.combat.effect.StatusEffect;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.HealBugemonStep;

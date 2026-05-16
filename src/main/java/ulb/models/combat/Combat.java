@@ -25,6 +25,7 @@ import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.combat.utils.DamageCalculator;
+import ulb.models.combat.utils.EffectProcessor;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
