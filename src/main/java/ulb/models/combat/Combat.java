@@ -138,6 +138,7 @@ public class Combat {
         if (secondActorBefore.isKo()) {
             LOG.debug("Second actor KO - requesting forced switch for {}", secondIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, secondIsPlayer);
+            this.tickEndOfTurn();
             return;
         }
 
@@ -158,8 +159,11 @@ public class Combat {
         if (firstActor.isKo()) {
             LOG.debug("First actor KO - requesting forced switch for {}", firstIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, firstIsPlayer);
+            this.tickEndOfTurn();
             return;
         }
+
+        this.tickEndOfTurn();
 
         LOG.debug("Turn resolved normally with {} steps", steps.size());
         callback.onTurnResolved(steps);
