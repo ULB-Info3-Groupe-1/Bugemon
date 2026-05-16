@@ -14,16 +14,20 @@ import org.junit.Test;
 import ulb.common.EffectDuration;
 import ulb.common.StatType;
 import ulb.models.BugemonFixtures;
+import ulb.models.ItemFixtures;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.effect.StatusEffect;
 import ulb.models.combat.turn.TurnAction.AttackAction;
 import ulb.models.combat.turn.TurnAction.ForfeitAction;
+import ulb.models.combat.turn.TurnAction.ItemAction;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
+import ulb.models.combat.turn.TurnStep.HealBugemonStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.DamageCalculator;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
+import ulb.models.item.Item;
 
 public class TestCombat {
 
@@ -242,4 +246,34 @@ public class TestCombat {
         assertTrue(playerTeam.getActive().getEffectiveDefense() > defenseWithMalus);
     }
 
+    @Test
+    public void testItemWithHealForThrower() {
+        int healAmount = 10;
+
+        Item item = ItemFixtures.healingItem(healAmount);
+
+        Inventory playerInventory = new Inventory();
+        playerInventory.addItem(item, 1);
+
+        Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
+
+        CombatTeam playerTeam = BugemonFixtures.teamOf(
+                BugemonFixtures.bugemon(100, 50, 40, 90, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
+        CombatTeam opponentTeam = BugemonFixtures.teamOf(
+                BugemonFixtures.bugemon(100, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
+
+        playerTeam.getActive().takeDamage(20);
+        int hpBefore = playerTeam.getActive().getCurrentHp();
+
+        Combat c = new Combat(playerTeam, opponentTeam, playerInventory, new Inventory(),
+                new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
+                new EffectProcessor());
+
+        List<TurnStep> turnSteps = new ArrayList<>();
+        c.resolveTurn(new ItemAction(item), new AttackAction(zeroPowerAttack), turnSteps::addAll);
+
+        assertEquals(hpBefore + healAmount, playerTeam.getActive().getCurrentHp());
+        assertFalse(playerInventory.hasItem(item));
+        assertTrue(turnSteps.stream().anyMatch(s -> s instanceof HealBugemonStep));
+    }
 }
