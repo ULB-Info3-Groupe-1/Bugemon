@@ -17,6 +17,7 @@ import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomType;
 
 public class FloorFactory {
+    // TODO: those constants shouldn't be here
     static final int GRID_SIZE = 5;
     static final int MAX_DEPTH = 6;
 
