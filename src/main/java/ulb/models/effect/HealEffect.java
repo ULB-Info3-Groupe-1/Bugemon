@@ -9,4 +9,12 @@ public class HealEffect extends Effect {
         super(target);
         this.amount = amount;
     }
+
+    public int getAmount() {
+        return this.amount;
+    }
+
+    public void accept(EffectVisitor visitor) {
+        visitor.visit(this);
+    }
 }

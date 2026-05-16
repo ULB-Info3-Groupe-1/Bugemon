@@ -6,4 +6,8 @@ public class ResetMalusEffect extends Effect {
     public ResetMalusEffect(EffectTarget target) {
         super(target);
     }
+
+    public void accept(EffectVisitor visitor) {
+        visitor.visit(this);
+    }
 }

@@ -15,4 +15,8 @@ public class StatModifierEffect extends Effect {
         this.modifier = modifier;
         this.duration = duration;
     }
+
+    public void accept(EffectVisitor visitor) {
+        visitor.visit(this);
+    }
 }

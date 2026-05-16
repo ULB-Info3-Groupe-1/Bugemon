@@ -12,4 +12,6 @@ public abstract class Effect {
     public EffectTarget getTarget() {
         return this.target;
     }
+
+    public abstract void accept(EffectVisitor visitor);
 }

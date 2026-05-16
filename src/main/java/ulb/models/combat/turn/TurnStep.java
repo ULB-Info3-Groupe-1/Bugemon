@@ -4,6 +4,7 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.CombatBugemon;
+import ulb.models.combat.CombatTeam;
 import ulb.models.effect.Effect;
 
 public sealed interface TurnStep {
@@ -28,4 +29,8 @@ public sealed interface TurnStep {
     // Placeholder for future item steps
     record ItemStep() implements TurnStep {
     }
+
+    record HealBugemonStep(CombatBugemon healedBugemon) implements TurnStep {}
+
+    record HealTeamStep(CombatTeam healedTeam) implements TurnStep {}
 }
