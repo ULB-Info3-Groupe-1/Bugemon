@@ -228,6 +228,12 @@ public class Combat {
 
     private List<TurnStep> resolveAttack(CombatBugemon attacker, CombatBugemon defender, Attack attack,
             CombatTeam attackerTeam) {
+        if (!attacker.hasAttack(attack)) {
+            throw new IllegalArgumentException(
+                    String.format("%s attempted to use attack %s, but does not have this attack.",
+                            attacker, attack));
+        }
+
         List<TurnStep> steps = new ArrayList<>();
 
         int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
