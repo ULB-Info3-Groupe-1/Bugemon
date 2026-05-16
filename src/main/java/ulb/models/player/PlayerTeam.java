@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class PlayerTeam {
+    // TODO: use Team instead of owning its own List<PlayerBugemon>
     private final List<PlayerBugemon> members;
     private final String name;
 
