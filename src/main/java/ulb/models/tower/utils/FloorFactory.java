@@ -2,11 +2,9 @@ package ulb.models.tower.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -56,13 +54,11 @@ public class FloorFactory {
     }
 
     public Floor create(int floorLevel) {
-        this.depthPerNode = new HashMap<>();
-
         this.generateNewFloor();
         return new Floor(floorLevel, this.root);
     }
 
-    public void generateNewFloor() {
+    private void generateNewFloor() {
         for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
             this.initialize();
             this.generateFloor();
@@ -74,11 +70,8 @@ public class FloorFactory {
                 "Failed to generate a valid floor after " + MAX_GENERATION_ATTEMPTS + " attempts");
     }
 
-    public FloorNode getRoot() {
-        return this.root;
-    }
-
     private void initialize() {
+        this.depthPerNode = new HashMap<>();
         this.rewardCount = this.random.nextInt(MIN_REWARD, MAX_REWARD + 1);
         this.branchCount = this.random.nextInt(MIN_BRANCHES, MAX_BRANCHES + 1);
         this.combatCount = this.random.nextInt(MIN_COMBATS, MAX_COMBATS + 1);
@@ -183,8 +176,6 @@ public class FloorFactory {
     }
 
     private List<FloorNode> getAllNonRootNodes() {
-        // Shuffle the nodes to ensure random placement of interest points
-        // .stream() ai generated, as I wanted something more compact
         List<FloorNode> nodes = this.visitedNode.stream().filter(n -> n != this.root).collect(ArrayList::new,
                 ArrayList::add, ArrayList::addAll);
         Collections.shuffle(nodes, this.random);
@@ -232,35 +223,4 @@ public class FloorFactory {
             }
         }
     }
-
-    // To print the floor with the associated branch (each number represents a
-    // branch)
-    @Override
-    public String toString() {
-        int[][] grid = new int[GRID_SIZE][GRID_SIZE];
-        List<FloorNode> branches = this.root.getChildren();
-
-        int branchIdx = 0;
-        for (FloorNode branch : branches) {
-            branchIdx++;
-            Deque<FloorNode> queue = new LinkedList<>();
-            queue.add(branch);
-
-            while (!queue.isEmpty()) {
-                FloorNode node = queue.poll();
-                grid[node.getX()][node.getY()] = branchIdx;
-                queue.addAll(node.getChildren());
-            }
-        }
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
-                stringBuilder.append(grid[i][j]).append(' ');
-            }
-            stringBuilder.append(System.lineSeparator());
-        }
-        return stringBuilder.toString();
-    }
-
 }
