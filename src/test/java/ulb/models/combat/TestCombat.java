@@ -2,6 +2,7 @@ package ulb.models.combat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -275,5 +276,25 @@ public class TestCombat {
         assertEquals(hpBefore + healAmount, playerTeam.getActive().getCurrentHp());
         assertFalse(playerInventory.hasItem(item));
         assertTrue(turnSteps.stream().anyMatch(s -> s instanceof HealBugemonStep));
+    }
+
+    @Test
+    public void testThrowIfBugemonDoesNotHaveAttack() {
+        Attack availableAttack = BugemonFixtures.attack(1);
+        Attack unavailableAttack = BugemonFixtures.attack(2);
+
+        CombatTeam playerTeam = BugemonFixtures.teamOf(BugemonFixtures.bugemon(100, 50, 40, 90,
+                List.of(availableAttack, availableAttack, availableAttack)));
+        CombatTeam opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
+
+        Combat c = new Combat(playerTeam, opponentTeam, new Inventory(), new Inventory(),
+                new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
+                new EffectProcessor());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            c.resolveTurn(new AttackAction(unavailableAttack), new AttackAction(this.aquaAttack), steps -> {
+            });
+        });
+
     }
 }
