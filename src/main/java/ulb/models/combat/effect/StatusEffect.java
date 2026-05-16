@@ -24,7 +24,7 @@ public class StatusEffect {
     }
 
     public boolean isExpired() {
-        return this.ticker.isExpired();
+        return this.ticker != null && this.ticker.isExpired();
     }
 
     public void tick() {

@@ -15,6 +15,7 @@ import ulb.models.BugemonFixtures;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
+import ulb.models.combat.effect.StatusEffect;
 import ulb.models.combat.turn.TurnAction.AttackAction;
 import ulb.models.combat.turn.TurnAction.ForfeitAction;
 import ulb.models.combat.turn.TurnStep;
@@ -22,6 +23,8 @@ import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.DamageCalculator;
 import ulb.models.combat.utils.EffectProcessor;
+import ulb.common.EffectDuration;
+import ulb.common.StatType;
 
 public class TestCombat {
 
@@ -180,4 +183,73 @@ public class TestCombat {
 
         assertTrue(playerTeam.getActive().getCurrentHp() > hpBefore);
     }
+
+    @Test
+    public void testAttackWithDefenseDebuffReducesOpponentDefense() {
+        Attack debuffAtk = BugemonFixtures.floraAttackWithDefenseDebuffOnOpponent();
+        Bugemon player = new Bugemon("p", "p", 500, 50, 40, 90, ElementType.FLORA,
+                List.of(debuffAtk, debuffAtk, debuffAtk), "", false);
+        CombatTeam playerTeam = BugemonFixtures.teamOf(player);
+
+        Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
+        Bugemon opp = new Bugemon("o", "o", 500, 50, 40, 30, ElementType.AQUA,
+                List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack), "", false);
+        CombatTeam opponentTeam = BugemonFixtures.teamOf(opp);
+
+        int defenseBefore = opponentTeam.getActive().getEffectiveDefense();
+
+        Combat c = new Combat(playerTeam, opponentTeam, new AutoStrategy(this.seededRandom),
+                new AutoStrategy(this.seededRandom), new DamageCalculator(), new EffectProcessor());
+        c.resolveTurn(new AttackAction(debuffAtk), new AttackAction(zeroPowerAttack), steps -> {
+        });
+
+        assertTrue(opponentTeam.getActive().getEffectiveDefense() < defenseBefore);
+    }
+
+    @Test
+    public void testAttackWithInitiativeBuffIncreasesThrowerInitiative() {
+        Attack buffAtk = BugemonFixtures.floraAttackWithInitiativeBuffOnThrower();
+        Bugemon player = new Bugemon("p", "p", 500, 50, 40, 90, ElementType.FLORA,
+                List.of(buffAtk, buffAtk, buffAtk), "", false);
+        CombatTeam playerTeam = BugemonFixtures.teamOf(player);
+
+        Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
+        Bugemon opp = new Bugemon("o", "o", 500, 50, 40, 30, ElementType.AQUA,
+                List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack), "", false);
+        CombatTeam opponentTeam = BugemonFixtures.teamOf(opp);
+
+        int initiativeBefore = playerTeam.getActive().getEffectiveInitiative();
+
+        Combat c = new Combat(playerTeam, opponentTeam, new AutoStrategy(this.seededRandom),
+                new AutoStrategy(this.seededRandom), new DamageCalculator(), new EffectProcessor());
+        c.resolveTurn(new AttackAction(buffAtk), new AttackAction(zeroPowerAttack), steps -> {
+        });
+
+        assertTrue(playerTeam.getActive().getEffectiveInitiative() > initiativeBefore);
+    }
+
+    @Test
+    public void testAttackWithResetMalusRemovesNegativeEffects() {
+        Attack resetAtk = BugemonFixtures.floraAttackWithResetMalus();
+        Bugemon player = new Bugemon("p", "p", 500, 50, 40, 90, ElementType.FLORA,
+                List.of(resetAtk, resetAtk, resetAtk), "", false);
+        CombatTeam playerTeam = BugemonFixtures.teamOf(player);
+
+        // Pré-applique un malus de défense sur le joueur
+        playerTeam.getActive().addEffect(new StatusEffect(StatType.DEFENSE, -20, EffectDuration.PERMANENT));
+        int defenseWithMalus = playerTeam.getActive().getEffectiveDefense();
+
+        Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
+        Bugemon opp = new Bugemon("o", "o", 500, 50, 40, 30, ElementType.AQUA,
+                List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack), "", false);
+        CombatTeam opponentTeam = BugemonFixtures.teamOf(opp);
+
+        Combat c = new Combat(playerTeam, opponentTeam, new AutoStrategy(this.seededRandom),
+                new AutoStrategy(this.seededRandom), new DamageCalculator(), new EffectProcessor());
+        c.resolveTurn(new AttackAction(resetAtk), new AttackAction(zeroPowerAttack), steps -> {
+        });
+
+        assertTrue(playerTeam.getActive().getEffectiveDefense() > defenseWithMalus);
+    }
+
 }
