@@ -13,8 +13,6 @@ import java.util.Set;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.FloorNode.RoomPosition;
-import ulb.models.tower.room.EmptyRoom;
-import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomType;
 
@@ -79,7 +77,8 @@ public class FloorFactory {
         this.bossNode = null;
         this.visitedNodes = new HashSet<>();
 
-        this.root = new FloorNode(new RoomPosition(GRID_SIZE / 2, GRID_SIZE / 2), new EmptyRoom(), new ArrayList<>(),
+        this.root = new FloorNode(new RoomPosition(GRID_SIZE / 2, GRID_SIZE / 2), new Room(RoomType.EMPTY),
+                new ArrayList<>(),
                 null);
         this.setNodeDepth(this.root, 0);
     }
@@ -209,7 +208,7 @@ public class FloorFactory {
 
             if (node.getParent().isPresent() && combatSet.contains(node.getParent().orElseThrow())
                     && !node.equals(this.bossNode)) {
-                node.setRoom(new RewardRoom());
+                node.setRoom(new Room(RoomType.REWARD));
                 placed++;
             }
         }
@@ -219,7 +218,7 @@ public class FloorFactory {
     private void fillEmptyRooms(List<FloorNode> remaining) {
         for (FloorNode node : remaining) {
             if (node.getRoom() == null && !node.equals(this.bossNode)) {
-                node.setRoom(new EmptyRoom());
+                node.setRoom(new Room(RoomType.EMPTY));
             }
         }
     }
