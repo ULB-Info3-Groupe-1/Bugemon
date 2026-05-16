@@ -11,26 +11,19 @@ public class PlayerBugemon {
     private final Bugemon base;
     private int level;
     private int xp;
-    private int bonusHp;
-    private int bonusAttack;
-    private int bonusDefense;
-    private int bonusInitiative;
+    private BonusStats bonusStats;
     private final List<Attack> currentAttacks;
 
     public PlayerBugemon(Bugemon base) {
-        this(base, 1, 0, 0, 0, 0, 0, base.attacks());
+        this(base, 1, 0, new BonusStats(), base.attacks());
     }
 
-    public PlayerBugemon(Bugemon base, int level, int xp, int bonusHp, int bonusAttack, int bonusDefense,
-            int bonusInitiative, List<Attack> currentAttacks) {
+    public PlayerBugemon(Bugemon base, int level, int xp, BonusStats bonusStats, List<Attack> currentAttacks) {
         this.base = Objects.requireNonNull(base);
 
         this.level = level;
         this.xp = xp;
-        this.bonusHp = bonusHp;
-        this.bonusAttack = bonusAttack;
-        this.bonusDefense = bonusDefense;
-        this.bonusInitiative = bonusInitiative;
+        this.bonusStats = bonusStats;
 
         Bugemon.checkAttacks(currentAttacks);
         this.currentAttacks = currentAttacks;
@@ -41,19 +34,19 @@ public class PlayerBugemon {
     }
 
     public int getMaxHp() {
-        return this.base.hp() + this.bonusHp;
+        return this.base.hp() + this.bonusStats.getBonusHp();
     }
 
     public int getAttack() {
-        return this.base.attack() + this.bonusAttack;
+        return this.base.attack() + this.bonusStats.getBonusAttack();
     }
 
     public int getDefense() {
-        return this.base.defense() + this.bonusDefense;
+        return this.base.defense() + this.bonusStats.getBonusDefense();
     }
 
     public int getInitiative() {
-        return this.base.initiative() + this.bonusInitiative;
+        return this.base.initiative() + this.bonusStats.getBonusInitiative();
     }
 
     public List<Attack> getAttacks() {
@@ -70,9 +63,7 @@ public class PlayerBugemon {
         }
         PlayerBugemon other = (PlayerBugemon) obj;
         return this.base.equals(other.base) && this.level == other.level && this.xp == other.xp
-                && this.bonusHp == other.bonusHp && this.bonusAttack == other.bonusAttack
-                && this.bonusDefense == other.bonusDefense && this.bonusInitiative == other.bonusInitiative
-                && this.currentAttacks.equals(other.currentAttacks);
+                && this.bonusStats.equals(other.bonusStats) && this.currentAttacks.equals(other.currentAttacks);
     }
 
     @Override
