@@ -11,16 +11,13 @@ import java.util.Random;
 import java.util.Set;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.skills.Skill;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
-import ulb.models.trainer.Trainer;
 import ulb.models.utils.Position;
 
-public class FloorGenerator {
-
+public class FloorFactory {
     static final int GRID_SIZE = 5;
     static final int MAX_DEPTH = 6;
 
@@ -38,8 +35,6 @@ public class FloorGenerator {
     private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final Random random;
-    private final List<Bugemon> allBugemons;
-    private final List<Skill> skills;
 
     private FloorNode root;
     private FloorNode bossNode;
@@ -51,11 +46,13 @@ public class FloorGenerator {
 
     private Set<FloorNode> visitedNode;
 
-    public FloorGenerator(List<Bugemon> allBugemons, List<Skill> skills, Trainer playerTrainer) {
-        this.allBugemons = allBugemons;
-        this.skills = skills;
-        this.random = new Random();
-        this.generateNewFloor(playerTrainer);
+    public FloorFactory(Random random) {
+        this.random = random;
+    }
+
+    public Floor create(int floorLevel) {
+        this.generateNewFloor();
+        return new Floor(this.root)
     }
 
     public void generateNewFloor(Trainer playerTrainer) {

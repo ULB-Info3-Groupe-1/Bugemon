@@ -1,104 +1,58 @@
 package ulb.models.tower;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Stream;
 
-import ulb.models.bugemon.Bugemon;
-import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
-import ulb.models.tower.room.RoomVisitor;
-import ulb.models.tower.utils.FloorGenerator;
-import ulb.models.trainer.Trainer;
 
 public class Floor {
-    private final Trainer playerTrainer;
-    private final FloorGenerator floorGenerator;
-    private FloorNode currentPosition;
-    private final FloorNode floorRoot;
-    private final int floorLevel;
+    private FloorNode currentNode;
+    private final FloorNode rootNode;
+    private final int level;
 
-    public Floor(List<Bugemon> allBugemons, List<Skill> skills, Trainer playerTrainer, int floorLevel) {
-        this.playerTrainer = playerTrainer;
-        this.floorLevel = floorLevel;
-        this.floorGenerator = new FloorGenerator(allBugemons, skills, playerTrainer);
-        this.currentPosition = this.floorGenerator.getRoot();
-        this.floorRoot = this.floorGenerator.getRoot();
+    public Floor(int level, FloorNode rootNode) {
+        this(level, rootNode, rootNode);
     }
 
-    public boolean isComplete() {
-        return this.floorGenerator.hasPlayerWonBossCombat();
-    }
-
-    public List<Room> getNextRooms() {
-        List<Room> nextRooms = new ArrayList<>();
-        for (FloorNode node : this.getReachableNodes()) {
-            nextRooms.add(node.getRoom());
-        }
-        return nextRooms;
+    public Floor(int level, FloorNode currentNode, FloorNode rootNode) {
+        this.level = level;
+        this.currentNode = currentNode;
+        this.rootNode = rootNode;
     }
 
     public FloorNode getRoot() {
-        return this.floorRoot;
+        return this.rootNode;
     }
 
-    public List<FloorNode> getFloorNodes() {
-        List<FloorNode> floorNodes = new ArrayList<>();
-        Set<FloorNode> visited = new HashSet<>();
-        Deque<FloorNode> queue = new ArrayDeque<>();
-        queue.add(this.floorGenerator.getRoot());
-
-        while (!queue.isEmpty()) {
-            FloorNode node = queue.removeFirst();
-            if (!visited.add(node)) {
-                continue;
-            }
-            floorNodes.add(node);
-            queue.addAll(node.getChildren());
-        }
-        return Collections.unmodifiableList(floorNodes);
+    public int getLevel() {
+        return this.level;
     }
 
     public List<FloorNode> getReachableNodes() {
-        List<FloorNode> reachableNodes = new ArrayList<>();
-        reachableNodes.addAll(this.currentPosition.getChildren());
-        this.currentPosition.getParent().ifPresent(reachableNodes::add);
-        return reachableNodes;
+        return Stream.concat(
+                this.currentNode.getChildren().stream(),
+                this.currentNode.getParent().stream()).toList();
     }
 
-    public int getFloorLevel() {
-        return this.floorLevel;
+    public List<Room> getReachableRooms() {
+        return this.getReachableNodes().stream().map(FloorNode::getRoom).toList();
     }
 
-    public void moveTo(FloorNode node) {
-        boolean isChild = this.currentPosition.getChildren().contains(node);
-        boolean isParent = this.currentPosition.getParent().map(parent -> parent.equals(node)).orElse(false);
-        if (isChild || isParent) {
-            this.currentPosition = node;
+    public void movePlayerTo(FloorNode node) {
+        if (this.checkCanMoveTo(node)) {
+            this.currentNode = node;
         }
     }
 
-    public FloorNode getCurrentPosition() {
-        return this.currentPosition;
+    public boolean checkCanMoveTo(FloorNode node) {
+        return this.getReachableNodes().contains(node);
+    }
+
+    public FloorNode getCurrentNode() {
+        return this.currentNode;
     }
 
     public Room getCurrentRoom() {
-        return this.currentPosition.getRoom();
-    }
-
-    public Trainer getPlayerTrainer() {
-        return this.playerTrainer;
-    }
-
-    public void visitCurrentRoom(RoomVisitor roomVisitor) {
-        Room room = this.getCurrentRoom();
-        if (room.isVisited()) {
-            return;
-        }
-        this.currentPosition.visit(roomVisitor);
+        return this.currentNode.getRoom();
     }
 }

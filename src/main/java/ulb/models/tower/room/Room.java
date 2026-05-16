@@ -25,8 +25,6 @@ public abstract class Room {
         this.state = roomState;
     }
 
-    public abstract void visit(RoomVisitor roomVisitor);
-
     public abstract RoomType getType();
 
     public enum RoomState {
