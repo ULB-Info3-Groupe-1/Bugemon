@@ -127,12 +127,6 @@ public class Combat {
         // resolve first action
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
 
-        if (this.isFinished()) {
-            LOG.info("Forfeit detected - combat ends in defeat");
-            callback.onTurnResolved(steps);
-            return;
-        }
-
         // handle potential combat end
         if (this.checkCombatFinished()) {
             LOG.info("Combat ended after first action: result={}", this.result);
@@ -256,6 +250,9 @@ public class Combat {
     }
 
     private boolean checkCombatFinished() {
+        if (this.isFinished()) { // triggered by forfeit action
+            return true;
+        }
         if (this.playerTeam.isDefeated()) {
             this.result = CombatResult.DEFEAT;
             this.finished = true;
