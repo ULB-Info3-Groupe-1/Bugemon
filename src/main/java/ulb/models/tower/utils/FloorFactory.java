@@ -15,7 +15,6 @@ import java.util.Set;
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.FloorNode.RoomPosition;
-import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
 import ulb.models.tower.room.Room;
@@ -118,7 +117,7 @@ public class FloorFactory {
             this.bossNode = node;
         }
 
-        if (this.depthPerNode.get(node) >= MAX_DEPTH || node.getBranchCount() >= MAX_DEPTH) {
+        if (this.depthPerNode.get(node) >= MAX_DEPTH || this.getBranchCount(node) >= MAX_DEPTH) {
             return;
         }
 
@@ -132,6 +131,21 @@ public class FloorFactory {
                 this.generateBranch(next);
             }
         }
+    }
+
+    private int getBranchCount(FloorNode node) {
+        while (this.depthPerNode.get(node) > 1 && node.getParent().isPresent()) {
+            node = node.getParent().orElseThrow();
+        }
+        return this.countSubTree(node);
+    }
+
+    private int countSubTree(FloorNode node) {
+        int count = 1;
+        for (FloorNode child : node.getChildren()) {
+            count += this.countSubTree(child);
+        }
+        return count;
     }
 
     private List<FloorNode> getAvailableNeighbors(FloorNode node) {
