@@ -1,37 +1,24 @@
 package ulb.models.tower.room;
 
-public abstract class Room {
-    RoomState state = RoomState.LOCKED; // default state
-    private boolean visited = false;
+public class Room {
+    private final RoomType type;
+    private boolean visited;
 
-    public boolean hasPlayerWon() {
-        return false;
+    public Room(RoomType type) {
+        this.type = type;
+        this.visited = false;
     }
 
-    public RoomState getState() {
-        return this.state;
+    public RoomType getType() {
+        return this.type;
     }
 
     public boolean isVisited() {
         return this.visited;
     }
 
-    public void setVisited() {
+    public void markAsVisited() {
         this.visited = true;
-        this.state = RoomState.VISITED;
-    }
-
-    public void setState(RoomState roomState) {
-        this.state = roomState;
-    }
-
-    public abstract RoomType getType();
-
-    public enum RoomState {
-        AVAILABLE,
-        VISITED,
-        VISITED_AVAILABLE,
-        LOCKED
     }
 
     public enum RoomType {

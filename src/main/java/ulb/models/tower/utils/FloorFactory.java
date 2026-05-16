@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import ulb.models.bugemon.Bugemon;
+import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
-import ulb.models.utils.Position;
 
 public class FloorFactory {
     static final int GRID_SIZE = 5;
@@ -52,14 +51,14 @@ public class FloorFactory {
 
     public Floor create(int floorLevel) {
         this.generateNewFloor();
-        return new Floor(this.root)
+        return new Floor(floorLevel, this.root);
     }
 
-    public void generateNewFloor(Trainer playerTrainer) {
+    public void generateNewFloor() {
         for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
             this.initialize();
             this.generateFloor();
-            if (this.placeInterestPoints(playerTrainer)) {
+            if (this.placeInterestPoints()) {
                 return;
             }
         }
@@ -150,7 +149,7 @@ public class FloorFactory {
         return neighbors;
     }
 
-    private boolean placeInterestPoints(Trainer playerTrainer) {
+    private boolean placeInterestPoints() {
         this.bossNode.setRoom(new CombatRoom(this.allBugemons, this.skills, playerTrainer, true));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();

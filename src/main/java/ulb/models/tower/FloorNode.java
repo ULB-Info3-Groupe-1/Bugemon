@@ -5,46 +5,38 @@ import java.util.Objects;
 import java.util.Optional;
 
 import ulb.models.tower.room.Room;
-import ulb.models.tower.utils.Position;
 
 public class FloorNode {
-    private final Position position;
-    private final int depth;
+    private final RoomPosition position;
     private final List<FloorNode> children;
     private final FloorNode parent;
     private Room room;
 
-    public FloorNode(Position position, Room room, List<FloorNode> children, FloorNode parent, int depth) {
+    public FloorNode(RoomPosition position, Room room, List<FloorNode> children, FloorNode parent) {
         this.position = position;
-        this.depth = depth;
         this.room = room;
         this.children = children;
         this.parent = parent;
     }
 
-    public boolean hasPlayerWon() {
-        return this.room.hasPlayerWon();
-    }
-
-    // Getters
     public int getX() {
-        return this.position.x();
+        return this.position.col();
     }
 
     public int getY() {
-        return this.position.y();
+        return this.position.row();
     }
 
     public RoomPosition getPosition() {
-        return new RoomPosition(this.position.x(), this.position.y());
-    }
-
-    public int getDepth() {
-        return this.depth;
+        return this.position;
     }
 
     public Room getRoom() {
         return this.room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public List<FloorNode> getChildren() {
@@ -58,32 +50,6 @@ public class FloorNode {
     public void addChild(FloorNode child) {
         this.children.add(child);
     }
-
-    public int getBranchCount() {
-        FloorNode n = this;
-        while (n.getDepth() > 1 && n.getParent().isPresent()) {
-            n = n.getParent().orElseThrow();
-        }
-        return this.countSubtree(n);
-    }
-
-    // Setters
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    // Private
-
-    private int countSubtree(FloorNode n) {
-        int count = 1;
-        for (FloorNode child : n.getChildren()) {
-            count += this.countSubtree(child);
-        }
-        return count;
-    }
-
-    // Overrides
 
     @Override
     public boolean equals(Object obj) {
@@ -99,7 +65,7 @@ public class FloorNode {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.position.x(), this.position.y());
+        return Objects.hash(this.position);
     }
 
     public record RoomPosition(int row, int col) {
