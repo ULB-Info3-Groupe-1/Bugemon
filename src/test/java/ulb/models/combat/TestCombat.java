@@ -56,7 +56,7 @@ public class TestCombat {
     @Test
     public void testResolveTurnProducesActions() {
         AttackAction playerAttack = new AttackAction(this.floraAttack);
-        AttackAction opponentAttack = new AttackAction(this.floraAttack);
+        AttackAction opponentAttack = new AttackAction(this.aquaAttack);
 
         List<TurnStep> turnSteps = new ArrayList<>();
 
