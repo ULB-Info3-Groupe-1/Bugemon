@@ -230,8 +230,7 @@ public class Combat {
             CombatTeam attackerTeam) {
         if (!attacker.hasAttack(attack)) {
             throw new IllegalArgumentException(
-                    String.format("%s attempted to use attack %s, but does not have this attack.",
-                            attacker, attack));
+                    String.format("%s attempted to use attack %s, but does not have this attack.", attacker, attack));
         }
 
         List<TurnStep> steps = new ArrayList<>();

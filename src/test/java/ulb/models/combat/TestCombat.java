@@ -283,8 +283,8 @@ public class TestCombat {
         Attack availableAttack = BugemonFixtures.attack(1);
         Attack unavailableAttack = BugemonFixtures.attack(2);
 
-        CombatTeam playerTeam = BugemonFixtures.teamOf(BugemonFixtures.bugemon(100, 50, 40, 90,
-                List.of(availableAttack, availableAttack, availableAttack)));
+        CombatTeam playerTeam = BugemonFixtures.teamOf(
+                BugemonFixtures.bugemon(100, 50, 40, 90, List.of(availableAttack, availableAttack, availableAttack)));
         CombatTeam opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
 
         Combat c = new Combat(playerTeam, opponentTeam, new Inventory(), new Inventory(),
