@@ -3,18 +3,23 @@ package ulb.models.tower.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
+import ulb.models.tower.FloorNode.RoomPosition;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
+import ulb.models.tower.room.Room;
+import ulb.models.tower.room.Room.RoomType;
 
 public class FloorFactory {
     static final int GRID_SIZE = 5;
@@ -31,7 +36,7 @@ public class FloorFactory {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
-    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
 
     private final Random random;
 
@@ -43,6 +48,8 @@ public class FloorFactory {
     private int branchCount;
     private int combatCount;
 
+    private Map<FloorNode, Integer> depthPerNode;
+
     private Set<FloorNode> visitedNode;
 
     public FloorFactory(Random random) {
@@ -50,6 +57,8 @@ public class FloorFactory {
     }
 
     public Floor create(int floorLevel) {
+        this.depthPerNode = new HashMap<>();
+
         this.generateNewFloor();
         return new Floor(floorLevel, this.root);
     }
@@ -70,10 +79,6 @@ public class FloorFactory {
         return this.root;
     }
 
-    public boolean hasPlayerWonBossCombat() {
-        return this.bossNode.hasPlayerWon();
-    }
-
     private void initialize() {
         this.rewardCount = this.random.nextInt(MIN_REWARD, MAX_REWARD + 1);
         this.branchCount = this.random.nextInt(MIN_BRANCHES, MAX_BRANCHES + 1);
@@ -82,8 +87,9 @@ public class FloorFactory {
         this.bossNode = null;
         this.visitedNode = new HashSet<>();
 
-        this.root = new FloorNode(new Position(GRID_SIZE / 2, GRID_SIZE / 2), new EmptyRoom(), new ArrayList<>(), null,
-                0);
+        this.root = new FloorNode(new RoomPosition(GRID_SIZE / 2, GRID_SIZE / 2), new EmptyRoom(), new ArrayList<>(),
+                null);
+        this.depthPerNode.put(this.root, 0);
     }
 
     private void generateFloor() {
@@ -94,8 +100,9 @@ public class FloorFactory {
 
         for (int i = 0; i < this.branchCount && i < rootNeighbors.size(); i++) {
             FloorNode tmp = rootNeighbors.get(i);
-            FloorNode child = new FloorNode(new Position(tmp.getX(), tmp.getY()), null, new ArrayList<>(), this.root,
-                    1);
+            FloorNode child = new FloorNode(new RoomPosition(tmp.getX(), tmp.getY()), null, new ArrayList<>(),
+                    this.root);
+            this.depthPerNode.put(child, 1);
             this.visitedNode.add(child);
             this.root.addChild(child);
         }
@@ -106,14 +113,12 @@ public class FloorFactory {
     }
 
     private void generateBranch(FloorNode node) {
-        if (node.getDepth() > this.maxDepthReached) {
-            this.maxDepthReached = node.getDepth();
+        if (this.depthPerNode.get(node) > this.maxDepthReached) {
+            this.maxDepthReached = this.depthPerNode.get(node);
             this.bossNode = node;
         }
 
-        // A bit weird but keep it need to ask to the client what he really wants
-        // Say what he really really wants really wants --> Spice Girls - Wannabe
-        if (node.getDepth() >= MAX_DEPTH || node.getBranchCount() >= MAX_DEPTH) {
+        if (this.depthPerNode.get(node) >= MAX_DEPTH || node.getBranchCount() >= MAX_DEPTH) {
             return;
         }
 
@@ -139,8 +144,9 @@ public class FloorFactory {
             int nextY = y + dir[1];
 
             if (nextX >= 0 && nextX < GRID_SIZE && nextY >= 0 && nextY < GRID_SIZE) {
-                FloorNode neighbor = new FloorNode(new Position(nextX, nextY), null, new ArrayList<>(), node,
-                        node.getDepth() + 1);
+                FloorNode neighbor = new FloorNode(new RoomPosition(nextX, nextY), null, new ArrayList<>(), node);
+                this.depthPerNode.put(neighbor, this.depthPerNode.get(node) + 1);
+
                 if (!this.visitedNode.contains(neighbor)) {
                     neighbors.add(neighbor);
                 }
@@ -150,11 +156,11 @@ public class FloorFactory {
     }
 
     private boolean placeInterestPoints() {
-        this.bossNode.setRoom(new CombatRoom(this.allBugemons, this.skills, playerTrainer, true));
+        this.bossNode.setRoom(new Room(RoomType.BOSS));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();
 
-        List<FloorNode> combatNodes = this.placeCombatRooms(remaining, playerTrainer);
+        List<FloorNode> combatNodes = this.placeCombatRooms(remaining);
         int rewardPlaced = this.placeRewardRooms(remaining, combatNodes);
         this.fillEmptyRooms(remaining);
 
@@ -171,14 +177,14 @@ public class FloorFactory {
         return nodes;
     }
 
-    private List<FloorNode> placeCombatRooms(List<FloorNode> remaining, Trainer playerTrainer) {
+    private List<FloorNode> placeCombatRooms(List<FloorNode> remaining) {
         List<FloorNode> combatNodes = new ArrayList<>();
         Iterator<FloorNode> it = remaining.iterator();
 
         while (it.hasNext() && combatNodes.size() < this.combatCount) {
             FloorNode node = it.next();
             if (!node.equals(this.bossNode)) {
-                node.setRoom(new CombatRoom(this.allBugemons, this.skills, playerTrainer, false));
+                node.setRoom(new Room(RoomType.COMBAT));
                 combatNodes.add(node);
                 it.remove();
             }
