@@ -1,11 +1,11 @@
 package ulb.models.combat.strategy.minimax;
 
-import ulb.models.bugemon.Item;
+import ulb.models.item.Item;
 
 /**
  * Represents a trainer's chosen action for a turn, as selected by the controller.
  */
-record SimAction(SimActionKind kind, int index, Item item) {
+public record SimAction(SimActionKind kind, int index, Item item) {
     static SimAction attack(int attackIndex) {
         return new SimAction(SimActionKind.ATTACK, attackIndex, null);
     }

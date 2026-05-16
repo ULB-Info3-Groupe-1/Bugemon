@@ -28,6 +28,14 @@ public class DamageCalculator {
         return new DamageResult(totalDamage, efficiency);
     }
 
+    public int calculateDamage(Attack attack, int attackerEffectiveAttack, int defenderEffectiveDefense) {
+        double power = (double) attack.power();
+        double attackFactor = this.attackFactorFormula.evaluate(attackerEffectiveAttack);
+        double reductionFactor = this.reductionFactorFormula.evaluate(defenderEffectiveDefense);
+        double totalDamage = power * attackFactor * reductionFactor;
+        return (int) Math.ceil(totalDamage);
+    }
+
     @FunctionalInterface
     public interface AttackFactorFormula {
         double evaluate(int effectiveAttack);

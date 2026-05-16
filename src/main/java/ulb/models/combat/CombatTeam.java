@@ -3,6 +3,8 @@ package ulb.models.combat;
 import java.util.List;
 
 import ulb.models.run.RunTeam;
+import ulb.models.combat.snapshot.CombatBugemonSnapshot;
+import ulb.models.combat.snapshot.TeamSnapshot;
 
 public class CombatTeam {
     private final List<CombatBugemon> members;
@@ -55,5 +57,16 @@ public class CombatTeam {
 
     public void syncToRunTeam() {
         this.members.forEach(CombatBugemon::syncToRunBugemon);
+    }
+
+    public TeamSnapshot getSnapshot() {
+        List<CombatBugemonSnapshot> bugemonSnapshots = this.members.stream()
+            .map(b -> new CombatBugemonSnapshot(b.getCurrentHp(), b.getAttacks(), b.getMaxHp(),
+                b.getEffectiveAttack(), b.getEffectiveDefense(), b.getEffectiveInitiative()))
+            .toList();
+        CombatBugemonSnapshot activeSnapshot = new CombatBugemonSnapshot(this.active.getCurrentHp(),
+            this.active.getAttacks(), this.active.getMaxHp(), this.active.getEffectiveAttack(),
+            this.active.getEffectiveDefense(), this.active.getEffectiveInitiative());
+        return new TeamSnapshot(bugemonSnapshots, activeSnapshot);
     }
 }
