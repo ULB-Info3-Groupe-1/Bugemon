@@ -24,12 +24,12 @@ public final class BugemonFixtures {
     }
 
     public static Bugemon fastFlora() {
-        return new Bugemon("flora-1", "FloraFast", 100, 50, 40, 70, ElementType.FLORA,
+        return new Bugemon("FloraFast", 100, 50, 40, 70, ElementType.FLORA,
                 List.of(floraAttack(), floraAttack(), floraAttack()), "", false);
     }
 
     public static Bugemon slowAqua() {
-        return new Bugemon("aqua-1", "AquaSlow", 100, 50, 40, 30, ElementType.AQUA,
+        return new Bugemon("AquaSlow", 100, 50, 40, 30, ElementType.AQUA,
                 List.of(aquaAttack(), aquaAttack(), aquaAttack()), "", false);
     }
 

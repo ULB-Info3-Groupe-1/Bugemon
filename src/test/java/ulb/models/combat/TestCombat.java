@@ -1,13 +1,12 @@
 package ulb.models.combat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +54,7 @@ public class TestCombat {
 
         assertFalse(turnSteps.isEmpty());
         // Should contain at least 2 AttackSteps (player and opponent)
-        long attackCount = turnSteps.stream().filter(a -> a instanceof AttackStep).count();
+        long attackCount = turnSteps.stream().filter(AttackStep.class::isInstance).count();
         assertTrue("At least one attack occured", attackCount >= 1);
     }
 
@@ -69,7 +68,7 @@ public class TestCombat {
         this.combat.resolveTurn(playerAttack, opponentAttack, steps::addAll);
 
         // First AttackStep should be from player (higher initiative)
-        AttackStep first = steps.stream().filter(s -> s instanceof AttackStep).map(s -> (AttackStep) s).findFirst()
+        AttackStep first = steps.stream().filter(AttackStep.class::isInstance).map(s -> (AttackStep) s).findFirst()
                 .orElseThrow();
 
         assertEquals("Player with higher initiative is first to attack", playerAttack.attack(), first.attack());
@@ -96,7 +95,7 @@ public class TestCombat {
         List<TurnStep> steps = new ArrayList<>();
         this.combat.resolveTurn(playerAtk, opponentAtk, steps::addAll);
 
-        boolean hasKo = steps.stream().anyMatch(a -> a instanceof KoStep);
+        boolean hasKo = steps.stream().anyMatch(KoStep.class::isInstance);
         assertTrue("A Ko should occured", hasKo);
     }
 
@@ -120,7 +119,7 @@ public class TestCombat {
         // Give player 1 HP so it will be KO by any attack
         // Create new combat to give more initiative to opponent
         Attack strongAtk = new Attack("strong", "Strong", "", 200, ElementType.AQUA, List.of());
-        Bugemon fastOpp = new Bugemon("o2", "FastOpp", 100, 100, 40, 90, ElementType.AQUA,
+        Bugemon fastOpp = new Bugemon("FastOpp", 100, 100, 40, 90, ElementType.AQUA,
                 List.of(strongAtk, strongAtk, strongAtk), "", false);
 
         CombatTeam fastOppTeam = BugemonFixtures.teamOf(fastOpp);
@@ -149,7 +148,7 @@ public class TestCombat {
 
         // Player attacks first (init 70 > 30), KO opponent
         // Opponent should NOT attack
-        long attackCount = steps.stream().filter(a -> a instanceof AttackStep).count();
+        long attackCount = steps.stream().filter(AttackStep.class::isInstance).count();
         assertEquals("Only the first attacker should be able to attack", 1, attackCount);
     }
 }
