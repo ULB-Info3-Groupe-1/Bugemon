@@ -11,6 +11,8 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
+import ulb.common.EffectDuration;
+import ulb.common.StatType;
 import ulb.models.BugemonFixtures;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -23,8 +25,6 @@ import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.DamageCalculator;
 import ulb.models.combat.utils.EffectProcessor;
-import ulb.common.EffectDuration;
-import ulb.common.StatType;
 
 public class TestCombat {
 
@@ -209,8 +209,8 @@ public class TestCombat {
     @Test
     public void testAttackWithInitiativeBuffIncreasesThrowerInitiative() {
         Attack buffAtk = BugemonFixtures.floraAttackWithInitiativeBuffOnThrower();
-        Bugemon player = new Bugemon("p", "p", 500, 50, 40, 90, ElementType.FLORA,
-                List.of(buffAtk, buffAtk, buffAtk), "", false);
+        Bugemon player = new Bugemon("p", "p", 500, 50, 40, 90, ElementType.FLORA, List.of(buffAtk, buffAtk, buffAtk),
+                "", false);
         CombatTeam playerTeam = BugemonFixtures.teamOf(player);
 
         Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();

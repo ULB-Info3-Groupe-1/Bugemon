@@ -38,13 +38,13 @@ public final class BugemonFixtures {
     }
 
     public static Attack floraAttackWithDefenseDebuffOnOpponent() {
-        return new Attack("atk-debuff", "Morsure", "", 1, ElementType.FLORA,
-                List.of(new StatModifierEffect(EffectTarget.OPPONENT, StatType.DEFENSE, -10, EffectDuration.PERMANENT)));
+        return new Attack("atk-debuff", "Morsure", "", 1, ElementType.FLORA, List
+                .of(new StatModifierEffect(EffectTarget.OPPONENT, StatType.DEFENSE, -10, EffectDuration.PERMANENT)));
     }
 
     public static Attack floraAttackWithInitiativeBuffOnThrower() {
-        return new Attack("atk-buf", "Élan", "", 1, ElementType.FLORA,
-                List.of(new StatModifierEffect(EffectTarget.THROWER, StatType.INITIATIVE, 15, EffectDuration.PERMANENT)));
+        return new Attack("atk-buf", "Élan", "", 1, ElementType.FLORA, List
+                .of(new StatModifierEffect(EffectTarget.THROWER, StatType.INITIATIVE, 15, EffectDuration.PERMANENT)));
     }
 
     public static Attack floraAttackWithResetMalus() {
