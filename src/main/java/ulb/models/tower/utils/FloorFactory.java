@@ -47,7 +47,7 @@ public class FloorFactory {
 
     private Map<FloorNode, Integer> depthPerNode;
 
-    private Set<FloorNode> visitedNode;
+    private Set<FloorNode> visitedNodes;
 
     public FloorFactory(Random random) {
         this.random = random;
@@ -77,15 +77,15 @@ public class FloorFactory {
         this.combatCount = this.random.nextInt(MIN_COMBATS, MAX_COMBATS + 1);
         this.maxDepthReached = 0;
         this.bossNode = null;
-        this.visitedNode = new HashSet<>();
+        this.visitedNodes = new HashSet<>();
 
         this.root = new FloorNode(new RoomPosition(GRID_SIZE / 2, GRID_SIZE / 2), new EmptyRoom(), new ArrayList<>(),
                 null);
-        this.depthPerNode.put(this.root, 0);
+        this.setNodeDepth(this.root, 0);
     }
 
     private void generateFloor() {
-        this.visitedNode.add(this.root);
+        this.visitedNodes.add(this.root);
 
         List<FloorNode> rootNeighbors = this.getAvailableNeighbors(this.root);
         Collections.shuffle(rootNeighbors, this.random);
@@ -94,8 +94,8 @@ public class FloorFactory {
             FloorNode tmp = rootNeighbors.get(i);
             FloorNode child = new FloorNode(new RoomPosition(tmp.getX(), tmp.getY()), null, new ArrayList<>(),
                     this.root);
-            this.depthPerNode.put(child, 1);
-            this.visitedNode.add(child);
+            this.setNodeDepth(child, 1);
+            this.visitedNodes.add(child);
             this.root.addChild(child);
         }
 
@@ -105,12 +105,12 @@ public class FloorFactory {
     }
 
     private void generateBranch(FloorNode node) {
-        if (this.depthPerNode.get(node) > this.maxDepthReached) {
-            this.maxDepthReached = this.depthPerNode.get(node);
+        if (this.getNodeDepth(node) > this.maxDepthReached) {
+            this.maxDepthReached = this.getNodeDepth(node);
             this.bossNode = node;
         }
 
-        if (this.depthPerNode.get(node) >= MAX_DEPTH || this.getBranchCount(node) >= MAX_DEPTH) {
+        if (this.getNodeDepth(node) >= MAX_DEPTH || this.getBranchCount(node) >= MAX_DEPTH) {
             return;
         }
 
@@ -118,8 +118,8 @@ public class FloorFactory {
         Collections.shuffle(neighbors, this.random);
 
         for (FloorNode next : neighbors) {
-            if (!this.visitedNode.contains(next)) {
-                this.visitedNode.add(next);
+            if (!this.visitedNodes.contains(next)) {
+                this.visitedNodes.add(next);
                 node.addChild(next);
                 this.generateBranch(next);
             }
@@ -152,9 +152,9 @@ public class FloorFactory {
 
             if (nextX >= 0 && nextX < GRID_SIZE && nextY >= 0 && nextY < GRID_SIZE) {
                 FloorNode neighbor = new FloorNode(new RoomPosition(nextX, nextY), null, new ArrayList<>(), node);
-                this.depthPerNode.put(neighbor, this.depthPerNode.get(node) + 1);
+                this.setNodeDepth(neighbor, this.getNodeDepth(node) + 1);
 
-                if (!this.visitedNode.contains(neighbor)) {
+                if (!this.visitedNodes.contains(neighbor)) {
                     neighbors.add(neighbor);
                 }
             }
@@ -166,20 +166,20 @@ public class FloorFactory {
         this.bossNode.setRoom(new Room(RoomType.BOSS));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();
+        Collections.shuffle(remaining, this.random);
 
         List<FloorNode> combatNodes = this.placeCombatRooms(remaining);
         int rewardPlaced = this.placeRewardRooms(remaining, combatNodes);
         this.fillEmptyRooms(remaining);
 
         // check if all interest points are placed correctly
+        // TODO: bad practice to return boolean as this func is a command
         return combatNodes.size() == this.combatCount && rewardPlaced == this.rewardCount;
     }
 
     private List<FloorNode> getAllNonRootNodes() {
-        List<FloorNode> nodes = this.visitedNode.stream().filter(n -> n != this.root).collect(ArrayList::new,
+        return this.visitedNodes.stream().filter(n -> n != this.root).collect(ArrayList::new,
                 ArrayList::add, ArrayList::addAll);
-        Collections.shuffle(nodes, this.random);
-        return nodes;
     }
 
     private List<FloorNode> placeCombatRooms(List<FloorNode> remaining) {
@@ -222,5 +222,13 @@ public class FloorFactory {
                 node.setRoom(new EmptyRoom());
             }
         }
+    }
+
+    private int getNodeDepth(FloorNode node) {
+        return this.depthPerNode.get(node);
+    }
+
+    private void setNodeDepth(FloorNode node, int depth) {
+        this.depthPerNode.put(node, depth);
     }
 }
