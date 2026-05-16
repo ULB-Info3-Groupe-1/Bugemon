@@ -270,6 +270,17 @@ public class Combat {
         return false;
     }
 
+    void tickEndOfTurn(CombatBugemon bugemon) {
+        if (!bugemon.isKo()) {
+            bugemon.tickEffects();
+        }
+    }
+
+    private void tickEndOfTurn() {
+        this.tickEndOfTurn(this.playerTeam.getActive());
+        this.tickEndOfTurn(this.opponentTeam.getActive());
+    }
+
     public boolean isFinished() {
         return this.finished;
     }
