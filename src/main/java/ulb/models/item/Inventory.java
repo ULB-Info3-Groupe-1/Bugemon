@@ -2,6 +2,7 @@ package ulb.models.item;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class Inventory {
     private final Map<Item, Integer> items;
@@ -14,16 +15,17 @@ public class Inventory {
         return this.items.containsKey(item) && this.items.get(item) > 0;
     }
 
-    public void useItem(Item item) {
+    /**
+     * Returns the item used.
+     */
+    public Optional<Item> useItem(Item item) {
         if (!this.hasItem(item)) {
-            throw new IllegalStateException("Objet not in inventory or item quantity is 0");
+            return Optional.empty();
         }
-        Integer quantity = this.items.get(item) - 1;
-        if (quantity <= 0) {
-            this.items.remove(item);
-        } else {
-            this.items.replace(item, quantity);
-        }
+
+        this.decrementItemQuantity(item);
+
+        return Optional.of(item);
     }
 
     public void addItem(Item item, int quantity) {
@@ -37,5 +39,14 @@ public class Inventory {
 
     public Map<Item, Integer> getMap() {
         return new HashMap<>(this.items);
+    }
+
+    private void decrementItemQuantity(Item item) {
+        Integer quantity = this.items.get(item) - 1;
+        if (quantity <= 0) {
+            this.items.remove(item);
+        } else {
+            this.items.replace(item, quantity);
+        }
     }
 }

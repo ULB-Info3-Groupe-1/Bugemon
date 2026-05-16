@@ -18,26 +18,21 @@ public enum ElementType {
     }
 
     static {
-        strongAgainst = Map.of(
-                ElementType.FLORA,
+        strongAgainst = Map.of(ElementType.FLORA,
                 Map.of(ElementType.FLORA, Efficiency.NEUTRAL, ElementType.AQUA, Efficiency.HIGH, ElementType.PYRO,
-                        Efficiency.NEUTRAL, ElementType.LITHO, Efficiency.LOW, ElementType.NORMAL,
-                        Efficiency.NEUTRAL),
+                        Efficiency.NEUTRAL, ElementType.LITHO, Efficiency.LOW, ElementType.NORMAL, Efficiency.NEUTRAL),
 
                 ElementType.AQUA,
                 Map.of(ElementType.FLORA, Efficiency.LOW, ElementType.AQUA, Efficiency.NEUTRAL, ElementType.PYRO,
-                        Efficiency.HIGH, ElementType.LITHO, Efficiency.NEUTRAL, ElementType.NORMAL,
-                        Efficiency.NEUTRAL),
+                        Efficiency.HIGH, ElementType.LITHO, Efficiency.NEUTRAL, ElementType.NORMAL, Efficiency.NEUTRAL),
 
                 ElementType.PYRO,
                 Map.of(ElementType.FLORA, Efficiency.NEUTRAL, ElementType.AQUA, Efficiency.LOW, ElementType.PYRO,
-                        Efficiency.NEUTRAL, ElementType.LITHO, Efficiency.HIGH, ElementType.NORMAL,
-                        Efficiency.NEUTRAL),
+                        Efficiency.NEUTRAL, ElementType.LITHO, Efficiency.HIGH, ElementType.NORMAL, Efficiency.NEUTRAL),
 
                 ElementType.LITHO,
                 Map.of(ElementType.FLORA, Efficiency.HIGH, ElementType.AQUA, Efficiency.NEUTRAL, ElementType.PYRO,
-                        Efficiency.LOW, ElementType.LITHO, Efficiency.NEUTRAL, ElementType.NORMAL,
-                        Efficiency.NEUTRAL),
+                        Efficiency.LOW, ElementType.LITHO, Efficiency.NEUTRAL, ElementType.NORMAL, Efficiency.NEUTRAL),
 
                 ElementType.NORMAL,
                 Map.of(ElementType.FLORA, Efficiency.NEUTRAL, ElementType.AQUA, Efficiency.NEUTRAL, ElementType.PYRO,

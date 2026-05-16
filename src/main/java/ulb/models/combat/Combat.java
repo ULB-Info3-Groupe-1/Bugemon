@@ -20,18 +20,21 @@ import ulb.models.combat.turn.TurnPhase;
 import ulb.models.combat.turn.TurnResolvedCallback;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
-import ulb.models.combat.turn.TurnStep.ItemStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.combat.utils.DamageCalculator;
 import ulb.models.combat.utils.EffectProcessor;
+import ulb.models.item.Inventory;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
 
     private final CombatTeam playerTeam;
     private final CombatTeam opponentTeam;
+
+    private final Inventory playerInventory;
+    private final Inventory opponentInventory;
 
     private final CombatStrategy playerStrategy;
     private final CombatStrategy opponentStrategy;
@@ -42,10 +45,14 @@ public class Combat {
     private CombatResult result;
     private boolean finished;
 
-    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, CombatStrategy playerStrategy,
-            CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
+    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, Inventory playerInventory,
+            Inventory opponentInventory, CombatStrategy playerStrategy, CombatStrategy opponentStrategy,
+            DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
+
+        this.playerInventory = playerInventory;
+        this.opponentInventory = opponentInventory;
 
         this.playerStrategy = playerStrategy;
         this.opponentStrategy = opponentStrategy;
@@ -204,8 +211,11 @@ public class Combat {
                 return List.of(new SwitchStep(switchAction.target()));
             }
 
-            public List<TurnStep> visit(ItemAction a) {
-                return List.of(new ItemStep());
+            public List<TurnStep> visit(ItemAction itemAction) {
+                return Combat.this.playerInventory
+                        .useItem(itemAction.item()).map(item -> Combat.this.effectProcessor
+                                .applySingleEffect(item.effect(), actor, opposingTeam.getActive(), actingTeam))
+                        .orElse(new ArrayList<>());
             }
 
             public List<TurnStep> visit(ForfeitAction a) {

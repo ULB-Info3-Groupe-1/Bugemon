@@ -40,13 +40,13 @@ public final class BugemonFixtures {
     }
 
     public static Attack attackWithDefenseDebuffOnOpponent() {
-        return new Attack("atk-debuff", "Morsure", "", 1, ElementType.NORMAL,
-                List.of(new StatModifierEffect(EffectTarget.OPPONENT, StatType.DEFENSE, -10, EffectDuration.PERMANENT)));
+        return new Attack("atk-debuff", "Morsure", "", 1, ElementType.NORMAL, List
+                .of(new StatModifierEffect(EffectTarget.OPPONENT, StatType.DEFENSE, -10, EffectDuration.PERMANENT)));
     }
 
     public static Attack attackWithInitiativeBuffOnThrower() {
-        return new Attack("atk-buf", "Élan", "", 1, ElementType.NORMAL,
-                List.of(new StatModifierEffect(EffectTarget.THROWER, StatType.INITIATIVE, 15, EffectDuration.PERMANENT)));
+        return new Attack("atk-buf", "Élan", "", 1, ElementType.NORMAL, List
+                .of(new StatModifierEffect(EffectTarget.THROWER, StatType.INITIATIVE, 15, EffectDuration.PERMANENT)));
     }
 
     public static Attack attackWithResetMalus() {

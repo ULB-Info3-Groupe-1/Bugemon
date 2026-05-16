@@ -28,8 +28,8 @@ public class EffectProcessor {
         return steps;
     }
 
-    private List<TurnStep> applySingleEffect(Effect effect, CombatBugemon attacker, CombatBugemon defender,
-            CombatTeam attackerTeam) {
+    public List<TurnStep> applySingleEffect(Effect effect, CombatBugemon thrower, CombatBugemon opponent,
+            CombatTeam throwerTeam) {
 
         List<TurnStep> steps = new ArrayList<>();
 
@@ -40,14 +40,14 @@ public class EffectProcessor {
             public void visit(HealEffect healEffect) {
                 switch (target) {
                     case TEAM :
-                        steps.add(new HealTeamStep(attackerTeam));
-                        attackerTeam.getAlive().forEach(b -> {
+                        steps.add(new HealTeamStep(throwerTeam));
+                        throwerTeam.getAlive().forEach(b -> {
                             b.heal(healEffect.getAmount());
                         });
                         break;
                     case THROWER :
-                        steps.add(new HealBugemonStep(attacker));
-                        attacker.heal(healEffect.getAmount());
+                        steps.add(new HealBugemonStep(thrower));
+                        thrower.heal(healEffect.getAmount());
                         break;
                     default :
                         return;
@@ -58,7 +58,7 @@ public class EffectProcessor {
             public void visit(ResetMalusEffect resetMalusEffect) {
                 switch (target) {
                     case THROWER :
-                        attacker.clearMalusEffects();
+                        thrower.clearMalusEffects();
                         break;
                     default :
                         return;
@@ -71,10 +71,10 @@ public class EffectProcessor {
                         statModifierEffect.getDuration());
                 switch (target) {
                     case THROWER :
-                        attacker.addEffect(effect);
+                        thrower.addEffect(effect);
                         break;
                     case OPPONENT :
-                        defender.addEffect(effect);
+                        opponent.addEffect(effect);
                         break;
                     default :
                         return;
