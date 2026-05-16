@@ -36,12 +36,13 @@ public class Combat {
     private final CombatStrategy opponentStrategy;
 
     private final DamageCalculator damageCalculator;
+    private final EffectProcessor effectProcessor;
 
     private CombatResult result;
     private boolean finished;
 
     public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, CombatStrategy playerStrategy,
-            CombatStrategy opponentStrategy, DamageCalculator damageCalculator) {
+            CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
 
@@ -49,6 +50,8 @@ public class Combat {
         this.opponentStrategy = opponentStrategy;
 
         this.damageCalculator = damageCalculator;
+
+        this.effectProcessor = effectProcessor;
 
         this.result = null;
         this.finished = false;
@@ -194,7 +197,7 @@ public class Combat {
         return action.accept(new TurnActionVisitor() {
             // TODO: handle each case
             public List<TurnStep> visit(AttackAction attackAction) {
-                return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack());
+                return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack(), actingTeam);
             }
 
             public List<TurnStep> visit(SwitchAction switchAction) {
@@ -214,7 +217,8 @@ public class Combat {
         });
     }
 
-    private List<TurnStep> resolveAttack(CombatBugemon attacker, CombatBugemon defender, Attack attack) {
+    private List<TurnStep> resolveAttack(CombatBugemon attacker, CombatBugemon defender, Attack attack,
+            CombatTeam attackerTeam) {
         List<TurnStep> steps = new ArrayList<>();
 
         int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
@@ -223,6 +227,8 @@ public class Combat {
         LOG.debug("{} uses {} on {} for {} damage (HP left: {})", attacker, attack.name(), defender, damage,
                 defender.getCurrentHp());
         steps.add(new AttackStep(attacker, defender, attack, damage, defender.getCurrentHp()));
+
+        steps.addAll(this.effectProcessor.applyEffects(attack, attacker, defender, attackerTeam));
 
         if (defender.isKo()) {
             LOG.info("{} is KO", defender);

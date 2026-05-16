@@ -41,7 +41,7 @@ public class TestCombat {
         this.opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
 
         this.combat = new Combat(this.playerTeam, this.opponentTeam, new AutoStrategy(this.seededRandom),
-                new AutoStrategy(this.seededRandom), new DamageCalculator());
+                new AutoStrategy(this.seededRandom), new DamageCalculator(), new EffectProcessor());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class TestCombat {
         this.playerTeam.getActive().takeDamage(99);
 
         Combat c = new Combat(this.playerTeam, fastOppTeam, new AutoStrategy(this.seededRandom),
-                new AutoStrategy(this.seededRandom), new DamageCalculator());
+                new AutoStrategy(this.seededRandom), new DamageCalculator(), new EffectProcessor());
 
         c.resolveTurn(new AttackAction(this.floraAttack), new AttackAction(strongAtk), steps -> {
         });
