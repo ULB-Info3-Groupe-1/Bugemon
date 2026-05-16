@@ -72,8 +72,7 @@ public class TestFloorFactory {
         }
 
         this.rewardCount = this.allNodes.stream()
-                .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.REWARD)
-                .count();
+                .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.REWARD).count();
         this.bossCount = this.allNodes.stream()
                 .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.BOSS).count();
     }
@@ -110,8 +109,7 @@ public class TestFloorFactory {
     @Test
     public void testBossAtDeepestLevel() {
         FloorNode bossNode = this.allNodes.stream()
-                .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.BOSS)
-                .findFirst().orElse(null);
+                .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.BOSS).findFirst().orElse(null);
         assertNotNull("Boss node must exist", bossNode);
         assertTrue("Boss node must be among the deepest nodes", this.deepestNodes.contains(bossNode));
     }

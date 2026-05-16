@@ -29,9 +29,7 @@ public class Floor {
     }
 
     public List<FloorNode> getReachableNodes() {
-        return Stream.concat(
-                this.currentNode.getChildren().stream(),
-                this.currentNode.getParent().stream()).toList();
+        return Stream.concat(this.currentNode.getChildren().stream(), this.currentNode.getParent().stream()).toList();
     }
 
     public List<Room> getReachableRooms() {

@@ -32,7 +32,7 @@ public class FloorFactory {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final Random random;
 
@@ -79,8 +79,7 @@ public class FloorFactory {
         this.visitedNodes = new HashSet<>();
 
         this.root = new FloorNode(new RoomPosition(GRID_SIZE / 2, GRID_SIZE / 2), new Room(RoomType.EMPTY),
-                new ArrayList<>(),
-                null);
+                new ArrayList<>(), null);
         this.setNodeDepth(this.root, 0);
     }
 
@@ -178,8 +177,8 @@ public class FloorFactory {
     }
 
     private List<FloorNode> getAllNonRootNodes() {
-        return this.visitedNodes.stream().filter(n -> n != this.root).collect(ArrayList::new,
-                ArrayList::add, ArrayList::addAll);
+        return this.visitedNodes.stream().filter(n -> n != this.root).collect(ArrayList::new, ArrayList::add,
+                ArrayList::addAll);
     }
 
     private List<FloorNode> placeCombatRooms(List<FloorNode> remaining) {
