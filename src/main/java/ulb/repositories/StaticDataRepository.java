@@ -36,6 +36,7 @@ import ulb.repositories.utils.DatabaseHelper;
 
 public class StaticDataRepository extends AbstractRepository {
     private static final int CRITICAL_TABLES_COUNT = 10;
+    private static final String SAVE_ITEM_EFFECT_QUERY = "SaveItemEffect";
 
     public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries,
             List<CreateBugemonDTO> defaultBugemonDTO, Map<String, Attack> attacks, List<Item> items) {
@@ -108,20 +109,10 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void setEffectParameters(PreparedStatement psEffect, Effect effect) throws SQLException {
         switch (effect) {
-            case StatModifierEffect modifier :
-                this.setStatModifierParameters(psEffect, modifier);
-                break;
-
-            case HealEffect heal :
-                this.setHealParameters(psEffect, heal);
-                break;
-
-            case ResetMalusEffect resetMalus :
-                this.setResetMalusParameters(psEffect, resetMalus);
-                break;
-
-            default :
-                break;
+            case StatModifierEffect modifier -> this.setStatModifierParameters(psEffect, modifier);
+            case HealEffect heal -> this.setHealParameters(psEffect, heal);
+            case ResetMalusEffect resetMalus -> this.setResetMalusParameters(psEffect, resetMalus);
+            default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
         }
     }
 
@@ -162,12 +153,12 @@ public class StaticDataRepository extends AbstractRepository {
 
     private void saveItemEffect(String itemId, Effect effect) {
         switch (effect) {
-            case HealEffect heal -> executeUpdate("SaveItemEffect", itemId, "EffectHeal", heal.getTarget().name(),
+            case HealEffect heal -> executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectHeal", heal.getTarget().name(),
                     heal.getAmount(), null, null, null);
-            case StatModifierEffect modifier -> executeUpdate("SaveItemEffect", itemId, "EffectStatModifier",
+            case StatModifierEffect modifier -> executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectStatModifier",
                     modifier.getTarget().name(), null, modifier.getStat() != null ? modifier.getStat().name() : null,
                     modifier.getModifier(), modifier.getDuration() == EffectDuration.PERMANENT ? 0 : 1);
-            case ResetMalusEffect resetMalus -> executeUpdate("SaveItemEffect", itemId, "EffectResetMalus",
+            case ResetMalusEffect resetMalus -> executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectResetMalus",
                     resetMalus.getTarget().name(), null, null, null, null);
             default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
         }
@@ -240,28 +231,19 @@ public class StaticDataRepository extends AbstractRepository {
     }
 
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
-        EffectTarget target;
-        switch (effectType) {
-            case "EffectStatModifier" :
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
+        EffectTarget target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
+        return switch (effectType) {
+            case "EffectStatModifier" -> {
                 StatType stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, StatType.class);
-                String duration = (rs.getString(DatabaseColumns.COL_EFFECT_DURATION) != null)
-                        ? rs.getString(DatabaseColumns.COL_EFFECT_DURATION)
-                        : "0_tour";
-                return new StatModifierEffect(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
+                String dbDuration = rs.getString(DatabaseColumns.COL_EFFECT_DURATION);
+                String duration = (dbDuration != null) ? dbDuration : "0_tour";
+                yield new StatModifierEffect(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
                         EffectDuration.fromLabel(duration));
-
-            case "EffectHeal" :
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                return new HealEffect(target, rs.getInt("effect_amount"));
-
-            case "EffectResetMalus" :
-                target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
-                return new ResetMalusEffect(target);
-
-            default :
-                throw new IllegalStateException("Unknown effect type: " + effectType);
-        }
+            }
+            case "EffectHeal" -> new HealEffect(target, rs.getInt("effect_amount"));
+            case "EffectResetMalus" -> new ResetMalusEffect(target);
+            default -> throw new IllegalStateException("Unknown effect type: " + effectType);
+        };
     }
 
     /**

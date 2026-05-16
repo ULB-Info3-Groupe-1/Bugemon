@@ -1,6 +1,7 @@
 package ulb.factories;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class BugemonFactory {
         try {
             URI path = bugemon.spriteUrl().toURI();
             fileName = Paths.get(path).getFileName().toString();
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             String urlStr = bugemon.spriteUrl().toString();
             fileName = urlStr.substring(urlStr.lastIndexOf('/') + 1);
         }

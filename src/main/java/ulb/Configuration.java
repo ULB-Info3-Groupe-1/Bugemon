@@ -18,6 +18,7 @@ public abstract class Configuration {
         public static final String SPRITES = "assets/sprites/";
         public static final String DEFAULT_SPRITE = "/png/unknown.png";
         public static final String ROOM_BASE_PATH = "/png/rooms/";
+        public static final String SQL_BASE_PATH = "/sql/";
 
         public static final class Fxml {
 

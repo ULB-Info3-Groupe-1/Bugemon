@@ -2,6 +2,7 @@ package ulb.repositories;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -25,7 +26,7 @@ public class DatabaseConnection {
             if (source.isFile() && new File(source.getParent(), ".env").exists()) {
                 return Dotenv.configure().directory(source.getParent()).load();
             }
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             // ignore, fall through
         }
 
