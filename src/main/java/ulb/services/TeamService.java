@@ -159,8 +159,8 @@ public class TeamService {
     public void saveTeam(String teamName)
             throws TeamNameAlreadyExistsException, TeamEmptyException, TeamNameEmptyException {
         this.checkWorkingTeamIsNotEmpty();
-        this.teamRepository.createTeam(this.playername, teamName);
         this.workingTeam.setName(teamName);
+        this.teamRepository.createTeam(this.playername, teamName);
         this.persistTeamMembers();
         this.playerTeams.add(new Team(this.workingTeam));
         // Clear because the working team is saved so by clearing it we can create a new
@@ -183,16 +183,17 @@ public class TeamService {
         this.checkActiveTeamIsPresent();
 
         // Update the active team with the working team that has the modifications
+        this.workingTeam.setName(this.activeTeam.getName());
         this.activeTeam = new Team(this.workingTeam);
 
         List<TeamMemberDTO> members = new ArrayList<>();
-        this.workingTeam.getMembers().forEach(b -> members.add(new TeamMemberDTO(this.playername,
-                this.activeTeam.getName(), b.getName(), this.workingTeam.getSlotPosition(b))));
+        this.workingTeam.getMembers().forEach(b -> members.add(new TeamMemberDTO(this.playername, this.workingTeam.getName(),
+                b.getName(), this.workingTeam.getSlotPosition(b))));
         this.persistNewBugemons();
 
-        this.teamRepository.modifyTeam(this.playername, this.activeTeam.getName(), members);
-        this.playerTeams.removeIf(t -> t.getName().equals(this.activeTeam.getName()));
-        this.playerTeams.add(new Team(this.activeTeam));
+        this.teamRepository.modifyTeam(this.playername, this.workingTeam.getName(), members);
+        this.playerTeams.removeIf(t -> t.getName().equals(this.workingTeam.getName()));
+        this.playerTeams.add(new Team(this.workingTeam));
     }
 
     /**
@@ -215,6 +216,7 @@ public class TeamService {
         this.teamRepository.setPlayerCurrentTeam(this.playername, newName);
         this.playerTeams.stream().filter(t -> t.getName().equals(this.activeTeam.getName()))
                 .forEach(t -> t.setName(newName));
+        this.workingTeam.setName(newName);
         this.activeTeam.setName(newName);
     }
 

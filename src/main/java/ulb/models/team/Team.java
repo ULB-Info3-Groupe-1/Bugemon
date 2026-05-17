@@ -110,4 +110,21 @@ public class Team {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Team other = (Team) obj;
+        return this.members.equals(other.members) && this.name.equals(other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.members.hashCode();
+    }
+
 }
