@@ -8,7 +8,9 @@ import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 
-/** Reusable custom component displaying a Bugemon team in a grid. */
+/**
+ * Reusable custom component displaying a Bugemon team in a grid.
+ */
 public class BugemonTeamView extends ComponentView {
     private static final int GRID_COLUMNS = 3;
 
@@ -25,15 +27,27 @@ public class BugemonTeamView extends ComponentView {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the grid with the alive members of the given team. */
-    public void showTeam(BugemonTeam bugemonTeam) {
+    /**
+     * Clears and repopulates the grid with the alive members of the given team.
+     */
+    public void showTeam(BugemonTeam bugemonTeam, boolean allAlive) {
         this.clearBugemons();
-
-        List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
-        for (int i = 0; i < aliveBugemons.size(); i++) {
-            BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
-            card.setListener(this.listener::onBugemonClicked);
-            this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
+        if (allAlive) {
+            List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
+            for (int i = 0; i < aliveBugemons.size(); i++) {
+                BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
+                if (this.listener != null) {
+                    card.setListener(this.listener::onBugemonClicked);
+                }
+                this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
+            }
+        } else {
+            List<Bugemon> allBugemons = bugemonTeam.stream().toList();
+            for (int i = 0; i < allBugemons.size(); i++) {
+                BugemonCardView card = new BugemonCardView(allBugemons.get(i));
+                card.setListener(this.listener::onBugemonClicked);
+                this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
+            }
         }
     }
 

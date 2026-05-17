@@ -154,7 +154,7 @@ public class ManageTeamView extends View {
     }
 
     private void refreshTeam(BugemonTeam team, boolean isTeamSaved) {
-        this.bugemonsTeamView.showTeam(team);
+        this.bugemonsTeamView.showTeam(team, true);
         if (team.isEmpty()) {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);
         } else if (isTeamSaved) {

@@ -55,7 +55,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     public void visitRewardRoom(RewardRoom rewardRoom) {
         LOG.info("Entering reward room");
-        // NOT IMPLEMENTED
+        this.metaController.onGoToRewards();
     }
 
     public void visitEmptyRoom(EmptyRoom emptyRoom) {
@@ -79,6 +79,10 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         } else {
             this.udpateDisplayedFloor();
         }
+    }
+
+    public void onRewardChosen() {
+        this.udpateDisplayedFloor();
     }
 
     private void endTowerFlow(boolean playerWon) {

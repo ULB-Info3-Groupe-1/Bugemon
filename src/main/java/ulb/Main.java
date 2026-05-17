@@ -21,11 +21,14 @@ import ulb.repositories.TeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
+import ulb.services.RewardService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
-/** JavaFX entry point — bootstraps the Bugemon game. */
+/**
+ * JavaFX entry point — bootstraps the Bugemon game.
+ */
 public class Main extends Application {
 
     public static void main(String[] args) {
@@ -69,8 +72,10 @@ public class Main extends Application {
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
                 inventoryService, skillService);
+        RewardService rewardService = new RewardService(staticDataRepository, inventoryRepository, playerName);
+
         MetaController controller = new MetaController(stage, bugemonService, playerService, teamService, towerService,
-                inventoryService, skillService);
+                inventoryService, skillService, rewardService);
         controller.start();
     }
 }

@@ -1,5 +1,6 @@
 package ulb.models.bugemon;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +30,9 @@ public class Bugemon implements BugemonDTO {
     @SerializedName("id")
     String id;
 
-    /** Display name of this bugemon. Serialised as {@code "nom"}. */
+    /**
+     * Display name of this bugemon. Serialised as {@code "nom"}.
+     */
     @SerializedName("nom")
     String name;
 
@@ -53,7 +56,9 @@ public class Bugemon implements BugemonDTO {
     @SerializedName("attaques")
     List<Attack> attackList;
 
-    /** Use {@link BugemonBuilder} to construct instances. */
+    /**
+     * Use {@link BugemonBuilder} to construct instances.
+     */
     Bugemon() {
     }
 
@@ -77,6 +82,12 @@ public class Bugemon implements BugemonDTO {
             throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
         }
         return List.copyOf(attacks);
+    }
+
+    public void replaceAttack(int index, Attack newAttack) {
+        List<Attack> newAttackList = new ArrayList<>(this.attackList);
+        newAttackList.set(index, newAttack);
+        this.attackList = validateAndCopyAttackList(newAttackList);
     }
 
     public void takeDamage(int damage) {
@@ -158,7 +169,9 @@ public class Bugemon implements BugemonDTO {
         return this.isStarter;
     }
 
-    /** Clears all active modifiers on every stat component. */
+    /**
+     * Clears all active modifiers on every stat component.
+     */
     public void resetMalus() {
         this.healthComponent.resetMalus();
         this.attackComponent.resetMalus();

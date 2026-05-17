@@ -22,6 +22,7 @@ import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
+import ulb.services.RewardService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -50,6 +51,7 @@ public class MetaController {
         COMBAT_DEFEAT,
         LEVEL_UP,
         SKILL_TREE,
+        REWARD_CHOICE
     }
 
     private final Stage stage;
@@ -68,6 +70,7 @@ public class MetaController {
     private final SkillTreeController skillTreeController;
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
+    private final RewardController rewardController;
     private boolean isTowerActive;
 
     /**
@@ -80,9 +83,8 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService,
-            SkillService skillService) throws IOException {
+            SkillService skillService, RewardService rewardService) throws IOException {
         this.stage = primaryStage;
-
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
@@ -102,6 +104,7 @@ public class MetaController {
         this.skillTreeController = new SkillTreeController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
+        this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
         this.initializeMusicResources();
         this.initTransitions();
     }
@@ -125,6 +128,13 @@ public class MetaController {
             this.switchTo(Window.LEVEL_UP);
         } else {
             this.switchTo(Window.MAIN_MENU);
+        }
+    }
+
+    public void onRewardChoiceFinished() {
+        if (this.isTowerActive()) {
+            this.towerController.onRewardChosen();
+            return;
         }
     }
 
@@ -180,6 +190,10 @@ public class MetaController {
         this.switchTo(Window.SKILL_TREE);
     }
 
+    public void onGoToRewards() {
+        this.switchTo(Window.REWARD_CHOICE);
+    }
+
     private void initializeMusicResources() throws IOException {
         this.musicLoader.loadAllResources(this.musicPlayer);
     }
@@ -229,6 +243,11 @@ public class MetaController {
             this.combatDefeatController.show();
             this.musicPlayer.playAmbiance(Ambiance.DEFEAT, true);
         });
+        this.transitions.put(Window.REWARD_CHOICE, () -> {
+            this.rewardController.show();
+            this.rewardController.startRewardPhase();
+            this.musicPlayer.playAmbiance(Ambiance.VICTORY, false);
+        });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
         this.transitions.put(Window.SKILL_TREE, this.skillTreeController::show);
     }
@@ -236,6 +255,16 @@ public class MetaController {
     /**
      * Switches the current screen to the specified window.
      *
+     * <<<<<<< HEAD <<<<<<< HEAD
+     *
+     * @param window
+     *            target screen to display
+     * @throws IllegalArgumentException
+     *             if the window is invalid =======
+     * @param window
+     *            target screen to display
+     * @throws IllegalArgumentException
+     *             if the window is invalid >>>>>>> eccfc14c (wip(fixing bugs) =======
      * @param window
      *            target screen to display
      * @throws IllegalArgumentException
