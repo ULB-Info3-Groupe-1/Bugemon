@@ -14,7 +14,6 @@ import ulb.models.effect.HealEffect;
 import ulb.models.combat.snapshot.CombatBugemonSnapshot;
 import ulb.models.combat.snapshot.CombatSnapshot;
 import ulb.models.combat.snapshot.TeamSnapshot;
-import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.utils.DamageCalculator;
 
 /**
