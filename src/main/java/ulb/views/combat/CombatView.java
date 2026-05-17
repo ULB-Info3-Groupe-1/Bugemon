@@ -48,14 +48,13 @@ public class CombatView extends View {
     @FXML
     private DialogZoneView dialogZoneView;
 
-    private CombatTeam playerTeam;
-    private CombatTeam opponentTeam;
-    private Map<Item, Integer> playerInventory;
-
     private final ActionMenuView actionMenu;
     private final AttackMenuView attackMenu;
     private final SwitchMenuView switchMenu;
     private final ItemMenuView itemMenuView;
+
+    private CombatBugemon playerBugemon;
+    private CombatBugemon opponentBugemon;
 
     private Listener listener;
     private NextListener nextListener;
@@ -79,6 +78,25 @@ public class CombatView extends View {
             }
         });
         this.showMainActionMenu();
+    }
+
+    public void displayBugemons(CombatBugemon newPlayerBugemon, CombatBugemon newOpponentBugemon) {
+        this.playerBugemon = newPlayerBugemon;
+        this.opponentBugemon = newOpponentBugemon;
+        this.refreshPlayer();
+        this.refreshOpponent();
+
+        this.hideDialog();
+    }
+
+    private void refreshOpponent() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'refreshOpponent'");
+    }
+
+    private void refreshPlayer() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'refreshPlayer'");
     }
 
     private void initListeners() {

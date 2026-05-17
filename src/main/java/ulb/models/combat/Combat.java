@@ -323,6 +323,10 @@ public class Combat {
         return this.playerTeam;
     }
 
+    public CombatTeam getOpponentTeam() {
+        return this.opponentTeam;
+    }
+
     public int getOpponentTeamSize() {
         return this.opponentTeam.size();
     }

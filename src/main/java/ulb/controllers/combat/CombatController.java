@@ -1,8 +1,11 @@
 package ulb.controllers.combat;
 
+import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,8 @@ import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Item;
+import ulb.services.CombatService;
+import ulb.services.PlayerInputHandler;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
@@ -35,34 +40,34 @@ import ulb.views.combat.CombatView;
  * the request for actions/switches from the Combat model and opening the UI menus accordingly.
  */
 public class CombatController extends Controller<CombatView>
-        implements CombatView.Listener, CombatView.NextListener, CombatStrategy {
+        implements CombatView.Listener, CombatView.NextListener, PlayerInputHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
+    private final CombatService combatService;
     private Combat combat;
-    private Map<Item, Integer> playerInventory;
-
-    private Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
     private ActionCallback pendingActionCallback;
+    private ActionCallback pendingSwitchCallback;
+    private final Queue<TurnStep> pendingSteps = new ArrayDeque<>();
+    private final Random random = new Random();
 
-    public CombatController(MetaController metaController) {
+    public CombatController(MetaController metaController, CombatService combatService) {
         super(metaController, ViewLoader.load(CombatView::new));
         this.view.setListener(this);
         this.view.setNextListener(this);
+
+        this.combatService = combatService;
     }
 
     /**
-     * Initializes and starts a new combat session. * @param combat the new Combat model instance
-     *
-     * @param playerInventory
-     *            the player's inventory mapped for the view
+     * Initializes a new combat session. 
+     * @param combat the new Combat model instance
      */
-    public void startCombat(Combat combat, Map<Item, Integer> playerInventory) {
+    public void initialize(Combat combat) {
         this.combat = combat;
-        this.playerInventory = playerInventory;
 
-        this.view.setModel(this.combat.getPlayerTeam(), null, this.playerInventory);
+        // TODO: demeter
+        this.view.displayBugemons(this.combat.getPlayerTeam().getActive(), combat.getOpponentTeam().getActive());
         this.view.refresh();
-        this.view.hideDialog();
 
         this.startTurnPhase();
     }
@@ -205,5 +210,17 @@ public class CombatController extends Controller<CombatView>
         boolean won = this.combat.getResult() == CombatResult.VICTORY;
         LOG.info("Combat ended. Victory: {}", won);
         this.metaController.onCombatFinished(won);
+    }
+
+    @Override
+    public void requestActionChoice(CombatContext context, ActionCallback callback) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'requestActionChoice'");
+    }
+
+    @Override
+    public void requestSwitchChoice(CombatContext context, ActionCallback callback) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'requestSwitchChoice'");
     }
 }
