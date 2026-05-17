@@ -102,11 +102,7 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onAttackChosen(Attack attack) {
-        if (this.pendingActionCallback != null) {
-            ActionCallback callback = this.pendingActionCallback;
-            this.pendingActionCallback = null;
-            callback.onActionChosen(new AttackAction(attack));
-        }
+        resolvePlayerAction(new AttackAction(attack));
     }
 
     @Override
@@ -129,25 +125,22 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onInventory() {
-        this.view.showInventoryMenu(this.combat.getPlayerInventory());
+        this.view.showInventory(this.combat.getPlayerInventory());
+    }
+
+    @Override
+    public void onItemHovered(Item item) {
+        this.view.showItemPreview(item);
     }
 
     @Override
     public void onItemChosen(Item item) {
-        if (this.pendingActionCallback != null) {
-            ActionCallback callback = this.pendingActionCallback;
-            this.pendingActionCallback = null;
-            callback.onActionChosen(new ItemAction(item));
-        }
+        resolvePlayerAction(new ItemAction(item));
     }
 
     @Override
     public void onForfeit() {
-        if (this.pendingActionCallback != null) {
-            ActionCallback callback = this.pendingActionCallback;
-            this.pendingActionCallback = null;
-            callback.onActionChosen(new ForfeitAction());
-        }
+        resolvePlayerAction(new ForfeitAction());
     }
 
     /** Dispatch the resolved action back to the Combat model */
