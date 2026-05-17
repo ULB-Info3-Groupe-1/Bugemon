@@ -9,20 +9,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.item.Item;
-import ulb.models.effect.HealEffect;
 import ulb.models.combat.snapshot.CombatBugemonSnapshot;
 import ulb.models.combat.snapshot.CombatSnapshot;
 import ulb.models.combat.snapshot.TeamSnapshot;
 import ulb.models.combat.utils.DamageCalculator;
+import ulb.models.effect.HealEffect;
+import ulb.models.item.Item;
 
 /**
  * Minimal MiniMax implementation that operates on immutable snapshots.
  *
- * Notes:
- * - This simplified version only considers attack actions (no items/switches).
- * - Damage is approximated by the attack's `power()` value (snapshots don't
- *   expose full combatant stats required by the real DamageCalculator).
+ * Notes: - This simplified version only considers attack actions (no items/switches). - Damage is approximated by the
+ * attack's `power()` value (snapshots don't expose full combatant stats required by the real DamageCalculator).
  */
 public class MiniMax {
     private static final int WIN_SCORE = 1_000_000;
@@ -47,14 +45,16 @@ public class MiniMax {
         Objects.requireNonNull(state);
         this.root = state;
 
-        List<SimAction> actions = generateActions(state, chooseForAiTeam);
-        if (actions.isEmpty()) return SimAction.none();
+        List<SimAction> actions = this.generateActions(state, chooseForAiTeam);
+        if (actions.isEmpty()) {
+            return SimAction.none();
+        }
 
         double best = NEG_INF;
         SimAction bestAction = actions.get(0);
         for (SimAction a : actions) {
-            CombatSnapshot next = simulateTurn(state, a, SimAction.none(), chooseForAiTeam);
-            double val = solve(next, maxDepth - 1, NEG_INF, POS_INF, !chooseForAiTeam);
+            CombatSnapshot next = this.simulateTurn(state, a, SimAction.none(), chooseForAiTeam);
+            double val = this.solve(next, this.maxDepth - 1, NEG_INF, POS_INF, !chooseForAiTeam);
             if (val > best) {
                 best = val;
                 bestAction = a;
@@ -72,31 +72,35 @@ public class MiniMax {
             return WIN_SCORE + depth;
         }
         if (depth <= 0) {
-            return evaluateState(playerState);
+            return this.evaluateState(playerState);
         }
 
         // In our model we alternate attacker/opponent by swapping snapshots.
-        List<SimAction> actions = generateActions(playerState, maximizing);
+        List<SimAction> actions = this.generateActions(playerState, maximizing);
         if (actions.isEmpty()) {
-            return evaluateState(playerState);
+            return this.evaluateState(playerState);
         }
 
         if (maximizing) {
             double value = NEG_INF;
             for (SimAction a : actions) {
-                CombatSnapshot next = simulateTurn(playerState, a, SimAction.none(), maximizing);
-                value = Math.max(value, solve(next, depth - 1, alpha, beta, false));
+                CombatSnapshot next = this.simulateTurn(playerState, a, SimAction.none(), maximizing);
+                value = Math.max(value, this.solve(next, depth - 1, alpha, beta, false));
                 alpha = Math.max(alpha, value);
-                if (alpha >= beta) break;
+                if (alpha >= beta) {
+                    break;
+                }
             }
             return value;
         } else {
             double value = POS_INF;
             for (SimAction a : actions) {
-                CombatSnapshot next = simulateTurn(playerState, SimAction.none(), a, maximizing);
-                value = Math.min(value, solve(next, depth - 1, alpha, beta, true));
+                CombatSnapshot next = this.simulateTurn(playerState, SimAction.none(), a, maximizing);
+                value = Math.min(value, this.solve(next, depth - 1, alpha, beta, true));
                 beta = Math.min(beta, value);
-                if (alpha >= beta) break;
+                if (alpha >= beta) {
+                    break;
+                }
             }
             return value;
         }
@@ -106,7 +110,7 @@ public class MiniMax {
         TeamSnapshot team = forAi ? state.aiTeam() : state.playerTeam();
         CombatBugemonSnapshot active = team.active();
         if (active == null || !active.isAlive()) {
-            return generateForcedSwitchActions(state, forAi);
+            return this.generateForcedSwitchActions(state, forAi);
         }
 
         List<SimAction> res = new ArrayList<>();
@@ -116,11 +120,11 @@ public class MiniMax {
         }
 
         // switches
-        res.addAll(generateVoluntarySwitchActions(state, forAi));
+        res.addAll(this.generateVoluntarySwitchActions(state, forAi));
 
         // items
         Map<Item, Integer> inventory = forAi ? state.aiInventory() : state.opponentInventory();
-        res.addAll(generateItemActions(inventory));
+        res.addAll(this.generateItemActions(inventory));
 
         return res;
     }
@@ -132,8 +136,7 @@ public class MiniMax {
 
         List<Map.Entry<Item, Integer>> entries = inventory.entrySet().stream()
                 .filter(e -> e.getValue() != null && e.getValue() > 0)
-                .sorted(Comparator.comparing(e -> e.getKey().id()))
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparing(e -> e.getKey().id())).collect(Collectors.toList());
 
         List<SimAction> res = new ArrayList<>();
         entries.forEach(e -> res.add(SimAction.useItem(e.getKey())));
@@ -147,46 +150,50 @@ public class MiniMax {
 
         List<SimAction> switches = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            if (i == currentIdx) continue;
-            if (list.get(i).isAlive()) switches.add(SimAction.switchTo(i));
+            if (i == currentIdx) {
+                continue;
+            }
+            if (list.get(i).isAlive()) {
+                switches.add(SimAction.switchTo(i));
+            }
         }
         return switches;
     }
 
     private List<SimAction> generateVoluntarySwitchActions(CombatSnapshot state, boolean forAi) {
-        return generateForcedSwitchActions(state, forAi);
+        return this.generateForcedSwitchActions(state, forAi);
     }
 
     private CombatSnapshot simulateTurn(CombatSnapshot state, SimAction primaryAction, SimAction secondaryAction,
             boolean primaryIsAi) {
         // Apply items first
         if (primaryIsAi) {
-            state = applyItemAction(state, true, primaryAction);
-            state = applyItemAction(state, false, secondaryAction);
+            state = this.applyItemAction(state, true, primaryAction);
+            state = this.applyItemAction(state, false, secondaryAction);
         } else {
-            state = applyItemAction(state, true, secondaryAction);
-            state = applyItemAction(state, false, primaryAction);
+            state = this.applyItemAction(state, true, secondaryAction);
+            state = this.applyItemAction(state, false, primaryAction);
         }
 
         // Apply switches
         if (primaryIsAi) {
-            state = applySwitchAction(state, true, primaryAction);
-            state = applySwitchAction(state, false, secondaryAction);
+            state = this.applySwitchAction(state, true, primaryAction);
+            state = this.applySwitchAction(state, false, secondaryAction);
         } else {
-            state = applySwitchAction(state, true, secondaryAction);
-            state = applySwitchAction(state, false, primaryAction);
+            state = this.applySwitchAction(state, true, secondaryAction);
+            state = this.applySwitchAction(state, false, primaryAction);
         }
 
         // Resolve attacks according to initiative heuristic
         if (primaryIsAi) {
-            state = resolveAttacks(state, primaryAction, secondaryAction);
+            state = this.resolveAttacks(state, primaryAction, secondaryAction);
         } else {
-            state = resolveAttacks(state, secondaryAction, primaryAction);
+            state = this.resolveAttacks(state, secondaryAction, primaryAction);
         }
 
         // Auto-switch if ko
-        state = autoSwitchIfKo(state, true);
-        state = autoSwitchIfKo(state, false);
+        state = this.autoSwitchIfKo(state, true);
+        state = this.autoSwitchIfKo(state, false);
 
         return state;
     }
@@ -208,12 +215,13 @@ public class MiniMax {
         }
 
         Attack attack = attacks.get(action.index());
-        int damage = this.damageCalculator.calculateDamage(attack, attacker.effectiveAttack(), defender.effectiveDefense());
+        int damage = this.damageCalculator.calculateDamage(attack, attacker.effectiveAttack(),
+                defender.effectiveDefense());
 
         // build new defender snapshot with reduced HP
         CombatBugemonSnapshot newDefender = new CombatBugemonSnapshot(Math.max(0, defender.currentHp() - damage),
-            defender.attacks(), defender.maxHp(), defender.effectiveAttack(), defender.effectiveDefense(),
-            defender.initiative());
+                defender.attacks(), defender.maxHp(), defender.effectiveAttack(), defender.effectiveDefense(),
+                defender.initiative());
 
         List<CombatBugemonSnapshot> newDefList = new ArrayList<>(defenderTeam.bugemons());
         int idx = newDefList.indexOf(defender);
@@ -230,31 +238,43 @@ public class MiniMax {
     }
 
     private CombatSnapshot applyItemAction(CombatSnapshot state, boolean forAi, SimAction action) {
-        if (action.kind() != SimActionKind.ITEM || action.item() == null) return state;
-
+        if (action.kind() != SimActionKind.ITEM || action.item() == null) {
+            return state;
+        }
         Map<Item, Integer> inventory = forAi ? state.aiInventory() : state.opponentInventory();
-        if (inventory == null) return state;
+        if (inventory == null) {
+            return state;
+        }
         Integer qty = inventory.get(action.item());
-        if (qty == null || qty <= 0) return state;
-
+        if (qty == null || qty <= 0) {
+            return state;
+        }
         TeamSnapshot team = forAi ? state.aiTeam() : state.playerTeam();
         CombatBugemonSnapshot active = team.active();
-        if (active == null) return state;
+        if (active == null) {
+            return state;
+        }
 
         // handle HealEffect only
         if (action.item().effect() instanceof HealEffect heal) {
             int healAmt = Math.max(0, heal.getAmount());
             int newHp = Math.min(active.maxHp(), active.currentHp() + healAmt);
-                CombatBugemonSnapshot newActive = new CombatBugemonSnapshot(newHp, active.attacks(), active.maxHp(),
+            CombatBugemonSnapshot newActive = new CombatBugemonSnapshot(newHp, active.attacks(), active.maxHp(),
                     active.effectiveAttack(), active.effectiveDefense(), active.initiative());
 
             List<CombatBugemonSnapshot> newList = new ArrayList<>(team.bugemons());
             int idx = newList.indexOf(active);
-            if (idx >= 0) newList.set(idx, newActive);
+            if (idx >= 0) {
+                newList.set(idx, newActive);
+            }
             TeamSnapshot newTeam = new TeamSnapshot(List.copyOf(newList), newActive);
 
             Map<Item, Integer> newInv = new HashMap<>(inventory);
-            if (qty == 1) newInv.remove(action.item()); else newInv.put(action.item(), qty - 1);
+            if (qty == 1) {
+                newInv.remove(action.item());
+            } else {
+                newInv.put(action.item(), qty - 1);
+            }
 
             if (forAi) {
                 return new CombatSnapshot(state.playerTeam(), newTeam, newInv, state.opponentInventory());
@@ -267,17 +287,24 @@ public class MiniMax {
     }
 
     private CombatSnapshot applySwitchAction(CombatSnapshot state, boolean forAi, SimAction action) {
-        if (action.kind() != SimActionKind.SWITCH) return state;
-
+        if (action.kind() != SimActionKind.SWITCH) {
+            return state;
+        }
         TeamSnapshot team = forAi ? state.aiTeam() : state.playerTeam();
         List<CombatBugemonSnapshot> list = team.bugemons();
         int idx = action.index();
-        if (idx < 0 || idx >= list.size()) return state;
+        if (idx < 0 || idx >= list.size()) {
+            return state;
+        }
         CombatBugemonSnapshot target = list.get(idx);
-        if (!target.isAlive()) return state;
+        if (!target.isAlive()) {
+            return state;
+        }
 
         TeamSnapshot newTeam = new TeamSnapshot(List.copyOf(list), target);
-        if (forAi) return new CombatSnapshot(state.playerTeam(), newTeam, state.aiInventory(), state.opponentInventory());
+        if (forAi) {
+            return new CombatSnapshot(state.playerTeam(), newTeam, state.aiInventory(), state.opponentInventory());
+        }
         return new CombatSnapshot(newTeam, state.aiTeam(), state.aiInventory(), state.opponentInventory());
     }
 
@@ -285,11 +312,15 @@ public class MiniMax {
         boolean aiAttacks = aiAction.kind() == SimActionKind.ATTACK;
         boolean oppAttacks = oppAction.kind() == SimActionKind.ATTACK;
 
-        if (!aiAttacks && !oppAttacks) return state;
+        if (!aiAttacks && !oppAttacks) {
+            return state;
+        }
 
         CombatBugemonSnapshot aiActive = state.aiTeam().active();
         CombatBugemonSnapshot oppActive = state.playerTeam().active();
-        if (aiActive == null || oppActive == null) return state;
+        if (aiActive == null || oppActive == null) {
+            return state;
+        }
 
         int aiMax = aiActive.attacks().stream().mapToInt(Attack::power).max().orElse(0);
         int oppMax = oppActive.attacks().stream().mapToInt(Attack::power).max().orElse(0);
@@ -297,43 +328,56 @@ public class MiniMax {
 
         if (aiAttacks && oppAttacks) {
             if (aiFirst) {
-                state = applyAttack(state, true, aiAction);
+                state = this.applyAttack(state, true, aiAction);
                 // recompute opp active after potential change
-                if (state.playerTeam().active().isAlive()) state = applyAttack(state, false, oppAction);
+                if (state.playerTeam().active().isAlive()) {
+                    state = this.applyAttack(state, false, oppAction);
+                }
             } else {
-                state = applyAttack(state, false, oppAction);
-                if (state.aiTeam().active().isAlive()) state = applyAttack(state, true, aiAction);
+                state = this.applyAttack(state, false, oppAction);
+                if (state.aiTeam().active().isAlive()) {
+                    state = this.applyAttack(state, true, aiAction);
+                }
             }
             return state;
         }
 
-        if (aiAttacks) return applyAttack(state, true, aiAction);
-        return applyAttack(state, false, oppAction);
+        if (aiAttacks) {
+            return this.applyAttack(state, true, aiAction);
+        }
+        return this.applyAttack(state, false, oppAction);
     }
 
     private CombatSnapshot autoSwitchIfKo(CombatSnapshot state, boolean forAi) {
         TeamSnapshot team = forAi ? state.aiTeam() : state.playerTeam();
-        if (team.active() != null && team.active().isAlive()) return state;
+        if (team.active() != null && team.active().isAlive()) {
+            return state;
+        }
 
         List<CombatBugemonSnapshot> list = team.bugemons();
         for (CombatBugemonSnapshot b : list) {
             if (b.isAlive()) {
                 TeamSnapshot newTeam = new TeamSnapshot(List.copyOf(list), b);
-                if (forAi) return new CombatSnapshot(state.playerTeam(), newTeam, state.aiInventory(), state.opponentInventory());
+                if (forAi) {
+                    return new CombatSnapshot(state.playerTeam(), newTeam, state.aiInventory(),
+                            state.opponentInventory());
+                }
                 return new CombatSnapshot(newTeam, state.aiTeam(), state.aiInventory(), state.opponentInventory());
             }
         }
         return state;
     }
 
-    
-
     private double evaluateState(CombatSnapshot state) {
-        if (state.isAiDefeated()) return -WIN_SCORE;
-        if (state.isOpponentDefeated()) return WIN_SCORE;
+        if (state.isAiDefeated()) {
+            return -WIN_SCORE;
+        }
+        if (state.isOpponentDefeated()) {
+            return WIN_SCORE;
+        }
 
-        int aiHp = totalHp(state.aiTeam());
-        int oppHp = totalHp(state.playerTeam());
+        int aiHp = this.totalHp(state.aiTeam());
+        int oppHp = this.totalHp(state.playerTeam());
         return (double) (aiHp - oppHp);
     }
 

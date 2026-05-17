@@ -1,16 +1,16 @@
 package ulb.models.combat.strategy;
 
-import ulb.models.combat.turn.ActionCallback;
-import ulb.models.combat.utils.CombatContext;
-import ulb.models.combat.turn.TurnAction;
-import ulb.models.combat.strategy.minimax.MiniMax;
-import ulb.models.combat.strategy.minimax.SimAction;
-import ulb.models.combat.strategy.minimax.SimActionKind;
+import java.util.List;
+
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatTeam;
 import ulb.models.combat.snapshot.CombatSnapshot;
-import ulb.models.combat.snapshot.TeamSnapshot;
-import java.util.List;
+import ulb.models.combat.strategy.minimax.MiniMax;
+import ulb.models.combat.strategy.minimax.SimAction;
+import ulb.models.combat.strategy.minimax.SimActionKind;
+import ulb.models.combat.turn.ActionCallback;
+import ulb.models.combat.turn.TurnAction;
+import ulb.models.combat.utils.CombatContext;
 
 public class MiniMaxStrategy implements CombatStrategy {
     public MiniMaxStrategy() {
@@ -35,7 +35,9 @@ public class MiniMaxStrategy implements CombatStrategy {
             }
             case SWITCH -> {
                 List<CombatBugemon> available = ally.getAvailable();
-                if (available.isEmpty()) throw new IllegalStateException("No available bugemon to switch");
+                if (available.isEmpty()) {
+                    throw new IllegalStateException("No available bugemon to switch");
+                }
                 int idx = Math.max(0, Math.min(action.index(), available.size() - 1));
                 ta = new TurnAction.SwitchAction(available.get(idx));
             }

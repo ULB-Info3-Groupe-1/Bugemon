@@ -17,8 +17,8 @@ import ulb.models.combat.snapshot.TeamSnapshot;
 import ulb.models.item.Item;
 
 public class TestMiniMax {
-    private static final Attack BASIC_ATTACK = new Attack("atk-1", "Basic", "Basic attack", 20,
-            ElementType.FLORA, List.of());
+    private static final Attack BASIC_ATTACK = new Attack("atk-1", "Basic", "Basic attack", 20, ElementType.FLORA,
+            List.of());
 
     private MiniMax miniMax(int depth) {
         return new MiniMax(depth);
@@ -69,7 +69,8 @@ public class TestMiniMax {
         CombatBugemonSnapshot opponentActive = new CombatBugemonSnapshot(0, List.of(), 40, 10, 10, 4);
         TeamSnapshot opponentTeam = new TeamSnapshot(List.of(opponentActive), opponentActive);
         TeamSnapshot aiTeam = new TeamSnapshot(List.of(aiActive), aiActive);
-        CombatSnapshot snapshot = new CombatSnapshot(opponentTeam, aiTeam, Map.<Item, Integer>of(), Map.<Item, Integer>of());
+        CombatSnapshot snapshot = new CombatSnapshot(opponentTeam, aiTeam, Map.<Item, Integer>of(),
+                Map.<Item, Integer>of());
 
         SimAction action = this.miniMax(2).chooseBestAction(snapshot, true);
 

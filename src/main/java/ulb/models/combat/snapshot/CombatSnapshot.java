@@ -1,11 +1,8 @@
 package ulb.models.combat.snapshot;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.CombatTeam;
 import ulb.models.item.Item;
 
@@ -23,7 +20,7 @@ public record CombatSnapshot(TeamSnapshot playerTeam, TeamSnapshot aiTeam, Map<I
         return this.aiTeam.active();
     }
 
-    public  CombatBugemonSnapshot opponentActive() {
+    public CombatBugemonSnapshot opponentActive() {
         return this.playerTeam.active();
     }
 
