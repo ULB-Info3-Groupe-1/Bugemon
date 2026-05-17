@@ -3,13 +3,14 @@ package ulb.models.player;
 import java.util.Collections;
 import java.util.List;
 
+import ulb.models.team.Team;
+
 public class PlayerTeam {
-    // TODO: use Team instead of owning its own List<PlayerBugemon>
     private final List<PlayerBugemon> members;
     private final String name;
 
-    public PlayerTeam(List<PlayerBugemon> members, String name) {
-        this.members = List.copyOf(members);
+    public PlayerTeam(Team team, String name) {
+        this.members = team.getMembers().stream().map(PlayerBugemon::new).toList();
         this.name = name;
     }
 

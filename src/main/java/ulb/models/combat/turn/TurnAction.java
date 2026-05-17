@@ -4,6 +4,7 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.CombatBugemon;
+import ulb.models.item.Item;
 
 public sealed interface TurnAction extends Comparable<TurnAction> {
 
@@ -38,7 +39,7 @@ public sealed interface TurnAction extends Comparable<TurnAction> {
         }
     }
 
-    record ItemAction() implements TurnAction {
+    record ItemAction(Item item) implements TurnAction {
         @Override
         public TurnPhase phase() {
             return TurnPhase.PASSIVE;

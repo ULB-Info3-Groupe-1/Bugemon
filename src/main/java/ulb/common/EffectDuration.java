@@ -14,17 +14,4 @@ public enum EffectDuration {
     public String toString() {
         return this.label;
     }
-
-    /**
-     * @throws IllegalArgumentException
-     *             if no value matches the label.
-     */
-    public static EffectDuration fromLabel(String label) {
-        for (EffectDuration duration : EffectDuration.values()) {
-            if (duration.label.equals(label)) {
-                return duration;
-            }
-        }
-        throw new IllegalArgumentException("Label not found : " + label);
-    }
 }

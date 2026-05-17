@@ -20,11 +20,12 @@ import ulb.models.combat.turn.TurnPhase;
 import ulb.models.combat.turn.TurnResolvedCallback;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
-import ulb.models.combat.turn.TurnStep.ItemStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.combat.utils.DamageCalculator;
+import ulb.models.combat.utils.EffectProcessor;
+import ulb.models.item.Inventory;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
@@ -32,23 +33,33 @@ public class Combat {
     private final CombatTeam playerTeam;
     private final CombatTeam opponentTeam;
 
+    private final Inventory playerInventory;
+    private final Inventory opponentInventory;
+
     private final CombatStrategy playerStrategy;
     private final CombatStrategy opponentStrategy;
 
     private final DamageCalculator damageCalculator;
+    private final EffectProcessor effectProcessor;
 
     private CombatResult result;
     private boolean finished;
 
-    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, CombatStrategy playerStrategy,
-            CombatStrategy opponentStrategy, DamageCalculator damageCalculator) {
+    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, Inventory playerInventory,
+            Inventory opponentInventory, CombatStrategy playerStrategy, CombatStrategy opponentStrategy,
+            DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
+
+        this.playerInventory = playerInventory;
+        this.opponentInventory = opponentInventory;
 
         this.playerStrategy = playerStrategy;
         this.opponentStrategy = opponentStrategy;
 
         this.damageCalculator = damageCalculator;
+
+        this.effectProcessor = effectProcessor;
 
         this.result = null;
         this.finished = false;
@@ -124,12 +135,6 @@ public class Combat {
         // resolve first action
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
 
-        if (this.isFinished()) {
-            LOG.info("Forfeit detected - combat ends in defeat");
-            callback.onTurnResolved(steps);
-            return;
-        }
-
         // handle potential combat end
         if (this.checkCombatFinished()) {
             LOG.info("Combat ended after first action: result={}", this.result);
@@ -141,6 +146,7 @@ public class Combat {
         if (secondActorBefore.isKo()) {
             LOG.debug("Second actor KO - requesting forced switch for {}", secondIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, secondIsPlayer);
+            this.tickEndOfTurn();
             return;
         }
 
@@ -161,8 +167,11 @@ public class Combat {
         if (firstActor.isKo()) {
             LOG.debug("First actor KO - requesting forced switch for {}", firstIsPlayer ? "player" : "opponent");
             this.handleKo(steps, callback, firstIsPlayer);
+            this.tickEndOfTurn();
             return;
         }
+
+        this.tickEndOfTurn();
 
         LOG.debug("Turn resolved normally with {} steps", steps.size());
         callback.onTurnResolved(steps);
@@ -194,7 +203,7 @@ public class Combat {
         return action.accept(new TurnActionVisitor() {
             // TODO: handle each case
             public List<TurnStep> visit(AttackAction attackAction) {
-                return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack());
+                return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack(), actingTeam);
             }
 
             public List<TurnStep> visit(SwitchAction switchAction) {
@@ -202,8 +211,11 @@ public class Combat {
                 return List.of(new SwitchStep(switchAction.target()));
             }
 
-            public List<TurnStep> visit(ItemAction a) {
-                return List.of(new ItemStep());
+            public List<TurnStep> visit(ItemAction itemAction) {
+                return Combat.this.playerInventory
+                        .useItem(itemAction.item()).map(item -> Combat.this.effectProcessor
+                                .applySingleEffect(item.effect(), actor, opposingTeam.getActive(), actingTeam))
+                        .orElse(new ArrayList<>());
             }
 
             public List<TurnStep> visit(ForfeitAction a) {
@@ -214,7 +226,13 @@ public class Combat {
         });
     }
 
-    private List<TurnStep> resolveAttack(CombatBugemon attacker, CombatBugemon defender, Attack attack) {
+    private List<TurnStep> resolveAttack(CombatBugemon attacker, CombatBugemon defender, Attack attack,
+            CombatTeam attackerTeam) {
+        if (!attacker.hasAttack(attack)) {
+            throw new IllegalArgumentException(
+                    String.format("%s attempted to use attack %s, but does not have this attack.", attacker, attack));
+        }
+
         List<TurnStep> steps = new ArrayList<>();
 
         int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
@@ -223,6 +241,8 @@ public class Combat {
         LOG.debug("{} uses {} on {} for {} damage (HP left: {})", attacker, attack.name(), defender, damage,
                 defender.getCurrentHp());
         steps.add(new AttackStep(attacker, defender, attack, damage, defender.getCurrentHp()));
+
+        steps.addAll(this.effectProcessor.applyEffects(attack, attacker, defender, attackerTeam));
 
         if (defender.isKo()) {
             LOG.info("{} is KO", defender);
@@ -250,6 +270,9 @@ public class Combat {
     }
 
     private boolean checkCombatFinished() {
+        if (this.isFinished()) { // triggered by forfeit action
+            return true;
+        }
         if (this.playerTeam.isDefeated()) {
             this.result = CombatResult.DEFEAT;
             this.finished = true;
@@ -262,6 +285,17 @@ public class Combat {
         }
 
         return false;
+    }
+
+    void tickEndOfTurn(CombatBugemon bugemon) {
+        if (!bugemon.isKo()) {
+            bugemon.tickEffects();
+        }
+    }
+
+    private void tickEndOfTurn() {
+        this.tickEndOfTurn(this.playerTeam.getActive());
+        this.tickEndOfTurn(this.opponentTeam.getActive());
     }
 
     public boolean isFinished() {

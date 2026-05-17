@@ -100,6 +100,10 @@ public class CombatBugemon {
         this.runBugemon.setCurrentHp(this.currentHp);
     }
 
+    public boolean hasAttack(Attack attack) {
+        return this.getAttacks().contains(attack);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
