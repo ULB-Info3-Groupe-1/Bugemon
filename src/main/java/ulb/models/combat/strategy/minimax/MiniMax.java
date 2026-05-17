@@ -12,7 +12,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.combat.snapshot.CombatBugemonSnapshot;
 import ulb.models.combat.snapshot.CombatSnapshot;
 import ulb.models.combat.snapshot.TeamSnapshot;
-import ulb.models.combat.utils.DamageCalculator;
+import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.effect.HealEffect;
 import ulb.models.item.Item;
 
