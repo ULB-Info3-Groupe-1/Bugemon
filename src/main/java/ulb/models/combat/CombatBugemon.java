@@ -73,6 +73,10 @@ public class CombatBugemon {
         return Collections.unmodifiableList(this.runBugemon.getAttacks());
     }
 
+    public double getXpProgress() {
+        return this.runBugemon.getXpProgress();
+    }
+
     private int getEffectModifierSum(StatType stat) {
         return this.activeEffects.stream().filter(e -> e.getStat() == stat).mapToInt(StatusEffect::getModifier).sum();
     }
@@ -107,6 +111,22 @@ public class CombatBugemon {
 
     public boolean hasAttack(Attack attack) {
         return this.getAttacks().contains(attack);
+    }
+
+    public void addXp(int xp) {
+        this.runBugemon.addXp(xp);
+    }
+
+    public String getSpritePath() {
+        return this.runBugemon.getSpritePath();
+    }
+
+    public String getName() {
+        return this.runBugemon.getName();
+    }
+
+    public int getLevel() {
+        return this.runBugemon.getLevel();
     }
 
     @Override

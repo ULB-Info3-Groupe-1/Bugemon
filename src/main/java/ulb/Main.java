@@ -53,8 +53,8 @@ public class Main extends Application {
                 loader.getQueries());
         InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, loader.getQueries(),
                 parser.getInventory());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
-                loader.getQueries());
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository, loader.getQueries(),
+                parser.getSkillTree());
         TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, playerBugemonRepository,
                 loader.getQueries());
 

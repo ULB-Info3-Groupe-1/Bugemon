@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
-import ulb.models.player.PlayerTeam;
+import ulb.models.team.Team;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.StaticBugemonDataDTO;
 import ulb.repositories.dto.TeamDTO;
@@ -113,8 +113,8 @@ public class TeamRepository extends AbstractRepository {
      * @throws TeamNotFoundException
      *             if the player has no teams
      */
-    public List<PlayerTeam> loadTeams(String playername) {
-        List<PlayerTeam> playerTeams = new ArrayList<>();
+    public List<Team> loadTeams(String playername) {
+        List<Team> playerTeams = new ArrayList<>();
 
         Map<String, PlayerBugemonDTO> bugemonStatsMap = this.playerBugemonRepository.getPlayerBugemons(playername)
                 .stream().collect(Collectors.toMap(PlayerBugemonDTO::bugemonName, pb -> pb));
@@ -136,7 +136,9 @@ public class TeamRepository extends AbstractRepository {
                 }
             });
 
-            playerTeams.add(new PlayerTeam(members, teamDto.teamName()));
+            Team team = new Team(members);
+            team.setName(teamDto.teamName());
+            playerTeams.add(team);
         }
 
         return playerTeams;
@@ -155,7 +157,7 @@ public class TeamRepository extends AbstractRepository {
      *            (String) the player's name who owns the current team
      * @return (Optional<Team>) the current team of the player if it exists, otherwise an empty optional
      */
-    public Optional<PlayerTeam> loadCurrentTeam(String playername) {
+    public Optional<Team> loadCurrentTeam(String playername) {
         LOG.debug("Getting current team for playername: {}", playername);
 
         if (!this.hasActiveTeam(playername)) {
@@ -186,7 +188,10 @@ public class TeamRepository extends AbstractRepository {
 
         String teamName = executeSingleQuery("GetPlayerCurrentTeamName", rs -> rs.getString("current_team"),
                 playername);
-        return Optional.of(new PlayerTeam(members, teamName));
+
+        Team team = new Team(members);
+        team.setName(teamName);
+        return Optional.of(team);
     }
 
     public void setPlayerCurrentTeam(String playername, String teamName) {

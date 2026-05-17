@@ -6,6 +6,7 @@ import java.util.List;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.player.PlayerBugemon;
 import ulb.models.team.exceptions.BugemonAlreadyPresentInTeamException;
 import ulb.models.team.exceptions.BugemonNotInTeamException;
 import ulb.models.team.exceptions.TeamAlreadyEmptyException;
@@ -16,7 +17,8 @@ import ulb.models.team.exceptions.TeamAlreadyFullException;
  * Implements {@link Iterable} for use in enhanced for-loops.
  */
 public class Team {
-    private final List<Bugemon> members;
+    private final List<PlayerBugemon> members;
+    private String name;
 
     private static final int MAX_SIZE = Configuration.Game.MAX_TEAM_SIZE;
 
@@ -24,7 +26,12 @@ public class Team {
         this.members = new ArrayList<>();
     }
 
-    public Team(List<Bugemon> members) {
+    public Team(Team other) {
+        this.members = new ArrayList<>(other.members);
+        this.name = other.name;
+    }
+
+    public Team(List<PlayerBugemon> members) {
         if (members.size() > MAX_SIZE) {
             throw new IllegalArgumentException("Team cannot have more than " + MAX_SIZE + " members.");
         }
@@ -32,10 +39,6 @@ public class Team {
             throw new IllegalArgumentException("Team cannot have duplicate members.");
         }
         this.members = new ArrayList<>(members);
-    }
-
-    public Team(Team other) {
-        this.members = new ArrayList<>(other.members);
     }
 
     public int size() {
@@ -50,7 +53,7 @@ public class Team {
         return this.members.isEmpty();
     }
 
-    public void add(Bugemon bugemon) throws TeamAlreadyFullException, BugemonAlreadyPresentInTeamException {
+    public void add(PlayerBugemon bugemon) throws TeamAlreadyFullException, BugemonAlreadyPresentInTeamException {
         if (this.isFull()) {
             throw new TeamAlreadyFullException("Team already full!");
         }
@@ -60,7 +63,7 @@ public class Team {
         this.members.add(bugemon);
     }
 
-    public void remove(Bugemon bugemon) throws TeamAlreadyEmptyException, BugemonNotInTeamException {
+    public void remove(PlayerBugemon bugemon) throws TeamAlreadyEmptyException, BugemonNotInTeamException {
         if (this.size() == 0) {
             throw new TeamAlreadyEmptyException("Team already empty!");
         }
@@ -70,7 +73,7 @@ public class Team {
         this.members.remove(bugemon);
     }
 
-    public List<Bugemon> getMembers() {
+    public List<PlayerBugemon> getMembers() {
         return Collections.unmodifiableList(this.members);
     }
 
@@ -81,11 +84,30 @@ public class Team {
      *            (Bugemon) the Bugemon to search for
      * @return (boolean) true if a Bugemon with the same name is already in the team, false otherwise
      */
-    public boolean contains(Bugemon bugemon) {
+    public boolean contains(PlayerBugemon bugemon) {
         return this.members.contains(bugemon);
     }
 
     public void clear() {
         this.members.clear();
     }
+
+    public int getSlotPosition(PlayerBugemon bugemon) {
+        return this.members.indexOf(bugemon);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void addAll(List<PlayerBugemon> bugemons) {
+        for (PlayerBugemon bugemon : bugemons) {
+            this.add(bugemon);
+        }
+    }
+
 }

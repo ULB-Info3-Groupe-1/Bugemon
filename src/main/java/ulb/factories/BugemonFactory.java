@@ -56,6 +56,32 @@ public class BugemonFactory {
                 defaultBugemon.attackList());
     }
 
+    /**
+     * Create a PlayerBugemon with default values. Used when a player has never played with the bugemon.
+     *
+     * @param base
+     *            the base bugemon
+     * @return the PlayerBugemon
+     */
+    public static PlayerBugemon createPlayerBugemon(Bugemon base, PlayerBugemonDTO playerBugemon) {
+        BonusStats bonusStats = new BonusStats(playerBugemon.currentMaxHp(), playerBugemon.currentAttackPower(),
+                playerBugemon.currentDefense(), playerBugemon.currentInitiative());
+        return new PlayerBugemon(base, playerBugemon.currentLevel(), playerBugemon.currentXp(), bonusStats,
+                base.attacks()); // TODO: need to change base.attacks with the list of attacks of the playerBugemonDTO
+    }
+
+    /**
+     * Create a PlayerBugemon with default values. Used when a player has never played with the bugemon.
+     *
+     * @param base
+     *            the base bugemon
+     * @return the PlayerBugemon
+     */
+    public static PlayerBugemon createDefaultPlayerBugemon(Bugemon base) {
+        BonusStats bonusStats = new BonusStats(0, 0, 0, 0);
+        return new PlayerBugemon(base, 1, 0, bonusStats, base.attacks());
+    }
+
     public static StaticBugemonDataDTO createStaticBugemonData(Bugemon bugemon) {
         return new StaticBugemonDataDTO(bugemon.name(), bugemon.type().name(), bugemon.spritePath(), bugemon.attacks(),
                 bugemon.isStarter());

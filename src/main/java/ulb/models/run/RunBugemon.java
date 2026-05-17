@@ -6,6 +6,7 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
+import ulb.models.level_up.Upgrade;
 import ulb.models.player.PlayerBugemon;
 
 public class RunBugemon {
@@ -68,6 +69,27 @@ public class RunBugemon {
 
     public List<Attack> getAttacks() {
         return Collections.unmodifiableList(this.playerBugemon.getAttacks());
+    }
+
+    public double getXpProgress() {
+        return this.playerBugemon.getXpProgress();
+    }
+
+    public void applyUpgrade(Upgrade upgrade) {
+        this.playerBugemon.applyUpgrade(upgrade);
+        this.currentHp = this.getMaxHp();
+    }
+
+    public void addXp(int xp) {
+        this.playerBugemon.addXp(xp);
+    }
+
+    public String getSpritePath() {
+        return this.playerBugemon.getSpritePath();
+    }
+
+    public int getLevel() {
+        return this.playerBugemon.getLevel();
     }
 
     @Override

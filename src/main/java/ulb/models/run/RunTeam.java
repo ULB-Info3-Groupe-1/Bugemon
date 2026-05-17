@@ -3,7 +3,7 @@ package ulb.models.run;
 import java.util.Collections;
 import java.util.List;
 
-import ulb.models.player.PlayerTeam;
+import ulb.models.team.Team;
 
 /**
  * Represents a team during a run.
@@ -15,7 +15,7 @@ public class RunTeam {
         this.members = List.copyOf(members);
     }
 
-    public static RunTeam fromTeam(PlayerTeam team) {
+    public static RunTeam fromTeam(Team team) {
         List<RunBugemon> runMembers = team.getMembers().stream().map(RunBugemon::new).toList();
         return new RunTeam(runMembers);
     }

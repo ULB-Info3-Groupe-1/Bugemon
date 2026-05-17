@@ -43,14 +43,20 @@ public class Combat {
     private final DamageCalculator damageCalculator;
     private final EffectProcessor effectProcessor;
 
+    private final int floor;
+    private final boolean bossMode;
+
     private CombatResult result;
     private boolean finished;
 
-    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, Inventory playerInventory,
-            Inventory opponentInventory, CombatStrategy playerStrategy, CombatStrategy opponentStrategy,
-            DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
+    public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, int floor, boolean bossMode,
+            Inventory playerInventory, Inventory opponentInventory, CombatStrategy playerStrategy,
+            CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
+
+        this.floor = floor;
+        this.bossMode = bossMode;
 
         this.playerInventory = playerInventory;
         this.opponentInventory = opponentInventory;
@@ -308,5 +314,21 @@ public class Combat {
             throw new IllegalStateException("Combat not finished yet");
         }
         return this.result;
+    }
+
+    public CombatTeam getPlayerTeam() {
+        return this.playerTeam;
+    }
+
+    public int getOpponentTeamSize() {
+        return this.opponentTeam.size();
+    }
+
+    public int getFloor() {
+        return this.floor;
+    }
+
+    public boolean isBossMode() {
+        return this.bossMode;
     }
 }

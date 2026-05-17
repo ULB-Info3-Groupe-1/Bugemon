@@ -1,0 +1,42 @@
+package ulb.views.combat.components;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+
+import ulb.Configuration;
+import ulb.models.bugemon.ElementType;
+import ulb.models.combat.CombatBugemon;
+import ulb.views.components.ComponentView;
+
+/** Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link BugemonDTO}. */
+public class BugemonInfoView extends ComponentView {
+
+    @FXML
+    private Label bugemonName;
+    @FXML
+    private Label bugemonLevel;
+    @FXML
+    private ProgressBar bugemonHPBar;
+    @FXML
+    private ProgressBar bugemonXpBar;
+    @FXML
+    private Label bugemonHpLabel;
+
+    public BugemonInfoView() {
+        super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_INFO);
+    }
+
+    /** Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class. */
+    public void setBugemonInfo(CombatBugemon bugemon) {
+        for (ElementType type : ElementType.values()) {
+            this.getStyleClass().remove(type.toString());
+        }
+        this.getStyleClass().add(bugemon.getType().toString());
+        this.bugemonName.setText(bugemon.getName());
+        this.bugemonLevel.setText("Lv." + bugemon.getLevel());
+        this.bugemonHPBar.setProgress((double) bugemon.getCurrentHp() / bugemon.getMaxHp());
+        this.bugemonXpBar.setProgress(bugemon.getXpProgress());
+        this.bugemonHpLabel.setText(bugemon.getCurrentHp() + " / " + bugemon.getMaxHp() + " HP");
+    }
+}

@@ -7,16 +7,23 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.models.skills.SkillTree;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
 public class PlayerRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PlayerRepository.class);
     private final InventoryRepository inventoryRepository;
+    private final SkillTree skillTree;
 
     public PlayerRepository(DatabaseConnection dbConnection, InventoryRepository inventoryRepository,
-            Map<String, String> queries) {
+            Map<String, String> queries, SkillTree skillTree) {
         super(dbConnection, queries);
         this.inventoryRepository = inventoryRepository;
+        this.skillTree = skillTree;
+    }
+
+    public SkillTree getSkillTree() {
+        return this.skillTree;
     }
 
     // --- PLAYERS ---

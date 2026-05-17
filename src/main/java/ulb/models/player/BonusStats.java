@@ -1,5 +1,7 @@
 package ulb.models.player;
 
+import ulb.models.level_up.Upgrade;
+
 public class BonusStats {
     private int bonusHp;
     private int bonusAttack;
@@ -47,6 +49,13 @@ public class BonusStats {
 
     public void setBonusInitiative(int bonusInitiative) {
         this.bonusInitiative = bonusInitiative;
+    }
+
+    public void apply(Upgrade upgrade) {
+        this.bonusHp += upgrade.hp();
+        this.bonusAttack += upgrade.attack();
+        this.bonusDefense += upgrade.defense();
+        this.bonusInitiative += upgrade.initiative();
     }
 
     @Override

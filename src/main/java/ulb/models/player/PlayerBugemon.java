@@ -7,6 +7,7 @@ import java.util.Objects;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
+import ulb.models.level_up.Upgrade;
 
 public class PlayerBugemon {
     private final Bugemon base;
@@ -42,6 +43,14 @@ public class PlayerBugemon {
         return this.base.hp() + this.bonusStats.getBonusHp();
     }
 
+    public int getXp() {
+        return this.xp;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
     public int getAttack() {
         return this.base.attack() + this.bonusStats.getBonusAttack();
     }
@@ -56,6 +65,44 @@ public class PlayerBugemon {
 
     public List<Attack> getAttacks() {
         return Collections.unmodifiableList(this.currentAttacks);
+    }
+
+    public int getXpToNextLevel() {
+        return 50 + 50 * (this.level - 1);
+    }
+
+    public int addXp(int xpToAdd) {
+        if (xpToAdd < 0) {
+            throw new IllegalArgumentException("amount of xp to add must be non-negative");
+        }
+
+        int numLevelUps = 0;
+
+        this.xp += xpToAdd;
+
+        while (this.xp >= this.getXpToNextLevel()) {
+            this.xp -= this.getXpToNextLevel();
+            numLevelUps++;
+            this.level++;
+        }
+
+        return numLevelUps;
+    }
+
+    public void applyUpgrade(Upgrade upgrade) {
+        this.bonusStats.apply(upgrade);
+    }
+
+    public String getSpritePath() {
+        return this.base.spritePath();
+    }
+
+    public List<Attack> getAttackList() {
+        return this.currentAttacks;
+    }
+
+    public double getXpProgress() {
+        return (double) this.xp / this.getXpToNextLevel();
     }
 
     @Override

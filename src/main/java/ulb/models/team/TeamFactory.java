@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.player.PlayerBugemon;
 import ulb.repositories.StaticDataRepository;
 
 // TODO: should these methods be static?
@@ -27,7 +28,7 @@ public class TeamFactory {
     public static Team generateBossTeam(StaticDataRepository repo, int size, String bossName, Random random) {
         Team team = new Team();
 
-        repo.findByName(bossName).ifPresent(team::add);
+        repo.findByName(bossName).map(PlayerBugemon::new).ifPresent(team::add);
 
         List<Bugemon> available = new ArrayList<>(repo.getAllDefaultBugemons());
         available.removeIf(b -> b.name().equals(bossName)); // remove boss to avoid adding twice
@@ -42,7 +43,7 @@ public class TeamFactory {
     private static void moveBugemonsToTeam(int numBugemons, Team team, List<Bugemon> available, Random random) {
         while (team.size() < numBugemons && !available.isEmpty()) {
             int idx = random.nextInt(available.size());
-            team.add(available.remove(idx));
+            team.add(new PlayerBugemon(available.remove(idx)));
         }
     }
 }

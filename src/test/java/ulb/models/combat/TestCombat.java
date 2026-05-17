@@ -48,7 +48,7 @@ public class TestCombat {
         this.playerTeam = BugemonFixtures.teamOf(BugemonFixtures.fastFlora());
         this.opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
 
-        this.combat = new Combat(this.playerTeam, this.opponentTeam, new Inventory(), new Inventory(),
+        this.combat = new Combat(this.playerTeam, this.opponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
     }
@@ -132,7 +132,7 @@ public class TestCombat {
                 .teamOf(BugemonFixtures.bugemon(100, 100, 40, 90, List.of(strongAtk, strongAtk, strongAtk)));
         this.playerTeam.getActive().takeDamage(99);
 
-        Combat c = new Combat(this.playerTeam, fastOppTeam, new Inventory(), new Inventory(),
+        Combat c = new Combat(this.playerTeam, fastOppTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
 
@@ -172,7 +172,7 @@ public class TestCombat {
         CombatTeam opponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        Combat c = new Combat(playerTeam, opponentTeam, new Inventory(), new Inventory(),
+        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
 
@@ -194,7 +194,7 @@ public class TestCombat {
 
         int defenseBefore = opponentTeam.getActive().getEffectiveDefense();
 
-        Combat c = new Combat(playerTeam, opponentTeam, new Inventory(), new Inventory(),
+        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
         c.resolveTurn(new AttackAction(debuffAtk), new AttackAction(zeroPowerAttack), steps -> {
@@ -215,7 +215,7 @@ public class TestCombat {
 
         int initiativeBefore = playerTeam.getActive().getEffectiveInitiative();
 
-        Combat c = new Combat(playerTeam, opponentTeam, new Inventory(), new Inventory(),
+        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
         c.resolveTurn(new AttackAction(buffAtk), new AttackAction(zeroPowerAttack), steps -> {
@@ -238,7 +238,7 @@ public class TestCombat {
         CombatTeam opponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        Combat c = new Combat(playerTeam, opponentTeam, new Inventory(), new Inventory(),
+        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
         c.resolveTurn(new AttackAction(resetAtk), new AttackAction(zeroPowerAttack), steps -> {
@@ -266,7 +266,7 @@ public class TestCombat {
         playerTeam.getActive().takeDamage(20);
         int hpBefore = playerTeam.getActive().getCurrentHp();
 
-        Combat c = new Combat(playerTeam, opponentTeam, playerInventory, new Inventory(),
+        Combat c = new Combat(playerTeam, opponentTeam, 2, false, playerInventory, new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
 
@@ -287,7 +287,7 @@ public class TestCombat {
                 BugemonFixtures.bugemon(100, 50, 40, 90, List.of(availableAttack, availableAttack, availableAttack)));
         CombatTeam opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
 
-        Combat c = new Combat(playerTeam, opponentTeam, new Inventory(), new Inventory(),
+        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
 
