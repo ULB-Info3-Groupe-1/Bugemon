@@ -208,13 +208,11 @@ public class Combat {
         CombatTeam opposingTeam = isPlayer ? this.opponentTeam : this.playerTeam;
         CombatBugemon actor = actingTeam.getActive();
 
-        if (actor.isKo()) {
-            return List.of();
-        }
-
         return action.accept(new TurnActionVisitor() {
-            // TODO: handle each case
             public List<TurnStep> visit(AttackAction attackAction) {
+                if (actor.isKo()) {
+                    return List.of();
+                }
                 return Combat.this.resolveAttack(actor, opposingTeam.getActive(), attackAction.attack(), actingTeam);
             }
 
@@ -224,6 +222,9 @@ public class Combat {
             }
 
             public List<TurnStep> visit(ItemAction itemAction) {
+                if (actor.isKo()) {
+                    return List.of();
+                }
                 return Combat.this.playerInventory
                         .useItem(itemAction.item()).map(item -> Combat.this.effectProcessor
                                 .applySingleEffect(item.effect(), actor, opposingTeam.getActive(), actingTeam))

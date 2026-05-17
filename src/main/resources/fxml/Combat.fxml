@@ -15,9 +15,9 @@
         <!-- Trainer (bottom-left): sprite + info side by side -->
         <HBox alignment="TOP_LEFT" spacing="60"
             AnchorPane.bottomAnchor="100" AnchorPane.leftAnchor="100">
-            <ImageView fx:id="bugemonTrainerImage" smooth="false"
+            <ImageView fx:id="bugemonPlayerImage" smooth="false"
                 fitHeight="160" fitWidth="160" preserveRatio="true" />
-            <BugemonInfoView fx:id="bugemonTrainerInfo" />
+            <BugemonInfoView fx:id="bugemonPlayerInfo" />
         </HBox>
 
         <!-- Opponent (top-right): info + sprite side by side -->

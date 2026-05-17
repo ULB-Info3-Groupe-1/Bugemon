@@ -90,10 +90,10 @@ public class CombatView extends View {
     public void switchBugemon(TurnStep.SwitchStep switchStep) {
         if (switchStep.isPlayer()) {
             this.playerBugemon = switchStep.bugemon();
-
+            this.refreshPlayer();
         } else {
             this.opponentBugemon = switchStep.bugemon();
-
+            this.refreshOpponent();
         }
     }
 
@@ -279,7 +279,15 @@ public class CombatView extends View {
         this.hideActionMenu();
 
         String message = switch (step) {
-            case AttackStep a -> a.attacker().getName() + " utilise " + a.attack().name() + " !";
+            case AttackStep a -> {
+                String base = a.attacker().getName() + " utilise " + a.attack().name()
+                        + " ! (" + a.damageResult().damage() + " dégâts)";
+                yield switch (a.damageResult().efficiency()) {
+                    case SUPER_EFFICIENT -> base + " C'est super efficace !";
+                    case NOT_VERY_EFFICIENT -> base + " Ce n'est pas très efficace...";
+                    case NORMAL -> base;
+                };
+            }
             case SwitchStep s ->
                 (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
             case KoStep k -> k.koBugemon().getName() + " est K.O. !";
