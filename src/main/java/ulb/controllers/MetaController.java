@@ -15,25 +15,36 @@ import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import java.util.Random;
+import ulb.Configuration;
 import ulb.models.combat.Combat;
-import ulb.models.item.Item;
+import ulb.models.combat.CombatTeam;
+import ulb.models.combat.damage.DamageCalculator;
+import ulb.models.combat.utils.EffectProcessor;
+import ulb.models.item.Inventory;
 import ulb.models.level_up.LevelUp;
+import ulb.models.run.RunTeam;
+import ulb.models.team.Team;
 import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
+import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is
+ * the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
+     * transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -63,7 +74,11 @@ public class MetaController {
     private final LevelUpController levelUpController;
     private final SkillTreeController skillTreeController;
 
+    private final BugemonService bugemonService;
+    private final TeamService teamService;
+    private final CombatService combatService;
     private final InventoryService inventoryService;
+    private final Random random = new Random();
 
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
@@ -73,19 +88,22 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *            main JavaFX stage of the application
+     *                     main JavaFX stage of the application
      * @throws IOException
-     *             if the music fails to be initialized
+     *                     if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService) throws IOException {
         this.stage = primaryStage;
+        this.bugemonService = bugemonService;
+        this.teamService = teamService;
+        this.combatService = new CombatService(new DamageCalculator(), new EffectProcessor(), new Random());
         this.inventoryService = inventoryService;
 
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
-        this.combatController = new CombatController(this);
+        this.combatController = new CombatController(this, this.combatService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
@@ -155,11 +173,40 @@ public class MetaController {
     }
 
     public void onStartManualCombat() {
-        this.switchTo(Window.MANUAL_COMBAT);
+        try {
+            Combat combat = this.buildStandaloneCombat(true);
+            this.combatController.initialize(combat);
+            this.switchTo(Window.MANUAL_COMBAT);
+        } catch (NoActiveTeamException e) {
+            LOG.error("Cannot start manual combat: no active team", e);
+        }
     }
 
     public void onStartAutomaticCombat() {
-        this.switchTo(Window.AUTOMATIC_COMBAT);
+        try {
+            Combat combat = this.buildStandaloneCombat(false);
+            this.combatController.initialize(combat);
+            this.switchTo(Window.AUTOMATIC_COMBAT);
+        } catch (NoActiveTeamException e) {
+            LOG.error("Cannot start automatic combat: no active team", e);
+        }
+    }
+
+    private Combat buildStandaloneCombat(boolean manual) throws NoActiveTeamException {
+        Team playerTeam = this.teamService.getRequiredActiveTeam();
+        RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
+        Team opponentTeamRaw = this.bugemonService.generateRandomTeam(playerRunTeam.size(), this.random);
+        CombatTeam opponentTeam = CombatTeam.fromRunTeam(RunTeam.fromTeam(opponentTeamRaw));
+        Inventory playerInventory = this.inventoryService.loadInventory();
+        Inventory opponentInventory = new Inventory();
+        int floor = Configuration.Game.FLOOR_MIN;
+        if (manual) {
+            return this.combatService.createCombat(playerRunTeam, opponentTeam,
+                    playerInventory, opponentInventory, this.combatController, floor, false);
+        } else {
+            return this.combatService.createAutoCombat(playerRunTeam, opponentTeam,
+                    playerInventory, opponentInventory, floor, false);
+        }
     }
 
     public void onTower() {
@@ -225,9 +272,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *            target screen to display
+     *               target screen to display
      * @throws IllegalArgumentException
-     *             if the window is invalid
+     *                                  if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
@@ -253,9 +300,7 @@ public class MetaController {
         this.musicPlayer.stopMusic();
         this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
 
-        Map<Item, Integer> inventoryMap = this.inventoryService.loadInventory().getMap();
-
-        this.combatController.startCombat(combat, inventoryMap);
+        this.combatController.initialize(combat);
         this.combatController.show();
     }
 }

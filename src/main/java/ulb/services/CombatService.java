@@ -49,6 +49,18 @@ public class CombatService {
                 playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
     }
 
+    /**
+     * Creates a combat where the player's team is also controlled by {@link AutoStrategy}.
+     */
+    public Combat createAutoCombat(RunTeam playerRunTeam, CombatTeam opponentTeam, Inventory playerInventory,
+            Inventory opponentInventory, int floor, boolean bossMode) {
+        CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
+        CombatStrategy playerStrategy = new AutoStrategy(this.random);
+        CombatStrategy opponentStrategy = new AutoStrategy(this.random);
+        return new Combat(playerCombatTeam, opponentTeam, floor, bossMode, playerInventory, opponentInventory,
+                playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
+    }
+
     public void finalizeCombat(Combat combat) {
         CombatTeam playerTeam = combat.getPlayerTeam();
 

@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
-import ulb.models.combat.damage.Efficiency;
 import ulb.views.components.ComponentView;
 
 /**

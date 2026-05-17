@@ -8,7 +8,8 @@ import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.views.combat.CombatView;
 
 /**
- * * Encapsulates all animation logic for combat so the main combat controller stays focused on game logic.
+ * * Encapsulates all animation logic for combat so the main combat controller
+ * stays focused on game logic.
  */
 public class CombatAnimationController {
     private final CombatView view;
@@ -18,15 +19,17 @@ public class CombatAnimationController {
     }
 
     /**
-     * Plays the animation corresponding to {@code step}, then invokes {@code onFinished}. Steps without a visual
+     * Plays the animation corresponding to {@code step}, then invokes
+     * {@code onFinished}. Steps without a visual
      * animation (item use, switch) invoke {@code onFinished} immediately.
      *
      * @param step
-     *            the step to animate.
+     *                   the step to animate.
      * @param playerTeam
-     *            the player's team, used to determine animation direction (player side vs opponent side).
+     *                   the player's team, used to determine animation direction
+     *                   (player side vs opponent side).
      * @param onFinished
-     *            callback executed after the animation completes.
+     *                   callback executed after the animation completes.
      */
     public void playStepAnimation(TurnStep step, CombatTeam playerTeam, Runnable onFinished) {
         switch (step) {
@@ -46,9 +49,9 @@ public class CombatAnimationController {
         }
     }
 
-    public void makeBugemonReappear(boolean forTrainer) {
-        if (forTrainer) {
-            this.view.makeTrainerBugemonReappear();
+    public void makeBugemonReappear(boolean forPlayer) {
+        if (forPlayer) {
+            this.view.makePlayerBugemonReappear();
         } else {
             this.view.makeOpponentBugemonReappear();
         }
@@ -56,15 +59,15 @@ public class CombatAnimationController {
 
     private void playAttackAnimation(boolean trainerAttacks, Runnable onFinished) {
         if (trainerAttacks) {
-            this.view.playTrainerAttackAnimation(onFinished);
+            this.view.playPlayerAttackAnimation(onFinished);
         } else {
             this.view.playOpponentAttackAnimation(onFinished);
         }
     }
 
-    private void playDeathAnimation(boolean forTrainer, Runnable onFinished) {
-        if (forTrainer) {
-            this.view.playDeathAnimationForTrainer(onFinished);
+    private void playDeathAnimation(boolean forPlayer, Runnable onFinished) {
+        if (forPlayer) {
+            this.view.playDeathAnimationForPlayer(onFinished);
         } else {
             this.view.playDeathAnimationForOpponent(onFinished);
         }

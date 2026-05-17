@@ -2,7 +2,6 @@ package ulb.controllers.combat;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
 import ulb.models.combat.damage.Efficiency;
-import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.turn.TurnAction.AttackAction;
@@ -46,7 +44,6 @@ public class CombatController extends Controller<CombatView>
     private ActionCallback pendingActionCallback;
     private ActionCallback pendingSwitchCallback;
     private final Queue<TurnStep> pendingSteps = new ArrayDeque<>();
-    private final Random random = new Random();
 
     public CombatController(MetaController metaController, CombatService combatService) {
         super(metaController, ViewLoader.load(CombatView::new));
@@ -76,7 +73,10 @@ public class CombatController extends Controller<CombatView>
     }
 
     private void onBothActionsReady(TurnAction playerAction, TurnAction opponentAction) {
-        this.combat.resolveTurn(playerAction, opponentAction, this.pendingSteps::addAll);
+        this.combat.resolveTurn(playerAction, opponentAction, steps -> {
+            this.pendingSteps.addAll(steps);
+            this.advanceStep();
+        });
     }
 
     @Override
@@ -161,13 +161,21 @@ public class CombatController extends Controller<CombatView>
             TurnStep step = this.pendingSteps.poll();
             LOG.debug("Advancing step: {}", step);
             this.view.showStepDialog(step);
-
-            // TODO: refresh hp depending on the step
-        }
-
-        if (this.pendingSteps.isEmpty()) {
+            this.refreshHpForStep(step);
+        } else {
             this.view.hideDialog();
             this.processEndOfTurn();
+        }
+    }
+
+    private void refreshHpForStep(TurnStep step) {
+        switch (step) {
+            case TurnStep.AttackStep atk -> this.view.updateHp(atk.defender(), atk.defenderHpAfter());
+            case TurnStep.KoStep ko -> this.view.updateHp(ko.koBugemon(), 0);
+            case TurnStep.SwitchStep sw -> this.view.switchBugemon(sw);
+            case TurnStep.HealBugemonStep heal ->
+                this.view.updateHp(heal.healedBugemon(), heal.healedBugemon().getCurrentHp());
+            default -> { /* ItemStep, HealTeamStep : pas de changement de PV individuel */ }
         }
     }
 

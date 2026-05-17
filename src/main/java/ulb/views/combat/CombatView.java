@@ -11,9 +11,7 @@ import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.ElementType;
 import ulb.models.combat.CombatBugemon;
-import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
@@ -107,12 +105,12 @@ public class CombatView extends View {
         }
     }
 
-    private void refreshOpponent() {
+    private void refreshPlayer() {
         this.bugemonPlayerInfo.setBugemonInfo(this.playerBugemon);
         this.setSprite(this.bugemonPlayerImage, this.playerBugemon.getSpritePath());
     }
 
-    private void refreshPlayer() {
+    private void refreshOpponent() {
         this.bugemonOpponentInfo.setBugemonInfo(this.opponentBugemon);
         this.setSprite(this.bugemonOpponentImage, this.opponentBugemon.getSpritePath());
     }
@@ -244,6 +242,14 @@ public class CombatView extends View {
         this.setActionMenuContent(this.attackMenu);
     }
 
+    public void showAttackPreview(Attack attack, Efficiency efficiency) {
+        this.hoverInfoView.show(attack, efficiency);
+    }
+
+    public void hideAttackPreview() {
+        this.hoverInfoView.hide();
+    }
+
     public void showSwitchMenu(List<CombatBugemon> available, boolean forced) {
         this.switchMenu.show(available, forced);
         this.setActionMenuContent(this.switchMenu);
@@ -252,6 +258,10 @@ public class CombatView extends View {
     public void showInventory(Map<Item, Integer> inventory) {
         this.itemMenuView.show(inventory);
         this.setActionMenuContent(this.itemMenuView);
+    }
+
+    public void showItemPreview(Item item) {
+        this.hoverInfoView.show(item);
     }
 
     protected void hideActionMenu() {
@@ -290,14 +300,6 @@ public class CombatView extends View {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
         this.showActionMenu();
-    }
-
-    public void showAttackPreview(Attack attack, Efficiency efficiency) {
-        this.hoverInfoView.show(attack, efficiency);
-    }
-
-    public void hideAttackPreview() {
-        this.hoverInfoView.hide();
     }
 
     public void lockNextButton() {

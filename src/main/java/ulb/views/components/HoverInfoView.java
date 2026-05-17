@@ -8,6 +8,7 @@ import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.ElementType;
 import ulb.models.combat.damage.Efficiency;
+import ulb.models.item.Item;
 
 /**
  * Generic hover info panel that displays a title and a variable list of info
@@ -45,6 +46,19 @@ public class HoverInfoView extends ComponentView {
         this.titleLabel.setText(attack.name());
         this.contentBox.getChildren().clear();
         this.contentBox.getChildren().add(new Label(sb.toString()));
+        this.setVisible(true);
+        this.setManaged(true);
+    }
+
+    public void show(Item item) {
+        this.setType(null);
+        this.setEfficiency(null);
+        String desc = item.description();
+        this.titleLabel.setText(item.name());
+        this.contentBox.getChildren().clear();
+        if (desc != null && !desc.isBlank()) {
+            this.contentBox.getChildren().add(new Label(desc));
+        }
         this.setVisible(true);
         this.setManaged(true);
     }
