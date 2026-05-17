@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.swing.text.Position;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +27,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import ulb.Configuration;
-import ulb.Configuration.Skill;
 import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
@@ -42,6 +39,10 @@ import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Inventory;
 import ulb.models.item.Item;
+import ulb.models.skills.Skill;
+import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillTree;
+import ulb.models.utils.Position;
 import ulb.repositories.dto.CreateBugemonDTO;
 
 /**

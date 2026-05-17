@@ -3,14 +3,12 @@ package ulb.models.player;
 import java.util.Collections;
 import java.util.List;
 
-import ulb.models.team.Team;
-
 public class PlayerTeam {
     private final List<PlayerBugemon> members;
     private final String name;
 
-    public PlayerTeam(Team team, String name) {
-        this.members = team.getMembers().stream().map(PlayerBugemon::new).toList();
+    public PlayerTeam(List<PlayerBugemon> members, String name) {
+        this.members = members;
         this.name = name;
     }
 

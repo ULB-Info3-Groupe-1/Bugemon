@@ -67,7 +67,7 @@ public final class BugemonFixtures {
     // --- Bugémons génériques (type NORMAL, type non pertinent) ---
 
     public static Bugemon bugemon(int hp, int attack, int defense, int initiative, List<Attack> attacks) {
-        return new Bugemon("b", "Bugémon", hp, attack, defense, initiative, ElementType.NORMAL, attacks, "", false);
+        return new Bugemon("Bugémon", hp, attack, defense, initiative, ElementType.NORMAL, attacks, "", false);
     }
 
     // --- Bugémons typés (type pertinent pour tester l'efficacité) ---

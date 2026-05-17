@@ -10,6 +10,15 @@ public enum EffectDuration {
         this.label = label;
     }
 
+    public static EffectDuration fromLabel(String label) {
+        for (EffectDuration duration : EffectDuration.values()) {
+            if (duration.label.equals(label)) {
+                return duration;
+            }
+        }
+        throw new IllegalArgumentException("Label not found : " + label);
+    }
+
     @Override
     public String toString() {
         return this.label;
