@@ -25,7 +25,6 @@ import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
-import ulb.services.RewardService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -87,7 +86,6 @@ public class MetaController {
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService,
             SkillService skillService, RewardService rewardService) throws IOException {
-            SkillService skillService, RewardService rewardService) throws IOException {
         this.stage = primaryStage;
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
@@ -108,7 +106,6 @@ public class MetaController {
         this.skillTreeController = new SkillTreeController(this, playerService);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
-        this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
         this.rewardController = new RewardController(this, rewardService, teamService, bugemonService);
         this.initializeMusicResources();
         this.initTransitions();
