@@ -9,7 +9,10 @@ import ulb.models.bugemon.ElementType;
 import ulb.models.combat.CombatBugemon;
 import ulb.views.components.ComponentView;
 
-/** Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link BugemonDTO}. */
+/**
+ * Reusable combat HUD component displaying name, level, HP bar, and XP bar for
+ * a single {@link BugemonDTO}.
+ */
 public class BugemonInfoView extends ComponentView {
 
     @FXML
@@ -27,7 +30,10 @@ public class BugemonInfoView extends ComponentView {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_INFO);
     }
 
-    /** Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class. */
+    /**
+     * Refreshes all displayed fields from the given {@link BugemonDTO} and applies
+     * the type style class.
+     */
     public void setBugemonInfo(CombatBugemon bugemon) {
         for (ElementType type : ElementType.values()) {
             this.getStyleClass().remove(type.toString());
@@ -38,5 +44,10 @@ public class BugemonInfoView extends ComponentView {
         this.bugemonHPBar.setProgress((double) bugemon.getCurrentHp() / bugemon.getMaxHp());
         this.bugemonXpBar.setProgress(bugemon.getXpProgress());
         this.bugemonHpLabel.setText(bugemon.getCurrentHp() + " / " + bugemon.getMaxHp() + " HP");
+    }
+
+    public void setHp(int currentHp, int maxHp) {
+        this.bugemonHPBar.setProgress((double) currentHp / maxHp);
+        this.bugemonHpLabel.setText(currentHp + " / " + maxHp + " HP");
     }
 }

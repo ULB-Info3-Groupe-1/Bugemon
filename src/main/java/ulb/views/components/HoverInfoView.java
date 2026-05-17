@@ -5,13 +5,17 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.ElementType;
 import ulb.models.combat.damage.Efficiency;
 
 /**
- * Generic hover info panel that displays a title and a variable list of info lines. Callers build the content via
- * {@link #show(String, String...)} and dismiss it with {@link #hide()}. Type-based background colouring and an
- * efficiency badge can be layered on top via {@link #setType(BugemonType)} and {@link #setEfficiency(Efficiency)}.
+ * Generic hover info panel that displays a title and a variable list of info
+ * lines. Callers build the content via
+ * {@link #show(String, String...)} and dismiss it with {@link #hide()}.
+ * Type-based background colouring and an
+ * efficiency badge can be layered on top via {@link #setType(BugemonType)} and
+ * {@link #setEfficiency(Efficiency)}.
  */
 public class HoverInfoView extends ComponentView {
 
@@ -26,41 +30,38 @@ public class HoverInfoView extends ComponentView {
         super(Configuration.Paths.Fxml.COMPONENT_HOVER_INFO);
     }
 
-    /**
-     * Populates the panel with the given title and info lines, resets any type colour and efficiency badge, then makes
-     * the panel visible.
-     *
-     * @param title
-     *            displayed in bold at the top
-     * @param lines
-     *            zero or more info lines shown below the title (null/blank lines are skipped)
-     */
-    public void show(String title, String... lines) {
-        this.setType(null);
-        this.setEfficiency(null);
-        this.titleLabel.setText(title);
-        this.contentBox.getChildren().clear();
-        for (String line : lines) {
-            if (line == null || line.isBlank()) {
-                continue;
-            }
-            Label label = new Label(line);
-            label.getStyleClass().add("hover-info-meta");
-            label.setWrapText(true);
-            label.setMaxWidth(Double.MAX_VALUE);
-            this.contentBox.getChildren().add(label);
+    public void show(Attack attack, Efficiency efficiency) {
+        this.setType(attack.type());
+        this.setEfficiency(efficiency);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Type : ")
+                .append(attack.type())
+                .append("    Puissance : ")
+                .append(attack.power());
+        String desc = attack.description();
+        if (desc != null && !desc.isBlank()) {
+            sb.append('\n').append(desc);
         }
+        this.titleLabel.setText(attack.name());
+        this.contentBox.getChildren().clear();
+        this.contentBox.getChildren().add(new Label(sb.toString()));
         this.setVisible(true);
         this.setManaged(true);
     }
 
+    public void hide() {
+        this.setVisible(false);
+        this.setManaged(false);
+    }
+
     /**
-     * Applies a type-based background colour to the panel. Pass {@code null} to restore the default surface colour.
+     * Applies a type-based background colour to the panel. Pass {@code null} to
+     * restore the default surface colour.
      *
      * @param type
-     *            the bugemon type whose colour to apply, or {@code null} to reset
+     *             the bugemon type whose colour to apply, or {@code null} to reset
      */
-    public void setType(ElementType type) {
+    private void setType(ElementType type) {
         this.getStyleClass().removeIf(c -> c.startsWith("hover-type-"));
         this.getStyleClass().remove("hover-typed");
         if (type != null) {
@@ -70,12 +71,13 @@ public class HoverInfoView extends ComponentView {
     }
 
     /**
-     * Shows or hides the efficiency badge. {@code NEUTRAL} and {@code null} hide the badge.
+     * Shows or hides the efficiency badge. {@code NEUTRAL} and {@code null} hide
+     * the badge.
      *
      * @param eff
      *            the efficiency value to display, or {@code null} to hide
      */
-    public void setEfficiency(Efficiency eff) {
+    private void setEfficiency(Efficiency eff) {
         this.efficiencyLabel.getStyleClass().removeIf(c -> c.startsWith("hover-info-efficiency"));
         if (eff == null || eff == Efficiency.NORMAL) {
             this.efficiencyLabel.setVisible(false);
@@ -91,11 +93,5 @@ public class HoverInfoView extends ComponentView {
         }
         this.efficiencyLabel.setVisible(true);
         this.efficiencyLabel.setManaged(true);
-    }
-
-    /** Hides the panel and removes it from the layout flow. */
-    public void hide() {
-        this.setVisible(false);
-        this.setManaged(false);
     }
 }

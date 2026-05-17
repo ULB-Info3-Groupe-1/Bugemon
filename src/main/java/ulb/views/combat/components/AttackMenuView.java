@@ -6,11 +6,14 @@ import javafx.scene.control.Button;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.damage.Efficiency;
 import ulb.views.components.ComponentView;
 
 /**
- * Action menu displaying the attacks available to the player's active Bugemon. Presents up to three attack buttons in a
- * fixed 2×2 grid (mirroring {@link ActionMenuView}), plus a back button. Button labels and type-coloured styles are
+ * Action menu displaying the attacks available to the player's active Bugemon.
+ * Presents up to three attack buttons in a
+ * fixed 2×2 grid (mirroring {@link ActionMenuView}), plus a back button. Button
+ * labels and type-coloured styles are
  * applied via {@link #show(List, Trainer)} at display time.
  */
 public class AttackMenuView extends ComponentView {
@@ -34,13 +37,14 @@ public class AttackMenuView extends ComponentView {
     }
 
     /**
-     * Populates the three attack slots with the given attacks, computing type-matchup efficiency against the opponent.
+     * Populates the three attack slots with the given attacks, computing
+     * type-matchup efficiency against the opponent.
      *
      * @param attackList
-     *            attacks available to the active Bugemon (up to 3)
+     *                   attacks available to the active Bugemon (up to 3)
      */
     public void show(List<Attack> attackList) {
-        Button[] buttons = {this.topLeftButton, this.topRightButton, this.bottomLeftButton};
+        Button[] buttons = { this.topLeftButton, this.topRightButton, this.bottomLeftButton };
         for (int i = 0; i < buttons.length; i++) {
             if (i < attackList.size()) {
                 Attack attack = attackList.get(i);
@@ -50,7 +54,7 @@ public class AttackMenuView extends ComponentView {
                 buttons[i].setVisible(true);
                 buttons[i].setManaged(true);
                 buttons[i].setOnMouseEntered(e -> this.listener.onAttackHovered(attack));
-                buttons[i].setOnMouseExited(e -> this.listener.onAttackLeft());
+                buttons[i].setOnMouseExited(e -> this.listener.onAttackUnhovered());
             } else {
                 this.attacks[i] = null;
                 buttons[i].setVisible(false);
@@ -62,7 +66,7 @@ public class AttackMenuView extends ComponentView {
     @FXML
     private void onAttack1Clicked() {
         if (this.attacks[0] != null) {
-            this.listener.onAttack(this.attacks[0]);
+            this.listener.onAttackChosen(this.attacks[0]);
         }
 
     }
@@ -70,14 +74,14 @@ public class AttackMenuView extends ComponentView {
     @FXML
     private void onAttack2Clicked() {
         if (this.attacks[1] != null) {
-            this.listener.onAttack(this.attacks[1]);
+            this.listener.onAttackChosen(this.attacks[1]);
         }
     }
 
     @FXML
     private void onAttack3Clicked() {
         if (this.attacks[2] != null) {
-            this.listener.onAttack(this.attacks[2]);
+            this.listener.onAttackChosen(this.attacks[2]);
         }
     }
 
@@ -88,11 +92,11 @@ public class AttackMenuView extends ComponentView {
 
     public interface Listener {
 
-        void onAttack(Attack attack);
+        void onAttackChosen(Attack attack);
 
         void onAttackHovered(Attack attack);
 
-        void onAttackLeft();
+        void onAttackUnhovered();
 
         void onBack();
     }

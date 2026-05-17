@@ -8,7 +8,10 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-/** Manages attack and death animations for the two Bugemon sprites in a combat screen. */
+/**
+ * Manages attack and death animations for the two Bugemon sprites in a combat
+ * screen.
+ */
 public class CombatAnimationView {
     private static final double ATTACK_LUNGE_DISTANCE = 100;
     private static final Duration ATTACK_LUNGE_DURATION = Duration.millis(150);
@@ -32,7 +35,7 @@ public class CombatAnimationView {
     }
 
     /** Plays the trainer attack animation (lunge forward then back). */
-    public void playTrainerAttackAnimation(Runnable onFinished) {
+    public void playPlayerAttackAnimation(Runnable onFinished) {
         this.playLungeAnimation(this.trainerSprite, ATTACK_LUNGE_DISTANCE, onFinished);
     }
 
@@ -53,7 +56,7 @@ public class CombatAnimationView {
     }
 
     /** Plays the death animation for the trainer's active Bugemon. */
-    public void playDeathAnimationForTrainer(Runnable onFinished) {
+    public void playDeathAnimationForPlayer(Runnable onFinished) {
         this.playDeathAnimation(this.trainerSprite, onFinished);
     }
 
@@ -94,7 +97,9 @@ public class CombatAnimationView {
         sequence.play();
     }
 
-    /** Resets {@code sprite} to its default visible, full-size, untranslated state. */
+    /**
+     * Resets {@code sprite} to its default visible, full-size, untranslated state.
+     */
     public void makeBugemonReappear(ImageView sprite) {
         sprite.setOpacity(DEFAULT_OPACITY);
         sprite.setScaleX(DEFAULT_SCALE);

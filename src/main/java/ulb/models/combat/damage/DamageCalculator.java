@@ -3,6 +3,7 @@ package ulb.models.combat.damage;
 import ulb.Configuration;
 import ulb.common.DamageResult;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.CombatBugemon;
 
 public class DamageCalculator {
@@ -21,7 +22,7 @@ public class DamageCalculator {
         double reductionFactor = this.reductionFactorFormula.evaluate(defender.getEffectiveDefense());
 
         double typeMultiplier = attack.type().getMultiplierAgainst(defender.getType());
-        Efficiency efficiency = Efficiency.fromMultiplier(typeMultiplier);
+        Efficiency efficiency = this.previewEfficiency(attack.type(), defender.getType());
 
         int totalDamage = (int) Math.ceil(power * attackFactor * reductionFactor * typeMultiplier);
 
@@ -44,5 +45,9 @@ public class DamageCalculator {
     @FunctionalInterface
     public interface ReductionFactorFormula {
         double evaluate(int effectiveDefense);
+    }
+
+    public Efficiency previewEfficiency(ElementType attackType, ElementType defenderType) {
+        return Efficiency.fromMultiplier(attackType.getMultiplierAgainst(defenderType));
     }
 }

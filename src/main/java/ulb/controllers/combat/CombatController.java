@@ -13,6 +13,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
+import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
@@ -57,7 +58,7 @@ public class CombatController extends Controller<CombatView>
 
     /**
      * Initializes a new combat session.
-     * 
+     *
      * @param combat the new Combat model instance
      */
     public void initialize(Combat combat) {
@@ -88,7 +89,19 @@ public class CombatController extends Controller<CombatView>
     // TODO: remove code dup with extracting, resetting and calling callback
 
     @Override
-    public void onAttack(Attack attack) {
+    public void onAttack() {
+        this.view.showAttackMenu(this.combat.getPlayerTeam().getActive().getAttacks());
+    }
+
+    @Override
+    public void onAttackHovered(Attack attack) {
+        Efficiency efficiency = this.combatService.previewEfficiency(
+                attack, this.combat.getOpponentTeam().getActive());
+        this.view.showAttackPreview(attack, efficiency);
+    }
+
+    @Override
+    public void onAttackChosen(Attack attack) {
         if (this.pendingActionCallback != null) {
             ActionCallback callback = this.pendingActionCallback;
             this.pendingActionCallback = null;
@@ -97,7 +110,14 @@ public class CombatController extends Controller<CombatView>
     }
 
     @Override
-    public void onSwitch(CombatBugemon bugemon) {
+    public void onSwitch() {
+        this.view.showSwitchMenu(
+                this.combat.getPlayerTeam().getAvailable(),
+                false);
+    }
+
+    @Override
+    public void onSwitchChosen(CombatBugemon bugemon) {
         if (this.pendingSwitchCallback != null) { // forced switch
             ActionCallback callback = this.pendingSwitchCallback;
             this.pendingSwitchCallback = null;
@@ -108,7 +128,12 @@ public class CombatController extends Controller<CombatView>
     }
 
     @Override
-    public void onItemSelected(Item item) {
+    public void onInventory() {
+        this.view.showInventoryMenu(this.combat.getPlayerInventory());
+    }
+
+    @Override
+    public void onItemChosen(Item item) {
         if (this.pendingActionCallback != null) {
             ActionCallback callback = this.pendingActionCallback;
             this.pendingActionCallback = null;

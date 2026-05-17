@@ -2,10 +2,13 @@ package ulb.services;
 
 import java.util.Random;
 
+import ulb.models.bugemon.Attack;
 import ulb.models.combat.Combat;
+import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
 import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.DamageCalculator;
+import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.strategy.AutoStrategy;
 import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.strategy.PlayerStrategy;
@@ -55,6 +58,10 @@ public class CombatService {
             int xpPerBugemon = this.computeXpPerBugemon(totalXp, playerTeam.size());
             playerTeam.getParticipants().forEach(participant -> participant.addXp(xpPerBugemon));
         }
+    }
+
+    public Efficiency previewEfficiency(Attack attack, CombatBugemon defender) {
+        return this.damageCalculator.previewEfficiency(attack.type(), defender.getType());
     }
 
     // TODO: move it

@@ -7,7 +7,10 @@ import ulb.Configuration;
 import ulb.models.item.Item;
 import ulb.views.components.ComponentView;
 
-/** Reusable component displaying the player's inventory as a list of clickable item buttons. */
+/**
+ * Reusable component displaying the player's inventory as a list of clickable
+ * item buttons.
+ */
 public class ItemMenuView extends ComponentView {
 
     private Listener listener;
@@ -41,19 +44,19 @@ public class ItemMenuView extends ComponentView {
         btn.getStyleClass().addAll("btn", "btn-warning", "menu-btn-min");
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setWrapText(true);
-        btn.setOnAction(e -> this.listener.onItemSelected(item));
+        btn.setOnAction(e -> this.listener.onItemChosen(item));
         btn.setOnMouseEntered(e -> this.listener.onItemHovered(item));
-        btn.setOnMouseExited(e -> this.listener.onItemLeft());
+        btn.setOnMouseExited(e -> this.listener.onItemUnhovered());
         return btn;
     }
 
     public interface Listener {
 
-        void onItemSelected(Item item);
+        void onItemChosen(Item item);
 
         void onItemHovered(Item item);
 
-        void onItemLeft();
+        void onItemUnhovered();
 
         void onBack();
 

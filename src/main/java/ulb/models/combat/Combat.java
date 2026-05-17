@@ -3,6 +3,7 @@ package ulb.models.combat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
+import ulb.models.item.Item;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
@@ -325,6 +327,10 @@ public class Combat {
 
     public CombatTeam getOpponentTeam() {
         return this.opponentTeam;
+    }
+
+    public Map<Item, Integer> getPlayerInventory() {
+        return this.playerInventory.getMap();
     }
 
     public int getOpponentTeamSize() {

@@ -34,11 +34,11 @@ public class CombatView extends View {
     private CombatAnimationView attackAnimationView;
 
     @FXML
-    private BugemonInfoView bugemonTrainerInfo;
+    private BugemonInfoView bugemonPlayerInfo;
     @FXML
     private BugemonInfoView bugemonOpponentInfo;
     @FXML
-    private ImageView bugemonTrainerImage;
+    private ImageView bugemonPlayerImage;
     @FXML
     private ImageView bugemonOpponentImage;
     @FXML
@@ -71,7 +71,7 @@ public class CombatView extends View {
 
     @FXML
     protected void initialize() {
-        this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
+        this.attackAnimationView = new CombatAnimationView(this.bugemonPlayerImage, this.bugemonOpponentImage);
         this.dialogZoneView.setListener(() -> {
             if (this.nextListener != null) {
                 this.nextListener.onNext();
@@ -89,32 +89,60 @@ public class CombatView extends View {
         this.hideDialog();
     }
 
+    public void switchBugemon(TurnStep.SwitchStep switchStep) {
+        if (switchStep.isPlayer()) {
+            this.playerBugemon = switchStep.bugemon();
+
+        } else {
+            this.opponentBugemon = switchStep.bugemon();
+
+        }
+    }
+
+    public void updateHp(CombatBugemon bugemon, int currentHp) {
+        if (bugemon.equals(this.playerBugemon)) {
+            this.bugemonPlayerInfo.setHp(currentHp, bugemon.getMaxHp());
+        } else if (bugemon.equals(this.opponentBugemon)) {
+            this.bugemonOpponentInfo.setHp(currentHp, bugemon.getMaxHp());
+        }
+    }
+
     private void refreshOpponent() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'refreshOpponent'");
+        this.bugemonPlayerInfo.setBugemonInfo(this.playerBugemon);
+        this.setSprite(this.bugemonPlayerImage, this.playerBugemon.getSpritePath());
     }
 
     private void refreshPlayer() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'refreshPlayer'");
+        this.bugemonOpponentInfo.setBugemonInfo(this.opponentBugemon);
+        this.setSprite(this.bugemonOpponentImage, this.opponentBugemon.getSpritePath());
+    }
+
+    private void setSprite(ImageView imageView, String spritePath) {
+        File file = new File(Configuration.Paths.SPRITES + spritePath);
+        imageView.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
     }
 
     private void initListeners() {
         this.actionMenu.setListener(new ActionMenuView.Listener() {
             @Override
             public void onAttack() {
-                CombatView.this.showAttackMenu();
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onAttack();
+                }
             }
 
             @Override
             public void onSwitch() {
-                CombatView.this.showSwitchMenu(false);
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onSwitch();
+                }
             }
 
             @Override
             public void onInventory() {
-                CombatView.this.showInventory();
-
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onInventory();
+                }
             }
 
             @Override
@@ -128,26 +156,27 @@ public class CombatView extends View {
 
         this.attackMenu.setListener(new AttackMenuView.Listener() {
             @Override
-            public void onAttack(Attack attack) {
+            public void onAttackChosen(Attack attack) {
                 if (CombatView.this.listener != null) {
-                    CombatView.this.listener.onAttack(attack);
+                    CombatView.this.listener.onAttackChosen(attack);
                 }
             }
 
             @Override
             public void onAttackHovered(Attack attack) {
-                showHoverInfo(attack.name(), "Type : " + attack.type(), "Puissance : " + attack.power(),
-                        attack.description().isBlank() ? null : attack.description());
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onAttackHovered(attack);
+                }
             }
 
             @Override
-            public void onAttackLeft() {
-                CombatView.this.hideHoverInfo();
+            public void onAttackUnhovered() {
+                CombatView.this.hideAttackPreview();
             }
 
             @Override
             public void onBack() {
-                CombatView.this.hideHoverInfo();
+                CombatView.this.hideAttackPreview();
                 CombatView.this.showMainActionMenu();
             }
         });
@@ -156,7 +185,7 @@ public class CombatView extends View {
             @Override
             public void onSwitch(CombatBugemon bugemon) {
                 if (CombatView.this.listener != null) {
-                    CombatView.this.listener.onSwitch(bugemon);
+                    CombatView.this.listener.onSwitchChosen(bugemon);
                 }
             }
 
@@ -168,26 +197,27 @@ public class CombatView extends View {
 
         this.itemMenuView.setListener(new ItemMenuView.Listener() {
             @Override
-            public void onItemSelected(Item item) {
+            public void onItemChosen(Item item) {
                 if (CombatView.this.listener != null) {
-                    CombatView.this.listener.onItemSelected(item);
+                    CombatView.this.listener.onItemChosen(item);
                 }
             }
 
             @Override
             public void onItemHovered(Item item) {
-                showHoverInfo(item.name(), "Catégorie : " + item.type(),
-                        item.description().isBlank() ? null : item.description());
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onItemHovered(item);
+                }
             }
 
             @Override
-            public void onItemLeft() {
-                CombatView.this.hideHoverInfo();
+            public void onItemUnhovered() {
+                CombatView.this.hideAttackPreview();
             }
 
             @Override
             public void onBack() {
-                CombatView.this.hideHoverInfo();
+                CombatView.this.hideAttackPreview();
                 CombatView.this.showMainActionMenu();
             }
         });
@@ -201,36 +231,6 @@ public class CombatView extends View {
         this.nextListener = listener;
     }
 
-    @Override
-    public String getPath() {
-        return Configuration.Paths.Fxml.COMBAT_VIEW;
-    }
-
-    public void refresh() {
-        // if (this.playerTeam == null || this.opponentTeam == null) {
-        //     return;
-        // }
-        //
-        // this.updateTrainerBugemon(this.playerTeam.getActive());
-        // this.updateOpponentBugemon(this.opponentTeam.getActive());
-        // this.refreshMenuState();
-    }
-
-    // TODO: remove (logic in view)
-    // public void refreshMenuState() {
-    //     if (this.playerTeam == null) {
-    //         return;
-    //     }
-    //
-    //     if (this.playerTeam.getActive().isKo()) {
-    //         this.showSwitchMenu(true);
-    //     } else {
-    //         boolean canSwitch = !this.playerTeam.getAvailable().isEmpty();
-    //         this.actionMenu.refresh(canSwitch);
-    //         this.showMainActionMenu();
-    //     }
-    // }
-
     protected void setActionMenuContent(Node content) {
         this.actionMenuSlot.getChildren().setAll(content);
     }
@@ -239,7 +239,7 @@ public class CombatView extends View {
         this.setActionMenuContent(this.actionMenu);
     }
 
-    private void showAttackMenu(List<Attack> attacks) {
+    public void showAttackMenu(List<Attack> attacks) {
         this.attackMenu.show(attacks);
         this.setActionMenuContent(this.attackMenu);
     }
@@ -249,7 +249,7 @@ public class CombatView extends View {
         this.setActionMenuContent(this.switchMenu);
     }
 
-    private void showInventory(Map<Item, Integer> inventory) {
+    public void showInventory(Map<Item, Integer> inventory) {
         this.itemMenuView.show(inventory);
         this.setActionMenuContent(this.itemMenuView);
     }
@@ -264,35 +264,8 @@ public class CombatView extends View {
         this.actionMenuSlot.setManaged(true);
     }
 
-    public void showHoverInfo(String title, String... lines) {
-        this.hoverInfoView.show(title, lines);
-    }
-
-    public void setHoverType(ElementType type) {
-    }
-
-    public void setHoverEfficiency(Efficiency eff) {
-        this.hoverInfoView.setEfficiency(eff);
-    }
-
-    public void hideHoverInfo() {
-        this.hoverInfoView.hide();
-    }
-
-    public void lockNextButton() {
-        this.dialogZoneView.setNextButtonDisabled(true);
-        this.hideActionMenu();
-    }
-
-    private void showDialog(String dialog) {
-        this.dialogZoneView.setNextButtonDisabled(false);
-        this.dialogZoneView.setDialogText(dialog);
-        this.dialogZoneView.setVisible(true);
-        this.dialogZoneView.setManaged(true);
-    }
-
     public void showStepDialog(TurnStep step) {
-        this.hideHoverInfo();
+        this.hideAttackPreview();
         this.hideActionMenu();
 
         String message = switch (step) {
@@ -306,56 +279,58 @@ public class CombatView extends View {
         this.showDialog(message);
     }
 
+    private void showDialog(String dialog) {
+        this.dialogZoneView.setNextButtonDisabled(false);
+        this.dialogZoneView.setDialogText(dialog);
+        this.dialogZoneView.setVisible(true);
+        this.dialogZoneView.setManaged(true);
+    }
+
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
         this.showActionMenu();
     }
 
-    public void updateTrainerBugemon(CombatBugemon trainerBugemon) {
-        if (!trainerBugemon.isKo()) {
-            this.makeTrainerBugemonReappear();
+    public void showAttackPreview(Attack attack, Efficiency efficiency) {
+        this.hoverInfoView.show(attack, efficiency);
+    }
+
+    public void hideAttackPreview() {
+        this.hoverInfoView.hide();
+    }
+
+    public void lockNextButton() {
+        this.dialogZoneView.setNextButtonDisabled(true);
+        this.hideActionMenu();
+    }
+
+    public void updatePlayerBugemon(CombatBugemon playerBugemon) {
+        if (!playerBugemon.isKo()) {
+            this.makePlayerBugemonReappear();
         }
-        File file = new File(Configuration.Paths.SPRITES + trainerBugemon.getSpritePath());
-        this.bugemonTrainerInfo.setBugemonInfo(trainerBugemon);
-        this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
+        this.bugemonPlayerInfo.setBugemonInfo(playerBugemon);
+        this.setSprite(this.bugemonPlayerImage, playerBugemon.getSpritePath());
     }
 
-    public void updateOpponentBugemon(CombatBugemon opponentBugemon) {
-        if (!opponentBugemon.isKo()) {
-            this.makeOpponentBugemonReappear();
-        }
-        File file = new File(Configuration.Paths.SPRITES + opponentBugemon.getSpritePath());
-        this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
-        this.bugemonOpponentImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
-    }
-
-    public void updateTrainerInfo(CombatBugemon bugemon) {
-        this.bugemonTrainerInfo.setBugemonInfo(bugemon);
-    }
-
-    public void updateOpponentInfo(CombatBugemon bugemon) {
-        this.bugemonOpponentInfo.setBugemonInfo(bugemon);
-    }
-
-    public void playTrainerAttackAnimation(Runnable onFinished) {
-        this.attackAnimationView.playTrainerAttackAnimation(onFinished);
+    public void playPlayerAttackAnimation(Runnable onFinished) {
+        this.attackAnimationView.playPlayerAttackAnimation(onFinished);
     }
 
     public void playOpponentAttackAnimation(Runnable onFinished) {
         this.attackAnimationView.playOpponentAttackAnimation(onFinished);
     }
 
-    public void playDeathAnimationForTrainer(Runnable onFinished) {
-        this.attackAnimationView.playDeathAnimationForTrainer(onFinished);
+    public void playDeathAnimationForPlayer(Runnable onFinished) {
+        this.attackAnimationView.playDeathAnimationForPlayer(onFinished);
     }
 
     public void playDeathAnimationForOpponent(Runnable onFinished) {
         this.attackAnimationView.playDeathAnimationForOpponent(onFinished);
     }
 
-    public void makeTrainerBugemonReappear() {
-        this.attackAnimationView.makeBugemonReappear(this.bugemonTrainerImage);
+    public void makePlayerBugemonReappear() {
+        this.attackAnimationView.makeBugemonReappear(this.bugemonPlayerImage);
     }
 
     public void makeOpponentBugemonReappear() {
@@ -367,12 +342,31 @@ public class CombatView extends View {
     }
 
     public interface Listener {
-        void onAttack(Attack attack);
+        void onAttack();
 
-        void onSwitch(CombatBugemon bugemon);
+        void onAttackHovered(Attack attack);
+
+        void onAttackChosen(Attack attack);
+
+        void onSwitch();
+
+        void onSwitchChosen(CombatBugemon bugemon);
 
         void onForfeit();
 
-        void onItemSelected(Item item);
+        void onInventory();
+
+        void onItemHovered(Item item);
+
+        void onItemChosen(Item item);
+    }
+
+    @Override
+    public String getPath() {
+        return Configuration.Paths.Fxml.COMBAT_VIEW;
+    }
+
+    @Override
+    public void refresh() {
     }
 }
