@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
@@ -270,7 +268,7 @@ public class MetaController {
      * @param window
      *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
+     *             if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);

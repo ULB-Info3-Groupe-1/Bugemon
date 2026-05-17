@@ -1,8 +1,6 @@
 package ulb;
 
 import java.io.InputStream;
-import java.util.List;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -24,7 +22,6 @@ import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
-import ulb.services.SkillService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -55,19 +52,18 @@ public class Main extends Application {
         scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
         stage.setScene(scene);
 
-                QueryLoader loader = new QueryLoader();
-                DatabaseConnection dbConnection = new DatabaseConnection();
-                StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
-                BugemonRepository bugemonRepository = new BugemonRepository(dbConnection, loader.getQueries());
-                InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, staticDataRepository,
-                                loader.getQueries());
-                PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
-                                loader.getQueries());
-                TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository,
-                                bugemonRepository,
-                                loader.getQueries());
-                String playerName = "default_player";
-                PlayerService playerService = new PlayerService(staticDataRepository, playerRepository, playerName);
+        QueryLoader loader = new QueryLoader();
+        DatabaseConnection dbConnection = new DatabaseConnection();
+        StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries());
+        BugemonRepository bugemonRepository = new BugemonRepository(dbConnection, loader.getQueries());
+        InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, staticDataRepository,
+                loader.getQueries());
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
+                loader.getQueries());
+        TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, bugemonRepository,
+                loader.getQueries());
+        String playerName = "default_player";
+        PlayerService playerService = new PlayerService(staticDataRepository, playerRepository, playerName);
         SkillService skillService = new SkillService(playerService.getUnlockedSkills());
         BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName,
                 skillService.getSkills(StatBonusEffect.class));
