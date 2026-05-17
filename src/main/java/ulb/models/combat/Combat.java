@@ -31,6 +31,8 @@ import ulb.models.item.Inventory;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
+    private static final String STR_PLAYER = "player";
+    private static final String STR_OPPONENT = "opponent";
 
     private final CombatTeam playerTeam;
     private final CombatTeam opponentTeam;
@@ -138,7 +140,7 @@ public class Combat {
         CombatTeam secondTeam = firstIsPlayer ? this.opponentTeam : this.playerTeam;
         CombatBugemon secondActorBefore = secondTeam.getActive();
 
-        LOG.debug("Resolving turn: first={}", firstIsPlayer ? "player" : "opponent");
+        LOG.debug("Resolving turn: first={}", firstIsPlayer ? STR_PLAYER : STR_OPPONENT);
 
         // resolve first action
         steps.addAll(this.resolveAction(actions.get(0), firstIsPlayer));
@@ -152,7 +154,7 @@ public class Combat {
 
         // handle potential Ko
         if (secondActorBefore.isKo()) {
-            LOG.debug("Second actor KO - requesting forced switch for {}", secondIsPlayer ? "player" : "opponent");
+            LOG.debug("Second actor KO - requesting forced switch for {}", secondIsPlayer ? STR_PLAYER : STR_OPPONENT);
             this.handleKo(steps, callback, secondIsPlayer);
             this.tickEndOfTurn();
             return;
@@ -173,7 +175,7 @@ public class Combat {
 
         // handle potential Ko
         if (firstActor.isKo()) {
-            LOG.debug("First actor KO - requesting forced switch for {}", firstIsPlayer ? "player" : "opponent");
+            LOG.debug("First actor KO - requesting forced switch for {}", firstIsPlayer ? STR_PLAYER : STR_OPPONENT);
             this.handleKo(steps, callback, firstIsPlayer);
             this.tickEndOfTurn();
             return;

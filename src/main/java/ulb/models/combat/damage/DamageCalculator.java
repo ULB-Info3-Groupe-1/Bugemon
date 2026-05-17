@@ -15,7 +15,7 @@ public class DamageCalculator {
     }
 
     public DamageResult calculateDamage(CombatBugemon attacker, CombatBugemon defender, Attack attack) {
-        double power = (double) attack.power();
+        double power = attack.power();
 
         double attackFactor = this.attackFactorFormula.evaluate(attacker.getEffectiveAttack());
         double reductionFactor = this.reductionFactorFormula.evaluate(defender.getEffectiveDefense());

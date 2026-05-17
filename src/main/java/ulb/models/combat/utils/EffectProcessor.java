@@ -41,9 +41,7 @@ public class EffectProcessor {
                 switch (target) {
                     case TEAM :
                         steps.add(new HealTeamStep(throwerTeam));
-                        throwerTeam.getAlive().forEach(b -> {
-                            b.heal(healEffect.getAmount());
-                        });
+                        throwerTeam.getAlive().forEach(b -> b.heal(healEffect.getAmount()));
                         break;
                     case THROWER :
                         steps.add(new HealBugemonStep(thrower));
@@ -56,12 +54,8 @@ public class EffectProcessor {
 
             @Override
             public void visit(ResetMalusEffect resetMalusEffect) {
-                switch (target) {
-                    case THROWER :
-                        thrower.clearMalusEffects();
-                        break;
-                    default :
-                        return;
+                if (target == EffectTarget.THROWER) {
+                    thrower.clearMalusEffects();
                 }
             }
 
