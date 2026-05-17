@@ -52,9 +52,9 @@ public class FloorFactory {
         this.random = random;
     }
 
-    public Floor create(int floorLevel) {
+    public Floor create() {
         this.generateNewFloor();
-        return new Floor(floorLevel, this.root);
+        return new Floor(this.root);
     }
 
     private void generateNewFloor() {

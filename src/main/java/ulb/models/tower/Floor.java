@@ -8,24 +8,18 @@ import ulb.models.tower.room.Room;
 public class Floor {
     private FloorNode currentNode;
     private final FloorNode rootNode;
-    private final int level;
 
-    public Floor(int level, FloorNode rootNode) {
-        this(level, rootNode, rootNode);
+    public Floor(FloorNode rootNode) {
+        this(rootNode, rootNode);
     }
 
-    public Floor(int level, FloorNode currentNode, FloorNode rootNode) {
-        this.level = level;
+    public Floor(FloorNode currentNode, FloorNode rootNode) {
         this.currentNode = currentNode;
         this.rootNode = rootNode;
     }
 
     public FloorNode getRoot() {
         return this.rootNode;
-    }
-
-    public int getLevel() {
-        return this.level;
     }
 
     public List<FloorNode> getReachableNodes() {
