@@ -1,7 +1,7 @@
 package ulb;
 
-import ulb.models.combat.utils.DamageCalculator.AttackFactorFormula;
-import ulb.models.combat.utils.DamageCalculator.ReductionFactorFormula;
+import ulb.models.combat.damage.DamageCalculator.AttackFactorFormula;
+import ulb.models.combat.damage.DamageCalculator.ReductionFactorFormula;
 
 public abstract class Configuration {
 

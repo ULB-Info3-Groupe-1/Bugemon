@@ -1,9 +1,5 @@
 package ulb.models.bugemon;
 
-import java.util.Map;
-
-import ulb.models.type.Efficiency;
-
 public enum ElementType {
     FLORA,
     AQUA,
@@ -11,32 +7,37 @@ public enum ElementType {
     LITHO,
     NORMAL;
 
-    private static Map<ElementType, Map<ElementType, Efficiency>> strongAgainst;
+    private static final double SUPER_EFFECTIVE = 1.5;
+    private static final double NOT_VERY_EFFECTIVE = 0.75;
+    private static final double NEUTRAL = 1.0;
 
-    public Efficiency getEfficiencyAgainst(ElementType opponentType) {
-        return strongAgainst.get(this).get(opponentType);
-    }
+    public double getMultiplierAgainst(ElementType defender) {
+        if (this == defender) {
+            return NEUTRAL;
+        }
 
-    static {
-        strongAgainst = Map.of(ElementType.FLORA,
-                Map.of(ElementType.FLORA, Efficiency.NEUTRAL, ElementType.AQUA, Efficiency.HIGH, ElementType.PYRO,
-                        Efficiency.NEUTRAL, ElementType.LITHO, Efficiency.LOW, ElementType.NORMAL, Efficiency.NEUTRAL),
-
-                ElementType.AQUA,
-                Map.of(ElementType.FLORA, Efficiency.LOW, ElementType.AQUA, Efficiency.NEUTRAL, ElementType.PYRO,
-                        Efficiency.HIGH, ElementType.LITHO, Efficiency.NEUTRAL, ElementType.NORMAL, Efficiency.NEUTRAL),
-
-                ElementType.PYRO,
-                Map.of(ElementType.FLORA, Efficiency.NEUTRAL, ElementType.AQUA, Efficiency.LOW, ElementType.PYRO,
-                        Efficiency.NEUTRAL, ElementType.LITHO, Efficiency.HIGH, ElementType.NORMAL, Efficiency.NEUTRAL),
-
-                ElementType.LITHO,
-                Map.of(ElementType.FLORA, Efficiency.HIGH, ElementType.AQUA, Efficiency.NEUTRAL, ElementType.PYRO,
-                        Efficiency.LOW, ElementType.LITHO, Efficiency.NEUTRAL, ElementType.NORMAL, Efficiency.NEUTRAL),
-
-                ElementType.NORMAL,
-                Map.of(ElementType.FLORA, Efficiency.NEUTRAL, ElementType.AQUA, Efficiency.NEUTRAL, ElementType.PYRO,
-                        Efficiency.NEUTRAL, ElementType.LITHO, Efficiency.NEUTRAL, ElementType.NORMAL,
-                        Efficiency.NEUTRAL));
+        return switch (this) {
+            case FLORA -> switch (defender) {
+                case AQUA -> SUPER_EFFECTIVE;
+                case LITHO -> NOT_VERY_EFFECTIVE;
+                default -> NEUTRAL;
+            };
+            case AQUA -> switch (defender) {
+                case PYRO -> SUPER_EFFECTIVE;
+                case FLORA -> NOT_VERY_EFFECTIVE;
+                default -> NEUTRAL;
+            };
+            case PYRO -> switch (defender) {
+                case LITHO -> SUPER_EFFECTIVE;
+                case AQUA -> NOT_VERY_EFFECTIVE;
+                default -> NEUTRAL;
+            };
+            case LITHO -> switch (defender) {
+                case FLORA -> SUPER_EFFECTIVE;
+                case PYRO -> NOT_VERY_EFFECTIVE;
+                default -> NEUTRAL;
+            };
+            case NORMAL -> NEUTRAL;
+        };
     }
 }

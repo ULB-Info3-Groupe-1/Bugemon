@@ -2,6 +2,7 @@ package ulb.models.combat.turn;
 
 import java.util.List;
 
+import ulb.common.DamageResult;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatTeam;
@@ -9,7 +10,7 @@ import ulb.models.effect.Effect;
 
 public sealed interface TurnStep {
 
-    record AttackStep(CombatBugemon attacker, CombatBugemon defender, Attack attack, int damage,
+    record AttackStep(CombatBugemon attacker, CombatBugemon defender, Attack attack, DamageResult damageResult,
             int defenderHpAfter) implements TurnStep {
         public String getAttackName() {
             return this.attack.name();

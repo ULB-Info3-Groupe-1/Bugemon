@@ -6,6 +6,7 @@ import java.util.List;
 
 import ulb.common.StatType;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.effect.StatusEffect;
 import ulb.models.run.RunBugemon;
 
@@ -28,6 +29,10 @@ public class CombatBugemon {
 
     public void markAsParticipated() {
         this.participated = true;
+    }
+
+    public ElementType getType() {
+        return this.runBugemon.getType();
     }
 
     public boolean isKo() {

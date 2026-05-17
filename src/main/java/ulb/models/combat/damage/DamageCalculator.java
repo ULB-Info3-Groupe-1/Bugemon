@@ -1,6 +1,7 @@
-package ulb.models.combat.utils;
+package ulb.models.combat.damage;
 
 import ulb.Configuration;
+import ulb.common.DamageResult;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.CombatBugemon;
 
@@ -13,16 +14,18 @@ public class DamageCalculator {
         this.reductionFactorFormula = Configuration.Game.REDUCTION_FACTOR_FORMULA;
     }
 
-    public int calculateDamage(CombatBugemon attacker, CombatBugemon defender, Attack attack) {
-
+    public DamageResult calculateDamage(CombatBugemon attacker, CombatBugemon defender, Attack attack) {
         double power = (double) attack.power();
 
         double attackFactor = this.attackFactorFormula.evaluate(attacker.getEffectiveAttack());
         double reductionFactor = this.reductionFactorFormula.evaluate(defender.getEffectiveDefense());
 
-        double totalDamage = power * attackFactor * reductionFactor;
+        double typeMultiplier = attack.type().getMultiplierAgainst(defender.getType());
+        Efficiency efficiency = Efficiency.fromMultiplier(typeMultiplier);
 
-        return (int) Math.ceil(totalDamage);
+        int totalDamage = (int) Math.ceil(power * attackFactor * reductionFactor * typeMultiplier);
+
+        return new DamageResult(totalDamage, efficiency);
     }
 
     @FunctionalInterface

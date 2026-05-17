@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 
 public class PlayerBugemon {
     private final Bugemon base;
@@ -31,6 +32,10 @@ public class PlayerBugemon {
 
     public String getName() {
         return this.base.name();
+    }
+
+    public ElementType getType() {
+        return this.base.type();
     }
 
     public int getMaxHp() {

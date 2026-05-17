@@ -7,7 +7,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.DamageResult;
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.turn.TurnAction.AttackAction;
@@ -23,7 +25,6 @@ import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
-import ulb.models.combat.utils.DamageCalculator;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 
@@ -235,12 +236,12 @@ public class Combat {
 
         List<TurnStep> steps = new ArrayList<>();
 
-        int damage = this.damageCalculator.calculateDamage(attacker, defender, attack);
+        DamageResult damageResult = this.damageCalculator.calculateDamage(attacker, defender, attack);
 
-        defender.takeDamage(damage);
-        LOG.debug("{} uses {} on {} for {} damage (HP left: {})", attacker, attack.name(), defender, damage,
+        defender.takeDamage(damageResult.damage());
+        LOG.debug("{} uses {} on {} for {} damage (HP left: {})", attacker, attack.name(), defender, damageResult,
                 defender.getCurrentHp());
-        steps.add(new AttackStep(attacker, defender, attack, damage, defender.getCurrentHp()));
+        steps.add(new AttackStep(attacker, defender, attack, damageResult, defender.getCurrentHp()));
 
         steps.addAll(this.effectProcessor.applyEffects(attack, attacker, defender, attackerTeam));
 

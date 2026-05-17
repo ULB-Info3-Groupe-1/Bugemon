@@ -5,6 +5,7 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 import ulb.models.player.PlayerBugemon;
 
 public class RunBugemon {
@@ -27,6 +28,10 @@ public class RunBugemon {
 
     public String getName() {
         return this.playerBugemon.getName();
+    }
+
+    public ElementType getType() {
+        return this.playerBugemon.getType();
     }
 
     public boolean isKo() {
