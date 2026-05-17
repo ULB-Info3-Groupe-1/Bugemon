@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import ulb.common.DamageResult;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.damage.DamageCalculator;
+import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.turn.TurnAction.AttackAction;
@@ -215,7 +216,7 @@ public class Combat {
 
             public List<TurnStep> visit(SwitchAction switchAction) {
                 actingTeam.setActive(switchAction.target());
-                return List.of(new SwitchStep(switchAction.target()));
+                return List.of(new SwitchStep(switchAction.target(), isPlayer));
             }
 
             public List<TurnStep> visit(ItemAction itemAction) {

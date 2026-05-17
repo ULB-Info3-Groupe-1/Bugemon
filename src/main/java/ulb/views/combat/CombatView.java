@@ -1,6 +1,8 @@
 package ulb.views.combat;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -9,20 +11,25 @@ import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
+import ulb.models.combat.CombatBugemon;
+import ulb.models.combat.CombatTeam;
+import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.turn.TurnStep;
+import ulb.models.combat.turn.TurnStep.AttackStep;
+import ulb.models.combat.turn.TurnStep.KoStep;
+import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.item.Item;
 import ulb.views.View;
+import ulb.views.combat.components.ActionMenuView;
+import ulb.views.combat.components.AttackMenuView;
 import ulb.views.combat.components.BugemonInfoView;
+import ulb.views.combat.components.ItemMenuView;
+import ulb.views.combat.components.SwitchMenuView;
 import ulb.views.components.DialogZoneView;
 import ulb.views.components.HoverInfoView;
 
-/**
- * Abstract base view for all combat screens, loaded from the shared {@code Combat.fxml} layout. Subclasses implement
- * {@link #initCombatMode()} to configure their specific UI behaviour.
- */
-public abstract class CombatView extends View {
+public class CombatView extends View {
 
     private CombatAnimationView attackAnimationView;
 
@@ -41,21 +48,145 @@ public abstract class CombatView extends View {
     @FXML
     private DialogZoneView dialogZoneView;
 
-    NextListener nextListener;
+    private CombatTeam playerTeam;
+    private CombatTeam opponentTeam;
+    private Map<Item, Integer> playerInventory;
 
-    protected CombatView() {
+    private final ActionMenuView actionMenu;
+    private final AttackMenuView attackMenu;
+    private final SwitchMenuView switchMenu;
+    private final ItemMenuView itemMenuView;
+
+    private Listener listener;
+    private NextListener nextListener;
+
+    public CombatView() {
+        super();
+        this.actionMenu = new ActionMenuView();
+        this.attackMenu = new AttackMenuView();
+        this.switchMenu = new SwitchMenuView();
+        this.itemMenuView = new ItemMenuView();
+
+        this.initListeners();
     }
 
-    /** Called by the FXMLLoader after all {@code @FXML} fields are injected. */
     @FXML
     protected void initialize() {
         this.attackAnimationView = new CombatAnimationView(this.bugemonTrainerImage, this.bugemonOpponentImage);
-        this.dialogZoneView.setListener(() -> this.nextListener.onNext());
-        this.initCombatMode();
+        this.dialogZoneView.setListener(() -> {
+            if (this.nextListener != null) {
+                this.nextListener.onNext();
+            }
+        });
+        this.showMainActionMenu();
+    }
+
+    private void initListeners() {
+        this.actionMenu.setListener(new ActionMenuView.Listener() {
+            @Override
+            public void onAttack() {
+                CombatView.this.showAttackMenu();
+            }
+
+            @Override
+            public void onSwitch() {
+                CombatView.this.showSwitchMenu(false);
+            }
+
+            @Override
+            public void onInventory() {
+                CombatView.this.showInventory();
+
+            }
+
+            @Override
+            public void onForfeit() {
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onForfeit();
+                }
+
+            }
+        });
+
+        this.attackMenu.setListener(new AttackMenuView.Listener() {
+            @Override
+            public void onAttack(Attack attack) {
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onAttack(attack);
+                }
+            }
+
+            @Override
+            public void onAttackHovered(Attack attack) {
+                showHoverInfo(attack.name(), "Type : " + attack.type(), "Puissance : " + attack.power(),
+                        attack.description().isBlank() ? null : attack.description());
+            }
+
+            @Override
+            public void onAttackLeft() {
+                CombatView.this.hideHoverInfo();
+            }
+
+            @Override
+            public void onBack() {
+                CombatView.this.hideHoverInfo();
+                CombatView.this.showMainActionMenu();
+            }
+        });
+
+        this.switchMenu.setListener(new SwitchMenuView.Listener() {
+            @Override
+            public void onSwitch(CombatBugemon bugemon) {
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onSwitch(bugemon);
+                }
+            }
+
+            @Override
+            public void onBack() {
+                CombatView.this.showMainActionMenu();
+            }
+        });
+
+        this.itemMenuView.setListener(new ItemMenuView.Listener() {
+            @Override
+            public void onItemSelected(Item item) {
+                if (CombatView.this.listener != null) {
+                    CombatView.this.listener.onItemSelected(item);
+                }
+            }
+
+            @Override
+            public void onItemHovered(Item item) {
+                showHoverInfo(item.name(), "Catégorie : " + item.type(),
+                        item.description().isBlank() ? null : item.description());
+            }
+
+            @Override
+            public void onItemLeft() {
+                CombatView.this.hideHoverInfo();
+            }
+
+            @Override
+            public void onBack() {
+                CombatView.this.hideHoverInfo();
+                CombatView.this.showMainActionMenu();
+            }
+        });
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     public void setNextListener(NextListener listener) {
         this.nextListener = listener;
+    }
+
+    public void setModel(CombatTeam playerteam, CombatTeam opponenteam, Map<Item, Integer> inventory) {
+        this.playerTeam = playerteam;
+        this.opponentTeam = opponenteam;
+        this.playerInventory = inventory;
     }
 
     @Override
@@ -63,68 +194,83 @@ public abstract class CombatView extends View {
         return Configuration.Paths.Fxml.COMBAT_VIEW;
     }
 
-    // ── Abstract contract ─────────────────────────────────────────────────────
+    public void refresh() {
+        if (this.playerTeam == null || this.opponentTeam == null) {
+            return;
+        }
 
-    /**
-     * Configures UI regions specific to this combat mode. Called once after FXML injection via {@link #initialize()}.
-     */
-    protected abstract void initCombatMode();
+        this.updateTrainerBugemon(this.playerTeam.getActive());
+        this.updateOpponentBugemon(this.opponentTeam.getActive());
+        this.refreshMenuState();
+    }
 
-    // ── Action menu ───────────────────────────────────────────────────────────
+    public void refreshMenuState() {
+        if (this.playerTeam == null) {
+            return;
+        }
 
-    /** Replaces the content of the action menu slot with the given node. */
+        if (this.playerTeam.getActive().isKo()) {
+            this.showSwitchMenu(true);
+        } else {
+            boolean canSwitch = !this.playerTeam.getAvailable().isEmpty();
+            this.actionMenu.refresh(canSwitch);
+            this.showMainActionMenu();
+        }
+    }
+
     protected void setActionMenuContent(Node content) {
         this.actionMenuSlot.getChildren().setAll(content);
     }
 
-    // ── Hover info panel ──────────────────────────────────────────────────────
-
-    /** Populates and shows the hover info panel with the given title and lines. */
-    public void showHoverInfo(String title, String... lines) {
-        this.hoverInfoView.show(title, lines);
+    public void showMainActionMenu() {
+        this.setActionMenuContent(this.actionMenu);
     }
 
-    /** Applies a type-based background colour to the hover info panel. */
-    public void setHoverType(ElementType type) {
-        this.hoverInfoView.setType(type);
+    private void showAttackMenu() {
+        List<Attack> attacks = this.playerTeam.getActive().getAttacks();
+        this.attackMenu.show(attacks);
+        this.setActionMenuContent(this.attackMenu);
     }
 
-    /** Shows or hides the efficiency badge on the hover info panel. */
-    public void setHoverEfficiency(Efficiency eff) {
-        this.hoverInfoView.setEfficiency(eff);
+    private void showSwitchMenu(boolean forced) {
+        List<CombatBugemon> available = this.playerTeam.getAvailable();
+        this.switchMenu.show(available, forced);
+        this.setActionMenuContent(this.switchMenu);
     }
 
-    /** Hides the hover info panel. */
-    public void hideHoverInfo() {
-        this.hoverInfoView.hide();
+    private void showInventory() {
+        this.itemMenuView.show(this.playerInventory);
+        this.setActionMenuContent(this.itemMenuView);
     }
 
-    // ── Action menu ───────────────────────────────────────────────────────────
-
-    /** Hides the action menu slot from the layout. */
     protected void hideActionMenu() {
         this.actionMenuSlot.setVisible(false);
         this.actionMenuSlot.setManaged(false);
     }
 
-    /** Restores the action menu slot in the layout. */
     protected void showActionMenu() {
         this.actionMenuSlot.setVisible(true);
         this.actionMenuSlot.setManaged(true);
     }
 
-    // ── Dialog zone ───────────────────────────────────────────────────────────
-
-    /** Disables the Next button immediately so rapid clicks cannot queue steps during an animation. */
-    public void lockNextButton() {
-        this.dialogZoneView.setNextButtonDisabled(true);
+    public void showHoverInfo(String title, String... lines) {
+        this.hoverInfoView.show(title, lines);
     }
 
-    /**
-     * Updates only the menus and action slots to reflect the current model state, without touching sprites or HP bars.
-     * Override in concrete views that have interactive menus.
-     */
-    public void refreshMenuState() {
+    public void setHoverType(ElementType type) {
+    }
+
+    public void setHoverEfficiency(Efficiency eff) {
+        this.hoverInfoView.setEfficiency(eff);
+    }
+
+    public void hideHoverInfo() {
+        this.hoverInfoView.hide();
+    }
+
+    public void lockNextButton() {
+        this.dialogZoneView.setNextButtonDisabled(true);
+        this.hideActionMenu();
     }
 
     private void showDialog(String dialog) {
@@ -134,51 +280,29 @@ public abstract class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
-    /** Builds and displays a dialog describing the given {@code step}. */
-    public void showStepDialog(TurnStep step, Trainer playerTrainer) {
+    public void showStepDialog(TurnStep step) {
+        this.hideHoverInfo();
+        this.hideActionMenu();
+
         String message = switch (step) {
-            case TurnStep.AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) ->
-                attacker.getCurrentBugemonName() + " utilise " + attack.name() + " !"
-                        + this.formatEfficiency(efficiency);
-
-            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) ->
-                (trainer == playerTrainer ? "Vous envoyez " : "L'adversaire envoie ") + bugemon.getName() + " !";
-
-            case TurnStep.ItemStep(Trainer trainer, Item item) ->
-                (trainer == playerTrainer ? "Vous utilisez " : "L'adversaire utilise ") + item.name() + " !";
-
-            case TurnStep.BugemonKoStep(Trainer trainer) ->
-                trainer == playerTrainer ? "Votre Bugémon est K.O. !" : "Le Bugémon adverse est K.O. !";
-
-            case TurnStep.TrainerKoStep(Trainer trainerKo) ->
-                trainerKo == playerTrainer ? "Vous êtes vaincu !" : "L'adversaire est vaincu !";
-
-            case TurnStep.ForfeitStep(Trainer trainer) ->
-                trainer == playerTrainer ? "Vous abandonnez..." : "L'adversaire abandonne.";
-
-            default -> "";
+            case AttackStep a -> a.attacker().getName() + " utilise " + a.attack().name() + " !";
+            case SwitchStep s ->
+                (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
+            case KoStep k -> k.koBugemon().getName() + " est K.O. !";
+            default -> "Action effectuée.";
         };
 
         this.showDialog(message);
     }
 
-    private String formatEfficiency(Efficiency efficiency) {
-        return switch (efficiency) {
-            case HIGH -> " C'est super efficace !";
-            case LOW -> " Ce n'est pas très efficace.";
-            default -> "";
-        };
-    }
-
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
+        this.showActionMenu();
     }
 
-    // ── Bugemon display ───────────────────────────────────────────────────────
-
-    public void updateTrainerBugemon(BugemonDTO trainerBugemon) {
-        if (trainerBugemon.isAlive()) {
+    public void updateTrainerBugemon(CombatBugemon trainerBugemon) {
+        if (!trainerBugemon.isKo()) {
             this.makeTrainerBugemonReappear();
         }
         File file = new File(Configuration.Paths.SPRITES + trainerBugemon.getSpritePath());
@@ -186,24 +310,22 @@ public abstract class CombatView extends View {
         this.bugemonTrainerImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
     }
 
-    public void updateOpponentBugemon(BugemonDTO opponentBugemon) {
+    public void updateOpponentBugemon(CombatBugemon opponentBugemon) {
+        if (!opponentBugemon.isKo()) {
+            this.makeOpponentBugemonReappear();
+        }
         File file = new File(Configuration.Paths.SPRITES + opponentBugemon.getSpritePath());
         this.bugemonOpponentInfo.setBugemonInfo(opponentBugemon);
         this.bugemonOpponentImage.setImage(new Image(file.toURI().toString(), 256, 256, true, false));
-        this.makeOpponentBugemonReappear();
     }
 
-    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
-    public void updateTrainerInfo(BugemonDTO bugemon) {
+    public void updateTrainerInfo(CombatBugemon bugemon) {
         this.bugemonTrainerInfo.setBugemonInfo(bugemon);
     }
 
-    /** Updates only the info bar (HP, level, XP) without changing the sprite or triggering any animation. */
-    public void updateOpponentInfo(BugemonDTO bugemon) {
+    public void updateOpponentInfo(CombatBugemon bugemon) {
         this.bugemonOpponentInfo.setBugemonInfo(bugemon);
     }
-
-    // ── Attack animations ─────────────────────────────────────────────────────
 
     public void playTrainerAttackAnimation(Runnable onFinished) {
         this.attackAnimationView.playTrainerAttackAnimation(onFinished);
@@ -230,8 +352,16 @@ public abstract class CombatView extends View {
     }
 
     public interface NextListener {
-
         void onNext();
+    }
 
+    public interface Listener {
+        void onAttack(Attack attack);
+
+        void onSwitch(CombatBugemon bugemon);
+
+        void onForfeit();
+
+        void onItemSelected(Item item);
     }
 }

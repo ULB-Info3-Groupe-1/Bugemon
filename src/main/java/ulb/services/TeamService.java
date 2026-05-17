@@ -160,8 +160,8 @@ public class TeamService {
             throws TeamNameAlreadyExistsException, TeamEmptyException, TeamNameEmptyException {
         this.checkWorkingTeamIsNotEmpty();
         this.teamRepository.createTeam(this.playername, teamName);
-        this.persistTeamMembers();
         this.workingTeam.setName(teamName);
+        this.persistTeamMembers();
         this.playerTeams.add(new Team(this.workingTeam));
         // Clear because the working team is saved so by clearing it we can create a new
         // team

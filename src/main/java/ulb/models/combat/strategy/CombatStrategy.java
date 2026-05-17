@@ -1,4 +1,4 @@
-package ulb.models.combat;
+package ulb.models.combat.strategy;
 
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.utils.CombatContext;

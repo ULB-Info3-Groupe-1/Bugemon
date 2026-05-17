@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import ulb.controllers.MetaController;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerBugemonRepository;
@@ -16,6 +18,12 @@ import ulb.repositories.PlayerRepository;
 import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.TeamRepository;
+import ulb.services.BugemonService;
+import ulb.services.InventoryService;
+import ulb.services.PlayerService;
+import ulb.services.SkillService;
+import ulb.services.TeamService;
+import ulb.services.TowerService;
 import ulb.utils.Parser;
 
 /** JavaFX entry point — bootstraps the Bugemon game. */
@@ -59,5 +67,19 @@ public class Main extends Application {
                 loader.getQueries());
 
         String playerName = "default_player";
+
+        PlayerService playerService = new PlayerService(playerRepository, playerName);
+        SkillService skillService = new SkillService(playerService.getUnlockedSkills());
+        BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository, playerName,
+                skillService.getSkills(StatBonusEffect.class));
+        TeamService teamService = new TeamService(playerRepository, teamRepository, playerBugemonRepository,
+                playerName);
+        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
+        TowerService towerService = new TowerService(playerRepository, playerName);
+
+        MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
+                towerService, inventoryService);
+        metaController.start();
+
     }
 }

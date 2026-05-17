@@ -1,9 +1,10 @@
-package ulb.models.combat;
+package ulb.models.combat.strategy;
 
 import java.util.List;
 import java.util.Random;
 
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.utils.CombatContext;

@@ -2,219 +2,208 @@ package ulb.controllers.combat;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
-import ulb.models.bugemon.effect.EffectHeal;
-import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.Attack;
 import ulb.models.combat.Combat;
-import ulb.models.combat.CombatContext;
-import ulb.models.combat.CombatXpDistributor;
-import ulb.models.combat.TurnResult;
-import ulb.models.combat.TurnStep;
-import ulb.models.level_up.LevelUp;
-import ulb.models.skills.Skill;
-import ulb.models.trainer.Trainer;
-import ulb.services.BugemonService;
-import ulb.services.CombatService;
-import ulb.services.TeamService;
+import ulb.models.combat.CombatBugemon;
+import ulb.models.combat.CombatResult;
+import ulb.models.combat.strategy.CombatStrategy;
+import ulb.models.combat.turn.ActionCallback;
+import ulb.models.combat.turn.TurnAction;
+import ulb.models.combat.turn.TurnAction.AttackAction;
+import ulb.models.combat.turn.TurnAction.ForfeitAction;
+import ulb.models.combat.turn.TurnAction.ItemAction;
+import ulb.models.combat.turn.TurnAction.SwitchAction;
+import ulb.models.combat.turn.TurnStep;
+import ulb.models.combat.turn.TurnStep.AttackStep;
+import ulb.models.combat.turn.TurnStep.KoStep;
+import ulb.models.combat.turn.TurnStep.SwitchStep;
+import ulb.models.combat.utils.CombatContext;
+import ulb.models.item.Item;
+import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
 /**
- * Abstract base controller for all combat screens. Manages the step-by-step iteration of a {@link TurnResult}: each
- * call to {@link #advanceStep()} resolves the current step (KO reactions, end-of-combat detection) then delegates to
- * {@link #showNextStep(TurnStep step, Runnable viewRefresh)} for the next animation and dialog. Subclasses implement
- * {@link #onStepsExhausted()} (what to do when a turn is fully displayed) and {@link #onCombatEnded(Trainer)}
- * (navigation on combat end).
- *
- * @param <V>
- *            the concrete {@link CombatView} subtype managed by this controller.
+ * Main controller for the combat screen. Integrates both the step-by-step animation logic and the manual player input
+ * logic, replacing the old ManualCombatController. * It acts as the {@link CombatStrategy} for the player, intercepting
+ * the request for actions/switches from the Combat model and opening the UI menus accordingly.
  */
-public abstract class CombatController<V extends CombatView> extends Controller<V> implements CombatView.NextListener {
+public class CombatController extends Controller<CombatView>
+        implements CombatView.Listener, CombatView.NextListener, CombatStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
-    protected final CombatAnimationController animationController;
-    protected final TeamService teamService;
-    protected final BugemonService bugemonService;
-    protected final CombatService combatService;
+    private Combat combat;
+    private Map<Item, Integer> playerInventory;
 
-    protected final List<Skill> statBonusSkills;
+    private Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
+    private ActionCallback pendingActionCallback;
 
-    protected Combat combat;
-    protected boolean shouldRestoreHp;
-    protected Trainer playerTrainer;
-    protected Iterator<TurnStep> pendingSteps = Collections.emptyIterator();
-    private Trainer pendingWinner = null;
-
-    protected CombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            List<Skill> statBonusSkills, V view) {
-        super(metaController, view);
-        this.animationController = new CombatAnimationController(view);
-        this.teamService = teamService;
-        this.bugemonService = bugemonService;
-        this.combatService = new CombatService();
-        this.statBonusSkills = statBonusSkills;
-
+    public CombatController(MetaController metaController) {
+        super(metaController, ViewLoader.load(CombatView::new));
+        this.view.setListener(this);
         this.view.setNextListener(this);
     }
 
-    public abstract void startCombat(boolean restoreHp);
+    /**
+     * Initializes and starts a new combat session. * @param combat the new Combat model instance
+     *
+     * @param playerInventory
+     *            the player's inventory mapped for the view
+     */
+    public void startCombat(Combat combat, Map<Item, Integer> playerInventory) {
+        this.combat = combat;
+        this.playerInventory = playerInventory;
 
-    // ── Step iteration ────────────────────────────────────────────────────────
+        this.view.setModel(this.combat.getPlayerTeam(), null, this.playerInventory);
+        this.view.refresh();
+        this.view.hideDialog();
 
-    /** Runs one combat turn and starts iterating its steps. */
-    protected void startTurn() {
-        TurnResult result = this.combat.turn();
-        this.pendingSteps = result.steps();
-        this.advanceStep();
+        this.startTurnPhase();
     }
 
-    /**
-     * Displays the next step: plays its animation, then runs the targeted {@code viewRefresh} callback, then shows the
-     * dialog. The callback updates only the UI elements affected by this specific step.
-     */
-    protected void showNextStep(TurnStep step, Runnable viewRefresh) {
-        this.view.lockNextButton();
-        this.animationController.playStepAnimation(step, this.playerTrainer, () -> {
-            viewRefresh.run();
-            this.view.showStepDialog(step, this.playerTrainer);
+    // ── Phase Flow ────────────────────────────────────────────────────────────
+
+    private void startTurnPhase() {
+        if (this.combat.isFinished()) {
+            this.onCombatEnded();
+            return;
+        }
+
+        this.combat.requestActions((playerAction, opponentAction) -> {
+            this.combat.resolveTurn(playerAction, opponentAction, steps -> {
+                this.pendingSteps = steps.iterator();
+                this.advanceStep();
+            });
         });
     }
 
-    /**
-     * Processes the next pending step. Delegates entirely to {@link #handleStep(TurnStep)}.
-     */
-    protected void advanceStep() {
+    // ── CombatStrategy Implementation ─────────────────────────────────────────
+
+    @Override
+    public void chooseAction(CombatContext ctx, ActionCallback cb) {
+        this.view.setModel(ctx.allyTeam(), ctx.opponentTeam(), this.playerInventory);
+        this.view.refresh();
+
+        this.pendingActionCallback = cb;
+        this.view.refreshMenuState();
+    }
+
+    @Override
+    public void chooseSwitch(CombatContext ctx, ActionCallback cb) {
+        this.pendingActionCallback = cb;
+        this.view.refreshMenuState();
+    }
+
+    // ── View Listener (Player Input) ──────────────────────────────────────────
+
+    @Override
+    public void onAttack(Attack attack) {
+        this.resolvePlayerAction(new AttackAction(attack));
+    }
+
+    @Override
+    public void onSwitch(CombatBugemon bugemon) {
+        this.resolvePlayerAction(new SwitchAction(bugemon));
+    }
+
+    @Override
+    public void onItemSelected(Item item) {
+        this.resolvePlayerAction(new ItemAction(item));
+    }
+
+    @Override
+    public void onForfeit() {
+        this.resolvePlayerAction(new ForfeitAction());
+    }
+
+    /** Dispatch the resolved action back to the Combat model */
+    private void resolvePlayerAction(TurnAction action) {
+        if (this.pendingActionCallback != null) {
+            ActionCallback cb = this.pendingActionCallback;
+            this.pendingActionCallback = null;
+            cb.onActionChosen(action);
+        }
+    }
+
+    // ── Step Iteration and Animations ─────────────────────────────────────────
+
+    private void advanceStep() {
         if (!this.pendingSteps.hasNext()) {
             this.onStepsExhausted();
             return;
         }
+
         TurnStep step = this.pendingSteps.next();
         LOG.debug("Advancing step: {}", step);
-        this.handleStep(step);
-    }
 
-    /**
-     * Single dispatch point for all step types. Each branch owns both the model reaction and the targeted
-     * post-animation view update, keeping them in sync.
-     */
-    private void handleStep(TurnStep step) {
         Runnable animationCallback = switch (step) {
-
-            case TurnStep.TrainerKoStep(Trainer trainerKo) -> {
-                this.processEndCombat(trainerKo, "Combat ended");
-                yield () -> {
-                    if (trainerKo == this.playerTrainer) {
-                        this.view.playDeathAnimationForTrainer(() -> {
-                        });
-                    } else {
-                        this.view.playDeathAnimationForOpponent(() -> {
-                        });
-                    }
-                };
-            }
-
-            case TurnStep.ForfeitStep(Trainer trainer) -> {
-                this.processEndCombat(trainer, "Combat ended by forfeit");
-                yield () -> {
-                };
-            }
-
-            case TurnStep.BugemonKoStep(Trainer trainer) when !trainer.isDefeated() -> () -> {
-                trainer.reactToKo();
-                this.updateBugemonView(trainer);
-                this.view.refreshMenuState();
-            };
-
-            case TurnStep.AttackStep s -> () -> {
-                this.updateInfoForTrainer(this.getOpponentOf(s.attacker()));
-
-                boolean selfHpEffect = s.getAttackEffects().stream()
-                        .anyMatch(e -> e.target() == EffectTarget.THROWER && e instanceof EffectHeal);
-                if (selfHpEffect) {
-                    this.updateInfoForTrainer(s.attacker());
+            case AttackStep a -> () -> {
+                boolean isPlayerAttacking = a.attacker() == this.combat.getPlayerTeam().getActive();
+                if (isPlayerAttacking) {
+                    this.view.playTrainerAttackAnimation(() -> {
+                        this.view.updateOpponentInfo(a.defender());
+                        this.view.showStepDialog(step);
+                    });
+                } else {
+                    this.view.playOpponentAttackAnimation(() -> {
+                        this.view.updateTrainerInfo(a.defender());
+                        this.view.showStepDialog(step);
+                    });
                 }
             };
 
-            case TurnStep.SwitchStep s -> () -> this.updateBugemonView(s.trainer());
-
-            case TurnStep.ItemStep s -> () -> this.updateInfoForTrainer(s.trainer());
-
-            default -> () -> {
+            case SwitchStep s -> () -> {
+                if (s.isPlayer()) {
+                    this.view.updateTrainerBugemon(s.bugemon());
+                } else {
+                    this.view.updateOpponentBugemon(s.bugemon());
+                }
+                this.view.showStepDialog(step);
             };
+
+            case KoStep k -> () -> {
+                boolean isPlayerKo = k.koBugemon() == this.combat.getPlayerTeam().getActive();
+                if (isPlayerKo) {
+                    this.view.playDeathAnimationForTrainer(() -> {
+                        this.view.showStepDialog(step);
+                    });
+                } else {
+                    this.view.playDeathAnimationForOpponent(() -> {
+                        this.view.showStepDialog(step);
+                    });
+                }
+            };
+
+            default -> () -> this.view.showStepDialog(step);
         };
-        this.showNextStep(step, animationCallback);
+
+        this.view.lockNextButton();
+        animationCallback.run();
     }
-
-    private void processEndCombat(Trainer defeatedTrainer, String logPrefix) {
-        Trainer winner = this.getOpponentOf(defeatedTrainer);
-        LOG.info("{} – winner: {}", logPrefix, winner.getCurrentBugemonName());
-        this.pendingWinner = winner;
-    }
-
-    private void updateBugemonView(Trainer trainer) {
-        if (trainer == this.playerTrainer) {
-            this.view.updateTrainerBugemon(trainer.getCurrentBugemon());
-        } else {
-            this.view.updateOpponentBugemon(trainer.getCurrentBugemon());
-        }
-    }
-
-    private Trainer getOpponentOf(Trainer trainer) {
-        return trainer == this.playerTrainer ? this.combat.getOpponentTrainer() : this.playerTrainer;
-    }
-
-    private void updateInfoForTrainer(Trainer trainer) {
-        if (trainer == this.playerTrainer) {
-            this.view.updateTrainerInfo(trainer.getCurrentBugemon());
-        } else {
-            this.view.updateOpponentInfo(trainer.getCurrentBugemon());
-        }
-    }
-
-    /**
-     * Called when all steps of the current turn have been displayed. Automatic combat starts the next turn immediately;
-     * manual combat shows the post-turn menu.
-     */
-    protected abstract void onStepsExhausted();
-
-    /**
-     * Called when a {@link TurnStep.TrainerKoStep} or {@link TurnStep.ForfeitStep} is reached.
-     *
-     * @param winner
-     *            the trainer who won the combat.
-     */
-    protected void onCombatEnded(Trainer winner) {
-        boolean won = winner == this.playerTrainer;
-        if (won) {
-            CombatContext ctx = new CombatContext(winner, this.getOpponentOf(winner));
-            CombatXpDistributor xpDistributor = new CombatXpDistributor();
-            List<LevelUp> generatedLevelUps = xpDistributor.distributeXp(ctx, this.statBonusSkills);
-            winner.getParticipatingBugemons().forEach(this.bugemonService::saveBugemonState);
-            if (!generatedLevelUps.isEmpty()) {
-                this.metaController.receiveCombatResults(generatedLevelUps);
-            }
-        }
-        if (this.shouldRestoreHp) {
-            this.playerTrainer.restoreTeamHp();
-        }
-        this.metaController.onCombatFinished(won);
-    }
-
-    // ── Shared utilities ──────────────────────────────────────────────────────
 
     @Override
     public void onNext() {
-        if (this.pendingWinner != null) {
-            Trainer winner = this.pendingWinner;
-            this.pendingWinner = null;
-            this.onCombatEnded(winner);
-            return;
-        }
         this.advanceStep();
+    }
+
+    private void onStepsExhausted() {
+        if (this.combat.isFinished()) {
+            this.onCombatEnded();
+        } else {
+            this.view.hideDialog();
+            this.startTurnPhase();
+        }
+    }
+
+    private void onCombatEnded() {
+        boolean won = this.combat.getResult() == CombatResult.VICTORY;
+        LOG.info("Combat ended. Victory: {}", won);
+        this.metaController.onCombatFinished(won);
     }
 }

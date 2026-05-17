@@ -24,7 +24,7 @@ public sealed interface TurnStep {
     record KoStep(CombatBugemon koBugemon) implements TurnStep {
     }
 
-    record SwitchStep(CombatBugemon bugemon) implements TurnStep {
+    record SwitchStep(CombatBugemon bugemon, boolean isPlayer) implements TurnStep {
     }
 
     // Placeholder for future item steps

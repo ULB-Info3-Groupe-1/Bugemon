@@ -1,13 +1,15 @@
 package ulb.controllers.combat;
 
-import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Efficiency;
-import ulb.models.combat.TurnStep;
-import ulb.models.trainer.Trainer;
+import ulb.models.combat.CombatTeam;
+import ulb.models.combat.turn.TurnStep;
+import ulb.models.combat.turn.TurnStep.AttackStep;
+import ulb.models.combat.turn.TurnStep.KoStep;
+import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.views.combat.CombatView;
 
-/** Encapsulates all animation logic for combat so the main combat controller stays focused on game logic. */
+/**
+ * * Encapsulates all animation logic for combat so the main combat controller stays focused on game logic.
+ */
 public class CombatAnimationController {
     private final CombatView view;
 
@@ -17,37 +19,28 @@ public class CombatAnimationController {
 
     /**
      * Plays the animation corresponding to {@code step}, then invokes {@code onFinished}. Steps without a visual
-     * animation (item use, forfeit) invoke {@code onFinished} immediately.
+     * animation (item use, switch) invoke {@code onFinished} immediately.
      *
      * @param step
      *            the step to animate.
-     * @param playerTrainer
-     *            used to determine animation direction (player side vs opponent side).
+     * @param playerTeam
+     *            the player's team, used to determine animation direction (player side vs opponent side).
      * @param onFinished
      *            callback executed after the animation completes.
      */
-    public void playStepAnimation(TurnStep step, Trainer playerTrainer, Runnable onFinished) {
+    public void playStepAnimation(TurnStep step, CombatTeam playerTeam, Runnable onFinished) {
         switch (step) {
-            case TurnStep.AttackStep(Trainer attacker, Attack attack, Efficiency efficiency) -> {
-                boolean fromPlayer = attacker == playerTrainer;
+            case AttackStep a -> {
+                boolean fromPlayer = a.attacker() == playerTeam.getActive();
                 this.playAttackAnimation(fromPlayer, onFinished);
             }
 
-            case TurnStep.BugemonKoStep(Trainer trainer) -> {
-                boolean isPlayerSide = trainer == playerTrainer;
+            case KoStep k -> {
+                boolean isPlayerSide = k.koBugemon() == playerTeam.getActive();
                 this.playDeathAnimation(isPlayerSide, onFinished);
             }
 
-            // The death animation was already played for the BugemonKoStep that preceded
-            // this; replaying it would reset the sprite opacity and create a visual flash.
-            case TurnStep.TrainerKoStep(Trainer trainerKo) -> onFinished.run();
-
-            case TurnStep.ForfeitStep(Trainer trainer) -> {
-                boolean isPlayerForfeiting = trainer == playerTrainer;
-                this.playDeathAnimation(isPlayerForfeiting, onFinished);
-            }
-
-            case TurnStep.SwitchStep(Trainer trainer, Bugemon bugemon) -> onFinished.run();
+            case SwitchStep s -> onFinished.run();
 
             default -> onFinished.run();
         }

@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS "bugemons" (
 CREATE TABLE IF NOT EXISTS "players" (
   "playername" varchar PRIMARY KEY,
   "current_team" varchar,
-  "current_tower_floor" integer DEFAULT 2
+  "current_tower_floor" integer DEFAULT 2,
+  "skill_points" integer
 );
 
 CREATE TABLE IF NOT EXISTS "player_bugemons" (
@@ -71,7 +72,7 @@ CREATE TABLE IF NOT EXISTS "items" (
   "name" varchar,
   "description" varchar,
   "category" varchar,
-  "sprite" varchar, 
+  "sprite" varchar,
   PRIMARY KEY ("item_id")
 );
 
@@ -88,10 +89,17 @@ CREATE TABLE IF NOT EXISTS "item_effects" (
 );
 
 CREATE TABLE IF NOT EXISTS "item_player" (
-  "playername" varchar REFERENCES "players"("playername") ON DELETE CASCADE, 
+  "playername" varchar REFERENCES "players"("playername") ON DELETE CASCADE,
   "item_id" varchar REFERENCES "items"("item_id") ON DELETE CASCADE,
   "amount" integer,
   PRIMARY KEY ("playername", "item_id")
+);
+
+CREATE TABLE IF NOT EXISTS "skills_players" (
+  "playername" varchar REFERENCES "players"("playername") ON DELETE CASCADE,
+  "skill_id" varchar,
+  "current_level" integer NOT NULL,
+  PRIMARY KEY ("playername", "skill_id")
 );
 
 CREATE UNIQUE INDEX ON "team_members" ("playername", "team_name", "bugemon_name");

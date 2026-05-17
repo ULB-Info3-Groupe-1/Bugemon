@@ -2,12 +2,13 @@ package ulb.services;
 
 import java.util.Random;
 
-import ulb.models.combat.AutoStrategy;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatResult;
-import ulb.models.combat.CombatStrategy;
 import ulb.models.combat.CombatTeam;
-import ulb.models.combat.utils.DamageCalculator;
+import ulb.models.combat.damage.DamageCalculator;
+import ulb.models.combat.strategy.AutoStrategy;
+import ulb.models.combat.strategy.CombatStrategy;
+import ulb.models.combat.strategy.PlayerStrategy;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.run.RunTeam;
@@ -36,15 +37,13 @@ public class CombatService {
      *
      * At the end of the combat, HPs are restored and XP is distributed.
      */
-    public Combat createCombat(RunTeam playerRunTeam, CombatTeam opponentTeam, Inventory inventory, int floor,
-            boolean bossMode, boolean autoMode) {
+    public Combat createCombat(RunTeam playerRunTeam, CombatTeam opponentTeam, Inventory playerInventory,
+            Inventory opponentInventory, PlayerInputHandler handler, int floor, boolean bossMode) {
         CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
-
-        CombatStrategy playerStrategy = new AutoStrategy(inputHandler); // TODO: PlayerStrategy
+        CombatStrategy playerStrategy = new PlayerStrategy(handler);
         CombatStrategy opponentStrategy = new AutoStrategy(this.random);
-
-        return new Combat(playerCombatTeam, opponentTeam, floor, bossMode, playerStrategy, opponentStrategy,
-                this.damageCalculator, this.effectProcessor, inventory, this.random);
+        return new Combat(playerCombatTeam, opponentTeam, floor, bossMode, playerInventory, opponentInventory,
+                playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
     }
 
     public void finalizeCombat(Combat combat) {

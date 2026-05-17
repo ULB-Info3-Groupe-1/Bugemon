@@ -9,20 +9,18 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.controllers.combat.AutomaticCombatController;
+import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
-import ulb.controllers.combat.ManualCombatController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
+import ulb.models.item.Item;
 import ulb.models.level_up.LevelUp;
-import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
-import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.views.View;
@@ -59,13 +57,14 @@ public class MetaController {
     private final ManageTeamController createTeamController;
     private final ManageTeamController editTeamController;
     private final CreateBugemonController createBugemonController;
-    private final AutomaticCombatController automaticCombatController;
-    private final ManualCombatController manualCombatController;
-    private final TowerController towerController;
+    private final CombatController combatController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
     private final SkillTreeController skillTreeController;
+
+    private final InventoryService inventoryService;
+
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
     private boolean isTowerActive;
@@ -79,24 +78,20 @@ public class MetaController {
      *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
-            TeamService teamService, TowerService towerService, InventoryService inventoryService,
-            SkillService skillService) throws IOException {
+            TeamService teamService, TowerService towerService, InventoryService inventoryService) throws IOException {
         this.stage = primaryStage;
+        this.inventoryService = inventoryService;
 
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
         this.mainMenuController = new MainMenuController(this, teamService);
-        this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
-                skillService);
-        this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
-                skillService.getSkills(StatBonusEffect.class));
+        this.combatController = new CombatController(this);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, bugemonService);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
                 bugemonService);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
         this.levelUpController = new LevelUpController(this, bugemonService);
-        this.towerController = new TowerController(this, towerService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.skillTreeController = new SkillTreeController(this, playerService);
@@ -113,7 +108,6 @@ public class MetaController {
     public void onCombatFinished(boolean won) {
         LOG.info("onCombatFinished, won: {}", won);
         if (this.isTowerActive()) {
-            this.towerController.onTowerCombatFinished(won);
             return;
         }
 
@@ -207,20 +201,14 @@ public class MetaController {
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.manualCombatController.startCombat(true);
-            this.manualCombatController.show();
+            this.combatController.show();
         });
+        // TODO: check to have automatic combat
         this.transitions.put(Window.AUTOMATIC_COMBAT, () -> {
             this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.automaticCombatController.startCombat(true);
-            this.automaticCombatController.show();
-            this.automaticCombatController.startAutoRun();
+            this.combatController.show();
         });
-        this.transitions.put(Window.TOWER, () -> {
-            this.isTowerActive = true;
-            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-            this.towerController.show();
-        });
+        // TODO: add tower transitions
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();
             this.musicPlayer.playAmbiance(Ambiance.VICTORY, true);
@@ -264,7 +252,10 @@ public class MetaController {
     public void startTowerCombat(Combat combat) {
         this.musicPlayer.stopMusic();
         this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
-        this.manualCombatController.startCombat(combat, false);
-        this.manualCombatController.show();
+
+        Map<Item, Integer> inventoryMap = this.inventoryService.loadInventory().getMap();
+
+        this.combatController.startCombat(combat, inventoryMap);
+        this.combatController.show();
     }
 }

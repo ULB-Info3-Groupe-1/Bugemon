@@ -233,15 +233,15 @@ public class StaticDataRepository extends AbstractRepository {
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
         EffectTarget target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
         return switch (effectType) {
-            case "EffectStatModifier" -> {
+            case "StatModifierEffect" -> {
                 StatType stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, StatType.class);
                 String dbDuration = rs.getString(DatabaseColumns.COL_EFFECT_DURATION);
                 String duration = (dbDuration != null) ? dbDuration : "0_tour";
                 yield new StatModifierEffect(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
                         EffectDuration.fromLabel(duration));
             }
-            case "EffectHeal" -> new HealEffect(target, rs.getInt("effect_amount"));
-            case "EffectResetMalus" -> new ResetMalusEffect(target);
+            case "HealEffect" -> new HealEffect(target, rs.getInt("effect_amount"));
+            case "ResetMalusEffect" -> new ResetMalusEffect(target);
             default -> throw new IllegalStateException("Unknown effect type: " + effectType);
         };
     }

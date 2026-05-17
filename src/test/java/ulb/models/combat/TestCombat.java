@@ -19,6 +19,7 @@ import ulb.models.ItemFixtures;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.effect.StatusEffect;
+import ulb.models.combat.strategy.AutoStrategy;
 import ulb.models.combat.turn.TurnAction.AttackAction;
 import ulb.models.combat.turn.TurnAction.ForfeitAction;
 import ulb.models.combat.turn.TurnAction.ItemAction;
