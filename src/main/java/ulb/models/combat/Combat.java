@@ -114,7 +114,7 @@ public class Combat {
      *
      * This is tipically used when the active bugemon of the team is ko.
      */
-    public void requestForcedSwitch(CombatTeam team, ActionCallback callback) {
+    private void requestForcedSwitch(CombatTeam team, ActionCallback callback) {
         boolean isPlayer = team == this.playerTeam;
 
         CombatStrategy strategy = isPlayer ? this.playerStrategy : this.opponentStrategy;
