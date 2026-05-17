@@ -201,40 +201,35 @@ public class CombatView extends View {
         this.nextListener = listener;
     }
 
-    public void setModel(CombatTeam playerteam, CombatTeam opponenteam, Map<Item, Integer> inventory) {
-        this.playerTeam = playerteam;
-        this.opponentTeam = opponenteam;
-        this.playerInventory = inventory;
-    }
-
     @Override
     public String getPath() {
         return Configuration.Paths.Fxml.COMBAT_VIEW;
     }
 
     public void refresh() {
-        if (this.playerTeam == null || this.opponentTeam == null) {
-            return;
-        }
-
-        this.updateTrainerBugemon(this.playerTeam.getActive());
-        this.updateOpponentBugemon(this.opponentTeam.getActive());
-        this.refreshMenuState();
+        // if (this.playerTeam == null || this.opponentTeam == null) {
+        //     return;
+        // }
+        //
+        // this.updateTrainerBugemon(this.playerTeam.getActive());
+        // this.updateOpponentBugemon(this.opponentTeam.getActive());
+        // this.refreshMenuState();
     }
 
-    public void refreshMenuState() {
-        if (this.playerTeam == null) {
-            return;
-        }
-
-        if (this.playerTeam.getActive().isKo()) {
-            this.showSwitchMenu(true);
-        } else {
-            boolean canSwitch = !this.playerTeam.getAvailable().isEmpty();
-            this.actionMenu.refresh(canSwitch);
-            this.showMainActionMenu();
-        }
-    }
+    // TODO: remove (logic in view)
+    // public void refreshMenuState() {
+    //     if (this.playerTeam == null) {
+    //         return;
+    //     }
+    //
+    //     if (this.playerTeam.getActive().isKo()) {
+    //         this.showSwitchMenu(true);
+    //     } else {
+    //         boolean canSwitch = !this.playerTeam.getAvailable().isEmpty();
+    //         this.actionMenu.refresh(canSwitch);
+    //         this.showMainActionMenu();
+    //     }
+    // }
 
     protected void setActionMenuContent(Node content) {
         this.actionMenuSlot.getChildren().setAll(content);
@@ -244,20 +239,18 @@ public class CombatView extends View {
         this.setActionMenuContent(this.actionMenu);
     }
 
-    private void showAttackMenu() {
-        List<Attack> attacks = this.playerTeam.getActive().getAttacks();
+    private void showAttackMenu(List<Attack> attacks) {
         this.attackMenu.show(attacks);
         this.setActionMenuContent(this.attackMenu);
     }
 
-    private void showSwitchMenu(boolean forced) {
-        List<CombatBugemon> available = this.playerTeam.getAvailable();
+    public void showSwitchMenu(List<CombatBugemon> available, boolean forced) {
         this.switchMenu.show(available, forced);
         this.setActionMenuContent(this.switchMenu);
     }
 
-    private void showInventory() {
-        this.itemMenuView.show(this.playerInventory);
+    private void showInventory(Map<Item, Integer> inventory) {
+        this.itemMenuView.show(inventory);
         this.setActionMenuContent(this.itemMenuView);
     }
 

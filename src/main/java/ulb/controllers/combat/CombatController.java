@@ -85,24 +85,44 @@ public class CombatController extends Controller<CombatView>
 
     // ── View Listener (Player Input) ──────────────────────────────────────────
 
+    // TODO: remove code dup with extracting, resetting and calling callback
+
     @Override
     public void onAttack(Attack attack) {
-        this.resolvePlayerAction(new AttackAction(attack));
+        if (this.pendingActionCallback != null) {
+            ActionCallback callback = this.pendingActionCallback;
+            this.pendingActionCallback = null;
+            callback.onActionChosen(new AttackAction(attack));
+        }
     }
 
     @Override
     public void onSwitch(CombatBugemon bugemon) {
-        this.resolvePlayerAction(new SwitchAction(bugemon));
+        if (this.pendingSwitchCallback != null) { // forced switch
+            ActionCallback callback = this.pendingSwitchCallback;
+            this.pendingSwitchCallback = null;
+            callback.onActionChosen(new SwitchAction(bugemon));
+        } else { // NOT forced call back
+            this.resolvePlayerAction(new SwitchAction(bugemon));
+        }
     }
 
     @Override
     public void onItemSelected(Item item) {
-        this.resolvePlayerAction(new ItemAction(item));
+        if (this.pendingActionCallback != null) {
+            ActionCallback callback = this.pendingActionCallback;
+            this.pendingActionCallback = null;
+            callback.onActionChosen(new ItemAction(item));
+        }
     }
 
     @Override
     public void onForfeit() {
-        this.resolvePlayerAction(new ForfeitAction());
+        if (this.pendingActionCallback != null) {
+            ActionCallback callback = this.pendingActionCallback;
+            this.pendingActionCallback = null;
+            callback.onActionChosen(new ForfeitAction());
+        }
     }
 
     /** Dispatch the resolved action back to the Combat model */
@@ -151,11 +171,14 @@ public class CombatController extends Controller<CombatView>
     @Override
     public void requestActionChoice(CombatContext context, ActionCallback callback) {
         this.pendingActionCallback = callback;
+        this.view.showMainActionMenu();
     }
 
     @Override
     public void requestSwitchChoice(CombatContext context, ActionCallback callback) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'requestSwitchChoice'");
+        this.pendingSwitchCallback = callback;
+        this.view.showSwitchMenu(
+                context.allyTeam().getAvailable(),
+                context.allyTeam().getActive().isKo());
     }
 }
