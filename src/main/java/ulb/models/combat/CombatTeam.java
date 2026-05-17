@@ -55,6 +55,10 @@ public class CombatTeam {
         return this.getAlive().stream().filter(b -> b != this.active).toList();
     }
 
+    public boolean hasAvailable() {
+        return this.getAvailable().size() > 0;
+    }
+
     public void syncToRunTeam() {
         this.members.forEach(CombatBugemon::syncToRunBugemon);
     }

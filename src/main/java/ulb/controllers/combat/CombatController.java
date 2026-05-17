@@ -3,6 +3,7 @@ package ulb.controllers.combat;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
@@ -19,6 +20,7 @@ import ulb.models.combat.CombatResult;
 import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
+import ulb.models.combat.turn.TurnResolvedCallback;
 import ulb.models.combat.turn.TurnAction.AttackAction;
 import ulb.models.combat.turn.TurnAction.ForfeitAction;
 import ulb.models.combat.turn.TurnAction.ItemAction;
@@ -72,37 +74,17 @@ public class CombatController extends Controller<CombatView>
         this.startTurnPhase();
     }
 
-    // ── Phase Flow ────────────────────────────────────────────────────────────
-
     private void startTurnPhase() {
-        if (this.combat.isFinished()) {
-            this.onCombatEnded();
-            return;
-        }
-
-        this.combat.requestActions((playerAction, opponentAction) -> {
-            this.combat.resolveTurn(playerAction, opponentAction, steps -> {
-                this.pendingSteps = steps.iterator();
-                this.advanceStep();
-            });
-        });
+        this.combat.requestActions(this::onBothActionsReady);
     }
 
-    // ── CombatStrategy Implementation ─────────────────────────────────────────
-
-    @Override
-    public void chooseAction(CombatContext ctx, ActionCallback cb) {
-        this.view.setModel(ctx.allyTeam(), ctx.opponentTeam(), this.playerInventory);
-        this.view.refresh();
-
-        this.pendingActionCallback = cb;
-        this.view.refreshMenuState();
+    private void onBothActionsReady(TurnAction playerAction, TurnAction opponentAction) {
+        this.combat.resolveTurn(playerAction, opponentAction, this.pendingSteps::addAll);
     }
 
     @Override
-    public void chooseSwitch(CombatContext ctx, ActionCallback cb) {
-        this.pendingActionCallback = cb;
-        this.view.refreshMenuState();
+    public void onNext() {
+        this.advanceStep();
     }
 
     // ── View Listener (Player Input) ──────────────────────────────────────────
@@ -139,74 +121,39 @@ public class CombatController extends Controller<CombatView>
     // ── Step Iteration and Animations ─────────────────────────────────────────
 
     private void advanceStep() {
-        if (!this.pendingSteps.hasNext()) {
-            this.onStepsExhausted();
-            return;
+        // TODO: add back animation
+
+        if (!this.pendingSteps.isEmpty()) {
+            TurnStep step = this.pendingSteps.poll();
+            LOG.debug("Advancing step: {}", step);
+            this.view.showStepDialog(step);
+
+            // TODO: refresh hp depending on the step
         }
 
-        TurnStep step = this.pendingSteps.next();
-        LOG.debug("Advancing step: {}", step);
-
-        Runnable animationCallback = switch (step) {
-            case AttackStep a -> () -> {
-                boolean isPlayerAttacking = a.attacker() == this.combat.getPlayerTeam().getActive();
-                if (isPlayerAttacking) {
-                    this.view.playTrainerAttackAnimation(() -> {
-                        this.view.updateOpponentInfo(a.defender());
-                        this.view.showStepDialog(step);
-                    });
-                } else {
-                    this.view.playOpponentAttackAnimation(() -> {
-                        this.view.updateTrainerInfo(a.defender());
-                        this.view.showStepDialog(step);
-                    });
-                }
-            };
-
-            case SwitchStep s -> () -> {
-                if (s.isPlayer()) {
-                    this.view.updateTrainerBugemon(s.bugemon());
-                } else {
-                    this.view.updateOpponentBugemon(s.bugemon());
-                }
-                this.view.showStepDialog(step);
-            };
-
-            case KoStep k -> () -> {
-                boolean isPlayerKo = k.koBugemon() == this.combat.getPlayerTeam().getActive();
-                if (isPlayerKo) {
-                    this.view.playDeathAnimationForTrainer(() -> {
-                        this.view.showStepDialog(step);
-                    });
-                } else {
-                    this.view.playDeathAnimationForOpponent(() -> {
-                        this.view.showStepDialog(step);
-                    });
-                }
-            };
-
-            default -> () -> this.view.showStepDialog(step);
-        };
-
-        this.view.lockNextButton();
-        animationCallback.run();
+        if (this.pendingSteps.isEmpty()) {
+            this.view.hideDialog();
+            // TODO: this.processEndOfTurn();
+        }
     }
 
-    @Override
-    public void onNext() {
-        this.advanceStep();
-    }
-
-    private void onStepsExhausted() {
+    private void processEndOfTurn() {
         if (this.combat.isFinished()) {
-            this.onCombatEnded();
-        } else {
+            this.onCombatFinished();
+        } else if (this.combat.getPlayerTeam().getActive().isKo()
+            && this.combat.getPlayerTeam().hasAvailable()) {
+            this.handlePlayerKo();
             this.view.hideDialog();
             this.startTurnPhase();
         }
     }
 
-    private void onCombatEnded() {
+    private void handlePlayerKo() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'handlePlayerKo'");
+    }
+
+    private void onCombatFinished() {
         boolean won = this.combat.getResult() == CombatResult.VICTORY;
         LOG.info("Combat ended. Victory: {}", won);
         this.metaController.onCombatFinished(won);
