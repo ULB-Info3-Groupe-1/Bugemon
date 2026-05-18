@@ -40,7 +40,6 @@ public class Combat {
     private final CombatTeam opponentTeam;
 
     private final Inventory playerInventory;
-    private final Inventory opponentInventory;
 
     private final CombatStrategy playerStrategy;
     private final CombatStrategy opponentStrategy;
@@ -55,7 +54,7 @@ public class Combat {
     private boolean finished;
 
     public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, int floor, boolean bossMode,
-            Inventory playerInventory, Inventory opponentInventory, CombatStrategy playerStrategy,
+            Inventory playerInventory, CombatStrategy playerStrategy,
             CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
@@ -64,7 +63,6 @@ public class Combat {
         this.bossMode = bossMode;
 
         this.playerInventory = playerInventory;
-        this.opponentInventory = opponentInventory;
 
         this.playerStrategy = playerStrategy;
         this.opponentStrategy = opponentStrategy;

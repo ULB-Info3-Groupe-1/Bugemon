@@ -15,7 +15,8 @@ import ulb.models.run.RunTeam;
 import ulb.models.team.factory.TeamFactory;
 
 /**
- * Produces a {@link Combat} where the player acts through a {@link PlayerInputHandler}.
+ * Produces a {@link Combat} where the player acts through a
+ * {@link PlayerInputHandler}.
  */
 public class ManualCombatFactory extends CombatFactory {
 
@@ -37,7 +38,7 @@ public class ManualCombatFactory extends CombatFactory {
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
         CombatStrategy playerStrategy = new PlayerStrategy(this.handler);
         CombatStrategy opponentStrategy = new AutoStrategy(this.random);
-        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory, new Inventory(),
+        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory,
                 playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
     }
 }
