@@ -16,6 +16,7 @@ public class RandomTeamFactory extends TeamFactory {
 
     @Override
     public Team create(int size) {
+        this.checkSize(size);
         Team team = new Team();
         List<Bugemon> available = new ArrayList<>(this.bugemons);
         available.removeIf(Bugemon::isBoss);

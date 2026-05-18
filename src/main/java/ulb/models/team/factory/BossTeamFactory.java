@@ -9,7 +9,8 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Produces a {@link Team} led by a named boss Bugémon, padded with random members.
+ * Produces a {@link Team} led by a named boss Bugémon, padded with random
+ * members.
  */
 public class BossTeamFactory extends TeamFactory {
 
@@ -22,6 +23,7 @@ public class BossTeamFactory extends TeamFactory {
 
     @Override
     public Team create(int size) {
+        this.checkSize(size);
         Team team = new Team();
         this.bugemons.stream().filter(b -> b.name().equals(this.bossName)).findFirst().map(PlayerBugemon::new)
                 .ifPresent(team::add);
