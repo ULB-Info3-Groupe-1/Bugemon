@@ -26,7 +26,8 @@ public class InventoryService {
     }
 
     /**
-     * Resets the player's inventory to a default state with the default items, then grants the starter items granted by
+     * Resets the player's inventory to a default state with the default items, then
+     * grants the starter items granted by
      * every unlocked {@link StarterItemsEffect} skill.
      */
     public void resetInventory() {
@@ -39,7 +40,8 @@ public class InventoryService {
 
     // TODO: UI should permit the player to select the +x items granted by the skill
     /**
-     * For every unlocked {@link StarterItemsEffect}, adds {@code quantity} units of every item in the inventory whose
+     * For every unlocked {@link StarterItemsEffect}, adds {@code quantity} units of
+     * every item in the inventory whose
      * category matches the effect's category.
      */
     private void applyStarterItemsSkills(Inventory inventory) {
@@ -64,6 +66,10 @@ public class InventoryService {
 
     public void saveInventory(Inventory inventory) {
         this.inventoryRepository.saveInventory(this.playername, inventory);
+    }
+
+    public void save(Inventory inventory) {
+        this.saveInventory(inventory);
     }
 
 }

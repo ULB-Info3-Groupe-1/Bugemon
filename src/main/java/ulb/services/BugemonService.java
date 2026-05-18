@@ -10,6 +10,7 @@ import ulb.models.bugemon.ElementType;
 import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.skills.Skill;
+import ulb.models.team.Team;
 import ulb.repositories.PlayerBugemonRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -37,7 +38,8 @@ public class BugemonService {
     }
 
     /**
-     * Get all bugemons of the game and return the PlayerBugemons linked to the bugemon.
+     * Get all bugemons of the game and return the PlayerBugemons linked to the
+     * bugemon.
      *
      * @return List of PlayerBugemons
      */
@@ -57,9 +59,9 @@ public class BugemonService {
      * Save a new bugemon in the database.
      *
      * @param bugemon
-     *            (CreateBugemonDTO) the bugemon to be saved
+     *                (CreateBugemonDTO) the bugemon to be saved
      * @throws BugemonNameIsEmptyException
-     *             if the name of the bugemon is empty
+     *                                     if the name of the bugemon is empty
      */
     public void saveNewBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonNameAlreadyExistsException {
@@ -82,7 +84,7 @@ public class BugemonService {
      * Get all attacks matching a specific Bugemon type.
      *
      * @param type
-     *            type used to filter attacks
+     *             type used to filter attacks
      * @return attacks for the provided type
      */
     public List<Attack> getAttacksByType(ElementType type) {
@@ -93,7 +95,7 @@ public class BugemonService {
      * Saves the state of a single bugemon to the database.
      *
      * @param bugemon
-     *            the bugemon to save
+     *                the bugemon to save
      */
     public void saveBugemonState(PlayerBugemon bugemon) {
         this.playerBugemonRepository.updatePlayerBugemon(
@@ -105,7 +107,7 @@ public class BugemonService {
      * Saves the level up of a bugemon to the database.
      *
      * @param levelUp
-     *            the level up of the bugemon to save
+     *                the level up of the bugemon to save
      */
     public void saveLevelUp(LevelUp levelUp) {
         this.saveBugemonState(levelUp.getBugemon());
@@ -117,6 +119,10 @@ public class BugemonService {
 
     public List<Skill> getStatBonusSkills() {
         return this.statBonusSkills;
+    }
+
+    public void save(Team activeTeam) {
+        activeTeam.getMembers().forEach(this::saveBugemonState);
     }
 
 }
