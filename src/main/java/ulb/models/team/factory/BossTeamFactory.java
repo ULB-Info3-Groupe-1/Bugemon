@@ -9,8 +9,7 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Produces a {@link Team} led by a named boss Bugémon, padded with random
- * members.
+ * Produces a {@link Team} led by a named boss Bugémon, padded with random members.
  */
 public class BossTeamFactory extends TeamFactory {
 

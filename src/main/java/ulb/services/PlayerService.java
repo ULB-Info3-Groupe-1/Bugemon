@@ -3,7 +3,6 @@ package ulb.services;
 import java.util.List;
 import java.util.Map;
 
-import ulb.models.player.PlayerState;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;

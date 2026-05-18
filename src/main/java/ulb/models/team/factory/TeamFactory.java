@@ -9,8 +9,7 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Abstract creator — declares the factory method {@link #create(int)} that each
- * concrete subclass overrides to
+ * Abstract creator — declares the factory method {@link #create(int)} that each concrete subclass overrides to
  * instantiate a specific {@link Team} variant.
  */
 public abstract class TeamFactory {
@@ -27,8 +26,7 @@ public abstract class TeamFactory {
     public abstract Team create(int size);
 
     /**
-     * Fills {@code team} with randomly-picked members from {@code available} until
-     * it reaches {@code size}.
+     * Fills {@code team} with randomly-picked members from {@code available} until it reaches {@code size}.
      */
     protected void fillTeam(int size, Team team, List<Bugemon> available) {
         while (team.size() < size && !available.isEmpty()) {

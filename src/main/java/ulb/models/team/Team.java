@@ -13,8 +13,7 @@ import ulb.models.team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.team.exceptions.TeamAlreadyFullException;
 
 /**
- * A team of up to {@value Configuration.Game#MAX_TEAM_SIZE} {@link Bugemon}s.
- * Enforces capacity and uniqueness (by ID).
+ * A team of up to {@value Configuration.Game#MAX_TEAM_SIZE} {@link Bugemon}s. Enforces capacity and uniqueness (by ID).
  * Implements {@link Iterable} for use in enhanced for-loops.
  */
 public class Team {
@@ -82,9 +81,8 @@ public class Team {
      * Checks if a Bugemon with the same name is already in the team
      *
      * @param bugemon
-     *                (Bugemon) the Bugemon to search for
-     * @return (boolean) true if a Bugemon with the same name is already in the
-     *         team, false otherwise
+     *            (Bugemon) the Bugemon to search for
+     * @return (boolean) true if a Bugemon with the same name is already in the team, false otherwise
      */
     public boolean contains(PlayerBugemon bugemon) {
         return this.members.contains(bugemon);
