@@ -1,5 +1,5 @@
 -- Query to create the database schema
--- CreateSchema
+-- CreateTables
 
 CREATE TABLE IF NOT EXISTS "attacks" (
   "id" varchar PRIMARY KEY,
