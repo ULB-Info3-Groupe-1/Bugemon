@@ -13,13 +13,13 @@ public class PlayerState {
 
     private Team activeTeam;
     private final Inventory inventory;
-    private final List<Skill> skill;
+    private final List<Skill> skills;
 
     public PlayerState(String playerName, Team activeTeam, Inventory inventory, List<Skill> skill) {
         this.playerName = playerName;
         this.activeTeam = activeTeam;
         this.inventory = inventory;
-        this.skill = skill;
+        this.skills = skill;
     }
 
     public String getPlayerName() {
@@ -39,19 +39,19 @@ public class PlayerState {
     }
 
     public List<Skill> getSkills() {
-        return this.skill;
+        return this.skills;
     }
 
     public void setSkills(List<Skill> skill) {
-        this.skill.clear();
-        this.skill.addAll(skill);
+        this.skills.clear();
+        this.skills.addAll(skill);
     }
 
     public void addSkill(Skill skill) {
-        this.skill.add(skill);
+        this.skills.add(skill);
     }
 
     public void removeSkill(Skill skill) {
-        this.skill.remove(skill);
+        this.skills.remove(skill);
     }
 }
