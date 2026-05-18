@@ -10,19 +10,20 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.skills.Skill;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
-import ulb.models.trainer.ManualTrainer;
-import ulb.models.trainer.Trainer;
+import ulb.repositories.InventoryRepository;
+import ulb.services.InventoryService;
+import ulb.services.SkillService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestFloorGenerator {
@@ -41,12 +42,14 @@ public class TestFloorGenerator {
 
     @Before
     public void setup() {
+        InventoryService.resetInstance();
+        InventoryService.init("TestPlayer", mock(InventoryRepository.class), mock(SkillService.class));
+
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
 
         List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         mockBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
-        this.floorGenerator = new FloorGenerator(mockBugemons, DEFAULT_SKILLS, trainer);
+        this.floorGenerator = new FloorGenerator(mockBugemons, playerTeam, DEFAULT_SKILLS);
         this.root = this.floorGenerator.getRoot();
 
         this.allNodes = new ArrayList<>();
@@ -77,6 +80,11 @@ public class TestFloorGenerator {
 
             this.deepestLevel++;
         }
+    }
+
+    @After
+    public void tearDown() {
+        InventoryService.resetInstance();
     }
 
     public void testAllNodesHaveRooms() {

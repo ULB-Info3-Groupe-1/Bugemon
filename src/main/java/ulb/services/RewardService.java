@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon.Item;
 import ulb.models.level_up.Upgrade;
 import ulb.models.reward.AttackReward;
 import ulb.models.reward.ItemReward;
 import ulb.models.reward.Reward;
 import ulb.models.reward.StatReward;
-import ulb.repositories.InventoryRepository;
 import ulb.repositories.StaticDataRepository;
 
 public class RewardService {
@@ -22,23 +20,16 @@ public class RewardService {
     private static final int MAX_STAT_BONUS = 5;
 
     private final StaticDataRepository staticDatarepository;
-    private final InventoryRepository inventoryRepository;
-    private final String playerName;
     private Random random;
     private List<Reward> options;
-    private Inventory inventory;
     private final List<Attack> availableAttacks;
     private final List<Item> availableItems;
 
-    public RewardService(StaticDataRepository staticDataRepository, InventoryRepository inventoryRepository,
-            String playerName) {
+    public RewardService(StaticDataRepository staticDataRepository) {
         this.staticDatarepository = staticDataRepository;
-        this.inventoryRepository = inventoryRepository;
-        this.playerName = playerName;
 
-        this.inventory = this.inventoryRepository.getPlayerInventory(this.playerName);
-        this.availableAttacks = new ArrayList<Attack>(this.staticDatarepository.getAllAttacks().values());
-        this.availableItems = new ArrayList<Item>(this.staticDatarepository.getAllItems());
+        this.availableAttacks = new ArrayList<>(this.staticDatarepository.getAllAttacks().values());
+        this.availableItems = new ArrayList<>(this.staticDatarepository.getAllItems());
         this.random = new Random();
     }
 
@@ -58,7 +49,7 @@ public class RewardService {
         this.options.add(new AttackReward(this.availableAttacks.get(randomAttackIndex)));
 
         int randomItemIndex = this.random.nextInt(this.availableItems.size());
-        this.options.add(new ItemReward(this.availableItems.get(randomItemIndex), this.inventory));
+        this.options.add(new ItemReward(this.availableItems.get(randomItemIndex)));
 
         java.util.Collections.shuffle(this.options);
 

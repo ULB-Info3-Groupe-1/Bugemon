@@ -20,15 +20,13 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
     private final BugemonService bugemonService;
     private final TeamService teamService;
     private final TowerService towerService;
-    private final InventoryService inventoryService;
 
     public SaveMenuController(MetaController metaController, BugemonService bugemonService, TeamService teamService,
-            TowerService towerService, InventoryService inventoryService) {
+            TowerService towerService) {
         super(metaController, ViewLoader.load(SaveMenuView::new));
         this.bugemonService = bugemonService;
         this.teamService = teamService;
         this.towerService = towerService;
-        this.inventoryService = inventoryService;
         this.view.setListener(this);
     }
 
@@ -38,7 +36,7 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
         this.bugemonService.clearAllPlayerBugemons();
         this.teamService.clearTeamsAndActiveTeam();
         this.towerService.clearTowerProgress();
-        this.inventoryService.resetInventory();
+        InventoryService.getInstance().resetInventory();
         this.metaController.onMainMenu();
     }
 
@@ -46,7 +44,7 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
     public void onContinue() {
         LOG.info("Continuing game - loading player data");
         this.teamService.loadTeamsAndActiveTeam();
-        this.inventoryService.loadInventory();
+        InventoryService.getInstance().loadInventory();
         this.metaController.onMainMenu();
     }
 

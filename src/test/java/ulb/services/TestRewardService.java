@@ -1,13 +1,15 @@
 package ulb.services;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
@@ -22,52 +24,59 @@ import ulb.repositories.InventoryRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.utils.test.TestUtilsBugemons;
 
-class TestRewardService {
+public class TestRewardService {
 
-    private static final String PLAYERNAME = "default_player";
     private StaticDataRepository staticDataRepository;
-    private InventoryRepository inventoryRepository;
     private RewardService rewardService;
 
     @Before
     public void setUp() {
         this.staticDataRepository = mock(StaticDataRepository.class);
-        this.inventoryRepository = mock(InventoryRepository.class);
 
-        this.rewardService = new RewardService(this.staticDataRepository, this.inventoryRepository, PLAYERNAME);
+        when(this.staticDataRepository.getAllItems())
+                .thenReturn(List.of(new Item("item-01", "Potion", "Soin", Item.ItemType.HEALING, null)));
+        when(this.staticDataRepository.getAllAttacks()).thenReturn(
+                Map.of("atk-01", new Attack("atk-01", "TestAttack", BugemonType.FLORA, "Description", 50, null)));
+
+        this.rewardService = new RewardService(this.staticDataRepository);
     }
 
     @Test
-    void testRewardsAreCorrectlyGenerated() {
+    public void testRewardsAreCorrectlyGenerated() {
         List<Reward> options = this.rewardService.generateRewards();
 
-        Assertions.assertEquals(3, options.size(), "We should have exactly 3 reward options");
-        assertTrue(options.stream().anyMatch(r -> r instanceof StatReward), "StatReward Missing");
-        assertTrue(options.stream().anyMatch(r -> r instanceof AttackReward), "AttackReward Missing");
-        assertTrue(options.stream().anyMatch(r -> r instanceof ItemReward), "Manque ItemReward Missing");
+        assertEquals("We should have exactly 3 reward options", 3, options.size());
+        assertTrue("StatReward Missing", options.stream().anyMatch(r -> r instanceof StatReward));
+        assertTrue("AttackReward Missing", options.stream().anyMatch(r -> r instanceof AttackReward));
+        assertTrue("Manque ItemReward Missing", options.stream().anyMatch(r -> r instanceof ItemReward));
     }
 
     @Test
-    void testStatRewardIsNotEmpty() {
+    public void testStatRewardIsNotEmpty() {
         List<Reward> options = this.rewardService.generateRewards();
         StatReward statReward = (StatReward) options.stream().filter(r -> r instanceof StatReward).findFirst()
                 .orElseThrow();
 
-        assertTrue(statReward.getSummary().contains("+"), "Stat bonus should display a +");
+        assertTrue("Stat bonus should display a +", statReward.getSummary().contains("+"));
     }
 
     @Test
-    void testItemRewardIsAddedToInventory() {
+    public void testItemRewardIsAddedToInventory() {
         Inventory fakeInventory = new Inventory();
+        InventoryRepository repo = mock(InventoryRepository.class);
+        when(repo.getPlayerInventory("Player1")).thenReturn(fakeInventory);
+
+        InventoryService.init("Player1", repo, mock(SkillService.class));
+
         Item fakeItem = new Item("item-01", "Potion", "Soin", Item.ItemType.HEALING, null);
-        ItemReward itemReward = new ItemReward(fakeItem, fakeInventory);
+        ItemReward itemReward = new ItemReward(fakeItem);
         itemReward.applyReward(null);
 
-        assertTrue(fakeInventory.hasItem(fakeItem), "Not in inventory!");
+        assertTrue("Not in inventory!", fakeInventory.hasItem(fakeItem));
     }
 
     @Test
-    void testAddAttackToBugemon() {
+    public void testAddAttackToBugemon() {
         Bugemon fakeBugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
         Attack fakeAttack = new Attack("atk-01", "TestAttack", BugemonType.FLORA, "Description", 50, null);
 
@@ -77,7 +86,7 @@ class TestRewardService {
 
         attackReward.applyReward(fakeBugemon);
 
-        assertTrue(fakeBugemon.getAttackList().contains(fakeAttack), "Bugemon should have learned the new attack");
+        assertTrue("Bugemon should have learned the new attack", fakeBugemon.getAttackList().contains(fakeAttack));
 
     }
 }

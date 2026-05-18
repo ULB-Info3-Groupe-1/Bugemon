@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,12 +28,19 @@ public class TestInventoryService {
     @Before
     public void setUp() {
         this.inventoryRepo = mock(InventoryRepository.class);
-        this.inventoryService = new InventoryService(PLAYER, this.inventoryRepo, mock(SkillService.class));
+        InventoryService.init(PLAYER, this.inventoryRepo, mock(SkillService.class));
+
+        this.inventoryService = InventoryService.getInstance();
 
         Item item = mock(Item.class);
         Inventory inventory = new Inventory();
         inventory.addItem(item, 1);
         when(this.inventoryRepo.getPlayerInventory(PLAYER)).thenReturn(new Inventory());
+    }
+
+    @After
+    public void tearDown() {
+        InventoryService.resetInstance();
     }
 
     @Test
@@ -52,6 +60,8 @@ public class TestInventoryService {
 
     @Test
     public void loadInventory_shouldGrantStarterItems_whenSkillUnlocked() {
+        InventoryService.resetInstance();
+
         SkillService skillService = mock(SkillService.class);
         Skill starterSkill = new SkillBuilder().effect(new StarterItemsEffect(2, "soin")).build();
         when(skillService.getSkills(StarterItemsEffect.class)).thenReturn(List.of(starterSkill));
@@ -64,8 +74,8 @@ public class TestInventoryService {
 
         when(this.inventoryRepo.getPlayerInventory(PLAYER)).thenReturn(loadedInventoryMock);
 
-        InventoryService service = new InventoryService(PLAYER, this.inventoryRepo, skillService);
-        Inventory resultInventory = service.loadInventory();
+        InventoryService.init(PLAYER, this.inventoryRepo, skillService);
+        Inventory resultInventory = InventoryService.getInstance().loadInventory();
 
         assertEquals(Integer.valueOf(3), resultInventory.getMap().get(healingItem));
         assertEquals(Integer.valueOf(1), resultInventory.getMap().get(boostItem));
@@ -73,6 +83,8 @@ public class TestInventoryService {
 
     @Test
     public void loadInventory_shouldNotChangeInventory_whenNoStarterItemsSkill() {
+        InventoryService.resetInstance();
+
         SkillService skillService = mock(SkillService.class);
         when(skillService.getSkills(StarterItemsEffect.class)).thenReturn(List.of());
 
@@ -82,8 +94,8 @@ public class TestInventoryService {
 
         when(this.inventoryRepo.getPlayerInventory(PLAYER)).thenReturn(loadedInventoryMock);
 
-        InventoryService service = new InventoryService(PLAYER, this.inventoryRepo, skillService);
-        Inventory resultInventory = service.loadInventory();
+        InventoryService.init(PLAYER, this.inventoryRepo, skillService);
+        Inventory resultInventory = InventoryService.getInstance().loadInventory();
 
         assertEquals(Integer.valueOf(1), resultInventory.getMap().get(healingItem));
     }

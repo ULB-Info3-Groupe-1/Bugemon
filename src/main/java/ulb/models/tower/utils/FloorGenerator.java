@@ -11,12 +11,12 @@ import java.util.Random;
 import java.util.Set;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.skills.Skill;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.room.CombatRoom;
 import ulb.models.tower.room.EmptyRoom;
 import ulb.models.tower.room.RewardRoom;
-import ulb.models.trainer.Trainer;
 import ulb.models.utils.Position;
 
 public class FloorGenerator {
@@ -51,18 +51,18 @@ public class FloorGenerator {
 
     private Set<FloorNode> visitedNode;
 
-    public FloorGenerator(List<Bugemon> allBugemons, List<Skill> skills, Trainer playerTrainer) {
+    public FloorGenerator(List<Bugemon> allBugemons, BugemonTeam playerTeam, List<Skill> skills) {
         this.allBugemons = allBugemons;
         this.skills = skills;
         this.random = new Random();
-        this.generateNewFloor(playerTrainer);
+        this.generateNewFloor(playerTeam);
     }
 
-    public void generateNewFloor(Trainer playerTrainer) {
+    public void generateNewFloor(BugemonTeam playerTeam) {
         for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
             this.initialize();
             this.generateFloor();
-            if (this.placeInterestPoints(playerTrainer)) {
+            if (this.placeInterestPoints(playerTeam)) {
                 return;
             }
         }
@@ -153,12 +153,12 @@ public class FloorGenerator {
         return neighbors;
     }
 
-    private boolean placeInterestPoints(Trainer playerTrainer) {
-        this.bossNode.setRoom(new CombatRoom(this.allBugemons, this.skills, playerTrainer, true));
+    private boolean placeInterestPoints(BugemonTeam playerTeam) {
+        this.bossNode.setRoom(new CombatRoom(this.allBugemons, playerTeam, this.skills, true));
 
         List<FloorNode> remaining = this.getAllNonRootNodes();
 
-        List<FloorNode> combatNodes = this.placeCombatRooms(remaining, playerTrainer);
+        List<FloorNode> combatNodes = this.placeCombatRooms(remaining, playerTeam);
         int rewardPlaced = this.placeRewardRooms(remaining, combatNodes);
         this.fillEmptyRooms(remaining);
 
@@ -175,14 +175,14 @@ public class FloorGenerator {
         return nodes;
     }
 
-    private List<FloorNode> placeCombatRooms(List<FloorNode> remaining, Trainer playerTrainer) {
+    private List<FloorNode> placeCombatRooms(List<FloorNode> remaining, BugemonTeam playerTeam) {
         List<FloorNode> combatNodes = new ArrayList<>();
         Iterator<FloorNode> it = remaining.iterator();
 
         while (it.hasNext() && combatNodes.size() < this.combatCount) {
             FloorNode node = it.next();
             if (!node.equals(this.bossNode)) {
-                node.setRoom(new CombatRoom(this.allBugemons, this.skills, playerTrainer, false));
+                node.setRoom(new CombatRoom(this.allBugemons, playerTeam, this.skills, false));
                 combatNodes.add(node);
                 it.remove();
             }

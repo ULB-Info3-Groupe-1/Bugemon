@@ -12,16 +12,14 @@ public class TowerService {
     private final PlayerRepository playerRepository;
     private final BugemonService bugemonService;
     private final TeamService teamService;
-    private final InventoryService inventoryService;
     private final SkillService skillService;
 
     public TowerService(PlayerRepository playerRepository, String playername, BugemonService bugemonService,
-            TeamService teamService, InventoryService inventoryService, SkillService skillService) {
+            TeamService teamService, SkillService skillService) {
         this.playername = playername;
         this.playerRepository = playerRepository;
         this.bugemonService = bugemonService;
         this.teamService = teamService;
-        this.inventoryService = inventoryService;
         this.skillService = skillService;
     }
 
@@ -62,11 +60,11 @@ public class TowerService {
     }
 
     public void handleCombatEnd(Tower tower, boolean playerWon) {
-        this.inventoryService.saveInventory(tower.getInventory());
         tower.update();
 
         if (!playerWon || tower.isFinished()) {
             this.clearTowerProgress();
+            this.teamService.restoreHpTeam();
         } else {
             this.saveFloor(tower.getCurrentFloorNumber());
             this.teamService.regenHpActiveTeamPostCombat();
@@ -79,8 +77,7 @@ public class TowerService {
      * @return the new tower
      */
     public Tower createTower() {
-        return new Tower(this.bugemonService.getAllDefaultBugemons(), this.skillService.getUnlockedSkills(),
-                this.teamService.getRequiredActiveTeam(), this.inventoryService.loadInventory(),
-                this.getCurrentFloor());
+        return new Tower(this.bugemonService.getAllDefaultBugemons(), this.teamService.getRequiredActiveTeam(),
+                this.skillService.getUnlockedSkills(), this.getCurrentFloor());
     }
 }

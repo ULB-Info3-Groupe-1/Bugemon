@@ -4,18 +4,24 @@ import java.util.List;
 
 import ulb.factories.CombatFactory;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.combat.Combat;
 import ulb.models.skills.Skill;
-import ulb.models.trainer.Trainer;
 
 public final class CombatRoom extends Room {
     private final boolean isBoss;
 
-    private final Combat combat;
+    private final List<Bugemon> allBugemons;
+    private final BugemonTeam playerTeam;
+    private final List<Skill> skills;
 
-    public CombatRoom(List<Bugemon> allBugemons, List<Skill> skills, Trainer playerTrainer, boolean isBoss) {
+    private Combat combat;
+
+    public CombatRoom(List<Bugemon> allBugemons, BugemonTeam playerTeam, List<Skill> skills, boolean isBoss) {
         this.isBoss = isBoss;
-        this.combat = CombatFactory.create(allBugemons, playerTrainer, skills, this.isBoss);
+        this.allBugemons = allBugemons;
+        this.playerTeam = playerTeam;
+        this.skills = skills;
     }
 
     public Combat getCombat() {
@@ -24,6 +30,9 @@ public final class CombatRoom extends Room {
 
     @Override
     public boolean hasPlayerWon() {
+        if (this.combat == null) {
+            return false;
+        }
         return this.combat.hasPlayerWon();
     }
 
@@ -38,6 +47,7 @@ public final class CombatRoom extends Room {
 
     @Override
     public void visit(RoomVisitor roomVisitor) {
+        this.combat = CombatFactory.create(this.allBugemons, this.playerTeam, this.skills, this.isBoss);
         roomVisitor.visitCombatRoom(this);
         this.setVisited();
     }

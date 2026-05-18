@@ -20,7 +20,6 @@ import ulb.models.combat.Combat;
 import ulb.models.level_up.LevelUp;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.services.BugemonService;
-import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.RewardService;
 import ulb.services.SkillService;
@@ -82,14 +81,12 @@ public class MetaController {
      *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
-            TeamService teamService, TowerService towerService, InventoryService inventoryService,
-            SkillService skillService, RewardService rewardService) throws IOException {
+            TeamService teamService, TowerService towerService, SkillService skillService, RewardService rewardService)
+            throws IOException {
         this.stage = primaryStage;
-        this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
-                inventoryService);
+        this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService);
         this.mainMenuController = new MainMenuController(this, teamService);
-        this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, inventoryService,
-                skillService);
+        this.manualCombatController = new ManualCombatController(this, teamService, bugemonService, skillService);
         this.automaticCombatController = new AutomaticCombatController(this, teamService, bugemonService,
                 skillService.getSkills(StatBonusEffect.class));
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
@@ -134,7 +131,6 @@ public class MetaController {
     public void onRewardChoiceFinished() {
         if (this.isTowerActive()) {
             this.towerController.onRewardChosen();
-            return;
         }
     }
 
@@ -232,7 +228,7 @@ public class MetaController {
         });
         this.transitions.put(Window.TOWER, () -> {
             this.isTowerActive = true;
-            this.musicPlayer.playAmbiance(Ambiance.COMBAT, false);
+            this.musicPlayer.playAmbiance(Ambiance.MENU, false);
             this.towerController.show();
         });
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
