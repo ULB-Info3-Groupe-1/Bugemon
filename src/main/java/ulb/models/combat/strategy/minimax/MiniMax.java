@@ -9,10 +9,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.snapshot.CombatBugemonSnapshot;
 import ulb.models.combat.snapshot.CombatSnapshot;
 import ulb.models.combat.snapshot.TeamSnapshot;
-import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.effect.HealEffect;
 import ulb.models.item.Item;
 
@@ -31,8 +31,6 @@ public class MiniMax {
 
     private final DamageCalculator damageCalculator;
 
-    private CombatSnapshot root;
-
     public MiniMax(int maxDepth) {
         if (maxDepth <= 0) {
             throw new IllegalArgumentException("maxDepth must be > 0");
@@ -43,7 +41,6 @@ public class MiniMax {
 
     public SimAction chooseBestAction(CombatSnapshot state, boolean chooseForAiTeam) {
         Objects.requireNonNull(state);
-        this.root = state;
 
         List<SimAction> actions = this.generateActions(state, chooseForAiTeam);
         if (actions.isEmpty()) {

@@ -33,6 +33,12 @@ public class InventoryRepository extends AbstractRepository {
 
     // --- Items/Inventory ---
 
+    public Inventory getDefaultInventory() {
+        Inventory inventory = new Inventory();
+        this.defaultInventory.getMap().forEach(inventory::addItem);
+        return inventory;
+    }
+
     public Inventory getPlayerInventory(String playername) {
         LOG.debug("Getting inventory for playername: {}", playername);
         Inventory inventory = new Inventory();

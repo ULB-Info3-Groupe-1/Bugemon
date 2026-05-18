@@ -40,6 +40,7 @@ public class Combat {
     private final CombatTeam opponentTeam;
 
     private final Inventory playerInventory;
+    private final Inventory opponentInventory;
 
     private final CombatStrategy playerStrategy;
     private final CombatStrategy opponentStrategy;
@@ -54,8 +55,8 @@ public class Combat {
     private boolean finished;
 
     public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, int floor, boolean bossMode,
-            Inventory playerInventory, CombatStrategy playerStrategy, CombatStrategy opponentStrategy,
-            DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
+            Inventory playerInventory, Inventory opponentInventory, CombatStrategy playerStrategy,
+            CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
 
@@ -63,6 +64,7 @@ public class Combat {
         this.bossMode = bossMode;
 
         this.playerInventory = playerInventory;
+        this.opponentInventory = opponentInventory;
 
         this.playerStrategy = playerStrategy;
         this.opponentStrategy = opponentStrategy;
@@ -76,11 +78,11 @@ public class Combat {
     }
 
     private CombatContext makePlayerContext() {
-        return new CombatContext(this.playerTeam, this.opponentTeam);
+        return new CombatContext(this.playerTeam, this.opponentTeam, this.playerInventory, this.opponentInventory);
     }
 
     private CombatContext makeOpponentContext() {
-        return new CombatContext(this.opponentTeam, this.playerTeam);
+        return new CombatContext(this.opponentTeam, this.playerTeam, this.opponentInventory, this.playerInventory);
     }
 
     public void requestActions(TurnActionsReadyCallback callback) {

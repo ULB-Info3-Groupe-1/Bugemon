@@ -33,7 +33,7 @@ public class AutoCombatFactory extends CombatFactory {
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
         CombatStrategy playerStrategy = new AutoStrategy(this.random);
         CombatStrategy opponentStrategy = new AutoStrategy(this.random);
-        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory, playerStrategy,
-                opponentStrategy, this.damageCalculator, this.effectProcessor);
+        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory, new Inventory(),
+                playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
     }
 }

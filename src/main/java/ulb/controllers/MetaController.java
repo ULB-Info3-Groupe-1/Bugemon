@@ -180,8 +180,9 @@ public class MetaController {
             Inventory playerInventory = this.inventoryService.loadInventory();
             TeamFactory opponentFactory = this.teamService
                     .createOpponentFactory(this.bugemonService.getAllDefaultBugemons(), this.random);
-            CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.combatController,
-                    Configuration.Game.FLOOR_MIN, false);
+            CombatFactory combatFactory = this.combatService.createManualCombatFactory(
+                    this.inventoryService.getDefaultInventory(), this.combatController, Configuration.Game.FLOOR_MIN,
+                    false);
             this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
             this.switchTo(Window.MANUAL_COMBAT);
         } catch (NoActiveTeamException e) {

@@ -22,7 +22,6 @@ import ulb.models.combat.effect.StatusEffect;
 import ulb.models.combat.strategy.AutoStrategy;
 import ulb.models.combat.turn.TurnAction.AttackAction;
 import ulb.models.combat.turn.TurnAction.ForfeitAction;
-import ulb.models.combat.strategy.AutoStrategy;
 import ulb.models.combat.turn.TurnAction.ItemAction;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;

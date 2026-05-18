@@ -33,6 +33,10 @@ public class InventoryService {
         this.inventoryRepository.addDefaultInventory(this.playername);
     }
 
+    public Inventory getDefaultInventory() {
+        return this.inventoryRepository.getDefaultInventory();
+    }
+
     // TODO: UI should permit the player to select the +x items granted by the skill
     /**
      * For every unlocked {@link StarterItemsEffect}, adds {@code quantity} units of every item in the inventory whose

@@ -13,6 +13,7 @@ import ulb.models.combat.factory.AutoCombatFactory;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.combat.factory.ManualCombatFactory;
 import ulb.models.combat.utils.EffectProcessor;
+import ulb.models.item.Inventory;
 import ulb.models.player.PlayerInputHandler;
 
 /**
@@ -34,9 +35,10 @@ public class CombatService {
         this.random = random;
     }
 
-    public CombatFactory createManualCombatFactory(PlayerInputHandler handler, int floor, boolean bossMode) {
-        return new ManualCombatFactory(this.damageCalculator, this.effectProcessor, this.random, handler, floor,
-                bossMode);
+    public CombatFactory createManualCombatFactory(Inventory defaultInventory, PlayerInputHandler handler, int floor,
+            boolean bossMode) {
+        return new ManualCombatFactory(defaultInventory, this.damageCalculator, this.effectProcessor, this.random,
+                handler, floor, bossMode);
     }
 
     public CombatFactory createAutoCombatFactory(int floor, boolean bossMode) {

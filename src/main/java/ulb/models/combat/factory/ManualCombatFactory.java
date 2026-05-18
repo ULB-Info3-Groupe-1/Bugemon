@@ -5,8 +5,8 @@ import java.util.Random;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.DamageCalculator;
-import ulb.models.combat.strategy.AutoStrategy;
 import ulb.models.combat.strategy.CombatStrategy;
+import ulb.models.combat.strategy.MiniMaxStrategy;
 import ulb.models.combat.strategy.PlayerStrategy;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
@@ -20,12 +20,14 @@ import ulb.models.team.factory.TeamFactory;
 public class ManualCombatFactory extends CombatFactory {
 
     private final PlayerInputHandler handler;
+    private final Inventory defaultInventory;
     private final int floor;
     private final boolean bossMode;
 
-    public ManualCombatFactory(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
-            PlayerInputHandler handler, int floor, boolean bossMode) {
+    public ManualCombatFactory(Inventory defaultInventory, DamageCalculator damageCalculator,
+            EffectProcessor effectProcessor, Random random, PlayerInputHandler handler, int floor, boolean bossMode) {
         super(damageCalculator, effectProcessor, random);
+        this.defaultInventory = defaultInventory;
         this.handler = handler;
         this.floor = floor;
         this.bossMode = bossMode;
@@ -36,8 +38,8 @@ public class ManualCombatFactory extends CombatFactory {
         CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
         CombatStrategy playerStrategy = new PlayerStrategy(this.handler);
-        CombatStrategy opponentStrategy = new AutoStrategy(this.random);
-        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory, playerStrategy,
-                opponentStrategy, this.damageCalculator, this.effectProcessor);
+        CombatStrategy opponentStrategy = new MiniMaxStrategy();
+        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory,
+                this.defaultInventory, playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
     }
 }
