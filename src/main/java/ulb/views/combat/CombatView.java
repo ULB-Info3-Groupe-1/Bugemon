@@ -280,8 +280,8 @@ public class CombatView extends View {
 
         String message = switch (step) {
             case AttackStep a -> {
-                String base = a.attacker().getName() + " utilise " + a.attack().name()
-                        + " ! (" + a.damageResult().damage() + " dégâts)";
+                String base = a.attacker().getName() + " utilise " + a.attack().name() + " ! ("
+                        + a.damageResult().damage() + " dégâts)";
                 yield switch (a.damageResult().efficiency()) {
                     case SUPER_EFFICIENT -> base + " C'est super efficace !";
                     case NOT_VERY_EFFICIENT -> base + " Ce n'est pas très efficace...";

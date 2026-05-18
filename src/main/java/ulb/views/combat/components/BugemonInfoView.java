@@ -10,8 +10,7 @@ import ulb.models.combat.CombatBugemon;
 import ulb.views.components.ComponentView;
 
 /**
- * Reusable combat HUD component displaying name, level, HP bar, and XP bar for
- * a single {@link BugemonDTO}.
+ * Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link BugemonDTO}.
  */
 public class BugemonInfoView extends ComponentView {
 
@@ -31,8 +30,7 @@ public class BugemonInfoView extends ComponentView {
     }
 
     /**
-     * Refreshes all displayed fields from the given {@link BugemonDTO} and applies
-     * the type style class.
+     * Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class.
      */
     public void setBugemonInfo(CombatBugemon bugemon) {
         for (ElementType type : ElementType.values()) {

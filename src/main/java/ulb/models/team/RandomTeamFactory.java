@@ -1,0 +1,25 @@
+package ulb.models.team;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import ulb.models.bugemon.Bugemon;
+import ulb.repositories.StaticDataRepository;
+
+/** Produces a {@link Team} filled with randomly-selected non-boss Bugémons. */
+public class RandomTeamFactory extends TeamFactory {
+
+    public RandomTeamFactory(StaticDataRepository repo, Random random) {
+        super(repo, random);
+    }
+
+    @Override
+    public Team create(int size) {
+        Team team = new Team();
+        List<Bugemon> available = new ArrayList<>(this.repo.getAllDefaultBugemons());
+        available.removeIf(Bugemon::isBoss);
+        this.fillTeam(size, team, available);
+        return team;
+    }
+}

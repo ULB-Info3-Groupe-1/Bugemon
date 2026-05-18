@@ -9,10 +9,8 @@ import ulb.models.bugemon.Attack;
 import ulb.views.components.ComponentView;
 
 /**
- * Action menu displaying the attacks available to the player's active Bugemon.
- * Presents up to three attack buttons in a
- * fixed 2×2 grid (mirroring {@link ActionMenuView}), plus a back button. Button
- * labels and type-coloured styles are
+ * Action menu displaying the attacks available to the player's active Bugemon. Presents up to three attack buttons in a
+ * fixed 2×2 grid (mirroring {@link ActionMenuView}), plus a back button. Button labels and type-coloured styles are
  * applied via {@link #show(List, Trainer)} at display time.
  */
 public class AttackMenuView extends ComponentView {
@@ -36,14 +34,13 @@ public class AttackMenuView extends ComponentView {
     }
 
     /**
-     * Populates the three attack slots with the given attacks, computing
-     * type-matchup efficiency against the opponent.
+     * Populates the three attack slots with the given attacks, computing type-matchup efficiency against the opponent.
      *
      * @param attackList
-     *                   attacks available to the active Bugemon (up to 3)
+     *            attacks available to the active Bugemon (up to 3)
      */
     public void show(List<Attack> attackList) {
-        Button[] buttons = { this.topLeftButton, this.topRightButton, this.bottomLeftButton };
+        Button[] buttons = {this.topLeftButton, this.topRightButton, this.bottomLeftButton};
         for (int i = 0; i < buttons.length; i++) {
             if (i < attackList.size()) {
                 Attack attack = attackList.get(i);

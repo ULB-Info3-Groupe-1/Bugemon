@@ -8,8 +8,7 @@ import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.views.combat.CombatView;
 
 /**
- * * Encapsulates all animation logic for combat so the main combat controller
- * stays focused on game logic.
+ * * Encapsulates all animation logic for combat so the main combat controller stays focused on game logic.
  */
 public class CombatAnimationController {
     private final CombatView view;
@@ -19,17 +18,15 @@ public class CombatAnimationController {
     }
 
     /**
-     * Plays the animation corresponding to {@code step}, then invokes
-     * {@code onFinished}. Steps without a visual
+     * Plays the animation corresponding to {@code step}, then invokes {@code onFinished}. Steps without a visual
      * animation (item use, switch) invoke {@code onFinished} immediately.
      *
      * @param step
-     *                   the step to animate.
+     *            the step to animate.
      * @param playerTeam
-     *                   the player's team, used to determine animation direction
-     *                   (player side vs opponent side).
+     *            the player's team, used to determine animation direction (player side vs opponent side).
      * @param onFinished
-     *                   callback executed after the animation completes.
+     *            callback executed after the animation completes.
      */
     public void playStepAnimation(TurnStep step, CombatTeam playerTeam, Runnable onFinished) {
         switch (step) {

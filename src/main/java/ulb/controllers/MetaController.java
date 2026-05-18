@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -15,16 +16,14 @@ import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
-import java.util.Random;
-import ulb.Configuration;
 import ulb.models.combat.Combat;
-import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.level_up.LevelUp;
 import ulb.models.run.RunTeam;
 import ulb.models.team.Team;
+import ulb.models.team.TeamFactory;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
@@ -35,16 +34,14 @@ import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is
- * the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
-     * transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -78,7 +75,6 @@ public class MetaController {
     private final TeamService teamService;
     private final CombatService combatService;
     private final InventoryService inventoryService;
-    private final Random random = new Random();
 
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
@@ -88,17 +84,18 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *                     main JavaFX stage of the application
+     *            main JavaFX stage of the application
      * @throws IOException
-     *                     if the music fails to be initialized
+     *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService) throws IOException {
         this.stage = primaryStage;
         this.bugemonService = bugemonService;
         this.teamService = teamService;
-        this.combatService = new CombatService(new DamageCalculator(), new EffectProcessor(), new Random());
         this.inventoryService = inventoryService;
+
+        this.combatService = new CombatService(new DamageCalculator(), new EffectProcessor(), new Random());
 
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
@@ -174,8 +171,11 @@ public class MetaController {
 
     public void onStartManualCombat() {
         try {
-            Combat combat = this.buildStandaloneCombat(true);
-            this.combatController.initialize(combat);
+            Team playerTeam = this.teamService.getRequiredActiveTeam();
+            RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
+            Inventory playerInventory = this.inventoryService.loadInventory();
+            TeamFactory opponentFactory = this.bugemonService.createTeamFactory(new Random());
+            this.combatController.startManualCombat(playerRunTeam, playerInventory, opponentFactory);
             this.switchTo(Window.MANUAL_COMBAT);
         } catch (NoActiveTeamException e) {
             LOG.error("Cannot start manual combat: no active team", e);
@@ -184,28 +184,14 @@ public class MetaController {
 
     public void onStartAutomaticCombat() {
         try {
-            Combat combat = this.buildStandaloneCombat(false);
-            this.combatController.initialize(combat);
+            Team playerTeam = this.teamService.getRequiredActiveTeam();
+            RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
+            Inventory playerInventory = this.inventoryService.loadInventory();
+            TeamFactory opponentFactory = this.bugemonService.createTeamFactory(new Random());
+            this.combatController.startAutoCombat(playerRunTeam, playerInventory, opponentFactory);
             this.switchTo(Window.AUTOMATIC_COMBAT);
         } catch (NoActiveTeamException e) {
             LOG.error("Cannot start automatic combat: no active team", e);
-        }
-    }
-
-    private Combat buildStandaloneCombat(boolean manual) throws NoActiveTeamException {
-        Team playerTeam = this.teamService.getRequiredActiveTeam();
-        RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
-        Team opponentTeamRaw = this.bugemonService.generateRandomTeam(playerRunTeam.size(), this.random);
-        CombatTeam opponentTeam = CombatTeam.fromRunTeam(RunTeam.fromTeam(opponentTeamRaw));
-        Inventory playerInventory = this.inventoryService.loadInventory();
-        Inventory opponentInventory = new Inventory();
-        int floor = Configuration.Game.FLOOR_MIN;
-        if (manual) {
-            return this.combatService.createCombat(playerRunTeam, opponentTeam,
-                    playerInventory, opponentInventory, this.combatController, floor, false);
-        } else {
-            return this.combatService.createAutoCombat(playerRunTeam, opponentTeam,
-                    playerInventory, opponentInventory, floor, false);
         }
     }
 
@@ -272,9 +258,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *               target screen to display
+     *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
+     *             if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);

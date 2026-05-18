@@ -11,12 +11,9 @@ import ulb.models.combat.damage.Efficiency;
 import ulb.models.item.Item;
 
 /**
- * Generic hover info panel that displays a title and a variable list of info
- * lines. Callers build the content via
- * {@link #show(String, String...)} and dismiss it with {@link #hide()}.
- * Type-based background colouring and an
- * efficiency badge can be layered on top via {@link #setType(BugemonType)} and
- * {@link #setEfficiency(Efficiency)}.
+ * Generic hover info panel that displays a title and a variable list of info lines. Callers build the content via
+ * {@link #show(String, String...)} and dismiss it with {@link #hide()}. Type-based background colouring and an
+ * efficiency badge can be layered on top via {@link #setType(BugemonType)} and {@link #setEfficiency(Efficiency)}.
  */
 public class HoverInfoView extends ComponentView {
 
@@ -35,10 +32,7 @@ public class HoverInfoView extends ComponentView {
         this.setType(attack.type());
         this.setEfficiency(efficiency);
         StringBuilder sb = new StringBuilder();
-        sb.append("Type : ")
-                .append(attack.type())
-                .append("    Puissance : ")
-                .append(attack.power());
+        sb.append("Type : ").append(attack.type()).append("    Puissance : ").append(attack.power());
         String desc = attack.description();
         if (desc != null && !desc.isBlank()) {
             sb.append('\n').append(desc);
@@ -69,11 +63,10 @@ public class HoverInfoView extends ComponentView {
     }
 
     /**
-     * Applies a type-based background colour to the panel. Pass {@code null} to
-     * restore the default surface colour.
+     * Applies a type-based background colour to the panel. Pass {@code null} to restore the default surface colour.
      *
      * @param type
-     *             the bugemon type whose colour to apply, or {@code null} to reset
+     *            the bugemon type whose colour to apply, or {@code null} to reset
      */
     private void setType(ElementType type) {
         this.getStyleClass().removeIf(c -> c.startsWith("hover-type-"));
@@ -85,8 +78,7 @@ public class HoverInfoView extends ComponentView {
     }
 
     /**
-     * Shows or hides the efficiency badge. {@code NEUTRAL} and {@code null} hide
-     * the badge.
+     * Shows or hides the efficiency badge. {@code NEUTRAL} and {@code null} hide the badge.
      *
      * @param eff
      *            the efficiency value to display, or {@code null} to hide

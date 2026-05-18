@@ -8,8 +8,7 @@ import ulb.models.item.Item;
 import ulb.views.components.ComponentView;
 
 /**
- * Reusable component displaying the player's inventory as a list of clickable
- * item buttons.
+ * Reusable component displaying the player's inventory as a list of clickable item buttons.
  */
 public class ItemMenuView extends ComponentView {
 

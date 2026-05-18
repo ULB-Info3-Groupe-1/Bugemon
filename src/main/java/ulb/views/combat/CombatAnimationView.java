@@ -9,8 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 /**
- * Manages attack and death animations for the two Bugemon sprites in a combat
- * screen.
+ * Manages attack and death animations for the two Bugemon sprites in a combat screen.
  */
 public class CombatAnimationView {
     private static final double ATTACK_LUNGE_DISTANCE = 100;

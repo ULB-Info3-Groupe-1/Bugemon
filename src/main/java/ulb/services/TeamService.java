@@ -187,8 +187,8 @@ public class TeamService {
         this.activeTeam = new Team(this.workingTeam);
 
         List<TeamMemberDTO> members = new ArrayList<>();
-        this.workingTeam.getMembers().forEach(b -> members.add(new TeamMemberDTO(this.playername, this.workingTeam.getName(),
-                b.getName(), this.workingTeam.getSlotPosition(b))));
+        this.workingTeam.getMembers().forEach(b -> members.add(new TeamMemberDTO(this.playername,
+                this.workingTeam.getName(), b.getName(), this.workingTeam.getSlotPosition(b))));
         this.persistNewBugemons();
 
         this.teamRepository.modifyTeam(this.playername, this.workingTeam.getName(), members);

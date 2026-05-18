@@ -21,19 +21,19 @@ import ulb.models.combat.turn.TurnAction.ItemAction;
 import ulb.models.combat.turn.TurnAction.SwitchAction;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.utils.CombatContext;
+import ulb.models.item.Inventory;
 import ulb.models.item.Item;
+import ulb.models.run.RunTeam;
+import ulb.models.team.TeamFactory;
 import ulb.services.CombatService;
 import ulb.services.PlayerInputHandler;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
 /**
- * Main controller for the combat screen. Integrates both the step-by-step
- * animation logic and the manual player input
- * logic, replacing the old ManualCombatController. * It acts as the
- * {@link CombatStrategy} for the player, intercepting
- * the request for actions/switches from the Combat model and opening the UI
- * menus accordingly.
+ * Main controller for the combat screen. Integrates both the step-by-step animation logic and the manual player input
+ * logic, replacing the old ManualCombatController. * It acts as the {@link CombatStrategy} for the player, intercepting
+ * the request for actions/switches from the Combat model and opening the UI menus accordingly.
  */
 public class CombatController extends Controller<CombatView>
         implements CombatView.Listener, CombatView.NextListener, PlayerInputHandler {
@@ -53,10 +53,25 @@ public class CombatController extends Controller<CombatView>
         this.combatService = combatService;
     }
 
+    /** Builds and initializes a manual standalone combat; the opponent team is produced by {@code opponentFactory}. */
+    public void startManualCombat(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
+        Combat newCombat = this.combatService.createStandaloneManualCombat(
+                playerRunTeam, playerInventory, this, opponentFactory);
+        this.initialize(newCombat);
+    }
+
+    /** Builds and initializes an automatic standalone combat; the opponent team is produced by {@code opponentFactory}. */
+    public void startAutoCombat(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
+        Combat newCombat = this.combatService.createStandaloneAutoCombat(
+                playerRunTeam, playerInventory, opponentFactory);
+        this.initialize(newCombat);
+    }
+
     /**
      * Initializes a new combat session.
      *
-     * @param combat the new Combat model instance
+     * @param combat
+     *            the new Combat model instance
      */
     public void initialize(Combat combat) {
         this.combat = combat;
@@ -95,8 +110,7 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onAttackHovered(Attack attack) {
-        Efficiency efficiency = this.combatService.previewEfficiency(
-                attack, this.combat.getOpponentTeam().getActive());
+        Efficiency efficiency = this.combatService.previewEfficiency(attack, this.combat.getOpponentTeam().getActive());
         this.view.showAttackPreview(attack, efficiency);
     }
 
@@ -107,9 +121,7 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onSwitch() {
-        this.view.showSwitchMenu(
-                this.combat.getPlayerTeam().getAvailable(),
-                false);
+        this.view.showSwitchMenu(this.combat.getPlayerTeam().getAvailable(), false);
     }
 
     @Override
@@ -175,7 +187,8 @@ public class CombatController extends Controller<CombatView>
             case TurnStep.SwitchStep sw -> this.view.switchBugemon(sw);
             case TurnStep.HealBugemonStep heal ->
                 this.view.updateHp(heal.healedBugemon(), heal.healedBugemon().getCurrentHp());
-            default -> { /* ItemStep, HealTeamStep : pas de changement de PV individuel */ }
+            default -> {
+                /* ItemStep, HealTeamStep : pas de changement de PV individuel */ }
         }
     }
 
@@ -203,8 +216,6 @@ public class CombatController extends Controller<CombatView>
     @Override
     public void requestSwitchChoice(CombatContext context, ActionCallback callback) {
         this.pendingSwitchCallback = callback;
-        this.view.showSwitchMenu(
-                context.allyTeam().getAvailable(),
-                context.allyTeam().getActive().isKo());
+        this.view.showSwitchMenu(context.allyTeam().getAvailable(), context.allyTeam().getActive().isKo());
     }
 }
