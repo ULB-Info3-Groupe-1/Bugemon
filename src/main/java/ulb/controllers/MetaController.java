@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.Configuration;
 import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
@@ -17,6 +18,7 @@ import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
+import ulb.models.combat.CombatFactory;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
@@ -80,6 +82,8 @@ public class MetaController {
     private final MusicLoader musicLoader;
     private boolean isTowerActive;
 
+    private final Random random = new Random();
+
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
@@ -95,7 +99,7 @@ public class MetaController {
         this.teamService = teamService;
         this.inventoryService = inventoryService;
 
-        this.combatService = new CombatService(new DamageCalculator(), new EffectProcessor(), new Random());
+        this.combatService = new CombatService(new DamageCalculator(), new EffectProcessor(), this.random);
 
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
@@ -174,8 +178,11 @@ public class MetaController {
             Team playerTeam = this.teamService.getRequiredActiveTeam();
             RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
             Inventory playerInventory = this.inventoryService.loadInventory();
-            TeamFactory opponentFactory = this.bugemonService.createTeamFactory(new Random());
-            this.combatController.startManualCombat(playerRunTeam, playerInventory, opponentFactory);
+            TeamFactory opponentFactory = this.teamService
+                    .createOpponentFactory(this.bugemonService.getAllDefaultBugemons(), this.random);
+            CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.combatController,
+                    Configuration.Game.FLOOR_MIN, false);
+            this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
             this.switchTo(Window.MANUAL_COMBAT);
         } catch (NoActiveTeamException e) {
             LOG.error("Cannot start manual combat: no active team", e);
@@ -187,8 +194,11 @@ public class MetaController {
             Team playerTeam = this.teamService.getRequiredActiveTeam();
             RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
             Inventory playerInventory = this.inventoryService.loadInventory();
-            TeamFactory opponentFactory = this.bugemonService.createTeamFactory(new Random());
-            this.combatController.startAutoCombat(playerRunTeam, playerInventory, opponentFactory);
+            TeamFactory opponentFactory = this.teamService
+                    .createOpponentFactory(this.bugemonService.getAllDefaultBugemons(), this.random);
+            CombatFactory combatFactory = this.combatService.createAutoCombatFactory(Configuration.Game.FLOOR_MIN,
+                    false);
+            this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
             this.switchTo(Window.AUTOMATIC_COMBAT);
         } catch (NoActiveTeamException e) {
             LOG.error("Cannot start automatic combat: no active team", e);

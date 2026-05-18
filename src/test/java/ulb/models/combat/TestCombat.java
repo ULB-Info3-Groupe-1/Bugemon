@@ -129,7 +129,7 @@ public class TestCombat {
     @Test
     public void testDefeatWhenPlayerDefeated() {
         // Opponent with high power and initiative attacks first and KOs the player
-        Attack strongAtk = BugemonFixtures.attack(200);
+        Attack strongAtk = BugemonFixtures.attack("atk-strong", 200);
         CombatTeam fastOppTeam = BugemonFixtures
                 .teamOf(BugemonFixtures.bugemon(100, 100, 40, 90, List.of(strongAtk, strongAtk, strongAtk)));
         this.playerTeam.getActive().takeDamage(99);
@@ -165,88 +165,88 @@ public class TestCombat {
     @Test
     public void testAttackWithHealForThrower() {
         Attack healAtk = BugemonFixtures.attackWithThrowerHeal();
-        CombatTeam playerTeam = BugemonFixtures
+        CombatTeam playerCombatTeam = BugemonFixtures
                 .teamOf(BugemonFixtures.bugemon(500, 100, 40, 90, List.of(healAtk, healAtk, healAtk)));
-        playerTeam.getActive().takeDamage(10);
-        int hpBefore = playerTeam.getActive().getCurrentHp();
+        playerCombatTeam.getActive().takeDamage(10);
+        int hpBefore = playerCombatTeam.getActive().getCurrentHp();
 
         Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
-        CombatTeam opponentTeam = BugemonFixtures.teamOf(
+        CombatTeam healTestOpponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
+        Combat c = new Combat(playerCombatTeam, healTestOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
 
         List<TurnStep> turnSteps = new ArrayList<>();
         c.resolveTurn(new AttackAction(healAtk), new AttackAction(zeroPowerAttack), turnSteps::addAll);
 
-        assertTrue(playerTeam.getActive().getCurrentHp() > hpBefore);
+        assertTrue(playerCombatTeam.getActive().getCurrentHp() > hpBefore);
     }
 
     @Test
     public void testAttackWithDefenseDebuffReducesOpponentDefense() {
         Attack debuffAtk = BugemonFixtures.attackWithDefenseDebuffOnOpponent();
-        CombatTeam playerTeam = BugemonFixtures
+        CombatTeam debuffPlayerTeam = BugemonFixtures
                 .teamOf(BugemonFixtures.bugemon(500, 50, 40, 90, List.of(debuffAtk, debuffAtk, debuffAtk)));
 
         Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
-        CombatTeam opponentTeam = BugemonFixtures.teamOf(
+        CombatTeam debuffOpponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        int defenseBefore = opponentTeam.getActive().getEffectiveDefense();
+        int defenseBefore = debuffOpponentTeam.getActive().getEffectiveDefense();
 
-        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
+        Combat c = new Combat(debuffPlayerTeam, debuffOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
         c.resolveTurn(new AttackAction(debuffAtk), new AttackAction(zeroPowerAttack), steps -> {
         });
 
-        assertTrue(opponentTeam.getActive().getEffectiveDefense() < defenseBefore);
+        assertTrue(debuffOpponentTeam.getActive().getEffectiveDefense() < defenseBefore);
     }
 
     @Test
     public void testAttackWithInitiativeBuffIncreasesThrowerInitiative() {
         Attack buffAtk = BugemonFixtures.attackWithInitiativeBuffOnThrower();
-        CombatTeam playerTeam = BugemonFixtures
+        CombatTeam buffPlayerTeam = BugemonFixtures
                 .teamOf(BugemonFixtures.bugemon(500, 50, 40, 90, List.of(buffAtk, buffAtk, buffAtk)));
 
         Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
-        CombatTeam opponentTeam = BugemonFixtures.teamOf(
+        CombatTeam buffOpponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        int initiativeBefore = playerTeam.getActive().getEffectiveInitiative();
+        int initiativeBefore = buffPlayerTeam.getActive().getEffectiveInitiative();
 
-        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
+        Combat c = new Combat(buffPlayerTeam, buffOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
         c.resolveTurn(new AttackAction(buffAtk), new AttackAction(zeroPowerAttack), steps -> {
         });
 
-        assertTrue(playerTeam.getActive().getEffectiveInitiative() > initiativeBefore);
+        assertTrue(buffPlayerTeam.getActive().getEffectiveInitiative() > initiativeBefore);
     }
 
     @Test
     public void testAttackWithResetMalusRemovesNegativeEffects() {
         Attack resetAtk = BugemonFixtures.attackWithResetMalus();
-        CombatTeam playerTeam = BugemonFixtures
+        CombatTeam resetPlayerTeam = BugemonFixtures
                 .teamOf(BugemonFixtures.bugemon(500, 50, 40, 90, List.of(resetAtk, resetAtk, resetAtk)));
 
         // Pré-applique un malus de défense sur le joueur
-        playerTeam.getActive().addEffect(new StatusEffect(StatType.DEFENSE, -20, EffectDuration.PERMANENT));
-        int defenseWithMalus = playerTeam.getActive().getEffectiveDefense();
+        resetPlayerTeam.getActive().addEffect(new StatusEffect(StatType.DEFENSE, -20, EffectDuration.PERMANENT));
+        int defenseWithMalus = resetPlayerTeam.getActive().getEffectiveDefense();
 
         Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
-        CombatTeam opponentTeam = BugemonFixtures.teamOf(
+        CombatTeam resetOpponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
+        Combat c = new Combat(resetPlayerTeam, resetOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
         c.resolveTurn(new AttackAction(resetAtk), new AttackAction(zeroPowerAttack), steps -> {
         });
 
-        assertTrue(playerTeam.getActive().getEffectiveDefense() > defenseWithMalus);
+        assertTrue(resetPlayerTeam.getActive().getEffectiveDefense() > defenseWithMalus);
     }
 
     @Test
@@ -260,36 +260,36 @@ public class TestCombat {
 
         Attack zeroPowerAttack = BugemonFixtures.zeroPowerAttack();
 
-        CombatTeam playerTeam = BugemonFixtures.teamOf(
+        CombatTeam itemPlayerTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(100, 50, 40, 90, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
-        CombatTeam opponentTeam = BugemonFixtures.teamOf(
+        CombatTeam itemOpponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(100, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        playerTeam.getActive().takeDamage(20);
-        int hpBefore = playerTeam.getActive().getCurrentHp();
+        itemPlayerTeam.getActive().takeDamage(20);
+        int hpBefore = itemPlayerTeam.getActive().getCurrentHp();
 
-        Combat c = new Combat(playerTeam, opponentTeam, 2, false, playerInventory, new Inventory(),
+        Combat c = new Combat(itemPlayerTeam, itemOpponentTeam, 2, false, playerInventory, new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
 
         List<TurnStep> turnSteps = new ArrayList<>();
         c.resolveTurn(new ItemAction(item), new AttackAction(zeroPowerAttack), turnSteps::addAll);
 
-        assertEquals(hpBefore + healAmount, playerTeam.getActive().getCurrentHp());
+        assertEquals(hpBefore + healAmount, itemPlayerTeam.getActive().getCurrentHp());
         assertFalse(playerInventory.hasItem(item));
         assertTrue(turnSteps.stream().anyMatch(s -> s instanceof HealBugemonStep));
     }
 
     @Test
     public void testThrowIfBugemonDoesNotHaveAttack() {
-        Attack availableAttack = BugemonFixtures.attack(1);
-        Attack unavailableAttack = BugemonFixtures.attack(2);
+        Attack availableAttack = BugemonFixtures.attack("atk-available", 1);
+        Attack unavailableAttack = BugemonFixtures.attack("atk-unavailable", 2);
 
-        CombatTeam playerTeam = BugemonFixtures.teamOf(
+        CombatTeam throwPlayerTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(100, 50, 40, 90, List.of(availableAttack, availableAttack, availableAttack)));
-        CombatTeam opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
+        CombatTeam throwOpponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
 
-        Combat c = new Combat(playerTeam, opponentTeam, 2, false, new Inventory(), new Inventory(),
+        Combat c = new Combat(throwPlayerTeam, throwOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor());
 
@@ -297,6 +297,5 @@ public class TestCombat {
             c.resolveTurn(new AttackAction(unavailableAttack), new AttackAction(this.aquaAttack), steps -> {
             });
         });
-
     }
 }

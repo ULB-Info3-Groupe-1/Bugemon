@@ -23,12 +23,12 @@ public final class BugemonFixtures {
 
     // --- Attaques génériques (type NORMAL, type non pertinent) ---
 
-    public static Attack attack(int power) {
-        return new Attack("atk", "Attaque", "", power, ElementType.NORMAL, List.of());
+    public static Attack attack(String id, int power) {
+        return new Attack(id, "Attaque", "", power, ElementType.NORMAL, List.of());
     }
 
     public static Attack zeroPowerAttack() {
-        return attack(0);
+        return attack("atk-zero", 0);
     }
 
     public static Attack attackWithThrowerHeal() {

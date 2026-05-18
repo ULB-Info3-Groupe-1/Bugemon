@@ -1,4 +1,4 @@
-package ulb.services;
+package ulb.models.player;
 
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.utils.CombatContext;

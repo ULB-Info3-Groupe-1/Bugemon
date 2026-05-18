@@ -11,8 +11,10 @@ import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
+import ulb.models.combat.CombatFactory;
 import ulb.models.combat.CombatResult;
 import ulb.models.combat.damage.Efficiency;
+import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.turn.TurnAction.AttackAction;
@@ -23,10 +25,10 @@ import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Inventory;
 import ulb.models.item.Item;
+import ulb.models.player.PlayerInputHandler;
 import ulb.models.run.RunTeam;
 import ulb.models.team.TeamFactory;
 import ulb.services.CombatService;
-import ulb.services.PlayerInputHandler;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
@@ -53,18 +55,12 @@ public class CombatController extends Controller<CombatView>
         this.combatService = combatService;
     }
 
-    /** Builds and initializes a manual standalone combat; the opponent team is produced by {@code opponentFactory}. */
-    public void startManualCombat(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
-        Combat newCombat = this.combatService.createStandaloneManualCombat(
-                playerRunTeam, playerInventory, this, opponentFactory);
-        this.initialize(newCombat);
-    }
-
-    /** Builds and initializes an automatic standalone combat; the opponent team is produced by {@code opponentFactory}. */
-    public void startAutoCombat(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
-        Combat newCombat = this.combatService.createStandaloneAutoCombat(
-                playerRunTeam, playerInventory, opponentFactory);
-        this.initialize(newCombat);
+    /**
+     * Builds and initializes a manual standalone combat; the opponent team is produced by {@code opponentFactory}.
+     */
+    public void startCombat(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory,
+            CombatFactory combatFactory) {
+        this.initialize(combatFactory.create(playerRunTeam, playerInventory, opponentFactory));
     }
 
     /**
@@ -73,8 +69,8 @@ public class CombatController extends Controller<CombatView>
      * @param combat
      *            the new Combat model instance
      */
-    public void initialize(Combat combat) {
-        this.combat = combat;
+    public void initialize(Combat newCombat) {
+        this.combat = newCombat;
 
         // TODO: demeter
         this.view.displayBugemons(this.combat.getPlayerTeam().getActive(), combat.getOpponentTeam().getActive());
@@ -116,7 +112,7 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onAttackChosen(Attack attack) {
-        resolvePlayerAction(new AttackAction(attack));
+        this.resolvePlayerAction(new AttackAction(attack));
     }
 
     @Override
@@ -147,12 +143,12 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onItemChosen(Item item) {
-        resolvePlayerAction(new ItemAction(item));
+        this.resolvePlayerAction(new ItemAction(item));
     }
 
     @Override
     public void onForfeit() {
-        resolvePlayerAction(new ForfeitAction());
+        this.resolvePlayerAction(new ForfeitAction());
     }
 
     /** Dispatch the resolved action back to the Combat model */

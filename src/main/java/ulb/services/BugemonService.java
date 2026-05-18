@@ -2,7 +2,6 @@ package ulb.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Attack;
@@ -11,9 +10,6 @@ import ulb.models.bugemon.ElementType;
 import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.skills.Skill;
-import ulb.models.team.RandomTeamFactory;
-import ulb.models.team.Team;
-import ulb.models.team.TeamFactory;
 import ulb.repositories.PlayerBugemonRepository;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -117,14 +113,6 @@ public class BugemonService {
 
     public void clearAllPlayerBugemons() {
         this.playerBugemonRepository.removeAllPlayerBugemon(this.playername);
-    }
-
-    public Team generateRandomTeam(int size, Random random) {
-        return new RandomTeamFactory(this.staticDataRepository, random).create(size);
-    }
-
-    public TeamFactory createTeamFactory(Random random) {
-        return new RandomTeamFactory(this.staticDataRepository, random);
     }
 
     public List<Skill> getStatBonusSkills() {

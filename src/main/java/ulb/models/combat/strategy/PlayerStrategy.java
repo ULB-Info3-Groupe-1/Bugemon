@@ -2,7 +2,7 @@ package ulb.models.combat.strategy;
 
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.utils.CombatContext;
-import ulb.services.PlayerInputHandler;
+import ulb.models.player.PlayerInputHandler;
 
 public class PlayerStrategy implements CombatStrategy {
 

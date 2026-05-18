@@ -225,8 +225,8 @@ public class CombatView extends View {
         this.listener = listener;
     }
 
-    public void setNextListener(NextListener listener) {
-        this.nextListener = listener;
+    public void setNextListener(NextListener nextlistener) {
+        this.nextListener = nextlistener;
     }
 
     protected void setActionMenuContent(Node content) {
@@ -315,12 +315,12 @@ public class CombatView extends View {
         this.hideActionMenu();
     }
 
-    public void updatePlayerBugemon(CombatBugemon playerBugemon) {
-        if (!playerBugemon.isKo()) {
+    public void updatePlayerBugemon(CombatBugemon playerCombatBugemon) {
+        if (!playerCombatBugemon.isKo()) {
             this.makePlayerBugemonReappear();
         }
-        this.bugemonPlayerInfo.setBugemonInfo(playerBugemon);
-        this.setSprite(this.bugemonPlayerImage, playerBugemon.getSpritePath());
+        this.bugemonPlayerInfo.setBugemonInfo(playerCombatBugemon);
+        this.setSprite(this.bugemonPlayerImage, playerCombatBugemon.getSpritePath());
     }
 
     public void playPlayerAttackAnimation(Runnable onFinished) {

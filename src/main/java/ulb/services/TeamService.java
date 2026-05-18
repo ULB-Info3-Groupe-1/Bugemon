@@ -3,11 +3,15 @@ package ulb.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
+import ulb.models.team.RandomTeamFactory;
 import ulb.models.team.Team;
+import ulb.models.team.TeamFactory;
 import ulb.repositories.PlayerBugemonRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.TeamRepository;
@@ -358,5 +362,9 @@ public class TeamService {
         if (this.workingTeam.isEmpty()) {
             throw new TeamEmptyException("Working team is empty");
         }
+    }
+
+    public TeamFactory createOpponentFactory(List<Bugemon> bugemons, Random random) {
+        return new RandomTeamFactory(bugemons, random);
     }
 }
