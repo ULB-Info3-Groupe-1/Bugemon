@@ -54,8 +54,8 @@ public class Combat {
     private boolean finished;
 
     public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, int floor, boolean bossMode,
-            Inventory playerInventory, CombatStrategy playerStrategy,
-            CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
+            Inventory playerInventory, CombatStrategy playerStrategy, CombatStrategy opponentStrategy,
+            DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
 

@@ -13,8 +13,7 @@ import ulb.models.run.RunTeam;
 import ulb.models.team.factory.TeamFactory;
 
 /**
- * Produces a {@link Combat} where both sides are controlled by
- * {@link AutoStrategy}.
+ * Produces a {@link Combat} where both sides are controlled by {@link AutoStrategy}.
  */
 public class AutoCombatFactory extends CombatFactory {
 
@@ -34,7 +33,7 @@ public class AutoCombatFactory extends CombatFactory {
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
         CombatStrategy playerStrategy = new AutoStrategy(this.random);
         CombatStrategy opponentStrategy = new AutoStrategy(this.random);
-        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory,
-                playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
+        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory, playerStrategy,
+                opponentStrategy, this.damageCalculator, this.effectProcessor);
     }
 }
