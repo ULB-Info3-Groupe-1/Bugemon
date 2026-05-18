@@ -36,16 +36,14 @@ import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is
- * the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
-     * transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -90,9 +88,9 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *                     main JavaFX stage of the application
+     *            main JavaFX stage of the application
      * @throws IOException
-     *                     if the music fails to be initialized
+     *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService) throws IOException {
@@ -264,9 +262,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *               target screen to display
+     *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
+     *             if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
