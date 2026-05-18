@@ -2,8 +2,6 @@ package ulb.models.combat.factory;
 
 import java.util.Random;
 
-import ulb.models.combat.Combat;
-import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.strategy.MiniMaxStrategy;
@@ -11,8 +9,6 @@ import ulb.models.combat.strategy.PlayerStrategy;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.player.PlayerInputHandler;
-import ulb.models.run.RunTeam;
-import ulb.models.team.factory.TeamFactory;
 
 /**
  * Produces a {@link Combat} where the player acts through a {@link PlayerInputHandler}.
@@ -21,25 +17,26 @@ public class ManualCombatFactory extends CombatFactory {
 
     private final PlayerInputHandler handler;
     private final Inventory defaultInventory;
-    private final int floor;
-    private final boolean bossMode;
 
     public ManualCombatFactory(Inventory defaultInventory, DamageCalculator damageCalculator,
             EffectProcessor effectProcessor, Random random, PlayerInputHandler handler, int floor, boolean bossMode) {
-        super(damageCalculator, effectProcessor, random);
+        super(damageCalculator, effectProcessor, random, floor, bossMode);
         this.defaultInventory = defaultInventory;
         this.handler = handler;
-        this.floor = floor;
-        this.bossMode = bossMode;
     }
 
     @Override
-    public Combat create(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
-        CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
-        CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
-        CombatStrategy playerStrategy = new PlayerStrategy(this.handler);
-        CombatStrategy opponentStrategy = new MiniMaxStrategy();
-        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory,
-                this.defaultInventory, playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);
+    protected CombatStrategy buildPlayerStrategy() {
+        return new PlayerStrategy(this.handler);
+    }
+
+    @Override
+    protected CombatStrategy buildOpponentStrategy() {
+        return new MiniMaxStrategy();
+    }
+
+    @Override
+    protected Inventory buildOpponentInventory() {
+        return this.defaultInventory;
     }
 }
