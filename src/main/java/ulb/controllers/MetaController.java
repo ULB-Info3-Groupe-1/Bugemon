@@ -232,10 +232,18 @@ public class MetaController {
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
+
+            // preload active team if some
+            this.playerState.getActiveTeam().ifPresent(this.createTeamController::preloadTeam);
+
             this.createTeamController.show();
         });
         this.transitions.put(Window.EDIT_TEAM, () -> {
             this.musicPlayer.playAmbiance(Ambiance.MENU, false);
+
+            // preload active team if some
+            this.playerState.getActiveTeam().ifPresent(this.createTeamController::preloadTeam);
+
             this.editTeamController.show();
         });
         this.transitions.put(Window.CREATE_BUGEMON, () -> {

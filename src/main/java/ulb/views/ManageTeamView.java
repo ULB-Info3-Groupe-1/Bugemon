@@ -1,8 +1,7 @@
 package ulb.views;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -126,15 +125,7 @@ public class ManageTeamView extends View {
 
         void onStartTowerCombat();
 
-        Team getWorkingTeam();
-
         boolean isWorkingTeamSaved();
-
-        List<String> getTeamNames();
-
-        Optional<String> getActiveTeamName();
-
-        List<PlayerBugemon> getAvailableBugemons();
 
         void onTeamSelected(String teamName);
     }
@@ -143,17 +134,24 @@ public class ManageTeamView extends View {
 
     @Override
     public void refresh() {
-        this.teamListView.setItems(FXCollections.observableArrayList(this.listener.getTeamNames()));
-        this.listener.getActiveTeamName().ifPresentOrElse(
-                teamName -> this.teamListView.getSelectionModel().select(teamName),
-                () -> this.teamListView.getSelectionModel().clearSelection());
-
-        Team team = this.listener.getWorkingTeam();
-        this.allBugemonsGridView.showAll(this.listener.getAvailableBugemons(), new HashSet<>(team.getMembers()));
-        this.refreshTeam(team, this.listener.isWorkingTeamSaved());
     }
 
-    private void refreshTeam(Team team, boolean isTeamSaved) {
+    public void refreshAvailableBugemons(List<PlayerBugemon> availableBugemons, Set<PlayerBugemon> selectedBugemons) {
+        this.allBugemonsGridView.showAll(availableBugemons, selectedBugemons);
+    }
+
+    public void refreshTeamNames(List<String> teamNames) {
+        this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
+    }
+
+    public void refreshTeam(Team team, boolean isTeamSaved) {
+        String teamName = team.getName();
+        if (teamName == null) {
+            this.teamListView.getSelectionModel().clearSelection();
+        } else {
+            this.teamListView.getSelectionModel().select(teamName);
+        }
+
         this.bugemonsTeamView.showTeam(team);
         if (team.isEmpty()) {
             this.selectedTeamName.setText(NO_TEAM_SELECTED);

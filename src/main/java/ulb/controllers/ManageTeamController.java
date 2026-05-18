@@ -1,7 +1,7 @@
 package ulb.controllers;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
@@ -23,6 +23,7 @@ import ulb.views.ViewLoader;
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
     private final TeamService teamService;
     private final BugemonService bugemonService;
+    private final Team team;
 
     public enum TeamFormMode {
         EDIT,
@@ -40,45 +41,62 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.teamService = teamService;
         this.bugemonService = bugemonService;
 
+        this.team = new Team();
+
         this.view.setListener(this);
+    }
+
+    public void preloadTeam(Team preloaded) {
+        if (preloaded == null) {
+            return;
+        }
+
+        preloaded.getMembers().forEach(this.team::add);
+        this.updateDisplayedTeam();
     }
 
     @Override
     protected void show() {
-        this.teamService.setWorkingTeamAsActiveTeam();
-        this.view.refresh();
         super.show();
+
+        this.updateDisplayedTeam();
+        this.updateDisplayedTeamNames();
+        this.updateDisplayedAvailableBugemons();
     }
 
-    @Override
+    public void updateDisplayedTeam() {
+        this.view.refreshTeam(this.team, this.isWorkingTeamSaved());
+    }
+
+    public void updateDisplayedTeamNames() { 
+        this.view.refreshTeamNames(this.getTeamNames());
+    }
+
+    public void updateDisplayedAvailableBugemons() {
+        this.view.refreshAvailableBugemons(this.getAvailableBugemons(), new HashSet<>(this.team.getMembers()));
+    }
+
     public List<PlayerBugemon> getAvailableBugemons() {
         return this.bugemonService.getAllBugemons();
     }
 
-    @Override
-    public Team getWorkingTeam() {
-        return this.teamService.getWorkingTeam();
-    }
-
-    @Override
     public boolean isWorkingTeamSaved() {
         return this.teamService.isWorkingTeamSaved();
     }
 
-    @Override
     public List<String> getTeamNames() {
         return this.teamService.getTeamNames();
     }
 
     @Override
-    public Optional<String> getActiveTeamName() {
-        return this.teamService.getActiveTeamName();
-    }
-
-    @Override
     public void onBugemonSelected(PlayerBugemon bugemon) {
-        this.teamService.addOrRemoveBugemon(bugemon);
-        this.view.refresh();
+        if (this.team.contains(bugemon)) {
+            this.team.remove(bugemon);
+        } else {
+            this.team.add(bugemon);
+        }
+        this.updateDisplayedTeam();
+        this.updateDisplayedAvailableBugemons();
     }
 
     @Override
@@ -123,7 +141,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onAddNewTeam() {
-        this.teamService.clearWorkingTeam();
+        this.team.clear();
+        this.updateDisplayedTeam();
         this.view.clearTeamNameToSave();
         this.view.refresh();
     }
