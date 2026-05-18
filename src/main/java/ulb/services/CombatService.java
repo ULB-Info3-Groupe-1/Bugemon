@@ -3,15 +3,15 @@ package ulb.services;
 import java.util.Random;
 
 import ulb.models.bugemon.Attack;
-import ulb.models.combat.AutoCombatFactory;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
-import ulb.models.combat.CombatFactory;
 import ulb.models.combat.CombatResult;
 import ulb.models.combat.CombatTeam;
-import ulb.models.combat.ManualCombatFactory;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.damage.Efficiency;
+import ulb.models.combat.factory.AutoCombatFactory;
+import ulb.models.combat.factory.CombatFactory;
+import ulb.models.combat.factory.ManualCombatFactory;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.player.PlayerInputHandler;
 

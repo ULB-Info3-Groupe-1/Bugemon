@@ -1,24 +1,32 @@
-package ulb.models.combat;
+package ulb.models.combat.factory;
 
 import java.util.Random;
 
+import ulb.models.combat.Combat;
+import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.strategy.AutoStrategy;
 import ulb.models.combat.strategy.CombatStrategy;
+import ulb.models.combat.strategy.PlayerStrategy;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
+import ulb.models.player.PlayerInputHandler;
 import ulb.models.run.RunTeam;
-import ulb.models.team.TeamFactory;
+import ulb.models.team.factory.TeamFactory;
 
-/** Produces a {@link Combat} where both sides are controlled by {@link AutoStrategy}. */
-public class AutoCombatFactory extends CombatFactory {
+/**
+ * Produces a {@link Combat} where the player acts through a {@link PlayerInputHandler}.
+ */
+public class ManualCombatFactory extends CombatFactory {
 
+    private final PlayerInputHandler handler;
     private final int floor;
     private final boolean bossMode;
 
-    public AutoCombatFactory(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
-            int floor, boolean bossMode) {
+    public ManualCombatFactory(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
+            PlayerInputHandler handler, int floor, boolean bossMode) {
         super(damageCalculator, effectProcessor, random);
+        this.handler = handler;
         this.floor = floor;
         this.bossMode = bossMode;
     }
@@ -27,7 +35,7 @@ public class AutoCombatFactory extends CombatFactory {
     public Combat create(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
         CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
-        CombatStrategy playerStrategy = new AutoStrategy(this.random);
+        CombatStrategy playerStrategy = new PlayerStrategy(this.handler);
         CombatStrategy opponentStrategy = new AutoStrategy(this.random);
         return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory, new Inventory(),
                 playerStrategy, opponentStrategy, this.damageCalculator, this.effectProcessor);

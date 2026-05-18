@@ -1,10 +1,11 @@
-package ulb.models.team;
+package ulb.models.team.factory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.team.Team;
 
 /** Produces a {@link Team} filled with randomly-selected non-boss Bugémons. */
 public class RandomTeamFactory extends TeamFactory {

@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
-import ulb.models.team.RandomTeamFactory;
 import ulb.models.team.Team;
-import ulb.models.team.TeamFactory;
+import ulb.models.team.factory.RandomTeamFactory;
+import ulb.models.team.factory.TeamFactory;
 import ulb.repositories.PlayerBugemonRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.TeamRepository;
