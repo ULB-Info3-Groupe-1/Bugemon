@@ -36,14 +36,16 @@ import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is
+ * the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
+     * transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -88,9 +90,9 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *            main JavaFX stage of the application
+     *                     main JavaFX stage of the application
      * @throws IOException
-     *             if the music fails to be initialized
+     *                     if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, PlayerService playerService,
             TeamService teamService, TowerService towerService, InventoryService inventoryService) throws IOException {
@@ -174,35 +176,28 @@ public class MetaController {
     }
 
     public void onStartManualCombat() {
-        try {
-            Team playerTeam = this.teamService.getRequiredActiveTeam();
-            RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
-            Inventory playerInventory = this.inventoryService.loadInventory();
-            TeamFactory opponentFactory = this.teamService
-                    .createOpponentFactory(this.bugemonService.getAllDefaultBugemons(), this.random);
-            CombatFactory combatFactory = this.combatService.createManualCombatFactory(
-                    this.inventoryService.getDefaultInventory(), this.combatController, Configuration.Game.FLOOR_MIN,
-                    false);
-            this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
-            this.switchTo(Window.MANUAL_COMBAT);
-        } catch (NoActiveTeamException e) {
-            LOG.error("Cannot start manual combat: no active team", e);
-        }
+        CombatFactory combatFactory = this.combatService.createManualCombatFactory(
+                this.inventoryService.getDefaultInventory(), this.combatController, Configuration.Game.FLOOR_MIN,
+                false);
+        this.startCombat(combatFactory, Window.MANUAL_COMBAT);
     }
 
     public void onStartAutomaticCombat() {
+        CombatFactory combatFactory = this.combatService.createAutoCombatFactory(Configuration.Game.FLOOR_MIN, false);
+        this.startCombat(combatFactory, Window.AUTOMATIC_COMBAT);
+    }
+
+    private void startCombat(CombatFactory combatFactory, Window window) {
         try {
             Team playerTeam = this.teamService.getRequiredActiveTeam();
             RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
             Inventory playerInventory = this.inventoryService.loadInventory();
             TeamFactory opponentFactory = this.teamService
                     .createOpponentFactory(this.bugemonService.getAllDefaultBugemons(), this.random);
-            CombatFactory combatFactory = this.combatService.createAutoCombatFactory(Configuration.Game.FLOOR_MIN,
-                    false);
             this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
-            this.switchTo(Window.AUTOMATIC_COMBAT);
+            this.switchTo(window);
         } catch (NoActiveTeamException e) {
-            LOG.error("Cannot start automatic combat: no active team", e);
+            LOG.error("Cannot start combat: no active team", e);
         }
     }
 
@@ -269,9 +264,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *            target screen to display
+     *               target screen to display
      * @throws IllegalArgumentException
-     *             if the window is invalid
+     *                                  if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
