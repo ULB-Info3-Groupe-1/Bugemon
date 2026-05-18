@@ -8,30 +8,42 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import ulb.controllers.TowerController;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Inventory;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room.RoomType;
-import ulb.models.trainer.ManualTrainer;
-import ulb.models.trainer.Trainer;
+import ulb.repositories.InventoryRepository;
+import ulb.services.InventoryService;
+import ulb.services.SkillService;
 import ulb.utils.test.TestUtilsBugemons;
 
 public class TestRooms {
 
     private static final List<Skill> DEFAULT_SKILLS = List.of();
 
+    @Before
+    public void setUp() {
+        InventoryService.resetInstance();
+        InventoryService.init("TestPlayer", mock(InventoryRepository.class), mock(SkillService.class));
+    }
+
+    @After
+    public void tearDown() {
+        InventoryService.resetInstance();
+    }
+
     @Test
     public void testCombatRoomCompletionAndType() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
 
         List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         mockBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
-        CombatRoom combatRoom = new CombatRoom(mockBugemons, DEFAULT_SKILLS, trainer, false);
+        CombatRoom combatRoom = new CombatRoom(mockBugemons, playerTeam, DEFAULT_SKILLS, false);
 
         assertEquals(RoomType.COMBAT, combatRoom.getType());
     }
@@ -39,11 +51,10 @@ public class TestRooms {
     @Test
     public void testBossCombatRoomType() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
 
         List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         mockBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
-        CombatRoom bossRoom = new CombatRoom(mockBugemons, DEFAULT_SKILLS, trainer, true);
+        CombatRoom bossRoom = new CombatRoom(mockBugemons, playerTeam, DEFAULT_SKILLS, true);
 
         assertEquals(RoomType.BOSS, bossRoom.getType());
         assertTrue(bossRoom.isBoss());
@@ -59,11 +70,10 @@ public class TestRooms {
     @Test
     public void testVisitDelegatesToTowerController() {
         BugemonTeam playerTeam = TestUtilsBugemons.createDefaultTeam(3);
-        Trainer trainer = new ManualTrainer(playerTeam, mock(Inventory.class));
 
         List<Bugemon> mockBugemons = new ArrayList<>(TestUtilsBugemons.createDefaultTeam(6).stream().toList());
         mockBugemons.add(TestUtilsBugemons.createDefaultBugemon("FinalBoss"));
-        CombatRoom combatRoom = new CombatRoom(mockBugemons, DEFAULT_SKILLS, trainer, false);
+        CombatRoom combatRoom = new CombatRoom(mockBugemons, playerTeam, DEFAULT_SKILLS, false);
         RewardRoom rewardRoom = new RewardRoom();
         EmptyRoom emptyRoom = new EmptyRoom();
         TowerController towerController = mock(TowerController.class);

@@ -30,17 +30,15 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     private static final int DEFAULT_MINIMAX_DEPTH = 2;
 
     private ManualTrainer manualPlayerTrainer;
-    private final InventoryService inventoryService;
 
     /**
      * Constructs a {@code ManualCombatController} and wires itself as the view listener.
      *
      */
     public ManualCombatController(MetaController metaController, TeamService teamService, BugemonService bugemonService,
-            InventoryService inventoryService, SkillService skillService) {
+            SkillService skillService) {
         super(metaController, teamService, bugemonService, skillService.getSkills(StatBonusEffect.class),
                 ViewLoader.load(ManualCombatView::new));
-        this.inventoryService = inventoryService;
         this.view.setListener(this);
     }
 
@@ -50,7 +48,8 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.shouldRestoreHp = shouldRestoreHp;
 
         this.manualPlayerTrainer = new ManualTrainer(this.teamService.getRequiredActiveTeam(),
-                this.inventoryService.loadInventory());
+                InventoryService.getInstance().loadInventory());
+
         this.playerTrainer = this.manualPlayerTrainer;
 
         AITrainer opponentTrainer = new AITrainer(TeamFactory
@@ -84,6 +83,13 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
         this.playerTrainer = this.manualPlayerTrainer;
         this.combat = newCombat;
         Trainer opponentTrainer = this.combat.getOpponentTrainer();
+
+        for (Bugemon b : this.teamService.getRequiredActiveTeam()) {
+            if (b.getHp() > 0) {
+                this.manualPlayerTrainer.setCurrentBugemon(b);
+                break;
+            }
+        }
 
         this.view.setModel(this.manualPlayerTrainer, opponentTrainer);
         this.pendingSteps = Collections.emptyIterator();
@@ -129,16 +135,11 @@ public class ManualCombatController extends CombatController<ManualCombatView> i
     @Override
     public void onItemSelected(Item item) {
         this.manualPlayerTrainer.registerUseItem(item);
+        InventoryService.getInstance().saveInventory(this.manualPlayerTrainer.getInventory());
         this.startTurn();
     }
 
     // ── CombatController hooks ────────────────────────────────────────────────
-
-    @Override
-    protected void onCombatEnded(ulb.models.trainer.Trainer winner) {
-        this.inventoryService.saveInventory(this.manualPlayerTrainer.getInventory());
-        super.onCombatEnded(winner);
-    }
 
     protected void onStepsExhausted() {
         if (!this.manualPlayerTrainer.isCurrentBugemonAlive()) {

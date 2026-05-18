@@ -115,6 +115,14 @@ public class TeamService {
     // --- Team Management ---
 
     /**
+     * Restores the HP of all Bugemons in the active team and saves their state to the database.
+     */
+    public void restoreHpTeam() {
+        this.activeTeam.forEach(Bugemon::restoreHp);
+        this.saveBugemonStateOfActiveTeam();
+    }
+
+    /**
      * Loads the teams of the player from the database and sets the active team. If the player does not have an active
      * team, the active team is set to empty. It also clears the local list of teams before loading them from the
      * database to avoid duplicates in case this method is called multiple times.

@@ -9,20 +9,44 @@ import ulb.repositories.InventoryRepository;
 
 public class InventoryService {
 
+    private static InventoryService instance;
+
     private final InventoryRepository inventoryRepository;
     private final SkillService skillService;
     private final String playername;
 
-    public InventoryService(String playername, InventoryRepository inventoryRepository, SkillService skillService) {
+    private InventoryService(String playername, InventoryRepository inventoryRepository, SkillService skillService) {
         this.inventoryRepository = inventoryRepository;
         this.playername = playername;
         this.skillService = skillService;
+    }
+
+    public static synchronized void init(String playername, InventoryRepository inventoryRepository,
+            SkillService skillService) {
+        if (instance == null) {
+            instance = new InventoryService(playername, inventoryRepository, skillService);
+        }
+    }
+
+    public static synchronized InventoryService getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("InventoryService is not initialized");
+        }
+        return instance;
+    }
+
+    public static synchronized void resetInstance() {
+        instance = null;
     }
 
     public Inventory loadInventory() {
         Inventory inventory = this.inventoryRepository.getPlayerInventory(this.playername);
         this.applyStarterItemsSkills(inventory);
         return inventory;
+    }
+
+    public void saveInventory(Inventory inventory) {
+        this.inventoryRepository.saveInventory(this.playername, inventory);
     }
 
     /**
@@ -56,10 +80,6 @@ public class InventoryService {
             case "boost" -> ItemType.BOOST;
             default -> throw new IllegalArgumentException("Unknown starter item category: " + category);
         };
-    }
-
-    public void saveInventory(Inventory inventory) {
-        this.inventoryRepository.saveInventory(this.playername, inventory);
     }
 
 }

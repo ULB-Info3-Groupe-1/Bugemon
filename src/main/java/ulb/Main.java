@@ -69,13 +69,14 @@ public class Main extends Application {
                 skillService.getSkills(StatBonusEffect.class));
         TeamService teamService = new TeamService(playerRepository, teamRepository, bugemonRepository, playerName,
                 skillService);
-        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName, bugemonService, teamService,
-                inventoryService, skillService);
-        RewardService rewardService = new RewardService(staticDataRepository, inventoryRepository, playerName);
+                skillService);
+        RewardService rewardService = new RewardService(staticDataRepository);
+
+        InventoryService.init(playerName, inventoryRepository, skillService);
 
         MetaController controller = new MetaController(stage, bugemonService, playerService, teamService, towerService,
-                inventoryService, skillService, rewardService);
+                skillService, rewardService);
         controller.start();
     }
 }

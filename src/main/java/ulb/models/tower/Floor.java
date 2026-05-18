@@ -9,23 +9,21 @@ import java.util.List;
 import java.util.Set;
 
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.skills.Skill;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.RoomVisitor;
 import ulb.models.tower.utils.FloorGenerator;
-import ulb.models.trainer.Trainer;
 
 public class Floor {
-    private final Trainer playerTrainer;
     private final FloorGenerator floorGenerator;
     private FloorNode currentPosition;
     private final FloorNode floorRoot;
     private final int floorLevel;
 
-    public Floor(List<Bugemon> allBugemons, List<Skill> skills, Trainer playerTrainer, int floorLevel) {
-        this.playerTrainer = playerTrainer;
+    public Floor(List<Bugemon> allBugemons, BugemonTeam playerTeam, List<Skill> skills, int floorLevel) {
         this.floorLevel = floorLevel;
-        this.floorGenerator = new FloorGenerator(allBugemons, skills, playerTrainer);
+        this.floorGenerator = new FloorGenerator(allBugemons, playerTeam, skills);
         this.currentPosition = this.floorGenerator.getRoot();
         this.floorRoot = this.floorGenerator.getRoot();
     }
@@ -88,10 +86,6 @@ public class Floor {
 
     public Room getCurrentRoom() {
         return this.currentPosition.getRoom();
-    }
-
-    public Trainer getPlayerTrainer() {
-        return this.playerTrainer;
     }
 
     public void visitCurrentRoom(RoomVisitor roomVisitor) {
