@@ -62,6 +62,7 @@ public class Main extends Application {
                 loader.getQueries());
         TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, bugemonRepository,
                 loader.getQueries());
+
         String playerName = "default_player";
         PlayerService playerService = new PlayerService(staticDataRepository, playerRepository, playerName);
         SkillService skillService = new SkillService(playerService.getUnlockedSkills());
