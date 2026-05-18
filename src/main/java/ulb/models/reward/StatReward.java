@@ -8,7 +8,6 @@ public class StatReward extends Reward {
     private final Upgrade upgrade;
 
     public StatReward(Upgrade upgrade) {
-        super(RewardType.STAT);
         this.upgrade = upgrade;
     }
 

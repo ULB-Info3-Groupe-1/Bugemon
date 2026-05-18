@@ -10,7 +10,6 @@ public class ItemReward extends Reward {
     private final Item item;
 
     public ItemReward(Item item) {
-        super(RewardType.ITEM);
         this.item = item;
     }
 

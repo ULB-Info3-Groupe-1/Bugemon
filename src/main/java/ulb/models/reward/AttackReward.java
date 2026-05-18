@@ -9,7 +9,6 @@ public class AttackReward extends Reward {
     private int indexToReplace;
 
     public AttackReward(Attack newAttack) {
-        super(RewardType.ATTACK);
         this.newAttack = newAttack;
         this.indexToReplace = -1;
     }

@@ -9,7 +9,9 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon_team.BugemonTeam;
 import ulb.models.reward.AttackReward;
+import ulb.models.reward.ItemReward;
 import ulb.models.reward.Reward;
+import ulb.models.reward.StatReward;
 import ulb.services.BugemonService;
 import ulb.services.RewardService;
 import ulb.services.TeamService;
@@ -49,21 +51,20 @@ public class RewardController extends Controller<RewardView> implements RewardVi
             return;
         }
 
-        switch (selectedReward.getRewardType()) {
-            case ITEM -> {
+        switch (selectedReward) {
+            case ItemReward item -> {
                 selectedReward.applyReward(null);
                 this.quitRewardScreen();
             }
-            case STAT -> {
+            case StatReward stat -> {
                 this.pendingReward = selectedReward;
                 this.view.showStatSelection(activeBugemonTeam);
             }
-            case ATTACK -> {
+            case AttackReward attack -> {
                 this.pendingReward = selectedReward;
                 this.view.showAttackSelection(activeBugemonTeam);
             }
-            default -> {
-            }
+            default -> throw new IllegalStateException("Unknown reward type: " + selectedReward);
         }
     }
 
@@ -78,16 +79,12 @@ public class RewardController extends Controller<RewardView> implements RewardVi
         // disclaimer: WE MUST USE THE SWITCH CASE IN ORDER TO UPDATE THE VIEW PROPERLY
         // hihi stinky poopy
 
-        switch (this.pendingReward.getRewardType()) {
-            case ATTACK -> {
-                this.updateAttackSelection(bugemon);
-                break;
-            }
+        switch (this.pendingReward) {
+            case AttackReward attack -> this.updateAttackSelection(bugemon);
             default -> {
                 this.pendingReward.applyReward(bugemon);
                 this.bugemonService.saveBugemonState(bugemon);
                 this.quitRewardScreen();
-                break;
             }
         }
     }
