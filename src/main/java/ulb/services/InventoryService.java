@@ -7,6 +7,8 @@ import ulb.models.skills.Skill;
 import ulb.models.skills.SkillEffect.StarterItemsEffect;
 import ulb.repositories.InventoryRepository;
 
+// TODO: refact this class
+
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
@@ -20,8 +22,10 @@ public class InventoryService {
     }
 
     public Inventory loadInventory() {
-        Inventory inventory = this.inventoryRepository.getPlayerInventory(this.playername);
-        this.applyStarterItemsSkills(inventory);
+        Inventory inventory = new Inventory();
+
+        // Inventory inventory = this.inventoryRepository.getPlayerInventory(this.playername);
+        // this.applyStarterItemsSkills(inventory);
         return inventory;
     }
 
@@ -30,11 +34,12 @@ public class InventoryService {
      * every unlocked {@link StarterItemsEffect} skill.
      */
     public void resetInventory() {
-        this.inventoryRepository.addDefaultInventory(this.playername);
+        // this.inventoryRepository.addDefaultInventory(this.playername);
     }
 
     public Inventory getDefaultInventory() {
-        return this.inventoryRepository.getDefaultInventory();
+        return this.loadInventory();
+        // return this.inventoryRepository.getDefaultInventory();
     }
 
     // TODO: UI should permit the player to select the +x items granted by the skill
@@ -63,7 +68,7 @@ public class InventoryService {
     }
 
     public void saveInventory(Inventory inventory) {
-        this.inventoryRepository.saveInventory(this.playername, inventory);
+        // this.inventoryRepository.saveInventory(this.playername, inventory);
     }
 
     public void save(Inventory inventory) {

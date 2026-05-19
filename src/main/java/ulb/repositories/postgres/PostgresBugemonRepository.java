@@ -25,6 +25,13 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     }
 
     @Override
+    public void addAllPlayerBugemons(String playerName) {
+        for (PlayerBugemonDTO bugemon : this.findAll(playerName)) {
+            this.save(playerName, bugemon);
+        }
+    }
+
+    @Override
     public List<PlayerBugemonDTO> findAll(String playername) {
         LOG.debug("Finding all bugemons for playername: {}", playername);
         return executeQuery("GetPlayerBugemons", this::mapPlayerBugemon, playername);

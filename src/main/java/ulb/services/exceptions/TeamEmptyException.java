@@ -1,4 +1,4 @@
-package ulb.repositories.exceptions;
+package ulb.services.exceptions;
 
 /**
  * Thrown when trying to save an empty team.

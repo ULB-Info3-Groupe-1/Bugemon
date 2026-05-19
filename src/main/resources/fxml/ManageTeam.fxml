@@ -65,11 +65,6 @@
 
                 <Button fx:id="saveTeamButton" text="Sauvegarder"
                     onAction="#onSaveClicked" styleClass="btn,btn-success,btn-team" />
-                <Button fx:id="renameTeamButton" text="Renommer"
-                    onAction="#onRenameClicked" styleClass="btn,btn-success,btn-team" />
-                <Button fx:id="modifyTeamButton" text="Modifier l'équipe"
-                    onAction="#onModifyTeamClicked"
-                    styleClass="btn,btn-success,btn-team" />
                 <Button fx:id="addNewTeamButton" text="Nouvelle équipe +"
                     onAction="#onAddNewTeamClicked"
                     styleClass="btn,btn-success,btn-team" />

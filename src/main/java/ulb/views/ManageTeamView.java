@@ -46,11 +46,7 @@ public class ManageTeamView extends View {
     @FXML
     private Text selectedTeamName;
     @FXML
-    private Button modifyTeamButton;
-    @FXML
     private Button deleteTeamButton;
-    @FXML
-    private Button renameTeamButton;
     @FXML
     private Button startAutomaticCombatButton;
     @FXML
@@ -81,8 +77,8 @@ public class ManageTeamView extends View {
      */
     private void setMode(TeamFormMode mode) {
         boolean isCreate = (mode == TeamFormMode.CREATE);
-        List<Button> editButtons = List.of(this.modifyTeamButton, this.renameTeamButton, this.deleteTeamButton,
-                this.startAutomaticCombatButton, this.startManualCombatButton, this.startTowerCombatButton);
+        List<Button> editButtons = List.of(this.deleteTeamButton, this.startAutomaticCombatButton,
+                this.startManualCombatButton, this.startTowerCombatButton);
 
         editButtons.forEach(btn -> {
             btn.setVisible(!isCreate);
@@ -110,13 +106,9 @@ public class ManageTeamView extends View {
 
         void onDelete(String teamName);
 
-        void onRename(String newName);
-
         void onAddNewTeam();
 
         void onBugemonSelected(PlayerBugemon bugemon);
-
-        void onModifyTeam(String teamName);
 
         void onStartAutomaticCombat();
 
@@ -182,18 +174,8 @@ public class ManageTeamView extends View {
     }
 
     @FXML
-    private void onRenameClicked() {
-        this.listener.onRename(this.getTeamNameToSave());
-    }
-
-    @FXML
     private void onAddNewTeamClicked() {
         this.listener.onAddNewTeam();
-    }
-
-    @FXML
-    private void onModifyTeamClicked() {
-        this.listener.onModifyTeam(this.getSelectedTeamName());
     }
 
     @FXML
@@ -244,20 +226,8 @@ public class ManageTeamView extends View {
         this.showWarningAlert(TEAM_NAME_NOT_FOUND, "Aucune équipe sauvegardée avec le nom " + teamName + ".");
     }
 
-    public void showSelectTeamToRenameAlert() {
-        this.showWarningAlert(TEAM_NAME_NOT_FOUND, "Veuillez sélectionner une équipe à renommer.");
-    }
-
     public void showDeleteTeamNoActiveTeamAlert() {
         this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez supprimer.");
-    }
-
-    public void showRenameTeamNoActiveTeamAlert() {
-        this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez renommer.");
-    }
-
-    public void showAlertChooseTeamToModify() {
-        this.showNoActiveTeamAlert("Veuillez choisir une équipe à modifier.");
     }
 
     /**

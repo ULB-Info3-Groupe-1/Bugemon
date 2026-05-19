@@ -25,9 +25,7 @@ public class PlayerService {
     private void loadPlayerSkills() {
         List<SkillDTO> saved = this.skillRepository.findAll(this.playerName);
         for (SkillDTO dto : saved) {
-            this.skillTree.getAllNodes().stream()
-                    .filter(n -> n.getSkill().getId().equals(dto.skillId()))
-                    .findFirst()
+            this.skillTree.getAllNodes().stream().filter(n -> n.getSkill().getId().equals(dto.skillId())).findFirst()
                     .ifPresent(n -> n.getSkill().setCurrentLevel(dto.level()));
         }
     }
@@ -78,9 +76,7 @@ public class PlayerService {
     }
 
     private List<SkillDTO> buildCurrentSkillDTOs() {
-        return this.skillTree.getAllNodes().stream()
-                .filter(n -> n.getSkill().getCurrentLevel() > 0)
-                .map(n -> new SkillDTO(n.getSkill().getId(), n.getSkill().getCurrentLevel()))
-                .toList();
+        return this.skillTree.getAllNodes().stream().filter(n -> n.getSkill().getCurrentLevel() > 0)
+                .map(n -> new SkillDTO(n.getSkill().getId(), n.getSkill().getCurrentLevel())).toList();
     }
 }

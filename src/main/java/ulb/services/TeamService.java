@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Random;
 
 import ulb.factories.BugemonFactory;
-
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
@@ -16,6 +15,8 @@ import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.services.exceptions.TeamEmptyException;
+import ulb.services.exceptions.TeamNameEmptyException;
 
 /**
  * Service responsible for team persistence.
@@ -40,8 +41,7 @@ public class TeamService {
         List<PlayerBugemon> members = teamDTO.members().stream()
                 .sorted(Comparator.comparingInt(TeamMemberDTO::slotPosition))
                 .map(member -> this.bugemonRepository.findBase(member.bugemonName())
-                        .flatMap(base -> this.bugemonRepository
-                                .findByName(this.playername, member.bugemonName())
+                        .flatMap(base -> this.bugemonRepository.findByName(this.playername, member.bugemonName())
                                 .map(dto -> BugemonFactory.createPlayerBugemon(base, dto)))
                         .orElseThrow())
                 .toList();
@@ -50,20 +50,49 @@ public class TeamService {
         return team;
     }
 
-    public void deleteTeam(String teamName) {
+    public boolean isTeamSaved(Team team) {
+        if (team.getName() == null || team.getName().isEmpty()) {
+            return false;
+        }
+        return this.teamRepository.findByName(this.playername, team.getName())
+                .map(teamDTO -> this.teamToDTO(this.playername, team).equals(teamDTO)).orElse(false);
+    }
+
+    public void deleteTeam(String teamName) throws TeamNameEmptyException {
+        if (teamName.isEmpty()) {
+            throw new TeamNameEmptyException(teamName);
+        }
         this.teamRepository.delete(this.playername, teamName);
+    }
+
+    public void setActiveTeam(String teamName) {
+        this.teamRepository.setCurrentTeamName(this.playername, teamName);
+    }
+
+    public void resetActiveTeam() {
+        this.teamRepository.resetCurrentTeamName(this.playername);
     }
 
     public void deleteTeams() {
         this.teamRepository.deleteAll(this.playername);
     }
 
-    public void save(Team team) {
+    public void save(Team team) throws TeamEmptyException, TeamNameEmptyException {
+        if (team.isEmpty()) {
+            throw new TeamEmptyException("Cannot save an empty team!");
+        } else if (team.getName().isEmpty()) {
+            throw new TeamNameEmptyException("Cannot save a team without a name!");
+        }
         this.teamRepository.save(this.playername, this.teamToDTO(this.playername, team));
     }
 
+    public Optional<String> getActiveTeamName() {
+        return this.teamRepository.getCurrentTeamName(this.playername);
+    }
+
     public Optional<Team> getActiveTeam() {
-        return this.teamRepository.getCurrentTeamName(this.playername).flatMap(teamName -> this.teamRepository.findByName(this.playername, teamName)).map(this::createTeam);
+        return this.teamRepository.getCurrentTeamName(this.playername)
+                .flatMap(teamName -> this.teamRepository.findByName(this.playername, teamName)).map(this::createTeam);
     }
 
     public TeamFactory createOpponentFactory(List<Bugemon> bugemons, Random random) {
@@ -72,8 +101,7 @@ public class TeamService {
 
     private TeamDTO teamToDTO(String playerName, Team team) {
         List<TeamMemberDTO> members = team.getMembers().stream()
-                .map(b -> new TeamMemberDTO(b.getName(), team.getMembers().indexOf(b)))
-                .toList();
+                .map(b -> new TeamMemberDTO(b.getName(), team.getMembers().indexOf(b))).toList();
         return new TeamDTO(playerName, team.getName(), members);
     }
 }

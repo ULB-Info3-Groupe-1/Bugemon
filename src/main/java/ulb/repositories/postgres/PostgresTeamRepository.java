@@ -62,11 +62,24 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
     @Override
     public Optional<String> getCurrentTeamName(String playername) {
         LOG.debug("Getting current teamName for playername: {}", playername);
-        List<String> results = executeQuery("GetPlayerCurrentTeamName", rs -> rs.getString(DatabaseColumns.COL_NAME), playername);
+        List<String> results = executeQuery("GetPlayerCurrentTeamName",
+                rs -> rs.getString(DatabaseColumns.COL_CURRENT_TEAM), playername);
         if (results.isEmpty()) {
             return Optional.empty();
         }
         return Optional.ofNullable(results.get(0));
+    }
+
+    @Override
+    public void setCurrentTeamName(String playername, String teamName) {
+        LOG.debug("Setting current teamName '{}' for playername: {}", teamName, playername);
+        executeUpdate("SetPlayerCurrentTeamName", playername, teamName);
+    }
+
+    @Override
+    public void resetCurrentTeamName(String playername) {
+        LOG.debug("Resetting current teamName for playername: {}", playername);
+        executeUpdate("ResetPlayerCurrentTeamName", playername);
     }
 
     private void addTeamMember(String playerName, String teamName, TeamMemberDTO dto) {

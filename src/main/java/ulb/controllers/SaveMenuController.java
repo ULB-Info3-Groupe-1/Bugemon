@@ -36,7 +36,8 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
     public void onNewGame() {
         LOG.info("Starting new game - clearing player data");
         this.bugemonService.clearAllPlayerBugemons();
-        this.teamService.clearTeamsAndActiveTeam();
+        this.teamService.resetActiveTeam();
+        this.teamService.deleteTeams();
         this.towerService.clearTowerProgress();
         this.inventoryService.resetInventory();
         this.metaController.onMainMenu();

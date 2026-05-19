@@ -18,7 +18,7 @@ SET skill_points = ?
 WHERE playername = ?;
 
 -- Query
--- UnsetPlayerCurrentTeam
+-- ResetPlayerCurrentTeamName
 UPDATE players
 SET current_team = NULL
 WHERE playername = ?;

@@ -20,6 +20,7 @@ public class SaveService {
         this.playerService.save();
         playerState.getActiveTeam().ifPresent(this.bugemonService::save);
         this.inventoryService.save(playerState.getInventory());
-        playerState.getActiveTeam().ifPresent(this.teamService::save);
+        // TODO: i think it's not needed, but need to link this team with the current Tower
+        // playerState.getActiveTeam().ifPresent(this.teamService::save);
     }
 }

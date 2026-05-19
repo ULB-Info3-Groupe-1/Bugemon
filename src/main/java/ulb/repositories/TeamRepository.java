@@ -18,4 +18,8 @@ public interface TeamRepository {
     void deleteAll(String playerName);
 
     Optional<String> getCurrentTeamName(String playername);
+
+    void setCurrentTeamName(String playername, String teamName);
+
+    void resetCurrentTeamName(String playername);
 }

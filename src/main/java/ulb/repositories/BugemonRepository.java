@@ -19,4 +19,6 @@ public interface BugemonRepository {
     void save(String playername, PlayerBugemonDTO playerBugemon);
 
     void delete(String playername, String bugemonName);
+
+    void addAllPlayerBugemons(String playerName);
 }
