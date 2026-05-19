@@ -15,6 +15,8 @@ import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
 
+// TODO: perform checks for arguments (team contains at least one bugemon, has a name etc.)
+
 /**
  * Service responsible for team persistence.
  */
@@ -32,6 +34,21 @@ public class TeamService {
 
     public List<String> getTeamNames() {
         return this.teamRepository.findAll(this.playerName).stream().map(TeamDTO::teamName).toList();
+    }
+
+    public boolean isTeamSaved(Team team) {
+        if (team.getName() == null) {
+            return false;
+        }
+
+        return this.teamRepository
+                .findByName(this.playerName, team.getName())
+                .map(teamDto -> teamDto.equals(this.teamToDTO(team)))
+                .orElse(false);
+    }
+
+    public boolean teamExists(String name) {
+        return this.teamRepository.findByName(this.playerName, name).isPresent();
     }
 
     public Team createTeam(TeamDTO teamDTO) {
