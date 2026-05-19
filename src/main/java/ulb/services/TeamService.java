@@ -21,18 +21,18 @@ import ulb.repositories.dto.TeamMemberDTO;
  */
 public class TeamService {
 
-    private final String playername;
+    private final String playerName;
     private final TeamRepository teamRepository;
     private final BugemonRepository bugemonRepository;
 
-    public TeamService(TeamRepository teamRepository, BugemonRepository bugemonRepository, String playername) {
-        this.playername = playername;
+    public TeamService(TeamRepository teamRepository, BugemonRepository bugemonRepository, String playerName) {
+        this.playerName = playerName;
         this.teamRepository = teamRepository;
         this.bugemonRepository = bugemonRepository;
     }
 
     public List<String> getTeamNames() {
-        return this.teamRepository.findAll(playername).stream().map(TeamDTO::teamName).toList();
+        return this.teamRepository.findAll(playerName).stream().map(TeamDTO::teamName).toList();
     }
 
     public Team createTeam(TeamDTO teamDTO) {
@@ -40,7 +40,7 @@ public class TeamService {
                 .sorted(Comparator.comparingInt(TeamMemberDTO::slotPosition))
                 .map(member -> this.bugemonRepository.findBase(member.bugemonName())
                         .flatMap(base -> this.bugemonRepository
-                                .findByName(this.playername, member.bugemonName())
+                                .findByName(this.playerName, member.bugemonName())
                                 .map(dto -> BugemonFactory.createPlayerBugemon(base, dto)))
                         .orElseThrow())
                 .toList();
@@ -50,25 +50,25 @@ public class TeamService {
     }
 
     public void deleteTeam(String teamName) {
-        this.teamRepository.delete(this.playername, teamName);
+        this.teamRepository.delete(this.playerName, teamName);
     }
 
     public void deleteTeams() {
-        this.teamRepository.deleteAll(this.playername);
+        this.teamRepository.deleteAll(this.playerName);
     }
 
     public void save(Team team) {
-        this.teamRepository.save(this.playername, this.teamToDTO(this.playername, team));
+        this.teamRepository.save(this.playerName, this.teamToDTO(team));
     }
 
     public TeamFactory createOpponentFactory(List<Bugemon> bugemons, Random random) {
         return new RandomTeamFactory(bugemons, random);
     }
 
-    private TeamDTO teamToDTO(String playerName, Team team) {
+    private TeamDTO teamToDTO(Team team) {
         List<TeamMemberDTO> members = team.getMembers().stream()
                 .map(b -> new TeamMemberDTO(b.getName(), team.getMembers().indexOf(b)))
                 .toList();
-        return new TeamDTO(playerName, team.getName(), members);
+        return new TeamDTO(this.playerName, team.getName(), members);
     }
 }

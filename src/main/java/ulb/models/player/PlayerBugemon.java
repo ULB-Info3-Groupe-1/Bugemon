@@ -8,6 +8,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
 import ulb.models.level_up.Upgrade;
+import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PlayerBugemon {
     private final Bugemon base;
@@ -126,5 +127,11 @@ public class PlayerBugemon {
     @Override
     public String toString() {
         return String.format("%s Nv.%d XP.%d", this.base.name(), this.level, this.xp);
+    }
+
+    public PlayerBugemonDTO toDTO(String playerName) {
+        return new PlayerBugemonDTO(playerName, this.base.name(), this.bonusStats.getBonusDefense(),
+                this.bonusStats.getBonusAttack(), this.bonusStats.getBonusInitiative(),
+                this.bonusStats.getBonusHp(), this.xp, this.level);
     }
 }

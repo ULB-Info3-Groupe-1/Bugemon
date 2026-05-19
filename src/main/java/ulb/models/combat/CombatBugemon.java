@@ -8,6 +8,7 @@ import ulb.common.StatType;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.ElementType;
 import ulb.models.combat.effect.StatusEffect;
+import ulb.models.player.PlayerBugemon;
 import ulb.models.run.RunBugemon;
 
 public class CombatBugemon {
@@ -109,12 +110,12 @@ public class CombatBugemon {
         this.runBugemon.setCurrentHp(this.currentHp);
     }
 
-    public boolean hasAttack(Attack attack) {
-        return this.getAttacks().contains(attack);
+    public PlayerBugemon getPlayerBugemon() {
+        return this.runBugemon.getPlayerBugemon();
     }
 
-    public void addXp(int xp) {
-        this.runBugemon.addXp(xp);
+    public boolean hasAttack(Attack attack) {
+        return this.getAttacks().contains(attack);
     }
 
     public String getSpritePath() {

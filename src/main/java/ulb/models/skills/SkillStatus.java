@@ -1,6 +1,6 @@
 package ulb.models.skills;
 
-public enum SkillNodeState {
+public enum SkillStatus {
     ACTIVE,
     AVAILABLE,
     LOCKED

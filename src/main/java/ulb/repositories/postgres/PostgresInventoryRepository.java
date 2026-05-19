@@ -31,7 +31,7 @@ public class PostgresInventoryRepository extends AbstractRepository implements I
     }
 
     @Override
-    public InventoryDTO find(String playername) {
+    public InventoryDTO findInventory(String playername) {
         LOG.debug("Finding inventory for playername: {}", playername);
         Map<Item, Integer> inventoryMap = new HashMap<>();
         this.executeQuery("GetPlayerInventory", rs -> {

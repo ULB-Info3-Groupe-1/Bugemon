@@ -1,5 +1,5 @@
 package ulb.repositories.dto;
 
-public record PlayerBugemonDTO(String playername, String bugemonName, int currentDefense, int currentAttackPower,
-        int currentInitiative, int currentMaxHp, int currentXp, int currentLevel) {
+public record PlayerBugemonDTO(String playername, String bugemonName, int bonusDefense, int bonusAttackPower,
+                int bonusInitiative, int bonusMaxHp, int xp, int level) {
 }

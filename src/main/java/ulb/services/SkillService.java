@@ -1,27 +1,20 @@
 package ulb.services;
 
-import java.util.List;
-
-import ulb.models.skills.Skill;
-import ulb.models.skills.SkillEffect;
+import ulb.repositories.SkillRepository;
+import ulb.repositories.StaticRepository;
 
 public class SkillService {
-    private final List<Skill> allSkills;
 
-    public SkillService(List<Skill> allSkills) {
-        this.allSkills = allSkills;
+    private final String playername;
+
+    private final SkillRepository skillRepository;
+    private final StaticRepository staticRepository;
+
+    public SkillService(SkillRepository skillRepository, StaticRepository staticRepository, String playername) {
+        this.skillRepository = skillRepository;
+        this.staticRepository = staticRepository;
+
+        this.playername = playername;
     }
 
-    public List<Skill> getAllSkills() {
-        return this.allSkills;
-    }
-
-    public List<Skill> getUnlockedSkills() {
-        return this.allSkills.stream().filter(Skill::isUnlocked).toList();
-    }
-
-    public <T extends SkillEffect> List<Skill> getSkills(Class<T> effectType) {
-        return this.allSkills.stream().filter(Skill::isUnlocked).filter(s -> effectType.isInstance(s.getEffect()))
-                .toList();
-    }
 }

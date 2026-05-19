@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulb.factories.BugemonFactory;
-import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.ElementType;
-import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.skills.Skill;
 import ulb.models.team.Team;
@@ -22,30 +19,23 @@ public class BugemonService {
 
     private final String playername;
     private final StaticRepository staticDataRepository;
-    private final BugemonRepository playerBugemonRepository;
-    private final List<Skill> statBonusSkills;
+    private final BugemonRepository bugemonRepository;
 
-    public BugemonService(StaticRepository staticDataRepository, BugemonRepository playerBugemonRepository,
+    public BugemonService(StaticRepository staticDataRepository, BugemonRepository bugemonRepository,
             String playername, List<Skill> statBonusSkills) {
         this.playername = playername;
         this.staticDataRepository = staticDataRepository;
-        this.playerBugemonRepository = playerBugemonRepository;
-        this.statBonusSkills = statBonusSkills;
+        this.bugemonRepository = bugemonRepository;
     }
 
-    public List<Bugemon> getAllDefaultBugemons() {
+    public List<Bugemon> getDefaultBugemons() {
         return this.staticDataRepository.findBugemons();
     }
 
-    /**
-     * Get all bugemons of the game and return the PlayerBugemons linked to the bugemon.
-     *
-     * @return List of PlayerBugemons
-     */
-    public List<PlayerBugemon> getAllBugemons() {
-        List<PlayerBugemonDTO> playerBugemons = this.playerBugemonRepository.findAll(this.playername);
+    public List<PlayerBugemon> getPlayerBugemons() {
+        List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
         List<PlayerBugemon> listToReturn = new ArrayList<>();
-        for (Bugemon bugemon : this.getAllDefaultBugemons()) {
+        for (Bugemon bugemon : this.staticDataRepository.findBugemons()) {
             playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())).findFirst()
                     .ifPresentOrElse((dto) -> {
                         listToReturn.add(BugemonFactory.createPlayerBugemon(bugemon, dto));
@@ -54,74 +44,28 @@ public class BugemonService {
         return listToReturn;
     }
 
-    /**
-     * Save a new bugemon in the database.
-     *
-     * @param bugemon
-     *            (CreateBugemonDTO) the bugemon to be saved
-     * @throws BugemonNameIsEmptyException
-     *             if the name of the bugemon is empty
-     */
+    public void save(Team team) {
+        team.getMembers().forEach(this::savePlayerBugemon);
+    }
+
+    public void savePlayerBugemon(PlayerBugemon bugemon) {
+        this.bugemonRepository.save(this.playername, bugemon.toDTO(this.playername));
+    }
+
     public void saveNewBugemon(CreateBugemonDTO bugemon)
             throws BugemonNameIsEmptyException, BugemonNameAlreadyExistsException {
         if (bugemon.name().isEmpty()) {
             throw new BugemonNameIsEmptyException("Bugemon name cannot be empty!");
         }
 
-        if (this.getAllDefaultBugemons().stream().anyMatch(b -> b.name().equals(bugemon.name()))) {
+        if (this.staticDataRepository.findBugemons().stream().anyMatch(b -> b.name().equals(bugemon.name()))) {
             throw new BugemonNameAlreadyExistsException("Bugemon name already exists!");
         }
 
         this.staticDataRepository.saveBugemon(bugemon);
     }
 
-    public Bugemon getBugemonByName(String name) {
-        return this.getAllDefaultBugemons().stream().filter(b -> b.name().equals(name)).findFirst().orElse(null);
+    public void removePlayerBugemons() {
+        this.bugemonRepository.removeAll(this.playername);
     }
-
-    /**
-     * Get all attacks matching a specific Bugemon type.
-     *
-     * @param type
-     *            type used to filter attacks
-     * @return attacks for the provided type
-     */
-    public List<Attack> getAttacksByType(ElementType type) {
-        return this.staticDataRepository.findAttacks().stream().filter(a -> a.type() == type).toList();
-    }
-
-    /**
-     * Saves the state of a single bugemon to the database.
-     *
-     * @param bugemon
-     *            the bugemon to save
-     */
-    public void saveBugemonState(PlayerBugemon bugemon) {
-        this.playerBugemonRepository.save(this.playername,
-                new PlayerBugemonDTO(this.playername, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
-                        bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
-    }
-
-    /**
-     * Saves the level up of a bugemon to the database.
-     *
-     * @param levelUp
-     *            the level up of the bugemon to save
-     */
-    public void saveLevelUp(LevelUp levelUp) {
-        this.saveBugemonState(levelUp.getBugemon());
-    }
-
-    public void clearAllPlayerBugemons() {
-        this.playerBugemonRepository.removeAll(this.playername);
-    }
-
-    public List<Skill> getStatBonusSkills() {
-        return this.statBonusSkills;
-    }
-
-    public void save(Team activeTeam) {
-        activeTeam.getMembers().forEach(this::saveBugemonState);
-    }
-
 }
