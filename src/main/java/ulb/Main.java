@@ -12,14 +12,15 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import ulb.controllers.MetaController;
 import ulb.models.player.PlayerState;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
-import ulb.repositories.DatabaseConnection;
-import ulb.repositories.InventoryRepository;
-import ulb.repositories.PlayerBugemonRepository;
-import ulb.repositories.PlayerRepository;
-import ulb.repositories.QueryLoader;
-import ulb.repositories.StaticDataRepository;
-import ulb.repositories.TeamRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
+import ulb.repositories.postgres.DatabaseConnection;
+import ulb.repositories.postgres.InventoryRepository;
+import ulb.repositories.postgres.PlayerBugemonRepository;
+import ulb.repositories.postgres.PlayerRepository;
+import ulb.repositories.postgres.QueryLoader;
+import ulb.repositories.postgres.StaticDataRepository;
+import ulb.repositories.postgres.PostgresTeamRepository;
+import ulb.repositories.TeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
@@ -69,24 +70,20 @@ public class Main extends Application {
         parser.parse();
 
         StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries(),
-                parser.getBugemons(), parser.getAttacks(), parser.getItems());
+                        parser.getBugemons(), parser.getAttacks(), parser.getItems());
         PlayerBugemonRepository playerBugemonRepository = new PlayerBugemonRepository(dbConnection,
-                loader.getQueries());
+                        loader.getQueries());
         InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, loader.getQueries(),
-                parser.getInventory());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository, loader.getQueries(),
-                parser.getSkillTree());
-        TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, playerBugemonRepository,
-                loader.getQueries());
+                        parser.getInventory());
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
+                        loader.getQueries(),
+                        parser.getSkillTree());
+        TeamRepository teamRepository = new PostgresTeamRepository(dbConnection, loader.getQueries());
 
         String playerName = "default_player";
         this.createUserIfNotExists(playerName, playerRepository);
 
         PlayerService playerService = new PlayerService(playerRepository, playerName);
-
-        PlayerState playerState = new PlayerState(playerName, null, inventoryRepository.getPlayerInventory(playerName),
-                playerService.getUnlockedSkills());
-
         SkillService skillService = new SkillService(playerService.getUnlockedSkills());
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository, playerName,
                 skillService.getSkills(StatBonusEffect.class));
@@ -94,9 +91,10 @@ public class Main extends Application {
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName);
 
-        MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
-                towerService, inventoryService, playerState);
-        metaController.start();
+        PlayerState playerState = new PlayerState(playerName, team, teamService.getActiveTeam().orElse(null), playerService.getUnlockedSkills());
 
+        MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
+                        towerService, inventoryService, playerState);
+        metaController.start();
     }
 }

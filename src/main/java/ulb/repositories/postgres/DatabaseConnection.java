@@ -1,4 +1,4 @@
-package ulb.repositories;
+package ulb.repositories.postgres;
 
 import java.io.File;
 import java.net.URI;
@@ -55,13 +55,14 @@ public class DatabaseConnection {
     }
 
     /**
-     * Helper method to prepare a SQL statement using the current database connection.
+     * Helper method to prepare a SQL statement using the current database
+     * connection.
      *
      * @param sql
      *            The SQL query to prepare
      * @return A PreparedStatement ready to be executed
      * @throws SQLException
-     *             if the preparation fails
+     *                      if the preparation fails
      */
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         return this.connection.prepareStatement(sql);

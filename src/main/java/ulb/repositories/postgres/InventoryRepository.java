@@ -1,4 +1,4 @@
-package ulb.repositories;
+package ulb.repositories.postgres;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,14 +70,16 @@ public class InventoryRepository extends AbstractRepository {
     }
 
     /**
-     * Update the player's inventory by first removing all existing items and then adding the items from the provided
+     * Update the player's inventory by first removing all existing items and then
+     * adding the items from the provided
      * inventory.
      *
      *
      * the player's name whose inventory is to be updated
      *
      * @param inventory
-     *            the inventory containing the items to be saved for the player
+     *                  the inventory containing the items to be saved for the
+     *                  player
      */
     public void saveInventory(String playername, Inventory inventory) {
         LOG.debug("Saving inventory for playerId: {}", playername);
@@ -86,11 +88,12 @@ public class InventoryRepository extends AbstractRepository {
     }
 
     /**
-     * Reset the player's inventory to a default state by first clearing the existing inventory and then adding the
+     * Reset the player's inventory to a default state by first clearing the
+     * existing inventory and then adding the
      * default items.
      *
      * @param playername
-     *            the player's name whose inventory is to be reset
+     *                   the player's name whose inventory is to be reset
      */
     public void addDefaultInventory(String playername) {
         this.clearInventory(playername);

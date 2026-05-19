@@ -1,4 +1,4 @@
-package ulb.repositories;
+package ulb.repositories.postgres;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -250,7 +250,7 @@ public class StaticDataRepository extends AbstractRepository {
      * Saves a Bugemon to the database.
      *
      * @param b
-     *            (CreateBugemonDTO) the bugemon to be saved
+     *          (CreateBugemonDTO) the bugemon to be saved
      */
     public void saveBugemon(CreateBugemonDTO b) {
         String fileName = b.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
