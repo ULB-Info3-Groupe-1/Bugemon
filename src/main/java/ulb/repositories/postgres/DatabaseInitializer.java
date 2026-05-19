@@ -22,6 +22,7 @@ import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Item;
+import ulb.repositories.DatabaseConnection;
 import ulb.repositories.dto.CreateBugemonDTO;
 
 public class DatabaseInitializer extends AbstractRepository {
