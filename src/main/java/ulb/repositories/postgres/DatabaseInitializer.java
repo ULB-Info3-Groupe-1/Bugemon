@@ -17,29 +17,34 @@ import java.util.Map;
 import ulb.Configuration;
 import ulb.common.EffectDuration;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Item;
+import ulb.models.skills.SkillEffect;
+import ulb.models.skills.SkillNode;
 import ulb.repositories.DatabaseConnection;
-import ulb.repositories.dto.CreateBugemonDTO;
 
 public class DatabaseInitializer extends AbstractRepository {
 
-    private static final int CRITICAL_TABLES_COUNT = 10;
+    private static final int CRITICAL_TABLES_COUNT = 13;
     private static final String SAVE_ITEM_EFFECT_QUERY = "SaveItemEffect";
 
-    private final List<CreateBugemonDTO> defaultBugemons;
+    private final List<Bugemon> defaultBugemons;
     private final Map<String, Attack> attacks;
     private final List<Item> items;
+    private final List<SkillNode> skillNodes;
 
     public DatabaseInitializer(DatabaseConnection dbConnection, Map<String, String> queries,
-            List<CreateBugemonDTO> bugemonData, Map<String, Attack> attackData, List<Item> itemData) {
+            List<Bugemon> bugemonData, Map<String, Attack> attackData, List<Item> itemData,
+            List<SkillNode> skillNodeData) {
         super(dbConnection, queries);
         this.defaultBugemons = bugemonData;
         this.attacks = attackData;
         this.items = itemData;
+        this.skillNodes = skillNodeData;
     }
 
     public void initialize() {
@@ -64,12 +69,19 @@ public class DatabaseInitializer extends AbstractRepository {
         if (itemCount == 0) {
             this.items.forEach(this::saveItem);
         }
+
+        Integer skillCount = this.executeQuery("IsSkillsEmpty", rs -> rs.getInt("skill_count")).stream().findFirst()
+                .orElse(0);
+        if (skillCount == 0) {
+            this.skillNodes.forEach(this::saveSkillNode);
+        }
     }
 
     private void seedGameData() {
         this.attacks.values().forEach(this::saveAttack);
         this.defaultBugemons.forEach(this::saveBugemon);
         this.items.forEach(this::saveItem);
+        this.skillNodes.forEach(this::saveSkillNode);
     }
 
     private void saveAttack(Attack attack) {
@@ -91,16 +103,19 @@ public class DatabaseInitializer extends AbstractRepository {
         }
     }
 
-    private void saveBugemon(CreateBugemonDTO bugemon) {
-        String fileName = bugemon.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
+    private void saveBugemon(Bugemon bugemon) {
+        URL spriteUrl = DatabaseInitializer.class.getResource("/png/" + bugemon.spritePath());
+        if (spriteUrl == null) {
+            throw new IllegalStateException("Sprite resource not found: /png/" + bugemon.spritePath());
+        }
         try {
-            this.saveSpriteFile(bugemon.spriteUrl(), fileName);
+            this.saveSpriteFile(spriteUrl, bugemon.spritePath());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName, bugemon.defense(),
-                bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(), bugemon.attack1().id(),
-                bugemon.attack2().id(), bugemon.attack3().id());
+        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), bugemon.spritePath(),
+                bugemon.defense(), bugemon.attack(), bugemon.initiative(), bugemon.hp(), bugemon.isStarter(),
+                bugemon.attacks().get(0).id(), bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
     }
 
     private void saveItem(Item item) {
@@ -158,6 +173,36 @@ public class DatabaseInitializer extends AbstractRepository {
         ps.setNull(5, Types.INTEGER);
         ps.setNull(6, Types.VARCHAR);
         ps.setNull(7, Types.INTEGER);
+    }
+
+    private void saveSkillNode(SkillNode node) {
+        this.executeUpdate("SaveSkillNode",
+                node.id(), node.name(), node.description(), node.cost(), node.maxLevel(), node.x(), node.y());
+        if (node.effect() != null) {
+            this.saveSkillEffect(node.id(), node.effect());
+        }
+        node.prerequisites().forEach(prereqId ->
+                this.executeUpdate("SaveSkillPrerequisite", node.id(), prereqId));
+    }
+
+    private void saveSkillEffect(String skillId, SkillEffect effect) {
+        switch (effect) {
+            case SkillEffect.StatBonusEffect e -> this.executeUpdate("SaveSkillEffect",
+                    skillId, "stat_bonus", e.stat().name(), null, null, e.bonus(), null);
+            case SkillEffect.TypeMultiplierEffect e -> this.executeUpdate("SaveSkillEffect",
+                    skillId, "type_multiplicateur", null, e.type().name(), e.mult(), null, null);
+            case SkillEffect.CritBonusEffect e -> this.executeUpdate("SaveSkillEffect",
+                    skillId, "critique_bonus", null, null, e.extraChance(), null, null);
+            case SkillEffect.RegenPostCombatEffect e -> this.executeUpdate("SaveSkillEffect",
+                    skillId, "regen_post_combat", null, null, e.percent(), null, null);
+            case SkillEffect.XpMultiplierEffect e -> this.executeUpdate("SaveSkillEffect",
+                    skillId, "xp_multiplicateur", null, null, e.multiplier(), null, null);
+            case SkillEffect.StarterItemsEffect e -> this.executeUpdate("SaveSkillEffect",
+                    skillId, "objets_bonus", null, null, null, e.quantity(), e.category());
+            case SkillEffect.RewardChoiceEffect e -> this.executeUpdate("SaveSkillEffect",
+                    skillId, "recompense_choix", null, null, null, e.totalChoices(), null);
+            default -> throw new IllegalStateException("Unknown skill effect type: " + effect.getClass().getSimpleName());
+        }
     }
 
     private void saveSpriteFile(URL spriteUrl, String spriteFileName) throws IOException {

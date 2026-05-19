@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +39,9 @@ import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Item;
-import ulb.models.skills.Skill;
+import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
-import ulb.models.utils.Position;
-import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.InventoryDTO;
 
 /**
@@ -54,8 +53,6 @@ import ulb.repositories.dto.InventoryDTO;
  * @see BugemonDeserializer
  */
 public class Parser {
-    private static final String SKILL_ROOT_ID = "start";
-
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
     // Constants for the paths to the JSON data files within the resources
@@ -66,7 +63,7 @@ public class Parser {
 
     // Static fields to hold the parsed data, accessible via getter methods
     private static Map<String, Attack> attacks;
-    private static List<CreateBugemonDTO> bugemons;
+    private static List<Bugemon> bugemons;
     private static List<Item> items;
     private static InventoryDTO inventory;
     private static SkillTree skillTree; // represent the tree data structure
@@ -106,7 +103,7 @@ public class Parser {
         LOG.info("Finished parsing data");
     }
 
-    public final List<CreateBugemonDTO> getBugemons() {
+    public final List<Bugemon> getBugemons() {
         return bugemons;
     }
 
@@ -253,56 +250,73 @@ public class Parser {
     }
 
     private static void parseSkills(Reader reader) {
-        Map<String, SkillNode> skillNodes = new HashMap<>();
-
         LOG.debug("Parsing Skill Tree");
+        List<SkillNode> nodes = new ArrayList<>();
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray nodesArray = root.getAsJsonObject("skill_tree").getAsJsonArray("nodes");
 
-            skillNodes = new HashMap<>();
-
             for (JsonElement nodeElement : nodesArray) {
-                JsonObject nodeObj = nodeElement.getAsJsonObject();
+                JsonObject obj = nodeElement.getAsJsonObject();
 
-                String id = nodeObj.get("id").getAsString();
-                String name = nodeObj.get("nom").getAsString();
-                String description = nodeObj.get("description").getAsString();
-                int cost = nodeObj.get("cout").getAsInt();
-                int maxLevel = nodeObj.get("max_niveau").getAsInt();
+                String id = obj.get("id").getAsString();
+                String name = obj.get("nom").getAsString();
+                String description = obj.get("description").getAsString();
+                int cost = obj.get("cout").getAsInt();
+                int maxLevel = obj.get("max_niveau").getAsInt();
 
-                // we don't use this as it is stupid to check that as we need just
-                // to know the point given on the f*cking node... THAT WILL tell if the node
-                // is unlocked or not and we'll handle the special case of the root node <3
-                // thanks for you understanding...
-                int initialLevel = id.equals(SKILL_ROOT_ID) ? 1 : 0;
+                JsonObject posObj = obj.getAsJsonObject("position");
+                int x = posObj.get("x").getAsInt();
+                int y = posObj.get("y").getAsInt();
 
-                // SkillEffect effect = parseSkillEffect(nodeObj.get("effet"));
-
-                Skill skill = new Skill(id, name, description, cost, maxLevel, initialLevel, null);
-
-                JsonObject posObj = nodeObj.getAsJsonObject("position");
-                Position position = new Position(posObj.get("x").getAsInt(), posObj.get("y").getAsInt());
-
-                SkillNode skillNode = new SkillNode(skill, position);
-
-                skillNodes.put(id, skillNode);
-
-                // Assuming skillNodes are being built in the right order
-                for (JsonElement req : nodeObj.getAsJsonArray("prerequis")) {
-                    String reqId = req.getAsString();
-                    SkillNode parent = skillNodes.get(reqId);
-                    parent.addChild(skillNode);
-                    skillNode.addParent(parent);
+                List<String> prerequisites = new ArrayList<>();
+                for (JsonElement prereq : obj.getAsJsonArray("prerequis")) {
+                    prerequisites.add(prereq.getAsString());
                 }
+
+                SkillEffect effect = null;
+                JsonElement effElem = obj.get("effet");
+                if (effElem != null && !effElem.isJsonNull()) {
+                    effect = parseSkillEffect(effElem.getAsJsonObject());
+                }
+
+                nodes.add(new SkillNode(id, name, description, x, y, maxLevel, cost, effect, prerequisites));
             }
 
-            skillTree = new SkillTree(skillNodes.get(SKILL_ROOT_ID));
-
+            skillTree = new SkillTree(nodes);
             reader.close();
-
         } catch (Exception e) {
             LOG.error("Error when parsing skill tree: {}", e.getMessage());
         }
+    }
+
+    private static SkillEffect parseSkillEffect(JsonObject obj) {
+        String type = obj.get("type").getAsString();
+        return switch (type) {
+            case "stat_bonus" -> new SkillEffect.StatBonusEffect(
+                    parseStatType(obj.get("stat").getAsString()),
+                    obj.get("valeur").getAsInt());
+            case "type_multiplicateur" -> new SkillEffect.TypeMultiplierEffect(
+                    ElementType.valueOf(obj.get("type_cible").getAsString().toUpperCase()),
+                    obj.get("valeur").getAsDouble());
+            case "critique_bonus" -> new SkillEffect.CritBonusEffect(obj.get("valeur").getAsDouble());
+            case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(obj.get("valeur_pourcent").getAsDouble());
+            case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(obj.get("valeur").getAsDouble());
+            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(
+                    obj.get("quantite").getAsInt(),
+                    obj.get("categorie").getAsString());
+            case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(obj.get("valeur").getAsInt());
+            default -> throw new IllegalArgumentException("Unknown skill effect type: " + type);
+        };
+    }
+
+    private static StatType parseStatType(String statStr) {
+        return switch (statStr) {
+            case "hp" -> StatType.HP;
+            case "attaque" -> StatType.ATTACK;
+            case "defense" -> StatType.DEFENSE;
+            case "initiative" -> StatType.INITIATIVE;
+            default -> throw new IllegalArgumentException("Unknown stat type: " + statStr);
+        };
     }
 }
