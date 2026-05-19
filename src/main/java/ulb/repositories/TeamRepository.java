@@ -15,5 +15,5 @@ public interface TeamRepository {
 
     void delete(String playerName, String teamName);
 
-    void removeAll(String playerName);
+    void deleteAll(String playerName);
 }
