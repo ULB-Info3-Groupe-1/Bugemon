@@ -1,4 +1,4 @@
-package ulb.repositories;
+package ulb.repositories.postgres;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +33,8 @@ public class QueryLoader {
     private final Map<String, String> queries = new HashMap<>();
 
     /**
-     * Loads SQL queries, creates the schema if absent, and bootstraps static game data.
+     * Loads SQL queries, creates the schema if absent, and bootstraps static game
+     * data.
      */
     public QueryLoader() {
         this.loadSQLQueries();
@@ -47,7 +48,8 @@ public class QueryLoader {
     }
 
     /**
-     * Parses a SQL file and populates {@code queries}. See {@code team/rules.md} for the required file format
+     * Parses a SQL file and populates {@code queries}. See {@code team/rules.md}
+     * for the required file format
      * ({@code -- Query ...} / {@code -- QueryName} / SQL body).
      */
     private void loadQueriesFromFile(String filePath) {
@@ -127,7 +129,7 @@ public class QueryLoader {
      * Returns the SQL string for the given query name.
      *
      * @throws IllegalArgumentException
-     *             if the query name is not found
+     *                                  if the query name is not found
      */
     public String getSql(String queryName) {
         String sql = this.queries.get(queryName);

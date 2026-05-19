@@ -1,4 +1,4 @@
-package ulb.repositories;
+package ulb.repositories.postgres;
 
 import java.util.HashMap;
 import java.util.List;
