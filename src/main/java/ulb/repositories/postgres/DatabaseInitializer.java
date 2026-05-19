@@ -43,8 +43,8 @@ public class DatabaseInitializer extends AbstractRepository {
     }
 
     public void initialize() {
-        Integer tableCount = this.executeQuery("areTablesPresent",
-                rs -> rs.getInt("existing_critical_tables")).stream().findFirst().orElse(0);
+        Integer tableCount = this.executeQuery("areTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
+                .findFirst().orElse(0);
 
         if (tableCount < CRITICAL_TABLES_COUNT) {
             this.executeUpdate("CreateSchema");
@@ -52,15 +52,15 @@ public class DatabaseInitializer extends AbstractRepository {
             return;
         }
 
-        Integer rowCount = this.executeQuery("IsDataEmpty",
-                rs -> rs.getInt("total_rows")).stream().findFirst().orElse(0);
+        Integer rowCount = this.executeQuery("IsDataEmpty", rs -> rs.getInt("total_rows")).stream().findFirst()
+                .orElse(0);
         if (rowCount == 0) {
             this.seedGameData();
             return;
         }
 
-        Integer itemCount = this.executeQuery("IsItemsEmpty",
-                rs -> rs.getInt("item_count")).stream().findFirst().orElse(0);
+        Integer itemCount = this.executeQuery("IsItemsEmpty", rs -> rs.getInt("item_count")).stream().findFirst()
+                .orElse(0);
         if (itemCount == 0) {
             this.items.forEach(this::saveItem);
         }
@@ -74,8 +74,7 @@ public class DatabaseInitializer extends AbstractRepository {
 
     private void saveAttack(Attack attack) {
         this.executeUpdate("SaveAttack", attack.id(), attack.name(),
-                attack.type() != null ? attack.type().name() : null,
-                attack.description(), attack.power());
+                attack.type() != null ? attack.type().name() : null, attack.description(), attack.power());
 
         if (attack.effects() == null || attack.effects().isEmpty()) {
             return;
@@ -99,14 +98,14 @@ public class DatabaseInitializer extends AbstractRepository {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName,
-                bugemon.defense(), bugemon.attack(), bugemon.initiative(), bugemon.maxHp(),
-                bugemon.isStarter(), bugemon.attack1().id(), bugemon.attack2().id(), bugemon.attack3().id());
+        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName, bugemon.defense(),
+                bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(), bugemon.attack1().id(),
+                bugemon.attack2().id(), bugemon.attack3().id());
     }
 
     private void saveItem(Item item) {
-        this.executeUpdate("CreateItem", item.id(), item.name(), item.description(),
-                item.type().name(), item.id() + ".png");
+        this.executeUpdate("CreateItem", item.id(), item.name(), item.description(), item.type().name(),
+                item.id() + ".png");
         if (item.effect() != null) {
             this.saveItemEffect(item.id(), item.effect());
         }
@@ -114,20 +113,14 @@ public class DatabaseInitializer extends AbstractRepository {
 
     private void saveItemEffect(String itemId, Effect effect) {
         switch (effect) {
-            case HealEffect heal ->
-                this.executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectHeal",
-                        heal.getTarget().name(), heal.getAmount(), null, null, null);
-            case StatModifierEffect modifier ->
-                this.executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectStatModifier",
-                        modifier.getTarget().name(), null,
-                        modifier.getStat() != null ? modifier.getStat().name() : null,
-                        modifier.getModifier(),
-                        modifier.getDuration() == EffectDuration.PERMANENT ? 0 : 1);
-            case ResetMalusEffect resetMalus ->
-                this.executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectResetMalus",
-                        resetMalus.getTarget().name(), null, null, null, null);
-            default ->
-                throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
+            case HealEffect heal -> this.executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectHeal",
+                    heal.getTarget().name(), heal.getAmount(), null, null, null);
+            case StatModifierEffect modifier -> this.executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectStatModifier",
+                    modifier.getTarget().name(), null, modifier.getStat() != null ? modifier.getStat().name() : null,
+                    modifier.getModifier(), modifier.getDuration() == EffectDuration.PERMANENT ? 0 : 1);
+            case ResetMalusEffect resetMalus -> this.executeUpdate(SAVE_ITEM_EFFECT_QUERY, itemId, "EffectResetMalus",
+                    resetMalus.getTarget().name(), null, null, null, null);
+            default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
         }
     }
 
@@ -136,8 +129,7 @@ public class DatabaseInitializer extends AbstractRepository {
             case StatModifierEffect modifier -> this.setStatModifierParameters(ps, modifier);
             case HealEffect heal -> this.setHealParameters(ps, heal);
             case ResetMalusEffect resetMalus -> this.setResetMalusParameters(ps, resetMalus);
-            default ->
-                throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
+            default -> throw new IllegalStateException("Unknown effect type: " + effect.getClass().getSimpleName());
         }
     }
 

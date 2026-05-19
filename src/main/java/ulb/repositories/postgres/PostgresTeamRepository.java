@@ -25,8 +25,7 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
     public List<TeamDTO> findAll(String playerName) {
         LOG.debug("Finding all teams for playername: {}", playerName);
         return this.getPlayerTeamNames(playerName).stream()
-                .map(name -> new TeamDTO(playerName, name, this.getTeamMembers(playerName, name)))
-                .toList();
+                .map(name -> new TeamDTO(playerName, name, this.getTeamMembers(playerName, name))).toList();
     }
 
     @Override
@@ -73,8 +72,7 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
     }
 
     private TeamMemberDTO mapTeamMember(ResultSet rs) throws SQLException {
-        return new TeamMemberDTO(
-                rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
+        return new TeamMemberDTO(rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
                 rs.getInt(DatabaseColumns.COL_SLOT_POSITION));
     }
 

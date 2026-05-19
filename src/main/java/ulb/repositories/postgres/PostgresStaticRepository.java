@@ -29,7 +29,6 @@ import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
-import ulb.models.item.Inventory;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -71,13 +70,13 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName,
-                bugemon.defense(), bugemon.attack(), bugemon.initiative(), bugemon.maxHp(),
-                bugemon.isStarter(), bugemon.attack1().id(), bugemon.attack2().id(), bugemon.attack3().id());
-        this.bugemonCache.put(bugemon.name(), new Bugemon(bugemon.name(), bugemon.maxHp(), bugemon.attack(),
-                bugemon.defense(), bugemon.initiative(), bugemon.type(),
-                List.of(bugemon.attack1(), bugemon.attack2(), bugemon.attack3()),
-                fileName, bugemon.isStarter()));
+        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName, bugemon.defense(),
+                bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(), bugemon.attack1().id(),
+                bugemon.attack2().id(), bugemon.attack3().id());
+        this.bugemonCache.put(bugemon.name(),
+                new Bugemon(bugemon.name(), bugemon.maxHp(), bugemon.attack(), bugemon.defense(), bugemon.initiative(),
+                        bugemon.type(), List.of(bugemon.attack1(), bugemon.attack2(), bugemon.attack3()), fileName,
+                        bugemon.isStarter()));
     }
 
     @Override
@@ -96,11 +95,9 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
             infos.computeIfAbsent(id, k -> {
                 effects.put(k, new ArrayList<>());
                 try {
-                    return new AttackInfo(
-                            rs.getString("attack_name"),
+                    return new AttackInfo(rs.getString("attack_name"),
                             DatabaseHelper.getEnumOrNull(rs, "attack_type", ElementType.class),
-                            rs.getString("attack_description"),
-                            rs.getInt("attack_power"));
+                            rs.getString("attack_description"), rs.getInt("attack_power"));
                 } catch (SQLException e) {
                     throw new IllegalStateException("Error loading attack " + id, e);
                 }
@@ -130,17 +127,12 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         String attackId1 = rs.getString(DatabaseColumns.COL_ATTACK_ID_1);
         String attackId2 = rs.getString(DatabaseColumns.COL_ATTACK_ID_2);
         String attackId3 = rs.getString(DatabaseColumns.COL_ATTACK_ID_3);
-        return new Bugemon(
-                rs.getString(DatabaseColumns.COL_NAME),
-                rs.getInt(DatabaseColumns.COL_BASE_MAX_HP),
-                rs.getInt(DatabaseColumns.COL_BASE_ATTACK),
-                rs.getInt(DatabaseColumns.COL_BASE_DEFENSE),
-                rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE),
-                type,
+        return new Bugemon(rs.getString(DatabaseColumns.COL_NAME), rs.getInt(DatabaseColumns.COL_BASE_MAX_HP),
+                rs.getInt(DatabaseColumns.COL_BASE_ATTACK), rs.getInt(DatabaseColumns.COL_BASE_DEFENSE),
+                rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE), type,
                 List.of(this.attackCache.get(attackId1), this.attackCache.get(attackId2),
                         this.attackCache.get(attackId3)),
-                rs.getString(DatabaseColumns.COL_SPRITE),
-                rs.getBoolean(DatabaseColumns.COL_IS_STARTER));
+                rs.getString(DatabaseColumns.COL_SPRITE), rs.getBoolean(DatabaseColumns.COL_IS_STARTER));
     }
 
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
