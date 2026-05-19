@@ -25,7 +25,6 @@ import ulb.models.item.Inventory;
 import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
-import ulb.models.team.Team;
 import ulb.models.team.factory.TeamFactory;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
@@ -33,7 +32,6 @@ import ulb.services.InventoryService;
 import ulb.services.PlayerService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
-import ulb.services.exceptions.NoActiveTeamException;
 import ulb.views.View;
 
 /**
@@ -192,17 +190,14 @@ public class MetaController {
     }
 
     private void startCombat(CombatFactory combatFactory, Window window) {
-        try {
-            Team playerTeam = this.teamService.getRequiredActiveTeam();
+        this.teamService.getActiveTeam().ifPresent(playerTeam -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
             Inventory playerInventory = this.inventoryService.loadInventory();
             TeamFactory opponentFactory = this.teamService
                     .createOpponentFactory(this.bugemonService.getAllDefaultBugemons(), this.random);
             this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
             this.switchTo(window);
-        } catch (NoActiveTeamException e) {
-            LOG.error("Cannot start combat: no active team", e);
-        }
+        });
     }
 
     public void onTower() {

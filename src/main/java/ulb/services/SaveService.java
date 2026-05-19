@@ -1,6 +1,9 @@
 package ulb.services;
 
 import ulb.models.player.PlayerState;
+import ulb.repositories.exceptions.TeamEmptyException;
+import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
+import ulb.repositories.exceptions.TeamNameEmptyException;
 
 public class SaveService {
     private final PlayerService playerService;
@@ -27,6 +30,13 @@ public class SaveService {
         this.playerService.save();
         this.playerState.getActiveTeam().ifPresent(this.bugemonService::save);
         this.inventoryService.save(this.playerState.getInventory());
-        this.playerState.getActiveTeam().ifPresent(this.teamService::save);
+        this.playerState.getActiveTeam().ifPresent(team -> {
+            try {
+                this.teamService.saveTeam(team);
+            } catch (TeamNameAlreadyExistsException | TeamEmptyException | TeamNameEmptyException e) {
+                // TODO: check normal to catch error here ?
+                throw new IllegalStateException();
+            }
+        });
     }
 }
