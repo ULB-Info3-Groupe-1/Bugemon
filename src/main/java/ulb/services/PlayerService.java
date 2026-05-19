@@ -1,32 +1,34 @@
 package ulb.services;
 
 import java.util.List;
-import java.util.Map;
 
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.SkillRepository;
+import ulb.repositories.dto.SkillDTO;
 
 public class PlayerService {
     private final SkillRepository skillRepository;
     private final SkillTree skillTree;
     private final String playerName;
+    private int skillPoints;
 
     public PlayerService(SkillRepository skillRepository, SkillTree skillTree, String playerName) {
         this.skillRepository = skillRepository;
         this.skillTree = skillTree;
         this.playerName = playerName;
+        this.skillPoints = skillRepository.findSkillPoints(playerName);
         this.loadPlayerSkills();
     }
 
     private void loadPlayerSkills() {
-        Map<String, Integer> saved = this.skillRepository.getPlayerSkills(this.playerName);
-        for (SkillNode node : this.skillTree.getAllNodes()) {
-            Integer level = saved.get(node.getSkill().getId());
-            if (level != null) {
-                node.getSkill().setCurrentLevel(level);
-            }
+        List<SkillDTO> saved = this.skillRepository.findAll(this.playerName);
+        for (SkillDTO dto : saved) {
+            this.skillTree.getAllNodes().stream()
+                    .filter(n -> n.getSkill().getId().equals(dto.skillId()))
+                    .findFirst()
+                    .ifPresent(n -> n.getSkill().setCurrentLevel(dto.level()));
         }
     }
 
@@ -43,23 +45,21 @@ public class PlayerService {
     }
 
     public int getAvailableSkillPoints() {
-        return this.skillRepository.getPlayerSkillPoints(this.playerName);
+        return this.skillPoints;
     }
 
     public void addSkillPoints(int points) {
-        this.skillRepository.setPlayerSkillPoints(this.playerName, this.getAvailableSkillPoints() + points);
+        this.skillPoints += points;
+        this.skillRepository.save(this.playerName, this.buildCurrentSkillDTOs(), this.skillPoints);
     }
 
     public boolean unlockSkill(SkillNode node) {
-        int skillPoints = this.getAvailableSkillPoints();
-        if (!this.skillTree.canUnlock(node, skillPoints)) {
+        if (!this.skillTree.canUnlock(node, this.skillPoints)) {
             return false;
         }
-        skillPoints -= node.getSkill().getCost();
+        this.skillPoints -= node.getSkill().getCost();
         node.getSkill().incrementLevel();
-        this.skillRepository.setPlayerSkillPoints(this.playerName, skillPoints);
-        this.skillRepository.savePlayerSkill(this.playerName, node.getSkill().getId(),
-                node.getSkill().getCurrentLevel());
+        this.skillRepository.save(this.playerName, this.buildCurrentSkillDTOs(), this.skillPoints);
         return true;
     }
 
@@ -68,24 +68,19 @@ public class PlayerService {
             return 0;
         }
         int refund = this.skillTree.downgrade(node);
-        this.skillRepository.setPlayerSkillPoints(this.playerName, this.getAvailableSkillPoints() + refund);
-        this.updateSkillTree();
+        this.skillPoints += refund;
+        this.skillRepository.save(this.playerName, this.buildCurrentSkillDTOs(), this.skillPoints);
         return refund;
     }
 
-    private void updateSkillTree() {
-        for (SkillNode node : this.skillTree.getAllNodes()) {
-            String id = node.getSkill().getId();
-            int level = node.getSkill().getCurrentLevel();
-            if (level > 0) {
-                this.skillRepository.savePlayerSkill(this.playerName, id, level);
-            } else {
-                this.skillRepository.deletePlayerSkill(this.playerName, id);
-            }
-        }
+    public void save() {
+        this.skillRepository.save(this.playerName, this.buildCurrentSkillDTOs(), this.skillPoints);
     }
 
-    public void save() {
-        this.updateSkillTree();
+    private List<SkillDTO> buildCurrentSkillDTOs() {
+        return this.skillTree.getAllNodes().stream()
+                .filter(n -> n.getSkill().getCurrentLevel() > 0)
+                .map(n -> new SkillDTO(n.getSkill().getId(), n.getSkill().getCurrentLevel()))
+                .toList();
     }
 }
