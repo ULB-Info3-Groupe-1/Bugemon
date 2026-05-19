@@ -20,6 +20,7 @@ import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.TeamRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
+import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
@@ -31,72 +32,75 @@ import ulb.utils.Parser;
 /** JavaFX entry point — bootstraps the Bugemon game. */
 public class Main extends Application {
 
-    public static void main(String[] args) {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
-        launch(args);
-    }
-
-    private void createUserIfNotExists(String playerName, PlayerRepository playerRepository)
-            throws PlayernameAlreadyExistsException {
-        try {
-            playerRepository.createPlayer(playerName);
-        } catch (PlayernameAlreadyExistsException e) {
-            // We do nothing because whitout client/server architecture, the database is
-            // local and we don't have a login
-            // system, so the playername used is 'default_player' and is always the same.
-        }
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
-        if (fontStream != null) {
-            Font.loadFont(fontStream, 16);
+        public static void main(String[] args) {
+                SLF4JBridgeHandler.removeHandlersForRootLogger();
+                SLF4JBridgeHandler.install();
+                launch(args);
         }
 
-        stage.setTitle(Configuration.Ui.STAGE_TITLE);
-        stage.setMaximized(true);
+        private void createUserIfNotExists(String playerName, PlayerRepository playerRepository)
+                        throws PlayernameAlreadyExistsException {
+                try {
+                        playerRepository.createPlayer(playerName);
+                } catch (PlayernameAlreadyExistsException e) {
+                        // We do nothing because whitout client/server architecture, the database is
+                        // local and we don't have a login
+                        // system, so the playername used is 'default_player' and is always the same.
+                }
+        }
 
-        Scene scene = new Scene(new StackPane());
-        scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
-        stage.setScene(scene);
+        @Override
+        public void start(Stage stage) throws Exception {
+                InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
+                if (fontStream != null) {
+                        Font.loadFont(fontStream, 16);
+                }
 
-        QueryLoader loader = new QueryLoader();
-        DatabaseConnection dbConnection = new DatabaseConnection();
-        Parser parser = new Parser();
-        parser.parse();
+                stage.setTitle(Configuration.Ui.STAGE_TITLE);
+                stage.setMaximized(true);
 
-        StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries(),
-                parser.getBugemons(), parser.getAttacks(), parser.getItems());
-        PlayerBugemonRepository playerBugemonRepository = new PlayerBugemonRepository(dbConnection,
-                loader.getQueries());
-        InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, loader.getQueries(),
-                parser.getInventory());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository, loader.getQueries(),
-                parser.getSkillTree());
-        TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, playerBugemonRepository,
-                loader.getQueries());
+                Scene scene = new Scene(new StackPane());
+                scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
+                scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
+                stage.setScene(scene);
 
-        String playerName = "default_player";
-        this.createUserIfNotExists(playerName, playerRepository);
+                QueryLoader loader = new QueryLoader();
+                DatabaseConnection dbConnection = new DatabaseConnection();
+                Parser parser = new Parser();
+                parser.parse();
 
-        PlayerService playerService = new PlayerService(playerRepository, playerName);
+                StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries(),
+                                parser.getBugemons(), parser.getAttacks(), parser.getItems());
+                PlayerBugemonRepository playerBugemonRepository = new PlayerBugemonRepository(dbConnection,
+                                loader.getQueries());
+                InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, loader.getQueries(),
+                                parser.getInventory());
+                PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
+                                loader.getQueries(),
+                                parser.getSkillTree());
+                TeamRepository teamRepository = new PostgresTeamRepository(dbConnection,
+                                loader.getQueries());
 
-        PlayerState playerState = new PlayerState(playerName, null, inventoryRepository.getPlayerInventory(playerName),
-                playerService.getUnlockedSkills());
+                String playerName = "default_player";
+                this.createUserIfNotExists(playerName, playerRepository);
 
-        SkillService skillService = new SkillService(playerService.getUnlockedSkills());
-        BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository, playerName,
-                skillService.getSkills(StatBonusEffect.class));
-        TeamService teamService = new TeamService(teamRepository, playerBugemonRepository, playerName);
-        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
-        TowerService towerService = new TowerService(playerRepository, playerName);
+                PlayerService playerService = new PlayerService(playerRepository, playerName);
 
-        MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
-                towerService, inventoryService, playerState);
-        metaController.start();
+                PlayerState playerState = new PlayerState(playerName, null,
+                                inventoryRepository.getPlayerInventory(playerName),
+                                playerService.getUnlockedSkills());
 
-    }
+                SkillService skillService = new SkillService(playerService.getUnlockedSkills());
+                BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository,
+                                playerName,
+                                skillService.getSkills(StatBonusEffect.class));
+                TeamService teamService = new TeamService(teamRepository, playerBugemonRepository, playerName);
+                InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
+                TowerService towerService = new TowerService(playerRepository, playerName);
+
+                MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
+                                towerService, inventoryService, playerState);
+                metaController.start();
+
+        }
 }

@@ -3,6 +3,7 @@ package ulb.repositories.postgres;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +35,19 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
     }
 
     @Override
-    public TeamDTO loadTeam(String playerName, String teamName) {
+    public void removeAll(String playerName) {
+        LOG.debug("Removing all teams for playername: {}", playerName);
+        this.executeQuery("ClearTeams", rs -> null, playerName);
+    }
+
+    @Override
+    public Optional<TeamDTO> loadTeam(String playerName, String teamName) {
         LOG.debug("Loading team '{}' for playername: {}", teamName, playerName);
+        if (!this.teamExists(playerName, teamName)) {
+            return Optional.empty();
+        }
         List<TeamMemberDTO> members = this.getTeamMembers(playerName, teamName);
-        return new TeamDTO(playerName, teamName, members);
+        return Optional.of(new TeamDTO(playerName, teamName, members));
     }
 
     @Override
