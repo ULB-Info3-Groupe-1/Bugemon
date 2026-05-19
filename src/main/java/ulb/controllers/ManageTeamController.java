@@ -90,43 +90,33 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
         this.tmpTeam.setName(teamName);
         this.teamService.save(this.tmpTeam); // TODO: show alert messages if operation fails
-        this.tmpTeam.clear();
-        this.tmpTeam.setName(null);
+        this.clearTmpTeam();
 
         this.view.refresh();
     }
 
     @Override
     public void onDelete(String teamName) {
-        try {
-            this.teamService.deleteTeam(teamName);
-            this.workingTeam.clear();
-        } catch (TeamNotFoundException e) {
-            this.view.showDeleteTeamNoActiveTeamAlert();
-        } catch (TeamNameEmptyException e) {
-            this.view.showEmptyTeamAlert();
-        }
+        this.teamService.deleteTeam(teamName); // TODO: what if operation fails
+        this.clearTmpTeam();
         this.view.refresh();
     }
 
     @Override
     public void onRename(String newName) {
-        try {
-            this.teamService.renameActiveTeam(this.workingTeam.getName(), newName);
-            this.workingTeam.setName(newName);
-        } catch (TeamNotFoundException e) {
-            this.view.showSelectTeamToRenameAlert();
-        } catch (TeamNameAlreadyExistsException e) {
+        if (this.teamService.teamExists(newName)) {
             this.view.showTeamNameAlreadyExistsAlert(newName);
-        } catch (TeamNameEmptyException e) {
-            this.view.showEmptyTeamNameAlert();
+            return;
         }
+
+        this.teamService.renameTeam(this.tmpTeam, newName); // TODO: what if operation fails
+
         this.view.refresh();
     }
 
     @Override
     public void onAddNewTeam() {
-        this.workingTeam.clear();
+        this.clearTmpTeam();
         this.view.clearTeamNameToSave();
         this.view.refresh();
     }
@@ -196,5 +186,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         if (canLeave) {
             this.metaController.onMainMenu();
         }
+    }
+
+    private void clearTmpTeam() {
+        this.tmpTeam.clear();
+        this.tmpTeam.setName(null);
     }
 }
