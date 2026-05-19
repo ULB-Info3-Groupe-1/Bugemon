@@ -14,7 +14,6 @@ import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
-
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
 

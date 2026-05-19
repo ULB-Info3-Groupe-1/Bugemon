@@ -1,5 +1,7 @@
 package ulb.repositories.postgres;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -7,43 +9,46 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
+import ulb.repositories.StaticBugemonRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PostgresBugemonRepository extends AbstractRepository implements BugemonRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresBugemonRepository.class);
+    private final StaticBugemonRepository staticDataRepository;
 
-    public PostgresBugemonRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
+    public PostgresBugemonRepository(DatabaseConnection dbConnection, Map<String, String> queries,
+            StaticBugemonRepository staticDataRepository) {
         super(dbConnection, queries);
+        this.staticDataRepository = staticDataRepository;
     }
 
     @Override
     public List<PlayerBugemonDTO> findAll(String playername) {
         LOG.debug("Finding all bugemons for playername: {}", playername);
-        return this.getPlayerBugemons(playername);
-    }
-
-    @Override
-    public void removeAll(String playername) {
-        LOG.debug("Removing all bugemons for playername: {}", playername);
-        this.executeUpdate("RemoveAllPlayerBugemons", playername);
+        return executeQuery("GetPlayerBugemons", this::mapPlayerBugemon, playername);
     }
 
     @Override
     public Optional<PlayerBugemonDTO> findByName(String playername, String bugemonName) {
         LOG.debug("Finding bugemon '{}' for playername: {}", bugemonName, playername);
-        return this.getPlayerBugemons(playername).stream()
-                .filter(b -> b.bugemonName().equals(bugemonName))
-                .findFirst();
+        return executeQuery("GetPlayerBugemonByName", this::mapPlayerBugemon, playername, bugemonName)
+                .stream().findFirst();
     }
 
     @Override
-    public void save(String playername, PlayerBugemonDTO playerBugemon) {
-        LOG.debug("Saving player bugemon '{}' for playername: {}", playerBugemon.bugemonName(), playername);
-        executeUpdate("SavePlayerBugemon", playerBugemon.playername(), playerBugemon.bugemonName(),
-                playerBugemon.currentDefense(), playerBugemon.currentAttackPower(),
-                playerBugemon.currentInitiative(), playerBugemon.currentMaxHp(), playerBugemon.currentXp(),
-                playerBugemon.currentLevel());
+    public Optional<Bugemon> findBase(String name) {
+        LOG.debug("Finding base bugemon '{}'", name);
+        return this.staticDataRepository.findByName(name);
+    }
+
+    @Override
+    public void save(String playername, PlayerBugemonDTO dto) {
+        LOG.debug("Saving player bugemon '{}' for playername: {}", dto.bugemonName(), playername);
+        executeUpdate("SavePlayerBugemon", dto.playername(), dto.bugemonName(),
+                dto.currentDefense(), dto.currentAttackPower(),
+                dto.currentInitiative(), dto.currentMaxHp(), dto.currentXp(), dto.currentLevel());
     }
 
     @Override
@@ -52,16 +57,21 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
         executeUpdate("DeletePlayerBugemon", playername, bugemonName);
     }
 
-    public List<PlayerBugemonDTO> getPlayerBugemons(String playername) {
-        LOG.debug("Getting bugemons for playername: {}", playername);
-        return executeQuery("GetPlayerBugemons",
-                rs -> new PlayerBugemonDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),
-                        rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
-                playername);
+    @Override
+    public void removeAll(String playername) {
+        LOG.debug("Removing all bugemons for playername: {}", playername);
+        executeUpdate("RemoveAllPlayerBugemons", playername);
     }
 
+    private PlayerBugemonDTO mapPlayerBugemon(ResultSet rs) throws SQLException {
+        return new PlayerBugemonDTO(
+                rs.getString(DatabaseColumns.COL_PLAYERNAME),
+                rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
+                rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
+                rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
+                rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
+                rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP),
+                rs.getInt(DatabaseColumns.COL_CURRENT_XP),
+                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL));
+    }
 }
