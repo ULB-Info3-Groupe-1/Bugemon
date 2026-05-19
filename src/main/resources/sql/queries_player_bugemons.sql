@@ -19,5 +19,13 @@ WHERE playername = ? AND bugemon_name = ?;
 SELECT * FROM player_bugemons WHERE playername = ?;
 
 -- Query
+-- GetPlayerBugemonByName
+SELECT * FROM player_bugemons WHERE playername = ? AND bugemon_name = ?;
+
+-- Query
 -- RemoveAllPlayerBugemons
-DELETE FROM player_bugemons WHERE playername = ?;   
+DELETE FROM player_bugemons WHERE playername = ?;
+
+-- Query
+-- DeletePlayerBugemon
+DELETE FROM player_bugemons WHERE playername = ? AND bugemon_name = ?;

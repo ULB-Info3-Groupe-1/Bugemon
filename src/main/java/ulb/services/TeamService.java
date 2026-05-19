@@ -12,9 +12,10 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
-import ulb.repositories.PlayerBugemonRepository;
+import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
@@ -28,7 +29,7 @@ public class TeamService {
 
     private final String playername;
     private final TeamRepository teamRepository;
-    private final PlayerBugemonRepository playerBugemonRepository;
+    private final BugemonRepository playerBugemonRepository;
 
     /**
      * Constructor.
@@ -41,7 +42,7 @@ public class TeamService {
      *                                the player's name to use for database
      *                                operations
      */
-    public TeamService(TeamRepository teamRepository, PlayerBugemonRepository playerBugemonRepository,
+    public TeamService(TeamRepository teamRepository, BugemonRepository playerBugemonRepository,
             String playername) {
         this.playername = playername;
         this.teamRepository = teamRepository;
@@ -51,7 +52,13 @@ public class TeamService {
     // --- Getters ---
 
     public List<Team> getPlayerTeams() {
-        return this.teamRepository.loadTeams(this.playername);
+        List<TeamDTO> teamDTOs = this.teamRepository.findAll(this.playername);
+        return this.createTeams(teamDTOs);
+
+    }
+
+    public List<Team> createTeams(List<TeamDTO> teamDTOs) {
+        return new ArrayList<>();
     }
 
     public Optional<Team> getActiveTeam() {
