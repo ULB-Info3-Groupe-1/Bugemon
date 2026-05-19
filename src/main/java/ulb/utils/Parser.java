@@ -239,13 +239,13 @@ public class Parser {
         }
     }
 
-    private static void mapInventory(Map<String, Integer> inventoryRaw, List<Item> items) {
+    private static void mapInventory(Map<String, Integer> inventoryRaw, List<Item> itemsParsed) {
         Map<Item, Integer> inventoryMap = new HashMap<>();
         for (Map.Entry<String, Integer> entry : inventoryRaw.entrySet()) {
             String itemId = entry.getKey();
             int quantity = entry.getValue();
 
-            Item obj = items.stream().filter(o -> o.id().equals(itemId)).findFirst()
+            Item obj = itemsParsed.stream().filter(o -> o.id().equals(itemId)).findFirst()
                     .orElseThrow(() -> new RuntimeException("Item with ID " + itemId + " not found"));
             inventoryMap.put(obj, quantity);
         }

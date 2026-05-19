@@ -11,7 +11,7 @@ import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.skills.Skill;
 import ulb.models.team.Team;
-import ulb.repositories.PlayerBugemonRepository;
+import ulb.repositories.BugemonRepository;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.PlayerBugemonDTO;
@@ -22,11 +22,11 @@ public class BugemonService {
 
     private final String playername;
     private final StaticRepository staticDataRepository;
-    private final PlayerBugemonRepository playerBugemonRepository;
+    private final BugemonRepository playerBugemonRepository;
     private final List<Skill> statBonusSkills;
 
-    public BugemonService(PostgresStaticRepository staticDataRepository,
-            PlayerBugemonRepository playerBugemonRepository, String playername, List<Skill> statBonusSkills) {
+    public BugemonService(StaticRepository staticDataRepository, BugemonRepository playerBugemonRepository,
+            String playername, List<Skill> statBonusSkills) {
         this.playername = playername;
         this.staticDataRepository = staticDataRepository;
         this.playerBugemonRepository = playerBugemonRepository;
@@ -34,7 +34,7 @@ public class BugemonService {
     }
 
     public List<Bugemon> getAllDefaultBugemons() {
-        return this.staticDataRepository.getAllDefaultBugemons();
+        return this.staticDataRepository.findBugemons();
     }
 
     /**
@@ -43,7 +43,7 @@ public class BugemonService {
      * @return List of PlayerBugemons
      */
     public List<PlayerBugemon> getAllBugemons() {
-        List<PlayerBugemonDTO> playerBugemons = this.playerBugemonRepository.getPlayerBugemons(this.playername);
+        List<PlayerBugemonDTO> playerBugemons = this.playerBugemonRepository.findAll(this.playername);
         List<PlayerBugemon> listToReturn = new ArrayList<>();
         for (Bugemon bugemon : this.getAllDefaultBugemons()) {
             playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())).findFirst()
@@ -87,7 +87,7 @@ public class BugemonService {
      * @return attacks for the provided type
      */
     public List<Attack> getAttacksByType(ElementType type) {
-        return this.staticDataRepository.getAllAttacks().values().stream().filter(a -> a.type() == type).toList();
+        return this.staticDataRepository.findAttacks().stream().filter(a -> a.type() == type).toList();
     }
 
     /**
@@ -97,7 +97,7 @@ public class BugemonService {
      *            the bugemon to save
      */
     public void saveBugemonState(PlayerBugemon bugemon) {
-        this.playerBugemonRepository.updatePlayerBugemon(
+        this.playerBugemonRepository.save(this.playername,
                 new PlayerBugemonDTO(this.playername, bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(),
                         bugemon.getInitiative(), bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
     }
@@ -113,7 +113,7 @@ public class BugemonService {
     }
 
     public void clearAllPlayerBugemons() {
-        this.playerBugemonRepository.removeAllPlayerBugemon(this.playername);
+        this.playerBugemonRepository.removeAll(this.playername);
     }
 
     public List<Skill> getStatBonusSkills() {

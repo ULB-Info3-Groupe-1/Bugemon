@@ -13,6 +13,21 @@ import ulb.controllers.MetaController;
 import ulb.models.player.PlayerState;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
+import ulb.repositories.BugemonRepository;
+import ulb.repositories.DatabaseConnection;
+import ulb.repositories.InventoryRepository;
+import ulb.repositories.PlayerRepository;
+import ulb.repositories.QueryLoader;
+import ulb.repositories.SkillRepository;
+import ulb.repositories.StaticRepository;
+import ulb.repositories.TeamRepository;
+import ulb.repositories.postgres.DatabaseInitializer;
+import ulb.repositories.postgres.PostgresBugemonRepository;
+import ulb.repositories.postgres.PostgresDatabaseConnection;
+import ulb.repositories.postgres.PostgresInventoryRepository;
+import ulb.repositories.postgres.PostgresPlayerRepository;
+import ulb.repositories.postgres.PostgresSkillRepository;
+import ulb.repositories.postgres.PostgresStaticRepository;
 import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
@@ -32,13 +47,12 @@ public class Main extends Application {
     }
 
     private void createUserIfNotExists(String playerName, PlayerRepository playerRepository,
-            StaticRepository staticRepository) throws PlayernameAlreadyExistsException {
+            StaticRepository staticRepository) {
         try {
             playerRepository.createPlayer(playerName, staticRepository.defaultInventory());
         } catch (PlayernameAlreadyExistsException e) {
-            // We do nothing because whitout client/server architecture, the database is
-            // local and we don't have a login
-            // system, so the playername used is 'default_player' and is always the same.
+            // Without client/server architecture the database is local and the playername
+            // is always 'default_player', so a duplicate on startup is expected and safe.
         }
     }
 
@@ -97,7 +111,7 @@ public class Main extends Application {
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName);
 
-        PlayerState playerState = new PlayerState(playerName, null, inventoryService.getPlayerInventory(playerName),
+        PlayerState playerState = new PlayerState(playerName, null, inventoryService.loadInventory(),
                 playerService.getUnlockedSkills());
 
         MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
