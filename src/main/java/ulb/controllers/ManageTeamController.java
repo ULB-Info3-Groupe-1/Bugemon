@@ -1,7 +1,6 @@
 package ulb.controllers;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.HashSet;
 
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
@@ -20,6 +19,11 @@ import ulb.views.ViewLoader;
  * controller never pushes data into the view.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
+
+    private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
+    private static final String TEAM_NOT_SAVED_MESSAGE = "Nouvelle équipe ou équipe existante modifiée non "
+            + "sauvegardée.";
+
     private final TeamService teamService;
     private final BugemonService bugemonService;
 
@@ -51,33 +55,40 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     @Override
     protected void show() {
         this.teamService.getActiveTeam().ifPresent(t -> this.workingTeam = t);
-        this.view.refresh();
+        this.updateAllUI();
         super.show();
     }
 
-    @Override
-    public List<PlayerBugemon> getAvailableBugemons() {
-        return this.bugemonService.getAllBugemons();
+    private void updateAllUI() {
+        this.updateWorkingTeamToShow();
+        this.updateTeamSelected();
+        this.updateDisplayedTeamNames();
+        this.updateDisplayedAvailableBugemons();
     }
 
-    @Override
-    public Team getWorkingTeam() {
-        return this.workingTeam;
+    private void updateWorkingTeamToShow() {
+        this.view.refreshWorkingTeam(this.workingTeam);
+        if (this.workingTeam.isEmpty()) {
+            this.view.refreshWorkingTeamNameToShow(NO_TEAM_SELECTED);
+        } else if (this.teamService.isTeamSaved(this.workingTeam)) {
+            this.view.refreshWorkingTeamNameToShow(this.workingTeam.getName());
+        } else {
+            this.view.refreshWorkingTeamNameToShow(TEAM_NOT_SAVED_MESSAGE);
+        }
+
     }
 
-    @Override
-    public boolean isWorkingTeamSaved() {
-        return this.teamService.isTeamSaved(this.workingTeam);
+    private void updateTeamSelected() {
+        this.view.refreshTeamSelected(this.teamService.getActiveTeamName().orElse(null));
     }
 
-    @Override
-    public List<String> getTeamNames() {
-        return this.teamService.getTeamNames();
+    private void updateDisplayedTeamNames() {
+        this.view.refreshTeamNames(this.teamService.getTeamNames());
     }
 
-    @Override
-    public Optional<String> getActiveTeamName() {
-        return this.teamService.getActiveTeamName();
+    private void updateDisplayedAvailableBugemons() {
+        this.view.refreshAvailableBugemons(this.bugemonService.getAllBugemons(),
+                new HashSet<>(this.workingTeam.getMembers()));
     }
 
     @Override
@@ -87,7 +98,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } else if (!this.workingTeam.isFull()) {
             this.workingTeam.add(bugemon);
         }
-        this.view.refresh();
+        this.updateWorkingTeamToShow();
+        this.updateDisplayedAvailableBugemons();
     }
 
     @Override
@@ -103,7 +115,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
@@ -116,7 +128,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamAlert();
         }
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
@@ -131,14 +143,15 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
-        this.view.refresh();
+        this.updateDisplayedTeamNames();
+        this.updateTeamSelected();
     }
 
     @Override
     public void onAddNewTeam() {
         this.workingTeam.clear();
-        this.view.clearTeamNameToSave();
-        this.view.refresh();
+        this.updateWorkingTeamToShow();
+        this.updateDisplayedAvailableBugemons();
     }
 
     @Override
@@ -156,7 +169,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
-        this.view.refresh();
+        this.updateWorkingTeamToShow();
     }
 
     @Override
@@ -168,7 +181,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
-        this.view.refresh();
+        this.updateWorkingTeamToShow();
+        this.updateDisplayedAvailableBugemons();
     }
 
     @Override
