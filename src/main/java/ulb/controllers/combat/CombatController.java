@@ -73,7 +73,7 @@ public class CombatController extends Controller<CombatView>
         this.combat = newCombat;
 
         // TODO: demeter
-        this.view.displayBugemons(this.combat.getPlayerTeam().getActive(), combat.getOpponentTeam().getActive());
+        this.view.displayBugemons(this.combat.getPlayerTeam().getActive(), this.combat.getOpponentTeam().getActive());
         this.view.refresh();
 
         this.startTurn();
