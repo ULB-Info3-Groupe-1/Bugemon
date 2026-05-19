@@ -19,7 +19,6 @@ import ulb.repositories.postgres.PlayerBugemonRepository;
 import ulb.repositories.postgres.PlayerRepository;
 import ulb.repositories.postgres.QueryLoader;
 import ulb.repositories.postgres.StaticDataRepository;
-import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.repositories.TeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
@@ -70,15 +69,15 @@ public class Main extends Application {
         parser.parse();
 
         StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries(),
-                        parser.getBugemons(), parser.getAttacks(), parser.getItems());
+                parser.getBugemons(), parser.getAttacks(), parser.getItems());
         PlayerBugemonRepository playerBugemonRepository = new PlayerBugemonRepository(dbConnection,
-                        loader.getQueries());
+                loader.getQueries());
         InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, loader.getQueries(),
-                        parser.getInventory());
-        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
-                        loader.getQueries(),
-                        parser.getSkillTree());
-        TeamRepository teamRepository = new PostgresTeamRepository(dbConnection, loader.getQueries());
+                parser.getInventory());
+        PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository, loader.getQueries(),
+                parser.getSkillTree());
+        TeamRepository teamRepository = new TeamRepository(dbConnection, staticDataRepository, playerBugemonRepository,
+                loader.getQueries());
 
         String playerName = "default_player";
         this.createUserIfNotExists(playerName, playerRepository);

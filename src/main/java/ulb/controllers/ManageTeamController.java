@@ -6,7 +6,7 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
-import ulb.repositories.exceptions.TeamNameInvalidException;
+import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.TeamService;
@@ -14,10 +14,8 @@ import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen. Mutates the
- * {@link BugemonTeam} model in response to player
- * actions, then calls {@code view.refresh()} so the view can pull the updated
- * state from the model directly. The
+ * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to player
+ * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
  * controller never pushes data into the view.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
@@ -41,8 +39,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     /**
-     * Constructs a {@code CreateTeamController}, wires the view callbacks, and
-     * performs an initial
+     * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
      * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
      *
      */
@@ -115,7 +112,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showTeamNameAlreadyExistsAlert(teamName);
         } catch (TeamEmptyException e) {
             this.view.showEmptyTeamAlert();
-        } catch (TeamNameInvalidException e) {
+        } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
         this.updateAllUI();
@@ -128,7 +125,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.workingTeam.clear();
         } catch (TeamNotFoundException e) {
             this.view.showDeleteTeamNoActiveTeamAlert();
-        } catch (TeamNameInvalidException e) {
+        } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamAlert();
         }
         this.updateAllUI();
@@ -143,7 +140,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showSelectTeamToRenameAlert();
         } catch (TeamNameAlreadyExistsException e) {
             this.view.showTeamNameAlreadyExistsAlert(newName);
-        } catch (TeamNameInvalidException e) {
+        } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
         }
         this.updateDisplayedTeamNames();
