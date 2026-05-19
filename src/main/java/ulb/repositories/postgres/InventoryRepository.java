@@ -17,6 +17,7 @@ import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Inventory;
 import ulb.models.item.Item;
 import ulb.models.item.ItemType;
+import ulb.repositories.DatabaseConnection;
 
 public class InventoryRepository extends AbstractRepository {
     private static final Logger LOG = LoggerFactory.getLogger(InventoryRepository.class);
