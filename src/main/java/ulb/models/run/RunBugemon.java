@@ -80,16 +80,16 @@ public class RunBugemon {
         this.currentHp = this.getMaxHp();
     }
 
-    public void addXp(int xp) {
-        this.playerBugemon.addXp(xp);
-    }
-
     public String getSpritePath() {
         return this.playerBugemon.getSpritePath();
     }
 
     public int getLevel() {
         return this.playerBugemon.getLevel();
+    }
+
+    public PlayerBugemon getPlayerBugemon() {
+        return this.playerBugemon;
     }
 
     @Override

@@ -4,7 +4,7 @@ import ulb.repositories.dto.InventoryDTO;
 
 public interface InventoryRepository {
 
-    InventoryDTO find(String playername);
+    InventoryDTO findInventory(String playername);
 
     void save(String playername, InventoryDTO inventory);
 

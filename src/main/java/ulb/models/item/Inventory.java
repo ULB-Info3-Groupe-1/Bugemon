@@ -11,6 +11,10 @@ public class Inventory {
         this.items = new HashMap<>();
     }
 
+    public Inventory(Map<Item, Integer> items) {
+        this.items = new HashMap<>(items);
+    }
+
     public boolean hasItem(Item item) {
         return this.items.containsKey(item) && this.items.get(item) > 0;
     }

@@ -95,6 +95,10 @@ public abstract class Configuration {
         public static final double BASE_CRIT_CHANCE = 0.10;
         public static final double CRIT_DAMAGE_FACTOR = 1.5;
 
+        public static final int BASE_XP = 30;
+        public static final int BOSS_MULTIPLIER = 2;
+        public static final int NORMAL_MULTIPLIER = 1;
+
         public static final AttackFactorFormula ATTACK_FACTOR_FORMULA = //
                 effectiveAttack -> (100.0 + effectiveAttack) / 100.0;
         public static final ReductionFactorFormula REDUCTION_FACTOR_FORMULA = //
@@ -109,6 +113,8 @@ public abstract class Configuration {
         public static final String DEFAULT_ID = "start";
         public static final String DEFAULT_NAME = "départ";
         public static final String DEFAULT_DESCRIPTION = "Point de départ de l'arbre";
+
+        public static final int DEFAULT_LEVEL_UP_CHOICE_COUNT = 3;
 
     }
 
