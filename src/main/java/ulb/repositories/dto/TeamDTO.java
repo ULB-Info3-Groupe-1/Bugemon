@@ -1,4 +1,6 @@
 package ulb.repositories.dto;
 
-public record TeamDTO(String playername, String teamName) {
+import java.util.List;
+
+public record TeamDTO(String playername, String teamName, List<TeamMemberDTO> members) {
 }

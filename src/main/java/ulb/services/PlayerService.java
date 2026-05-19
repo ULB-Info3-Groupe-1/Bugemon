@@ -6,7 +6,7 @@ import java.util.Map;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
-import ulb.repositories.PlayerRepository;
+import ulb.repositories.postgres.PlayerRepository;
 
 public class PlayerService {
     private final PlayerRepository playerRepository;

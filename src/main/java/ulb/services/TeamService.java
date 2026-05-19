@@ -12,9 +12,6 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
-import ulb.repositories.PlayerBugemonRepository;
-import ulb.repositories.PlayerRepository;
-import ulb.repositories.TeamRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamMemberDTO;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
@@ -22,6 +19,9 @@ import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
+import ulb.repositories.postgres.PlayerBugemonRepository;
+import ulb.repositories.postgres.PlayerRepository;
+import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.services.exceptions.NoActiveTeamException;
 
 /**
@@ -39,12 +39,13 @@ public class TeamService {
      */
     private final PlayerRepository playerRepository;
 
-    private final TeamRepository teamRepository;
+    private final PostgresTeamRepository teamRepository;
 
     private final PlayerBugemonRepository playerBugemonRepository;
 
     /**
-     * The team that the player is currently modifying. It is used to keep track of the changes made to the team before
+     * The team that the player is currently modifying. It is used to keep track of
+     * the changes made to the team before
      * saving it to the database.
      */
     private final Team workingTeam;
@@ -63,11 +64,12 @@ public class TeamService {
      * Constructor for the TeamService.
      *
      * @param playerRepository
-     *            the repository used to interact with the database
+     *                         the repository used to interact with the database
      * @param playername
-     *            the name of the player to use to interact with the database
+     *                         the name of the player to use to interact with the
+     *                         database
      */
-    public TeamService(PlayerRepository playerRepository, TeamRepository teamRepository,
+    public TeamService(PlayerRepository playerRepository, PostgresTeamRepository teamRepository,
             PlayerBugemonRepository playerBugemonRepository, String playername) {
         this.playername = playername;
         this.workingTeam = new Team();
@@ -92,7 +94,7 @@ public class TeamService {
      *
      * @return the active team of the player
      * @throws NoActiveTeamException
-     *             if the player does not have an active team
+     *                               if the player does not have an active team
      */
     public Team getRequiredActiveTeam() throws NoActiveTeamException {
         this.checkActiveTeamIsPresent();
@@ -114,8 +116,10 @@ public class TeamService {
     // --- Team Management ---
 
     /**
-     * Loads the teams of the player from the database and sets the active team. If the player does not have an active
-     * team, the active team is set to empty. It also clears the local list of teams before loading them from the
+     * Loads the teams of the player from the database and sets the active team. If
+     * the player does not have an active
+     * team, the active team is set to empty. It also clears the local list of teams
+     * before loading them from the
      * database to avoid duplicates in case this method is called multiple times.
      */
     public void loadTeamsAndActiveTeam() {
@@ -137,9 +141,9 @@ public class TeamService {
      * Sets the active team for the player.
      *
      * @param teamName
-     *            the name of the team to set
+     *                 the name of the team to set
      * @throws TeamNotFoundException
-     *             if the team does not exist
+     *                               if the team does not exist
      */
     public void setActiveTeam(String teamName) throws TeamNotFoundException {
         Team team = this.playerTeams.stream().filter(t -> t.getName().equals(teamName)).findFirst()
@@ -149,16 +153,17 @@ public class TeamService {
     }
 
     /**
-     * Saves the working team to the database. It needs the name to give to the working team to save it in db.
+     * Saves the working team to the database. It needs the name to give to the
+     * working team to save it in db.
      *
      * @param teamName
-     *            the name of the team to be saved
+     *                 the name of the team to be saved
      * @throws TeamNameAlreadyExistsException
-     *             if the team name is already taken
+     *                                        if the team name is already taken
      * @throws TeamEmptyException
-     *             if the active team is empty
+     *                                        if the active team is empty
      * @throws TeamNameEmptyException
-     *             if the team name is empty
+     *                                        if the team name is empty
      */
     public void saveTeam(String teamName)
             throws TeamNameAlreadyExistsException, TeamEmptyException, TeamNameEmptyException {
@@ -176,11 +181,11 @@ public class TeamService {
      * Modifies the active team in the database.
      *
      * @throws TeamEmptyException
-     *             if the active team is empty
+     *                               if the active team is empty
      * @throws TeamNotFoundException
-     *             if the team does not exist
+     *                               if the team does not exist
      * @throws NoActiveTeamException
-     *             if the player does not have an active team
+     *                               if the player does not have an active team
      */
     public void modifyActiveTeam() throws TeamEmptyException, TeamNotFoundException, NoActiveTeamException {
         this.checkWorkingTeamIsNotEmpty();
@@ -203,13 +208,13 @@ public class TeamService {
      * Renames a team
      *
      * @param newName
-     *            the new team name
+     *                the new team name
      * @throws TeamNotFoundException
-     *             if the team does not exist
+     *                                        if the team does not exist
      * @throws TeamNameAlreadyExistsException
-     *             if the team name is already taken
+     *                                        if the team name is already taken
      * @throws TeamNameEmptyException
-     *             if the team name is empty
+     *                                        if the team name is empty
      */
     public void renameActiveTeam(String newName) throws TeamNotFoundException, TeamNameAlreadyExistsException,
             TeamNameEmptyException, NoActiveTeamException {
@@ -227,11 +232,11 @@ public class TeamService {
      * Deletes the active team from the database and clears the active team.
      *
      * @param teamName
-     *            the name of the team to be deleted
+     *                 the name of the team to be deleted
      * @throws TeamNotFoundException
-     *             if the team does not exist
+     *                                if the team does not exist
      * @throws TeamNameEmptyException
-     *             if the team name is empty
+     *                                if the team name is empty
      */
     public void deleteTeam(String teamName)
             throws TeamNotFoundException, TeamNameEmptyException, NoActiveTeamException {
@@ -258,8 +263,10 @@ public class TeamService {
     }
 
     /**
-     * Checks if the working team of the player has been saved to the database. If the working team is empty, it is
-     * considered as saved because there is nothing to save (we cannot save an empty team).
+     * Checks if the working team of the player has been saved to the database. If
+     * the working team is empty, it is
+     * considered as saved because there is nothing to save (we cannot save an empty
+     * team).
      *
      * @return (boolean) true if the working team has been saved, false otherwise
      */
@@ -271,10 +278,11 @@ public class TeamService {
     }
 
     /**
-     * Adds a bugemon to the working team if it is not already in the team, otherwise removes it from the team.
+     * Adds a bugemon to the working team if it is not already in the team,
+     * otherwise removes it from the team.
      *
      * @param bugemon
-     *            the bugemon to be added or removed from the working team
+     *                the bugemon to be added or removed from the working team
      */
     public void addOrRemoveBugemon(PlayerBugemon bugemon) {
         if (this.workingTeam.contains(bugemon)) {
@@ -290,7 +298,7 @@ public class TeamService {
      * Saves the state of the bugemons of the active team to the database.
      *
      * @throws NoActiveTeamException
-     *             if the player does not have an active team
+     *                               if the player does not have an active team
      */
     public void saveBugemonStateOfActiveTeam() throws NoActiveTeamException {
         this.checkActiveTeamIsPresent();
@@ -310,7 +318,8 @@ public class TeamService {
     // -- Public Helpers --
 
     /**
-     * Sets the working team as the active team (by copying the members). If the player does not have an active team,
+     * Sets the working team as the active team (by copying the members). If the
+     * player does not have an active team,
      * nothing is done.
      */
     public void setWorkingTeamAsActiveTeam() {
@@ -324,8 +333,10 @@ public class TeamService {
     // --- Private Helpers ---
 
     /**
-     * Saves the members of the working team to the database. If a bugemon of the working team is not owned by the
-     * player, it is first saved to the database before being added as a team member.
+     * Saves the members of the working team to the database. If a bugemon of the
+     * working team is not owned by the
+     * player, it is first saved to the database before being added as a team
+     * member.
      */
     private void persistTeamMembers() {
         this.persistNewBugemons();
