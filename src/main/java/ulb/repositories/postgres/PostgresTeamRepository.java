@@ -53,7 +53,7 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
     }
 
     @Override
-    public void removeAll(String playerName) {
+    public void deleteAll(String playerName) {
         LOG.debug("Removing all teams for playername: {}", playerName);
         executeUpdate("ClearTeamMembers", playerName);
         executeUpdate("ClearTeams", playerName);
