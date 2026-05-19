@@ -90,6 +90,7 @@ public class Team {
 
     public void clear() {
         this.members.clear();
+        this.name = null;
     }
 
     public String getName() {

@@ -19,6 +19,7 @@ import ulb.repositories.PlayerRepository;
 import ulb.repositories.QueryLoader;
 import ulb.repositories.StaticDataRepository;
 import ulb.repositories.TeamRepository;
+import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
 import ulb.services.PlayerService;
@@ -34,6 +35,17 @@ public class Main extends Application {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
         launch(args);
+    }
+
+    private void createUserIfNotExists(String playerName, PlayerRepository playerRepository)
+            throws PlayernameAlreadyExistsException {
+        try {
+            playerRepository.createPlayer(playerName);
+        } catch (PlayernameAlreadyExistsException e) {
+            // We do nothing because whitout client/server architecture, the database is
+            // local and we don't have a login
+            // system, so the playername used is 'default_player' and is always the same.
+        }
     }
 
     @Override
@@ -68,6 +80,7 @@ public class Main extends Application {
                 loader.getQueries());
 
         String playerName = "default_player";
+        this.createUserIfNotExists(playerName, playerRepository);
 
         PlayerService playerService = new PlayerService(playerRepository, playerName);
 
@@ -77,8 +90,7 @@ public class Main extends Application {
         SkillService skillService = new SkillService(playerService.getUnlockedSkills());
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository, playerName,
                 skillService.getSkills(StatBonusEffect.class));
-        TeamService teamService = new TeamService(playerRepository, teamRepository, playerBugemonRepository,
-                playerName);
+        TeamService teamService = new TeamService(teamRepository, playerBugemonRepository, playerName);
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName);
 

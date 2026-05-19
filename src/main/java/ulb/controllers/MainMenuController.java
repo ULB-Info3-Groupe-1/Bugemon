@@ -34,7 +34,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     /** Starts an automatic combat session. */
     @Override
     public void onStartAutomaticCombat() {
-        if (!this.isActiveTeamEmpty()) {
+        if (!this.isActiveTeamNotPresent()) {
             this.metaController.onStartAutomaticCombat();
         }
     }
@@ -42,14 +42,14 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     /** Starts a manual combat session. */
     @Override
     public void onStartManualCombat() {
-        if (!this.isActiveTeamEmpty()) {
+        if (!this.isActiveTeamNotPresent()) {
             this.metaController.onStartManualCombat();
         }
     }
 
     @Override
     public void onTower() {
-        if (!this.isActiveTeamEmpty()) {
+        if (!this.isActiveTeamNotPresent()) {
             this.metaController.onTower();
         }
     }
@@ -69,8 +69,8 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
         javafx.application.Platform.exit();
     }
 
-    private boolean isActiveTeamEmpty() {
-        if (this.teamService.isActiveTeamEmpty()) {
+    private boolean isActiveTeamNotPresent() {
+        if (this.teamService.getActiveTeam().isEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
             return true;
         }
