@@ -77,6 +77,10 @@ VALUES (?, ?, ?)
 ON CONFLICT (playername, skill_id) DO UPDATE SET current_level = EXCLUDED.current_level;
 
 -- Query
+-- DeleteAllPlayerSkills
+DELETE FROM skills_players WHERE playername = ?;
+
+-- Query
 -- DeletePlayerSkill
 DELETE FROM skills_players WHERE playername = ? AND skill_id = ?;
 
