@@ -102,6 +102,32 @@ CREATE TABLE IF NOT EXISTS "skills_players" (
   PRIMARY KEY ("playername", "skill_id")
 );
 
+CREATE TABLE IF NOT EXISTS "skills" (
+  "id" varchar PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "description" varchar,
+  "cost" integer NOT NULL,
+  "max_level" integer NOT NULL,
+  "x" integer NOT NULL,
+  "y" integer NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "skill_effects" (
+  "skill_id" varchar PRIMARY KEY REFERENCES "skills"("id") ON DELETE CASCADE,
+  "type" varchar NOT NULL,
+  "stat" varchar,
+  "element_type" varchar,
+  "double_value" double precision,
+  "int_value" integer,
+  "category" varchar
+);
+
+CREATE TABLE IF NOT EXISTS "skill_prerequisites" (
+  "skill_id" varchar REFERENCES "skills"("id") ON DELETE CASCADE,
+  "prerequisite_id" varchar REFERENCES "skills"("id") ON DELETE CASCADE,
+  PRIMARY KEY ("skill_id", "prerequisite_id")
+);
+
 CREATE UNIQUE INDEX ON "team_members" ("playername", "team_name", "bugemon_name");
 
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_1_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;

@@ -29,6 +29,9 @@ import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
+import ulb.models.skills.SkillEffect;
+import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillTree;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
@@ -39,17 +42,19 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     private final Map<String, Attack> attackCache;
     private final Map<String, Bugemon> bugemonCache;
     private final InventoryDTO defaultInventoryCache;
+    private final SkillTree skillTreeCache;
 
     public PostgresStaticRepository(DatabaseConnection dbConnection, Map<String, String> queries,
             InventoryDTO defaultInventory) {
         super(dbConnection, queries);
         this.attackCache = Collections.unmodifiableMap(this.loadAllAttacks());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
+        this.skillTreeCache = this.loadSkillTree();
         this.defaultInventoryCache = defaultInventory;
     }
 
     @Override
-    public List<Bugemon> findBugemons() {
+    public List<Bugemon> bugemons() {
         return Collections.unmodifiableList(this.bugemonCache.values().stream().toList());
     }
 
@@ -58,7 +63,7 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     }
 
     @Override
-    public List<Attack> findAttacks() {
+    public List<Attack> attacks() {
         return Collections.unmodifiableList(this.attackCache.values().stream().toList());
     }
 
@@ -82,6 +87,11 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     @Override
     public InventoryDTO defaultInventory() {
         return this.defaultInventoryCache;
+    }
+
+    @Override
+    public SkillTree skillTree() {
+        return this.skillTreeCache;
     }
 
     // --- Private loading ---
@@ -149,6 +159,78 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
             case "ResetMalusEffect" -> new ResetMalusEffect(target);
             default -> throw new IllegalStateException("Unknown effect type: " + effectType);
         };
+    }
+
+    private SkillTree loadSkillTree() {
+        Map<String, SkillNodeData> nodeData = new LinkedHashMap<>();
+        this.executeQuery("GetAllSkillNodes", rs -> {
+            String id = rs.getString("id");
+            nodeData.computeIfAbsent(id, k -> {
+                try {
+                    SkillEffect effect = null;
+                    String effectType = rs.getString("effect_type");
+                    if (effectType != null) {
+                        effect = this.buildSkillEffect(rs, effectType);
+                    }
+                    return new SkillNodeData(rs.getString("name"), rs.getString("description"),
+                            rs.getInt("x"), rs.getInt("y"), rs.getInt("max_level"), rs.getInt("cost"), effect);
+                } catch (SQLException e) {
+                    throw new IllegalStateException("Error loading skill node " + id, e);
+                }
+            });
+            return null;
+        });
+
+        Map<String, List<String>> prereqs = new HashMap<>();
+        this.executeQuery("GetAllSkillPrerequisites", rs -> {
+            prereqs.computeIfAbsent(rs.getString("skill_id"), k -> new ArrayList<>())
+                    .add(rs.getString("prerequisite_id"));
+            return null;
+        });
+
+        List<SkillNode> nodes = new ArrayList<>();
+        nodeData.forEach((id, data) -> nodes.add(new SkillNode(id, data.name, data.description,
+                data.x, data.y, data.maxLevel, data.cost, data.effect,
+                prereqs.getOrDefault(id, List.of()))));
+        return new SkillTree(nodes);
+    }
+
+    private SkillEffect buildSkillEffect(ResultSet rs, String type) throws SQLException {
+        return switch (type) {
+            case "stat_bonus" -> new SkillEffect.StatBonusEffect(
+                    StatType.valueOf(rs.getString("stat")),
+                    rs.getInt("int_value"));
+            case "type_multiplicateur" -> new SkillEffect.TypeMultiplierEffect(
+                    ElementType.valueOf(rs.getString("element_type")),
+                    rs.getDouble("double_value"));
+            case "critique_bonus" -> new SkillEffect.CritBonusEffect(rs.getDouble("double_value"));
+            case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(rs.getDouble("double_value"));
+            case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(rs.getDouble("double_value"));
+            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(
+                    rs.getInt("int_value"), rs.getString("category"));
+            case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(rs.getInt("int_value"));
+            default -> throw new IllegalStateException("Unknown skill effect type: " + type);
+        };
+    }
+
+    private static class SkillNodeData {
+        final String name;
+        final String description;
+        final int x;
+        final int y;
+        final int maxLevel;
+        final int cost;
+        final SkillEffect effect;
+
+        SkillNodeData(String name, String description, int x, int y, int maxLevel, int cost, SkillEffect effect) {
+            this.name = name;
+            this.description = description;
+            this.x = x;
+            this.y = y;
+            this.maxLevel = maxLevel;
+            this.cost = cost;
+            this.effect = effect;
+        }
     }
 
     private void saveSpriteFile(URL spriteUrl, String spriteFileName) throws IOException {

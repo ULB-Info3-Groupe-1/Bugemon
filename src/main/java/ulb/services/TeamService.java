@@ -4,10 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import ulb.factories.BugemonFactory;
-
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
+import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.models.team.Team;
 import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
@@ -41,7 +40,7 @@ public class TeamService {
                 .map(member -> this.bugemonRepository.findBase(member.bugemonName())
                         .flatMap(base -> this.bugemonRepository
                                 .findByName(this.playerName, member.bugemonName())
-                                .map(dto -> BugemonFactory.createPlayerBugemon(base, dto)))
+                                .map((PlayerBugemonDTO dto) -> PlayerBugemon.from(base, dto)))
                         .orElseThrow())
                 .toList();
         Team team = new Team(members);

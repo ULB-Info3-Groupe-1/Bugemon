@@ -3,10 +3,8 @@ package ulb.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulb.factories.BugemonFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
-import ulb.models.skills.Skill;
 import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.StaticRepository;
@@ -22,24 +20,24 @@ public class BugemonService {
     private final BugemonRepository bugemonRepository;
 
     public BugemonService(StaticRepository staticDataRepository, BugemonRepository bugemonRepository,
-            String playername, List<Skill> statBonusSkills) {
+            String playername) {
         this.playername = playername;
         this.staticDataRepository = staticDataRepository;
         this.bugemonRepository = bugemonRepository;
     }
 
     public List<Bugemon> getDefaultBugemons() {
-        return this.staticDataRepository.findBugemons();
+        return this.staticDataRepository.bugemons();
     }
 
     public List<PlayerBugemon> getPlayerBugemons() {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
         List<PlayerBugemon> listToReturn = new ArrayList<>();
-        for (Bugemon bugemon : this.staticDataRepository.findBugemons()) {
+        for (Bugemon bugemon : this.staticDataRepository.bugemons()) {
             playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())).findFirst()
                     .ifPresentOrElse((dto) -> {
-                        listToReturn.add(BugemonFactory.createPlayerBugemon(bugemon, dto));
-                    }, () -> listToReturn.add(BugemonFactory.createDefaultPlayerBugemon(bugemon)));
+                        listToReturn.add(PlayerBugemon.from(bugemon, dto));
+                    }, () -> listToReturn.add(new PlayerBugemon(bugemon)));
         }
         return listToReturn;
     }
@@ -58,7 +56,7 @@ public class BugemonService {
             throw new BugemonNameIsEmptyException("Bugemon name cannot be empty!");
         }
 
-        if (this.staticDataRepository.findBugemons().stream().anyMatch(b -> b.name().equals(bugemon.name()))) {
+        if (this.staticDataRepository.bugemons().stream().anyMatch(b -> b.name().equals(bugemon.name()))) {
             throw new BugemonNameAlreadyExistsException("Bugemon name already exists!");
         }
 

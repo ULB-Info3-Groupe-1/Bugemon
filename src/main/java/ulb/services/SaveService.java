@@ -3,21 +3,21 @@ package ulb.services;
 import ulb.models.player.PlayerState;
 
 public class SaveService {
-    private final PlayerService playerService;
+    private final SkillService skillService;
     private final BugemonService bugemonService;
     private final InventoryService inventoryService;
     private final TeamService teamService;
 
-    public SaveService(PlayerService playerService, BugemonService bugemonService, InventoryService inventoryService,
+    public SaveService(SkillService skillService, BugemonService bugemonService, InventoryService inventoryService,
             TeamService teamService, PlayerState playerState) {
-        this.playerService = playerService;
+        this.skillService = skillService;
         this.bugemonService = bugemonService;
         this.inventoryService = inventoryService;
         this.teamService = teamService;
     }
 
     public void save(PlayerState playerState) {
-        this.playerService.save();
+        this.skillService.save(playerState.getSkillTreeState());
         playerState.getActiveTeam().ifPresent(this.bugemonService::save);
         this.inventoryService.save(playerState.getInventory());
         playerState.getActiveTeam().ifPresent(this.teamService::save);

@@ -21,6 +21,12 @@ public class PlayerBugemon {
         this(base, 1, 0, new BonusStats(), base.attacks());
     }
 
+    public static PlayerBugemon from(Bugemon base, PlayerBugemonDTO dto) {
+        BonusStats bonusStats = new BonusStats(
+                dto.bonusMaxHp(), dto.bonusAttackPower(), dto.bonusDefense(), dto.bonusInitiative());
+        return new PlayerBugemon(base, dto.level(), dto.xp(), bonusStats, base.attacks());
+    }
+
     public PlayerBugemon(Bugemon base, int level, int xp, BonusStats bonusStats, List<Attack> currentAttacks) {
         this.base = Objects.requireNonNull(base);
 
