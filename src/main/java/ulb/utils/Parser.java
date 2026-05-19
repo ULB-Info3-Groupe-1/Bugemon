@@ -37,18 +37,21 @@ import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
-import ulb.models.item.Inventory;
 import ulb.models.item.Item;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
 import ulb.models.utils.Position;
 import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.dto.InventoryDTO;
 
 /**
- * Parses the three bundled JSON resource files (attacks, Bugemons, items/inventory). The main entry point is
- * {@link #parse()}, which builds an ID-to-{@link Attack} map first so that Bugemon deserialisation can resolve attack
- * references. Results are exposed via {@link #getBugemons()}, {@link #getAttacks()}, {@link #getItems()}, and
+ * Parses the three bundled JSON resource files (attacks, Bugemons,
+ * items/inventory). The main entry point is
+ * {@link #parse()}, which builds an ID-to-{@link Attack} map first so that
+ * Bugemon deserialisation can resolve attack
+ * references. Results are exposed via {@link #getBugemons()},
+ * {@link #getAttacks()}, {@link #getItems()}, and
  * {@link #getInventory()}.
  *
  * @see BugemonDeserializer
@@ -68,12 +71,14 @@ public class Parser {
     private static Map<String, Attack> attacks;
     private static List<CreateBugemonDTO> bugemons;
     private static List<Item> items;
-    private static Inventory inventory;
+    private static InventoryDTO inventory;
     private static SkillTree skillTree; // represent the tree data structure
 
     /**
-     * Parses all JSON resource files and populates the static data fields. Must be called once before any
-     * {@code get*()} accessor. Silently returns without populating any data if a resource file cannot be opened.
+     * Parses all JSON resource files and populates the static data fields. Must be
+     * called once before any
+     * {@code get*()} accessor. Silently returns without populating any data if a
+     * resource file cannot be opened.
      */
     public void parse() {
         LOG.info("Parsing data");
@@ -114,7 +119,7 @@ public class Parser {
         return items;
     }
 
-    public final Inventory getInventory() {
+    public final InventoryDTO getInventory() {
         return inventory;
     }
 
@@ -127,8 +132,10 @@ public class Parser {
     }
 
     /**
-     * Custom Gson type adapter that deserialises a JSON string into a {@link BugemonType} enum constant. Converts the
-     * raw value to upper-case before calling {@link BugemonType#valueOf(String)}, so {@code "flora"} and
+     * Custom Gson type adapter that deserialises a JSON string into a
+     * {@link BugemonType} enum constant. Converts the
+     * raw value to upper-case before calling {@link BugemonType#valueOf(String)},
+     * so {@code "flora"} and
      * {@code "FLORA"} both resolve to {@link BugemonType#FLORA}.
      */
     private static class TypeDeserializer implements JsonDeserializer<ElementType> {
@@ -231,21 +238,25 @@ public class Parser {
             JsonObject startInventory = root.getAsJsonObject("inventaire_depart");
             Type invType = new TypeToken<Map<String, Integer>>() {
             }.getType();
-            Map<String, Integer> inventoryMap = gson.fromJson(startInventory, invType);
-
-            inventory = new Inventory();
-            for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
-                String itemId = entry.getKey();
-                int quantity = entry.getValue();
-
-                Item obj = items.stream().filter(o -> o.id().equals(itemId)).findFirst()
-                        .orElseThrow(() -> new RuntimeException("Item with ID " + itemId + " not found"));
-                inventory.addItem(obj, quantity);
-            }
+            Map<String, Integer> inventoryRaw = gson.fromJson(startInventory, invType);
+            mapInventory(inventoryRaw, items);
             reader.close();
         } catch (Exception e) {
             LOG.error("Error when parsing Items and inventory: {}", e.getMessage());
         }
+    }
+
+    private static void mapInventory(Map<String, Integer> inventoryRaw, List<Item> items) {
+        Map<Item, Integer> inventoryMap = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : inventoryRaw.entrySet()) {
+            String itemId = entry.getKey();
+            int quantity = entry.getValue();
+
+            Item obj = items.stream().filter(o -> o.id().equals(itemId)).findFirst()
+                    .orElseThrow(() -> new RuntimeException("Item with ID " + itemId + " not found"));
+            inventoryMap.put(obj, quantity);
+        }
+        inventory = new InventoryDTO(inventoryMap);
     }
 
     private static void parseSkills(Reader reader) {

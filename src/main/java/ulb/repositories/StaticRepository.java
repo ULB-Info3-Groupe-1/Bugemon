@@ -6,6 +6,7 @@ import java.util.Optional;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.dto.InventoryDTO;
 
 public interface StaticRepository {
 
@@ -16,4 +17,6 @@ public interface StaticRepository {
     void saveBugemon(CreateBugemonDTO dto);
 
     List<Attack> findAttacks();
+
+    InventoryDTO defaultInventory();
 }
