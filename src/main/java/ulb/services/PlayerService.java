@@ -6,22 +6,23 @@ import java.util.Map;
 import ulb.models.skills.Skill;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
-import ulb.repositories.PlayerRepository;
+import ulb.repositories.SkillRepository;
 
 public class PlayerService {
-    private final PlayerRepository playerRepository;
+    private final SkillRepository skillRepository;
+    private final SkillTree skillTree;
     private final String playerName;
 
-    public PlayerService(PlayerRepository playerRepository, String playerName) {
+    public PlayerService(SkillRepository skillRepository, SkillTree skillTree, String playerName) {
+        this.skillRepository = skillRepository;
+        this.skillTree = skillTree;
         this.playerName = playerName;
-        this.playerRepository = playerRepository;
         this.loadPlayerSkills();
     }
 
     private void loadPlayerSkills() {
-        SkillTree skillTree = this.playerRepository.getSkillTree();
-        Map<String, Integer> saved = this.playerRepository.getPlayerSkills(this.playerName);
-        for (SkillNode node : skillTree.getAllNodes()) {
+        Map<String, Integer> saved = this.skillRepository.getPlayerSkills(this.playerName);
+        for (SkillNode node : this.skillTree.getAllNodes()) {
             Integer level = saved.get(node.getSkill().getId());
             if (level != null) {
                 node.getSkill().setCurrentLevel(level);
@@ -30,61 +31,56 @@ public class PlayerService {
     }
 
     public List<Skill> getUnlockedSkills() {
-        SkillTree skillTree = this.playerRepository.getSkillTree();
-        return skillTree.getAllNodes().stream().map(SkillNode::getSkill).filter(Skill::isUnlocked).toList();
+        return this.skillTree.getAllNodes().stream().map(SkillNode::getSkill).filter(Skill::isUnlocked).toList();
     }
 
     public SkillTree getSkillTree() {
-        return this.playerRepository.getSkillTree();
+        return this.skillTree;
     }
 
     public SkillNode getSkillTreeRoot() {
-        SkillTree skillTree = this.playerRepository.getSkillTree();
-        return skillTree.getRoot();
+        return this.skillTree.getRoot();
     }
 
     public int getAvailableSkillPoints() {
-        return this.playerRepository.getPlayerSkillPoints(this.playerName);
+        return this.skillRepository.getPlayerSkillPoints(this.playerName);
     }
 
     public void addSkillPoints(int points) {
-        this.playerRepository.setPlayerPoints(this.getAvailableSkillPoints() + points, this.playerName);
+        this.skillRepository.setPlayerSkillPoints(this.playerName, this.getAvailableSkillPoints() + points);
     }
 
     public boolean unlockSkill(SkillNode node) {
         int skillPoints = this.getAvailableSkillPoints();
-        SkillTree skillTree = this.playerRepository.getSkillTree();
-        if (!skillTree.canUnlock(node, skillPoints)) {
+        if (!this.skillTree.canUnlock(node, skillPoints)) {
             return false;
         }
         skillPoints -= node.getSkill().getCost();
         node.getSkill().incrementLevel();
-        this.playerRepository.setPlayerPoints(skillPoints, this.playerName);
-        this.playerRepository.savePlayerSkill(this.playerName, node.getSkill().getId(),
+        this.skillRepository.setPlayerSkillPoints(this.playerName, skillPoints);
+        this.skillRepository.savePlayerSkill(this.playerName, node.getSkill().getId(),
                 node.getSkill().getCurrentLevel());
         return true;
     }
 
     public int refundSkillNode(SkillNode node) {
-        SkillTree skillTree = this.playerRepository.getSkillTree();
-        if (!skillTree.canDowngrade(node)) {
+        if (!this.skillTree.canDowngrade(node)) {
             return 0;
         }
-        int refund = skillTree.downgrade(node);
-        this.playerRepository.setPlayerPoints(this.getAvailableSkillPoints() + refund, this.playerName);
+        int refund = this.skillTree.downgrade(node);
+        this.skillRepository.setPlayerSkillPoints(this.playerName, this.getAvailableSkillPoints() + refund);
         this.updateSkillTree();
         return refund;
     }
 
     private void updateSkillTree() {
-        SkillTree skillTree = this.playerRepository.getSkillTree();
-        for (SkillNode node : skillTree.getAllNodes()) {
+        for (SkillNode node : this.skillTree.getAllNodes()) {
             String id = node.getSkill().getId();
             int level = node.getSkill().getCurrentLevel();
             if (level > 0) {
-                this.playerRepository.savePlayerSkill(this.playerName, id, level);
+                this.skillRepository.savePlayerSkill(this.playerName, id, level);
             } else {
-                this.playerRepository.deletePlayerSkill(this.playerName, id);
+                this.skillRepository.deletePlayerSkill(this.playerName, id);
             }
         }
     }

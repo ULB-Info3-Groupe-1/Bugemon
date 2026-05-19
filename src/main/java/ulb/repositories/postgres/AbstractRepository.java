@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ulb.repositories.DatabaseConnection;
+
 public abstract class AbstractRepository {
 
     private final Map<String, String> queries;

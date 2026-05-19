@@ -14,12 +14,17 @@ import ulb.models.player.PlayerState;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
-import ulb.repositories.PlayerBugemonRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.QueryLoader;
-import ulb.repositories.StaticDataRepository;
+import ulb.repositories.SkillRepository;
+import ulb.repositories.StaticRepository;
 import ulb.repositories.TeamRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
+import ulb.repositories.postgres.DatabaseInitializer;
+import ulb.repositories.postgres.PostgresDatabaseConnection;
+import ulb.repositories.postgres.PostgresPlayerRepository;
+import ulb.repositories.postgres.PostgresSkillRepository;
+import ulb.repositories.postgres.PostgresStaticRepository;
 import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
@@ -65,26 +70,27 @@ public class Main extends Application {
                 stage.setScene(scene);
 
                 QueryLoader loader = new QueryLoader();
-                DatabaseConnection dbConnection = new DatabaseConnection();
+                DatabaseConnection dbConnection = new PostgresDatabaseConnection();
                 Parser parser = new Parser();
                 parser.parse();
-
-                StaticDataRepository staticDataRepository = new StaticDataRepository(dbConnection, loader.getQueries(),
+                DatabaseInitializer dbInitializer = new DatabaseInitializer(dbConnection, loader.getQueries(),
                                 parser.getBugemons(), parser.getAttacks(), parser.getItems());
-                PlayerBugemonRepository playerBugemonRepository = new PlayerBugemonRepository(dbConnection,
-                                loader.getQueries());
+                dbInitializer.initialize();
+
+                PostgresStaticRepository staticDataRepository = new PostgresStaticRepository(dbConnection,
+                                loader.getQueries(), parser.getInventory());
                 InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, loader.getQueries(),
                                 parser.getInventory());
-                PlayerRepository playerRepository = new PlayerRepository(dbConnection, inventoryRepository,
-                                loader.getQueries(),
-                                parser.getSkillTree());
+                PlayerRepository playerRepository = new PostgresPlayerRepository(dbConnection,
+                                loader.getQueries(), inventoryRepository);
+                SkillRepository skillRepository = new PostgresSkillRepository(dbConnection, loader.getQueries());
                 TeamRepository teamRepository = new PostgresTeamRepository(dbConnection,
                                 loader.getQueries());
 
                 String playerName = "default_player";
                 this.createUserIfNotExists(playerName, playerRepository);
 
-                PlayerService playerService = new PlayerService(playerRepository, playerName);
+                PlayerService playerService = new PlayerService(skillRepository, parser.getSkillTree(), playerName);
 
                 PlayerState playerState = new PlayerState(playerName, null,
                                 inventoryRepository.getPlayerInventory(playerName),

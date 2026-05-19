@@ -29,34 +29,38 @@ import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
-import ulb.repositories.StaticBugemonRepository;
+import ulb.models.item.Inventory;
+import ulb.repositories.DatabaseConnection;
+import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.utils.DatabaseHelper;
 
-public class StaticDataRepository extends AbstractRepository implements StaticBugemonRepository {
+public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {
 
     private final Map<String, Attack> attackCache;
-    private final List<Bugemon> bugemonCache;
+    private final Map<String, Bugemon> bugemonCache;
+    private final Inventory defaultInventoryCache;
 
-    public StaticDataRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
+    public PostgresStaticRepository(DatabaseConnection dbConnection, Map<String, String> queries,
+            Inventory defaultInventory) {
         super(dbConnection, queries);
         this.attackCache = Collections.unmodifiableMap(this.loadAllAttacks());
-        this.bugemonCache = new ArrayList<>(this.loadAllBugemons());
+        this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
+        this.defaultInventoryCache = defaultInventory;
     }
 
     @Override
-    public List<Bugemon> getAllDefaultBugemons() {
-        return Collections.unmodifiableList(this.bugemonCache);
+    public List<Bugemon> findBugemons() {
+        return Collections.unmodifiableList(this.bugemonCache.values().stream().toList());
+    }
+
+    public Optional<Bugemon> findBugemonByName(String name) {
+        return Optional.ofNullable(this.bugemonCache.get(name));
     }
 
     @Override
-    public Map<String, Attack> getAllAttacks() {
-        return this.attackCache;
-    }
-
-    @Override
-    public Optional<Bugemon> findByName(String name) {
-        return this.bugemonCache.stream().filter(b -> b.name().equals(name)).findFirst();
+    public List<Attack> findAttacks() {
+        return Collections.unmodifiableList(this.attackCache.values().stream().toList());
     }
 
     @Override
@@ -70,10 +74,14 @@ public class StaticDataRepository extends AbstractRepository implements StaticBu
         this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName,
                 bugemon.defense(), bugemon.attack(), bugemon.initiative(), bugemon.maxHp(),
                 bugemon.isStarter(), bugemon.attack1().id(), bugemon.attack2().id(), bugemon.attack3().id());
-        this.bugemonCache.add(new Bugemon(bugemon.name(), bugemon.maxHp(), bugemon.attack(),
+        this.bugemonCache.put(bugemon.name(), new Bugemon(bugemon.name(), bugemon.maxHp(), bugemon.attack(),
                 bugemon.defense(), bugemon.initiative(), bugemon.type(),
                 List.of(bugemon.attack1(), bugemon.attack2(), bugemon.attack3()),
                 fileName, bugemon.isStarter()));
+    }
+
+    public Inventory getDefaultInventory() {
+        return this.defaultInventoryCache;
     }
 
     // --- Private loading ---
@@ -109,8 +117,11 @@ public class StaticDataRepository extends AbstractRepository implements StaticBu
         return result;
     }
 
-    private List<Bugemon> loadAllBugemons() {
-        return this.executeQuery("GetAllDefaultBugemons", this::mapBugemon);
+    private Map<String, Bugemon> loadAllBugemons() {
+        List<Bugemon> bugemons = this.executeQuery("GetAllDefaultBugemons", this::mapBugemon);
+        Map<String, Bugemon> bugemonsMap = new HashMap<>();
+        bugemons.forEach(b -> bugemonsMap.put(b.name(), b));
+        return bugemonsMap;
     }
 
     private Bugemon mapBugemon(ResultSet rs) throws SQLException {

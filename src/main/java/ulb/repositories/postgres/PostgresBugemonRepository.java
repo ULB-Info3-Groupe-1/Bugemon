@@ -11,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
-import ulb.repositories.StaticBugemonRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.repositories.DatabaseConnection;
 
 public class PostgresBugemonRepository extends AbstractRepository implements BugemonRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresBugemonRepository.class);
-    private final StaticBugemonRepository staticDataRepository;
+    private final PostgresStaticRepository staticDataRepository;
 
     public PostgresBugemonRepository(DatabaseConnection dbConnection, Map<String, String> queries,
-            StaticBugemonRepository staticDataRepository) {
+            PostgresStaticRepository staticDataRepository) {
         super(dbConnection, queries);
         this.staticDataRepository = staticDataRepository;
     }
@@ -40,7 +40,7 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     @Override
     public Optional<Bugemon> findBase(String name) {
         LOG.debug("Finding base bugemon '{}'", name);
-        return this.staticDataRepository.findByName(name);
+        return this.staticDataRepository.findBugemonByName(name);
     }
 
     @Override
