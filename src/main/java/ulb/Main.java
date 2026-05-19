@@ -22,6 +22,7 @@ import ulb.repositories.TeamRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 import ulb.repositories.postgres.DatabaseInitializer;
 import ulb.repositories.postgres.PostgresDatabaseConnection;
+import ulb.repositories.postgres.PostgresInventoryRepository;
 import ulb.repositories.postgres.PostgresPlayerRepository;
 import ulb.repositories.postgres.PostgresSkillRepository;
 import ulb.repositories.postgres.PostgresStaticRepository;
@@ -43,10 +44,10 @@ public class Main extends Application {
                 launch(args);
         }
 
-        private void createUserIfNotExists(String playerName, PlayerRepository playerRepository)
-                        throws PlayernameAlreadyExistsException {
+        private void createUserIfNotExists(String playerName, PlayerRepository playerRepository,
+                        StaticRepository staticRepository) throws PlayernameAlreadyExistsException {
                 try {
-                        playerRepository.createPlayer(playerName);
+                        playerRepository.createPlayer(playerName, staticRepository.defaultInventory());
                 } catch (PlayernameAlreadyExistsException e) {
                         // We do nothing because whitout client/server architecture, the database is
                         // local and we don't have a login
@@ -79,8 +80,8 @@ public class Main extends Application {
 
                 PostgresStaticRepository staticDataRepository = new PostgresStaticRepository(dbConnection,
                                 loader.getQueries(), parser.getInventory());
-                InventoryRepository inventoryRepository = new InventoryRepository(dbConnection, loader.getQueries(),
-                                parser.getInventory());
+                InventoryRepository inventoryRepository = new PostgresInventoryRepository(dbConnection,
+                                loader.getQueries());
                 PlayerRepository playerRepository = new PostgresPlayerRepository(dbConnection,
                                 loader.getQueries(), inventoryRepository);
                 SkillRepository skillRepository = new PostgresSkillRepository(dbConnection, loader.getQueries());
@@ -88,13 +89,9 @@ public class Main extends Application {
                                 loader.getQueries());
 
                 String playerName = "default_player";
-                this.createUserIfNotExists(playerName, playerRepository);
+                this.createUserIfNotExists(playerName, playerRepository, staticDataRepository);
 
                 PlayerService playerService = new PlayerService(skillRepository, parser.getSkillTree(), playerName);
-
-                PlayerState playerState = new PlayerState(playerName, null,
-                                inventoryRepository.getPlayerInventory(playerName),
-                                playerService.getUnlockedSkills());
 
                 SkillService skillService = new SkillService(playerService.getUnlockedSkills());
                 BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository,
@@ -103,6 +100,10 @@ public class Main extends Application {
                 TeamService teamService = new TeamService(teamRepository, playerBugemonRepository, playerName);
                 InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
                 TowerService towerService = new TowerService(playerRepository, playerName);
+
+                PlayerState playerState = new PlayerState(playerName, null,
+                                inventoryService.getPlayerInventory(playerName),
+                                playerService.getUnlockedSkills());
 
                 MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
                                 towerService, inventoryService, playerState);

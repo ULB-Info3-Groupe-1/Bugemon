@@ -1,4 +1,4 @@
-package ulb.repositories.utils;
+package ulb.repositories.postgres;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
