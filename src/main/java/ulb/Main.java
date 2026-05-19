@@ -12,6 +12,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import ulb.controllers.MetaController;
 import ulb.models.player.PlayerState;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
+import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerRepository;
@@ -21,6 +22,7 @@ import ulb.repositories.StaticRepository;
 import ulb.repositories.TeamRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 import ulb.repositories.postgres.DatabaseInitializer;
+import ulb.repositories.postgres.PostgresBugemonRepository;
 import ulb.repositories.postgres.PostgresDatabaseConnection;
 import ulb.repositories.postgres.PostgresInventoryRepository;
 import ulb.repositories.postgres.PostgresPlayerRepository;
@@ -45,13 +47,12 @@ public class Main extends Application {
     }
 
     private void createUserIfNotExists(String playerName, PlayerRepository playerRepository,
-            StaticRepository staticRepository) throws PlayernameAlreadyExistsException {
+            StaticRepository staticRepository) {
         try {
             playerRepository.createPlayer(playerName, staticRepository.defaultInventory());
         } catch (PlayernameAlreadyExistsException e) {
-            // We do nothing because whitout client/server architecture, the database is
-            // local and we don't have a login
-            // system, so the playername used is 'default_player' and is always the same.
+            // Without client/server architecture the database is local and the playername
+            // is always 'default_player', so a duplicate on startup is expected and safe.
         }
     }
 
@@ -85,6 +86,8 @@ public class Main extends Application {
                 inventoryRepository);
         SkillRepository skillRepository = new PostgresSkillRepository(dbConnection, loader.getQueries());
         TeamRepository teamRepository = new PostgresTeamRepository(dbConnection, loader.getQueries());
+        BugemonRepository bugemonRepository = new PostgresBugemonRepository(dbConnection, loader.getQueries(),
+                staticDataRepository);
 
         String playerName = "default_player";
         this.createUserIfNotExists(playerName, playerRepository, staticDataRepository);
@@ -92,13 +95,13 @@ public class Main extends Application {
         PlayerService playerService = new PlayerService(skillRepository, parser.getSkillTree(), playerName);
 
         SkillService skillService = new SkillService(playerService.getUnlockedSkills());
-        BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository, playerName,
+        BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName,
                 skillService.getSkills(StatBonusEffect.class));
-        TeamService teamService = new TeamService(teamRepository, playerBugemonRepository, playerName);
+        TeamService teamService = new TeamService(teamRepository, bugemonRepository, playerName);
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName);
 
-        PlayerState playerState = new PlayerState(playerName, null, inventoryService.getPlayerInventory(playerName),
+        PlayerState playerState = new PlayerState(playerName, null, inventoryService.loadInventory(),
                 playerService.getUnlockedSkills());
 
         MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,

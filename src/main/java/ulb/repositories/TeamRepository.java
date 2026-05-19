@@ -7,13 +7,13 @@ import ulb.repositories.dto.TeamDTO;
 
 public interface TeamRepository {
 
-    public List<TeamDTO> findAll(String playerName);
+    List<TeamDTO> findAll(String playerName);
 
-    public Optional<TeamDTO> findByName(String playerName, String teamName);
+    Optional<TeamDTO> findByName(String playerName, String teamName);
 
-    public void save(String playerName, TeamDTO team);
+    void save(String playerName, TeamDTO team);
 
-    public void delete(String playerName, String teamName);
+    void delete(String playerName, String teamName);
 
-    public void removeAll(String playerName);
+    void removeAll(String playerName);
 }
