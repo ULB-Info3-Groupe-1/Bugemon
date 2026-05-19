@@ -1,7 +1,6 @@
 package ulb.repositories;
 
 import java.util.List;
-import java.util.Map;
 
 import ulb.repositories.dto.SkillDTO;
 
@@ -13,13 +12,9 @@ public interface SkillRepository {
 
     int findSkillLevel(String playername, String skillId);
 
-    int getPlayerSkillPoints(String playername);
+    int findSkillPoints(String playername);
 
-    void setPlayerSkillPoints(String playername, int skillPoints);
+    void save(String playername, List<SkillDTO> skills, int skillPoints);
 
-    void savePlayerSkill(String playername, String skillId, int level);
-
-    void deletePlayerSkill(String playername, String skillId);
-
-    Map<String, Integer> getPlayerSkills(String playername);
+    void delete(String playername);
 }

@@ -33,16 +33,16 @@ import ulb.models.item.Inventory;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.utils.DatabaseHelper;
+import ulb.repositories.dto.InventoryDTO;
 
 public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {
 
     private final Map<String, Attack> attackCache;
     private final Map<String, Bugemon> bugemonCache;
-    private final Inventory defaultInventoryCache;
+    private final InventoryDTO defaultInventoryCache;
 
     public PostgresStaticRepository(DatabaseConnection dbConnection, Map<String, String> queries,
-            Inventory defaultInventory) {
+            InventoryDTO defaultInventory) {
         super(dbConnection, queries);
         this.attackCache = Collections.unmodifiableMap(this.loadAllAttacks());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
@@ -80,7 +80,8 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
                 fileName, bugemon.isStarter()));
     }
 
-    public Inventory getDefaultInventory() {
+    @Override
+    public InventoryDTO defaultInventory() {
         return this.defaultInventoryCache;
     }
 

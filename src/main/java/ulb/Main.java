@@ -13,9 +13,6 @@ import ulb.controllers.MetaController;
 import ulb.models.player.PlayerState;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
-import ulb.repositories.postgres.InventoryRepository;
-import ulb.repositories.postgres.QueryLoader;
-import ulb.repositories.TeamRepository;
 import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
@@ -34,10 +31,10 @@ public class Main extends Application {
                 launch(args);
         }
 
-        private void createUserIfNotExists(String playerName, PlayerRepository playerRepository)
-                        throws PlayernameAlreadyExistsException {
+        private void createUserIfNotExists(String playerName, PlayerRepository playerRepository,
+                        StaticRepository staticRepository) throws PlayernameAlreadyExistsException {
                 try {
-                        playerRepository.createPlayer(playerName);
+                        playerRepository.createPlayer(playerName, staticRepository.defaultInventory());
                 } catch (PlayernameAlreadyExistsException e) {
                         // We do nothing because whitout client/server architecture, the database is
                         // local and we don't have a login
