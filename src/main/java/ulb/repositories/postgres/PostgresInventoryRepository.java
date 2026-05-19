@@ -37,12 +37,9 @@ public class PostgresInventoryRepository extends AbstractRepository implements I
         this.executeQuery("GetPlayerInventory", rs -> {
             String effectType = rs.getString(DatabaseColumns.COL_EFFECT_TYPE);
             Effect effect = effectType != null ? this.buildItemEffect(rs, effectType) : null;
-            Item item = new Item(
-                    rs.getString(DatabaseColumns.COL_ITEM_ID),
-                    rs.getString(DatabaseColumns.COL_NAME),
+            Item item = new Item(rs.getString(DatabaseColumns.COL_ITEM_ID), rs.getString(DatabaseColumns.COL_NAME),
                     rs.getString(DatabaseColumns.COL_DESCRIPTION),
-                    ItemType.valueOf(rs.getString(DatabaseColumns.COL_CATEGORY)),
-                    effect);
+                    ItemType.valueOf(rs.getString(DatabaseColumns.COL_CATEGORY)), effect);
             inventoryMap.put(item, rs.getInt(DatabaseColumns.COL_AMOUNT));
             return null;
         }, playername);
@@ -53,8 +50,8 @@ public class PostgresInventoryRepository extends AbstractRepository implements I
     public void save(String playername, InventoryDTO inventory) {
         LOG.debug("Saving inventory for playername: {}", playername);
         this.clearInventory(playername);
-        inventory.items().forEach(
-                (item, quantity) -> this.executeUpdate("SaveItemForPlayer", playername, item.id(), quantity));
+        inventory.items()
+                .forEach((item, quantity) -> this.executeUpdate("SaveItemForPlayer", playername, item.id(), quantity));
     }
 
     @Override
@@ -71,13 +68,12 @@ public class PostgresInventoryRepository extends AbstractRepository implements I
         EffectTarget target = EffectTarget.valueOf(rs.getString(DatabaseColumns.COL_EFFECT_TARGET));
         return switch (effectType) {
             case "EffectHeal" -> new HealEffect(target, rs.getInt(DatabaseColumns.COL_EFFECT_VALUE));
-            case "EffectStatModifier" -> new StatModifierEffect(
-                    target,
-                    StatType.valueOf(rs.getString(DatabaseColumns.COL_EFFECT_STAT)),
-                    rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
-                    rs.getInt(DatabaseColumns.COL_EFFECT_DURATION) == DB_DURATION_PERMANENT
-                            ? EffectDuration.PERMANENT
-                            : EffectDuration.ONE_TURN);
+            case "EffectStatModifier" ->
+                new StatModifierEffect(target, StatType.valueOf(rs.getString(DatabaseColumns.COL_EFFECT_STAT)),
+                        rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
+                        rs.getInt(DatabaseColumns.COL_EFFECT_DURATION) == DB_DURATION_PERMANENT
+                                ? EffectDuration.PERMANENT
+                                : EffectDuration.ONE_TURN);
             case "EffectResetMalus" -> new ResetMalusEffect(target);
             default -> throw new IllegalStateException("Unknown item effect type: " + effectType);
         };

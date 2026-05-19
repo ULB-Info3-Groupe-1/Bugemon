@@ -5,11 +5,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.dto.InventoryDTO;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
-import ulb.repositories.DatabaseConnection;
 
 public class PostgresPlayerRepository extends AbstractRepository implements PlayerRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresPlayerRepository.class);
@@ -48,8 +48,8 @@ public class PostgresPlayerRepository extends AbstractRepository implements Play
     @Override
     public int getPlayerCurrentFloor(String playername) {
         LOG.debug("Getting current floor for playername: {}", playername);
-        return this.executeQuery("GetPlayerCurrentTowerFloor",
-                rs -> rs.getInt(DatabaseColumns.COL_CURRENT_TOWER_FLOOR), playername).get(0);
+        return this.executeQuery("GetPlayerCurrentTowerFloor", rs -> rs.getInt(DatabaseColumns.COL_CURRENT_TOWER_FLOOR),
+                playername).get(0);
     }
 
     @Override

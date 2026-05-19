@@ -8,9 +8,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 import ulb.repositories.DatabaseConnection;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class PostgresDatabaseConnection implements DatabaseConnection {
     private static final Dotenv DOTENV = loadDotenv();

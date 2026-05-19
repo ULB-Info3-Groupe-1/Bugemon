@@ -23,7 +23,7 @@ public abstract class AbstractRepository {
      * Returns the SQL string for the given query name.
      *
      * @throws IllegalArgumentException
-     *                                  if the query name is not found
+     *             if the query name is not found
      */
     protected String getSql(String queryName) {
         String sql = this.queries.get(queryName);
