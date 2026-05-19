@@ -4,17 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.repositories.dto.TeamDTO;
-import ulb.repositories.exceptions.TeamEmptyException;
 
 public interface TeamRepository {
 
     public List<TeamDTO> findAll(String playerName);
 
+    public Optional<TeamDTO> findByName(String playerName, String teamName);
+
+    public void save(String playerName, TeamDTO team);
+
+    public void delete(String playerName, String teamName);
+
     public void removeAll(String playerName);
-
-    public Optional<TeamDTO> loadTeam(String playerName, String teamName);
-
-    public void saveTeam(String playerName, TeamDTO team) throws TeamEmptyException;
-
-    public void deleteTeam(String playerName, String teamName);
 }
