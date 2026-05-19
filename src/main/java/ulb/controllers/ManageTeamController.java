@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.models.player.PlayerBugemon;
+import ulb.models.player.PlayerState;
 import ulb.models.team.Team;
 import ulb.repositories.exceptions.TeamEmptyException;
 import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
-import ulb.repositories.exceptions.TeamNameEmptyException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.TeamService;
@@ -22,12 +22,8 @@ import ulb.views.ViewLoader;
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
     private final TeamService teamService;
     private final BugemonService bugemonService;
-
-    /**
-     * The team that the player is currently modifying. It is used to keep track of the changes made to the team before
-     * saving it to the database.
-     */
-    private Team workingTeam;
+    private final PlayerState playerState;
+    private final Team tmpTeam; // The team that gets edited in this screen
 
     public enum TeamFormMode {
         EDIT,
@@ -40,19 +36,14 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
      *
      */
     public ManageTeamController(TeamFormMode mode, MetaController metaController, TeamService teamService,
-            BugemonService bugemonService) {
+            BugemonService bugemonService, PlayerState playerState) {
         super(metaController, ViewLoader.load(() -> new ManageTeamView(mode)));
         this.teamService = teamService;
         this.bugemonService = bugemonService;
-        this.workingTeam = new Team();
-        this.view.setListener(this);
-    }
+        this.playerState = playerState;
+        this.tmpTeam = this.playerState.getActiveTeam().orElseGet(Team::new);
 
-    @Override
-    protected void show() {
-        this.teamService.getActiveTeam().ifPresent(t -> this.workingTeam = t);
-        this.view.refresh();
-        super.show();
+        this.view.setListener(this);
     }
 
     @Override
@@ -92,17 +83,16 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onSave(String teamName) {
-        try {
-            this.workingTeam.setName(teamName);
-            this.teamService.saveTeam(this.workingTeam);
-            this.workingTeam.clear();
-        } catch (TeamNameAlreadyExistsException e) {
+        if (this.teamService.teamExists(teamName)) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
-        } catch (TeamEmptyException e) {
-            this.view.showEmptyTeamAlert();
-        } catch (TeamNameEmptyException e) {
-            this.view.showEmptyTeamNameAlert();
+            return;
         }
+
+        this.tmpTeam.setName(teamName);
+        this.teamService.save(this.tmpTeam); // TODO: show alert messages if operation fails
+        this.tmpTeam.clear();
+        this.tmpTeam.setName(null);
+
         this.view.refresh();
     }
 
