@@ -25,22 +25,32 @@ import ulb.utils.Parser;
 /** JavaFX entry point — bootstraps the Bugemon game. */
 public class Main extends Application {
 
-        public static void main(String[] args) {
-                SLF4JBridgeHandler.removeHandlersForRootLogger();
-                SLF4JBridgeHandler.install();
-                launch(args);
+    public static void main(String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+        launch(args);
+    }
+
+    private void createUserIfNotExists(String playerName, PlayerRepository playerRepository,
+            StaticRepository staticRepository) throws PlayernameAlreadyExistsException {
+        try {
+            playerRepository.createPlayer(playerName, staticRepository.defaultInventory());
+        } catch (PlayernameAlreadyExistsException e) {
+            // We do nothing because whitout client/server architecture, the database is
+            // local and we don't have a login
+            // system, so the playername used is 'default_player' and is always the same.
+        }
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
+        if (fontStream != null) {
+            Font.loadFont(fontStream, 16);
         }
 
-        private void createUserIfNotExists(String playerName, PlayerRepository playerRepository,
-                        StaticRepository staticRepository) throws PlayernameAlreadyExistsException {
-                try {
-                        playerRepository.createPlayer(playerName, staticRepository.defaultInventory());
-                } catch (PlayernameAlreadyExistsException e) {
-                        // We do nothing because whitout client/server architecture, the database is
-                        // local and we don't have a login
-                        // system, so the playername used is 'default_player' and is always the same.
-                }
-        }
+        stage.setTitle(Configuration.Ui.STAGE_TITLE);
+        stage.setMaximized(true);
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -79,10 +89,6 @@ public class Main extends Application {
 
         PlayerService playerService = new PlayerService(playerRepository, playerName);
 
-        PlayerState playerState = new PlayerState(playerName, null,
-                        inventoryRepository.getPlayerInventory(playerName),
-                        playerService.getUnlockedSkills());
-
         SkillService skillService = new SkillService(playerService.getUnlockedSkills());
         BugemonService bugemonService = new BugemonService(staticDataRepository, playerBugemonRepository,
                         playerName,
@@ -91,8 +97,11 @@ public class Main extends Application {
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, skillService);
         TowerService towerService = new TowerService(playerRepository, playerName);
 
+        PlayerState playerState = new PlayerState(playerName, null, inventoryService.getPlayerInventory(playerName),
+                playerService.getUnlockedSkills());
+
         MetaController metaController = new MetaController(stage, bugemonService, playerService, teamService,
-                        towerService, inventoryService, playerState);
+                towerService, inventoryService, playerState);
         metaController.start();
 
     }

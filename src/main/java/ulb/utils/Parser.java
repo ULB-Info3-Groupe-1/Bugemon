@@ -46,12 +46,9 @@ import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.InventoryDTO;
 
 /**
- * Parses the three bundled JSON resource files (attacks, Bugemons,
- * items/inventory). The main entry point is
- * {@link #parse()}, which builds an ID-to-{@link Attack} map first so that
- * Bugemon deserialisation can resolve attack
- * references. Results are exposed via {@link #getBugemons()},
- * {@link #getAttacks()}, {@link #getItems()}, and
+ * Parses the three bundled JSON resource files (attacks, Bugemons, items/inventory). The main entry point is
+ * {@link #parse()}, which builds an ID-to-{@link Attack} map first so that Bugemon deserialisation can resolve attack
+ * references. Results are exposed via {@link #getBugemons()}, {@link #getAttacks()}, {@link #getItems()}, and
  * {@link #getInventory()}.
  *
  * @see BugemonDeserializer
@@ -75,10 +72,8 @@ public class Parser {
     private static SkillTree skillTree; // represent the tree data structure
 
     /**
-     * Parses all JSON resource files and populates the static data fields. Must be
-     * called once before any
-     * {@code get*()} accessor. Silently returns without populating any data if a
-     * resource file cannot be opened.
+     * Parses all JSON resource files and populates the static data fields. Must be called once before any
+     * {@code get*()} accessor. Silently returns without populating any data if a resource file cannot be opened.
      */
     public void parse() {
         LOG.info("Parsing data");
@@ -132,10 +127,8 @@ public class Parser {
     }
 
     /**
-     * Custom Gson type adapter that deserialises a JSON string into a
-     * {@link BugemonType} enum constant. Converts the
-     * raw value to upper-case before calling {@link BugemonType#valueOf(String)},
-     * so {@code "flora"} and
+     * Custom Gson type adapter that deserialises a JSON string into a {@link BugemonType} enum constant. Converts the
+     * raw value to upper-case before calling {@link BugemonType#valueOf(String)}, so {@code "flora"} and
      * {@code "FLORA"} both resolve to {@link BugemonType#FLORA}.
      */
     private static class TypeDeserializer implements JsonDeserializer<ElementType> {

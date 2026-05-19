@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
-import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.DatabaseConnection;
+import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PostgresBugemonRepository extends AbstractRepository implements BugemonRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresBugemonRepository.class);
@@ -33,8 +33,8 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     @Override
     public Optional<PlayerBugemonDTO> findByName(String playername, String bugemonName) {
         LOG.debug("Finding bugemon '{}' for playername: {}", bugemonName, playername);
-        return executeQuery("GetPlayerBugemonByName", this::mapPlayerBugemon, playername, bugemonName)
-                .stream().findFirst();
+        return executeQuery("GetPlayerBugemonByName", this::mapPlayerBugemon, playername, bugemonName).stream()
+                .findFirst();
     }
 
     @Override
@@ -46,9 +46,9 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     @Override
     public void save(String playername, PlayerBugemonDTO dto) {
         LOG.debug("Saving player bugemon '{}' for playername: {}", dto.bugemonName(), playername);
-        executeUpdate("SavePlayerBugemon", dto.playername(), dto.bugemonName(),
-                dto.currentDefense(), dto.currentAttackPower(),
-                dto.currentInitiative(), dto.currentMaxHp(), dto.currentXp(), dto.currentLevel());
+        executeUpdate("SavePlayerBugemon", dto.playername(), dto.bugemonName(), dto.currentDefense(),
+                dto.currentAttackPower(), dto.currentInitiative(), dto.currentMaxHp(), dto.currentXp(),
+                dto.currentLevel());
     }
 
     @Override
@@ -64,14 +64,10 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     }
 
     private PlayerBugemonDTO mapPlayerBugemon(ResultSet rs) throws SQLException {
-        return new PlayerBugemonDTO(
-                rs.getString(DatabaseColumns.COL_PLAYERNAME),
-                rs.getString(DatabaseColumns.COL_BUGEMON_NAME),
-                rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
-                rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
-                rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
-                rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP),
-                rs.getInt(DatabaseColumns.COL_CURRENT_XP),
+        return new PlayerBugemonDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),
+                rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
+                rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK), rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
+                rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
                 rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL));
     }
 }

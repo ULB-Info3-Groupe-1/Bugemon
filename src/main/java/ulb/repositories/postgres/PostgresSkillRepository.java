@@ -7,8 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.repositories.SkillRepository;
 import ulb.repositories.DatabaseConnection;
+import ulb.repositories.SkillRepository;
 
 public class PostgresSkillRepository extends AbstractRepository implements SkillRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresSkillRepository.class);
@@ -45,9 +45,8 @@ public class PostgresSkillRepository extends AbstractRepository implements Skill
     @Override
     public Map<String, Integer> getPlayerSkills(String playername) {
         LOG.debug("Getting all skills for playername: {}", playername);
-        List<Map.Entry<String, Integer>> rows = this.executeQuery("GetPlayerSkills",
-                rs -> Map.entry(rs.getString(DatabaseColumns.COL_SKILL_ID),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
+        List<Map.Entry<String, Integer>> rows = this.executeQuery("GetPlayerSkills", rs -> Map
+                .entry(rs.getString(DatabaseColumns.COL_SKILL_ID), rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
                 playername);
 
         Map<String, Integer> skills = new HashMap<>();
