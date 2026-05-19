@@ -68,6 +68,12 @@ public class TeamService {
         this.teamRepository.delete(this.playerName, teamName);
     }
 
+    public void renameTeam(Team team, String newName) {
+        this.deleteTeam(team.getName());
+        team.setName(newName);
+        this.createTeam(this.teamToDTO(team));
+    }
+
     public void deleteTeams() {
         this.teamRepository.deleteAll(this.playerName);
     }
