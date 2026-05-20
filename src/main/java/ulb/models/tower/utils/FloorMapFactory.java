@@ -112,6 +112,8 @@ public class FloorMapFactory {
         if (numBranchesGenerated < numBranchesGenerated) {
             return Optional.empty();
         }
+
+        String bossKey = deepestNode(nodeDepths);
     }
 
     private static void growBranch(
@@ -175,6 +177,13 @@ public class FloorMapFactory {
             }
         }
         return result;
+    }
+
+    private static String deepestNode(Map<String, Integer> nodeDepths) {
+        return nodeDepths.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElseThrow(() -> new IllegalStateException("no node given"));
     }
 
     private void generateNewFloor() {
