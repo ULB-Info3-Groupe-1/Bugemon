@@ -26,48 +26,59 @@ import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Inventory;
 import ulb.models.item.Item;
 import ulb.models.player.PlayerInputHandler;
+import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
 import ulb.models.team.factory.TeamFactory;
 import ulb.services.CombatService;
+import ulb.services.SkillService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
 /**
- * Main controller for the combat screen. Integrates both the step-by-step animation logic and the manual player input
- * logic, replacing the old ManualCombatController. * It acts as the {@link CombatStrategy} for the player, intercepting
- * the request for actions/switches from the Combat model and opening the UI menus accordingly.
+ * Main controller for the combat screen. Integrates both the step-by-step
+ * animation logic and the manual player input
+ * logic, replacing the old ManualCombatController. * It acts as the
+ * {@link CombatStrategy} for the player, intercepting
+ * the request for actions/switches from the Combat model and opening the UI
+ * menus accordingly.
  */
 public class CombatController extends Controller<CombatView>
         implements CombatView.Listener, CombatView.NextListener, PlayerInputHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
     private final CombatService combatService;
-    private Combat combat;
+
     private ActionCallback pendingActionCallback;
     private ActionCallback pendingSwitchCallback;
+
     private final Queue<TurnStep> pendingSteps = new ArrayDeque<>();
 
-    public CombatController(MetaController metaController, CombatService combatService) {
+    private Combat combat;
+    private PlayerState playerState;
+
+    public CombatController(MetaController metaController, CombatService combatService, PlayerState playerState) {
         super(metaController, ViewLoader.load(CombatView::new));
         this.view.setListener(this);
         this.view.setNextListener(this);
 
         this.combatService = combatService;
+        this.playerState = playerState;
     }
 
     /**
-     * Builds and initializes a manual standalone combat; the opponent team is produced by {@code opponentFactory}.
+     * Builds and initializes a manual standalone combat; the opponent team is
+     * produced by {@code opponentFactory}.
      */
-    public void startCombat(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory,
+    public void startCombat(RunTeam playerRunTeam, TeamFactory opponentFactory,
             CombatFactory combatFactory) {
-        this.initialize(combatFactory.create(playerRunTeam, playerInventory, opponentFactory));
+        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory));
     }
 
     /**
      * Initializes a new combat session.
      *
      * @param combat
-     *            the new Combat model instance
+     *               the new Combat model instance
      */
     public void initialize(Combat newCombat) {
         this.combat = newCombat;
@@ -200,7 +211,9 @@ public class CombatController extends Controller<CombatView>
     private void onCombatFinished() {
         boolean won = this.combat.getResult() == CombatResult.VICTORY;
         LOG.info("Combat ended. Victory: {}", won);
-        this.metaController.onCombatFinished(won);
+
+        this.metaController
+                .onCombatFinished(this.combatService.finalizeCombat(this.combat, this.playerState.getXpMultiplier()));
     }
 
     @Override
