@@ -33,7 +33,7 @@
                 <Label text="Nom de l'équipe à sauvegarder :"
                     styleClass="team-input-label" />
                 <TextField fx:id="saveTeamNameInput"
-                    styleClass="text-field,btn-team" promptText="Nouveau nom..."
+                    styleClass="text-field btn-team" promptText="Nouveau nom..."
                     onAction="#onSaveClicked" />
             </VBox>
         </HBox>
@@ -60,35 +60,35 @@
                 </VBox.margin>
                 <Label text="Mes équipes" styleClass="section-label" />
                 <ListView fx:id="teamListView"
-                    styleClass="team-list-view,btn-team" prefHeight="160"
+                    styleClass="team-list-view btn-team" prefHeight="160"
                     minHeight="80" onMouseClicked="#onTeamSelected" />
 
                 <Button fx:id="saveTeamButton" text="Sauvegarder"
-                    onAction="#onSaveClicked" styleClass="btn,btn-success,btn-team" />
+                    onAction="#onSaveClicked" styleClass="btn btn-success btn-team" />
                 <Button fx:id="renameTeamButton" text="Renommer"
-                    onAction="#onRenameClicked" styleClass="btn,btn-success,btn-team" />
+                    onAction="#onRenameClicked" styleClass="btn btn-success btn-team" />
                 <Button fx:id="modifyTeamButton" text="Modifier l'équipe"
                     onAction="#onModifyTeamClicked"
-                    styleClass="btn,btn-success,btn-team" />
+                    styleClass="btn btn-success btn-team" />
                 <Button fx:id="addNewTeamButton" text="Nouvelle équipe +"
                     onAction="#onAddNewTeamClicked"
-                    styleClass="btn,btn-success,btn-team" />
+                    styleClass="btn btn-success btn-team" />
                 <Button fx:id="startAutomaticCombatButton"
                     text="Lancer combat automatique"
                     onAction="#onStartAutomaticCombatClicked"
-                    styleClass="btn,btn-success,btn-team" />
+                    styleClass="btn btn-success btn-team" />
                 <Button fx:id="startManualCombatButton"
                     text="Lancer combat manuel" onAction="#onStartManualCombatClicked"
-                    styleClass="btn,btn-success,btn-team" />
+                    styleClass="btn btn-success btn-team" />
                 <Button fx:id="startTowerCombatButton"
                     text="Lancer combat de la Tour NO"
                     onAction="#onStartTowerCombatClicked"
-                    styleClass="btn,btn-success,btn-team" />
+                    styleClass="btn btn-success btn-team" />
                 <Button fx:id="deleteTeamButton" text="Supprimer"
-                    onAction="#onDeleteClicked" styleClass="btn,btn-danger,btn-team" />
+                    onAction="#onDeleteClicked" styleClass="btn btn-danger btn-team" />
                 <Button fx:id="returnMainMenuButton"
                     text="Retour au menu principal" onAction="#onReturnMainMenuClicked"
-                    styleClass="btn,btn-secondary,btn-team" />
+                    styleClass="btn btn-secondary btn-team" />
             </VBox>
         </HBox>
     </center>

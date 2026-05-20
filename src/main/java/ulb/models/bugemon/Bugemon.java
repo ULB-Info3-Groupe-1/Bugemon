@@ -19,9 +19,14 @@ public record Bugemon(String name, int hp, int attack, int defense, int initiati
         Objects.requireNonNull(type);
         Objects.requireNonNull(attacks);
 
-        // TODO: add checks for other fields (stats > 0, name/id not empty etc.)
+        if (name.isBlank() || name.isEmpty()) {
+            throw new IllegalArgumentException("Bugemon's name cannot be empty");
+        }
+        checkHp(hp);
+        if (attack <= 0 || defense <= 0 || initiative <= 0) {
+            throw new IllegalArgumentException("Stats must be strictly positive");
+        }
 
-        Objects.requireNonNull(attacks);
         checkAttacks(attacks);
         attacks = List.copyOf(attacks);
     }
