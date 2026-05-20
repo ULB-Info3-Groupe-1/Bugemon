@@ -20,7 +20,7 @@ public class ManualCombatFactory extends CombatFactory {
 
     public ManualCombatFactory(Inventory defaultInventory, DamageCalculator damageCalculator,
             EffectProcessor effectProcessor, Random random, PlayerInputHandler handler, int floor, boolean bossMode) {
-        super(damageCalculator, effectProcessor, random, floor, bossMode);
+        super(damageCalculator, effectProcessor, floor, bossMode);
         this.defaultInventory = defaultInventory;
         this.handler = handler;
     }

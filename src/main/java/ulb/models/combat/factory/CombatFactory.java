@@ -1,7 +1,6 @@
 package ulb.models.combat.factory;
 
 import java.util.Map;
-import java.util.Random;
 
 import ulb.models.bugemon.ElementType;
 import ulb.models.combat.Combat;
@@ -20,18 +19,16 @@ import ulb.models.team.factory.TeamFactory;
  */
 public abstract class CombatFactory {
 
-    protected final DamageCalculator damageCalculator;
-    protected final EffectProcessor effectProcessor;
-    protected final Random random;
+    private final DamageCalculator damageCalculator;
+    private final EffectProcessor effectProcessor;
 
-    protected final int floor;
-    protected final boolean bossMode;
+    private final int floor;
+    private final boolean bossMode;
 
-    protected CombatFactory(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
-            int floor, boolean bossMode) {
+    protected CombatFactory(DamageCalculator damageCalculator, EffectProcessor effectProcessor, int floor,
+            boolean bossMode) {
         this.damageCalculator = damageCalculator;
         this.effectProcessor = effectProcessor;
-        this.random = random;
 
         this.floor = floor;
         this.bossMode = bossMode;

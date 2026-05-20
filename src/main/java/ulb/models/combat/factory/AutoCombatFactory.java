@@ -11,10 +11,12 @@ import ulb.models.combat.utils.EffectProcessor;
  * Produces a {@link Combat} where both sides are controlled by {@link AutoStrategy}.
  */
 public class AutoCombatFactory extends CombatFactory {
+    private final Random random;
 
     public AutoCombatFactory(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
             int floor, boolean bossMode) {
-        super(damageCalculator, effectProcessor, random, floor, bossMode);
+        super(damageCalculator, effectProcessor, floor, bossMode);
+        this.random = random;
     }
 
     @Override
