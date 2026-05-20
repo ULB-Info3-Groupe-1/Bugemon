@@ -34,6 +34,9 @@ public class FloorMapFactory {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
+    // Probability of continuing growth of a branch in the same direction
+    private static final double BIAS_SAME_DIRECTION_PROB = 0.7;
+
     private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
 
     private final int seed;
@@ -70,7 +73,7 @@ public class FloorMapFactory {
 
         // start node setup
         String startKey = nodeKey(CENTER, CENTER);
-        nodeCoords.put(startKey, new int[] {CENTER, CENTER, 0});
+        nodeCoords.put(startKey, new int[] { CENTER, CENTER, 0 });
         childrenOf.put(startKey, new ArrayList<>());
         parentOf.put(startKey, null);
 
@@ -99,13 +102,55 @@ public class FloorMapFactory {
                 continue;
             }
 
-            // TODO: grow the branch
+            growBranch(col, row, dir, 1, startKey, nodeCoords, childrenOf, parentOf, random);
 
             numBranchesGenerated++;
         }
 
         if (numBranchesGenerated < numBranchesGenerated) {
             return Optional.empty();
+        }
+    }
+
+    private static void growBranch(
+            int col,
+            int row,
+            int[] lastDir,
+            int depth,
+            String parentKey,
+            Map<String, int[]> nodeCoords,
+            Map<String, List<String>> childrenOf,
+            Map<String, String> parentOf,
+            Random random) {
+
+        for (int d = depth; d <= MAX_DEPTH; d++) {
+            String key = nodeKey(col, row);
+            nodeCoords.put(key, new int[] { col, row, d }); // current node here
+            childrenOf.put(key, new ArrayList<>()); // current node has no children atm
+            parentOf.put(key, parentKey);
+            childrenOf.get(parentKey).add(key); // add current as child of parent
+            parentKey = key;
+
+            List<int[]> candidates = validNextDirs(col, row, lastDir, nodeCoords);
+            if (candidates.isEmpty()) {
+                break;
+            }
+
+            int[] currentDir = lastDir;
+
+            // true if currentDir is a candidate
+            boolean straightFree = candidates.stream()
+                    .anyMatch(dir -> dir[0] == currentDir[0] && dir[1] == currentDir[1]);
+
+            // Prefer continuing in the same direction when possible.
+            // This was not asked by the client but is a cool feature.
+            int[] chosen = (straightFree && random.nextDouble() < BIAS_SAME_DIRECTION_PROB)
+                    ? currentDir
+                    : candidates.get(random.nextInt(candidates.size()));
+
+            col = col + chosen[0];
+            row = row + chosen[1];
+            lastDir = chosen;
         }
     }
 
