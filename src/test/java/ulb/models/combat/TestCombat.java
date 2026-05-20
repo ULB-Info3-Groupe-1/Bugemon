@@ -19,6 +19,7 @@ import ulb.models.ItemFixtures;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.effect.StatusEffect;
+import ulb.models.skills.SkillContext;
 import ulb.models.combat.strategy.AutoStrategy;
 import ulb.models.combat.turn.TurnAction.AttackAction;
 import ulb.models.combat.turn.TurnAction.ForfeitAction;
@@ -51,7 +52,7 @@ public class TestCombat {
 
         this.combat = new Combat(this.playerTeam, this.opponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
     }
 
     @Test
@@ -135,7 +136,7 @@ public class TestCombat {
 
         Combat c = new Combat(this.playerTeam, fastOppTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
 
         c.resolveTurn(new AttackAction(this.floraAttack), new AttackAction(strongAtk), steps -> {
         });
@@ -175,7 +176,7 @@ public class TestCombat {
 
         Combat c = new Combat(playerCombatTeam, healTestOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
 
         List<TurnStep> turnSteps = new ArrayList<>();
         c.resolveTurn(new AttackAction(healAtk), new AttackAction(zeroPowerAttack), turnSteps::addAll);
@@ -197,7 +198,7 @@ public class TestCombat {
 
         Combat c = new Combat(debuffPlayerTeam, debuffOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
         c.resolveTurn(new AttackAction(debuffAtk), new AttackAction(zeroPowerAttack), steps -> {
         });
 
@@ -218,7 +219,7 @@ public class TestCombat {
 
         Combat c = new Combat(buffPlayerTeam, buffOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
         c.resolveTurn(new AttackAction(buffAtk), new AttackAction(zeroPowerAttack), steps -> {
         });
 
@@ -241,7 +242,7 @@ public class TestCombat {
 
         Combat c = new Combat(resetPlayerTeam, resetOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
         c.resolveTurn(new AttackAction(resetAtk), new AttackAction(zeroPowerAttack), steps -> {
         });
 
@@ -269,7 +270,7 @@ public class TestCombat {
 
         Combat c = new Combat(itemPlayerTeam, itemOpponentTeam, 2, false, playerInventory, new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
 
         List<TurnStep> turnSteps = new ArrayList<>();
         c.resolveTurn(new ItemAction(item), new AttackAction(zeroPowerAttack), turnSteps::addAll);
@@ -290,7 +291,7 @@ public class TestCombat {
 
         Combat c = new Combat(throwPlayerTeam, throwOpponentTeam, 2, false, new Inventory(), new Inventory(),
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
-                new EffectProcessor());
+                new EffectProcessor(), SkillContext.NONE);
 
         assertThrows(IllegalArgumentException.class, () -> {
             c.resolveTurn(new AttackAction(unavailableAttack), new AttackAction(this.aquaAttack), steps -> {

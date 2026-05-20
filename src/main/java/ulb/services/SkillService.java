@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import ulb.models.skills.SkillContext;
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
 import ulb.models.skills.exceptions.IllegalNodeStateException;
@@ -38,6 +39,10 @@ public class SkillService {
 
     public SkillTree getSkillTree() {
         return this.staticRepository.skillTree();
+    }
+
+    public SkillContext buildSkillContext(SkillTreeState state) {
+        return new SkillContext(state, this.getSkillTree());
     }
 
     public void addPoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId)

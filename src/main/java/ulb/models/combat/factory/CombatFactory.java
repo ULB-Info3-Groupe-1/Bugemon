@@ -9,6 +9,7 @@ import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.run.RunTeam;
+import ulb.models.skills.SkillContext;
 import ulb.models.team.Team;
 import ulb.models.team.factory.TeamFactory;
 
@@ -36,7 +37,8 @@ public abstract class CombatFactory {
     }
 
     /** Factory method: builds and returns a fully initialised {@link Combat}. */
-    public Combat create(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
+    public Combat create(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory,
+            SkillContext playerSkillContext) {
         CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
 
@@ -45,7 +47,7 @@ public abstract class CombatFactory {
 
         return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory,
                 this.buildOpponentInventory(), playerStrategy, opponentStrategy, this.damageCalculator,
-                this.effectProcessor);
+                this.effectProcessor, playerSkillContext);
     }
 
     protected abstract CombatStrategy buildPlayerStrategy();

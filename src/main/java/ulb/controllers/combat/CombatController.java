@@ -27,6 +27,7 @@ import ulb.models.item.Item;
 import ulb.models.player.PlayerInputHandler;
 import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
+import ulb.models.skills.SkillContext;
 import ulb.models.team.factory.TeamFactory;
 import ulb.services.CombatService;
 import ulb.services.SkillService;
@@ -46,6 +47,7 @@ public class CombatController extends Controller<CombatView>
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
     private final CombatService combatService;
+    private final SkillService skillService;
 
     private ActionCallback pendingActionCallback;
     private ActionCallback pendingSwitchCallback;
@@ -55,12 +57,14 @@ public class CombatController extends Controller<CombatView>
     private Combat combat;
     private PlayerState playerState;
 
-    public CombatController(MetaController metaController, CombatService combatService, PlayerState playerState) {
+    public CombatController(MetaController metaController, CombatService combatService, SkillService skillService,
+            PlayerState playerState) {
         super(metaController, ViewLoader.load(CombatView::new));
         this.view.setListener(this);
         this.view.setNextListener(this);
 
         this.combatService = combatService;
+        this.skillService = skillService;
         this.playerState = playerState;
     }
 
@@ -69,7 +73,9 @@ public class CombatController extends Controller<CombatView>
      * produced by {@code opponentFactory}.
      */
     public void startCombat(RunTeam playerRunTeam, TeamFactory opponentFactory, CombatFactory combatFactory) {
-        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory));
+        SkillContext skillContext = this.skillService.buildSkillContext(this.playerState.getSkillTreeState());
+        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory,
+                skillContext));
     }
 
     /**
@@ -210,8 +216,8 @@ public class CombatController extends Controller<CombatView>
         boolean won = this.combat.getResult() == CombatResult.VICTORY;
         LOG.info("Combat ended. Victory: {}", won);
 
-        this.metaController
-                .onCombatFinished(this.combatService.finalizeCombat(this.combat, this.playerState.getXpMultiplier()));
+        this.combatService.finalizeCombat(this.combat, this.combat.getPlayerSkillContext());
+        this.metaController.onCombatFinished(won);
     }
 
     @Override

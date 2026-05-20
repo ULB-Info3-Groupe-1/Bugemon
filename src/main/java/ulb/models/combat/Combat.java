@@ -30,6 +30,7 @@ import ulb.models.combat.utils.CombatContext;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.item.Item;
+import ulb.models.skills.SkillContext;
 
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
@@ -47,6 +48,7 @@ public class Combat {
 
     private final DamageCalculator damageCalculator;
     private final EffectProcessor effectProcessor;
+    private final SkillContext playerSkillContext;
 
     private final int floor;
     private final boolean bossMode;
@@ -56,7 +58,8 @@ public class Combat {
 
     public Combat(CombatTeam playerTeam, CombatTeam opponentTeam, int floor, boolean bossMode,
             Inventory playerInventory, Inventory opponentInventory, CombatStrategy playerStrategy,
-            CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor) {
+            CombatStrategy opponentStrategy, DamageCalculator damageCalculator, EffectProcessor effectProcessor,
+            SkillContext playerSkillContext) {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
 
@@ -70,8 +73,8 @@ public class Combat {
         this.opponentStrategy = opponentStrategy;
 
         this.damageCalculator = damageCalculator;
-
         this.effectProcessor = effectProcessor;
+        this.playerSkillContext = playerSkillContext;
 
         this.result = null;
         this.finished = false;
@@ -248,7 +251,8 @@ public class Combat {
 
         List<TurnStep> steps = new ArrayList<>();
 
-        DamageResult damageResult = this.damageCalculator.calculateDamage(attacker, defender, attack);
+        SkillContext ctx = (attackerTeam == this.playerTeam) ? this.playerSkillContext : SkillContext.NONE;
+        DamageResult damageResult = this.damageCalculator.calculateDamage(attacker, defender, attack, ctx);
 
         defender.takeDamage(damageResult.damage());
         LOG.debug("{} uses {} on {} for {} damage (HP left: {})", attacker, attack.name(), defender, damageResult,
@@ -309,6 +313,10 @@ public class Combat {
     private void tickEndOfTurn() {
         this.tickEndOfTurn(this.playerTeam.getActive());
         this.tickEndOfTurn(this.opponentTeam.getActive());
+    }
+
+    public SkillContext getPlayerSkillContext() {
+        return this.playerSkillContext;
     }
 
     public boolean isFinished() {

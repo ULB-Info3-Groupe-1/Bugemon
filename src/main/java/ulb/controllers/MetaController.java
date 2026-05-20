@@ -20,8 +20,6 @@ import ulb.models.combat.Combat;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerState;
-import ulb.models.run.RunTeam;
-import ulb.models.team.factory.TeamFactory;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
@@ -95,7 +93,7 @@ public class MetaController {
 
         this.saveMenuController = new SaveMenuController(this, saveService, playerState);
         this.mainMenuController = new MainMenuController(this, playerState);
-        this.combatController = new CombatController(this, this.combatService, playerState);
+        this.combatController = new CombatController(this, this.combatService, skillService, playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
