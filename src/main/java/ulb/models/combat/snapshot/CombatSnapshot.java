@@ -1,6 +1,5 @@
 package ulb.models.combat.snapshot;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import ulb.models.combat.CombatTeam;
@@ -9,7 +8,8 @@ import ulb.models.item.Item;
 public record CombatSnapshot(TeamSnapshot playerTeam, TeamSnapshot aiTeam, Map<Item, Integer> aiInventory,
         Map<Item, Integer> opponentInventory) {
 
-    public static CombatSnapshot fromAiPerspective(CombatTeam aiTeam, CombatTeam opponentTeam, Map<Item, Integer> aiInventory, Map<Item, Integer> opponentInventory) {
+    public static CombatSnapshot fromAiPerspective(CombatTeam aiTeam, CombatTeam opponentTeam,
+            Map<Item, Integer> aiInventory, Map<Item, Integer> opponentInventory) {
         if (opponentTeam == null || aiTeam == null) {
             throw new IllegalStateException("Both teams must be non-null to create a CombatSnapshot.");
         }

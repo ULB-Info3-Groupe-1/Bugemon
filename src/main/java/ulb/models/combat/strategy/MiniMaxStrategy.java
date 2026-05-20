@@ -58,7 +58,6 @@ public class MiniMaxStrategy implements CombatStrategy {
         Inventory allyInv = ctx.allyInventory();
         Inventory oppInv = ctx.opponentInventory();
 
-
         List<CombatBugemon> available = ally.getAvailable();
         if (available.isEmpty()) {
             throw new IllegalStateException("MiniMaxStrategy must switch but has no available bugemon.");
