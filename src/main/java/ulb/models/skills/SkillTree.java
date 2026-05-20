@@ -25,7 +25,7 @@ public class SkillTree {
     }
 
     public SkillNode getById(String id) {
-        return this.findById(id).orElseThrow(() -> new IllegalArgumentException("Nœud inconnu : " + id));
+        return this.findById(id).orElseThrow(() -> new IllegalArgumentException("Unknown node: " + id));
     }
 
     public List<SkillNode> getDependents(String nodeId) {
