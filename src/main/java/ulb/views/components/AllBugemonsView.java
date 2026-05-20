@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 
 import ulb.Configuration;
-import ulb.common.dto.PlayerBugemonDTO;
+import ulb.common.dto.BugemonDisplayDTO;
 
 /** Reusable custom component displaying all the bugemons inside of a grid. */
 public class AllBugemonsView extends ComponentView {
@@ -25,13 +25,13 @@ public class AllBugemonsView extends ComponentView {
     }
 
     /** Clears and repopulates the grid with the given list of Bugemons. */
-    public void showAll(List<PlayerBugemonDTO> playerBugemonList, Set<PlayerBugemonDTO> selectedBugemons) {
+    public void showAll(List<BugemonDisplayDTO> bugemonList, Set<BugemonDisplayDTO> selectedBugemons) {
         this.flowPane.getChildren().clear();
 
-        for (PlayerBugemonDTO playerBugemon : playerBugemonList) {
-            BugemonCardView bugemonCard = this.createBugemonCard(playerBugemon);
+        for (BugemonDisplayDTO bugemon : bugemonList) {
+            BugemonCardView bugemonCard = this.createBugemonCard(bugemon);
 
-            if (selectedBugemons.contains(playerBugemon)) {
+            if (selectedBugemons.contains(bugemon)) {
                 bugemonCard.select();
             } else {
                 bugemonCard.unselect();
@@ -41,18 +41,14 @@ public class AllBugemonsView extends ComponentView {
         }
     }
 
-    private BugemonCardView createBugemonCard(PlayerBugemonDTO playerBugemon) {
-        BugemonCardView card = new BugemonCardView(playerBugemon);
+    private BugemonCardView createBugemonCard(BugemonDisplayDTO bugemon) {
+        BugemonCardView card = new BugemonCardView(bugemon);
         card.hideLevelLabel();
-
         card.setListener(this.listener::onBugemonClicked);
-
         return card;
     }
 
     public interface Listener {
-
-        void onBugemonClicked(PlayerBugemonDTO playerBugemonList);
-
+        void onBugemonClicked(BugemonDisplayDTO bugemon);
     }
 }

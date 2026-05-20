@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
 import ulb.Configuration;
-import ulb.common.dto.PlayerBugemonDTO;
+import ulb.common.dto.BugemonDisplayDTO;
 
 /** Reusable custom component displaying a Bugemon team in a grid. */
 public class BugemonTeamView extends ComponentView {
@@ -25,7 +25,7 @@ public class BugemonTeamView extends ComponentView {
     }
 
     /** Clears and repopulates the grid with the alive members of the given team. */
-    public void showTeam(List<PlayerBugemonDTO> members) {
+    public void showTeam(List<BugemonDisplayDTO> members) {
         this.clearBugemons();
 
         for (int i = 0; i < members.size(); i++) {
@@ -35,16 +35,11 @@ public class BugemonTeamView extends ComponentView {
         }
     }
 
-    /**
-     * Clears the grid of the current Bugemons selected.
-     */
     public void clearBugemons() {
         this.gridPane.getChildren().clear();
     }
 
     public interface Listener {
-
-        void onBugemonClicked(PlayerBugemonDTO playerBugemon);
-
+        void onBugemonClicked(BugemonDisplayDTO bugemon);
     }
 }

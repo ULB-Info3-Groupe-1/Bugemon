@@ -15,13 +15,12 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import ulb.Configuration;
-import ulb.common.dto.PlayerBugemonDTO;
+import ulb.common.dto.BugemonDisplayDTO;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
 
 /**
- * Read-only component displaying a {@link Bugemon}'s stats and attacks. Call {@link #show(Bugemon, ContextMenuEvent)}
- * to open it as a floating popup centred over the owner window.
+ * Read-only popup displaying a Bugemon's stats and attacks. Instantiate with the bugemon to display, then call
+ * {@link #show(ContextMenuEvent)} to open it centred over the owner window.
  */
 public class BugemonDetailPopupView extends ComponentView {
 
@@ -44,7 +43,7 @@ public class BugemonDetailPopupView extends ComponentView {
     @FXML
     private VBox attacksContainer;
 
-    private BugemonDetailPopupView(PlayerBugemonDTO bugemon) {
+    public BugemonDetailPopupView(BugemonDisplayDTO bugemon) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_DETAIL_POPUP);
         File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.base().spritePath());
         this.sprite.setImage(new Image(spriteFile.toURI().toString(), 72, 72, true, false));
@@ -64,16 +63,15 @@ public class BugemonDetailPopupView extends ComponentView {
         }
     }
 
-    /** Builds and shows a transparent popup with the Bugemon's details, closing it when it loses focus. */
-    public static void show(PlayerBugemonDTO bugemon, ContextMenuEvent event) {
+    /** Shows the popup centred over the owner window, closing it when it loses focus. */
+    public void show(ContextMenuEvent event) {
         Node source = (Node) event.getSource();
         Window owner = source.getScene().getWindow();
 
         Stage popup = new Stage(StageStyle.TRANSPARENT);
         popup.initOwner(owner);
 
-        BugemonDetailPopupView content = new BugemonDetailPopupView(bugemon);
-        Scene scene = new Scene(content);
+        Scene scene = new Scene(this);
         scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().addAll(source.getScene().getStylesheets());
 

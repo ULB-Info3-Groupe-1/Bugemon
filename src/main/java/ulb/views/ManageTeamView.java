@@ -12,7 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import ulb.Configuration;
-import ulb.common.dto.PlayerBugemonDTO;
+import ulb.common.dto.BugemonDisplayDTO;
 import ulb.controllers.ManageTeamController.TeamFormMode;
 import ulb.views.components.AllBugemonsView;
 import ulb.views.components.BugemonTeamView;
@@ -99,8 +99,8 @@ public class ManageTeamView extends View {
 
     public void setListener(Listener listener) {
         this.listener = listener;
-        this.allBugemonsGridView.setListener(this.listener::onBugemonSelected);
-        this.bugemonsTeamView.setListener(this.listener::onBugemonSelected);
+        this.allBugemonsGridView.setListener(listener::onBugemonSelected);
+        this.bugemonsTeamView.setListener(listener::onBugemonSelected);
     }
 
     public interface Listener {
@@ -114,7 +114,7 @@ public class ManageTeamView extends View {
 
         void onAddNewTeam();
 
-        void onBugemonSelected(PlayerBugemonDTO playerBugemon);
+        void onBugemonSelected(BugemonDisplayDTO bugemon);
 
         void onModifyTeam(String teamName);
 
@@ -134,15 +134,16 @@ public class ManageTeamView extends View {
         // Nothing to do
     }
 
-    public void refreshWorkingTeam(List<PlayerBugemonDTO> members) {
+    public void refreshWorkingTeam(List<BugemonDisplayDTO> members) {
         this.bugemonsTeamView.showTeam(members);
     }
 
-     public void refreshWorkingTeamNameToShow(String teamName) {
+    public void refreshWorkingTeamNameToShow(String teamName) {
         this.selectedTeamName.setText(teamName);
     }
 
-    public void refreshAvailableBugemons(List<PlayerBugemonDTO> availableBugemons, Set<PlayerBugemonDTO> selectedBugemons) {
+    public void refreshAvailableBugemons(List<BugemonDisplayDTO> availableBugemons,
+            Set<BugemonDisplayDTO> selectedBugemons) {
         this.allBugemonsGridView.showAll(availableBugemons, selectedBugemons);
     }
 

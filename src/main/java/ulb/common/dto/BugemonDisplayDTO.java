@@ -6,9 +6,9 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
 
-public record PlayerBugemonDTO(String playername, Bugemon base, int bonusDefense, int bonusAttackPower,
+public record BugemonDisplayDTO(Bugemon base, int bonusDefense, int bonusAttackPower,
         int bonusInitiative, int bonusMaxHp, int xp, int level, List<Attack> attacks) {
-    
+
     public int getMaxHp() {
         return this.base().hp() + this.bonusMaxHp();
     }

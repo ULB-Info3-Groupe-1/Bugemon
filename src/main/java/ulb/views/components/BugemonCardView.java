@@ -8,7 +8,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Bugemon;
+import ulb.common.dto.BugemonDisplayDTO;
 
 /** Reusable custom component representing a single Bugemon cell with an image and name label. */
 public class BugemonCardView extends ComponentView {
@@ -24,24 +24,27 @@ public class BugemonCardView extends ComponentView {
 
     private Listener listener;
 
-    private final Bugemon bugemon;
+    private final BugemonDisplayDTO bugemon;
+    private final BugemonDetailPopupView detailPopup;
 
     public BugemonCardView() {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
         this.bugemon = null;
+        this.detailPopup = null;
 
         this.nameLabel.setText(EMPTY_NAME);
         this.imageView.setImage(EMPTY_IMAGE);
     }
 
-    public BugemonCardView(Bugemon bugemon, int level) {
+    public BugemonCardView(BugemonDisplayDTO bugemon) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
         this.bugemon = bugemon;
+        this.detailPopup = new BugemonDetailPopupView(bugemon);
 
-        this.nameLabel.setText(bugemon.name());
-        this.levelLabel.setText(String.valueOf(level));
-        this.imageView.setImage(new Image(bugemon.spritePath()));
-        this.setOnContextMenuRequested(e -> BugemonDetailPopupView.show(bugemon, e));
+        this.nameLabel.setText(bugemon.getName());
+        this.levelLabel.setText(String.valueOf(bugemon.level()));
+        this.imageView.setImage(new Image(bugemon.getSpritePath()));
+        this.setOnContextMenuRequested(e -> this.detailPopup.show(e));
     }
 
     public void hideLevelLabel() {
@@ -77,8 +80,6 @@ public class BugemonCardView extends ComponentView {
     }
 
     public interface Listener {
-
-        void onClick(Bugemon bugemon);
-
+        void onClick(BugemonDisplayDTO bugemon);
     }
 }

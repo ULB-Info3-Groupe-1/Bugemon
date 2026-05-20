@@ -1,8 +1,10 @@
 package ulb.controllers;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import ulb.common.dto.PlayerBugemonDTO;
+import ulb.common.dto.BugemonDisplayDTO;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerState;
 import ulb.models.team.Team;
@@ -51,18 +53,26 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     protected void show() {
+        if (this.tmpTeam == null) {
+            this.tmpTeam = new Team();
+        }
         this.playerState.getActiveTeam().ifPresent(t -> this.tmpTeam = t);
         this.updateAllUI();
         super.show();
     }
 
     private void updateDisplayedAvailableBugemons() {
-        this.view.refreshAvailableBugemons(this.bugemonService.getDefaultBugemons(),
-                new HashSet<>(this.tmpTeam.getMembers()));
+        List<BugemonDisplayDTO> allDTOs = this.bugemonService.getPlayerBugemons().stream()
+                .map(PlayerBugemon::toDisplayDTO).toList();
+        Set<BugemonDisplayDTO> selectedDTOs = new HashSet<>(
+                this.tmpTeam.getMembers().stream().map(PlayerBugemon::toDisplayDTO).toList());
+        this.view.refreshAvailableBugemons(allDTOs, selectedDTOs);
     }
 
     private void updateWorkingTeamToShow() {
-        this.view.refreshWorkingTeam(this.tmpTeam);
+        List<BugemonDisplayDTO> memberDTOs = this.tmpTeam.getMembers().stream()
+                .map(PlayerBugemon::toDisplayDTO).toList();
+        this.view.refreshWorkingTeam(memberDTOs);
         if (this.tmpTeam.isEmpty()) {
             this.view.refreshWorkingTeamNameToShow(NO_TEAM_SELECTED);
         } else if (this.teamService.isTeamSaved(this.tmpTeam)) {
@@ -70,7 +80,6 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } else {
             this.view.refreshWorkingTeamNameToShow(TEAM_NOT_SAVED_MESSAGE);
         }
-
     }
 
     private void updateTeamSelected() {
@@ -89,14 +98,14 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public void onBugemonSelected(PlayerBugemonDTO playerBugemonDTO) {
-        PlayerBugemon playerBugemon = this.bugemonService.getPlayerBugemon(playerBugemonDTO.getName());
+    public void onBugemonSelected(BugemonDisplayDTO dto) {
+        PlayerBugemon playerBugemon = this.bugemonService.getPlayerBugemon(dto.getName());
         if (this.tmpTeam.contains(playerBugemon)) {
             this.tmpTeam.remove(playerBugemon);
         } else if (!this.tmpTeam.isFull()) {
             this.tmpTeam.add(playerBugemon);
         }
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
@@ -110,14 +119,14 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.teamService.save(this.tmpTeam); // TODO: show alert messages if operation fails
         this.clearTmpTeam();
 
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
     public void onDelete(String teamName) {
         this.teamService.deleteTeam(teamName); // TODO: what if operation fails
         this.clearTmpTeam();
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
@@ -129,14 +138,14 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
         this.teamService.renameTeam(this.tmpTeam, newName); // TODO: what if operation fails
 
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
     public void onAddNewTeam() {
         this.clearTmpTeam();
         this.view.clearTeamNameToSave();
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
@@ -150,7 +159,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.tmpTeam.setName(teamName);
         this.teamService.save(this.tmpTeam);
 
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
@@ -163,7 +172,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
