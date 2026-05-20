@@ -178,14 +178,14 @@ public class SkillTreeState {
     }
 
     public double getTypeMultiplier(SkillTree tree, ElementType type) {
-        double multiplier = 1.0;
+        double bonus = 0.0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
             if (node.effect() instanceof TypeMultiplierEffect typeBonus && typeBonus.type() == type) {
-                multiplier += (typeBonus.mult() - 1.0) * entry.getValue();
+                bonus += (typeBonus.mult() - 1.0) * entry.getValue();
             }
         }
-        return 1.0 + multiplier;
+        return 1.0 + bonus;
     }
 
     public int getRegenPercent(SkillTree tree) {

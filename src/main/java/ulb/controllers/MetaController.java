@@ -85,7 +85,7 @@ public class MetaController {
 
         this.saveMenuController = new SaveMenuController(this, services.save, playerState);
         this.mainMenuController = new MainMenuController(this, playerState);
-        this.combatController = new CombatController(this, this.combatService, playerState);
+        this.combatController = new CombatController(this, this.combatService, skillService, playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 services.team, playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,

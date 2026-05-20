@@ -21,6 +21,7 @@ import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerInputHandler;
+import ulb.models.skills.SkillContext;
 
 /**
  * Handles combat lifecycle (XP finalisation, damage preview) and creates {@link CombatFactory} instances.
@@ -51,7 +52,7 @@ public class CombatService {
         return new AutoCombatFactory(this.damageCalculator, this.effectProcessor, this.random, floor, bossMode);
     }
 
-    public CombatSummary finalizeCombat(Combat combat, int xpMultiplier) {
+    public CombatSummary finalizeCombat(Combat combat, SkillContext skillContext) {
         CombatTeam playerTeam = combat.getPlayerTeam();
         CombatResult result = combat.getResult();
 
@@ -61,7 +62,7 @@ public class CombatService {
         if (result == CombatResult.VICTORY) {
             int opponentCount = combat.getOpponentTeamSize();
             int baseXp = this.computeCombatXp(combat.getFloor(), combat.isBossMode(), opponentCount);
-            totalXp = baseXp * xpMultiplier;
+            totalXp = (int) (baseXp * skillContext.getXpMultiplier());
             int xpPerBugemon = this.computeXpPerBugemon(totalXp, playerTeam.size());
             List<CombatBugemon> participants = playerTeam.getParticipants();
             for (CombatBugemon participant : participants) {
