@@ -16,7 +16,6 @@ import javafx.util.Duration;
 
 import ulb.Configuration;
 import ulb.models.skills.SkillNode;
-import ulb.models.skills.SkillNodeState;
 
 public class SkillTreeView extends View {
     // Skill:

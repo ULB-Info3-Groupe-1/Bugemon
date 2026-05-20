@@ -1,98 +1,64 @@
 package ulb.models.skills;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestSkillTree {
 
-    private SkillNode mockRoot;
     private SkillTree skillTree;
-    private Skill mockSkill;
+    private SkillNode nodeA;
+    private SkillNode nodeB;
 
     @Before
     public void setUp() {
-        this.mockRoot = mock(SkillNode.class);
-        this.mockSkill = mock(Skill.class);
-        when(this.mockRoot.getSkill()).thenReturn(this.mockSkill);
-        this.skillTree = new SkillTree(this.mockRoot);
+        this.nodeA = new SkillNode("A", "A", "desc", 0, 0, 1, 1, null, Collections.emptyList());
+        this.nodeB = new SkillNode("B", "B", "desc", 0, 0, 1, 1, null, List.of("A"));
+        this.skillTree = new SkillTree(List.of(this.nodeA, this.nodeB));
     }
 
     @Test
-    public void shouldReturnFalseForCanUnlock_whenLevelIsMax() {
-        when(this.mockSkill.getCurrentLevel()).thenReturn(3);
-        when(this.mockSkill.getMaxLevel()).thenReturn(3);
-
-        assertFalse(this.skillTree.canUnlock(this.mockRoot, 10));
+    public void shouldReturnAllNodes_whenGetNodesIsCalled() {
+        List<SkillNode> nodes = this.skillTree.getNodes();
+        assertEquals(2, nodes.size());
+        assertTrue(nodes.contains(this.nodeA));
+        assertTrue(nodes.contains(this.nodeB));
     }
 
     @Test
-    public void shouldReturnFalseForCanUnlock_whenNotEnoughPoints() {
-        when(this.mockSkill.getCurrentLevel()).thenReturn(0);
-        when(this.mockSkill.getMaxLevel()).thenReturn(3);
-        when(this.mockSkill.getCost()).thenReturn(5);
-
-        assertFalse(this.skillTree.canUnlock(this.mockRoot, 3));
+    public void shouldFindNodeById_whenNodeExists() {
+        Optional<SkillNode> found = this.skillTree.findById("A");
+        assertTrue(found.isPresent());
+        assertEquals(this.nodeA, found.get());
     }
 
     @Test
-    public void shouldReturnTrueForCanUnlock_whenAlreadyUnlocked() {
-        when(this.mockSkill.getCurrentLevel()).thenReturn(1);
-        when(this.mockSkill.getMaxLevel()).thenReturn(3);
-        when(this.mockSkill.getCost()).thenReturn(5);
-        when(this.mockSkill.isUnlocked()).thenReturn(true);
-
-        assertTrue(this.skillTree.canUnlock(this.mockRoot, 10));
+    public void shouldReturnEmptyOptional_whenNodeDoesNotExist() {
+        Optional<SkillNode> found = this.skillTree.findById("C");
+        assertTrue(found.isEmpty());
     }
 
     @Test
-    public void shouldReturnUnlockableState_whenCanUnlockIsCalledAndConditionsMet() {
-        when(this.mockSkill.getCurrentLevel()).thenReturn(0);
-        when(this.mockSkill.getMaxLevel()).thenReturn(3);
-        when(this.mockSkill.getCost()).thenReturn(5);
-        when(this.mockSkill.isUnlocked()).thenReturn(false);
-        when(this.mockRoot.isUnlockable()).thenReturn(true);
+    public void shouldGetNodeById_whenNodeExists() {
+        SkillNode found = this.skillTree.getById("B");
+        assertEquals(this.nodeB, found);
+    }
 
-        assertTrue(this.skillTree.canUnlock(this.mockRoot, 10));
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException_whenGettingNonExistentNodeById() {
+        this.skillTree.getById("C");
     }
 
     @Test
-    public void shouldReturnFalseForCanDowngrade_whenNotUnlocked() {
-        when(this.mockSkill.isUnlocked()).thenReturn(false);
-
-        assertFalse(this.skillTree.canDowngrade(this.mockRoot));
-    }
-
-    @Test
-    public void shouldReturnFalseForCanDowngrade_whenNodeIsRoot() {
-        when(this.mockSkill.isUnlocked()).thenReturn(true);
-        when(this.mockSkill.getId()).thenReturn("start");
-
-        assertFalse(this.skillTree.canDowngrade(this.mockRoot));
-    }
-
-    @Test
-    public void shouldReturnTrueForCanDowngrade_whenUnlockedAndNotRoot() {
-        when(this.mockSkill.isUnlocked()).thenReturn(true);
-        when(this.mockSkill.getId()).thenReturn("other");
-
-        assertTrue(this.skillTree.canDowngrade(this.mockRoot));
-    }
-
-    @Test
-    public void shouldDowngradeAndRefund_whenNodeIsDowngraded() {
-        when(this.mockSkill.getCost()).thenReturn(5);
-        when(this.mockSkill.isUnlocked()).thenReturn(true);
-
-        int refunded = this.skillTree.downgrade(this.mockRoot);
-
-        assertEquals(5, refunded);
-        verify(this.mockSkill).decrementLevel();
+    public void shouldGetDependents_whenNodeIsAPrerequisite() {
+        List<SkillNode> dependents = this.skillTree.getDependents("A");
+        assertEquals(1, dependents.size());
+        assertEquals(this.nodeB, dependents.get(0));
     }
 }
