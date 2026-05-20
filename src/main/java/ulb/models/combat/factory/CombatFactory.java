@@ -1,7 +1,9 @@
 package ulb.models.combat.factory;
 
+import java.util.Map;
 import java.util.Random;
 
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.DamageCalculator;
@@ -36,7 +38,8 @@ public abstract class CombatFactory {
     }
 
     /** Factory method: builds and returns a fully initialised {@link Combat}. */
-    public Combat create(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory) {
+    public Combat create(RunTeam playerRunTeam, Inventory playerInventory, TeamFactory opponentFactory,
+            int playerCritBonus, Map<ElementType, Double> playerTypeMultipliers) {
         CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), opponentFactory);
 

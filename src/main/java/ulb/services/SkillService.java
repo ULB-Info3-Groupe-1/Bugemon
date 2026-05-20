@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import ulb.models.bugemon.ElementType;
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
 import ulb.models.skills.exceptions.IllegalNodeStateException;
@@ -38,6 +39,18 @@ public class SkillService {
 
     public SkillTree getSkillTree() {
         return this.staticRepository.skillTree();
+    }
+
+    public int getCritBonus(SkillTreeState skillTreeState) {
+        return skillTreeState.getCritBonus(this.getSkillTree());
+    }
+
+    public double getXpMultiplier(SkillTreeState skillTreeState) {
+        return skillTreeState.getXpMultiplier(this.getSkillTree());
+    }
+
+    public double getTypeMultiplier(SkillTreeState skillTreeState, ElementType type) {
+        return skillTreeState.getTypeMultiplier(this.getSkillTree(), type);
     }
 
     public void addPoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId)

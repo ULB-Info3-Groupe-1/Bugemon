@@ -1,6 +1,8 @@
 package ulb.controllers.combat;
 
 import java.util.ArrayDeque;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Queue;
 
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
@@ -27,6 +30,7 @@ import ulb.models.item.Item;
 import ulb.models.player.PlayerInputHandler;
 import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
+import ulb.models.skills.SkillTreeState;
 import ulb.models.team.factory.TeamFactory;
 import ulb.services.CombatService;
 import ulb.services.SkillService;
@@ -45,6 +49,8 @@ public class CombatController extends Controller<CombatView>
         implements CombatView.Listener, CombatView.NextListener, PlayerInputHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
+    private final PlayerState playerState;
+    private final SkillService skillService; // TODO: is this good?
     private final CombatService combatService;
 
     private ActionCallback pendingActionCallback;
@@ -53,15 +59,17 @@ public class CombatController extends Controller<CombatView>
     private final Queue<TurnStep> pendingSteps = new ArrayDeque<>();
 
     private Combat combat;
-    private PlayerState playerState;
 
-    public CombatController(MetaController metaController, CombatService combatService, PlayerState playerState) {
+    public CombatController(MetaController metaController, CombatService combatService, SkillService skillService,
+            PlayerState playerState) {
         super(metaController, ViewLoader.load(CombatView::new));
+
         this.view.setListener(this);
         this.view.setNextListener(this);
 
-        this.combatService = combatService;
         this.playerState = playerState;
+        this.combatService = combatService;
+        this.skillService = skillService;
     }
 
     /**
@@ -69,7 +77,16 @@ public class CombatController extends Controller<CombatView>
      * produced by {@code opponentFactory}.
      */
     public void startCombat(RunTeam playerRunTeam, TeamFactory opponentFactory, CombatFactory combatFactory) {
-        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory));
+        SkillTreeState skillTreeState = this.playerState.getSkillTreeState();
+        int critBonus = this.skillService.getCritBonus(skillTreeState);
+
+        Map<ElementType, Double> typeMultipliers = new EnumMap<>(ElementType.class);
+        for (ElementType type : ElementType.values()) {
+            typeMultipliers.put(type, this.skillService.getTypeMultiplier(skillTreeState, type));
+        }
+
+        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory, critBonus,
+                typeMultipliers));
     }
 
     /**
