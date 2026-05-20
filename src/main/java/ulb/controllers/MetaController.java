@@ -14,26 +14,31 @@ import ulb.bootstrap.ServiceRegistry;
 import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.level_up.LevelUp;
 import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.SoundEffect;
 import ulb.models.player.PlayerState;
+import ulb.models.run.RunTeam;
+import ulb.models.team.factory.TeamFactory;
+import ulb.services.BugemonService;
 import ulb.services.CombatService;
-import ulb.services.InventoryService;
 import ulb.services.MusicService;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is
+ * the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
+     * transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -64,8 +69,9 @@ public class MetaController {
     private final SkillTreeController skillTreeController;
 
     private final CombatService combatService;
-    private final InventoryService inventoryService;
     private final MusicService musicService;
+    private final BugemonService bugemonService;
+    private final PlayerState playerState;
 
     private boolean isTowerActive;
 
@@ -73,19 +79,20 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *            main JavaFX stage of the application
+     *                     main JavaFX stage of the application
      * @throws IOException
-     *             if the music fails to be initialized
+     *                     if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, ServiceRegistry services, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
-        this.inventoryService = services.inventory;
         this.combatService = services.combat;
+        this.bugemonService = services.bugemon;
         this.musicService = services.music;
+        this.playerState = playerState;
 
         this.saveMenuController = new SaveMenuController(this, services.save, playerState);
         this.mainMenuController = new MainMenuController(this, playerState);
-        this.combatController = new CombatController(this, this.combatService, skillService, playerState);
+        this.combatController = new CombatController(this, this.combatService, services.skill, playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 services.team, playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
@@ -152,19 +159,27 @@ public class MetaController {
     }
 
     public void onStartManualCombat() {
-        CombatFactory combatFactory = this.combatService.createManualCombatFactory(
-                this.inventoryService.getDefaultInventory(), this.combatController, Configuration.Game.FLOOR_MIN,
-                false);
-        this.startCombat(combatFactory, Window.MANUAL_COMBAT);
+        this.playerState.getActiveTeam().ifPresent(team -> {
+            RunTeam playerRunTeam = RunTeam.fromTeam(team);
+            List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+            TeamFactory opponentFactory = this.combatService.createRandomOpponentFactory();
+            CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.playerState.getInventory(),
+                    this.combatController, opponentFactory, Configuration.Game.FLOOR_MIN, false);
+            this.combatController.startCombat(playerRunTeam, combatFactory, bugemons);
+            this.switchTo(Window.MANUAL_COMBAT);
+        });
     }
 
     public void onStartAutomaticCombat() {
-        CombatFactory combatFactory = this.combatService.createAutoCombatFactory(Configuration.Game.FLOOR_MIN, false);
-        this.startCombat(combatFactory, Window.AUTOMATIC_COMBAT);
-    }
-
-    private void startCombat(CombatFactory combatFactory, Window window) {
-        // TODO: remove or do something
+        this.playerState.getActiveTeam().ifPresent(team -> {
+            RunTeam playerRunTeam = RunTeam.fromTeam(team);
+            List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+            TeamFactory opponentFactory = this.combatService.createRandomOpponentFactory();
+            CombatFactory combatFactory = this.combatService.createAutoCombatFactory(
+                    opponentFactory, Configuration.Game.FLOOR_MIN, false);
+            this.combatController.startCombat(playerRunTeam, combatFactory, bugemons);
+            this.switchTo(Window.AUTOMATIC_COMBAT);
+        });
     }
 
     public void onTower() {
@@ -226,9 +241,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *            target screen to display
+     *               target screen to display
      * @throws IllegalArgumentException
-     *             if the window is invalid
+     *                                  if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);

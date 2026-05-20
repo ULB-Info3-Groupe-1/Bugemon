@@ -9,25 +9,22 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Abstract creator — declares the factory method {@link #create(int)} that each concrete subclass overrides to
+ * Abstract creator — declares the factory method {@link #create(int, List)} that each concrete subclass overrides to
  * instantiate a specific {@link Team} variant.
+ *
+ * The list of available bugemons is passed at call time so the factory always uses the current pool.
  */
 public abstract class TeamFactory {
 
-    protected final List<Bugemon> bugemons;
     protected final Random random;
 
-    protected TeamFactory(List<Bugemon> bugemons, Random random) {
-        this.bugemons = bugemons;
+    protected TeamFactory(Random random) {
         this.random = random;
     }
 
-    /** Factory method: builds and returns a {@link Team} of the requested size. */
-    public abstract Team create(int size);
+    /** Factory method: builds and returns a {@link Team} of the requested size from the given bugemon pool. */
+    public abstract Team create(int size, List<Bugemon> bugemons);
 
-    /**
-     * Fills {@code team} with randomly-picked members from {@code available} until it reaches {@code size}.
-     */
     protected void fillTeam(int size, Team team, List<Bugemon> available) {
         while (team.size() < size && !available.isEmpty()) {
             int idx = this.random.nextInt(available.size());

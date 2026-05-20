@@ -9,18 +9,17 @@ import ulb.models.combat.strategy.PlayerStrategy;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.player.PlayerInputHandler;
+import ulb.models.team.factory.TeamFactory;
 
-/**
- * Produces a {@link Combat} where the player acts through a {@link PlayerInputHandler}.
- */
 public class ManualCombatFactory extends CombatFactory {
 
     private final PlayerInputHandler handler;
     private final Inventory defaultInventory;
 
     public ManualCombatFactory(Inventory defaultInventory, DamageCalculator damageCalculator,
-            EffectProcessor effectProcessor, Random random, PlayerInputHandler handler, int floor, boolean bossMode) {
-        super(damageCalculator, effectProcessor, random, floor, bossMode);
+            EffectProcessor effectProcessor, Random random, PlayerInputHandler handler,
+            TeamFactory opponentFactory, int floor, boolean bossMode) {
+        super(opponentFactory, damageCalculator, effectProcessor, random, floor, bossMode);
         this.defaultInventory = defaultInventory;
         this.handler = handler;
     }
