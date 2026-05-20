@@ -68,12 +68,14 @@ public class FloorMapFactory {
         Random random = new Random(this.seed + floor);
 
         Map<String, int[]> nodeCoords = new HashMap<>();
+        Map<String, Integer> nodeDepths = new HashMap<>();
         Map<String, String> parentOf = new HashMap<>();
         Map<String, List<String>> childrenOf = new HashMap<>();
 
         // start node setup
         String startKey = nodeKey(CENTER, CENTER);
-        nodeCoords.put(startKey, new int[] { CENTER, CENTER, 0 });
+        nodeCoords.put(startKey, new int[] { CENTER, CENTER });
+        nodeDepths.put(startKey, 0);
         childrenOf.put(startKey, new ArrayList<>());
         parentOf.put(startKey, null);
 
@@ -102,7 +104,7 @@ public class FloorMapFactory {
                 continue;
             }
 
-            growBranch(col, row, dir, 1, startKey, nodeCoords, childrenOf, parentOf, random);
+            growBranch(col, row, dir, 1, startKey, nodeCoords, nodeDepths, childrenOf, parentOf, random);
 
             numBranchesGenerated++;
         }
@@ -119,13 +121,15 @@ public class FloorMapFactory {
             int depth,
             String parentKey,
             Map<String, int[]> nodeCoords,
+            Map<String, Integer> nodeDepths,
             Map<String, List<String>> childrenOf,
             Map<String, String> parentOf,
             Random random) {
 
         for (int d = depth; d <= MAX_DEPTH; d++) {
             String key = nodeKey(col, row);
-            nodeCoords.put(key, new int[] { col, row, d }); // current node here
+            nodeCoords.put(key, new int[] { col, row }); // current node here
+            nodeDepths.put(key, d); // current node at depth d
             childrenOf.put(key, new ArrayList<>()); // current node has no children atm
             parentOf.put(key, parentKey);
             childrenOf.get(parentKey).add(key); // add current as child of parent
