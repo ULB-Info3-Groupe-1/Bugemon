@@ -1,7 +1,8 @@
 package ulb.views;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,9 +12,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import ulb.Configuration;
+import ulb.common.dto.PlayerBugemonDTO;
 import ulb.controllers.ManageTeamController.TeamFormMode;
-import ulb.models.player.PlayerBugemon;
-import ulb.models.team.Team;
 import ulb.views.components.AllBugemonsView;
 import ulb.views.components.BugemonTeamView;
 
@@ -24,7 +24,6 @@ import ulb.views.components.BugemonTeamView;
  */
 public class ManageTeamView extends View {
 
-    private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
     private static final String NO_ACTIVE_TEAM = "Aucune équipe active";
     private static final String INVALID_NAME = "Nom d'équipe invalide";
     private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
@@ -115,7 +114,7 @@ public class ManageTeamView extends View {
 
         void onAddNewTeam();
 
-        void onBugemonSelected(PlayerBugemon bugemon);
+        void onBugemonSelected(PlayerBugemonDTO playerBugemon);
 
         void onModifyTeam(String teamName);
 
@@ -132,24 +131,30 @@ public class ManageTeamView extends View {
 
     @Override
     public void refresh() {
-        this.teamListView.setItems(FXCollections.observableArrayList(this.listener.getTeamNames()));
-        this.listener.getActiveTeamName().ifPresentOrElse(
-                teamName -> this.teamListView.getSelectionModel().select(teamName),
-                () -> this.teamListView.getSelectionModel().clearSelection());
-
-        Team team = this.listener.getWorkingTeam();
-        this.allBugemonsGridView.showAll(this.listener.getAvailableBugemons(), new HashSet<>(team.getMembers()));
-        this.refreshTeam(team, this.listener.isWorkingTeamSaved());
+        // Nothing to do
     }
 
-    private void refreshTeam(Team team, boolean isTeamSaved) {
-        this.bugemonsTeamView.showTeam(team);
-        if (team.isEmpty()) {
-            this.selectedTeamName.setText(NO_TEAM_SELECTED);
-        } else if (isTeamSaved) {
-            this.selectedTeamName.setText(team.getName());
+    public void refreshWorkingTeam(List<PlayerBugemonDTO> members) {
+        this.bugemonsTeamView.showTeam(members);
+    }
+
+     public void refreshWorkingTeamNameToShow(String teamName) {
+        this.selectedTeamName.setText(teamName);
+    }
+
+    public void refreshAvailableBugemons(List<PlayerBugemonDTO> availableBugemons, Set<PlayerBugemonDTO> selectedBugemons) {
+        this.allBugemonsGridView.showAll(availableBugemons, selectedBugemons);
+    }
+
+    public void refreshTeamNames(List<String> teamNames) {
+        this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
+    }
+
+    public void refreshTeamSelected(String teamName) {
+        if (teamName == null) {
+            this.teamListView.getSelectionModel().clearSelection();
         } else {
-            this.selectedTeamName.setText(TEAM_NOT_SAVED_MESSAGE);
+            this.teamListView.getSelectionModel().select(teamName);
         }
     }
 

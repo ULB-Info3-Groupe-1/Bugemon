@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import ulb.common.dto.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
 import ulb.models.level_up.Upgrade;
-import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PlayerBugemon {
     private final Bugemon base;
@@ -136,8 +136,8 @@ public class PlayerBugemon {
     }
 
     public PlayerBugemonDTO toDTO(String playerName) {
-        return new PlayerBugemonDTO(playerName, this.base.name(), this.bonusStats.getBonusDefense(),
+        return new PlayerBugemonDTO(playerName, this.base, this.bonusStats.getBonusDefense(),
                 this.bonusStats.getBonusAttack(), this.bonusStats.getBonusInitiative(), this.bonusStats.getBonusHp(),
-                this.xp, this.level);
+                this.xp, this.level, this.currentAttacks);
     }
 }

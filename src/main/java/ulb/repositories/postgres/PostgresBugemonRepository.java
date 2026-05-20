@@ -9,11 +9,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.dto.PlayerBugemonDTO;
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PostgresBugemonRepository extends AbstractRepository implements BugemonRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresBugemonRepository.class);
@@ -46,8 +46,8 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
 
     @Override
     public void save(String playername, PlayerBugemonDTO dto) {
-        LOG.debug("Saving player bugemon '{}' for playername: {}", dto.bugemonName(), playername);
-        executeUpdate("SavePlayerBugemon", dto.playername(), dto.bugemonName(), dto.bonusDefense(),
+        LOG.debug("Saving player bugemon '{}' for playername: {}", dto.getName(), playername);
+        executeUpdate("SavePlayerBugemon", dto.playername(), dto.getName(), dto.bonusDefense(),
                 dto.bonusAttackPower(), dto.bonusInitiative(), dto.bonusMaxHp(), dto.xp(), dto.level());
     }
 

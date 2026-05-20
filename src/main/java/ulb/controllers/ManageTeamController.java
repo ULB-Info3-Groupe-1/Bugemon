@@ -1,9 +1,13 @@
 package ulb.controllers;
 
+import java.util.HashSet;
+
+import ulb.common.dto.PlayerBugemonDTO;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerState;
 import ulb.models.team.Team;
 import ulb.repositories.exceptions.TeamNotFoundException;
+import ulb.services.BugemonService;
 import ulb.services.TeamService;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
@@ -14,8 +18,14 @@ import ulb.views.ViewLoader;
  * controller never pushes data into the view.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
+
+    private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
+    private static final String TEAM_NOT_SAVED_MESSAGE = "Nouvelle équipe ou équipe existante modifiée non "
+            + "sauvegardée.";
+
     private final TeamService teamService;
     private final PlayerState playerState;
+    private final BugemonService bugemonService;
 
     private Team tmpTeam; // The team that gets edited in this screen
 
@@ -30,21 +40,61 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
      *
      */
     public ManageTeamController(TeamFormMode mode, MetaController metaController, TeamService teamService,
-            PlayerState playerState) {
+            BugemonService bugemonService, PlayerState playerState) {
         super(metaController, ViewLoader.load(() -> new ManageTeamView(mode)));
         this.teamService = teamService;
+        this.bugemonService = bugemonService;
         this.playerState = playerState;
-        this.tmpTeam = this.playerState.getActiveTeam().orElseGet(Team::new);
 
         this.view.setListener(this);
     }
 
     @Override
-    public void onBugemonSelected(PlayerBugemon bugemon) {
-        if (this.tmpTeam.contains(bugemon)) {
-            this.tmpTeam.remove(bugemon);
+    protected void show() {
+        this.playerState.getActiveTeam().ifPresent(t -> this.tmpTeam = t);
+        this.updateAllUI();
+        super.show();
+    }
+
+    private void updateDisplayedAvailableBugemons() {
+        this.view.refreshAvailableBugemons(this.bugemonService.getDefaultBugemons(),
+                new HashSet<>(this.tmpTeam.getMembers()));
+    }
+
+    private void updateWorkingTeamToShow() {
+        this.view.refreshWorkingTeam(this.tmpTeam);
+        if (this.tmpTeam.isEmpty()) {
+            this.view.refreshWorkingTeamNameToShow(NO_TEAM_SELECTED);
+        } else if (this.teamService.isTeamSaved(this.tmpTeam)) {
+            this.view.refreshWorkingTeamNameToShow(this.tmpTeam.getName());
+        } else {
+            this.view.refreshWorkingTeamNameToShow(TEAM_NOT_SAVED_MESSAGE);
+        }
+
+    }
+
+    private void updateTeamSelected() {
+        this.view.refreshTeamSelected(this.playerState.getActiveTeamName().orElse(null));
+    }
+
+    private void updateDisplayedTeamNames() {
+        this.view.refreshTeamNames(this.teamService.getTeamNames());
+    }
+
+    private void updateAllUI() {
+        this.updateWorkingTeamToShow();
+        this.updateTeamSelected();
+        this.updateDisplayedTeamNames();
+        this.updateDisplayedAvailableBugemons();
+    }
+
+    @Override
+    public void onBugemonSelected(PlayerBugemonDTO playerBugemonDTO) {
+        PlayerBugemon playerBugemon = this.bugemonService.getPlayerBugemon(playerBugemonDTO.getName());
+        if (this.tmpTeam.contains(playerBugemon)) {
+            this.tmpTeam.remove(playerBugemon);
         } else if (!this.tmpTeam.isFull()) {
-            this.tmpTeam.add(bugemon);
+            this.tmpTeam.add(playerBugemon);
         }
         this.view.refresh();
     }

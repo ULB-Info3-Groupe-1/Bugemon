@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.common.dto.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
@@ -12,7 +13,6 @@ import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 
@@ -37,14 +37,20 @@ public class BugemonService {
         return this.staticDataRepository.attacks().stream().filter(attack -> attack.type() == bugemonType).toList();
     }
 
+    public PlayerBugemon getPlayerBugemon(String bugemonName) {
+        return this.bugemonRepository.findByName(this.playername, bugemonName)
+                .map(dto -> PlayerBugemon.from(this.staticDataRepository.bugemons().stream()
+                        .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow(), dto))
+                .orElse(new PlayerBugemon(this.staticDataRepository.bugemons().stream()
+                        .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow()));
+    }
+
     public List<PlayerBugemon> getPlayerBugemons() {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
         List<PlayerBugemon> listToReturn = new ArrayList<>();
         for (Bugemon bugemon : this.staticDataRepository.bugemons()) {
-            playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())).findFirst()
-                    .ifPresentOrElse((dto) -> {
-                        listToReturn.add(PlayerBugemon.from(bugemon, dto));
-                    }, () -> listToReturn.add(new PlayerBugemon(bugemon)));
+            playerBugemons.stream().filter(pb -> pb.getName().equals(bugemon.name())).findFirst()
+                    .ifPresentOrElse(dto -> listToReturn.add(PlayerBugemon.from(bugemon, dto)), () -> listToReturn.add(new PlayerBugemon(bugemon)));
         }
         return listToReturn;
     }

@@ -5,8 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
 import ulb.Configuration;
-import ulb.models.player.PlayerBugemon;
-import ulb.models.team.Team;
+import ulb.common.dto.PlayerBugemonDTO;
 
 /** Reusable custom component displaying a Bugemon team in a grid. */
 public class BugemonTeamView extends ComponentView {
@@ -26,10 +25,9 @@ public class BugemonTeamView extends ComponentView {
     }
 
     /** Clears and repopulates the grid with the alive members of the given team. */
-    public void showTeam(Team bugemonTeam) {
+    public void showTeam(List<PlayerBugemonDTO> members) {
         this.clearBugemons();
 
-        List<PlayerBugemon> members = bugemonTeam.getMembers();
         for (int i = 0; i < members.size(); i++) {
             BugemonCardView card = new BugemonCardView(members.get(i));
             card.setListener(this.listener::onBugemonClicked);
@@ -46,7 +44,7 @@ public class BugemonTeamView extends ComponentView {
 
     public interface Listener {
 
-        void onBugemonClicked(PlayerBugemon bugemon);
+        void onBugemonClicked(PlayerBugemonDTO playerBugemon);
 
     }
 }

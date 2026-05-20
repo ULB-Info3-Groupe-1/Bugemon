@@ -15,9 +15,9 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import ulb.Configuration;
+import ulb.common.dto.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.player.PlayerBugemon;
 
 /**
  * Read-only component displaying a {@link Bugemon}'s stats and attacks. Call {@link #show(Bugemon, ContextMenuEvent)}
@@ -44,20 +44,20 @@ public class BugemonDetailPopupView extends ComponentView {
     @FXML
     private VBox attacksContainer;
 
-    private BugemonDetailPopupView(PlayerBugemon bugemon) {
+    private BugemonDetailPopupView(PlayerBugemonDTO bugemon) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_DETAIL_POPUP);
-        File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.getSpritePath());
+        File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.base().spritePath());
         this.sprite.setImage(new Image(spriteFile.toURI().toString(), 72, 72, true, false));
-        this.nameLabel.setText(bugemon.getName());
-        this.nameLabel.getStyleClass().addAll("bugemon-name", bugemon.getType().toString());
-        this.typeLabel.setText(bugemon.getType().toString());
-        this.typeLabel.getStyleClass().add(bugemon.getType().toString());
-        this.levelLabel.setText("Nv. " + bugemon.getLevel());
+        this.nameLabel.setText(bugemon.base().name());
+        this.nameLabel.getStyleClass().addAll("bugemon-name", bugemon.base().type().toString());
+        this.typeLabel.setText(bugemon.base().type().toString());
+        this.typeLabel.getStyleClass().add(bugemon.base().type().toString());
+        this.levelLabel.setText("Nv. " + bugemon.level());
         this.hpValue.setText(String.valueOf(bugemon.getMaxHp()));
         this.attackValue.setText(String.valueOf(bugemon.getAttack()));
         this.defenseValue.setText(String.valueOf(bugemon.getDefense()));
         this.initiativeValue.setText(String.valueOf(bugemon.getInitiative()));
-        for (Attack attack : bugemon.getAttackList()) {
+        for (Attack attack : bugemon.attacks()) {
             Label row = new Label("• " + attack.name() + "  (" + attack.type() + ")  [" + attack.power() + "]");
             row.getStyleClass().add("bugemon-popup-attack");
             this.attacksContainer.getChildren().add(row);
@@ -65,7 +65,7 @@ public class BugemonDetailPopupView extends ComponentView {
     }
 
     /** Builds and shows a transparent popup with the Bugemon's details, closing it when it loses focus. */
-    public static void show(PlayerBugemon bugemon, ContextMenuEvent event) {
+    public static void show(PlayerBugemonDTO bugemon, ContextMenuEvent event) {
         Node source = (Node) event.getSource();
         Window owner = source.getScene().getWindow();
 

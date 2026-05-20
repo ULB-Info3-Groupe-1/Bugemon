@@ -29,6 +29,10 @@ public class PlayerState {
         return Optional.ofNullable(this.activeTeam);
     }
 
+    public Optional<String> getActiveTeamName() {
+        return this.getActiveTeam().map(Team::getName);
+    }
+
     public void setActiveTeam(Team team) {
         this.activeTeam = team;
     }
