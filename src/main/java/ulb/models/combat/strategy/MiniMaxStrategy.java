@@ -55,13 +55,16 @@ public class MiniMaxStrategy implements CombatStrategy {
     public void chooseSwitch(CombatContext ctx, ActionCallback callback) {
         CombatTeam ally = ctx.allyTeam();
         CombatTeam opp = ctx.opponentTeam();
+        Inventory allyInv = ctx.allyInventory();
+        Inventory oppInv = ctx.opponentInventory();
+
 
         List<CombatBugemon> available = ally.getAvailable();
         if (available.isEmpty()) {
             throw new IllegalStateException("MiniMaxStrategy must switch but has no available bugemon.");
         }
 
-        CombatSnapshot snapshot = CombatSnapshot.fromAiPerspective(ally, opp);
+        CombatSnapshot snapshot = CombatSnapshot.fromAiPerspective(ally, opp, oppInv.getMap(), allyInv.getMap());
         MiniMax mini = new MiniMax(4);
         SimAction action = mini.chooseBestAction(snapshot, true);
 
