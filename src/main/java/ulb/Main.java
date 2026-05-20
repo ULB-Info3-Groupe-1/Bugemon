@@ -11,7 +11,6 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import ulb.controllers.MetaController;
 import ulb.models.player.PlayerState;
-import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
@@ -31,7 +30,6 @@ import ulb.repositories.postgres.PostgresStaticRepository;
 import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.services.BugemonService;
 import ulb.services.InventoryService;
-import ulb.services.PlayerService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
