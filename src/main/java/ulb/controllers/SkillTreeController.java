@@ -1,6 +1,7 @@
 package ulb.controllers;
 
 import ulb.models.player.PlayerState;
+import ulb.models.skills.exceptions.IllegalNodeStateException;
 import ulb.services.SkillService;
 import ulb.views.SkillTreeView;
 import ulb.views.ViewLoader;
@@ -22,9 +23,10 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     public void onSkillLeftClicked(String skillId) {
         try {
             this.skillService.addPoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(), skillId);
-        } catch (IllegalStateException e) {
+        } catch (IllegalNodeStateException e) {
 
         }
+
         this.view.refresh(this.playerState.getSkillTreeState(), this.skillService.getSkillTree());
 
     }
@@ -34,9 +36,10 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
         try {
             this.skillService.removePoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
                     skillId);
-        } catch (IllegalStateException e) {
+        } catch (IllegalNodeStateException e) {
 
         }
+
         this.view.refresh(this.playerState.getSkillTreeState(), this.skillService.getSkillTree());
     }
 

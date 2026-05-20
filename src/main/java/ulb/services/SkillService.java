@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
+import ulb.models.skills.exceptions.IllegalNodeStateException;
 import ulb.repositories.SkillRepository;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.SkillDTO;
@@ -39,11 +40,13 @@ public class SkillService {
         return this.staticRepository.skillTree();
     }
 
-    public void addPoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId) {
+    public void addPoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId)
+            throws IllegalNodeStateException {
         skillTreeState.addPoint(nodeId, skillTree);
     }
 
-    public void removePoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId) {
+    public void removePoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId)
+            throws IllegalNodeStateException {
         skillTreeState.removePoint(nodeId, skillTree);
     }
 

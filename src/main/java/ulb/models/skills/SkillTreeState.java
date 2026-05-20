@@ -13,6 +13,7 @@ import ulb.models.skills.SkillEffect.RewardChoiceEffect;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.models.skills.SkillEffect.TypeMultiplierEffect;
 import ulb.models.skills.SkillEffect.XpMultiplierEffect;
+import ulb.models.skills.exceptions.IllegalNodeStateException;
 
 public class SkillTreeState {
 
@@ -75,18 +76,18 @@ public class SkillTreeState {
         return this.getNodeLevel(nodeId) > 0 && !this.wouldBreakDependents(nodeId, tree);
     }
 
-    public void addPoint(String nodeId, SkillTree tree) {
+    public void addPoint(String nodeId, SkillTree tree) throws IllegalNodeStateException {
         if (!this.canAddPoint(nodeId, tree)) {
-            throw new IllegalStateException("Unable to add a point to skill : " + nodeId);
+            throw new IllegalNodeStateException("Unable to add a point to skill : " + nodeId);
         }
         this.skillLevels.merge(nodeId, 1, Integer::sum);
         this.skillPoints -= tree.getById(nodeId).cost();
     }
 
-    public void removePoint(String nodeId, SkillTree tree) {
+    public void removePoint(String nodeId, SkillTree tree) throws IllegalNodeStateException {
         int level = this.getNodeLevel(nodeId);
         if (level <= 0) {
-            throw new IllegalStateException("No Skill point to remove at : " + nodeId);
+            throw new IllegalNodeStateException("No Skill point to remove at : " + nodeId);
         }
         int cost = tree.getById(nodeId).cost();
         int newLevel = level - 1;
