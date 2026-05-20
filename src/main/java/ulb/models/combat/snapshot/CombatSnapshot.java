@@ -9,11 +9,11 @@ import ulb.models.item.Item;
 public record CombatSnapshot(TeamSnapshot playerTeam, TeamSnapshot aiTeam, Map<Item, Integer> aiInventory,
         Map<Item, Integer> opponentInventory) {
 
-    public static CombatSnapshot fromAiPerspective(CombatTeam aiTeam, CombatTeam opponentTeam) {
+    public static CombatSnapshot fromAiPerspective(CombatTeam aiTeam, CombatTeam opponentTeam, Map<Item, Integer> aiInventory, Map<Item, Integer> opponentInventory) {
         if (opponentTeam == null || aiTeam == null) {
             throw new IllegalStateException("Both teams must be non-null to create a CombatSnapshot.");
         }
-        return new CombatSnapshot(opponentTeam.getSnapshot(), aiTeam.getSnapshot(), new HashMap<>(), new HashMap<>());
+        return new CombatSnapshot(opponentTeam.getSnapshot(), aiTeam.getSnapshot(), aiInventory, opponentInventory);
     }
 
     public CombatBugemonSnapshot aiActive() {
