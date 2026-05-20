@@ -2,10 +2,8 @@ package ulb.repositories.dto;
 
 import java.util.List;
 
-import ulb.models.tower.utils.Position;
+import ulb.models.tower.FloorMap.RoomPosition;
 
+public record FloorMapDTO(int floor, List<RoomPosition> visitedRoomsPosition) {
 
-
-public record FloorMapDTO(int floorNumber, List<Position> visitedRoomsPosition) {
-    
 }

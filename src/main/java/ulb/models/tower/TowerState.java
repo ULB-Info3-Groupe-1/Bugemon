@@ -1,25 +1,23 @@
 package ulb.models.tower;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ulb.Configuration;
 import ulb.models.run.RunTeam;
-import ulb.models.tower.utils.Position;
+import ulb.models.tower.FloorMap.RoomPosition;
 
 public class TowerState {
-    
+
     private int seed;
     private final RunTeam runTeam;
-    private int floorNumber;
-    private Floor currentFloor;
-    private FloorNode playerPosition;
+    private int currentFloor;
+    private FloorMap floorMap;
 
-    public TowerState(int seed, RunTeam runTeam, int floorNumber, Floor currentFloor) {
+    public TowerState(int seed, RunTeam runTeam, int currentFloor, FloorMap floorMap) {
         this.seed = seed;
         this.runTeam = runTeam;
-        this.floorNumber = floorNumber;
         this.currentFloor = currentFloor;
+        this.floorMap = floorMap;
     }
 
     public void clear() {
@@ -27,55 +25,33 @@ public class TowerState {
         this.seed = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
 
         this.runTeam.getMembers().clear();
-        this.floorNumber = Configuration.Game.FLOOR_MIN;
-        this.currentFloor = null;
-        this.playerPosition = null;
+        this.currentFloor = Configuration.Game.FLOOR_MIN;
+        this.floorMap = null;
     }
 
     public int getSeed() {
         return this.seed;
     }
 
-
-
     public RunTeam getRunTeam() {
         return this.runTeam;
     }
-    
-    public int getCurrentFloorNumber() {
-        return this.floorNumber;
-    }
 
-    public Floor getCurrentFloor() {
+    public int getCurrentFloor() {
         return this.currentFloor;
     }
 
-    public FloorNode getPlayerPosition() {
-        return this.playerPosition;
+    public FloorMap getFloorMap() {
+        return this.floorMap;
     }
 
-    public String getTeamName(){
+    public String getTeamName() {
         return this.runTeam.getName();
     }
 
-    public List<Position> getVisitedRoomsPosition() {
-        List<Position> visitedPositions = new ArrayList<>();
-        
-        if (this.currentFloor != null && this.currentFloor.getRoot() != null) {
-            collectVisitedRooms(this.currentFloor.getRoot(), visitedPositions);
-        }
-        
-        return visitedPositions;
+    public List<RoomPosition> getVisitedRoomsPosition() {
+        return this.floorMap.getVisitedRooms().stream()
+                .map(this.floorMap::getPosition)
+                .toList();
     }
-
-    private void collectVisitedRooms(FloorNode node, List<Position> visitedPositions) {
-        if (node.getRoom() != null && node.getRoom().isVisited()) {
-            visitedPositions.add(new Position(node.getX(), node.getY()));
-        }
-
-        for (FloorNode child : node.getChildren()) {
-            collectVisitedRooms(child, visitedPositions);
-        }
-    }
-
 }

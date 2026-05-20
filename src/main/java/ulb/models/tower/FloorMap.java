@@ -27,6 +27,10 @@ public class FloorMap {
         return this.currentRoom;
     }
 
+    public List<Room> getVisitedRooms() {
+        return this.rooms.stream().filter(Room::isVisited).toList();
+    }
+
     /**
      * Returns the neighboring rooms, excluding all visited ones (and the current room).
      */
@@ -53,6 +57,12 @@ public class FloorMap {
         // TODO: might need to check if the player can move there (throw if not)
         this.currentRoom.markAsVisited();
         this.currentRoom = room;
+    }
+
+    // TODO: make sure we need all of them: getPosition, getCol, getRow
+
+    public RoomPosition getPosition(Room room) {
+        return this.positions.get(room);
     }
 
     public int getCol(Room room) {
