@@ -62,6 +62,25 @@ public class FloorMapFactory {
 
         // compute branch count (between MIN_BRANCHES and MAX_BRANCHES)
         int branchCount = random.nextInt(MIN_BRANCHES, MAX_BRANCHES);
+
+        // shuffle directions in which to grow the branches
+        List<int[]> shuffledDirs = new ArrayList<>(Arrays.asList(DIRECTIONS));
+        Collections.shuffle(shuffledDirs, random);
+
+        // grow the branches
+        for (int b = 0; b < branchCount; b++) {
+            int[] dir = shuffledDirs.get(b); // allows us to grow every branch in a different direction
+
+            // compute start position of branch to grow
+            int col = CENTER + dir[0];
+            int row = CENTER + dir[1];
+
+            boolean inBounds = inBounds(col, row);
+            boolean branchStartPosAvailable = !nodeCoords.containsKey(nodeKey(col, row));
+
+            // TODO: (!inBounds || !branchStartPosAvailable) -> must retry generating the floor
+        }
+
     }
 
     private void generateNewFloor() {
@@ -240,5 +259,9 @@ public class FloorMapFactory {
 
     private static String nodeKey(int col, int row) {
         return String.format("(%d, %d)", col, row);
+    }
+
+    private static boolean inBounds(int col, int row) {
+        return col >= 0 && col < GRID_SIZE && row >= 0 && row < GRID_SIZE;
     }
 }
