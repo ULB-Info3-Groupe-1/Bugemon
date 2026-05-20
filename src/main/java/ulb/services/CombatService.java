@@ -22,9 +22,12 @@ import ulb.models.item.Inventory;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerInputHandler;
 import ulb.models.skills.SkillContext;
+import ulb.models.team.factory.RandomTeamFactory;
+import ulb.models.team.factory.TeamFactory;
 
 /**
- * Handles combat lifecycle (XP finalisation, damage preview) and creates {@link CombatFactory} instances.
+ * Handles combat lifecycle (XP finalisation, damage preview) and creates
+ * {@link CombatFactory} instances.
  */
 public class CombatService {
 
@@ -42,14 +45,19 @@ public class CombatService {
         this.random = random;
     }
 
-    public CombatFactory createManualCombatFactory(Inventory defaultInventory, PlayerInputHandler handler, int floor,
-            boolean bossMode) {
-        return new ManualCombatFactory(defaultInventory, this.damageCalculator, this.effectProcessor, this.random,
-                handler, floor, bossMode);
+    public TeamFactory createRandomOpponentFactory() {
+        return new RandomTeamFactory(this.random);
     }
 
-    public CombatFactory createAutoCombatFactory(int floor, boolean bossMode) {
-        return new AutoCombatFactory(this.damageCalculator, this.effectProcessor, this.random, floor, bossMode);
+    public CombatFactory createManualCombatFactory(Inventory defaultInventory, PlayerInputHandler handler,
+            TeamFactory opponentFactory, int floor, boolean bossMode) {
+        return new ManualCombatFactory(defaultInventory, this.damageCalculator, this.effectProcessor, this.random,
+                handler, opponentFactory, floor, bossMode);
+    }
+
+    public CombatFactory createAutoCombatFactory(TeamFactory opponentFactory, int floor, boolean bossMode) {
+        return new AutoCombatFactory(this.damageCalculator, this.effectProcessor, this.random, opponentFactory, floor,
+                bossMode);
     }
 
     public CombatSummary finalizeCombat(Combat combat, SkillContext skillContext) {

@@ -4,30 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Produces a {@link Team} led by a named boss Bugémon, padded with random members.
+ * Produces a {@link Team} led by a named boss Bugémon, padded with random
+ * members.
  */
 public class BossTeamFactory extends TeamFactory {
 
-    private final String bossName;
+    private static final String BOSS_NAME = Configuration.Game.BOSS_NAME;
 
-    public BossTeamFactory(List<Bugemon> bugemons, Random random, String bossName) {
-        super(bugemons, random);
-        this.bossName = bossName;
+    public BossTeamFactory(Random random) {
+        super(random);
     }
 
     @Override
-    public Team create(int size) {
+    public Team create(int size, List<Bugemon> bugemons) {
         this.checkSize(size);
+        Bugemon boss = bugemons.stream()
+                .filter(b -> b.name().equals(BOSS_NAME))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown boss: " + BOSS_NAME));
         Team team = new Team();
-        this.bugemons.stream().filter(b -> b.name().equals(this.bossName)).findFirst().map(PlayerBugemon::new)
-                .ifPresent(team::add);
-        List<Bugemon> available = new ArrayList<>(this.bugemons);
-        available.removeIf(b -> b.name().equals(this.bossName));
+        team.add(new PlayerBugemon(boss));
+        List<Bugemon> available = new ArrayList<>(bugemons);
+        available.removeIf(b -> b.name().equals(BOSS_NAME));
         this.fillTeam(size, team, available);
         return team;
     }

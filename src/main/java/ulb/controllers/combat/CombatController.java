@@ -1,6 +1,7 @@
 package ulb.controllers.combat;
 
 import java.util.ArrayDeque;
+import java.util.List;
 import java.util.Queue;
 
 import org.slf4j.Logger;
@@ -26,9 +27,9 @@ import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Item;
 import ulb.models.player.PlayerInputHandler;
 import ulb.models.player.PlayerState;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.run.RunTeam;
 import ulb.models.skills.SkillContext;
-import ulb.models.team.factory.TeamFactory;
 import ulb.services.CombatService;
 import ulb.services.SkillService;
 import ulb.views.ViewLoader;
@@ -72,10 +73,10 @@ public class CombatController extends Controller<CombatView>
      * Builds and initializes a manual standalone combat; the opponent team is
      * produced by {@code opponentFactory}.
      */
-    public void startCombat(RunTeam playerRunTeam, TeamFactory opponentFactory, CombatFactory combatFactory) {
+    public void startCombat(RunTeam playerRunTeam, CombatFactory combatFactory, List<Bugemon> availableBugemons) {
         SkillContext skillContext = this.skillService.buildSkillContext(this.playerState.getSkillTreeState());
-        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory,
-                skillContext));
+        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), skillContext,
+                availableBugemons));
     }
 
     /**

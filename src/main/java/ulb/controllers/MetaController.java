@@ -16,10 +16,13 @@ import ulb.controllers.combat.CombatVictoryController;
 import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerState;
+import ulb.models.run.RunTeam;
+import ulb.models.team.factory.TeamFactory;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
@@ -70,7 +73,8 @@ public class MetaController {
     private final SkillTreeController skillTreeController;
 
     private final CombatService combatService;
-    private final InventoryService inventoryService;
+    private final BugemonService bugemonService;
+    private final PlayerState playerState;
 
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
@@ -88,8 +92,9 @@ public class MetaController {
             TowerService towerService, InventoryService inventoryService, SkillService skillService,
             SaveService saveService, CombatService combatService, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
-        this.inventoryService = inventoryService;
         this.combatService = combatService;
+        this.bugemonService = bugemonService;
+        this.playerState = playerState;
 
         this.saveMenuController = new SaveMenuController(this, saveService, playerState);
         this.mainMenuController = new MainMenuController(this, playerState);
@@ -163,19 +168,27 @@ public class MetaController {
     }
 
     public void onStartManualCombat() {
-        CombatFactory combatFactory = this.combatService.createManualCombatFactory(
-                this.inventoryService.getDefaultInventory(), this.combatController, Configuration.Game.FLOOR_MIN,
-                false);
-        this.startCombat(combatFactory, Window.MANUAL_COMBAT);
+        this.playerState.getActiveTeam().ifPresent(team -> {
+            RunTeam playerRunTeam = RunTeam.fromTeam(team);
+            List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+            TeamFactory opponentFactory = this.combatService.createRandomOpponentFactory();
+            CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.playerState.getInventory(),
+                    this.combatController, opponentFactory, Configuration.Game.FLOOR_MIN, false);
+            this.combatController.startCombat(playerRunTeam, combatFactory, bugemons);
+            this.switchTo(Window.MANUAL_COMBAT);
+        });
     }
 
     public void onStartAutomaticCombat() {
-        CombatFactory combatFactory = this.combatService.createAutoCombatFactory(Configuration.Game.FLOOR_MIN, false);
-        this.startCombat(combatFactory, Window.AUTOMATIC_COMBAT);
-    }
-
-    private void startCombat(CombatFactory combatFactory, Window window) {
-        // TODO: remove or do something
+        this.playerState.getActiveTeam().ifPresent(team -> {
+            RunTeam playerRunTeam = RunTeam.fromTeam(team);
+            List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+            TeamFactory opponentFactory = this.combatService.createRandomOpponentFactory();
+            CombatFactory combatFactory = this.combatService.createAutoCombatFactory(
+                    opponentFactory, Configuration.Game.FLOOR_MIN, false);
+            this.combatController.startCombat(playerRunTeam, combatFactory, bugemons);
+            this.switchTo(Window.AUTOMATIC_COMBAT);
+        });
     }
 
     public void onTower() {
