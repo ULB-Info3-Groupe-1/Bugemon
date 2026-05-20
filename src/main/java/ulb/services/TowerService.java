@@ -58,7 +58,7 @@ public class TowerService {
         for (RunBugemon runBugemon: runTeam.getMembers()) {
             hpPerMember.put(new TeamMemberDTO(runBugemon.getName(), runTeam.getSlotOfMember(runBugemon)), runBugemon.getCurrentHp());
         }
-        FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloorNumber(), towerState.getVisitedRoomsPosition());
+        FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloor(), towerState.getVisitedRoomsPosition());
         RunTeamDTO teamDTO = new RunTeamDTO(playername, towerState.getTeamName(), hpPerMember);
 
         return new TowerDTO(towerState.getSeed(), floorMapDTO, teamDTO);
