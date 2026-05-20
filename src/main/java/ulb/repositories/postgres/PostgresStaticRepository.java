@@ -172,8 +172,8 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
                     if (effectType != null) {
                         effect = this.buildSkillEffect(rs, effectType);
                     }
-                    return new SkillNodeData(rs.getString("name"), rs.getString("description"),
-                            rs.getInt("x"), rs.getInt("y"), rs.getInt("max_level"), rs.getInt("cost"), effect);
+                    return new SkillNodeData(rs.getString("name"), rs.getString("description"), rs.getInt("x"),
+                            rs.getInt("y"), rs.getInt("max_level"), rs.getInt("cost"), effect);
                 } catch (SQLException e) {
                     throw new IllegalStateException("Error loading skill node " + id, e);
                 }
@@ -189,25 +189,21 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         });
 
         List<SkillNode> nodes = new ArrayList<>();
-        nodeData.forEach((id, data) -> nodes.add(new SkillNode(id, data.name, data.description,
-                data.x, data.y, data.maxLevel, data.cost, data.effect,
-                prereqs.getOrDefault(id, List.of()))));
+        nodeData.forEach((id, data) -> nodes.add(new SkillNode(id, data.name, data.description, data.x, data.y,
+                data.maxLevel, data.cost, data.effect, prereqs.getOrDefault(id, List.of()))));
         return new SkillTree(nodes);
     }
 
     private SkillEffect buildSkillEffect(ResultSet rs, String type) throws SQLException {
         return switch (type) {
-            case "stat_bonus" -> new SkillEffect.StatBonusEffect(
-                    StatType.valueOf(rs.getString("stat")),
-                    rs.getInt("int_value"));
+            case "stat_bonus" ->
+                new SkillEffect.StatBonusEffect(StatType.valueOf(rs.getString("stat")), rs.getInt("int_value"));
             case "type_multiplicateur" -> new SkillEffect.TypeMultiplierEffect(
-                    ElementType.valueOf(rs.getString("element_type")),
-                    rs.getDouble("double_value"));
+                    ElementType.valueOf(rs.getString("element_type")), rs.getDouble("double_value"));
             case "critique_bonus" -> new SkillEffect.CritBonusEffect(rs.getDouble("double_value"));
             case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(rs.getDouble("double_value"));
             case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(rs.getDouble("double_value"));
-            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(
-                    rs.getInt("int_value"), rs.getString("category"));
+            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(rs.getInt("int_value"), rs.getString("category"));
             case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(rs.getInt("int_value"));
             default -> throw new IllegalStateException("Unknown skill effect type: " + type);
         };

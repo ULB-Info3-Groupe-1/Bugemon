@@ -20,19 +20,14 @@ public class PostgresSkillRepository extends AbstractRepository implements Skill
     @Override
     public List<SkillDTO> findAll(String playername) {
         LOG.debug("Finding all skills for playername: {}", playername);
-        return this.executeQuery("GetPlayerSkills",
-                rs -> new SkillDTO(rs.getString(DatabaseColumns.COL_SKILL_ID),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
-                playername);
+        return this.executeQuery("GetPlayerSkills", rs -> new SkillDTO(rs.getString(DatabaseColumns.COL_SKILL_ID),
+                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)), playername);
     }
 
     @Override
     public SkillDTO findById(String playername, String skillId) {
         LOG.debug("Finding skill '{}' for playername: {}", skillId, playername);
-        return this.findAll(playername).stream()
-                .filter(s -> s.skillId().equals(skillId))
-                .findFirst()
-                .orElse(null);
+        return this.findAll(playername).stream().filter(s -> s.skillId().equals(skillId)).findFirst().orElse(null);
     }
 
     @Override
@@ -44,8 +39,8 @@ public class PostgresSkillRepository extends AbstractRepository implements Skill
     @Override
     public int findSkillPoints(String playername) {
         LOG.debug("Finding skill points for playername: {}", playername);
-        return this.executeQuery("GetPlayerSkillPoints",
-                rs -> rs.getInt(DatabaseColumns.COL_SKILL_POINTS), playername).get(0);
+        return this.executeQuery("GetPlayerSkillPoints", rs -> rs.getInt(DatabaseColumns.COL_SKILL_POINTS), playername)
+                .get(0);
     }
 
     @Override

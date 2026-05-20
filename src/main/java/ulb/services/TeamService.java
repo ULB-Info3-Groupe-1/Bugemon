@@ -6,12 +6,12 @@ import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
-import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.models.team.Team;
 import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
+import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
 
@@ -31,15 +31,14 @@ public class TeamService {
     }
 
     public List<String> getTeamNames() {
-        return this.teamRepository.findAll(playerName).stream().map(TeamDTO::teamName).toList();
+        return this.teamRepository.findAll(this.playerName).stream().map(TeamDTO::teamName).toList();
     }
 
     public Team createTeam(TeamDTO teamDTO) {
         List<PlayerBugemon> members = teamDTO.members().stream()
                 .sorted(Comparator.comparingInt(TeamMemberDTO::slotPosition))
                 .map(member -> this.bugemonRepository.findBase(member.bugemonName())
-                        .flatMap(base -> this.bugemonRepository
-                                .findByName(this.playerName, member.bugemonName())
+                        .flatMap(base -> this.bugemonRepository.findByName(this.playerName, member.bugemonName())
                                 .map((PlayerBugemonDTO dto) -> PlayerBugemon.from(base, dto)))
                         .orElseThrow())
                 .toList();
@@ -66,8 +65,7 @@ public class TeamService {
 
     private TeamDTO teamToDTO(Team team) {
         List<TeamMemberDTO> members = team.getMembers().stream()
-                .map(b -> new TeamMemberDTO(b.getName(), team.getMembers().indexOf(b)))
-                .toList();
+                .map(b -> new TeamMemberDTO(b.getName(), team.getMembers().indexOf(b))).toList();
         return new TeamDTO(this.playerName, team.getName(), members);
     }
 }
