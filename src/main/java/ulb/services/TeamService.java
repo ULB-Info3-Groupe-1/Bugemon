@@ -41,10 +41,8 @@ public class TeamService {
             return false;
         }
 
-        return this.teamRepository
-                .findByName(this.playerName, team.getName())
-                .map(teamDto -> teamDto.equals(this.teamToDTO(team)))
-                .orElse(false);
+        return this.teamRepository.findByName(this.playerName, team.getName())
+                .map(teamDto -> teamDto.equals(this.teamToDTO(team))).orElse(false);
     }
 
     public boolean teamExists(String name) {
