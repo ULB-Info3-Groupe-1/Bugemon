@@ -1,7 +1,6 @@
 package ulb.controllers.combat;
 
 import java.util.ArrayDeque;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Queue;
 
@@ -79,11 +78,7 @@ public class CombatController extends Controller<CombatView>
     public void startCombat(RunTeam playerRunTeam, TeamFactory opponentFactory, CombatFactory combatFactory) {
         SkillTreeState skillTreeState = this.playerState.getSkillTreeState();
         int critBonus = this.skillService.getCritBonus(skillTreeState);
-
-        Map<ElementType, Double> typeMultipliers = new EnumMap<>(ElementType.class);
-        for (ElementType type : ElementType.values()) {
-            typeMultipliers.put(type, this.skillService.getTypeMultiplier(skillTreeState, type));
-        }
+        Map<ElementType, Double> typeMultipliers = this.skillService.getTypeMultipliers(skillTreeState);
 
         this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory, critBonus,
                 typeMultipliers));

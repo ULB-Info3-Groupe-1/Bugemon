@@ -1,5 +1,6 @@
 package ulb.services;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,6 +48,15 @@ public class SkillService {
 
     public double getXpMultiplier(SkillTreeState skillTreeState) {
         return skillTreeState.getXpMultiplier(this.getSkillTree());
+    }
+
+    public Map<ElementType, Double> getTypeMultipliers(SkillTreeState skillTreeState) {
+        Map<ElementType, Double> typeMultipliers = new EnumMap<>(ElementType.class);
+        for (ElementType type : ElementType.values()) {
+            typeMultipliers.put(type, this.getTypeMultiplier(skillTreeState, type));
+        }
+
+        return typeMultipliers;
     }
 
     public double getTypeMultiplier(SkillTreeState skillTreeState, ElementType type) {
