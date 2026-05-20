@@ -11,6 +11,7 @@ import ulb.models.combat.strategy.minimax.SimActionKind;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.utils.CombatContext;
+import ulb.models.item.Inventory;
 
 public class MiniMaxStrategy implements CombatStrategy {
     public MiniMaxStrategy() {
@@ -20,8 +21,10 @@ public class MiniMaxStrategy implements CombatStrategy {
     public void chooseAction(CombatContext ctx, ActionCallback callback) {
         CombatTeam ally = ctx.allyTeam();
         CombatTeam opp = ctx.opponentTeam();
+        Inventory allyInv = ctx.allyInventory();
+        Inventory oppInv = ctx.opponentInventory();
 
-        CombatSnapshot snapshot = CombatSnapshot.fromAiPerspective(ally, opp);
+        CombatSnapshot snapshot = CombatSnapshot.fromAiPerspective(ally, opp, oppInv.getMap(), allyInv.getMap());
         MiniMax mini = new MiniMax(4);
         // choose for the AI-controlled team explicitly
         SimAction action = mini.chooseBestAction(snapshot, true);
