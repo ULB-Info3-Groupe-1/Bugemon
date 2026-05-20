@@ -29,20 +29,23 @@ import ulb.models.team.factory.TeamFactory;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
+import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is
+ * the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
+     * transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -90,12 +93,13 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *            main JavaFX stage of the application
+     *                     main JavaFX stage of the application
      * @throws IOException
-     *             if the music fails to be initialized
+     *                     if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
             TowerService towerService, InventoryService inventoryService, SkillService skillService,
+            SaveService saveService,
             PlayerState playerState) throws IOException {
         this.stage = primaryStage;
         this.bugemonService = bugemonService;
@@ -107,8 +111,7 @@ public class MetaController {
 
         this.combatService = new CombatService(new DamageCalculator(), new EffectProcessor(), this.random);
 
-        this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
-                inventoryService);
+        this.saveMenuController = new SaveMenuController(this, saveService, playerState);
         this.mainMenuController = new MainMenuController(this, playerState);
         this.combatController = new CombatController(this, this.combatService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
@@ -192,11 +195,11 @@ public class MetaController {
     }
 
     private void startCombat(CombatFactory combatFactory, Window window) {
-        this.teamService.getActiveTeam().ifPresent(playerTeam -> {
+        this.playerState.getActiveTeam().ifPresent(playerTeam -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
-            Inventory playerInventory = this.inventoryService.loadInventory();
+            Inventory playerInventory = this.inventoryService.getInventory();
             TeamFactory opponentFactory = this.teamService
-                    .createOpponentFactory(this.bugemonService.getAllDefaultBugemons(), this.random);
+                    .createOpponentFactory(this.bugemonService.getDefaultBugemons(), this.random);
             this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
             this.switchTo(window);
         });
@@ -265,9 +268,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *            target screen to display
+     *               target screen to display
      * @throws IllegalArgumentException
-     *             if the window is invalid
+     *                                  if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
