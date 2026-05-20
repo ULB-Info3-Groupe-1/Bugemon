@@ -7,7 +7,6 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerState;
 import ulb.models.team.Team;
 import ulb.repositories.exceptions.TeamEmptyException;
-import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
 import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.TeamService;
