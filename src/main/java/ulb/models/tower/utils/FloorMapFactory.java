@@ -1,6 +1,7 @@
 package ulb.models.tower.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,10 +11,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import ulb.models.tower.Floor;
 import ulb.models.tower.FloorMap;
-import ulb.models.tower.FloorNode;
-import ulb.models.tower.FloorNode.RoomPosition;
+import ulb.models.tower.FloorMap.RoomPosition;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomType;
 
@@ -21,6 +20,7 @@ public class FloorMapFactory {
     // TODO: those constants shouldn't be here
     static final int GRID_SIZE = 5;
     static final int MAX_DEPTH = 6;
+    static final int CENTER = GRID_SIZE / 2;
 
     static final int MIN_BRANCHES = 3;
     static final int MAX_BRANCHES = 4;
@@ -33,23 +33,14 @@ public class FloorMapFactory {
 
     private static final int MAX_GENERATION_ATTEMPTS = 10;
 
-    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
 
     private final int seed;
 
-    private final Random random;
-
-    private FloorNode root;
-    private FloorNode bossNode;
     private int maxDepthReached;
 
     private int rewardCount;
-    private int branchCount;
     private int combatCount;
-
-    private Map<FloorNode, Integer> depthPerNode;
-
-    private Set<FloorNode> visitedNodes;
 
     public FloorMapFactory(int seed) {
         this.seed = seed;
@@ -57,7 +48,20 @@ public class FloorMapFactory {
 
     public FloorMap create(int floor) {
         // seed to generate n-th floor = game_seed + floor
-        this.random = new Random(this.seed + floor);
+        Random random = new Random(this.seed + floor);
+
+        Map<String, int[]> nodeCoords = new HashMap<>();
+        Map<String, String> parentOf = new HashMap<>();
+        Map<String, List<String>> childrenOf = new HashMap<>();
+
+        // start node setup
+        String startKey = nodeKey(CENTER, CENTER);
+        nodeCoords.put(startKey, new int[] {CENTER, CENTER, 0});
+        childrenOf.put(startKey, new ArrayList<>());
+        parentOf.put(startKey, null);
+
+        // compute branch count (between MIN_BRANCHES and MAX_BRANCHES)
+        int branchCount = random.nextInt(MIN_BRANCHES, MAX_BRANCHES);
     }
 
     private void generateNewFloor() {
@@ -232,5 +236,9 @@ public class FloorMapFactory {
 
     private void setNodeDepth(FloorNode node, int depth) {
         this.depthPerNode.put(node, depth);
+    }
+
+    private static String nodeKey(int col, int row) {
+        return String.format("(%d, %d)", col, row);
     }
 }
