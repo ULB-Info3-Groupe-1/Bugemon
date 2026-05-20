@@ -11,12 +11,13 @@ import java.util.Random;
 import java.util.Set;
 
 import ulb.models.tower.Floor;
+import ulb.models.tower.FloorMap;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.FloorNode.RoomPosition;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.room.Room.RoomType;
 
-public class FloorFactory {
+public class FloorMapFactory {
     // TODO: those constants shouldn't be here
     static final int GRID_SIZE = 5;
     static final int MAX_DEPTH = 6;
@@ -34,6 +35,8 @@ public class FloorFactory {
 
     private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
+    private final int seed;
+
     private final Random random;
 
     private FloorNode root;
@@ -48,13 +51,13 @@ public class FloorFactory {
 
     private Set<FloorNode> visitedNodes;
 
-    public FloorFactory(Random random) {
-        this.random = random;
+    public FloorMapFactory(int seed) {
+        this.seed = seed;
     }
 
-    public Floor create() {
-        this.generateNewFloor();
-        return new Floor(this.root);
+    public FloorMap create(int floor) {
+        // seed to generate n-th floor = game_seed + floor
+        this.random = new Random(this.seed + floor);
     }
 
     private void generateNewFloor() {
