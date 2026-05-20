@@ -1,6 +1,7 @@
 package ulb;
 
 import java.io.InputStream;
+import java.util.Random;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -29,7 +30,9 @@ import ulb.repositories.postgres.PostgresSkillRepository;
 import ulb.repositories.postgres.PostgresStaticRepository;
 import ulb.repositories.postgres.PostgresTeamRepository;
 import ulb.services.BugemonService;
+import ulb.services.CombatService;
 import ulb.services.InventoryService;
+import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -95,12 +98,15 @@ public class Main extends Application {
         TeamService teamService = new TeamService(teamRepository, bugemonRepository, playerName);
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, staticDataRepository);
         TowerService towerService = new TowerService(playerRepository, playerName);
+        SaveService saveService = new SaveService(skillService, bugemonService, inventoryService, teamService);
+        Random random = new Random();
+        CombatService combatService = new CombatService(random);
 
         PlayerState playerState = new PlayerState(playerName, null, inventoryService.getInventory(),
                 skillService.getSkillTreeState());
 
         MetaController metaController = new MetaController(stage, bugemonService, teamService, towerService,
-                inventoryService, skillService, playerState);
+                inventoryService, skillService, saveService, combatService, playerState);
         metaController.start();
 
     }

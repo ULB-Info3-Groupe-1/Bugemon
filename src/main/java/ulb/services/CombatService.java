@@ -31,6 +31,10 @@ public class CombatService {
     private final EffectProcessor effectProcessor;
     private final Random random;
 
+    public CombatService(Random random) {
+        this(new DamageCalculator(), new EffectProcessor(), random);
+    }
+
     public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random) {
         this.damageCalculator = damageCalculator;
         this.effectProcessor = effectProcessor;

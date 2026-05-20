@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -18,14 +17,9 @@ import ulb.controllers.music.Ambiance;
 import ulb.controllers.music.MusicLoader;
 import ulb.controllers.music.MusicPlayer;
 import ulb.models.combat.Combat;
-import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.factory.CombatFactory;
-import ulb.models.combat.utils.EffectProcessor;
-import ulb.models.item.Inventory;
 import ulb.models.level_up.LevelUp;
 import ulb.models.player.PlayerState;
-import ulb.models.run.RunTeam;
-import ulb.models.team.factory.TeamFactory;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
@@ -73,19 +67,12 @@ public class MetaController {
     private final LevelUpController levelUpController;
     private final SkillTreeController skillTreeController;
 
-    private final BugemonService bugemonService;
-    private final TeamService teamService;
     private final CombatService combatService;
     private final InventoryService inventoryService;
-    private final SkillService skillService;
-
-    private final PlayerState playerState;
 
     private final MusicPlayer musicPlayer;
     private final MusicLoader musicLoader;
     private boolean isTowerActive;
-
-    private final Random random = new Random();
 
     /**
      * Creates the meta-controller and initializes all screen controllers.
@@ -97,20 +84,14 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
             TowerService towerService, InventoryService inventoryService, SkillService skillService,
-            SaveService saveService, PlayerState playerState) throws IOException {
+            SaveService saveService, CombatService combatService, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
-        this.bugemonService = bugemonService;
-        this.teamService = teamService;
         this.inventoryService = inventoryService;
-        this.skillService = skillService;
-
-        this.playerState = playerState;
-
-        this.combatService = new CombatService(new DamageCalculator(), new EffectProcessor(), this.random);
+        this.combatService = combatService;
 
         this.saveMenuController = new SaveMenuController(this, saveService, playerState);
         this.mainMenuController = new MainMenuController(this, playerState);
-        this.combatController = new CombatController(this, this.combatService);
+        this.combatController = new CombatController(this, this.combatService, playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
                 teamService, playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
@@ -192,14 +173,7 @@ public class MetaController {
     }
 
     private void startCombat(CombatFactory combatFactory, Window window) {
-        this.playerState.getActiveTeam().ifPresent(playerTeam -> {
-            RunTeam playerRunTeam = RunTeam.fromTeam(playerTeam);
-            Inventory playerInventory = this.inventoryService.getInventory();
-            TeamFactory opponentFactory = this.teamService
-                    .createOpponentFactory(this.bugemonService.getDefaultBugemons(), this.random);
-            this.combatController.startCombat(playerRunTeam, playerInventory, opponentFactory, combatFactory);
-            this.switchTo(window);
-        });
+        // TODO: remove or do something
     }
 
     public void onTower() {
