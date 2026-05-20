@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -47,6 +48,19 @@ public class FloorMapFactory {
     }
 
     public FloorMap create(int floor) {
+        for (int i = 0; i < MAX_GENERATION_ATTEMPTS; i++) {
+            Optional<FloorMap> floormap = this.tryCreate(floor);
+
+            if (floormap.isPresent()) {
+                return floormap.orElseThrow();
+            }
+        }
+
+        throw new IllegalStateException(
+                "Failed to create FloorMap after " + MAX_GENERATION_ATTEMPTS + " attempts");
+    }
+
+    public Optional<FloorMap> tryCreate(int floor) {
         // seed to generate n-th floor = game_seed + floor
         Random random = new Random(this.seed + floor);
 
