@@ -53,4 +53,8 @@ public class Inventory {
             this.items.replace(item, quantity);
         }
     }
+
+    public void clear() {
+        this.items.clear();
+    }
 }

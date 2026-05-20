@@ -76,12 +76,11 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
             throw new UncheckedIOException(e);
         }
         this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName, bugemon.defense(),
-                bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(), bugemon.attack1().id(),
-                bugemon.attack2().id(), bugemon.attack3().id());
+                bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(),
+                bugemon.attacks().get(0).id(), bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
         this.bugemonCache.put(bugemon.name(),
                 new Bugemon(bugemon.name(), bugemon.maxHp(), bugemon.attack(), bugemon.defense(), bugemon.initiative(),
-                        bugemon.type(), List.of(bugemon.attack1(), bugemon.attack2(), bugemon.attack3()), fileName,
-                        bugemon.isStarter()));
+                        bugemon.type(), bugemon.attacks(), fileName, bugemon.isStarter()));
     }
 
     @Override

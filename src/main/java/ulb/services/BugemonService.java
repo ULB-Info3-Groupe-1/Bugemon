@@ -1,9 +1,12 @@
 package ulb.services;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
@@ -30,6 +33,10 @@ public class BugemonService {
         return this.staticDataRepository.bugemons();
     }
 
+    public List<Attack> getAttacks(ElementType bugemonType) {
+        return this.staticDataRepository.attacks().stream().filter(attack -> attack.type() == bugemonType).toList();
+    }
+
     public List<PlayerBugemon> getPlayerBugemons() {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
         List<PlayerBugemon> listToReturn = new ArrayList<>();
@@ -48,6 +55,11 @@ public class BugemonService {
 
     public void savePlayerBugemon(PlayerBugemon bugemon) {
         this.bugemonRepository.save(this.playername, bugemon.toDTO(this.playername));
+    }
+
+    public CreateBugemonDTO createBugemon(String name, ElementType type, URL spriteUrl, int defense, int attack,
+            int initiative, int maxHp, List<Attack> attacks) {
+        return new CreateBugemonDTO(name, type, spriteUrl, defense, attack, initiative, maxHp, false, attacks);
     }
 
     public void saveNewBugemon(CreateBugemonDTO bugemon)

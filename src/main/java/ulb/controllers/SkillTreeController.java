@@ -19,22 +19,25 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     }
 
     @Override
-    public void show() {
-        // TODO: implement getSkillTree in the SkillService
+    public void onSkillLeftClicked(String skillId) {
+        try {
+            this.skillService.addPoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(), skillId);
+        } catch (IllegalStateException e) {
+
+        }
         this.view.refresh(this.playerState.getSkillTreeState(), this.skillService.getSkillTree());
-        super.show();
+
     }
 
     @Override
-    public void onSkillLeftClicked(String nodeId) {
-        // TODO: add point to corresponding node
-        // TODO: refresh skillTree
-    }
+    public void onSkillRightClicked(String skillId) {
+        try {
+            this.skillService.removePoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
+                    skillId);
+        } catch (IllegalStateException e) {
 
-    @Override
-    public void onSkillRightClicked(String nodeId) {
-        // TODO: remove point to corresponding node
-        // TODO: refresh skillTree
+        }
+        this.view.refresh(this.playerState.getSkillTreeState(), this.skillService.getSkillTree());
     }
 
     @Override

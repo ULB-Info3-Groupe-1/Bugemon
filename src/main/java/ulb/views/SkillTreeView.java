@@ -23,7 +23,8 @@ public class SkillTreeView extends View {
     // Click on a skill node
     // Use an algorithm to dispatch properly the node...
     // Node should have colors and unlocked or not...
-    // Drawing the link between node ? Spline or straight line ?? Reingold–Tilford layout
+    // Drawing the link between node ? Spline or straight line ?? Reingold–Tilford
+    // layout
 
     private static final double NODE_WIDTH = 120.0;
     private static final double NODE_HEIGHT = 80.0;
@@ -260,9 +261,9 @@ public class SkillTreeView extends View {
     }
 
     public interface Listener {
-        void onSkillLeftClicked(SkillNode node);
+        void onSkillLeftClicked(String nodeId);
 
-        void onSkillRightClicked(SkillNode node);
+        void onSkillRightClicked(String nodeId);
 
         void onReturnToMainMenu();
     }

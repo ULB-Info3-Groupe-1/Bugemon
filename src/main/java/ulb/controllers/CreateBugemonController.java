@@ -46,7 +46,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
     public void updateAvailableAttacks() {
         this.selectedBugemonType.ifPresent(bugemonType -> {
-            List<Attack> attacks = this.bugemonService.getAttacksByType(bugemonType);
+            List<Attack> attacks = this.bugemonService.getAttacks(bugemonType);
             this.view.setAvailableAttacks(attacks);
         });
     }
@@ -64,10 +64,6 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
             return;
         }
 
-        Attack attack1 = attacks.get(0);
-        Attack attack2 = attacks.get(1);
-        Attack attack3 = attacks.get(2);
-
         if (this.selectedBugemonSpriteUrl.isEmpty()) {
             this.view.showInvalidFormChooseSprite();
             return;
@@ -78,8 +74,9 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
             return;
         }
 
-        CreateBugemonDTO bugemonToCreate = new CreateBugemonDTO(bugemonName, this.selectedBugemonType.get(),
-                this.selectedBugemonSpriteUrl.get(), defense, attack, initiative, hp, false, attack1, attack2, attack3);
+        CreateBugemonDTO bugemonToCreate = this.bugemonService.createBugemon(bugemonName,
+                this.selectedBugemonType.get(), this.selectedBugemonSpriteUrl.get(), attack, defense, initiative, hp,
+                attacks);
 
         try {
             this.bugemonService.saveNewBugemon(bugemonToCreate);

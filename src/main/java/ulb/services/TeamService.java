@@ -2,6 +2,7 @@ package ulb.services;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
@@ -30,6 +31,10 @@ public class TeamService {
         this.playerName = playerName;
         this.teamRepository = teamRepository;
         this.bugemonRepository = bugemonRepository;
+    }
+
+    public Optional<Team> getTeam(String teamName) {
+        return this.teamRepository.findByName(this.playerName, teamName).map(this::createTeam);
     }
 
     public List<String> getTeamNames() {
@@ -66,14 +71,14 @@ public class TeamService {
         this.teamRepository.delete(this.playerName, teamName);
     }
 
+    public void deleteTeams() {
+        this.teamRepository.deleteAll(this.playerName);
+    }
+
     public void renameTeam(Team team, String newName) {
         this.deleteTeam(team.getName());
         team.setName(newName);
         this.createTeam(this.teamToDTO(team));
-    }
-
-    public void deleteTeams() {
-        this.teamRepository.deleteAll(this.playerName);
     }
 
     public void save(Team team) {

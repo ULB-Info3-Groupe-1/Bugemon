@@ -109,17 +109,17 @@ public class MetaController {
 
         this.saveMenuController = new SaveMenuController(this, bugemonService, teamService, towerService,
                 inventoryService);
-        this.mainMenuController = new MainMenuController(this, teamService);
+        this.mainMenuController = new MainMenuController(this, playerState);
         this.combatController = new CombatController(this, this.combatService);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                teamService, bugemonService);
+                teamService, playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
-                bugemonService);
+                playerState);
         this.createBugemonController = new CreateBugemonController(this, bugemonService);
         this.levelUpController = new LevelUpController(this, bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.skillTreeController = new SkillTreeController(this, skillService);
+        this.skillTreeController = new SkillTreeController(this, skillService, playerState);
         this.musicPlayer = new MusicPlayer();
         this.musicLoader = new MusicLoader();
         this.initializeMusicResources();
