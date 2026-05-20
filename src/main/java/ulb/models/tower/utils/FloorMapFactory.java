@@ -81,6 +81,9 @@ public class FloorMapFactory {
         List<int[]> shuffledDirs = new ArrayList<>(Arrays.asList(DIRECTIONS));
         Collections.shuffle(shuffledDirs, random);
 
+        int numBranchesGenerated = 0; // keep track of number of generated branches to return empty if could not
+                                      // generate enough branches.
+
         // grow the branches
         for (int b = 0; b < branchCount; b++) {
             int[] dir = shuffledDirs.get(b); // allows us to grow every branch in a different direction
@@ -89,12 +92,40 @@ public class FloorMapFactory {
             int col = CENTER + dir[0];
             int row = CENTER + dir[1];
 
-            boolean inBounds = inBounds(col, row);
+            boolean branchStartPosInBounds = inBounds(col, row);
             boolean branchStartPosAvailable = !nodeCoords.containsKey(nodeKey(col, row));
 
-            // TODO: (!inBounds || !branchStartPosAvailable) -> must retry generating the floor
+            if (!branchStartPosInBounds || !branchStartPosAvailable) {
+                continue;
+            }
+
+            // TODO: grow the branch
+
+            numBranchesGenerated++;
         }
 
+        if (numBranchesGenerated < numBranchesGenerated) {
+            return Optional.empty();
+        }
+    }
+
+    private static List<int[]> validNextDirs(int col, int row, int[] lastDir, Map<String, int[]> nodeCoords) {
+        List<int[]> result = new ArrayList<>();
+        for (int[] d : DIRECTIONS) {
+            if (d[0] == -lastDir[0] && d[1] == -lastDir[1]) {
+                continue;
+            }
+            int nextCol = col + d[0];
+            int nextRow = row + d[1];
+
+            boolean inBounds = inBounds(nextCol, nextRow);
+            boolean overlapping = nodeCoords.containsKey(nodeKey(nextCol, nextRow));
+
+            if (!inBounds && !overlapping) {
+                result.add(d);
+            }
+        }
+        return result;
     }
 
     private void generateNewFloor() {
