@@ -47,8 +47,7 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     public void save(String playername, PlayerBugemonDTO dto) {
         LOG.debug("Saving player bugemon '{}' for playername: {}", dto.bugemonName(), playername);
         executeUpdate("SavePlayerBugemon", dto.playername(), dto.bugemonName(), dto.bonusDefense(),
-                dto.bonusAttackPower(), dto.bonusInitiative(), dto.bonusMaxHp(), dto.xp(),
-                dto.level());
+                dto.bonusAttackPower(), dto.bonusInitiative(), dto.bonusMaxHp(), dto.xp(), dto.level());
     }
 
     @Override

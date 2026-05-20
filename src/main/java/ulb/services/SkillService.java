@@ -31,8 +31,7 @@ public class SkillService {
     public SkillTreeState getSkillTreeState() {
         List<SkillDTO> dtos = this.skillRepository.findAll(this.playername);
         int skillPoints = this.skillRepository.findSkillPoints(this.playername);
-        Map<String, Integer> levels = dtos.stream()
-                .collect(Collectors.toMap(SkillDTO::skillId, SkillDTO::level));
+        Map<String, Integer> levels = dtos.stream().collect(Collectors.toMap(SkillDTO::skillId, SkillDTO::level));
         return SkillTreeState.restore(levels, skillPoints);
     }
 
@@ -42,8 +41,7 @@ public class SkillService {
 
     private List<SkillDTO> toDTO(SkillTreeState skillTreeState) {
         return skillTreeState.getSkillLevels().entrySet().stream()
-                .map(entry -> new SkillDTO(entry.getKey(), entry.getValue()))
-                .toList();
+                .map(entry -> new SkillDTO(entry.getKey(), entry.getValue())).toList();
     }
 
 }

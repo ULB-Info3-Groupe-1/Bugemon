@@ -23,8 +23,7 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerInputHandler;
 
 /**
- * Handles combat lifecycle (XP finalisation, damage preview) and creates
- * {@link CombatFactory} instances.
+ * Handles combat lifecycle (XP finalisation, damage preview) and creates {@link CombatFactory} instances.
  */
 public class CombatService {
 
@@ -65,8 +64,7 @@ public class CombatService {
                 PlayerBugemon playerBugemon = participant.getPlayerBugemon();
                 int numLevelPassed = playerBugemon.addXp(xpPerBugemon);
                 for (int i = 0; i < numLevelPassed; i++) {
-                    levelUpResults.add(
-                            new LevelUpResult(playerBugemon, playerBugemon.getLevel() - numLevelPassed + i));
+                    levelUpResults.add(new LevelUpResult(playerBugemon, playerBugemon.getLevel() - numLevelPassed + i));
                 }
             }
         }

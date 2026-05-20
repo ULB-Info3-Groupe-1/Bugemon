@@ -293,8 +293,7 @@ public class Parser {
     private static SkillEffect parseSkillEffect(JsonObject obj) {
         String type = obj.get("type").getAsString();
         return switch (type) {
-            case "stat_bonus" -> new SkillEffect.StatBonusEffect(
-                    parseStatType(obj.get("stat").getAsString()),
+            case "stat_bonus" -> new SkillEffect.StatBonusEffect(parseStatType(obj.get("stat").getAsString()),
                     obj.get("valeur").getAsInt());
             case "type_multiplicateur" -> new SkillEffect.TypeMultiplierEffect(
                     ElementType.valueOf(obj.get("type_cible").getAsString().toUpperCase()),
@@ -302,9 +301,8 @@ public class Parser {
             case "critique_bonus" -> new SkillEffect.CritBonusEffect(obj.get("valeur").getAsDouble());
             case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(obj.get("valeur_pourcent").getAsDouble());
             case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(obj.get("valeur").getAsDouble());
-            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(
-                    obj.get("quantite").getAsInt(),
-                    obj.get("categorie").getAsString());
+            case "objets_bonus" ->
+                new SkillEffect.StarterItemsEffect(obj.get("quantite").getAsInt(), obj.get("categorie").getAsString());
             case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(obj.get("valeur").getAsInt());
             default -> throw new IllegalArgumentException("Unknown skill effect type: " + type);
         };

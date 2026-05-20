@@ -67,8 +67,7 @@ public class SkillTreeState {
 
     public boolean canAddPoint(String nodeId, SkillTree tree) {
         SkillNode node = tree.getById(nodeId);
-        return this.skillPoints >= node.cost()
-                && this.getNodeLevel(nodeId) < node.maxLevel()
+        return this.skillPoints >= node.cost() && this.getNodeLevel(nodeId) < node.maxLevel()
                 && this.isAvailable(node, tree);
     }
 
@@ -119,8 +118,7 @@ public class SkillTreeState {
             if (this.getNodeLevel(dependent.id()) <= 0) {
                 continue;
             }
-            boolean hasOtherActivePrereq = dependent.prerequisites().stream()
-                    .filter(pId -> !pId.equals(nodeId))
+            boolean hasOtherActivePrereq = dependent.prerequisites().stream().filter(pId -> !pId.equals(nodeId))
                     .anyMatch(pId -> this.getNodeLevel(pId) > 0);
             if (!hasOtherActivePrereq) {
                 return true;
@@ -144,6 +142,7 @@ public class SkillTreeState {
                     case ATTACK -> atk += b * level;
                     case DEFENSE -> def += b * level;
                     case INITIATIVE -> init += b * level;
+                    default -> throw new IllegalStateException("Unexpected stat type: " + statBonus.stat());
                 }
             }
         }

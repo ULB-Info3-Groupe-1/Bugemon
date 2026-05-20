@@ -37,9 +37,8 @@ public class DatabaseInitializer extends AbstractRepository {
     private final List<Item> items;
     private final List<SkillNode> skillNodes;
 
-    public DatabaseInitializer(DatabaseConnection dbConnection, Map<String, String> queries,
-            List<Bugemon> bugemonData, Map<String, Attack> attackData, List<Item> itemData,
-            List<SkillNode> skillNodeData) {
+    public DatabaseInitializer(DatabaseConnection dbConnection, Map<String, String> queries, List<Bugemon> bugemonData,
+            Map<String, Attack> attackData, List<Item> itemData, List<SkillNode> skillNodeData) {
         super(dbConnection, queries);
         this.defaultBugemons = bugemonData;
         this.attacks = attackData;
@@ -176,32 +175,32 @@ public class DatabaseInitializer extends AbstractRepository {
     }
 
     private void saveSkillNode(SkillNode node) {
-        this.executeUpdate("SaveSkillNode",
-                node.id(), node.name(), node.description(), node.cost(), node.maxLevel(), node.x(), node.y());
+        this.executeUpdate("SaveSkillNode", node.id(), node.name(), node.description(), node.cost(), node.maxLevel(),
+                node.x(), node.y());
         if (node.effect() != null) {
             this.saveSkillEffect(node.id(), node.effect());
         }
-        node.prerequisites().forEach(prereqId ->
-                this.executeUpdate("SaveSkillPrerequisite", node.id(), prereqId));
+        node.prerequisites().forEach(prereqId -> this.executeUpdate("SaveSkillPrerequisite", node.id(), prereqId));
     }
 
     private void saveSkillEffect(String skillId, SkillEffect effect) {
         switch (effect) {
-            case SkillEffect.StatBonusEffect e -> this.executeUpdate("SaveSkillEffect",
-                    skillId, "stat_bonus", e.stat().name(), null, null, e.bonus(), null);
-            case SkillEffect.TypeMultiplierEffect e -> this.executeUpdate("SaveSkillEffect",
-                    skillId, "type_multiplicateur", null, e.type().name(), e.mult(), null, null);
-            case SkillEffect.CritBonusEffect e -> this.executeUpdate("SaveSkillEffect",
-                    skillId, "critique_bonus", null, null, e.extraChance(), null, null);
-            case SkillEffect.RegenPostCombatEffect e -> this.executeUpdate("SaveSkillEffect",
-                    skillId, "regen_post_combat", null, null, e.percent(), null, null);
-            case SkillEffect.XpMultiplierEffect e -> this.executeUpdate("SaveSkillEffect",
-                    skillId, "xp_multiplicateur", null, null, e.multiplier(), null, null);
-            case SkillEffect.StarterItemsEffect e -> this.executeUpdate("SaveSkillEffect",
-                    skillId, "objets_bonus", null, null, null, e.quantity(), e.category());
-            case SkillEffect.RewardChoiceEffect e -> this.executeUpdate("SaveSkillEffect",
-                    skillId, "recompense_choix", null, null, null, e.totalChoices(), null);
-            default -> throw new IllegalStateException("Unknown skill effect type: " + effect.getClass().getSimpleName());
+            case SkillEffect.StatBonusEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "stat_bonus",
+                    e.stat().name(), null, null, e.bonus(), null);
+            case SkillEffect.TypeMultiplierEffect e -> this.executeUpdate("SaveSkillEffect", skillId,
+                    "type_multiplicateur", null, e.type().name(), e.mult(), null, null);
+            case SkillEffect.CritBonusEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "critique_bonus", null,
+                    null, e.extraChance(), null, null);
+            case SkillEffect.RegenPostCombatEffect e -> this.executeUpdate("SaveSkillEffect", skillId,
+                    "regen_post_combat", null, null, e.percent(), null, null);
+            case SkillEffect.XpMultiplierEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "xp_multiplicateur",
+                    null, null, e.multiplier(), null, null);
+            case SkillEffect.StarterItemsEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "objets_bonus",
+                    null, null, null, e.quantity(), e.category());
+            case SkillEffect.RewardChoiceEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "recompense_choix",
+                    null, null, null, e.totalChoices(), null);
+            default ->
+                throw new IllegalStateException("Unknown skill effect type: " + effect.getClass().getSimpleName());
         }
     }
 

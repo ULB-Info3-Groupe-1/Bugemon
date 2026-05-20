@@ -22,8 +22,8 @@ public class PlayerBugemon {
     }
 
     public static PlayerBugemon from(Bugemon base, PlayerBugemonDTO dto) {
-        BonusStats bonusStats = new BonusStats(
-                dto.bonusMaxHp(), dto.bonusAttackPower(), dto.bonusDefense(), dto.bonusInitiative());
+        BonusStats bonusStats = new BonusStats(dto.bonusMaxHp(), dto.bonusAttackPower(), dto.bonusDefense(),
+                dto.bonusInitiative());
         return new PlayerBugemon(base, dto.level(), dto.xp(), bonusStats, base.attacks());
     }
 
@@ -137,7 +137,7 @@ public class PlayerBugemon {
 
     public PlayerBugemonDTO toDTO(String playerName) {
         return new PlayerBugemonDTO(playerName, this.base.name(), this.bonusStats.getBonusDefense(),
-                this.bonusStats.getBonusAttack(), this.bonusStats.getBonusInitiative(),
-                this.bonusStats.getBonusHp(), this.xp, this.level);
+                this.bonusStats.getBonusAttack(), this.bonusStats.getBonusInitiative(), this.bonusStats.getBonusHp(),
+                this.xp, this.level);
     }
 }
