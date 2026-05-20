@@ -39,6 +39,14 @@ public class SkillService {
         return this.staticRepository.skillTree();
     }
 
+    public void addPoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId) {
+        skillTreeState.addPoint(nodeId, skillTree);
+    }
+
+    public void removePoint(SkillTreeState skillTreeState, SkillTree skillTree, String nodeId) {
+        skillTreeState.removePoint(nodeId, skillTree);
+    }
+
     private List<SkillDTO> toDTO(SkillTreeState skillTreeState) {
         return skillTreeState.getSkillLevels().entrySet().stream()
                 .map(entry -> new SkillDTO(entry.getKey(), entry.getValue())).toList();

@@ -40,4 +40,10 @@ public class PlayerState {
     public SkillTreeState getSkillTreeState() {
         return this.skillTreeState;
     }
+
+    public void clear() {
+        this.activeTeam = null;
+        this.inventory.clear();
+        this.skillTreeState.clear();
+    }
 }

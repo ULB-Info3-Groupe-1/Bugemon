@@ -100,6 +100,11 @@ public class SkillTreeState {
         }
     }
 
+    public void clear() {
+        this.skillLevels.clear();
+        this.skillPoints = 0;
+    }
+
     private void cascadeDeactivate(String removedNodeId, SkillTree tree) {
         for (SkillNode dependent : tree.getDependents(removedNodeId)) {
             int dependentLevel = this.getNodeLevel(dependent.id());

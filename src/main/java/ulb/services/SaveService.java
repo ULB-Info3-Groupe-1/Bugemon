@@ -9,11 +9,18 @@ public class SaveService {
     private final TeamService teamService;
 
     public SaveService(SkillService skillService, BugemonService bugemonService, InventoryService inventoryService,
-            TeamService teamService, PlayerState playerState) {
+            TeamService teamService) {
         this.skillService = skillService;
         this.bugemonService = bugemonService;
         this.inventoryService = inventoryService;
         this.teamService = teamService;
+    }
+
+    public void clear(PlayerState playerState) {
+        this.bugemonService.removePlayerBugemons();
+        this.inventoryService.resetInventory();
+        this.teamService.deleteTeams();
+        playerState.clear();
     }
 
     public void save(PlayerState playerState) {

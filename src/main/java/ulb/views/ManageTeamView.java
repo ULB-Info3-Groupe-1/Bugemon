@@ -2,7 +2,6 @@ package ulb.views;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -125,16 +124,6 @@ public class ManageTeamView extends View {
         void onStartManualCombat();
 
         void onStartTowerCombat();
-
-        Team getWorkingTeam();
-
-        boolean isWorkingTeamSaved();
-
-        List<String> getTeamNames();
-
-        Optional<String> getActiveTeamName();
-
-        List<PlayerBugemon> getAvailableBugemons();
 
         void onTeamSelected(String teamName);
     }
