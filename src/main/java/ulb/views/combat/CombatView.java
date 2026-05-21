@@ -121,6 +121,13 @@ public class CombatView extends View {
     }
 
     private void initListeners() {
+        this.initActionMenuListener();
+        this.initAttackMenuListener();
+        this.initSwitchMenuListener();
+        this.initItemMenuListener();
+    }
+
+    private void initActionMenuListener() {
         this.actionMenu.setListener(new ActionMenuView.Listener() {
             @Override
             public void onAttack() {
@@ -148,10 +155,11 @@ public class CombatView extends View {
                 if (CombatView.this.listener != null) {
                     CombatView.this.listener.onForfeit();
                 }
-
             }
         });
+    }
 
+    private void initAttackMenuListener() {
         this.attackMenu.setListener(new AttackMenuView.Listener() {
             @Override
             public void onAttackChosen(Attack attack) {
@@ -178,7 +186,9 @@ public class CombatView extends View {
                 CombatView.this.showMainActionMenu();
             }
         });
+    }
 
+    private void initSwitchMenuListener() {
         this.switchMenu.setListener(new SwitchMenuView.Listener() {
             @Override
             public void onSwitch(CombatBugemon bugemon) {
@@ -192,7 +202,9 @@ public class CombatView extends View {
                 CombatView.this.showMainActionMenu();
             }
         });
+    }
 
+    private void initItemMenuListener() {
         this.itemMenuView.setListener(new ItemMenuView.Listener() {
             @Override
             public void onItemChosen(Item item) {
