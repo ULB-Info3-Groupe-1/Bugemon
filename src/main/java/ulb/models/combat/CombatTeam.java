@@ -56,7 +56,7 @@ public class CombatTeam {
     }
 
     public boolean hasAvailable() {
-        return this.getAvailable().size() > 0;
+        return !this.getAvailable().isEmpty();
     }
 
     public void syncToRunTeam() {

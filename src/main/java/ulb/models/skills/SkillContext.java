@@ -15,26 +15,30 @@ public class SkillContext {
     }
 
     public int getAttackBonus() {
-        if (this.state == null)
+        if (this.state == null) {
             return 0;
+        }
         return this.state.getTotalStatBonus(this.tree).getBonusAttack();
     }
 
     public int getDefenseBonus() {
-        if (this.state == null)
+        if (this.state == null) {
             return 0;
+        }
         return this.state.getTotalStatBonus(this.tree).getBonusDefense();
     }
 
     public double getTypeMultiplier(ElementType attackType) {
-        if (this.state == null)
+        if (this.state == null) {
             return 1.0;
+        }
         return this.state.getTypeMultiplier(this.tree, attackType);
     }
 
     public double getXpMultiplier() {
-        if (this.state == null)
+        if (this.state == null) {
             return 1.0;
+        }
         return this.state.getXpMultiplier(this.tree);
     }
 }

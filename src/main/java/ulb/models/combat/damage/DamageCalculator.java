@@ -34,7 +34,7 @@ public class DamageCalculator {
     }
 
     public int calculateDamage(Attack attack, int attackerEffectiveAttack, int defenderEffectiveDefense) {
-        double power = (double) attack.power();
+        double power = attack.power();
         double attackFactor = this.attackFactorFormula.evaluate(attackerEffectiveAttack);
         double reductionFactor = this.reductionFactorFormula.evaluate(defenderEffectiveDefense);
         double totalDamage = power * attackFactor * reductionFactor;

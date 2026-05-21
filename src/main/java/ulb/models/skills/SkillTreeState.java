@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ulb.Configuration;
+import ulb.common.StatType;
 import ulb.models.bugemon.ElementType;
 import ulb.models.player.BonusStats;
 import ulb.models.skills.SkillEffect.CritBonusEffect;
@@ -53,13 +54,13 @@ public class SkillTreeState {
         if (level > 0) {
             return SkillStatus.ACTIVE;
         }
-        if (this.isAvailable(tree.getById(nodeId), tree)) {
+        if (this.isAvailable(tree.getById(nodeId))) {
             return SkillStatus.AVAILABLE;
         }
         return SkillStatus.LOCKED;
     }
 
-    private boolean isAvailable(SkillNode node, SkillTree tree) {
+    private boolean isAvailable(SkillNode node) {
         if (node.prerequisites().isEmpty()) {
             return true;
         }
@@ -68,8 +69,7 @@ public class SkillTreeState {
 
     public boolean canAddPoint(String nodeId, SkillTree tree) {
         SkillNode node = tree.getById(nodeId);
-        return this.skillPoints >= node.cost() && this.getNodeLevel(nodeId) < node.maxLevel()
-                && this.isAvailable(node, tree);
+        return this.skillPoints >= node.cost() && this.getNodeLevel(nodeId) < node.maxLevel() && this.isAvailable(node);
     }
 
     public boolean canRemovePoint(String nodeId, SkillTree tree) {
@@ -109,7 +109,7 @@ public class SkillTreeState {
     private void cascadeDeactivate(String removedNodeId, SkillTree tree) {
         for (SkillNode dependent : tree.getDependents(removedNodeId)) {
             int dependentLevel = this.getNodeLevel(dependent.id());
-            if (dependentLevel > 0 && !this.isAvailable(dependent, tree)) {
+            if (dependentLevel > 0 && !this.isAvailable(dependent)) {
                 this.skillPoints += dependent.cost() * dependentLevel;
                 this.skillLevels.remove(dependent.id());
             }
@@ -141,14 +141,15 @@ public class SkillTreeState {
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
             int level = entry.getValue();
-            if (node.effect() instanceof StatBonusEffect statBonus) { // visitor pattern would be cleaner
-                int b = statBonus.bonus();
-                switch (statBonus.stat()) {
+            if (node.effect() instanceof StatBonusEffect(StatType stat, int bonus)) { // visitor pattern would be
+                                                                                      // cleaner
+                int b = bonus;
+                switch (stat) {
                     case HP -> hp += b * level;
                     case ATTACK -> atk += b * level;
                     case DEFENSE -> def += b * level;
                     case INITIATIVE -> init += b * level;
-                    default -> throw new IllegalStateException("Unexpected stat type: " + statBonus.stat());
+                    default -> throw new IllegalStateException("Unexpected stat type: " + stat);
                 }
             }
         }
@@ -159,8 +160,8 @@ public class SkillTreeState {
         double bonus = 0.0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof XpMultiplierEffect xpBonus) {
-                bonus += (xpBonus.multiplier() - 1.0) * entry.getValue();
+            if (node.effect() instanceof XpMultiplierEffect(double multiplier)) {
+                bonus += (multiplier - 1.0) * entry.getValue();
             }
         }
         return 1.0 + bonus;
@@ -170,19 +171,19 @@ public class SkillTreeState {
         int total = 0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof CritBonusEffect critBonus) {
-                total += critBonus.extraChance() * entry.getValue();
+            if (node.effect() instanceof CritBonusEffect(double extraChance)) {
+                total += extraChance * entry.getValue();
             }
         }
         return total;
     }
 
-    public double getTypeMultiplier(SkillTree tree, ElementType type) {
+    public double getTypeMultiplier(SkillTree tree, ElementType elementType) {
         double bonus = 0.0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof TypeMultiplierEffect typeBonus && typeBonus.type() == type) {
-                bonus += (typeBonus.mult() - 1.0) * entry.getValue();
+            if (node.effect() instanceof TypeMultiplierEffect(ElementType type, double mult) && elementType == type) {
+                bonus += (mult - 1.0) * entry.getValue();
             }
         }
         return 1.0 + bonus;
@@ -192,8 +193,8 @@ public class SkillTreeState {
         int total = 0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof RegenPostCombatEffect regenBonus) {
-                total += regenBonus.percent() * entry.getValue();
+            if (node.effect() instanceof RegenPostCombatEffect(double percent)) {
+                total += percent * entry.getValue();
             }
         }
         return total;
@@ -203,8 +204,8 @@ public class SkillTreeState {
         int count = Configuration.Skill.DEFAULT_LEVEL_UP_CHOICE_COUNT;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof RewardChoiceEffect rewardBonus) {
-                count = Math.max(count, rewardBonus.totalChoices());
+            if (node.effect() instanceof RewardChoiceEffect(int totalChoices)) {
+                count = Math.max(count, totalChoices);
             }
         }
         return count;

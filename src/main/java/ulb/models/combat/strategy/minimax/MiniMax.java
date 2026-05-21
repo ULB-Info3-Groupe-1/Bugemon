@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.damage.DamageCalculator;
@@ -63,10 +62,10 @@ public class MiniMax {
 
     private double solve(CombatSnapshot playerState, int depth, double alpha, double beta, boolean maximizing) {
         if (playerState.isAiDefeated()) {
-            return -WIN_SCORE - depth;
+            return (double) -WIN_SCORE - depth;
         }
         if (playerState.isOpponentDefeated()) {
-            return WIN_SCORE + depth;
+            return (double) WIN_SCORE + depth;
         }
         if (depth <= 0) {
             return this.evaluateState(playerState);
@@ -133,7 +132,7 @@ public class MiniMax {
 
         List<Map.Entry<Item, Integer>> entries = inventory.entrySet().stream()
                 .filter(e -> e.getValue() != null && e.getValue() > 0)
-                .sorted(Comparator.comparing(e -> e.getKey().id())).collect(Collectors.toList());
+                .sorted(Comparator.comparing(e -> e.getKey().id())).toList();
 
         List<SimAction> res = new ArrayList<>();
         entries.forEach(e -> res.add(SimAction.useItem(e.getKey())));
@@ -375,7 +374,7 @@ public class MiniMax {
 
         int aiHp = this.totalHp(state.aiTeam());
         int oppHp = this.totalHp(state.playerTeam());
-        return (double) (aiHp - oppHp);
+        return (aiHp - oppHp);
     }
 
     private int totalHp(TeamSnapshot team) {

@@ -14,8 +14,6 @@ import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Inventory;
 
 public class MiniMaxStrategy implements CombatStrategy {
-    public MiniMaxStrategy() {
-    }
 
     @Override
     public void chooseAction(CombatContext ctx, ActionCallback callback) {
@@ -29,24 +27,23 @@ public class MiniMaxStrategy implements CombatStrategy {
         // choose for the AI-controlled team explicitly
         SimAction action = mini.chooseBestAction(snapshot, true);
 
-        TurnAction ta;
-        switch (action.kind()) {
+        TurnAction ta = switch (action.kind()) {
             case ATTACK -> {
                 var atkList = ally.getActive().getAttacks();
-                int idx = Math.max(0, Math.min(action.index(), atkList.size() - 1));
-                ta = new TurnAction.AttackAction(atkList.get(idx));
+                int idx = Math.clamp(action.index(), 0, atkList.size() - 1);
+                yield new TurnAction.AttackAction(atkList.get(idx));
             }
             case SWITCH -> {
                 List<CombatBugemon> available = ally.getAvailable();
                 if (available.isEmpty()) {
                     throw new IllegalStateException("No available bugemon to switch");
                 }
-                int idx = Math.max(0, Math.min(action.index(), available.size() - 1));
-                ta = new TurnAction.SwitchAction(available.get(idx));
+                int idx = Math.clamp(action.index(), 0, available.size() - 1);
+                yield new TurnAction.SwitchAction(available.get(idx));
             }
-            case ITEM -> ta = new TurnAction.ItemAction(action.item());
-            default -> ta = new TurnAction.ForfeitAction();
-        }
+            case ITEM -> new TurnAction.ItemAction(action.item());
+            default -> new TurnAction.ForfeitAction();
+        };
 
         callback.onActionChosen(ta);
     }
@@ -68,7 +65,7 @@ public class MiniMaxStrategy implements CombatStrategy {
         SimAction action = mini.chooseBestAction(snapshot, true);
 
         if (action.kind() == SimActionKind.SWITCH) {
-            int idx = Math.max(0, Math.min(action.index(), available.size() - 1));
+            int idx = Math.clamp(action.index(), 0, available.size() - 1);
             callback.onActionChosen(new TurnAction.SwitchAction(available.get(idx)));
             return;
         }
