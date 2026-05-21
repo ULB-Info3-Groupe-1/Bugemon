@@ -11,7 +11,7 @@ import java.nio.file.StandardCopyOption;
 import ulb.Configuration;
 
 public class SpriteUtils {
-    
+
     private SpriteUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
@@ -27,7 +27,7 @@ public class SpriteUtils {
             try {
                 Path sourcePath = Paths.get(spriteUrl.toURI());
                 if (Files.exists(fileTarget) && Files.isSameFile(sourcePath, fileTarget)) {
-                    return; 
+                    return;
                 }
             } catch (java.net.URISyntaxException e) {
                 // we ignore and try to copy the file anyway
