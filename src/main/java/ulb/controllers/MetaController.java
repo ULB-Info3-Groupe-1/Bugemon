@@ -16,7 +16,8 @@ import ulb.controllers.combat.CombatVictoryController;
 import ulb.models.combat.Combat;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.level_up.LevelUp;
-import ulb.models.music.Ambiance;
+import ulb.models.music.BackgroundAmbiance;
+import ulb.models.music.SoundEffect;
 import ulb.models.player.PlayerState;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
@@ -187,42 +188,42 @@ public class MetaController {
 
     private void initTransitions() {
         this.transitions.put(Window.MAIN_MENU, () -> {
-            this.musicService.playAmbiance(Ambiance.MENU, false);
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
             this.mainMenuController.show();
         });
         this.transitions.put(Window.SAVE_MENU, () -> {
-            this.musicService.playAmbiance(Ambiance.MENU, false);
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
             this.saveMenuController.show();
         });
         this.transitions.put(Window.CREATE_TEAM, () -> {
-            this.musicService.playAmbiance(Ambiance.MENU, false);
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
             this.createTeamController.show();
         });
         this.transitions.put(Window.EDIT_TEAM, () -> {
-            this.musicService.playAmbiance(Ambiance.MENU, false);
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
             this.editTeamController.show();
         });
         this.transitions.put(Window.CREATE_BUGEMON, () -> {
-            this.musicService.playAmbiance(Ambiance.MENU, false);
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
             this.createBugemonController.show();
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
-            this.musicService.playAmbiance(Ambiance.COMBAT, false);
+            this.musicService.playBackground(BackgroundAmbiance.COMBAT);
             this.combatController.show();
         });
         // TODO: check to have automatic combat
         this.transitions.put(Window.AUTOMATIC_COMBAT, () -> {
-            this.musicService.playAmbiance(Ambiance.COMBAT, false);
+            this.musicService.playBackground(BackgroundAmbiance.COMBAT);
             this.combatController.show();
         });
         // TODO: add tower transitions
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();
-            this.musicService.playAmbiance(Ambiance.VICTORY, true);
+            this.musicService.playSoundEffect(SoundEffect.VICTORY);
         });
         this.transitions.put(Window.COMBAT_DEFEAT, () -> {
             this.combatDefeatController.show();
-            this.musicService.playAmbiance(Ambiance.DEFEAT, true);
+            this.musicService.playSoundEffect(SoundEffect.DEFEAT);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
         this.transitions.put(Window.SKILL_TREE, this.skillTreeController::show);
@@ -258,7 +259,7 @@ public class MetaController {
 
     public void startTowerCombat(Combat combat) {
         this.musicService.stopMusic();
-        this.musicService.playAmbiance(Ambiance.COMBAT, false);
+        this.musicService.playBackground(BackgroundAmbiance.COMBAT);
 
         this.combatController.initialize(combat);
         this.combatController.show();

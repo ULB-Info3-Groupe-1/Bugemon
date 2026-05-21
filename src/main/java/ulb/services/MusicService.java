@@ -9,8 +9,9 @@ import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.models.music.Ambiance;
+import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.Music;
+import ulb.models.music.SoundEffect;
 import ulb.repositories.MusicRepository;
 
 public class MusicService {
@@ -21,36 +22,48 @@ public class MusicService {
     private final List<MediaPlayer> activeSoundEffects;
 
     private MediaPlayer mediaPlayer;
-    private Music currentMusic;
+    private BackgroundAmbiance currentAmbiance;
 
     public MusicService(MusicRepository musicRepository) {
         this.musicRepository = musicRepository;
         this.activeSoundEffects = new ArrayList<>();
     }
 
-    private void playMusic(Music music) {
-        if (this.currentMusic != null && this.mediaPlayer != null && this.currentMusic.ambiance() == music.ambiance()) {
-            LOG.debug("Music already playing for ambiance {}, keeping current track", music.ambiance());
+    public void playBackground(BackgroundAmbiance ambiance) {
+        if (this.currentAmbiance == ambiance && this.mediaPlayer != null) {
+            LOG.debug("Music already playing for ambiance {}, keeping current track", ambiance);
             return;
         }
 
         this.stopMusic();
 
+        List<Music> tracks = this.musicRepository.findByAmbiance(ambiance);
+        if (tracks.isEmpty()) {
+            LOG.error("Error playing music matching ambiance {}: no match", ambiance);
+            return;
+        }
+
+        Music music = tracks.get(ThreadLocalRandom.current().nextInt(tracks.size()));
         try {
             Media track = new Media(music.url().toExternalForm());
             this.mediaPlayer = new MediaPlayer(track);
-
             this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             this.mediaPlayer.play();
-
-            this.currentMusic = music;
-            LOG.debug("Now playing music: {}", music.ambiance());
+            this.currentAmbiance = ambiance;
+            LOG.debug("Now playing music: {}", ambiance);
         } catch (Exception e) {
-            LOG.error("Error playing music: {}", e.getMessage());
+            LOG.error("Error playing background music: {}", e.getMessage());
         }
     }
 
-    public void playSoundEffect(Music music) {
+    public void playSoundEffect(SoundEffect effect) {
+        List<Music> tracks = this.musicRepository.findByEffect(effect);
+        if (tracks.isEmpty()) {
+            LOG.error("Error playing sound effect {}: no match", effect);
+            return;
+        }
+
+        Music music = tracks.get(ThreadLocalRandom.current().nextInt(tracks.size()));
         try {
             Media track = new Media(music.url().toExternalForm());
             MediaPlayer sfxPlayer = new MediaPlayer(track);
@@ -69,29 +82,12 @@ public class MusicService {
         }
     }
 
-    public void playAmbiance(Ambiance ambiance, boolean isSoundEffect) {
-        List<Music> matchingMusics = this.musicRepository.findByAmbiance(ambiance);
-
-        if (matchingMusics.isEmpty()) {
-            LOG.error("Error playing music matching ambiance {}: no match", ambiance);
-            return;
-        }
-
-        Music music = matchingMusics.get(ThreadLocalRandom.current().nextInt(matchingMusics.size()));
-
-        if (isSoundEffect) {
-            this.playSoundEffect(music);
-        } else {
-            this.playMusic(music);
-        }
-    }
-
     public void stopMusic() {
         if (this.mediaPlayer != null) {
             this.mediaPlayer.stop();
             this.mediaPlayer.dispose();
             this.mediaPlayer = null;
         }
-        this.currentMusic = null;
+        this.currentAmbiance = null;
     }
 }
