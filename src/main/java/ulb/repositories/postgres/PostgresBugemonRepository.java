@@ -12,14 +12,15 @@ import org.slf4j.LoggerFactory;
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
+import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PostgresBugemonRepository extends AbstractRepository implements BugemonRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresBugemonRepository.class);
-    private final PostgresStaticRepository staticDataRepository;
+    private final StaticRepository staticDataRepository;
 
     public PostgresBugemonRepository(DatabaseConnection dbConnection, Map<String, String> queries,
-            PostgresStaticRepository staticDataRepository) {
+            StaticRepository staticDataRepository) {
         super(dbConnection, queries);
         this.staticDataRepository = staticDataRepository;
     }
