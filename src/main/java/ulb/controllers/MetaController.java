@@ -94,11 +94,11 @@ public class MetaController {
         this.mainMenuController = new MainMenuController(this, playerState);
         this.combatController = new CombatController(this, this.combatService, services.skill, playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                services.team, playerState);
+                services.team, bugemonService, playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
-                playerState);
-        this.createBugemonController = new CreateBugemonController(this, services.bugemon);
-        this.levelUpController = new LevelUpController(this, services.bugemon);
+                bugemonService, playerState);
+        this.createBugemonController = new CreateBugemonController(this, bugemonService);
+        this.levelUpController = new LevelUpController(this, bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.skillTreeController = new SkillTreeController(this, services.skill, playerState);
@@ -175,8 +175,8 @@ public class MetaController {
             RunTeam playerRunTeam = RunTeam.fromTeam(team);
             List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
             TeamFactory opponentFactory = this.combatService.createRandomOpponentFactory();
-            CombatFactory combatFactory = this.combatService.createAutoCombatFactory(
-                    opponentFactory, Configuration.Game.FLOOR_MIN, false);
+            CombatFactory combatFactory = this.combatService.createAutoCombatFactory(opponentFactory,
+                    Configuration.Game.FLOOR_MIN, false);
             this.combatController.startCombat(playerRunTeam, combatFactory, bugemons);
             this.switchTo(Window.AUTOMATIC_COMBAT);
         });

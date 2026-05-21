@@ -70,8 +70,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     private void updateWorkingTeamToShow() {
-        List<BugemonDisplayDTO> memberDTOs = this.tmpTeam.getMembers().stream()
-                .map(PlayerBugemon::toDisplayDTO).toList();
+        List<BugemonDisplayDTO> memberDTOs = this.tmpTeam.getMembers().stream().map(PlayerBugemon::toDisplayDTO)
+                .toList();
         this.view.refreshWorkingTeam(memberDTOs);
         if (this.tmpTeam.isEmpty()) {
             this.view.refreshWorkingTeamNameToShow(NO_TEAM_SELECTED);

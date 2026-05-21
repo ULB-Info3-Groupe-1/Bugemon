@@ -143,8 +143,8 @@ public class PlayerBugemon {
     }
 
     public BugemonDisplayDTO toDisplayDTO() {
-        return new BugemonDisplayDTO(this.base, this.bonusStats.getBonusDefense(),
-                this.bonusStats.getBonusAttack(), this.bonusStats.getBonusInitiative(), this.bonusStats.getBonusHp(),
-                this.xp, this.level, this.currentAttacks);
+        return new BugemonDisplayDTO(this.base, this.bonusStats.getBonusDefense(), this.bonusStats.getBonusAttack(),
+                this.bonusStats.getBonusInitiative(), this.bonusStats.getBonusHp(), this.xp, this.level,
+                this.currentAttacks);
     }
 }

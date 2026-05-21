@@ -10,8 +10,7 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Produces a {@link Team} led by a named boss Bugémon, padded with random
- * members.
+ * Produces a {@link Team} led by a named boss Bugémon, padded with random members.
  */
 public class BossTeamFactory extends TeamFactory {
 
@@ -24,9 +23,7 @@ public class BossTeamFactory extends TeamFactory {
     @Override
     public Team create(int size, List<Bugemon> bugemons) {
         this.checkSize(size);
-        Bugemon boss = bugemons.stream()
-                .filter(b -> b.name().equals(BOSS_NAME))
-                .findFirst()
+        Bugemon boss = bugemons.stream().filter(b -> b.name().equals(BOSS_NAME)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown boss: " + BOSS_NAME));
         Team team = new Team();
         team.add(new PlayerBugemon(boss));

@@ -49,9 +49,9 @@ public class BugemonService {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
         List<PlayerBugemon> listToReturn = new ArrayList<>();
         for (Bugemon bugemon : this.staticDataRepository.bugemons()) {
-            playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())).findFirst()
-                    .ifPresentOrElse(dto -> listToReturn.add(PlayerBugemon.from(bugemon, dto)),
-                            () -> listToReturn.add(new PlayerBugemon(bugemon)));
+            playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())).findFirst().ifPresentOrElse(
+                    dto -> listToReturn.add(PlayerBugemon.from(bugemon, dto)),
+                    () -> listToReturn.add(new PlayerBugemon(bugemon)));
         }
         return listToReturn;
     }

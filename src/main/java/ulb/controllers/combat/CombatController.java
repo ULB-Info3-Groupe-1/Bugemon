@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
@@ -29,7 +30,6 @@ import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Item;
 import ulb.models.player.PlayerInputHandler;
 import ulb.models.player.PlayerState;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.run.RunTeam;
 import ulb.models.skills.SkillContext;
 import ulb.services.CombatService;
@@ -38,12 +38,9 @@ import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
 /**
- * Main controller for the combat screen. Integrates both the step-by-step
- * animation logic and the manual player input
- * logic, replacing the old ManualCombatController. * It acts as the
- * {@link CombatStrategy} for the player, intercepting
- * the request for actions/switches from the Combat model and opening the UI
- * menus accordingly.
+ * Main controller for the combat screen. Integrates both the step-by-step animation logic and the manual player input
+ * logic, replacing the old ManualCombatController. * It acts as the {@link CombatStrategy} for the player, intercepting
+ * the request for actions/switches from the Combat model and opening the UI menus accordingly.
  */
 public class CombatController extends Controller<CombatView>
         implements CombatView.Listener, CombatView.NextListener, PlayerInputHandler {
@@ -72,20 +69,19 @@ public class CombatController extends Controller<CombatView>
     }
 
     /**
-     * Builds and initializes a manual standalone combat; the opponent team is
-     * produced by {@code opponentFactory}.
+     * Builds and initializes a manual standalone combat; the opponent team is produced by {@code opponentFactory}.
      */
     public void startCombat(RunTeam playerRunTeam, CombatFactory combatFactory, List<Bugemon> availableBugemons) {
         SkillContext skillContext = this.skillService.buildSkillContext(this.playerState.getSkillTreeState());
-        this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), skillContext,
-                availableBugemons));
+        this.initialize(
+                combatFactory.create(playerRunTeam, this.playerState.getInventory(), skillContext, availableBugemons));
     }
 
     /**
      * Initializes a new combat session.
      *
      * @param combat
-     *               the new Combat model instance
+     *            the new Combat model instance
      */
     public void initialize(Combat newCombat) {
         this.combat = newCombat;

@@ -26,8 +26,7 @@ import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
 
 /**
- * Handles combat lifecycle (XP finalisation, damage preview) and creates
- * {@link CombatFactory} instances.
+ * Handles combat lifecycle (XP finalisation, damage preview) and creates {@link CombatFactory} instances.
  */
 public class CombatService {
 

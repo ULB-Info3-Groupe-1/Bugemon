@@ -17,8 +17,8 @@ public class ManualCombatFactory extends CombatFactory {
     private final Inventory defaultInventory;
 
     public ManualCombatFactory(Inventory defaultInventory, DamageCalculator damageCalculator,
-            EffectProcessor effectProcessor, Random random, PlayerInputHandler handler,
-            TeamFactory opponentFactory, int floor, boolean bossMode) {
+            EffectProcessor effectProcessor, Random random, PlayerInputHandler handler, TeamFactory opponentFactory,
+            int floor, boolean bossMode) {
         super(opponentFactory, damageCalculator, effectProcessor, random, floor, bossMode);
         this.defaultInventory = defaultInventory;
         this.handler = handler;

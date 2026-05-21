@@ -2,7 +2,6 @@ package ulb.views;
 
 import java.util.List;
 import java.util.Set;
-
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
