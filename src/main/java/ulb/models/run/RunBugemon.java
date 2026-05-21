@@ -6,7 +6,7 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
-import ulb.models.level_up.Upgrade;
+import ulb.models.player.BonusStats;
 import ulb.models.player.PlayerBugemon;
 
 public class RunBugemon {
@@ -75,8 +75,8 @@ public class RunBugemon {
         return this.playerBugemon.getXpProgress();
     }
 
-    public void applyUpgrade(Upgrade upgrade) {
-        this.playerBugemon.applyUpgrade(upgrade);
+    public void applyUpgrade(BonusStats bonus) {
+        this.playerBugemon.applyUpgrade(bonus);
         this.currentHp = this.getMaxHp();
     }
 

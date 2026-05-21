@@ -8,7 +8,6 @@ import ulb.common.dto.BugemonDisplayDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
-import ulb.models.level_up.Upgrade;
 import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PlayerBugemon {
@@ -97,8 +96,8 @@ public class PlayerBugemon {
         return numLevelUps;
     }
 
-    public void applyUpgrade(Upgrade upgrade) {
-        this.bonusStats.apply(upgrade);
+    public void applyUpgrade(BonusStats bonus) {
+        this.bonusStats.add(bonus);
     }
 
     public String getSpritePath() {

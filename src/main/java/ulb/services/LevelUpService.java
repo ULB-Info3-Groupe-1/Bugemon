@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 
 import ulb.models.level_up.LevelUpGenerator;
-import ulb.models.level_up.Upgrade;
 import ulb.models.player.BonusStats;
 import ulb.models.run.RunBugemon;
 import ulb.repositories.BugemonRepository;
@@ -20,8 +19,8 @@ public class LevelUpService {
         this.levelUpGenerator = new LevelUpGenerator(random);
     }
 
-    public void applyLevelUp(RunBugemon bugemon, Upgrade upgrade) {
-        bugemon.applyUpgrade(upgrade);
+    public void applyLevelUp(RunBugemon bugemon, BonusStats bonus) {
+        bugemon.applyUpgrade(bonus);
         this.bugemonRepository.save(bugemon.getPlayerBugemon().toDTO(this.playername));
     }
 
