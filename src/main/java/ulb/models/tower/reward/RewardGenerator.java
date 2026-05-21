@@ -24,8 +24,7 @@ public class RewardGenerator {
         this.bonusStatsGenerator = new BonusStatsGenerator(random);
     }
 
-    public List<Reward> generate(List<Attack> availableAttacks, List<Item> availableItems, Random random,
-            RunTeam runTeam) {
+    public List<Reward> generate(List<Attack> availableAttacks, List<Item> availableItems, RunTeam runTeam) {
         List<Reward> rewards = new ArrayList<>();
         rewards.add(this.generateItemReward(availableItems));
         rewards.add(this.generateAttackReward(availableAttacks, runTeam));

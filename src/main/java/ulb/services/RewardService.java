@@ -1,14 +1,14 @@
 package ulb.services;
 
+import java.util.List;
 import java.util.Random;
-
-import com.sun.org.slf4j.internal.Logger;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.item.Inventory;
 import ulb.models.run.RunBugemon;
 import ulb.models.run.RunTeam;
 import ulb.models.tower.reward.AttackReward;
+import ulb.models.tower.reward.BonusStatsReward;
 import ulb.models.tower.reward.ItemReward;
 import ulb.models.tower.reward.Reward;
 import ulb.models.tower.reward.RewardGenerator;
@@ -21,14 +21,15 @@ public class RewardService {
     private final StaticRepository staticRepository;
     private final InventoryRepository inventoryRepository;
 
-    public RewardService(StaticRepository attackRepository, InventoryRepository itemRepository, Random random) {
+    public RewardService(StaticRepository staticRepository, InventoryRepository inventoryRepository, Random random) {
         this.rewardGenerator = new RewardGenerator(random);
         this.staticRepository = staticRepository;
         this.inventoryRepository = inventoryRepository;
     }
 
     public List<Reward> generateRewards(RunTeam runTeam) {
-        List<Reward> rewards = this.rewardGenerator.generate(this.staticRepository.attacks(), this.inventoryRepository.items runTeam);
+        List<Reward> rewards = this.rewardGenerator.generate(this.staticRepository.attacks(),
+                this.staticRepository.items(), runTeam);
         return rewards;
     }
 
@@ -36,8 +37,8 @@ public class RewardService {
         inventory.addItem(reward.getItem(), reward.getQuantity());
     }
 
-    public void applyStatBonusReward(StatBonusReward reward, RunBugemon bugemon) {
-        bugemon.applyStatBonusReward(reward.getBonus());
+    public void applyStatBonusReward(BonusStatsReward reward, RunBugemon bugemon) {
+        bugemon.applyUpgrade(reward.getBonus());
     }
 
     public void applyAttackReward(AttackReward reward, RunBugemon bugemon, Attack toReplace) {
