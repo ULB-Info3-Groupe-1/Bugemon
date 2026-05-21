@@ -44,9 +44,11 @@ public abstract class CombatFactory {
         CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), availableBugemons);
 
-        return new Combat(playerCombatTeam, opponentTeam, this.floor, this.bossMode, playerInventory,
-                this.buildOpponentInventory(), this.buildPlayerStrategy(), this.buildOpponentStrategy(),
-                this.damageCalculator, this.effectProcessor, playerSkillContext);
+        return new Combat.Builder().playerTeam(playerCombatTeam).opponentTeam(opponentTeam).floor(this.floor)
+                .bossMode(this.bossMode).playerInventory(playerInventory)
+                .opponentInventory(this.buildOpponentInventory()).playerStrategy(this.buildPlayerStrategy())
+                .opponentStrategy(this.buildOpponentStrategy()).damageCalculator(this.damageCalculator)
+                .effectProcessor(this.effectProcessor).playerSkillContext(playerSkillContext).build();
     }
 
     protected abstract CombatStrategy buildPlayerStrategy();
