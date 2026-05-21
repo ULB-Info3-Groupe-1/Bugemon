@@ -66,7 +66,7 @@ public class TestCombat {
 
         assertFalse(turnSteps.isEmpty());
         // Should contain at least 2 AttackSteps (player and opponent)
-        long attackCount = turnSteps.stream().filter(a -> a instanceof AttackStep).count();
+        long attackCount = turnSteps.stream().filter(AttackStep.class::isInstance).count();
         assertTrue("At least one attack occured", attackCount >= 1);
     }
 
@@ -80,7 +80,7 @@ public class TestCombat {
         this.combat.resolveTurn(playerAttack, opponentAttack, steps::addAll);
 
         // First AttackStep should be from player (higher initiative)
-        AttackStep first = steps.stream().filter(s -> s instanceof AttackStep).map(s -> (AttackStep) s).findFirst()
+        AttackStep first = steps.stream().filter(AttackStep.class::isInstance).map(s -> (AttackStep) s).findFirst()
                 .orElseThrow();
 
         assertEquals("Player with higher initiative is first to attack", playerAttack.attack(), first.attack());
@@ -107,7 +107,7 @@ public class TestCombat {
         List<TurnStep> steps = new ArrayList<>();
         this.combat.resolveTurn(playerAtk, opponentAtk, steps::addAll);
 
-        boolean hasKo = steps.stream().anyMatch(a -> a instanceof KoStep);
+        boolean hasKo = steps.stream().anyMatch(KoStep.class::isInstance);
         assertTrue("A Ko should occured", hasKo);
     }
 
@@ -158,7 +158,7 @@ public class TestCombat {
 
         // Player attacks first (init 70 > 30), KO opponent
         // Opponent should NOT attack
-        long attackCount = steps.stream().filter(a -> a instanceof AttackStep).count();
+        long attackCount = steps.stream().filter(AttackStep.class::isInstance).count();
         assertEquals("Only the first attacker should be able to attack", 1, attackCount);
     }
 
@@ -277,7 +277,7 @@ public class TestCombat {
 
         assertEquals(hpBefore + healAmount, itemPlayerTeam.getActive().getCurrentHp());
         assertFalse(playerInventory.hasItem(item));
-        assertTrue(turnSteps.stream().anyMatch(s -> s instanceof HealBugemonStep));
+        assertTrue(turnSteps.stream().anyMatch(HealBugemonStep.class::isInstance));
     }
 
     @Test
@@ -293,8 +293,11 @@ public class TestCombat {
                 new AutoStrategy(this.seededRandom), new AutoStrategy(this.seededRandom), new DamageCalculator(),
                 new EffectProcessor(), SkillContext.NONE);
 
+        AttackAction action1 = new AttackAction(unavailableAttack);
+        AttackAction action2 = new AttackAction(this.aquaAttack);
+
         assertThrows(IllegalArgumentException.class, () -> {
-            c.resolveTurn(new AttackAction(unavailableAttack), new AttackAction(this.aquaAttack), steps -> {
+            c.resolveTurn(action1, action2, steps -> {
             });
         });
     }
