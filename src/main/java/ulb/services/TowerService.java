@@ -14,9 +14,9 @@ import ulb.models.tower.TowerState;
 import ulb.models.tower.utils.FloorFactory;
 import ulb.repositories.TowerRepository;
 import ulb.repositories.dto.FloorMapDTO;
-import ulb.repositories.dto.TowerDTO;
 import ulb.repositories.dto.RunTeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.repositories.dto.TowerDTO;
 
 public class TowerService {
 
@@ -31,7 +31,8 @@ public class TowerService {
     }
 
     public TowerState createTower() {
-        RunTeam activeTeam = RunTeam.fromTeam(playerState.getActiveTeam().orElseThrow(() -> new IllegalStateException("Cannot start a run without an active team")));
+        RunTeam activeTeam = RunTeam.fromTeam(playerState.getActiveTeam()
+                .orElseThrow(() -> new IllegalStateException("Cannot start a run without an active team")));
         int seed = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
         Random random = new Random(seed);
         FloorFactory floorFactory = new FloorFactory(random);
@@ -48,15 +49,16 @@ public class TowerService {
         return floorFactory.create();
     }
 
-    public void save(TowerState towerState){
+    public void save(TowerState towerState) {
         towerRepository.save(playername, toDTO(towerState));
     }
 
     private TowerDTO toDTO(TowerState towerState) {
         Map<TeamMemberDTO, Integer> hpPerMember = new HashMap<>();
         RunTeam runTeam = towerState.getRunTeam();
-        for (RunBugemon runBugemon: runTeam.getMembers()) {
-            hpPerMember.put(new TeamMemberDTO(runBugemon.getName(), runTeam.getSlotOfMember(runBugemon)), runBugemon.getCurrentHp());
+        for (RunBugemon runBugemon : runTeam.getMembers()) {
+            hpPerMember.put(new TeamMemberDTO(runBugemon.getName(), runTeam.getSlotOfMember(runBugemon)),
+                    runBugemon.getCurrentHp());
         }
         FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloor(), towerState.getVisitedRoomsPosition());
         RunTeamDTO teamDTO = new RunTeamDTO(playername, towerState.getTeamName(), hpPerMember);

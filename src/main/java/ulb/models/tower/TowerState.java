@@ -50,8 +50,6 @@ public class TowerState {
     }
 
     public List<RoomPosition> getVisitedRoomsPosition() {
-        return this.floorMap.getVisitedRooms().stream()
-                .map(this.floorMap::getPosition)
-                .toList();
+        return this.floorMap.getVisitedRooms().stream().map(this.floorMap::getPosition).toList();
     }
 }
