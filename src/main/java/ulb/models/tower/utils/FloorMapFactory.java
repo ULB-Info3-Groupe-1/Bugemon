@@ -41,11 +41,6 @@ public class FloorMapFactory {
 
     private final int seed;
 
-    private int maxDepthReached;
-
-    private int rewardCount;
-    private int combatCount;
-
     public FloorMapFactory(int seed) {
         this.seed = seed;
     }
@@ -114,6 +109,8 @@ public class FloorMapFactory {
         }
 
         String bossKey = deepestNode(nodeDepths);
+        Map<String, RoomType> types = assignTypes(nodeCoords, childrenOf, parentOf, startKey, bossKey, random);
+        return Optional.of(buildMap(nodeCoords, childrenOf, types, startKey));
     }
 
     private static void growBranch(
