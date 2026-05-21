@@ -101,6 +101,8 @@ public class CombatView extends View {
             this.opponentBugemon = switchStep.bugemon();
             this.refreshOpponent();
         }
+
+        this.updateHp(switchStep.bugemon(), switchStep.hpAtSwitch());
     }
 
     public void updateHp(CombatBugemon bugemon, int currentHp) {
@@ -321,8 +323,8 @@ public class CombatView extends View {
                     case NORMAL -> base;
                 };
             }
-            case SwitchStep(CombatBugemon bugemon, boolean isPlayer) ->
-                (isPlayer ? "Vous envoyez " : "L'adversaire envoie ") + bugemon.getName() + " !";
+            case SwitchStep s ->
+                (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
             case KoStep(CombatBugemon koBugemon) -> koBugemon.getName() + " est K.O. !";
             default -> "Action effectuée.";
         };

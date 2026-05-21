@@ -181,7 +181,8 @@ public class CombatController extends Controller<CombatView>
             LOG.debug("Advancing step: {}", step);
             this.view.showStep(step);
             this.refreshHpForStep(step);
-        } else {
+        } 
+        if (this.pendingSteps.isEmpty()) {
             this.view.hideDialog();
             this.processEndOfTurn();
         }
