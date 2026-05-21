@@ -55,6 +55,8 @@ import ulb.repositories.dto.InventoryDTO;
 public class Parser {
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
+    private static final String STR_VALEUR = "valeur";
+
     // Constants for the paths to the JSON data files within the resources
     // directory
     private static final String JSON_ATTACK_PATH = Configuration.Json.ATTACK_PATH;
@@ -160,7 +162,7 @@ public class Parser {
                     new StatModifierEffect(target, context.deserialize(effectObject.get("stat"), StatType.class),
                             effectObject.get("modificateur").getAsInt(),
                             context.deserialize(effectObject.get("duree"), EffectDuration.class));
-                case "soin" -> new HealEffect(target, effectObject.get("valeur").getAsInt());
+                case "soin" -> new HealEffect(target, effectObject.get(STR_VALEUR).getAsInt());
                 case "reset_malus" -> new ResetMalusEffect(target);
                 default -> throw new JsonParseException("Unknown effect type: " + effectType);
             };
@@ -294,16 +296,16 @@ public class Parser {
         String type = obj.get("type").getAsString();
         return switch (type) {
             case "stat_bonus" -> new SkillEffect.StatBonusEffect(parseStatType(obj.get("stat").getAsString()),
-                    obj.get("valeur").getAsInt());
+                    obj.get(STR_VALEUR).getAsInt());
             case "type_multiplicateur" -> new SkillEffect.TypeMultiplierEffect(
                     ElementType.valueOf(obj.get("type_cible").getAsString().toUpperCase()),
-                    obj.get("valeur").getAsDouble());
-            case "critique_bonus" -> new SkillEffect.CritBonusEffect(obj.get("valeur").getAsDouble());
+                    obj.get(STR_VALEUR).getAsDouble());
+            case "critique_bonus" -> new SkillEffect.CritBonusEffect(obj.get(STR_VALEUR).getAsDouble());
             case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(obj.get("valeur_pourcent").getAsDouble());
-            case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(obj.get("valeur").getAsDouble());
+            case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(obj.get(STR_VALEUR).getAsDouble());
             case "objets_bonus" ->
                 new SkillEffect.StarterItemsEffect(obj.get("quantite").getAsInt(), obj.get("categorie").getAsString());
-            case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(obj.get("valeur").getAsInt());
+            case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(obj.get(STR_VALEUR).getAsInt());
             default -> throw new IllegalArgumentException("Unknown skill effect type: " + type);
         };
     }

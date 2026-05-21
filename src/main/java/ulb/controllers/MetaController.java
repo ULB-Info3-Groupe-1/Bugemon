@@ -92,11 +92,11 @@ public class MetaController {
         this.mainMenuController = new MainMenuController(this, playerState);
         this.combatController = new CombatController(this, this.combatService, services.skill, playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                services.team, bugemonService, playerState);
+                services.team, this.bugemonService, playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
-                bugemonService, playerState);
-        this.createBugemonController = new CreateBugemonController(this, bugemonService);
-        this.levelUpController = new LevelUpController(this, bugemonService);
+                this.bugemonService, playerState);
+        this.createBugemonController = new CreateBugemonController(this, this.bugemonService);
+        this.levelUpController = new LevelUpController(this, this.bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.skillTreeController = new SkillTreeController(this, services.skill, playerState);

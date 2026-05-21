@@ -23,8 +23,7 @@ public class InventoryService {
 
     public Inventory getInventory() {
         InventoryDTO inventoryDTO = this.inventoryRepository.findInventory(this.playername);
-        Inventory inventory = new Inventory(inventoryDTO.items());
-        return inventory;
+        return new Inventory(inventoryDTO.items());
     }
 
     public void resetInventory() {
@@ -32,8 +31,7 @@ public class InventoryService {
     }
 
     public Inventory getDefaultInventory() {
-        Inventory inventory = new Inventory(this.staticRepository.defaultInventory().items());
-        return inventory;
+        return new Inventory(this.staticRepository.defaultInventory().items());
     }
 
     public void save(Inventory inventory) {

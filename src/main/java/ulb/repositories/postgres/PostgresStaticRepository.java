@@ -195,15 +195,18 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
 
     private SkillEffect buildSkillEffect(ResultSet rs, String type) throws SQLException {
         return switch (type) {
-            case "stat_bonus" ->
-                new SkillEffect.StatBonusEffect(StatType.valueOf(rs.getString("stat")), rs.getInt("int_value"));
+            case "stat_bonus" -> new SkillEffect.StatBonusEffect(StatType.valueOf(rs.getString("stat")),
+                    rs.getInt(DatabaseColumns.COL_INT_VALUE));
             case "type_multiplicateur" -> new SkillEffect.TypeMultiplierEffect(
-                    ElementType.valueOf(rs.getString("element_type")), rs.getDouble("double_value"));
-            case "critique_bonus" -> new SkillEffect.CritBonusEffect(rs.getDouble("double_value"));
-            case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(rs.getDouble("double_value"));
-            case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(rs.getDouble("double_value"));
-            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(rs.getInt("int_value"), rs.getString("category"));
-            case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(rs.getInt("int_value"));
+                    ElementType.valueOf(rs.getString("element_type")), rs.getDouble(DatabaseColumns.COL_DOUBLE_VALUE));
+            case "critique_bonus" -> new SkillEffect.CritBonusEffect(rs.getDouble(DatabaseColumns.COL_DOUBLE_VALUE));
+            case "regen_post_combat" ->
+                new SkillEffect.RegenPostCombatEffect(rs.getDouble(DatabaseColumns.COL_DOUBLE_VALUE));
+            case "xp_multiplicateur" ->
+                new SkillEffect.XpMultiplierEffect(rs.getDouble(DatabaseColumns.COL_DOUBLE_VALUE));
+            case "objets_bonus" ->
+                new SkillEffect.StarterItemsEffect(rs.getInt(DatabaseColumns.COL_INT_VALUE), rs.getString("category"));
+            case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(rs.getInt(DatabaseColumns.COL_INT_VALUE));
             default -> throw new IllegalStateException("Unknown skill effect type: " + type);
         };
     }

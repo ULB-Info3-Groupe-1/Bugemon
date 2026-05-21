@@ -16,14 +16,23 @@ import java.util.Map;
 
 import ulb.Configuration;
 import ulb.common.EffectDuration;
+import ulb.common.StatType;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Item;
 import ulb.models.skills.SkillEffect;
+import ulb.models.skills.SkillEffect.CritBonusEffect;
+import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
+import ulb.models.skills.SkillEffect.RewardChoiceEffect;
+import ulb.models.skills.SkillEffect.StarterItemsEffect;
+import ulb.models.skills.SkillEffect.StatBonusEffect;
+import ulb.models.skills.SkillEffect.TypeMultiplierEffect;
+import ulb.models.skills.SkillEffect.XpMultiplierEffect;
 import ulb.models.skills.SkillNode;
 import ulb.repositories.DatabaseConnection;
 
@@ -31,6 +40,7 @@ public class DatabaseInitializer extends AbstractRepository {
 
     private static final int CRITICAL_TABLES_COUNT = 13;
     private static final String SAVE_ITEM_EFFECT_QUERY = "SaveItemEffect";
+    private static final String SAVE_SKILL_EFFECT_QUERY = "SaveSkillEffect";
 
     private final List<Bugemon> defaultBugemons;
     private final Map<String, Attack> attacks;
@@ -185,20 +195,20 @@ public class DatabaseInitializer extends AbstractRepository {
 
     private void saveSkillEffect(String skillId, SkillEffect effect) {
         switch (effect) {
-            case SkillEffect.StatBonusEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "stat_bonus",
-                    e.stat().name(), null, null, e.bonus(), null);
-            case SkillEffect.TypeMultiplierEffect e -> this.executeUpdate("SaveSkillEffect", skillId,
-                    "type_multiplicateur", null, e.type().name(), e.mult(), null, null);
-            case SkillEffect.CritBonusEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "critique_bonus", null,
-                    null, e.extraChance(), null, null);
-            case SkillEffect.RegenPostCombatEffect e -> this.executeUpdate("SaveSkillEffect", skillId,
-                    "regen_post_combat", null, null, e.percent(), null, null);
-            case SkillEffect.XpMultiplierEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "xp_multiplicateur",
-                    null, null, e.multiplier(), null, null);
-            case SkillEffect.StarterItemsEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "objets_bonus",
-                    null, null, null, e.quantity(), e.category());
-            case SkillEffect.RewardChoiceEffect e -> this.executeUpdate("SaveSkillEffect", skillId, "recompense_choix",
-                    null, null, null, e.totalChoices(), null);
+            case StatBonusEffect(StatType stat, int bonus) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
+                    "stat_bonus", stat.name(), null, null, bonus, null);
+            case TypeMultiplierEffect(ElementType type, double mult) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY,
+                    skillId, "type_multiplicateur", null, type.name(), mult, null, null);
+            case CritBonusEffect(double extraChance) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
+                    "critique_bonus", null, null, extraChance, null, null);
+            case RegenPostCombatEffect(double percent) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
+                    "regen_post_combat", null, null, percent, null, null);
+            case XpMultiplierEffect(double multiplier) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
+                    "xp_multiplicateur", null, null, multiplier, null, null);
+            case StarterItemsEffect(int quantity, String category) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY,
+                    skillId, "objets_bonus", null, null, null, quantity, category);
+            case RewardChoiceEffect(int totalChoices) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
+                    "recompense_choix", null, null, null, totalChoices, null);
             default ->
                 throw new IllegalStateException("Unknown skill effect type: " + effect.getClass().getSimpleName());
         }
