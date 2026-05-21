@@ -24,6 +24,7 @@ import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
+import ulb.models.item.Item;
 import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
@@ -37,12 +38,14 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     private final DefaultInventoryDTO defaultInventoryCache;
     private final SkillTree skillTreeCache;
     private Map<String, Bugemon> bugemonCache;
+    private List<Item> itemsCache;
 
     public PostgresStaticRepository(DatabaseConnection dbConnection, Map<String, String> queries,
             DefaultInventoryDTO defaultInventory) {
         super(dbConnection, queries);
         this.attackCache = Collections.unmodifiableMap(this.loadAllAttacks());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
+        this.itemsCache = Collections.unmodifiableList(this.loadItems());
         this.skillTreeCache = this.loadSkillTree();
         this.defaultInventoryCache = defaultInventory;
     }
@@ -83,6 +86,11 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     @Override
     public SkillTree skillTree() {
         return this.skillTreeCache;
+    }
+
+    @Override
+    public List<Item> items() {
+        return this.itemsCache;
     }
 
     // --- Private loading ---
@@ -150,6 +158,11 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
             case "ResetMalusEffect" -> new ResetMalusEffect(target);
             default -> throw new IllegalStateException("Unknown effect type: " + effectType);
         };
+    }
+
+    private List<Item> loadItems() {
+        // TODO: impl
+        return List.of();
     }
 
     private SkillTree loadSkillTree() {
