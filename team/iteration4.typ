@@ -65,3 +65,4 @@ Lorsque le joueur lancait un combat _standalone_ (pas tower), nous devions resta
 // TODO: systeme d'actions async
 // TODO: composition de Bugemons
 // TODO: interface des repos -> permette de se concentrer sur les méthodes importantes de ces derniers
+// TODO: refactoring process: refac model -> ajuster controller/vue pour nouveau model -> refac repository -> refac service -> refac controller -> refac views
