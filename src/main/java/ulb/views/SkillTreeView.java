@@ -1,7 +1,6 @@
 package ulb.views;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -15,8 +14,10 @@ import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 import ulb.Configuration;
+import ulb.models.skills.SkillStatus;
 import ulb.models.skills.SkillNode;
-import ulb.models.skills.SkillNodeState;
+import ulb.models.skills.SkillTree;
+import ulb.models.skills.SkillTreeState;
 
 public class SkillTreeView extends View {
     // Skill:
@@ -42,7 +43,8 @@ public class SkillTreeView extends View {
     private Label availablePoints;
 
     private Listener listener;
-    private SkillNode treeRoot;
+    private SkillTree tree;
+    private SkillTreeState state;
     private int availablePointsCount = 0;
 
     @FXML
@@ -99,7 +101,7 @@ public class SkillTreeView extends View {
 
     @Override
     public void refresh() {
-        if (this.treeRoot == null) {
+        if (this.tree == null || this.state == null) {
             return;
         }
         this.doRender();
@@ -120,15 +122,16 @@ public class SkillTreeView extends View {
         }
     }
 
-    public void renderTree(SkillNode root) {
-        this.treeRoot = root;
+    public void renderTree(SkillTree tree, SkillTreeState state) {
+        this.tree = tree;
+        this.state = state;
         this.doRender();
     }
 
-    private int computeMinX(SkillNode node) {
-        int min = node.getPosition().x();
-        for (SkillNode child : node.getChildren()) {
-            min = Math.min(min, this.computeMinX(child));
+    private int computeMinX(List<SkillNode> nodes) {
+        int min = 0;
+        for (SkillNode node : nodes) {
+            min = Math.min(min, node.x());
         }
         return min;
     }
@@ -137,83 +140,85 @@ public class SkillTreeView extends View {
         this.innerMapPane.getChildren().clear();
         this.availablePoints.setText("Points disponibles: " + this.availablePointsCount);
 
-        int minX = this.computeMinX(this.treeRoot);
+        if (this.tree == null || this.state == null) {
+            return;
+        }
 
-        Set<SkillNode> visited = new HashSet<>();
-        this.renderConnections(this.treeRoot, minX, visited);
-        visited.clear();
-        this.renderNode(this.treeRoot, minX, visited);
+        List<SkillNode> nodes = this.tree.getNodes();
+        int minX = this.computeMinX(nodes);
+
+        this.renderConnections(nodes, minX);
+        this.renderNodes(nodes, minX);
 
         int[] max = {0, 0};
-        this.collectMaxCoords(this.treeRoot, max);
+        this.collectMaxCoords(nodes, max);
         double treeWidth = (max[0] - minX + 1) * (NODE_WIDTH + HORIZONTAL_SPACING) - HORIZONTAL_SPACING;
         double treeHeight = (max[1] + 1) * (NODE_HEIGHT + VERTICAL_SPACING) - VERTICAL_SPACING;
         this.innerMapPane.setPrefSize(treeWidth, treeHeight);
         this.innerMapPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     }
 
-    // AI fix to place the tree at the center
-    private void collectMaxCoords(SkillNode node, int[] maxCoords) {
-        maxCoords[0] = Math.max(maxCoords[0], node.getPosition().x());
-        maxCoords[1] = Math.max(maxCoords[1], node.getPosition().y());
-        for (SkillNode child : node.getChildren()) {
-            this.collectMaxCoords(child, maxCoords);
+    private void collectMaxCoords(List<SkillNode> nodes, int[] maxCoords) {
+        for (SkillNode node : nodes) {
+            maxCoords[0] = Math.max(maxCoords[0], node.x());
+            maxCoords[1] = Math.max(maxCoords[1], node.y());
         }
     }
 
-    private void renderConnections(SkillNode node, int minX, Set<SkillNode> visited) {
-        if (!visited.add(node)) {
-            return;
-        }
-        for (SkillNode child : node.getChildren()) {
-            this.addConnection(node, child, minX);
-            this.renderConnections(child, minX, visited);
+    private void renderConnections(List<SkillNode> nodes, int minX) {
+        for (SkillNode child : nodes) {
+            for (String prerequisiteId : child.prerequisites()) {
+                this.tree.findById(prerequisiteId).ifPresent(parent -> this.addConnection(parent, child, minX));
+            }
         }
     }
 
     private void addConnection(SkillNode parent, SkillNode child, int minX) {
-        double parentCenterX = (parent.getPosition().x() - minX) * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
-        double parentBottomY = parent.getPosition().y() * (NODE_HEIGHT + VERTICAL_SPACING) + NODE_HEIGHT;
-        double childCenterX = (child.getPosition().x() - minX) * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
-        double childTopY = child.getPosition().y() * (NODE_HEIGHT + VERTICAL_SPACING);
+        double parentCenterX = (parent.x() - minX) * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
+        double parentBottomY = parent.y() * (NODE_HEIGHT + VERTICAL_SPACING) + NODE_HEIGHT;
+        double childCenterX = (child.x() - minX) * (NODE_WIDTH + HORIZONTAL_SPACING) + NODE_WIDTH / 2;
+        double childTopY = child.y() * (NODE_HEIGHT + VERTICAL_SPACING);
 
         Line join = new Line(parentCenterX, parentBottomY, childCenterX, childTopY);
         join.getStyleClass().add("skill-connection");
 
-        if (parent.getState() == SkillNodeState.ACTIVE && child.getState() == SkillNodeState.ACTIVE) {
+        SkillStatus parentStatus = this.state.getStatus(parent.id(), this.tree);
+        SkillStatus childStatus = this.state.getStatus(child.id(), this.tree);
+
+        if (parentStatus == SkillStatus.ACTIVE && childStatus == SkillStatus.ACTIVE) {
             join.getStyleClass().add("skill-connection-active");
-        } else if (parent.getState() == SkillNodeState.ACTIVE) {
+        } else if (parentStatus == SkillStatus.ACTIVE) {
             join.getStyleClass().add("skill-connection-available");
         }
 
         this.innerMapPane.getChildren().add(join);
     }
 
-    private void renderNode(SkillNode node, int minX, Set<SkillNode> visited) {
-        if (!visited.add(node)) {
-            return;
-        }
-        StackPane skillNode = this.buildSkillNode(node, minX);
-        this.innerMapPane.getChildren().add(skillNode);
-
-        for (SkillNode child : node.getChildren()) {
-            this.renderNode(child, minX, visited);
+    private void renderNodes(List<SkillNode> nodes, int minX) {
+        for (SkillNode node : nodes) {
+            StackPane skillNode = this.buildSkillNode(node, minX);
+            this.innerMapPane.getChildren().add(skillNode);
         }
     }
 
     private StackPane buildSkillNode(SkillNode node, int minX) {
-        double pixelX = (node.getPosition().x() - minX) * (NODE_WIDTH + HORIZONTAL_SPACING);
-        double pixelY = node.getPosition().y() * (NODE_HEIGHT + VERTICAL_SPACING);
+        double pixelX = (node.x() - minX) * (NODE_WIDTH + HORIZONTAL_SPACING);
+        double pixelY = node.y() * (NODE_HEIGHT + VERTICAL_SPACING);
+
+        SkillStatus status = this.state.getStatus(node.id(), this.tree);
 
         StackPane skillNode = new StackPane(this.buildBackground(), this.buildContent(node));
         skillNode.setPrefSize(NODE_WIDTH, NODE_HEIGHT);
         skillNode.setLayoutX(pixelX);
         skillNode.setLayoutY(pixelY);
         skillNode.getStyleClass().add("skill-node");
-        skillNode.getStyleClass().add(this.stateClass(node.getState()));
+        skillNode.getStyleClass().add(this.stateClass(status));
 
-        if (node.getState() != SkillNodeState.LOCKED) {
+        if (status != SkillStatus.LOCKED) {
             skillNode.setOnMouseClicked(e -> {
+                if (this.listener == null) {
+                    return;
+                }
                 if (e.getButton() == MouseButton.PRIMARY) {
                     this.listener.onSkillLeftClicked(node);
                 } else if (e.getButton() == MouseButton.SECONDARY) {
@@ -223,10 +228,9 @@ public class SkillTreeView extends View {
             });
         }
 
-        Tooltip tooltip = new Tooltip(node.getDescription());
+        Tooltip tooltip = new Tooltip(node.description());
         tooltip.setShowDelay(Duration.millis(300));
         Tooltip.install(skillNode, tooltip);
-
         return skillNode;
     }
 
@@ -237,13 +241,13 @@ public class SkillTreeView extends View {
     }
 
     private VBox buildContent(SkillNode node) {
-        Label name = new Label(node.getName());
+        Label name = new Label(node.name());
         name.getStyleClass().add("section-label");
         name.setWrapText(true);
         name.setMaxWidth(NODE_WIDTH - 8);
 
-        Label info = new Label(node.getCurrentLevel() + "/" + node.getMaxLevel());
-        Label cost = new Label(node.getCost() + " pt");
+        Label info = new Label(this.state.getNodeLevel(node.id()) + "/" + node.maxLevel());
+        Label cost = new Label(node.cost() + " pt");
 
         VBox content = new VBox(4, name, info, cost);
         content.setAlignment(javafx.geometry.Pos.CENTER);
@@ -251,7 +255,7 @@ public class SkillTreeView extends View {
         return content;
     }
 
-    String stateClass(SkillNodeState state) {
+    String stateClass(SkillStatus state) {
         return switch (state) {
             case ACTIVE -> "skill-node-active";
             case AVAILABLE -> "skill-node-available";

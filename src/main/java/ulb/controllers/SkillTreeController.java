@@ -1,44 +1,54 @@
 package ulb.controllers;
 
 import ulb.models.skills.SkillNode;
-import ulb.services.PlayerService;
+import ulb.models.player.PlayerState;
+import ulb.models.skills.exceptions.IllegalNodeStateException;
+import ulb.services.SkillService;
 import ulb.views.SkillTreeView;
 import ulb.views.ViewLoader;
 
 /** Controller for the skill tree screen. */
 public class SkillTreeController extends Controller<SkillTreeView> implements SkillTreeView.Listener {
 
-    private final PlayerService playerService;
+    private final SkillService skillService;
+    private final PlayerState playerState;
 
-    public SkillTreeController(MetaController metaController, PlayerService playerService) {
+    public SkillTreeController(MetaController metaController, SkillService skillService, PlayerState playerState) {
         super(metaController, ViewLoader.load(SkillTreeView::new));
         this.view.setListener(this);
-        this.playerService = playerService;
+        this.skillService = skillService;
+        this.playerState = playerState;
     }
 
     @Override
     public void show() {
-        this.view.setAvailablePoints(this.playerService.getAvailableSkillPoints());
-        this.view.renderTree(this.playerService.getSkillTreeRoot());
+        this.view.setAvailablePoints(this.playerState.getSkillTreeState().getSkillPoints());
+        this.view.renderTree(this.skillService.getSkillTree(), this.playerState.getSkillTreeState());
         super.show();
     }
 
     @Override
     public void onSkillLeftClicked(SkillNode node) {
-        // Add a point
-        // TODO: handle skill selection and apply effects
-        if (this.playerService.unlockSkill(node)) {
-            this.view.setAvailablePoints(this.playerService.getAvailableSkillPoints());
+        try {
+            this.skillService.addPoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
+                    node.id());
+            this.view.setAvailablePoints(this.playerState.getSkillTreeState().getSkillPoints());
             this.view.refresh();
+        } catch (IllegalNodeStateException e) {
+            // Invalid click or not enough points: keep the current tree as-is.
         }
     }
 
     @Override
     public void onSkillRightClicked(SkillNode node) {
-        // Delete a point
-        this.playerService.refundSkillNode(node);
-        this.view.setAvailablePoints(this.playerService.getAvailableSkillPoints());
-        this.view.refresh();
+        try {
+            this.skillService.removePoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
+                    node.id());
+            this.view.setAvailablePoints(this.playerState.getSkillTreeState().getSkillPoints());
+            this.view.refresh();
+        } catch (IllegalNodeStateException e) {
+            // Invalid click or locked dependency: keep the current tree as-is.
+        }
     }
 
     @Override

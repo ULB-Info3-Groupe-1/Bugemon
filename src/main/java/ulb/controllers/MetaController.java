@@ -60,6 +60,7 @@ public class MetaController {
     private final ManageTeamController createTeamController;
     private final ManageTeamController editTeamController;
     private final CreateBugemonController createBugemonController;
+    private final SkillTreeController skillTreeController;
     private final CombatController combatController;
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
@@ -95,6 +96,7 @@ public class MetaController {
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
                 this.bugemonService, playerState);
         this.createBugemonController = new CreateBugemonController(this, this.bugemonService);
+        this.skillTreeController = new SkillTreeController(this, services.skill, playerState);
         this.levelUpController = new LevelUpController(this, this.bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
@@ -210,6 +212,10 @@ public class MetaController {
         this.transitions.put(Window.CREATE_BUGEMON, () -> {
             this.musicService.playBackground(BackgroundAmbiance.MENU);
             this.createBugemonController.show();
+        });
+        this.transitions.put(Window.SKILL_TREE, () -> {
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
+            this.skillTreeController.show();
         });
         this.transitions.put(Window.MANUAL_COMBAT, () -> {
             this.musicService.playBackground(BackgroundAmbiance.COMBAT);
