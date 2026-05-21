@@ -266,16 +266,10 @@ public class Combat {
         callback.onTurnResolved(steps);
     }
 
-    public List<TurnStep> applyForcedPlayerSwitch(CombatBugemon bugemon) {
-        return this.resolveAction(new SwitchAction(bugemon), true);
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<TurnStep> applyForcedOpponentSwitch() {
-        List<TurnStep>[] steps = new List[1];
-        this.opponentStrategy.chooseSwitch(this.makeOpponentContext(),
-                action -> steps[0] = this.resolveAction(action, false));
-        return steps[0];
+    public void requestForcedSwitch(boolean isPlayer, TurnResolvedCallback onDone) {
+        CombatStrategy strategy = isPlayer ? this.playerStrategy : this.opponentStrategy;
+        CombatContext ctx = isPlayer ? this.makePlayerContext() : this.makeOpponentContext();
+        strategy.chooseSwitch(ctx, action -> onDone.onTurnResolved(this.resolveAction(action, isPlayer)));
     }
 
     private List<TurnStep> resolveAction(TurnAction action, boolean isPlayer) {

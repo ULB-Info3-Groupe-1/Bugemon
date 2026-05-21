@@ -50,7 +50,7 @@ public class CombatController extends Controller<CombatView>
     private final SkillService skillService;
 
     private ActionCallback pendingActionCallback;
-    private boolean awaitingForcedSwitch = false;
+    private ActionCallback pendingSwitchCallback;
 
     private final Queue<TurnStep> pendingSteps = new ArrayDeque<>();
 
@@ -86,8 +86,8 @@ public class CombatController extends Controller<CombatView>
     public void initialize(Combat newCombat) {
         this.combat = newCombat;
         this.pendingSteps.clear();
-        this.awaitingForcedSwitch = false;
         this.pendingActionCallback = null;
+        this.pendingSwitchCallback = null;
 
         this.view.displayBugemons(this.combat.getActivePlayerBugemon(), this.combat.getActiveOpponentBugemon());
         this.view.refresh();
@@ -138,11 +138,10 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onSwitchChosen(CombatBugemon bugemon) {
-        if (this.awaitingForcedSwitch) {
-            this.awaitingForcedSwitch = false;
-            List<TurnStep> switchSteps = this.combat.applyForcedPlayerSwitch(bugemon);
-            this.pendingSteps.addAll(switchSteps);
-            this.advanceStep();
+        if (this.pendingSwitchCallback != null) {
+            ActionCallback cb = this.pendingSwitchCallback;
+            this.pendingSwitchCallback = null;
+            cb.onActionChosen(new SwitchAction(bugemon));
         } else {
             this.resolvePlayerAction(new SwitchAction(bugemon));
         }
@@ -207,12 +206,9 @@ public class CombatController extends Controller<CombatView>
         if (this.combat.isFinished()) {
             this.onCombatFinished();
         } else if (this.combat.getActivePlayerBugemon().isKo()) {
-            this.awaitingForcedSwitch = true;
-            this.view.showSwitchMenu(this.combat.getPlayerTeam().getAvailable(), true);
+            this.combat.requestForcedSwitch(true, this::onForcedSwitchResolved);
         } else if (this.combat.getActiveOpponentBugemon().isKo()) {
-            List<TurnStep> switchSteps = this.combat.applyForcedOpponentSwitch();
-            this.pendingSteps.addAll(switchSteps);
-            this.advanceStep();
+            this.combat.requestForcedSwitch(false, this::onForcedSwitchResolved);
         } else {
             this.startTurn();
         }
@@ -234,7 +230,12 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void requestSwitchChoice(CombatContext context, ActionCallback callback) {
-        // Forced player switches are now handled via processEndOfTurn — this path is never reached.
-        LOG.warn("requestSwitchChoice called unexpectedly");
+        this.pendingSwitchCallback = callback;
+        this.view.showSwitchMenu(context.allyTeam().getAvailable(), true);
+    }
+
+    private void onForcedSwitchResolved(List<TurnStep> steps) {
+        this.pendingSteps.addAll(steps);
+        this.advanceStep();
     }
 }
