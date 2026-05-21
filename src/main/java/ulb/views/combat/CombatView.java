@@ -295,8 +295,8 @@ public class CombatView extends View {
     }
 
     public void showStep(TurnStep step) {
-        this.showStepAnimation(step);
         this.showStepDialog(step);
+        this.showStepAnimation(step);
     }
 
     private void showStepAnimation(TurnStep step) {

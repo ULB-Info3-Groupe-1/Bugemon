@@ -181,8 +181,7 @@ public class CombatController extends Controller<CombatView>
             LOG.debug("Advancing step: {}", step);
             this.view.showStep(step);
             this.refreshHpForStep(step);
-        } 
-        if (this.pendingSteps.isEmpty()) {
+        } else {
             this.view.hideDialog();
             this.processEndOfTurn();
         }
@@ -204,7 +203,6 @@ public class CombatController extends Controller<CombatView>
         if (this.combat.isFinished()) {
             this.onCombatFinished();
         } else {
-            this.view.hideDialog();
             this.startTurn();
         }
     }
