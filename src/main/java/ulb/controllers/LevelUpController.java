@@ -4,9 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import ulb.common.LevelUpResult;
 import ulb.models.level_up.LevelUp;
 import ulb.models.level_up.Upgrade;
-import ulb.services.BugemonService;
+import ulb.services.LevelUpService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 
@@ -17,8 +18,8 @@ import ulb.views.ViewLoader;
  * being displayed. When an {@link Upgrade} is chosen, the head is popped.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
-    private final BugemonService bugemonService;
-    private final Queue<LevelUp> pendingLevelUps;
+    private final LevelUpService levelUpService;
+    private final Queue<LevelUpResult> pendingLevelUps;
 
     /**
      * Constructs a {@code LevelUpController}, initialises its {@link LevelUpView}, and registers the choice callback.
@@ -26,19 +27,21 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
      * @param metaController
      *            the application-level controller used for navigation.
      */
-    public LevelUpController(MetaController metaController, BugemonService bugemonService) {
+    public LevelUpController(MetaController metaController, LevelUpService levelUpService) {
         super(metaController, ViewLoader.load(LevelUpView::new));
-        this.bugemonService = bugemonService;
+        this.levelUpService = levelUpService;
         this.pendingLevelUps = new LinkedList<>();
         this.view.setListener(this);
     }
 
-    public void addLevelUps(List<LevelUp> levels) {
-        this.pendingLevelUps.addAll(levels);
+    // TODO: name? initialize or show or sth else ?
+    public void initialize(List<LevelUpResult> levelUps) {
+        this.pendingLevelUps.addAll(levelUps);
+        this.processNextLevelUp();
     }
 
-    public boolean hasWorkToDo() {
-        return !this.pendingLevelUps.isEmpty();
+    public void processNextLevelUp() {
+        // TODO
     }
 
     @Override
@@ -55,11 +58,6 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
         } else {
             this.metaController.onAllPendingLevelUpsConsumed();
         }
-    }
-
-    public void updateDisplayedLevelUp() {
-        this.view.setLevelUp(this.pendingLevelUps.peek());
-        this.view.refresh();
     }
 
     @Override
