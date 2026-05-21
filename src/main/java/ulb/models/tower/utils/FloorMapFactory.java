@@ -186,6 +186,67 @@ public class FloorMapFactory {
                 .orElseThrow(() -> new IllegalStateException("no node given"));
     }
 
+    /** Assign a RoomType to each room */
+    private static Map<String, RoomType> assignTypes(
+            Map<String, int[]> nodeCoords,
+            Map<String, List<String>> childrenOf,
+            Map<String, String> parentOf,
+            String startKey,
+            String bossKey,
+            Random random) {
+
+        Map<String, RoomType> types = new HashMap<>();
+        types.put(startKey, RoomType.START);
+        types.put(bossKey, RoomType.BOSS);
+
+        // rooms we still have to assign a type to
+        List<String> candidates = nodeCoords.keySet().stream()
+                .filter(startKey::equals)
+                .filter(bossKey::equals)
+                .toList();
+
+        Collections.shuffle(candidates, random);
+
+        int combatCount = random.nextInt(MIN_COMBATS, MAX_COMBATS + 1);
+
+        // keeps tracks of which rooms haven't been assigned a type yet
+        List<String> remaining = new ArrayList<>(candidates);
+
+        int assignedCombat = 0;
+        for (String key : candidates) {
+            if (assignedCombat >= combatCount) {
+                break; // no more combat to assign
+            }
+
+            // assign type combat
+            types.put(key, RoomType.COMBAT);
+            remaining.remove(key);
+            assignedCombat++;
+        }
+
+        for (String key : remaining) {
+            types.put(key, RoomType.EMPTY);
+        }
+
+        int rewardCount = random.nextInt(MIN_REWARD, MAX_REWARD + 1);
+        int rewardAssigned = 0;
+
+        List<String> emptyKeys = new ArrayList<>(remaining);
+        Collections.shuffle(emptyKeys, random);
+
+        for (String key : emptyKeys) {
+            if (rewardAssigned >= rewardCount) {
+                break;
+            }
+            if (hasCombatAncestor(key, startKey, parentOf, types)) {
+                types.put(key, RoomType.REWARD);
+                rewardAssigned++;
+            }
+        }
+
+        return types;
+    }
+
     /**
      * Returns true iff there is a room assigned with the type Combat between the
      * node corresponding to key and the corresponding to startKey.

@@ -22,6 +22,7 @@ public class Room {
     }
 
     public enum RoomType {
+        START,
         COMBAT,
         BOSS,
         REWARD,
