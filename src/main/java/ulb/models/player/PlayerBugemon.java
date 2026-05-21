@@ -99,7 +99,7 @@ public class PlayerBugemon {
         return numLevelUps;
     }
 
-    public void applyUpgrade(BonusStats bonus) {
+    public void applyBonus(BonusStats bonus) {
         this.bonusStats.add(bonus);
     }
 

@@ -75,8 +75,8 @@ public class RunBugemon {
         return this.playerBugemon.getXpProgress();
     }
 
-    public void applyUpgrade(BonusStats bonus) {
-        this.playerBugemon.applyUpgrade(bonus);
+    public void applyBonus(BonusStats bonus) {
+        this.playerBugemon.applyBonus(bonus);
         this.currentHp = this.getMaxHp();
     }
 

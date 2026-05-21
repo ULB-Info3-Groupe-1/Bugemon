@@ -37,7 +37,7 @@ public class RewardService {
     }
 
     public void applyStatBonusReward(BonusStatsReward reward, RunBugemon bugemon) {
-        bugemon.applyUpgrade(reward.getBonus());
+        bugemon.applyBonus(reward.getBonus());
         this.bugemonService.savePlayerBugemon(bugemon.getPlayerBugemon());
     }
 
