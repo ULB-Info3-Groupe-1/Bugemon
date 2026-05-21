@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
+import ulb.bootstrap.ServiceRegistry;
 import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
@@ -19,14 +20,9 @@ import ulb.models.level_up.LevelUp;
 import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.SoundEffect;
 import ulb.models.player.PlayerState;
-import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.MusicService;
-import ulb.services.SaveService;
-import ulb.services.SkillService;
-import ulb.services.TeamService;
-import ulb.services.TowerService;
 import ulb.views.View;
 
 /**
@@ -81,27 +77,24 @@ public class MetaController {
      * @throws IOException
      *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage, BugemonService bugemonService, TeamService teamService,
-            TowerService towerService, InventoryService inventoryService, SkillService skillService,
-            SaveService saveService, CombatService combatService, MusicService musicService, PlayerState playerState)
-            throws IOException {
+    public MetaController(Stage primaryStage, ServiceRegistry services, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
-        this.inventoryService = inventoryService;
-        this.combatService = combatService;
-        this.musicService = musicService;
+        this.inventoryService = services.inventory;
+        this.combatService = services.combat;
+        this.musicService = services.music;
 
-        this.saveMenuController = new SaveMenuController(this, saveService, playerState);
+        this.saveMenuController = new SaveMenuController(this, services.save, playerState);
         this.mainMenuController = new MainMenuController(this, playerState);
         this.combatController = new CombatController(this, this.combatService, playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                teamService, playerState);
-        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, teamService,
+                services.team, playerState);
+        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
                 playerState);
-        this.createBugemonController = new CreateBugemonController(this, bugemonService);
-        this.levelUpController = new LevelUpController(this, bugemonService);
+        this.createBugemonController = new CreateBugemonController(this, services.bugemon);
+        this.levelUpController = new LevelUpController(this, services.bugemon);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.skillTreeController = new SkillTreeController(this, skillService, playerState);
+        this.skillTreeController = new SkillTreeController(this, services.skill, playerState);
         this.initTransitions();
     }
 

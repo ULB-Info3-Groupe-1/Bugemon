@@ -142,7 +142,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     @Override
     public void onReturnToMainMenu() {
         if (!this.teamService.isTeamSaved(this.tmpTeam) && this.view.showAlertTeamChangesNotSave()) {
-            this.clearTmpTeam();;
+            this.clearTmpTeam();
         }
 
         this.metaController.onMainMenu();
