@@ -1,9 +1,7 @@
 package ulb.views;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -22,7 +20,7 @@ import ulb.models.skills.SkillStatus;
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
 
-class SkillTreeView extends View {
+public class SkillTreeView extends View {
 
     private static final int NODE_WIDTH = 120;
     private static final int NODE_HEIGHT = 60;
@@ -31,7 +29,6 @@ class SkillTreeView extends View {
     private static final int PADDING = 40;
 
     private SkillTree skillTree;
-    private Map<String, StackPane> nodeBoxs = new HashMap<>();
 
     private Listener listener;
 
@@ -71,7 +68,7 @@ class SkillTreeView extends View {
         this.listener.onReturnClicked();
     }
 
-    public void buildTree(SkillTreeState skillTreeState) {
+    private void buildTree(SkillTreeState skillTreeState) {
         var nodes = this.skillTree.getNodes();
         var xStats = nodes.stream().mapToInt(SkillNode::x).summaryStatistics();
         var yStats = nodes.stream().mapToInt(SkillNode::y).summaryStatistics();
@@ -92,7 +89,6 @@ class SkillTreeView extends View {
             int level = skillTreeState.getNodeLevel(node.id());
 
             StackPane widget = this.buildSkillNode(node, status, level, minX, minY);
-            this.nodeBoxs.put(node.id(), widget);
             this.innerMap.getChildren().add(widget);
         }
 
@@ -173,9 +169,9 @@ class SkillTreeView extends View {
     private void applyStatusStyle(StackPane widget, SkillStatus status) {
         widget.getStyleClass().removeIf(c -> c.startsWith("skill-node-"));
         widget.getStyleClass().add(switch (status) {
-            case ACTIVE -> "skill-node-active";
-            case AVAILABLE -> "skill-node-available";
-            case LOCKED -> "skill-node-locked";
+        case ACTIVE -> "skill-node-active";
+        case AVAILABLE -> "skill-node-available";
+        case LOCKED -> "skill-node-locked";
         });
     }
 
