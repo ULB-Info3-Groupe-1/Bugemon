@@ -25,6 +25,7 @@ import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Item;
+import ulb.models.item.ItemType;
 import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
@@ -161,8 +162,36 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     }
 
     private List<Item> loadItems() {
-        // TODO: impl
-        return List.of();
+        List<Item> items = this.executeQuery("GetAllItems", rs -> {
+            try {
+                String effectType = rs.getString(DatabaseColumns.COL_EFFECT_TYPE);
+                Effect effect = null;
+                if (effectType != null) {
+                    effect = this.buildItemEffect(rs, effectType);
+                }
+                return new Item(rs.getString(DatabaseColumns.COL_ITEM_ID), rs.getString(DatabaseColumns.COL_NAME),
+                        rs.getString(DatabaseColumns.COL_DESCRIPTION),
+                        ItemType.valueOf(rs.getString(DatabaseColumns.COL_CATEGORY)), effect);
+            } catch (SQLException e) {
+                throw new IllegalStateException("Error loading item", e);
+            }
+        });
+        return items;
+    }
+
+    private Effect buildItemEffect(ResultSet rs, String effectType) throws SQLException {
+        EffectTarget target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
+        return switch (effectType) {
+            case "EffectHeal" -> new HealEffect(target, rs.getInt(DatabaseColumns.COL_EFFECT_VALUE));
+            case "EffectStatModifier" -> {
+                StatType stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, StatType.class);
+                yield new StatModifierEffect(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
+                        rs.getInt(DatabaseColumns.COL_EFFECT_DURATION) == 0 ? EffectDuration.PERMANENT
+                                : EffectDuration.ONE_TURN);
+            }
+            case "EffectResetMalus" -> new ResetMalusEffect(target);
+            default -> throw new IllegalStateException("Unknown item effect type: " + effectType);
+        };
     }
 
     private SkillTree loadSkillTree() {
