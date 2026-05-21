@@ -49,6 +49,10 @@ public class TowerService {
         this.towerRepository.save(this.playername, this.toDTO(towerState));
     }
 
+    public void delete() {
+        this.towerRepository.delete(this.playername);
+    }
+
     private int genTowerSeed() {
         return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
     }

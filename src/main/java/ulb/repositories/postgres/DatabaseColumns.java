@@ -50,4 +50,9 @@ public class DatabaseColumns {
     public static final String COL_SKILL_POINTS = "skill_points";
     public static final String COL_INT_VALUE = "int_value";
     public static final String COL_DOUBLE_VALUE = "double_value";
+    public static final String COL_SEED = "seed";
+    public static final String COL_FLOOR = "current_floor";
+    public static final String COL_ROW = "row";
+    public static final String COL_COL = "col";
+    public static final String COL_CURRENT_HP = "current_hp";
 }

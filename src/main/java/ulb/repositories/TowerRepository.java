@@ -1,5 +1,7 @@
 package ulb.repositories;
 
+import java.util.Optional;
+
 import ulb.repositories.dto.TowerDTO;
 
 public interface TowerRepository {
@@ -8,5 +10,5 @@ public interface TowerRepository {
 
     void delete(String playerName);
 
-    TowerDTO find(String playerName);
+    Optional<TowerDTO> find(String playerName);
 }

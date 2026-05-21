@@ -128,6 +128,29 @@ CREATE TABLE IF NOT EXISTS "skill_prerequisites" (
   PRIMARY KEY ("skill_id", "prerequisite_id")
 );
 
+CREATE TABLE IF NOT EXISTS "tower_runs" (
+  "playername"    varchar PRIMARY KEY
+                  REFERENCES "players"("playername") ON DELETE CASCADE,
+  "seed"          integer NOT NULL,
+  "team_name"     varchar NOT NULL,
+  "current_floor" integer NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "tower_visited_rooms" (
+  "playername" varchar REFERENCES "tower_runs"("playername") ON DELETE CASCADE,
+  "row"        integer NOT NULL,
+  "col"        integer NOT NULL,
+  PRIMARY KEY ("playername", "row", "col")
+);
+
+CREATE TABLE IF NOT EXISTS "tower_run_team_hp" (
+  "playername"    varchar REFERENCES "tower_runs"("playername") ON DELETE CASCADE,
+  "bugemon_name"  varchar NOT NULL,
+  "slot_position" integer NOT NULL,
+  "current_hp"    integer NOT NULL,
+  PRIMARY KEY ("playername", "slot_position")
+);
+
 CREATE UNIQUE INDEX ON "team_members" ("playername", "team_name", "bugemon_name");
 
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_1_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;

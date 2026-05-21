@@ -33,7 +33,7 @@ import ulb.utils.SpriteUtils;
 
 public class DatabaseInitializer extends AbstractRepository {
 
-    private static final int CRITICAL_TABLES_COUNT = 13;
+    private static final int CRITICAL_TABLES_COUNT = 16;
     private static final String SAVE_ITEM_EFFECT_QUERY = "SaveItemEffect";
     private static final String SAVE_SKILL_EFFECT_QUERY = "SaveSkillEffect";
 
