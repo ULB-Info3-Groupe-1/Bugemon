@@ -65,7 +65,7 @@ public class SkillTreeView extends View {
             }
 
             double newScale = oldScale * zoomFactor;
-            newScale = Math.max(0.2, Math.min(5.0, newScale));
+            newScale = Math.clamp(newScale, 0.2, 5.0);
 
             this.mapContainer.setScaleX(newScale);
             this.mapContainer.setScaleY(newScale);

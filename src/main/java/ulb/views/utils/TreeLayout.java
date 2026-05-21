@@ -1,7 +1,7 @@
 package ulb.views.utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // This class has for purpose to properly layout a tree
@@ -32,9 +32,9 @@ public class TreeLayout {
         }
 
         if (!node.isLeftMost()) {
-            node.x = node.getPreviousSibling().x + 1;
+            node.setX(node.getPreviousSibling().getX() + 1); // TODO: check demeter
         } else {
-            node.x = 0;
+            node.setX(0);
         }
 
         // computing the mod value and midpoint point
@@ -42,9 +42,9 @@ public class TreeLayout {
             float midpoint = computeMidPoint(node);
 
             if (node.isLeftMost()) {
-                node.x = midpoint;
+                node.setX(midpoint);
             } else {
-                node.mod = node.x - midpoint;
+                node.setMod(node.getX() - midpoint);
             }
         }
 
@@ -55,15 +55,15 @@ public class TreeLayout {
 
     private static float computeMidPoint(Node node) {
         // compute the mid point from its children...
-        ArrayList<Node> children = node.getChildren();
+        List<Node> children = node.getChildren();
         int childrenSize = children.size();
 
         if (childrenSize == 1) {
-            return children.get(0).x;
+            return children.get(0).getX();
         }
 
-        float leftMostX = children.get(0).x;
-        float rightMostX = children.get(childrenSize - 1).x;
+        float leftMostX = children.get(0).getX();
+        float rightMostX = children.get(childrenSize - 1).getX();
         return (leftMostX + rightMostX) / 2;
     }
 
@@ -80,9 +80,9 @@ public class TreeLayout {
             Map<Integer, Float> rightContour = new HashMap<>();
             getContour(sibling, 0, rightContour, false);
 
-            for (int depth : leftContour.keySet()) {
-                if (rightContour.containsKey(depth)) {
-                    float overlap = rightContour.get(depth) + minDistance - leftContour.get(depth);
+            for (Map.Entry<Integer, Float> entry : leftContour.entrySet()) {
+                if (rightContour.containsKey(entry.getKey())) {
+                    float overlap = rightContour.get(entry.getKey()) + minDistance - entry.getValue();
                     shiftValue = Math.max(shiftValue, overlap);
                 }
             }
@@ -92,9 +92,8 @@ public class TreeLayout {
 
         // Shifting
         if (shiftValue > 0) {
-            node.x += shiftValue;
-            node.mod += shiftValue;
-
+            node.addX(shiftValue);
+            node.addMod(shiftValue);
             // Maybe think about distribute evenly the shift value
             // but grosse flemme obviously... T^T
         }
@@ -105,21 +104,21 @@ public class TreeLayout {
         getContour(node, 0, leftContour, true);
 
         float shiftAmount = 0;
-        for (int depth : leftContour.keySet()) {
-            if (leftContour.get(depth) + shiftAmount < 0) {
-                shiftAmount = -leftContour.get(depth);
+        for (Map.Entry<Integer, Float> entry : leftContour.entrySet()) {
+            if (leftContour.get(entry.getKey()) + shiftAmount < 0) {
+                shiftAmount = -leftContour.get(entry.getKey());
             }
         }
 
         if (shiftAmount > 0) {
-            node.x += shiftAmount;
-            node.mod += shiftAmount;
+            node.addX(shiftAmount);
+            node.addMod(shiftAmount);
         }
     }
 
     private static void calculateFinalX(Node node, float modSum) {
-        node.x += modSum;
-        modSum += node.mod;
+        node.addX(modSum);
+        modSum += node.getMod();
 
         for (Node child : node.getChildren()) {
             calculateFinalX(child, modSum);
@@ -127,19 +126,17 @@ public class TreeLayout {
     }
 
     private static void getContour(Node node, float modSum, Map<Integer, Float> contour, boolean leftContour) {
-        int depth = (int) node.y;
-        float finalX = node.x + modSum; // computing as it was the final x pos
+        int depth = (int) node.getY();
+        float finalX = node.getX() + modSum; // computing as it was the final x pos
 
-        if (!contour.containsKey(depth)) {
-            contour.put(depth, finalX);
-        } else if (leftContour && finalX < contour.get(depth)) { // left
-            contour.put(depth, finalX);
-        } else if (!leftContour && finalX > contour.get(depth)) { // right
-            contour.put(depth, finalX);
+        if (leftContour) {
+            contour.merge(depth, finalX, Math::min);
+        } else {
+            contour.merge(depth, finalX, Math::max);
         }
 
         for (Node child : node.getChildren()) {
-            getContour(child, modSum + node.mod, contour, leftContour);
+            getContour(child, modSum + node.getMod(), contour, leftContour);
         }
     }
 }

@@ -288,9 +288,9 @@ public class CombatView extends View {
                     case NORMAL -> base;
                 };
             }
-            case SwitchStep s ->
-                (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
-            case KoStep k -> k.koBugemon().getName() + " est K.O. !";
+            case SwitchStep(CombatBugemon bugemon, boolean isPlayer) ->
+                (isPlayer ? "Vous envoyez " : "L'adversaire envoie ") + bugemon.getName() + " !";
+            case KoStep(CombatBugemon koBugemon) -> koBugemon.getName() + " est K.O. !";
             default -> "Action effectuée.";
         };
 
@@ -378,5 +378,6 @@ public class CombatView extends View {
 
     @Override
     public void refresh() {
+        // nothing to do
     }
 }

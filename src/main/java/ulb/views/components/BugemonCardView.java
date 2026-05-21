@@ -44,7 +44,7 @@ public class BugemonCardView extends ComponentView {
         this.nameLabel.setText(bugemon.getName());
         this.levelLabel.setText(String.valueOf(bugemon.level()));
         this.imageView.setImage(new Image(bugemon.getSpritePath()));
-        this.setOnContextMenuRequested(e -> this.detailPopup.show(e));
+        this.setOnContextMenuRequested(this.detailPopup::show);
     }
 
     public void hideLevelLabel() {

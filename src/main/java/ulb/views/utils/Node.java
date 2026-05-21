@@ -1,6 +1,7 @@
 package ulb.views.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // Dummy class while waiting a skill node...
 public class Node {
@@ -19,17 +20,16 @@ public class Node {
     private NodeState state = NodeState.LOCKED;
 
     // Visual part for the layout
-    // Public to avoid useless getter for now
-    public float x;
-    public float y;
-    public float mod;
+    private float x;
+    private float y;
+    private float mod;
 
     public Node(String data, String description, Node parent) {
         this.data = data;
         this.description = description;
         this.parent = parent;
 
-        // fix
+        // fix : TODO: check
         this.y = (this.parent == null) ? 0 : this.parent.y + 1;
     }
 
@@ -45,11 +45,47 @@ public class Node {
         return this.parent;
     }
 
+    public float getX() {
+        return this.x;
+    }
+
+    public float getY() {
+        return this.y;
+    }
+
+    public float getMod() {
+        return this.mod;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void addX(float value) {
+        this.x += value;
+    }
+
+    public void addY(float value) {
+        this.y += value;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public void setMod(float mod) {
+        this.mod = mod;
+    }
+
+    public void addMod(float value) {
+        this.mod += value;
+    }
+
     public void addChild(Node child) {
         this.children.add(child);
     }
 
-    public ArrayList<Node> getChildren() {
+    public List<Node> getChildren() {
         return this.children;
     }
 
@@ -66,7 +102,7 @@ public class Node {
     }
 
     public boolean isLeaf() {
-        return this.children.size() == 0;
+        return this.children.isEmpty();
     }
 
     public Node getPreviousSibling() {
