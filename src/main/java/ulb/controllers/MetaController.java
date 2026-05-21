@@ -98,7 +98,7 @@ public class MetaController {
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
                 this.bugemonService, playerState);
         this.createBugemonController = new CreateBugemonController(this, this.bugemonService);
-        this.levelUpController = new LevelUpController(this, services.levelUpService);
+        this.levelUpController = new LevelUpController(this, services.levelUp);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
 

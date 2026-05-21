@@ -18,12 +18,11 @@ public class ServiceRegistry {
     public final TowerService tower;
     public final CombatService combat;
     public final SaveService save;
-    public final LevelUpService levelUpService;
+    public final LevelUpService levelUp;
     public final MusicService music;
 
     public ServiceRegistry(BugemonService bugemon, TeamService team, InventoryService inventory, SkillService skill,
-            TowerService tower, CombatService combat, SaveService save, LevelUpService levelUpService,
-            MusicService music) {
+            TowerService tower, CombatService combat, SaveService save, LevelUpService levelUp, MusicService music) {
         this.bugemon = bugemon;
         this.team = team;
         this.inventory = inventory;
@@ -31,7 +30,7 @@ public class ServiceRegistry {
         this.tower = tower;
         this.combat = combat;
         this.save = save;
-        this.levelUpService = levelUpService;
+        this.levelUp = levelUp;
         this.music = music;
     }
 }
