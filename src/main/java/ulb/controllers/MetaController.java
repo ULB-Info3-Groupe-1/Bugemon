@@ -56,6 +56,7 @@ public class MetaController {
 
     private final Stage stage;
     private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
+
     private final SaveMenuController saveMenuController;
     private final MainMenuController mainMenuController;
     private final ManageTeamController createTeamController;
@@ -100,6 +101,7 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this, services.levelUpService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
+
         this.initTransitions();
     }
 
@@ -111,7 +113,7 @@ public class MetaController {
         LOG.info("onCombatFinished, won: {}", won);
         this.lastCombatSummary = summary;
 
-        if (this.isTowerActive()) {
+        if (this.isTowerActive) {
             // TODO : gérer la suite de la tour
             return;
         }
@@ -123,6 +125,24 @@ public class MetaController {
         if (this.lastCombatSummary != null) {
             this.receiveCombatSummary(this.lastCombatSummary);
             this.lastCombatSummary = null;
+        } else {
+            this.switchTo(Window.MAIN_MENU);
+        }
+    }
+
+    private void receiveCombatSummary(CombatSummary combatSummary) {
+        List<LevelUpResult> levelUps = combatSummary.levelUpResults();
+        if (levelUps != null && !levelUps.isEmpty()) {
+            this.levelUpController.initialize(levelUps);
+            this.switchTo(Window.LEVEL_UP);
+        } else {
+            this.onAllPendingLevelUpsConsumed();
+        }
+    }
+
+    public void onAllPendingLevelUpsConsumed() {
+        if (this.isTowerActive) {
+            this.switchTo(Window.TOWER);
         } else {
             this.switchTo(Window.MAIN_MENU);
         }
@@ -146,24 +166,6 @@ public class MetaController {
 
     public void onMainMenu() {
         this.switchTo(Window.MAIN_MENU);
-    }
-
-    public void onAllPendingLevelUpsConsumed() {
-        if (this.isTowerActive()) {
-            this.switchTo(Window.TOWER);
-        } else {
-            this.switchTo(Window.MAIN_MENU);
-        }
-    }
-
-    public void receiveCombatSummary(CombatSummary combatSummary) {
-        List<LevelUpResult> levelUps = combatSummary.levelUpResults();
-        if (levelUps != null && !levelUps.isEmpty()) {
-            this.levelUpController.initialize(levelUps);
-            this.switchTo(Window.LEVEL_UP);
-        } else {
-            this.onAllPendingLevelUpsConsumed();
-        }
     }
 
     public void onStartManualCombat() {
@@ -227,12 +229,10 @@ public class MetaController {
             this.musicService.playBackground(BackgroundAmbiance.COMBAT);
             this.combatController.show();
         });
-        // TODO: check to have automatic combat
         this.transitions.put(Window.AUTOMATIC_COMBAT, () -> {
             this.musicService.playBackground(BackgroundAmbiance.COMBAT);
             this.combatController.show();
         });
-        // TODO: add tower transitions
         this.transitions.put(Window.COMBAT_VICTORY, () -> {
             this.combatVictoryController.show();
             this.musicService.playSoundEffect(SoundEffect.VICTORY);
@@ -262,14 +262,6 @@ public class MetaController {
 
     void showView(View view) {
         view.show(this.stage);
-    }
-
-    public boolean isTowerActive() {
-        return this.isTowerActive;
-    }
-
-    public void endTowerFlow() {
-        this.isTowerActive = false;
     }
 
     public void startTowerCombat(Combat combat) {
