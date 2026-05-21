@@ -10,12 +10,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 import ulb.Configuration;
+import ulb.common.RoomState;
+import ulb.common.RoomType;
 import ulb.common.dto.display.RoomDisplayDTO;
-import ulb.models.tower.room.Room;
 
 /**
- * Custom component for a single tower room. Loads {@code Room.fxml} via {@code fx:root}, applies CSS classes for type
- * and state, and fires a click event only when the room is {@link RoomDisplayDTO.RoomState#AVAILABLE}.
+ * Custom component for a single tower room. Loads {@code Room.fxml} via
+ * {@code fx:root}, applies CSS classes for type
+ * and state, and fires a click event only when the room is
+ * {@link ulb.common.RoomState#AVAILABLE}.
  */
 public class RoomNodeView extends StackPane {
 
@@ -29,8 +32,7 @@ public class RoomNodeView extends StackPane {
     @FXML
     private ImageView roomTypeIcon;
 
-    private final Room roomRef;
-    private final RoomDisplayDTO.RoomState state;
+    private final RoomDisplayDTO dto;
     private Listener listener;
 
     public RoomNodeView(RoomDisplayDTO dto) {
@@ -43,8 +45,7 @@ public class RoomNodeView extends StackPane {
             throw new UncheckedIOException("Failed to load RoomNode component", e);
         }
 
-        this.roomRef = dto.roomRef();
-        this.state = dto.state();
+        this.dto = dto;
 
         this.getStyleClass().add(dto.type().cssClass());
         this.getStyleClass().add(dto.state().cssClass());
@@ -62,15 +63,15 @@ public class RoomNodeView extends StackPane {
 
     @FXML
     private void onClick() {
-        if (this.state != RoomDisplayDTO.RoomState.AVAILABLE) {
+        if (this.dto.state() != RoomState.AVAILABLE) {
             return;
         }
         if (this.listener != null) {
-            this.listener.onRoomClicked(this.roomRef);
+            this.listener.onRoomClicked(this.dto.x(), this.dto.y());
         }
     }
 
-    private static Image iconFor(RoomDisplayDTO.RoomType type) {
+    private static Image iconFor(RoomType type) {
         return switch (type) {
             case COMBAT -> ICON_COMBAT;
             case BOSS -> ICON_BOSS;
@@ -88,6 +89,6 @@ public class RoomNodeView extends StackPane {
     }
 
     public interface Listener {
-        void onRoomClicked(Room room);
+        void onRoomClicked(int row, int col);
     }
 }

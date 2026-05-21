@@ -1,5 +1,7 @@
 package ulb.models.tower.room;
 
+import ulb.common.RoomType;
+
 public class Room {
     private final RoomType type;
     private boolean visited;
@@ -19,13 +21,5 @@ public class Room {
 
     public void markAsVisited() {
         this.visited = true;
-    }
-
-    public enum RoomType {
-        START,
-        COMBAT,
-        BOSS,
-        REWARD,
-        EMPTY,
     }
 }

@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import ulb.common.RoomType;
 import ulb.models.tower.FloorMap;
-import ulb.models.tower.FloorMap.RoomPosition;
 import ulb.models.tower.room.Room;
-import ulb.models.tower.room.Room.RoomType;
+import ulb.models.utils.Position;
 
 public class FloorMapFactory {
     // TODO: those constants shouldn't be here
@@ -34,7 +34,7 @@ public class FloorMapFactory {
     // Probability of continuing growth of a branch in the same direction
     private static final double BIAS_SAME_DIRECTION_PROB = 0.7;
 
-    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
 
     private final int seed;
 
@@ -44,7 +44,7 @@ public class FloorMapFactory {
 
     public FloorMap create(int floor) {
         for (int i = 0; i < MAX_GENERATION_ATTEMPTS; i++) {
-            Optional<FloorMap> floormap = this.tryCreate(floor);
+            Optional<FloorMap> floormap = this.tryCreate(floor, i);
 
             if (floormap.isPresent()) {
                 return floormap.orElseThrow();
@@ -54,9 +54,9 @@ public class FloorMapFactory {
         throw new IllegalStateException("Failed to create FloorMap after " + MAX_GENERATION_ATTEMPTS + " attempts");
     }
 
-    private Optional<FloorMap> tryCreate(int floor) {
-        // seed to generate n-th floor = game_seed + floor
-        Random random = new Random(this.seed + floor);
+    private Optional<FloorMap> tryCreate(int floor, int attempt) {
+        // seed to generate n-th floor = game_seed + floor + attempt (varies per retry)
+        Random random = new Random(this.seed + floor + attempt);
 
         Map<String, int[]> nodeCoords = new HashMap<>();
         Map<String, Integer> nodeDepths = new HashMap<>();
@@ -65,7 +65,7 @@ public class FloorMapFactory {
 
         // start node setup
         String startKey = nodeKey(CENTER, CENTER);
-        nodeCoords.put(startKey, new int[]{CENTER, CENTER});
+        nodeCoords.put(startKey, new int[] { CENTER, CENTER });
         nodeDepths.put(startKey, 0);
         childrenOf.put(startKey, new ArrayList<>());
         parentOf.put(startKey, null);
@@ -85,17 +85,17 @@ public class FloorMapFactory {
             int[] dir = shuffledDirs.get(b); // allows us to grow every branch in a different direction
 
             // compute start position of branch to grow
-            int col = CENTER + dir[0];
-            int row = CENTER + dir[1];
+            int x = CENTER + dir[0];
+            int y = CENTER + dir[1];
 
-            boolean branchStartPosInBounds = inBounds(col, row);
-            boolean branchStartPosAvailable = !nodeCoords.containsKey(nodeKey(col, row));
+            boolean branchStartPosInBounds = inBounds(x, y);
+            boolean branchStartPosAvailable = !nodeCoords.containsKey(nodeKey(x, y));
 
             if (!branchStartPosInBounds || !branchStartPosAvailable) {
                 continue;
             }
 
-            growBranch(col, row, dir, 1, startKey, nodeCoords, nodeDepths, childrenOf, parentOf, random);
+            growBranch(x, y, dir, 1, startKey, nodeCoords, nodeDepths, childrenOf, parentOf, random);
 
             numBranchesGenerated++;
         }
@@ -109,20 +109,20 @@ public class FloorMapFactory {
         return Optional.of(buildMap(nodeCoords, childrenOf, types, startKey));
     }
 
-    private static void growBranch(int col, int row, int[] lastDir, int depth, String parentKey,
+    private static void growBranch(int x, int y, int[] lastDir, int depth, String parentKey,
             Map<String, int[]> nodeCoords, Map<String, Integer> nodeDepths, Map<String, List<String>> childrenOf,
             Map<String, String> parentOf, Random random) {
 
         for (int d = depth; d <= MAX_DEPTH; d++) {
-            String key = nodeKey(col, row);
-            nodeCoords.put(key, new int[]{col, row}); // current node here
+            String key = nodeKey(x, y);
+            nodeCoords.put(key, new int[] { x, y }); // current node here
             nodeDepths.put(key, d); // current node at depth d
             childrenOf.put(key, new ArrayList<>()); // current node has no children atm
             parentOf.put(key, parentKey);
             childrenOf.get(parentKey).add(key); // add current as child of parent
             parentKey = key;
 
-            List<int[]> candidates = validNextDirs(col, row, lastDir, nodeCoords);
+            List<int[]> candidates = validNextDirs(x, y, lastDir, nodeCoords);
             if (candidates.isEmpty()) {
                 break;
             }
@@ -138,8 +138,8 @@ public class FloorMapFactory {
             int[] chosen = (straightFree && random.nextDouble() < BIAS_SAME_DIRECTION_PROB) ? currentDir
                     : candidates.get(random.nextInt(candidates.size()));
 
-            col = col + chosen[0];
-            row = row + chosen[1];
+            x = x + chosen[0];
+            y = y + chosen[1];
             lastDir = chosen;
         }
     }
@@ -148,13 +148,13 @@ public class FloorMapFactory {
             Map<String, RoomType> types, String startKey) {
 
         Map<String, Room> byKey = new HashMap<>();
-        Map<Room, RoomPosition> positions = new HashMap<>();
+        Map<Room, Position> positions = new HashMap<>();
         for (String key : nodeCoords.keySet()) {
             RoomType type = types.getOrDefault(key, RoomType.EMPTY);
             Room room = new Room(type);
             byKey.put(key, room);
             int[] coords = nodeCoords.get(key);
-            positions.put(room, new RoomPosition(coords[0], coords[1]));
+            positions.put(room, new Position(coords[0], coords[1]));
         }
 
         Map<Room, List<Room>> neighbors = new HashMap<>();
@@ -180,14 +180,14 @@ public class FloorMapFactory {
         return new FloorMap(rooms, positions, neighbors, byKey.get(startKey));
     }
 
-    private static List<int[]> validNextDirs(int col, int row, int[] lastDir, Map<String, int[]> nodeCoords) {
+    private static List<int[]> validNextDirs(int x, int y, int[] lastDir, Map<String, int[]> nodeCoords) {
         List<int[]> result = new ArrayList<>();
         for (int[] d : DIRECTIONS) {
             if (d[0] == -lastDir[0] && d[1] == -lastDir[1]) {
                 continue;
             }
-            int nextCol = col + d[0];
-            int nextRow = row + d[1];
+            int nextCol = x + d[0];
+            int nextRow = y + d[1];
 
             boolean inBounds = inBounds(nextCol, nextRow);
             boolean overlapping = nodeCoords.containsKey(nodeKey(nextCol, nextRow));
@@ -215,7 +215,7 @@ public class FloorMapFactory {
 
         // rooms we still have to assign a type to
         List<String> candidates = nodeCoords.keySet().stream().filter(k -> !k.equals(startKey) && !k.equals(bossKey))
-                .toList();
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
         Collections.shuffle(candidates, random);
 
@@ -260,7 +260,8 @@ public class FloorMapFactory {
     }
 
     /**
-     * Returns true iff there is a room assigned with the type Combat between the node corresponding to key and the
+     * Returns true iff there is a room assigned with the type Combat between the
+     * node corresponding to key and the
      * corresponding to startKey.
      */
     private static boolean hasCombatAncestor(String key, String startKey, Map<String, String> parentOf,
@@ -275,11 +276,11 @@ public class FloorMapFactory {
         return false;
     }
 
-    private static String nodeKey(int col, int row) {
-        return String.format("(%d, %d)", col, row);
+    private static String nodeKey(int x, int y) {
+        return String.format("(%d, %d)", x, y);
     }
 
-    private static boolean inBounds(int col, int row) {
-        return col >= 0 && col < GRID_SIZE && row >= 0 && row < GRID_SIZE;
+    private static boolean inBounds(int x, int y) {
+        return x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
     }
 }

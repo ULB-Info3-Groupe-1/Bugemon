@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ulb.Configuration;
+import ulb.common.RoomState;
 import ulb.common.dto.display.ConnectionDisplayDTO;
 import ulb.common.dto.display.FloorDisplayDTO;
 import ulb.common.dto.display.RoomDisplayDTO;
@@ -19,10 +20,10 @@ import ulb.models.run.RunBugemon;
 import ulb.models.run.RunTeam;
 import ulb.models.team.Team;
 import ulb.models.tower.FloorMap;
-import ulb.models.tower.FloorMap.RoomPosition;
 import ulb.models.tower.TowerState;
 import ulb.models.tower.room.Room;
 import ulb.models.tower.utils.FloorMapFactory;
+import ulb.models.utils.Position;
 import ulb.repositories.TowerRepository;
 
 public class TowerService {
@@ -79,19 +80,19 @@ public class TowerService {
 
         List<RoomDisplayDTO> rooms = new ArrayList<>();
         for (Room room : map.getAllRooms()) {
-            RoomPosition pos = map.getPosition(room);
-            rooms.add(new RoomDisplayDTO(pos.row(), pos.col(), RoomDisplayDTO.RoomType.from(room.getType()),
-                    roomState(room, current, reachable), room));
+            Position pos = map.getPosition(room);
+            rooms.add(new RoomDisplayDTO(pos.x(), pos.y(), room.getType(),
+                    this.roomState(room, current, reachable)));
         }
 
         Set<Room> processed = new HashSet<>();
         List<ConnectionDisplayDTO> connections = new ArrayList<>();
         for (Room room : map.getAllRooms()) {
-            RoomPosition posA = map.getPosition(room);
+            Position posA = map.getPosition(room);
             for (Room neighbor : map.getNeighbors(room)) {
                 if (!processed.contains(neighbor)) {
-                    RoomPosition posB = map.getPosition(neighbor);
-                    connections.add(new ConnectionDisplayDTO(posA.row(), posA.col(), posB.row(), posB.col()));
+                    Position posB = map.getPosition(neighbor);
+                    connections.add(new ConnectionDisplayDTO(posA.x(), posA.y(), posB.x(), posB.y()));
                 }
             }
             processed.add(room);
@@ -100,14 +101,14 @@ public class TowerService {
         return new FloorDisplayDTO(this.activeTower.getCurrentFloor(), rooms, connections);
     }
 
-    private static RoomDisplayDTO.RoomState roomState(Room room, Room current, Set<Room> reachable) {
+    private RoomState roomState(Room room, Room current, Set<Room> reachable) {
         if (room == current)
-            return RoomDisplayDTO.RoomState.CURRENT;
+            return RoomState.CURRENT;
         if (reachable.contains(room))
-            return RoomDisplayDTO.RoomState.AVAILABLE;
+            return RoomState.AVAILABLE;
         if (room.isVisited())
-            return RoomDisplayDTO.RoomState.VISITED;
-        return RoomDisplayDTO.RoomState.LOCKED;
+            return RoomState.VISITED;
+        return RoomState.LOCKED;
     }
 
     private int genTowerSeed() {
@@ -128,7 +129,12 @@ public class TowerService {
         return new TowerDTO(towerState.getSeed(), floorMapDTO, teamDTO);
     }
 
-    private List<RoomPosition> getVisitedRoomsPosition(FloorMap floorMap) {
-        return floorMap.getVisitedRooms().stream().map(floorMap::getPosition).toList();
+    private List<Position> getVisitedRoomsPosition(FloorMap floorMap) {
+        return floorMap.getVisitedRooms().stream()
+                .map(r -> {
+                    Position p = floorMap.getPosition(r);
+                    return new Position(p.x(), p.y());
+                })
+                .toList();
     }
 }

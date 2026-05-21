@@ -70,7 +70,7 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName, bugemon.defense(),
+        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type(), fileName, bugemon.defense(),
                 bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(),
                 bugemon.attacks().get(0).id(), bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());

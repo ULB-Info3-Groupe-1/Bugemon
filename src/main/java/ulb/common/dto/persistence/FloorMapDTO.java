@@ -2,8 +2,7 @@ package ulb.common.dto.persistence;
 
 import java.util.List;
 
-import ulb.models.tower.FloorMap.RoomPosition;
+import ulb.models.utils.Position;
 
-public record FloorMapDTO(int floor, List<RoomPosition> visitedRoomsPosition) {
-
+public record FloorMapDTO(int floor, List<Position> visitedRoomsPosition) {
 }

@@ -4,13 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
+import ulb.common.RoomType;
 import ulb.models.player.PlayerState;
 import ulb.models.team.Team;
 import ulb.models.tower.FloorMap;
 import ulb.models.tower.TowerState;
 import ulb.models.tower.exceptions.IllegalMoveException;
 import ulb.models.tower.room.Room;
-import ulb.services.SaveService;
+import ulb.models.utils.Position;
 import ulb.services.TowerService;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
@@ -19,17 +20,14 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private static final Logger LOG = LoggerFactory.getLogger(TowerController.class);
 
     private final TowerService towerService;
-    private final SaveService saveService;
 
     private PlayerState playerState;
     private TowerState towerState;
 
-    public TowerController(MetaController metaController, PlayerState playerState, SaveService saveService,
-            TowerService towerService) {
+    public TowerController(MetaController metaController, PlayerState playerState, TowerService towerService) {
         super(metaController, ViewLoader.load(FloorView::new));
         this.view.setListener(this);
         this.playerState = playerState;
-        this.saveService = saveService;
         this.towerService = towerService;
     }
 
@@ -45,11 +43,19 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     @Override
-    public void onRoomClicked(Room room) {
+    public void onRoomClicked(int x, int y) {
+        FloorMap floorMap = this.towerState.getFloorMap();
+        Room room = floorMap.getAllRooms().stream()
+                .filter(r -> {
+                    Position p = floorMap.getPosition(r);
+                    return p.x() == x && p.y() == y;
+                })
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No room at (" + x + "," + y + ")"));
         try {
-            this.towerState.getFloorMap().movePlayerTo(room);
+            floorMap.movePlayerTo(room);
         } catch (IllegalMoveException e) {
-            LOG.warn("Illegal move attempted to room: {}", room.getType(), e);
+            LOG.warn("Illegal move attempted to room at ({}, {}): {}", x, y, e.getMessage());
             return;
         }
         this.towerService.save();
@@ -72,7 +78,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         }
         this.towerService.save();
         Room currentRoom = this.towerState.getFloorMap().getCurrentRoom();
-        if (currentRoom.getType() == Room.RoomType.BOSS) {
+        if (currentRoom.getType() == RoomType.BOSS) {
             this.advanceFloor();
         } else {
             this.udpateDisplayedFloor();

@@ -5,14 +5,15 @@ import java.util.Map;
 
 import ulb.models.tower.exceptions.IllegalMoveException;
 import ulb.models.tower.room.Room;
+import ulb.models.utils.Position;
 
 public class FloorMap {
     private final List<Room> rooms;
-    private final Map<Room, RoomPosition> positions;
+    private final Map<Room, Position> positions;
     private final Map<Room, List<Room>> neighbors;
     private Room currentRoom;
 
-    public FloorMap(List<Room> rooms, Map<Room, RoomPosition> positions, Map<Room, List<Room>> neighbors,
+    public FloorMap(List<Room> rooms, Map<Room, Position> positions, Map<Room, List<Room>> neighbors,
             Room currentRoom) {
         this.rooms = rooms;
         this.positions = positions;
@@ -33,7 +34,8 @@ public class FloorMap {
     }
 
     /**
-     * Returns the neighboring rooms, excluding all visited ones (and the current room).
+     * Returns the neighboring rooms, excluding all visited ones (and the current
+     * room).
      */
     public List<Room> getReachableRooms() {
         return this.getClickableRooms().stream().filter(r -> !r.isVisited()) // filter out visited rooms
@@ -62,20 +64,7 @@ public class FloorMap {
         this.currentRoom = room;
     }
 
-    // TODO: make sure we need all of them: getPosition, getCol, getRow
-
-    public RoomPosition getPosition(Room room) {
+    public Position getPosition(Room room) {
         return this.positions.get(room);
-    }
-
-    public int getCol(Room room) {
-        return this.positions.get(room).col();
-    }
-
-    public int getRow(Room room) {
-        return this.positions.get(room).row();
-    }
-
-    public record RoomPosition(int row, int col) {
     }
 }

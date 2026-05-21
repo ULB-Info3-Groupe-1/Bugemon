@@ -1,43 +1,12 @@
 package ulb.common.dto.display;
 
-import ulb.models.tower.room.Room;
+import ulb.common.RoomState;
+import ulb.common.RoomType;
 
 /**
- * Display-only snapshot of a single room. The {@code roomRef} is an opaque key passed back to the controller on click —
- * the view never calls methods on it.
+ * Display-only snapshot of a single room. Rooms are identified by their
+ * {@code (x, yl)} grid position — the
+ * controller uses this to look up the domain object on click.
  */
-public record RoomDisplayDTO(int row, int col, RoomType type, RoomState state, Room roomRef) {
-
-    public enum RoomType {
-        START,
-        COMBAT,
-        BOSS,
-        REWARD,
-        EMPTY;
-
-        public static RoomType from(Room.RoomType domain) {
-            return switch (domain) {
-                case START -> START;
-                case COMBAT -> COMBAT;
-                case BOSS -> BOSS;
-                case REWARD -> REWARD;
-                case EMPTY -> EMPTY;
-            };
-        }
-
-        public String cssClass() {
-            return "room-" + this.name().toLowerCase();
-        }
-    }
-
-    public enum RoomState {
-        CURRENT,
-        AVAILABLE,
-        VISITED,
-        LOCKED;
-
-        public String cssClass() {
-            return this.name().toLowerCase();
-        }
-    }
+public record RoomDisplayDTO(int x, int y, RoomType type, RoomState state) {
 }

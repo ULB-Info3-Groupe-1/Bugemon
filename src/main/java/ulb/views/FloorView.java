@@ -9,7 +9,6 @@ import ulb.Configuration;
 import ulb.common.dto.display.ConnectionDisplayDTO;
 import ulb.common.dto.display.FloorDisplayDTO;
 import ulb.common.dto.display.RoomDisplayDTO;
-import ulb.models.tower.room.Room;
 import ulb.views.components.RoomNodeView;
 
 public class FloorView extends View {
@@ -60,15 +59,15 @@ public class FloorView extends View {
     }
 
     private void resizePane() {
-        int maxRow = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::row).max().orElse(0);
-        int maxCol = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::col).max().orElse(0);
-        this.innerMapPane.setPrefSize((maxCol + 1) * CELL_SIZE, (maxRow + 1) * CELL_SIZE);
+        int maxX = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::x).max().orElse(0);
+        int maxY = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::y).max().orElse(0);
+        this.innerMapPane.setPrefSize((maxX + 1) * CELL_SIZE, (maxY + 1) * CELL_SIZE);
     }
 
     private void drawConnections() {
         for (ConnectionDisplayDTO conn : this.floorDTO.connections()) {
-            Line line = new Line(centerX(conn.fromCol()), centerY(conn.fromRow()), centerX(conn.toCol()),
-                    centerY(conn.toRow()));
+            Line line = new Line(centerX(conn.fromX()), centerY(conn.fromY()), centerX(conn.toX()),
+                    centerY(conn.toY()));
             line.getStyleClass().add("room-connection");
             this.innerMapPane.getChildren().add(line);
         }
@@ -77,9 +76,9 @@ public class FloorView extends View {
     private void drawRooms() {
         for (RoomDisplayDTO dto : this.floorDTO.rooms()) {
             RoomNodeView node = new RoomNodeView(dto);
-            node.setLayoutX(topLeftX(dto.col()));
-            node.setLayoutY(topLeftY(dto.row()));
-            node.setListener(room -> this.listener.onRoomClicked(room));
+            node.setLayoutX(topLeftX(dto.x()));
+            node.setLayoutY(topLeftY(dto.y()));
+            node.setListener((row, col) -> this.listener.onRoomClicked(row, col));
             this.innerMapPane.getChildren().add(node);
         }
     }
@@ -101,7 +100,7 @@ public class FloorView extends View {
     }
 
     public interface Listener {
-        void onRoomClicked(Room room);
+        void onRoomClicked(int row, int col);
 
         void onReturnToMainMenu();
     }
