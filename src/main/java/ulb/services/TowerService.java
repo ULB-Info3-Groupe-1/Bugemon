@@ -1,6 +1,7 @@
 package ulb.services;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -10,6 +11,8 @@ import ulb.models.player.PlayerState;
 import ulb.models.run.RunBugemon;
 import ulb.models.run.RunTeam;
 import ulb.models.tower.Floor;
+import ulb.models.tower.FloorMap;
+import ulb.models.tower.FloorMap.RoomPosition;
 import ulb.models.tower.TowerState;
 import ulb.models.tower.utils.FloorFactory;
 import ulb.repositories.TowerRepository;
@@ -60,9 +63,14 @@ public class TowerService {
             hpPerMember.put(new TeamMemberDTO(runBugemon.getName(), runTeam.getSlotOfMember(runBugemon)),
                     runBugemon.getCurrentHp());
         }
-        FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloor(), towerState.getVisitedRoomsPosition());
-        RunTeamDTO teamDTO = new RunTeamDTO(playername, towerState.getTeamName(), hpPerMember);
+        FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloor(),
+                this.getVisitedRoomsPosition(towerState.getFloorMap()));
+        RunTeamDTO teamDTO = new RunTeamDTO(this.playername, towerState.getTeamName(), hpPerMember);
 
         return new TowerDTO(towerState.getSeed(), floorMapDTO, teamDTO);
+    }
+
+    private List<RoomPosition> getVisitedRoomsPosition(FloorMap floorMap) {
+        return floorMap.getVisitedRooms().stream().map(floorMap::getPosition).toList();
     }
 }

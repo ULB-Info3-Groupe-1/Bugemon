@@ -1,14 +1,9 @@
 package ulb.models.tower;
 
-import java.util.List;
-
-import ulb.Configuration;
 import ulb.models.run.RunTeam;
-import ulb.models.tower.FloorMap.RoomPosition;
 
 public class TowerState {
-
-    private int seed;
+    private final int seed;
     private final RunTeam runTeam;
     private int currentFloor;
     private FloorMap floorMap;
@@ -18,15 +13,6 @@ public class TowerState {
         this.runTeam = runTeam;
         this.currentFloor = currentFloor;
         this.floorMap = floorMap;
-    }
-
-    public void clear() {
-        // we re-generate the seed to ensure a different floor layout for the next run
-        this.seed = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
-
-        this.runTeam.getMembers().clear();
-        this.currentFloor = Configuration.Game.FLOOR_MIN;
-        this.floorMap = null;
     }
 
     public int getSeed() {
@@ -47,9 +33,5 @@ public class TowerState {
 
     public String getTeamName() {
         return this.runTeam.getName();
-    }
-
-    public List<RoomPosition> getVisitedRoomsPosition() {
-        return this.floorMap.getVisitedRooms().stream().map(this.floorMap::getPosition).toList();
     }
 }
