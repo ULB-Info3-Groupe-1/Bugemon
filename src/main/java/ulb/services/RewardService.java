@@ -5,6 +5,8 @@ import java.util.Random;
 
 import ulb.models.bugemon.Attack;
 import ulb.models.item.Inventory;
+import ulb.models.player.PlayerBugemon;
+import ulb.models.player.exceptions.IllegalAttackReplacementException;
 import ulb.models.run.RunBugemon;
 import ulb.models.run.RunTeam;
 import ulb.models.tower.reward.AttackReward;
@@ -15,8 +17,9 @@ import ulb.models.tower.reward.RewardGenerator;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.StaticRepository;
 
-public class RewardService {
+// TODO: update services states
 
+public class RewardService {
     private final RewardGenerator rewardGenerator;
     private final StaticRepository staticRepository;
     private final InventoryRepository inventoryRepository;
@@ -41,7 +44,15 @@ public class RewardService {
         bugemon.applyUpgrade(reward.getBonus());
     }
 
-    public void applyAttackReward(AttackReward reward, RunBugemon bugemon, Attack toReplace) {
-        bugemon.replaceAttack(toReplace, reward.getAttack());
+    private void applyAttackReward(AttackReward reward, RunBugemon bugemon, Attack toReplace) { 
+        this.applyAttackReward(reward, bugemon.getPlayerBugemon(), toReplace);
+    }
+
+    private void applyAttackReward(AttackReward reward, PlayerBugemon bugemon, Attack toReplace) {
+        try {
+            bugemon.replaceAttack(toReplace, reward.getAttack());
+        } catch (IllegalAttackReplacementException e) {
+            // do nothing
+        }
     }
 }

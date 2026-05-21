@@ -9,6 +9,8 @@ import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
+import ulb.models.combat.damage.Efficiency;
+import ulb.models.player.exceptions.IllegalAttackReplacementException;
 
 public class PlayerBugemon {
     private final Bugemon base;
@@ -110,6 +112,21 @@ public class PlayerBugemon {
 
     public double getXpProgress() {
         return (double) this.xp / this.getXpToNextLevel();
+    }
+
+    public boolean replaceAttack(Attack oldAttack, Attack newAttack) throws IllegalAttackReplacementException {
+        if (!Efficiency.preview(this.getType(), newAttack.type()).isAtLeastNormal()) {
+            throw new IllegalAttackReplacementException("bugemon is weak against the type of the given attack");
+        }
+
+        int index = this.currentAttacks.indexOf(oldAttack);
+        if (index == -1) {
+            throw new IllegalAttackReplacementException(
+                    "attempted to replace an attack that the bugemon does not have");
+        }
+        this.currentAttacks.set(index, newAttack);
+
+        return true;
     }
 
     @Override
