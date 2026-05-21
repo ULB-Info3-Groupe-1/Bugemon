@@ -1,15 +1,9 @@
 package ulb.controllers;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.Configuration;
-import ulb.models.combat.Combat;
 import ulb.models.player.PlayerState;
-import ulb.models.run.RunTeam;
-import ulb.models.tower.Floor;
 import ulb.models.tower.FloorNode;
 import ulb.models.tower.TowerState;
 import ulb.models.tower.room.Room;
@@ -23,11 +17,12 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     private final TowerService towerService;
     private final SaveService saveService;
-    
+
     private PlayerState playerState;
     private TowerState towerState;
 
-    public TowerController(MetaController metaController, PlayerState playerState, SaveService saveService, TowerService towerService) {
+    public TowerController(MetaController metaController, PlayerState playerState, SaveService saveService,
+            TowerService towerService) {
         super(metaController, ViewLoader.load(FloorView::new));
         this.view.setListener(this);
         this.playerState = playerState;
@@ -38,14 +33,13 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     @Override
     protected void show() {
-        
+
         this.udpateDisplayedFloor();
     }
 
     @Override
     public void onRoomClicked(FloorNode node) {
     }
-
 
     public void visitRoom(Room room) {
         this.towerService.handleRoomVisit(this.towerState, room);
@@ -73,11 +67,11 @@ public class TowerController extends Controller<FloorView> implements FloorView.
      * Shows the floor map before continuing the run.
      */
     private void udpateDisplayedFloor() {
-        
+
         super.show();
     }
 
     private void updateDisplayedFloorStructure() {
-        
+
     }
 }

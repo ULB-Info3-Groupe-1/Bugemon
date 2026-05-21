@@ -34,7 +34,7 @@ public class FloorMapFactory {
     // Probability of continuing growth of a branch in the same direction
     private static final double BIAS_SAME_DIRECTION_PROB = 0.7;
 
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final int seed;
 
@@ -51,8 +51,7 @@ public class FloorMapFactory {
             }
         }
 
-        throw new IllegalStateException(
-                "Failed to create FloorMap after " + MAX_GENERATION_ATTEMPTS + " attempts");
+        throw new IllegalStateException("Failed to create FloorMap after " + MAX_GENERATION_ATTEMPTS + " attempts");
     }
 
     private Optional<FloorMap> tryCreate(int floor) {
@@ -66,7 +65,7 @@ public class FloorMapFactory {
 
         // start node setup
         String startKey = nodeKey(CENTER, CENTER);
-        nodeCoords.put(startKey, new int[] { CENTER, CENTER });
+        nodeCoords.put(startKey, new int[]{CENTER, CENTER});
         nodeDepths.put(startKey, 0);
         childrenOf.put(startKey, new ArrayList<>());
         parentOf.put(startKey, null);
@@ -110,21 +109,13 @@ public class FloorMapFactory {
         return Optional.of(buildMap(nodeCoords, childrenOf, types, startKey));
     }
 
-    private static void growBranch(
-            int col,
-            int row,
-            int[] lastDir,
-            int depth,
-            String parentKey,
-            Map<String, int[]> nodeCoords,
-            Map<String, Integer> nodeDepths,
-            Map<String, List<String>> childrenOf,
-            Map<String, String> parentOf,
-            Random random) {
+    private static void growBranch(int col, int row, int[] lastDir, int depth, String parentKey,
+            Map<String, int[]> nodeCoords, Map<String, Integer> nodeDepths, Map<String, List<String>> childrenOf,
+            Map<String, String> parentOf, Random random) {
 
         for (int d = depth; d <= MAX_DEPTH; d++) {
             String key = nodeKey(col, row);
-            nodeCoords.put(key, new int[] { col, row }); // current node here
+            nodeCoords.put(key, new int[]{col, row}); // current node here
             nodeDepths.put(key, d); // current node at depth d
             childrenOf.put(key, new ArrayList<>()); // current node has no children atm
             parentOf.put(key, parentKey);
@@ -144,8 +135,7 @@ public class FloorMapFactory {
 
             // Prefer continuing in the same direction when possible.
             // This was not asked by the client but is a cool feature.
-            int[] chosen = (straightFree && random.nextDouble() < BIAS_SAME_DIRECTION_PROB)
-                    ? currentDir
+            int[] chosen = (straightFree && random.nextDouble() < BIAS_SAME_DIRECTION_PROB) ? currentDir
                     : candidates.get(random.nextInt(candidates.size()));
 
             col = col + chosen[0];
@@ -154,11 +144,8 @@ public class FloorMapFactory {
         }
     }
 
-    private static FloorMap buildMap(
-            Map<String, int[]> nodeCoords,
-            Map<String, List<String>> childrenOf,
-            Map<String, RoomType> types,
-            String startKey) {
+    private static FloorMap buildMap(Map<String, int[]> nodeCoords, Map<String, List<String>> childrenOf,
+            Map<String, RoomType> types, String startKey) {
 
         Map<String, Room> byKey = new HashMap<>();
         Map<Room, RoomPosition> positions = new HashMap<>();
@@ -213,19 +200,13 @@ public class FloorMapFactory {
     }
 
     private static String deepestNode(Map<String, Integer> nodeDepths) {
-        return nodeDepths.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
+        return nodeDepths.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey)
                 .orElseThrow(() -> new IllegalStateException("no node given"));
     }
 
     /** Assign a RoomType to each room */
-    private static Map<String, RoomType> assignTypes(
-            Map<String, int[]> nodeCoords,
-            Map<String, List<String>> childrenOf,
-            Map<String, String> parentOf,
-            String startKey,
-            String bossKey,
+    private static Map<String, RoomType> assignTypes(Map<String, int[]> nodeCoords,
+            Map<String, List<String>> childrenOf, Map<String, String> parentOf, String startKey, String bossKey,
             Random random) {
 
         Map<String, RoomType> types = new HashMap<>();
@@ -233,9 +214,7 @@ public class FloorMapFactory {
         types.put(bossKey, RoomType.BOSS);
 
         // rooms we still have to assign a type to
-        List<String> candidates = nodeCoords.keySet().stream()
-                .filter(startKey::equals)
-                .filter(bossKey::equals)
+        List<String> candidates = nodeCoords.keySet().stream().filter(startKey::equals).filter(bossKey::equals)
                 .toList();
 
         Collections.shuffle(candidates, random);
@@ -281,11 +260,11 @@ public class FloorMapFactory {
     }
 
     /**
-     * Returns true iff there is a room assigned with the type Combat between the
-     * node corresponding to key and the corresponding to startKey.
+     * Returns true iff there is a room assigned with the type Combat between the node corresponding to key and the
+     * corresponding to startKey.
      */
-    private static boolean hasCombatAncestor(
-            String key, String startKey, Map<String, String> parentOf, Map<String, RoomType> types) {
+    private static boolean hasCombatAncestor(String key, String startKey, Map<String, String> parentOf,
+            Map<String, RoomType> types) {
         String current = parentOf.get(key);
         while (current != null && !current.equals(startKey)) {
             if (types.get(current) == RoomType.COMBAT) {
