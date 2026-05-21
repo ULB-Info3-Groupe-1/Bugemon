@@ -44,11 +44,11 @@ public class AllBugemonsView extends ComponentView {
     private BugemonCardView createBugemonCard(BugemonDisplayDTO bugemon) {
         BugemonCardView card = new BugemonCardView(bugemon);
         card.hideLevelLabel();
-        card.setListener(this.listener::onBugemonClicked);
+        card.setListener(this.listener::onBugemonSelected);
         return card;
     }
 
     public interface Listener {
-        void onBugemonClicked(BugemonDisplayDTO bugemon);
+        void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

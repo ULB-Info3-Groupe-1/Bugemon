@@ -64,7 +64,6 @@ public class MetaController {
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
-    private final SkillTreeController skillTreeController;
 
     private final CombatService combatService;
     private final MusicService musicService;
@@ -99,7 +98,6 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this, this.bugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.skillTreeController = new SkillTreeController(this, services.skill, playerState);
         this.initTransitions();
     }
 
@@ -232,7 +230,6 @@ public class MetaController {
             this.musicService.playSoundEffect(SoundEffect.DEFEAT);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
-        this.transitions.put(Window.SKILL_TREE, this.skillTreeController::show);
     }
 
     /**

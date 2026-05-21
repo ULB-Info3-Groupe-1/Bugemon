@@ -30,7 +30,7 @@ public class BugemonTeamView extends ComponentView {
 
         for (int i = 0; i < members.size(); i++) {
             BugemonCardView card = new BugemonCardView(members.get(i));
-            card.setListener(this.listener::onBugemonClicked);
+            card.setListener(this.listener::onBugemonSelected);
             this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
         }
     }
@@ -40,6 +40,6 @@ public class BugemonTeamView extends ComponentView {
     }
 
     public interface Listener {
-        void onBugemonClicked(BugemonDisplayDTO bugemon);
+        void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

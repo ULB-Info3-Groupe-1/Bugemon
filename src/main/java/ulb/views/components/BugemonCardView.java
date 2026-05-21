@@ -1,5 +1,6 @@
 package ulb.views.components;
 
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -43,7 +44,8 @@ public class BugemonCardView extends ComponentView {
 
         this.nameLabel.setText(bugemon.getName());
         this.levelLabel.setText(String.valueOf(bugemon.level()));
-        this.imageView.setImage(new Image(bugemon.getSpritePath()));
+        File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.getSpritePath());
+        this.imageView.setImage(new Image(spriteFile.toURI().toString()));
         this.setOnContextMenuRequested(this.detailPopup::show);
     }
 
@@ -59,7 +61,7 @@ public class BugemonCardView extends ComponentView {
         }
 
         if (this.listener != null && this.bugemon != null) {
-            this.listener.onClick(this.bugemon);
+            this.listener.onBugemonSelected(this.bugemon);
         }
     }
 
@@ -79,7 +81,19 @@ public class BugemonCardView extends ComponentView {
         this.getStyleClass().add("bugemon-cell");
     }
 
+    public void setName(String name) {
+        this.nameLabel.setText(name.isEmpty() ? EMPTY_NAME : name);
+    }
+
+    public void setSprite(File file) {
+        this.imageView.setImage(new Image(file.toURI().toString()));
+    }
+
+    public void removeSprite() {
+        this.imageView.setImage(EMPTY_IMAGE);
+    }
+
     public interface Listener {
-        void onClick(BugemonDisplayDTO bugemon);
+        void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }
