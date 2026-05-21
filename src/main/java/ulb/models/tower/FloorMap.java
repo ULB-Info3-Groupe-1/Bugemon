@@ -3,6 +3,7 @@ package ulb.models.tower;
 import java.util.List;
 import java.util.Map;
 
+import ulb.models.tower.exceptions.IllegalMoveException;
 import ulb.models.tower.room.Room;
 
 public class FloorMap {
@@ -52,8 +53,11 @@ public class FloorMap {
         return this.neighbors.getOrDefault(room, List.of());
     }
 
-    public void movePlayerTo(Room room) {
-        // TODO: might need to check if the player can move there (throw if not)
+    public void movePlayerTo(Room room) throws IllegalMoveException {
+        if (!this.getReachableRooms().contains(room)) {
+            throw new IllegalMoveException("Moving to the requested room is currently impossible");
+        }
+
         this.currentRoom.markAsVisited();
         this.currentRoom = room;
     }
