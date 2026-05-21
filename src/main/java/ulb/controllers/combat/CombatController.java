@@ -85,6 +85,7 @@ public class CombatController extends Controller<CombatView>
      */
     public void initialize(Combat newCombat) {
         this.combat = newCombat;
+        this.pendingSteps.clear();
 
         this.view.displayBugemons(this.combat.getActivePlayerBugemon(), this.combat.getActiveOpponentBugemon());
         this.view.refresh();

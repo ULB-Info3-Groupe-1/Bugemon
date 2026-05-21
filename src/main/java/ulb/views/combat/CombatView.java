@@ -22,6 +22,7 @@ import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
+import ulb.models.combat.turn.TurnStep.HealBugemonStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.item.Item;
@@ -116,11 +117,13 @@ public class CombatView extends View {
     private void refreshPlayer() {
         this.bugemonPlayerInfo.setBugemonInfo(this.playerBugemon);
         this.setSprite(this.bugemonPlayerImage, this.playerBugemon.getSpritePath());
+        this.bugemonPlayerImage.setOpacity(1.0);
     }
 
     private void refreshOpponent() {
         this.bugemonOpponentInfo.setBugemonInfo(this.opponentBugemon);
         this.setSprite(this.bugemonOpponentImage, this.opponentBugemon.getSpritePath());
+        this.bugemonOpponentImage.setOpacity(1.0);
     }
 
     private void setSprite(ImageView imageView, String spritePath) {
@@ -326,6 +329,9 @@ public class CombatView extends View {
             case SwitchStep s ->
                 (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
             case KoStep(CombatBugemon koBugemon) -> koBugemon.getName() + " est K.O. !";
+            case HealBugemonStep(CombatBugemon healedBugemon) -> healedBugemon.getName() + " récupère des PV !";
+            case TurnStep.HealTeamStep ignored -> "Toute l'équipe récupère des PV !";
+            case TurnStep.ItemStep ignored -> "Objet utilisé !";
             default -> "Action effectuée.";
         };
 

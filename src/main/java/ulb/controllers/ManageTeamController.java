@@ -110,13 +110,22 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onSave(String teamName) {
-        if (this.teamService.teamExists(teamName)) {
+        if (teamName.isBlank()) {
+            this.view.showEmptyTeamNameAlert();
+            return;
+        }
+        if (this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
+            return;
+        }
+        boolean isUpdate = teamName.equals(this.tmpTeam.getName());
+        if (!isUpdate && this.teamService.teamExists(teamName)) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
             return;
         }
 
         this.tmpTeam.setName(teamName);
-        this.teamService.save(this.tmpTeam); // TODO: show alert messages if operation fails
+        this.teamService.save(this.tmpTeam);
         this.clearTmpTeam();
 
         this.updateAllUI();
@@ -154,10 +163,9 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showAlertChooseTeamToModify();
             return;
         }
-        // TODO: what if team doesn't exist or operation fails?
 
-        this.tmpTeam.setName(teamName);
-        this.teamService.save(this.tmpTeam);
+        this.tmpTeam = this.teamService.getTeam(teamName)
+                .orElseThrow(() -> new IllegalStateException("Team not found: " + teamName));
 
         this.updateAllUI();
     }
