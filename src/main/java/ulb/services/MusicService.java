@@ -23,6 +23,8 @@ public class MusicService {
 
     private MediaPlayer mediaPlayer;
     private BackgroundAmbiance currentAmbiance;
+    private int sfxPlayingCount = 0;
+    private boolean wasMusicPlaying = false;
 
     public MusicService(MusicRepository musicRepository) {
         this.musicRepository = musicRepository;
@@ -48,7 +50,13 @@ public class MusicService {
             Media track = new Media(music.url().toExternalForm());
             this.mediaPlayer = new MediaPlayer(track);
             this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            this.mediaPlayer.play();
+
+            if (this.sfxPlayingCount == 0) {
+                this.mediaPlayer.play();
+            } else {
+                this.wasMusicPlaying = true;
+            }
+
             this.currentAmbiance = ambiance;
             LOG.debug("Now playing music: {}", ambiance);
         } catch (Exception e) {
@@ -69,11 +77,26 @@ public class MusicService {
             MediaPlayer sfxPlayer = new MediaPlayer(track);
             this.activeSoundEffects.add(sfxPlayer);
 
+            if (this.sfxPlayingCount == 0 && this.mediaPlayer != null
+                    && this.mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                this.wasMusicPlaying = true;
+                this.mediaPlayer.pause();
+                LOG.debug("Background music paused for sound effect");
+            }
+            this.sfxPlayingCount++;
+
             sfxPlayer.setCycleCount(1);
             sfxPlayer.setOnEndOfMedia(() -> {
                 sfxPlayer.stop();
                 sfxPlayer.dispose();
                 this.activeSoundEffects.remove(sfxPlayer);
+                this.sfxPlayingCount--;
+
+                if (this.sfxPlayingCount == 0 && this.wasMusicPlaying && this.mediaPlayer != null) {
+                    this.mediaPlayer.play();
+                    this.wasMusicPlaying = false;
+                    LOG.debug("Background music resumed");
+                }
             });
 
             sfxPlayer.play();
@@ -89,5 +112,6 @@ public class MusicService {
             this.mediaPlayer = null;
         }
         this.currentAmbiance = null;
+        this.wasMusicPlaying = false;
     }
 }
