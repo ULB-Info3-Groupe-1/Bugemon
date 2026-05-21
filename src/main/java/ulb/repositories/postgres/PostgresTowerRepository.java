@@ -57,8 +57,7 @@ public class PostgresTowerRepository extends AbstractRepository implements Tower
         TowerRunRow run = runs.get(0);
 
         List<Position> visitedRooms = executeQuery("GetTowerVisitedRooms",
-                rs -> new Position(rs.getInt(DatabaseColumns.COL_ROW), rs.getInt(DatabaseColumns.COL_COL)),
-                playerName);
+                rs -> new Position(rs.getInt(DatabaseColumns.COL_ROW), rs.getInt(DatabaseColumns.COL_COL)), playerName);
 
         Map<TeamMemberDTO, Integer> hpPerMember = executeQuery("GetTowerTeamHp", this::mapMemberHpRow, playerName)
                 .stream().collect(Collectors.toMap(r -> new TeamMemberDTO(r.bugemonName(), r.slotPosition()),

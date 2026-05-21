@@ -17,37 +17,36 @@ import ulb.models.player.PlayerState;
 /** JavaFX entry point — bootstraps the Bugemon game. */
 public class Main extends Application {
 
-        public static void main(String[] args) {
-                SLF4JBridgeHandler.removeHandlersForRootLogger();
-                SLF4JBridgeHandler.install();
-                launch(args);
+    public static void main(String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
+        if (fontStream != null) {
+            Font.loadFont(fontStream, 16);
         }
 
-        @Override
-        public void start(Stage stage) throws Exception {
-                InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
-                if (fontStream != null) {
-                        Font.loadFont(fontStream, 16);
-                }
+        stage.setTitle(Configuration.Ui.STAGE_TITLE);
+        stage.setMaximized(true);
 
-                stage.setTitle(Configuration.Ui.STAGE_TITLE);
-                stage.setMaximized(true);
+        Scene scene = new Scene(new StackPane());
+        scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
+        stage.setScene(scene);
 
-                Scene scene = new Scene(new StackPane());
-                scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
-                scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
-                stage.setScene(scene);
+        GameBootstrapper bootstrapper = new GameBootstrapper();
+        bootstrapper.initializeDatabase();
 
-                GameBootstrapper bootstrapper = new GameBootstrapper();
-                bootstrapper.initializeDatabase();
+        String playerName = "default_player";
+        ServiceRegistry services = bootstrapper.createServices(playerName);
+        PlayerState playerState = bootstrapper.createPlayerState(playerName, services.inventory, services.skill);
 
-                String playerName = "default_player";
-                ServiceRegistry services = bootstrapper.createServices(playerName);
-                PlayerState playerState = bootstrapper.createPlayerState(playerName, services.inventory,
-                                services.skill);
+        MetaController metaController = new MetaController(stage, services, playerState);
+        metaController.start();
 
-                MetaController metaController = new MetaController(stage, services, playerState);
-                metaController.start();
-
-        }
+    }
 }

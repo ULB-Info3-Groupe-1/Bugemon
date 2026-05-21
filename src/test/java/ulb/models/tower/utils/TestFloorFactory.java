@@ -14,9 +14,10 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import ulb.common.RoomType;
 import ulb.models.tower.FloorMap;
 import ulb.models.tower.room.Room;
-import ulb.models.tower.room.Room.RoomType;
+import ulb.models.utils.Position;
 
 public class TestFloorFactory {
 
@@ -83,9 +84,9 @@ public class TestFloorFactory {
     @Test
     public void testAllRoomsInGrid() {
         for (Room room : this.allRooms) {
-            FloorMap.RoomPosition pos = this.floorMap.getPosition(room);
-            assertThat(pos.col()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
-            assertThat(pos.row()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
+            Position pos = this.floorMap.getPosition(room);
+            assertThat(pos.x()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
+            assertThat(pos.y()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
         }
     }
 
@@ -142,7 +143,7 @@ public class TestFloorFactory {
                 current = this.parentPerRoom.get(current);
             }
             assertThat(hasCombatAncestor).as("RewardRoom at (%d,%d) has no COMBAT ancestor",
-                    this.floorMap.getPosition(room).col(), this.floorMap.getPosition(room).row()).isTrue();
+                    this.floorMap.getPosition(room).x(), this.floorMap.getPosition(room).y()).isTrue();
         }
     }
 }

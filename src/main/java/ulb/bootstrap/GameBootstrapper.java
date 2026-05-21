@@ -12,6 +12,7 @@ import ulb.repositories.QueryLoader;
 import ulb.repositories.SkillRepository;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.TeamRepository;
+import ulb.repositories.TowerRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 import ulb.repositories.postgres.DatabaseInitializer;
 import ulb.repositories.postgres.PostgresBugemonRepository;
@@ -21,6 +22,7 @@ import ulb.repositories.postgres.PostgresPlayerRepository;
 import ulb.repositories.postgres.PostgresSkillRepository;
 import ulb.repositories.postgres.PostgresStaticRepository;
 import ulb.repositories.postgres.PostgresTeamRepository;
+import ulb.repositories.postgres.PostgresTowerRepository;
 import ulb.repositories.resource.ResourceMusicRepository;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
@@ -70,6 +72,7 @@ public class GameBootstrapper {
                 this.staticDataRepository);
         TeamRepository teamRepository = new PostgresTeamRepository(this.dbConnection, this.loader.getQueries(),
                 bugemonRepository);
+        TowerRepository towerRepository = new PostgresTowerRepository(this.dbConnection, this.loader.getQueries());
         MusicRepository musicRepository = new ResourceMusicRepository();
 
         BugemonService bugemonService = new BugemonService(this.staticDataRepository, bugemonRepository, playerName);
@@ -77,8 +80,9 @@ public class GameBootstrapper {
         InventoryService inventoryService = new InventoryService(playerName, inventoryRepository,
                 this.staticDataRepository);
         SkillService skillService = new SkillService(skillRepository, this.staticDataRepository, playerName);
-        TowerService towerService = new TowerService(this.playerRepository, playerName);
-        SaveService saveService = new SaveService(skillService, bugemonService, inventoryService, teamService);
+        TowerService towerService = new TowerService(towerRepository, playerName);
+        SaveService saveService = new SaveService(skillService, bugemonService, inventoryService, teamService,
+                towerService);
         CombatService combatService = new CombatService(this.random);
         LevelUpService levelUpService = new LevelUpService(playerName, bugemonRepository, this.random);
         MusicService musicService = new MusicService(musicRepository);

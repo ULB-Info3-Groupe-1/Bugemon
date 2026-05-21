@@ -5,11 +5,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.common.dto.persistence.InventoryDTO;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerRepository;
-
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
 public class PostgresPlayerRepository extends AbstractRepository implements PlayerRepository {

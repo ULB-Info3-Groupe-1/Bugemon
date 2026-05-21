@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.common.dto.persistence.CreateBugemonDTO;
-import ulb.common.dto.persistence.InventoryDTO;
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.skills.SkillTree;

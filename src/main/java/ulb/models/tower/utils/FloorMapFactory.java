@@ -34,7 +34,7 @@ public class FloorMapFactory {
     // Probability of continuing growth of a branch in the same direction
     private static final double BIAS_SAME_DIRECTION_PROB = 0.7;
 
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final int seed;
 
@@ -65,7 +65,7 @@ public class FloorMapFactory {
 
         // start node setup
         String startKey = nodeKey(CENTER, CENTER);
-        nodeCoords.put(startKey, new int[] { CENTER, CENTER });
+        nodeCoords.put(startKey, new int[]{CENTER, CENTER});
         nodeDepths.put(startKey, 0);
         childrenOf.put(startKey, new ArrayList<>());
         parentOf.put(startKey, null);
@@ -115,7 +115,7 @@ public class FloorMapFactory {
 
         for (int d = depth; d <= MAX_DEPTH; d++) {
             String key = nodeKey(x, y);
-            nodeCoords.put(key, new int[] { x, y }); // current node here
+            nodeCoords.put(key, new int[]{x, y}); // current node here
             nodeDepths.put(key, d); // current node at depth d
             childrenOf.put(key, new ArrayList<>()); // current node has no children atm
             parentOf.put(key, parentKey);
@@ -260,8 +260,7 @@ public class FloorMapFactory {
     }
 
     /**
-     * Returns true iff there is a room assigned with the type Combat between the
-     * node corresponding to key and the
+     * Returns true iff there is a room assigned with the type Combat between the node corresponding to key and the
      * corresponding to startKey.
      */
     private static boolean hasCombatAncestor(String key, String startKey, Map<String, String> parentOf,

@@ -7,12 +7,10 @@ import java.util.Optional;
 import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.common.dto.persistence.TeamDTO;
 import ulb.common.dto.persistence.TeamMemberDTO;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
-
 import ulb.services.exceptions.TeamNameEmptyException;
 import ulb.services.exceptions.TeamNotFoundException;
 

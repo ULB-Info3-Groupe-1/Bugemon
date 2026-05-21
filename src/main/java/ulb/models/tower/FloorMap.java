@@ -34,8 +34,7 @@ public class FloorMap {
     }
 
     /**
-     * Returns the neighboring rooms, excluding all visited ones (and the current
-     * room).
+     * Returns the neighboring rooms, excluding all visited ones (and the current room).
      */
     public List<Room> getReachableRooms() {
         return this.getClickableRooms().stream().filter(r -> !r.isVisited()) // filter out visited rooms

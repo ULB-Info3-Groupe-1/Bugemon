@@ -15,10 +15,8 @@ import ulb.common.RoomType;
 import ulb.common.dto.display.RoomDisplayDTO;
 
 /**
- * Custom component for a single tower room. Loads {@code Room.fxml} via
- * {@code fx:root}, applies CSS classes for type
- * and state, and fires a click event only when the room is
- * {@link ulb.common.RoomState#AVAILABLE}.
+ * Custom component for a single tower room. Loads {@code Room.fxml} via {@code fx:root}, applies CSS classes for type
+ * and state, and fires a click event only when the room is {@link ulb.common.RoomState#AVAILABLE}.
  */
 public class RoomNodeView extends StackPane {
 

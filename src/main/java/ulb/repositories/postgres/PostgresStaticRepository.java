@@ -16,7 +16,7 @@ import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
 import ulb.common.dto.persistence.CreateBugemonDTO;
-import ulb.common.dto.persistence.InventoryDTO;
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
@@ -29,7 +29,6 @@ import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
-
 import ulb.utils.SpriteUtils;
 
 public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {
@@ -70,9 +69,9 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type(), fileName, bugemon.defense(),
-                bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(),
-                bugemon.attacks().get(0).id(), bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
+        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type(), fileName, bugemon.defense(), bugemon.attack(),
+                bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(), bugemon.attacks().get(0).id(),
+                bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
     }
 

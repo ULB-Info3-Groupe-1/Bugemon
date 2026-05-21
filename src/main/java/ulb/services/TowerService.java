@@ -81,8 +81,7 @@ public class TowerService {
         List<RoomDisplayDTO> rooms = new ArrayList<>();
         for (Room room : map.getAllRooms()) {
             Position pos = map.getPosition(room);
-            rooms.add(new RoomDisplayDTO(pos.x(), pos.y(), room.getType(),
-                    this.roomState(room, current, reachable)));
+            rooms.add(new RoomDisplayDTO(pos.x(), pos.y(), room.getType(), this.roomState(room, current, reachable)));
         }
 
         Set<Room> processed = new HashSet<>();
@@ -130,11 +129,9 @@ public class TowerService {
     }
 
     private List<Position> getVisitedRoomsPosition(FloorMap floorMap) {
-        return floorMap.getVisitedRooms().stream()
-                .map(r -> {
-                    Position p = floorMap.getPosition(r);
-                    return new Position(p.x(), p.y());
-                })
-                .toList();
+        return floorMap.getVisitedRooms().stream().map(r -> {
+            Position p = floorMap.getPosition(r);
+            return new Position(p.x(), p.y());
+        }).toList();
     }
 }

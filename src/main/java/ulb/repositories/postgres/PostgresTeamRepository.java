@@ -9,12 +9,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.dto.persistence.PlayerBugemonDTO;
+import ulb.common.dto.persistence.TeamDTO;
+import ulb.common.dto.persistence.TeamMemberDTO;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.TeamRepository;
-
-import ulb.common.dto.persistence.TeamDTO;
-import ulb.common.dto.persistence.TeamMemberDTO;
 
 public class PostgresTeamRepository extends AbstractRepository implements TeamRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresTeamRepository.class);

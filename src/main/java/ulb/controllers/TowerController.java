@@ -45,13 +45,10 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     @Override
     public void onRoomClicked(int x, int y) {
         FloorMap floorMap = this.towerState.getFloorMap();
-        Room room = floorMap.getAllRooms().stream()
-                .filter(r -> {
-                    Position p = floorMap.getPosition(r);
-                    return p.x() == x && p.y() == y;
-                })
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No room at (" + x + "," + y + ")"));
+        Room room = floorMap.getAllRooms().stream().filter(r -> {
+            Position p = floorMap.getPosition(r);
+            return p.x() == x && p.y() == y;
+        }).findFirst().orElseThrow(() -> new IllegalStateException("No room at (" + x + "," + y + ")"));
         try {
             floorMap.movePlayerTo(room);
         } catch (IllegalMoveException e) {
