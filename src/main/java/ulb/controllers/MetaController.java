@@ -17,7 +17,6 @@ import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.combat.Combat;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.SoundEffect;
@@ -30,16 +29,14 @@ import ulb.services.MusicService;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is
- * the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
-     * transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -83,9 +80,9 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *                     main JavaFX stage of the application
+     *            main JavaFX stage of the application
      * @throws IOException
-     *                     if the music fails to be initialized
+     *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, ServiceRegistry services, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
@@ -106,7 +103,7 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this, services.levelUpService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.towerController = new TowerController(this, playerState, services.tower);
+        this.towerController = new TowerController(this, playerState, services.tower, services.team);
         this.initTransitions();
     }
 
@@ -119,7 +116,16 @@ public class MetaController {
         this.lastCombatSummary = summary;
 
         if (this.isTowerActive) {
-            // TODO : gérer la suite de la tour
+            this.towerController.onTowerCombatFinished(won);
+            if (!won) {
+                this.isTowerActive = false;
+                this.switchTo(Window.COMBAT_DEFEAT);
+                return;
+            }
+            if (!this.towerController.isRunActive()) {
+                this.isTowerActive = false;
+            }
+            this.receiveCombatSummary(summary);
             return;
         }
 
@@ -177,7 +183,7 @@ public class MetaController {
         this.playerState.getActiveTeam().ifPresent(team -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(team);
             List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
-            TeamFactory opponentFactory = this.combatService.createRandomOpponentFactory();
+            TeamFactory opponentFactory = this.combatService.createOpponentFactory(false);
             CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.playerState.getInventory(),
                     this.combatController, opponentFactory, Configuration.Game.FLOOR_MIN, false);
             this.combatController.startCombat(playerRunTeam, combatFactory, bugemons);
@@ -189,7 +195,7 @@ public class MetaController {
         this.playerState.getActiveTeam().ifPresent(team -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(team);
             List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
-            TeamFactory opponentFactory = this.combatService.createRandomOpponentFactory();
+            TeamFactory opponentFactory = this.combatService.createOpponentFactory(false);
             CombatFactory combatFactory = this.combatService.createAutoCombatFactory(opponentFactory,
                     Configuration.Game.FLOOR_MIN, false);
             this.combatController.startCombat(playerRunTeam, combatFactory, bugemons);
@@ -201,6 +207,10 @@ public class MetaController {
         this.isTowerActive = true;
         this.towerController.startRun();
         this.switchTo(Window.TOWER);
+    }
+
+    public void endTowerFlow() {
+        this.isTowerActive = false;
     }
 
     public void onEditTeam() {
@@ -263,9 +273,9 @@ public class MetaController {
      * Switches the current screen to the specified window.
      *
      * @param window
-     *               target screen to display
+     *            target screen to display
      * @throws IllegalArgumentException
-     *                                  if the window is invalid
+     *             if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
@@ -279,11 +289,12 @@ public class MetaController {
         view.show(this.stage);
     }
 
-    public void startTowerCombat(Combat combat) {
-        this.musicService.stopMusic();
-        this.musicService.playBackground(BackgroundAmbiance.COMBAT);
-
-        this.combatController.initialize(combat);
-        this.combatController.show();
+    public void onStartTowerCombat(RunTeam runTeam, int floor, boolean isBoss) {
+        List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+        TeamFactory opponentFactory = this.combatService.createOpponentFactory(isBoss);
+        CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.playerState.getInventory(),
+                this.combatController, opponentFactory, floor, isBoss);
+        this.combatController.startCombat(runTeam, combatFactory, bugemons);
+        this.switchTo(Window.MANUAL_COMBAT);
     }
 }

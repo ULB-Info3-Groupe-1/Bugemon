@@ -1,11 +1,13 @@
 -- Query
 -- UpsertTowerRun
-INSERT INTO tower_runs (playername, seed, team_name, current_floor)
-VALUES (?, ?, ?, ?)
+INSERT INTO tower_runs (playername, seed, team_name, current_floor, current_row, current_col)
+VALUES (?, ?, ?, ?, ?, ?)
 ON CONFLICT (playername) DO UPDATE
   SET seed = EXCLUDED.seed,
       team_name = EXCLUDED.team_name,
-      current_floor = EXCLUDED.current_floor;
+      current_floor = EXCLUDED.current_floor,
+      current_row = EXCLUDED.current_row,
+      current_col = EXCLUDED.current_col;
 
 -- Query
 -- DeleteTowerVisitedRooms
@@ -25,7 +27,7 @@ ON CONFLICT (playername, slot_position) DO UPDATE
 
 -- Query
 -- GetTowerRun
-SELECT seed, team_name, current_floor FROM tower_runs WHERE playername = ?;
+SELECT seed, team_name, current_floor, current_row, current_col FROM tower_runs WHERE playername = ?;
 
 -- Query
 -- GetTowerVisitedRooms

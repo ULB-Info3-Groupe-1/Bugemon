@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import ulb.Configuration;
@@ -76,12 +77,12 @@ public class TowerService {
         }
         FloorMap map = this.activeTower.getFloorMap();
         Room current = map.getCurrentRoom();
-        Set<Room> reachable = new HashSet<>(map.getReachableRooms());
+        Set<Room> clickable = new HashSet<>(map.getClickableRooms());
 
         List<RoomDisplayDTO> rooms = new ArrayList<>();
         for (Room room : map.getAllRooms()) {
             Position pos = map.getPosition(room);
-            rooms.add(new RoomDisplayDTO(pos.x(), pos.y(), room.getType(), this.roomState(room, current, reachable)));
+            rooms.add(new RoomDisplayDTO(pos.x(), pos.y(), room.getType(), this.roomState(room, current, clickable)));
         }
 
         Set<Room> processed = new HashSet<>();
@@ -114,6 +115,32 @@ public class TowerService {
         return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
     }
 
+    public Optional<String> getSavedTeamName() {
+        return this.towerRepository.find(this.playername).map(dto -> dto.team().teamName());
+    }
+
+    public Optional<TowerState> loadSaved(Team team) {
+        return this.towerRepository.find(this.playername).map(dto -> {
+            FloorMap floorMap = this.generateFloor(dto.seed(), dto.floorMap().floor());
+
+            Set<Position> visitedPositions = new HashSet<>(dto.floorMap().visitedRoomsPosition());
+            Position currentPos = dto.floorMap().currentRoomPosition();
+            floorMap.getAllRooms().stream().filter(r -> visitedPositions.contains(floorMap.getPosition(r)))
+                    .forEach(Room::markAsVisited);
+            floorMap.getAllRooms().stream().filter(r -> floorMap.getPosition(r).equals(currentPos)).findFirst()
+                    .ifPresent(floorMap::setCurrentRoom);
+
+            Map<String, Integer> hpByName = new HashMap<>();
+            dto.team().hpPerMember().forEach((member, hp) -> hpByName.put(member.bugemonName(), hp));
+            List<RunBugemon> members = team.getMembers().stream()
+                    .map(pb -> new RunBugemon(pb, hpByName.getOrDefault(pb.getName(), pb.getMaxHp()))).toList();
+            RunTeam runTeam = new RunTeam(dto.team().teamName(), members);
+
+            this.activeTower = new TowerState(dto.seed(), runTeam, dto.floorMap().floor(), floorMap);
+            return this.activeTower;
+        });
+    }
+
     private TowerDTO toDTO(TowerState towerState) {
         Map<TeamMemberDTO, Integer> hpPerMember = new HashMap<>();
         RunTeam runTeam = towerState.getRunTeam();
@@ -121,17 +148,17 @@ public class TowerService {
             hpPerMember.put(new TeamMemberDTO(runBugemon.getName(), runTeam.getSlotOfMember(runBugemon)),
                     runBugemon.getCurrentHp());
         }
-        FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloor(),
-                this.getVisitedRoomsPosition(towerState.getFloorMap()));
+        FloorMap floorMap = towerState.getFloorMap();
+        Position currentRoomPos = floorMap.getPosition(floorMap.getCurrentRoom());
+        FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloor(), this.getVisitedRoomsPosition(floorMap),
+                new Position(currentRoomPos.x(), currentRoomPos.y()));
         RunTeamDTO teamDTO = new RunTeamDTO(this.playername, towerState.getTeamName(), hpPerMember);
 
         return new TowerDTO(towerState.getSeed(), floorMapDTO, teamDTO);
     }
 
     private List<Position> getVisitedRoomsPosition(FloorMap floorMap) {
-        return floorMap.getVisitedRooms().stream().map(r -> {
-            Position p = floorMap.getPosition(r);
-            return new Position(p.x(), p.y());
-        }).toList();
+        return floorMap.getVisitedRooms().stream().map(r -> floorMap.getPosition(r))
+                .map(p -> new Position(p.x(), p.y())).toList();
     }
 }

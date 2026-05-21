@@ -1,5 +1,7 @@
 package ulb.controllers;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,7 @@ import ulb.models.tower.TowerState;
 import ulb.models.tower.exceptions.IllegalMoveException;
 import ulb.models.tower.room.Room;
 import ulb.models.utils.Position;
+import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
@@ -20,20 +23,34 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private static final Logger LOG = LoggerFactory.getLogger(TowerController.class);
 
     private final TowerService towerService;
+    private final TeamService teamService;
 
     private PlayerState playerState;
     private TowerState towerState;
 
-    public TowerController(MetaController metaController, PlayerState playerState, TowerService towerService) {
+    public TowerController(MetaController metaController, PlayerState playerState, TowerService towerService,
+            TeamService teamService) {
         super(metaController, ViewLoader.load(FloorView::new));
         this.view.setListener(this);
         this.playerState = playerState;
         this.towerService = towerService;
+        this.teamService = teamService;
     }
 
     public void startRun() {
         Team activeTeam = this.playerState.getActiveTeam()
                 .orElseThrow(() -> new IllegalStateException("Cannot start tower without an active team"));
+
+        Optional<String> savedTeamName = this.towerService.getSavedTeamName();
+        if (savedTeamName.isPresent()) {
+            Optional<Team> savedTeam = this.teamService.getTeam(savedTeamName.get());
+            if (savedTeam.isPresent()) {
+                this.towerState = this.towerService.loadSaved(savedTeam.get())
+                        .orElseGet(() -> this.towerService.createTower(activeTeam));
+                return;
+            }
+            this.towerService.delete();
+        }
         this.towerState = this.towerService.createTower(activeTeam);
     }
 
@@ -70,16 +87,18 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         LOG.info("Tower combat finished, playerWon={}", playerWon);
         if (!playerWon) {
             this.towerService.delete();
-            this.endTowerFlow(false);
+            this.towerState = null;
             return;
         }
         this.towerService.save();
         Room currentRoom = this.towerState.getFloorMap().getCurrentRoom();
         if (currentRoom.getType() == RoomType.BOSS) {
-            this.advanceFloor();
-        } else {
-            this.udpateDisplayedFloor();
+            this.advanceFloorState();
         }
+    }
+
+    public boolean isRunActive() {
+        return this.towerState != null;
     }
 
     private void onBonusRoomExited() {
@@ -88,18 +107,25 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     private void dispatchRoomAction(Room room) {
+        if (room.isVisited()) {
+            this.udpateDisplayedFloor();
+            return;
+        }
         switch (room.getType()) {
-            case COMBAT, BOSS -> LOG.info("TODO: start tower combat for room type {}", room.getType());
+            case COMBAT -> this.metaController.onStartTowerCombat(this.towerState.getRunTeam(),
+                    this.towerState.getCurrentFloor(), false);
+            case BOSS -> this.metaController.onStartTowerCombat(this.towerState.getRunTeam(),
+                    this.towerState.getCurrentFloor(), true);
             case REWARD -> this.onBonusRoomExited();
             default -> this.udpateDisplayedFloor();
         }
     }
 
-    private void advanceFloor() {
+    private void advanceFloorState() {
         int nextFloor = this.towerState.getCurrentFloor() + 1;
         if (nextFloor > Configuration.Game.FLOOR_MAX) {
             this.towerService.delete();
-            this.endTowerFlow(true);
+            this.towerState = null;
             return;
         }
         FloorMap nextFloorMap = this.towerService.generateFloor(this.towerState.getSeed(), nextFloor);
@@ -107,13 +133,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
                 nextFloorMap);
         this.towerService.setActiveTower(this.towerState);
         this.towerService.save();
-        this.udpateDisplayedFloor();
-    }
-
-    private void endTowerFlow(boolean playerWon) {
-        this.towerState = null;
-        this.metaController.endTowerFlow();
-        this.metaController.onCombatFinished(playerWon);
     }
 
     private void udpateDisplayedFloor() {

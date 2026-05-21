@@ -133,7 +133,9 @@ CREATE TABLE IF NOT EXISTS "tower_runs" (
                   REFERENCES "players"("playername") ON DELETE CASCADE,
   "seed"          integer NOT NULL,
   "team_name"     varchar NOT NULL,
-  "current_floor" integer NOT NULL
+  "current_floor" integer NOT NULL,
+  "current_row"   integer NOT NULL DEFAULT 2,
+  "current_col"   integer NOT NULL DEFAULT 2
 );
 
 CREATE TABLE IF NOT EXISTS "tower_visited_rooms" (
@@ -174,3 +176,6 @@ ALTER TABLE "item_player" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_i
 ALTER TABLE "teams" ADD FOREIGN KEY ("playername") REFERENCES "players" ("playername") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "players" ADD FOREIGN KEY ("playername", "current_team") REFERENCES "teams" ("playername", "name") DEFERRABLE INITIALLY IMMEDIATE;
+
+ALTER TABLE "tower_runs" ADD COLUMN IF NOT EXISTS "current_row" integer NOT NULL DEFAULT 2;
+ALTER TABLE "tower_runs" ADD COLUMN IF NOT EXISTS "current_col" integer NOT NULL DEFAULT 2;

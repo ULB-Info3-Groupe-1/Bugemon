@@ -21,7 +21,7 @@ import ulb.repositories.TowerRepository;
 public class PostgresTowerRepository extends AbstractRepository implements TowerRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresTowerRepository.class);
 
-    private record TowerRunRow(int seed, String teamName, int floor) {
+    private record TowerRunRow(int seed, String teamName, int floor, int currentRow, int currentCol) {
     }
 
     private record MemberHpRow(String bugemonName, int slotPosition, int currentHp) {
@@ -35,7 +35,9 @@ public class PostgresTowerRepository extends AbstractRepository implements Tower
     public void save(String playerName, TowerDTO dto) {
         LOG.debug("Saving tower run for playerName: {}", playerName);
 
-        executeUpdate("UpsertTowerRun", playerName, dto.seed(), dto.team().teamName(), dto.floorMap().floor());
+        Position cur = dto.floorMap().currentRoomPosition();
+        executeUpdate("UpsertTowerRun", playerName, dto.seed(), dto.team().teamName(), dto.floorMap().floor(), cur.x(),
+                cur.y());
 
         executeUpdate("DeleteTowerVisitedRooms", playerName);
         dto.floorMap().visitedRoomsPosition()
@@ -63,7 +65,8 @@ public class PostgresTowerRepository extends AbstractRepository implements Tower
                 .stream().collect(Collectors.toMap(r -> new TeamMemberDTO(r.bugemonName(), r.slotPosition()),
                         MemberHpRow::currentHp));
 
-        FloorMapDTO floorMapDTO = new FloorMapDTO(run.floor(), visitedRooms);
+        FloorMapDTO floorMapDTO = new FloorMapDTO(run.floor(), visitedRooms,
+                new Position(run.currentRow(), run.currentCol()));
         RunTeamDTO teamDTO = new RunTeamDTO(playerName, run.teamName(), hpPerMember);
 
         return Optional.of(new TowerDTO(run.seed(), floorMapDTO, teamDTO));
@@ -77,7 +80,7 @@ public class PostgresTowerRepository extends AbstractRepository implements Tower
 
     private TowerRunRow mapTowerRunRow(ResultSet rs) throws SQLException {
         return new TowerRunRow(rs.getInt(DatabaseColumns.COL_SEED), rs.getString(DatabaseColumns.COL_TEAM_NAME),
-                rs.getInt(DatabaseColumns.COL_FLOOR));
+                rs.getInt(DatabaseColumns.COL_FLOOR), rs.getInt("current_row"), rs.getInt("current_col"));
     }
 
     private MemberHpRow mapMemberHpRow(ResultSet rs) throws SQLException {

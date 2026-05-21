@@ -55,11 +55,15 @@ public class FloorMap {
     }
 
     public void movePlayerTo(Room room) throws IllegalMoveException {
-        if (!this.getReachableRooms().contains(room)) {
+        if (!this.getClickableRooms().contains(room)) {
             throw new IllegalMoveException("Moving to the requested room is currently impossible");
         }
 
         this.currentRoom.markAsVisited();
+        this.currentRoom = room;
+    }
+
+    public void setCurrentRoom(Room room) {
         this.currentRoom = room;
     }
 

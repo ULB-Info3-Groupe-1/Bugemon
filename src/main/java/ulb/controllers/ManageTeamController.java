@@ -16,10 +16,8 @@ import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen. Mutates the
- * {@link BugemonTeam} model in response to player
- * actions, then calls {@code view.refresh()} so the view can pull the updated
- * state from the model directly. The
+ * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to player
+ * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
  * controller never pushes data into the view.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
@@ -40,8 +38,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     /**
-     * Constructs a {@code CreateTeamController}, wires the view callbacks, and
-     * performs an initial
+     * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
      * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
      *
      */

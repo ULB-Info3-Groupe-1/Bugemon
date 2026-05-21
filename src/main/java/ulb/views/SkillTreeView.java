@@ -14,8 +14,8 @@ import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 import ulb.Configuration;
-import ulb.models.skills.SkillStatus;
 import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillStatus;
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
 

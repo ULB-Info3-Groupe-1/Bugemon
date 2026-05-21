@@ -22,12 +22,12 @@ import ulb.models.item.Inventory;
 import ulb.models.player.PlayerInputHandler;
 import ulb.models.run.RunBugemon;
 import ulb.models.skills.SkillContext;
+import ulb.models.team.factory.BossTeamFactory;
 import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
 
 /**
- * Handles combat lifecycle (XP finalisation, damage preview) and creates
- * {@link CombatFactory} instances.
+ * Handles combat lifecycle (XP finalisation, damage preview) and creates {@link CombatFactory} instances.
  */
 public class CombatService {
 
@@ -48,8 +48,12 @@ public class CombatService {
         this.bugemonService = bugemonService;
     }
 
-    public TeamFactory createRandomOpponentFactory() {
-        return new RandomTeamFactory(this.random);
+    public TeamFactory createOpponentFactory(boolean isBoss) {
+        return isBoss ? new BossTeamFactory(this.random) : new RandomTeamFactory(this.random);
+    }
+
+    public TeamFactory createBossOpponentFactory() {
+        return new BossTeamFactory(this.random);
     }
 
     public CombatFactory createManualCombatFactory(Inventory defaultInventory, PlayerInputHandler handler,
