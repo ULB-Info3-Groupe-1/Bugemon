@@ -63,7 +63,7 @@ public class FloorMapFactory {
                 "Failed to create FloorMap after " + MAX_GENERATION_ATTEMPTS + " attempts");
     }
 
-    public Optional<FloorMap> tryCreate(int floor) {
+    private Optional<FloorMap> tryCreate(int floor) {
         // seed to generate n-th floor = game_seed + floor
         Random random = new Random(this.seed + floor);
 
