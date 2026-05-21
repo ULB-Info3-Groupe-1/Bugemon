@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.models.player.PlayerState;
-import ulb.models.tower.FloorNode;
 import ulb.models.tower.TowerState;
 import ulb.models.tower.room.Room;
 import ulb.services.SaveService;
@@ -38,12 +37,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     @Override
-    public void onRoomClicked(FloorNode node) {
-    }
-
-    public void visitRoom(Room room) {
-        this.towerService.handleRoomVisit(this.towerState, room);
-        this.udpateDisplayedFloor();
+    public void onRoomClicked(Room room) {
     }
 
     @Override
