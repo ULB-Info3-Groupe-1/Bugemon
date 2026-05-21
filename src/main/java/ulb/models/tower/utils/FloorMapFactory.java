@@ -160,6 +160,45 @@ public class FloorMapFactory {
         }
     }
 
+    private static FloorMap buildMap(
+            Map<String, int[]> nodeCoords,
+            Map<String, List<String>> childrenOf,
+            Map<String, RoomType> types,
+            String startKey) {
+
+        Map<String, Room> byKey = new HashMap<>();
+        Map<Room, RoomPosition> positions = new HashMap<>();
+        for (String key : nodeCoords.keySet()) {
+            RoomType type = types.getOrDefault(key, RoomType.EMPTY);
+            Room room = new Room(type);
+            byKey.put(key, room);
+            int[] coords = nodeCoords.get(key);
+            positions.put(room, new RoomPosition(coords[0], coords[1]));
+        }
+
+        Map<Room, List<Room>> neighbors = new HashMap<>();
+        for (Room room : byKey.values()) {
+            neighbors.put(room, new ArrayList<>());
+        }
+        for (Map.Entry<String, List<String>> entry : childrenOf.entrySet()) {
+            Room parent = byKey.get(entry.getKey());
+            if (parent == null) {
+                continue;
+            }
+            for (String childKey : entry.getValue()) {
+                Room child = byKey.get(childKey);
+                if (child == null) {
+                    continue;
+                }
+                neighbors.get(parent).add(child);
+                neighbors.get(child).add(parent);
+            }
+        }
+
+        List<Room> rooms = new ArrayList<>(byKey.values());
+        return new FloorMap(rooms, positions, neighbors, byKey.get(startKey));
+    }
+
     private static List<int[]> validNextDirs(int col, int row, int[] lastDir, Map<String, int[]> nodeCoords) {
         List<int[]> result = new ArrayList<>();
         for (int[] d : DIRECTIONS) {
