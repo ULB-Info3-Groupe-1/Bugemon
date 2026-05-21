@@ -61,7 +61,7 @@ public class BugemonService {
     }
 
     public void savePlayerBugemon(PlayerBugemon bugemon) {
-        this.bugemonRepository.save(this.playername, bugemon.toDTO(this.playername));
+        this.bugemonRepository.save(bugemon.toDTO(this.playername));
     }
 
     public CreateBugemonDTO createBugemon(String name, ElementType type, URL spriteUrl, int defense, int attack,

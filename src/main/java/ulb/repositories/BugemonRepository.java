@@ -16,7 +16,7 @@ public interface BugemonRepository {
 
     Optional<Bugemon> findBase(String bugemonName);
 
-    void save(String playername, PlayerBugemonDTO playerBugemon);
+    void save(PlayerBugemonDTO playerBugemon);
 
     void delete(String playername, String bugemonName);
 }
