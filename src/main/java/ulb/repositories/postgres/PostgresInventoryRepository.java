@@ -43,15 +43,15 @@ public class PostgresInventoryRepository extends AbstractRepository implements I
             inventoryMap.put(item, rs.getInt(DatabaseColumns.COL_AMOUNT));
             return null;
         }, playername);
-        return new InventoryDTO(inventoryMap);
+        return new InventoryDTO(playername, inventoryMap);
     }
 
     @Override
-    public void save(String playername, InventoryDTO inventory) {
-        LOG.debug("Saving inventory for playername: {}", playername);
-        this.clearInventory(playername);
-        inventory.items()
-                .forEach((item, quantity) -> this.executeUpdate("SaveItemForPlayer", playername, item.id(), quantity));
+    public void save(InventoryDTO inventory) {
+        LOG.debug("Saving inventory for playername: {}", inventory.playername());
+        this.clearInventory(inventory.playername());
+        inventory.items().forEach((item, quantity) -> this.executeUpdate("SaveItemForPlayer", inventory.playername(),
+                item.id(), quantity));
     }
 
     @Override

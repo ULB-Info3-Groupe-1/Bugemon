@@ -6,7 +6,7 @@ public interface InventoryRepository {
 
     InventoryDTO findInventory(String playername);
 
-    void save(String playername, InventoryDTO inventory);
+    void save(InventoryDTO inventory);
 
     void delete(String playername);
 

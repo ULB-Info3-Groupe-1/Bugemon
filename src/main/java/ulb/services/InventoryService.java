@@ -35,11 +35,11 @@ public class InventoryService {
     }
 
     public void save(Inventory inventory) {
-        this.inventoryRepository.save(this.playername, this.toDTO(inventory));
+        this.inventoryRepository.save(this.toDTO(inventory));
     }
 
     private InventoryDTO toDTO(Inventory inventory) {
-        return new InventoryDTO(inventory.getMap());
+        return new InventoryDTO(this.playername, inventory.getMap());
     }
 
 }
