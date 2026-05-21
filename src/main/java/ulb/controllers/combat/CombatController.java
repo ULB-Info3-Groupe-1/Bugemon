@@ -22,6 +22,8 @@ import ulb.models.combat.turn.TurnAction.ForfeitAction;
 import ulb.models.combat.turn.TurnAction.ItemAction;
 import ulb.models.combat.turn.TurnAction.SwitchAction;
 import ulb.models.combat.turn.TurnStep;
+import ulb.models.combat.turn.TurnStep.HealBugemonStep;
+import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Item;
 import ulb.models.player.PlayerInputHandler;
@@ -29,17 +31,13 @@ import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
 import ulb.models.team.factory.TeamFactory;
 import ulb.services.CombatService;
-import ulb.services.SkillService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
 /**
- * Main controller for the combat screen. Integrates both the step-by-step
- * animation logic and the manual player input
- * logic, replacing the old ManualCombatController. * It acts as the
- * {@link CombatStrategy} for the player, intercepting
- * the request for actions/switches from the Combat model and opening the UI
- * menus accordingly.
+ * Main controller for the combat screen. Integrates both the step-by-step animation logic and the manual player input
+ * logic, replacing the old ManualCombatController. * It acts as the {@link CombatStrategy} for the player, intercepting
+ * the request for actions/switches from the Combat model and opening the UI menus accordingly.
  */
 public class CombatController extends Controller<CombatView>
         implements CombatView.Listener, CombatView.NextListener, PlayerInputHandler {
@@ -65,8 +63,7 @@ public class CombatController extends Controller<CombatView>
     }
 
     /**
-     * Builds and initializes a manual standalone combat; the opponent team is
-     * produced by {@code opponentFactory}.
+     * Builds and initializes a manual standalone combat; the opponent team is produced by {@code opponentFactory}.
      */
     public void startCombat(RunTeam playerRunTeam, TeamFactory opponentFactory, CombatFactory combatFactory) {
         this.initialize(combatFactory.create(playerRunTeam, this.playerState.getInventory(), opponentFactory));
@@ -76,13 +73,12 @@ public class CombatController extends Controller<CombatView>
      * Initializes a new combat session.
      *
      * @param combat
-     *               the new Combat model instance
+     *            the new Combat model instance
      */
     public void initialize(Combat newCombat) {
         this.combat = newCombat;
 
-        // TODO: demeter
-        this.view.displayBugemons(this.combat.getPlayerTeam().getActive(), this.combat.getOpponentTeam().getActive());
+        this.view.displayBugemons(this.combat.getActivePlayerBugemon(), this.combat.getActiveOpponentBugemon());
         this.view.refresh();
 
         this.startTurn();
@@ -188,10 +184,10 @@ public class CombatController extends Controller<CombatView>
     private void refreshHpForStep(TurnStep step) {
         switch (step) {
             case TurnStep.AttackStep atk -> this.view.updateHp(atk.defender(), atk.defenderHpAfter());
-            case TurnStep.KoStep ko -> this.view.updateHp(ko.koBugemon(), 0);
+            case KoStep(CombatBugemon koBugemon) -> this.view.updateHp(koBugemon, 0);
             case TurnStep.SwitchStep sw -> this.view.switchBugemon(sw);
-            case TurnStep.HealBugemonStep heal ->
-                this.view.updateHp(heal.healedBugemon(), heal.healedBugemon().getCurrentHp());
+            case HealBugemonStep(CombatBugemon healedBugemon) ->
+                this.view.updateHp(healedBugemon, healedBugemon.getCurrentHp());
             default -> {
                 /* ItemStep, HealTeamStep : pas de changement de PV individuel */ }
         }

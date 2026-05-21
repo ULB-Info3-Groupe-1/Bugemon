@@ -1,5 +1,6 @@
 package ulb.controllers.combat;
 
+import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatTeam;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
@@ -35,8 +36,8 @@ public class CombatAnimationController {
                 this.playAttackAnimation(fromPlayer, onFinished);
             }
 
-            case KoStep k -> {
-                boolean isPlayerSide = k.koBugemon() == playerTeam.getActive();
+            case KoStep(CombatBugemon koBugemon) -> {
+                boolean isPlayerSide = koBugemon == playerTeam.getActive();
                 this.playDeathAnimation(isPlayerSide, onFinished);
             }
 

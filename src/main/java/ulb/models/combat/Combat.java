@@ -326,6 +326,14 @@ public class Combat {
         return this.playerTeam;
     }
 
+    public CombatBugemon getActivePlayerBugemon() {
+        return this.playerTeam.getActive();
+    }
+
+    public CombatBugemon getActiveOpponentBugemon() {
+        return this.opponentTeam.getActive();
+    }
+
     public CombatTeam getOpponentTeam() {
         return this.opponentTeam;
     }

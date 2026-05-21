@@ -1,6 +1,7 @@
-package ulb.controllers.music;
+package ulb.repositories.resource;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -9,6 +10,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -17,25 +19,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
+import ulb.models.music.Ambiance;
+import ulb.models.music.Music;
+import ulb.repositories.MusicRepository;
 
 /**
  * Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR).
  */
-public class MusicLoader {
-    private static final Logger LOG = LoggerFactory.getLogger(MusicLoader.class);
+public class ResourceMusicRepository implements MusicRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceMusicRepository.class);
 
-    /**
-     * Loads all music files from the given resource directory and assigns them the given ambiance.
-     *
-     * @param resourceDir
-     *            path to the resource directory (inside JAR or filesystem)
-     * @param ambiance
-     *            ambiance to assign to each loaded music
-     * @return list of loaded Music objects
-     * @throws IOException
-     *             if the directory cannot be accessed
-     */
-    public List<Music> loadFromDirectory(String resourceDir, Ambiance ambiance) throws IOException {
+    private final List<Music> musics = new ArrayList<>();
+
+    public ResourceMusicRepository() {
+        this.loadAllResources();
+    }
+
+    @Override
+    public List<Music> findByAmbiance(Ambiance ambiance) {
+        return this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
+    }
+
+    private void loadAllResources() {
+        try {
+            this.musics.addAll(this.loadFromDirectory(Configuration.Music.MUSIC_PATH_COMBAT, Ambiance.COMBAT));
+            this.musics.addAll(this.loadFromDirectory(Configuration.Music.MUSIC_PATH_MENU, Ambiance.MENU));
+            this.musics
+                    .addAll(this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_VICTORY, Ambiance.VICTORY));
+            this.musics.addAll(this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_DEFEAT, Ambiance.DEFEAT));
+        } catch (IOException e) {
+            LOG.error("Error loading musics: {}", e.getMessage());
+        }
+        LOG.debug("All musics have been loaded successfully into the repository");
+    }
+
+    private List<Music> loadFromDirectory(String resourceDir, Ambiance ambiance) throws IOException {
         URI uri = this.getResourceURI(resourceDir);
 
         if (!"jar".equals(uri.getScheme())) {
@@ -58,7 +76,7 @@ public class MusicLoader {
     }
 
     private URI getResourceURI(String resourceDir) {
-        URL url = MusicLoader.class.getResource(resourceDir);
+        URL url = MusicRepository.class.getResource(resourceDir);
         if (url == null) {
             throw new IllegalArgumentException("Resource not found: " + resourceDir);
         }
@@ -76,27 +94,10 @@ public class MusicLoader {
         }
     }
 
-    /**
-     * Loads all game music and sound effects and registers them with the provided player.
-     *
-     * @param musicPlayer
-     *            the music player to register music with
-     * @throws IOException
-     *             if any resource directory cannot be accessed
-     */
-    public void loadAllResources(MusicPlayer musicPlayer) throws IOException {
-        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_COMBAT, Ambiance.COMBAT).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(Configuration.Music.MUSIC_PATH_MENU, Ambiance.MENU).forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_VICTORY, Ambiance.VICTORY)
-                .forEach(musicPlayer::addMusic);
-        this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_DEFEAT, Ambiance.DEFEAT)
-                .forEach(musicPlayer::addMusic);
-    }
-
     private Optional<Music> loadMusic(Path path, Ambiance ambiance) {
         try {
             return Optional.of(new Music(path.toUri().toURL(), ambiance));
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
             LOG.error("Error loading song: {}", path);
             return Optional.empty();
         }

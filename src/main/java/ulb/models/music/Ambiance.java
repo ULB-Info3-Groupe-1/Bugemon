@@ -1,4 +1,4 @@
-package ulb.controllers.music;
+package ulb.models.music;
 
 /**
  * Enumerates the different musical ambiances available in the game.

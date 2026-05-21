@@ -1,4 +1,4 @@
-package ulb.controllers.music;
+package ulb.models.music;
 
 import java.net.URL;
 
