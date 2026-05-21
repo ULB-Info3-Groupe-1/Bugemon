@@ -186,6 +186,22 @@ public class FloorMapFactory {
                 .orElseThrow(() -> new IllegalStateException("no node given"));
     }
 
+    /**
+     * Returns true iff there is a room assigned with the type Combat between the
+     * node corresponding to key and the corresponding to startKey.
+     */
+    private static boolean hasCombatAncestor(
+            String key, String startKey, Map<String, String> parentOf, Map<String, RoomType> types) {
+        String current = parentOf.get(key);
+        while (current != null && !current.equals(startKey)) {
+            if (types.get(current) == RoomType.COMBAT) {
+                return true;
+            }
+            current = parentOf.get(current);
+        }
+        return false;
+    }
+
     private void generateNewFloor() {
         for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
             this.initialize();
