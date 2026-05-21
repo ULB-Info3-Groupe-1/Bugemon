@@ -3,8 +3,8 @@ package ulb.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.models.bugemon.Bugemon;
-import ulb.repositories.dto.PlayerBugemonDTO;
 
 public interface BugemonRepository {
 

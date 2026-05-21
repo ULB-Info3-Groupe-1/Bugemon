@@ -1,9 +1,9 @@
 package ulb.services;
 
+import ulb.common.dto.persistence.InventoryDTO;
 import ulb.models.item.Inventory;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.InventoryDTO;
 
 public class InventoryService {
 

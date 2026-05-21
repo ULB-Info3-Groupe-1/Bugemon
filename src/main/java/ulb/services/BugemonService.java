@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.common.dto.persistence.CreateBugemonDTO;
+import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
@@ -11,8 +13,6 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 

@@ -31,10 +31,12 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.playerState = playerState;
         this.saveService = saveService;
         this.towerService = towerService;
+    }
 
-        Team activeTeam = playerState.getActiveTeam()
+    public void startRun() {
+        Team activeTeam = this.playerState.getActiveTeam()
                 .orElseThrow(() -> new IllegalStateException("Cannot start tower without an active team"));
-        this.towerState = towerService.createTower(activeTeam);
+        this.towerState = this.towerService.createTower(activeTeam);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             LOG.warn("Illegal move attempted to room: {}", room.getType(), e);
             return;
         }
-        this.towerService.save(this.towerState);
+        this.towerService.save();
         this.dispatchRoomAction(room);
     }
 
@@ -68,7 +70,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             this.endTowerFlow(false);
             return;
         }
-        this.towerService.save(this.towerState);
+        this.towerService.save();
         Room currentRoom = this.towerState.getFloorMap().getCurrentRoom();
         if (currentRoom.getType() == Room.RoomType.BOSS) {
             this.advanceFloor();
@@ -78,7 +80,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     private void onBonusRoomExited() {
-        this.towerService.save(this.towerState);
+        this.towerService.save();
         this.udpateDisplayedFloor();
     }
 
@@ -100,7 +102,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         FloorMap nextFloorMap = this.towerService.generateFloor(this.towerState.getSeed(), nextFloor);
         this.towerState = new TowerState(this.towerState.getSeed(), this.towerState.getRunTeam(), nextFloor,
                 nextFloorMap);
-        this.towerService.save(this.towerState);
+        this.towerService.setActiveTower(this.towerState);
+        this.towerService.save();
         this.udpateDisplayedFloor();
     }
 
@@ -110,14 +113,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.metaController.onCombatFinished(playerWon);
     }
 
-    /**
-     * Shows the floor map before continuing the run.
-     */
     private void udpateDisplayedFloor() {
+        this.view.setFloorState(this.towerState.getCurrentFloor(), this.towerService.buildFloorDisplayDTO());
         super.show();
-    }
-
-    private void updateDisplayedFloorStructure() {
-
     }
 }

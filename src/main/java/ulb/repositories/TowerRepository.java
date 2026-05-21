@@ -2,7 +2,7 @@ package ulb.repositories;
 
 import java.util.Optional;
 
-import ulb.repositories.dto.TowerDTO;
+import ulb.common.dto.persistence.TowerDTO;
 
 public interface TowerRepository {
 

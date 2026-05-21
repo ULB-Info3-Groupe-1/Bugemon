@@ -100,7 +100,7 @@ public class FloorMapFactory {
             numBranchesGenerated++;
         }
 
-        if (numBranchesGenerated < numBranchesGenerated) {
+        if (numBranchesGenerated < MIN_BRANCHES) {
             return Optional.empty();
         }
 
@@ -192,7 +192,7 @@ public class FloorMapFactory {
             boolean inBounds = inBounds(nextCol, nextRow);
             boolean overlapping = nodeCoords.containsKey(nodeKey(nextCol, nextRow));
 
-            if (!inBounds && !overlapping) {
+            if (inBounds && !overlapping) {
                 result.add(d);
             }
         }
@@ -214,7 +214,7 @@ public class FloorMapFactory {
         types.put(bossKey, RoomType.BOSS);
 
         // rooms we still have to assign a type to
-        List<String> candidates = nodeCoords.keySet().stream().filter(startKey::equals).filter(bossKey::equals)
+        List<String> candidates = nodeCoords.keySet().stream().filter(k -> !k.equals(startKey) && !k.equals(bossKey))
                 .toList();
 
         Collections.shuffle(candidates, random);

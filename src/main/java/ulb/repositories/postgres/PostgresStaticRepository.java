@@ -15,6 +15,8 @@ import java.util.Optional;
 import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
+import ulb.common.dto.persistence.CreateBugemonDTO;
+import ulb.common.dto.persistence.InventoryDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
@@ -27,8 +29,7 @@ import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.DefaultInventoryDTO;
+
 import ulb.utils.SpriteUtils;
 
 public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {

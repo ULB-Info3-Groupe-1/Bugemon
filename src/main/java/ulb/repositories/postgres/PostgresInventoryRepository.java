@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
+import ulb.common.dto.persistence.InventoryDTO;
 import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
@@ -19,7 +20,6 @@ import ulb.models.item.Item;
 import ulb.models.item.ItemType;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
-import ulb.repositories.dto.InventoryDTO;
 
 public class PostgresInventoryRepository extends AbstractRepository implements InventoryRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresInventoryRepository.class);

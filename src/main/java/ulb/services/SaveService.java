@@ -1,7 +1,6 @@
 package ulb.services;
 
 import ulb.models.player.PlayerState;
-import ulb.models.tower.TowerState;
 
 public class SaveService {
     private final SkillService skillService;
@@ -19,23 +18,19 @@ public class SaveService {
         this.towerService = towerService;
     }
 
-    public void clear(PlayerState playerState, TowerState towerState) {
+    public void clear(PlayerState playerState) {
         this.bugemonService.removePlayerBugemons();
         this.inventoryService.resetInventory();
         this.teamService.deleteTeams();
         playerState.clear();
-        if (towerState != null) {
-            towerState.clear();
-        }
+        this.towerService.delete();
     }
 
-    public void save(PlayerState playerState, TowerState towerState) {
+    public void save(PlayerState playerState) {
         this.skillService.save(playerState.getSkillTreeState());
         playerState.getActiveTeam().ifPresent(this.bugemonService::save);
         this.inventoryService.save(playerState.getInventory());
         playerState.getActiveTeam().ifPresent(this.teamService::save);
-        if (towerState != null) {
-            this.towerService.save(towerState);
-        }
+        this.towerService.save();
     }
 }

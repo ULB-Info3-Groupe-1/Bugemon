@@ -8,7 +8,7 @@ import ulb.common.dto.BugemonDisplayDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
-import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.common.dto.persistence.PlayerBugemonDTO;
 
 public class PlayerBugemon {
     private final Bugemon base;

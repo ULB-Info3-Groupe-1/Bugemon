@@ -1,27 +1,35 @@
 package ulb.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ulb.Configuration;
+import ulb.common.dto.display.ConnectionDisplayDTO;
+import ulb.common.dto.display.FloorDisplayDTO;
+import ulb.common.dto.display.RoomDisplayDTO;
+import ulb.common.dto.persistence.FloorMapDTO;
+import ulb.common.dto.persistence.RunTeamDTO;
+import ulb.common.dto.persistence.TeamMemberDTO;
+import ulb.common.dto.persistence.TowerDTO;
 import ulb.models.run.RunBugemon;
 import ulb.models.run.RunTeam;
 import ulb.models.team.Team;
 import ulb.models.tower.FloorMap;
 import ulb.models.tower.FloorMap.RoomPosition;
 import ulb.models.tower.TowerState;
+import ulb.models.tower.room.Room;
 import ulb.models.tower.utils.FloorMapFactory;
 import ulb.repositories.TowerRepository;
-import ulb.repositories.dto.FloorMapDTO;
-import ulb.repositories.dto.RunTeamDTO;
-import ulb.repositories.dto.TeamMemberDTO;
-import ulb.repositories.dto.TowerDTO;
 
 public class TowerService {
 
     private final String playername;
     private final TowerRepository towerRepository;
+    private TowerState activeTower = null;
 
     public TowerService(TowerRepository towerRepository, String playername) {
         this.playername = playername;
@@ -30,14 +38,19 @@ public class TowerService {
 
     public TowerState createTower(Team activeTeam) {
         RunTeam team = RunTeam.fromTeam(activeTeam);
-
         int seed = this.genTowerSeed();
-
         int floor = Configuration.Game.FLOOR_MIN;
-
         FloorMap floorMap = this.generateFloor(seed, floor);
+        this.activeTower = new TowerState(seed, team, floor, floorMap);
+        return this.activeTower;
+    }
 
-        return new TowerState(seed, team, floor, floorMap);
+    public void setActiveTower(TowerState towerState) {
+        this.activeTower = towerState;
+    }
+
+    public java.util.Optional<TowerState> getActiveTower() {
+        return java.util.Optional.ofNullable(this.activeTower);
     }
 
     public FloorMap generateFloor(int seed, int floor) {
@@ -45,12 +58,56 @@ public class TowerService {
         return floorFactory.create(floor);
     }
 
-    public void save(TowerState towerState) {
-        this.towerRepository.save(this.playername, this.toDTO(towerState));
+    public void save() {
+        if (this.activeTower != null) {
+            this.towerRepository.save(this.playername, this.toDTO(this.activeTower));
+        }
     }
 
     public void delete() {
         this.towerRepository.delete(this.playername);
+        this.activeTower = null;
+    }
+
+    public FloorDisplayDTO buildFloorDisplayDTO() {
+        if (this.activeTower == null) {
+            throw new IllegalStateException("No active tower run");
+        }
+        FloorMap map = this.activeTower.getFloorMap();
+        Room current = map.getCurrentRoom();
+        Set<Room> reachable = new HashSet<>(map.getReachableRooms());
+
+        List<RoomDisplayDTO> rooms = new ArrayList<>();
+        for (Room room : map.getAllRooms()) {
+            RoomPosition pos = map.getPosition(room);
+            rooms.add(new RoomDisplayDTO(pos.row(), pos.col(), RoomDisplayDTO.RoomType.from(room.getType()),
+                    roomState(room, current, reachable), room));
+        }
+
+        Set<Room> processed = new HashSet<>();
+        List<ConnectionDisplayDTO> connections = new ArrayList<>();
+        for (Room room : map.getAllRooms()) {
+            RoomPosition posA = map.getPosition(room);
+            for (Room neighbor : map.getNeighbors(room)) {
+                if (!processed.contains(neighbor)) {
+                    RoomPosition posB = map.getPosition(neighbor);
+                    connections.add(new ConnectionDisplayDTO(posA.row(), posA.col(), posB.row(), posB.col()));
+                }
+            }
+            processed.add(room);
+        }
+
+        return new FloorDisplayDTO(this.activeTower.getCurrentFloor(), rooms, connections);
+    }
+
+    private static RoomDisplayDTO.RoomState roomState(Room room, Room current, Set<Room> reachable) {
+        if (room == current)
+            return RoomDisplayDTO.RoomState.CURRENT;
+        if (reachable.contains(room))
+            return RoomDisplayDTO.RoomState.AVAILABLE;
+        if (room.isVisited())
+            return RoomDisplayDTO.RoomState.VISITED;
+        return RoomDisplayDTO.RoomState.LOCKED;
     }
 
     private int genTowerSeed() {

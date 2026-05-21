@@ -9,11 +9,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.PlayerBugemonDTO;
 
 public class PostgresBugemonRepository extends AbstractRepository implements BugemonRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresBugemonRepository.class);

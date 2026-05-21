@@ -3,7 +3,7 @@ package ulb.repositories;
 import java.util.List;
 import java.util.Optional;
 
-import ulb.repositories.dto.TeamDTO;
+import ulb.common.dto.persistence.TeamDTO;
 
 public interface TeamRepository {
 

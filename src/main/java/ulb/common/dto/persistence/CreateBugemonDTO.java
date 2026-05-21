@@ -1,4 +1,4 @@
-package ulb.repositories.dto;
+package ulb.common.dto.persistence;
 
 import java.net.URL;
 import java.util.List;

@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.Configuration;
+import ulb.common.dto.persistence.CreateBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.ElementType;
-import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.BugemonService;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;

@@ -1,6 +1,6 @@
 package ulb.repositories;
 
-import ulb.repositories.dto.DefaultInventoryDTO;
+import ulb.common.dto.persistence.InventoryDTO;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
 public interface PlayerRepository {

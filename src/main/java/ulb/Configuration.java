@@ -49,6 +49,7 @@ public abstract class Configuration {
             public static final String CREATE_BUGEMON_VIEW = "/fxml/CreateBugemon.fxml";
             public static final String SAVE_MENU_VIEW = "/fxml/SaveMenu.fxml";
 
+            public static final String FLOOR_VIEW = "/fxml/Floor.fxml";
             public static final String SKILL_TREE_VIEW = "/fxml/SkillTree.fxml";
         }
     }

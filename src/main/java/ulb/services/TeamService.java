@@ -4,13 +4,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.common.dto.persistence.PlayerBugemonDTO;
+import ulb.common.dto.persistence.TeamDTO;
+import ulb.common.dto.persistence.TeamMemberDTO;
+import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
-import ulb.repositories.dto.PlayerBugemonDTO;
-import ulb.repositories.dto.TeamDTO;
-import ulb.repositories.dto.TeamMemberDTO;
+
 import ulb.services.exceptions.TeamNameEmptyException;
 import ulb.services.exceptions.TeamNotFoundException;
 

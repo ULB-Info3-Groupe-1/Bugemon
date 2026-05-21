@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.dto.persistence.FloorMapDTO;
+import ulb.common.dto.persistence.RunTeamDTO;
+import ulb.common.dto.persistence.TeamMemberDTO;
+import ulb.common.dto.persistence.TowerDTO;
 import ulb.models.tower.FloorMap.RoomPosition;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.TowerRepository;
-import ulb.repositories.dto.FloorMapDTO;
-import ulb.repositories.dto.RunTeamDTO;
-import ulb.repositories.dto.TeamMemberDTO;
-import ulb.repositories.dto.TowerDTO;
 
 public class PostgresTowerRepository extends AbstractRepository implements TowerRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresTowerRepository.class);
