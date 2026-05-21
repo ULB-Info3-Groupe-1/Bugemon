@@ -14,7 +14,6 @@ import ulb.repositories.dto.TeamMemberDTO;
 import ulb.services.exceptions.TeamNameEmptyException;
 import ulb.services.exceptions.TeamNotFoundException;
 
-
 // TODO: perform checks for arguments (team contains at least one bugemon, has a name etc.)
 
 /**

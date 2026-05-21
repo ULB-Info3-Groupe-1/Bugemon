@@ -168,7 +168,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onSaveClicked() {
-        this.listener.onSave(this.getTeamNameToSave());
+        this.listener.onSave(this.saveTeamNameInput.getText());
     }
 
     @FXML
@@ -178,12 +178,12 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onDeleteClicked() {
-        this.listener.onDelete(this.getSelectedTeamName());
+        this.listener.onDelete(this.selectedTeamName.getText());
     }
 
     @FXML
     private void onRenameClicked() {
-        this.listener.onRename(this.getTeamNameToSave());
+        this.listener.onRename(this.saveTeamNameInput.getText());
     }
 
     @FXML
@@ -216,16 +216,6 @@ public class ManageTeamView extends View {
         this.listener.onStartTowerCombat();
     }
 
-    // --- Getters ---
-
-    private String getTeamNameToSave() {
-        return this.saveTeamNameInput.getText();
-    }
-
-    private String getSelectedTeamName() {
-        return this.selectedTeamName.getText();
-    }
-
     // --- Alerts ---
 
     public void showEmptyTeamNameAlert() {
@@ -250,10 +240,6 @@ public class ManageTeamView extends View {
 
     public void showDeleteTeamNoActiveTeamAlert() {
         this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez supprimer.");
-    }
-
-    public void showRenameTeamNoActiveTeamAlert() {
-        this.showWarningAlert(NO_ACTIVE_TEAM, "Sélectionnez l'équipe que vous souhaitez renommer.");
     }
 
     public void showAlertChooseTeamToModify() {

@@ -54,10 +54,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     protected void show() {
+        this.playerState.getActiveTeam().ifPresent(t -> this.tmpTeam = new Team(t));
         if (this.tmpTeam == null) {
             this.tmpTeam = new Team();
         }
-        this.playerState.getActiveTeam().ifPresent(t -> this.tmpTeam = t);
         this.updateAllUI();
         super.show();
     }
@@ -120,7 +120,6 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         if (this.validateTeam()) {
             this.teamService.save(this.tmpTeam);
             this.clearTmpTeam();
-
             this.updateAllUI();
         }
     }
@@ -129,6 +128,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     public void onDelete(String teamName) {
         try {
             this.teamService.deleteTeam(teamName);
+            this.playerState.setActiveTeam(null);
             this.clearTmpTeam();
             this.updateAllUI();
         } catch (TeamNotFoundException e) {
@@ -166,7 +166,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showEmptyTeamAlert();
             return;
         }
- 
+
         try {
             this.teamService.modify(this.tmpTeam);
             this.updateAllUI();
@@ -226,8 +226,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     private void clearTmpTeam() {
-        this.tmpTeam.clear();
-        this.tmpTeam.setName(null);
+        this.tmpTeam = new Team();
     }
 
     private boolean validateTeam() {
@@ -236,7 +235,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             return false;
         }
 
-        if (this.tmpTeam.getName() == null || this.tmpTeam.getName().trim().isEmpty()) {
+        if (this.tmpTeam.getName() == null || this.tmpTeam.getName().isBlank()) {
             this.view.showEmptyTeamNameAlert();
             return false;
         }
