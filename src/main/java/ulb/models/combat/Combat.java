@@ -200,21 +200,6 @@ public class Combat {
         this.opponentStrategy.chooseAction(this.makeOpponentContext(), opponentCb);
     }
 
-    /**
-     * Requests a switch to the given team.
-     *
-     * This is tipically used when the active bugemon of the team is ko.
-     */
-    private void requestForcedSwitch(CombatTeam team, ActionCallback callback) {
-        boolean isPlayer = team == this.playerTeam;
-
-        CombatStrategy strategy = isPlayer ? this.playerStrategy : this.opponentStrategy;
-
-        CombatContext ctx = isPlayer ? this.makePlayerContext() : this.makeOpponentContext();
-
-        strategy.chooseSwitch(ctx, callback);
-    }
-
     public void resolveTurn(TurnAction playerAction, TurnAction opponentAction, TurnResolvedCallback callback) {
         List<TurnStep> steps = new ArrayList<>();
 
@@ -243,11 +228,12 @@ public class Combat {
             return;
         }
 
-        // handle potential Ko
+        // handle potential Ko of second actor — controller will request forced switch after displaying steps
         if (secondActorBefore.isKo()) {
-            LOG.debug("Second actor KO - requesting forced switch for {}", secondIsPlayer ? STR_PLAYER : STR_OPPONENT);
-            this.handleKo(steps, callback, secondIsPlayer);
+            LOG.debug("Second actor KO - returning steps, controller will handle forced switch for {}",
+                    secondIsPlayer ? STR_PLAYER : STR_OPPONENT);
             this.tickEndOfTurn();
+            callback.onTurnResolved(steps);
             return;
         }
 
@@ -257,6 +243,7 @@ public class Combat {
         // handle potential combat end
         if (this.checkCombatFinished()) {
             LOG.info("Combat ended after second action: result={}", this.result);
+            this.tickEndOfTurn();
             callback.onTurnResolved(steps);
             return;
         }
@@ -264,11 +251,12 @@ public class Combat {
         CombatTeam firstTeam = firstIsPlayer ? this.playerTeam : this.opponentTeam;
         CombatBugemon firstActor = firstTeam.getActive();
 
-        // handle potential Ko
+        // handle potential Ko of first actor — controller will request forced switch after displaying steps
         if (firstActor.isKo()) {
-            LOG.debug("First actor KO - requesting forced switch for {}", firstIsPlayer ? STR_PLAYER : STR_OPPONENT);
-            this.handleKo(steps, callback, firstIsPlayer);
+            LOG.debug("First actor KO - returning steps, controller will handle forced switch for {}",
+                    firstIsPlayer ? STR_PLAYER : STR_OPPONENT);
             this.tickEndOfTurn();
+            callback.onTurnResolved(steps);
             return;
         }
 
@@ -278,18 +266,10 @@ public class Combat {
         callback.onTurnResolved(steps);
     }
 
-    private void handleKo(List<TurnStep> turnSteps, TurnResolvedCallback callback, boolean isPlayer) {
-        CombatTeam koTeam = isPlayer ? this.playerTeam : this.opponentTeam;
-
-        this.requestForcedSwitch(koTeam, switchAction -> {
-            this.applyForcedSwitch(koTeam, switchAction, turnSteps);
-            callback.onTurnResolved(turnSteps);
-        });
-    }
-
-    private void applyForcedSwitch(CombatTeam team, TurnAction action, List<TurnStep> turnSteps) {
-        boolean isPlayer = this.playerTeam == team;
-        turnSteps.addAll(this.resolveAction(action, isPlayer));
+    public void requestForcedSwitch(boolean isPlayer, TurnResolvedCallback onDone) {
+        CombatStrategy strategy = isPlayer ? this.playerStrategy : this.opponentStrategy;
+        CombatContext ctx = isPlayer ? this.makePlayerContext() : this.makeOpponentContext();
+        strategy.chooseSwitch(ctx, action -> onDone.onTurnResolved(this.resolveAction(action, isPlayer)));
     }
 
     private List<TurnStep> resolveAction(TurnAction action, boolean isPlayer) {

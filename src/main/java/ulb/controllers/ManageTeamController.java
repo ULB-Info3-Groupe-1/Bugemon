@@ -1,8 +1,8 @@
 package ulb.controllers;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import ulb.common.dto.BugemonDisplayDTO;
 import ulb.models.player.PlayerBugemon;
@@ -16,8 +16,10 @@ import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to player
- * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
+ * Controller responsible for the team creation screen. Mutates the
+ * {@link BugemonTeam} model in response to player
+ * actions, then calls {@code view.refresh()} so the view can pull the updated
+ * state from the model directly. The
  * controller never pushes data into the view.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
@@ -38,7 +40,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     /**
-     * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
+     * Constructs a {@code CreateTeamController}, wires the view callbacks, and
+     * performs an initial
      * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
      *
      */
@@ -65,8 +68,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     private void updateDisplayedAvailableBugemons() {
         List<BugemonDisplayDTO> allDTOs = this.bugemonService.getPlayerBugemons().stream()
                 .map(PlayerBugemon::toDisplayDTO).toList();
-        Set<BugemonDisplayDTO> selectedDTOs = new HashSet<>(
-                this.tmpTeam.getMembers().stream().map(PlayerBugemon::toDisplayDTO).toList());
+        Set<String> selectedNames = this.tmpTeam.getMembers().stream().map(PlayerBugemon::getName)
+                .collect(Collectors.toSet());
+        Set<BugemonDisplayDTO> selectedDTOs = allDTOs.stream().filter(dto -> selectedNames.contains(dto.getName()))
+                .collect(Collectors.toSet());
         this.view.refreshAvailableBugemons(allDTOs, selectedDTOs);
     }
 
@@ -111,7 +116,16 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onSave(String teamName) {
-        if (this.teamService.teamExists(teamName)) {
+        if (teamName.isBlank()) {
+            this.view.showEmptyTeamNameAlert();
+            return;
+        }
+        if (this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
+            return;
+        }
+        boolean isUpdate = teamName.equals(this.tmpTeam.getName());
+        if (!isUpdate && this.teamService.teamExists(teamName)) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
             return;
         }
@@ -213,16 +227,15 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onReturnToMainMenu() {
-        boolean canLeave = this.teamService.isTeamSaved(this.tmpTeam) || this.tmpTeam.isEmpty();
-
-        if (!canLeave && this.view.showAlertTeamChangesNotSave()) {
-            this.clearTmpTeam();
-            canLeave = true;
+        if (!this.teamService.isTeamSaved(this.tmpTeam) && !this.tmpTeam.isEmpty()) {
+            if (this.view.showAlertTeamChangesNotSave()) {
+                this.clearTmpTeam();
+            } else {
+                return;
+            }
         }
+        this.metaController.onMainMenu();
 
-        if (canLeave) {
-            this.metaController.onMainMenu();
-        }
     }
 
     private void clearTmpTeam() {

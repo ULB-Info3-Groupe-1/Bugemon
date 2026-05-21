@@ -86,6 +86,9 @@ public class CombatController extends Controller<CombatView>
      */
     public void initialize(Combat newCombat) {
         this.combat = newCombat;
+        this.pendingSteps.clear();
+        this.pendingActionCallback = null;
+        this.pendingSwitchCallback = null;
 
         this.view.displayBugemons(this.combat.getActivePlayerBugemon(), this.combat.getActiveOpponentBugemon());
         this.view.refresh();
@@ -136,11 +139,11 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onSwitchChosen(CombatBugemon bugemon) {
-        if (this.pendingSwitchCallback != null) { // forced switch
-            ActionCallback callback = this.pendingSwitchCallback;
+        if (this.pendingSwitchCallback != null) {
+            ActionCallback cb = this.pendingSwitchCallback;
             this.pendingSwitchCallback = null;
-            callback.onActionChosen(new SwitchAction(bugemon));
-        } else { // NOT forced call back
+            cb.onActionChosen(new SwitchAction(bugemon));
+        } else {
             this.resolvePlayerAction(new SwitchAction(bugemon));
         }
     }
@@ -174,15 +177,13 @@ public class CombatController extends Controller<CombatView>
         }
     }
 
-    // ── Step Iteration and Animations ─────────────────────────────────────────
+    // ── Step Iteration ─────────────────────────────────────────
 
     private void advanceStep() {
-        // TODO: add back animation
-
         if (!this.pendingSteps.isEmpty()) {
             TurnStep step = this.pendingSteps.poll();
             LOG.debug("Advancing step: {}", step);
-            this.view.showStepDialog(step);
+            this.view.showStep(step);
             this.refreshHpForStep(step);
         } else {
             this.view.hideDialog();
@@ -205,8 +206,11 @@ public class CombatController extends Controller<CombatView>
     private void processEndOfTurn() {
         if (this.combat.isFinished()) {
             this.onCombatFinished();
+        } else if (this.combat.getActivePlayerBugemon().isKo()) {
+            this.combat.requestForcedSwitch(true, this::onForcedSwitchResolved);
+        } else if (this.combat.getActiveOpponentBugemon().isKo()) {
+            this.combat.requestForcedSwitch(false, this::onForcedSwitchResolved);
         } else {
-            this.view.hideDialog();
             this.startTurn();
         }
     }
@@ -228,6 +232,11 @@ public class CombatController extends Controller<CombatView>
     @Override
     public void requestSwitchChoice(CombatContext context, ActionCallback callback) {
         this.pendingSwitchCallback = callback;
-        this.view.showSwitchMenu(context.allyTeam().getAvailable(), context.allyTeam().getActive().isKo());
+        this.view.showSwitchMenu(context.allyTeam().getAvailable(), true);
+    }
+
+    private void onForcedSwitchResolved(List<TurnStep> steps) {
+        this.pendingSteps.addAll(steps);
+        this.advanceStep();
     }
 }
