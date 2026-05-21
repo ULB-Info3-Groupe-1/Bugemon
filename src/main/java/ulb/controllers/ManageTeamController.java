@@ -8,9 +8,10 @@ import ulb.common.dto.BugemonDisplayDTO;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerState;
 import ulb.models.team.Team;
-import ulb.repositories.exceptions.TeamNotFoundException;
 import ulb.services.BugemonService;
 import ulb.services.TeamService;
+import ulb.services.exceptions.TeamNameEmptyException;
+import ulb.services.exceptions.TeamNotFoundException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
@@ -116,17 +117,23 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
 
         this.tmpTeam.setName(teamName);
-        this.teamService.save(this.tmpTeam); // TODO: show alert messages if operation fails
-        this.clearTmpTeam();
+        if (this.validateTeam()) {
+            this.teamService.save(this.tmpTeam);
+            this.clearTmpTeam();
 
-        this.updateAllUI();
+            this.updateAllUI();
+        }
     }
 
     @Override
     public void onDelete(String teamName) {
-        this.teamService.deleteTeam(teamName); // TODO: what if operation fails
-        this.clearTmpTeam();
-        this.updateAllUI();
+        try {
+            this.teamService.deleteTeam(teamName);
+            this.clearTmpTeam();
+            this.updateAllUI();
+        } catch (TeamNotFoundException e) {
+            this.view.showDeleteTeamNoActiveTeamAlert();
+        }
     }
 
     @Override
@@ -136,9 +143,14 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             return;
         }
 
-        this.teamService.renameTeam(this.tmpTeam, newName); // TODO: what if operation fails
-
-        this.updateAllUI();
+        try {
+            this.teamService.renameTeam(this.tmpTeam, newName);
+            this.updateAllUI();
+        } catch (TeamNameEmptyException e) {
+            this.view.showEmptyTeamNameAlert();
+        } catch (TeamNotFoundException e) {
+            this.view.showSelectTeamToRenameAlert();
+        }
     }
 
     @Override
@@ -149,17 +161,18 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     @Override
-    public void onModifyTeam(String teamName) {
-        if (teamName == null || teamName.isEmpty() || !this.teamService.teamExists(teamName)) {
-            this.view.showAlertChooseTeamToModify();
+    public void onModifyTeam() {
+        if (this.tmpTeam == null || this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
             return;
         }
-        // TODO: what if team doesn't exist or operation fails?
-
-        this.tmpTeam.setName(teamName);
-        this.teamService.save(this.tmpTeam);
-
-        this.updateAllUI();
+ 
+        try {
+            this.teamService.modify(this.tmpTeam);
+            this.updateAllUI();
+        } catch (TeamNotFoundException e) {
+            this.view.showAlertChooseTeamToModify();
+        }
     }
 
     @Override
@@ -200,15 +213,33 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onReturnToMainMenu() {
-        if (!this.teamService.isTeamSaved(this.tmpTeam) && this.view.showAlertTeamChangesNotSave()) {
+        boolean canLeave = this.teamService.isTeamSaved(this.tmpTeam) || this.tmpTeam.isEmpty();
+
+        if (!canLeave && this.view.showAlertTeamChangesNotSave()) {
             this.clearTmpTeam();
+            canLeave = true;
         }
 
-        this.metaController.onMainMenu();
+        if (canLeave) {
+            this.metaController.onMainMenu();
+        }
     }
 
     private void clearTmpTeam() {
         this.tmpTeam.clear();
         this.tmpTeam.setName(null);
+    }
+
+    private boolean validateTeam() {
+        if (this.tmpTeam == null || this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
+            return false;
+        }
+
+        if (this.tmpTeam.getName() == null || this.tmpTeam.getName().trim().isEmpty()) {
+            this.view.showEmptyTeamNameAlert();
+            return false;
+        }
+        return true;
     }
 }

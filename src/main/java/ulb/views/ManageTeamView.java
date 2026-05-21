@@ -115,7 +115,7 @@ public class ManageTeamView extends View {
 
         void onBugemonSelected(BugemonDisplayDTO bugemon);
 
-        void onModifyTeam(String teamName);
+        void onModifyTeam();
 
         void onStartAutomaticCombat();
 
@@ -193,7 +193,7 @@ public class ManageTeamView extends View {
 
     @FXML
     private void onModifyTeamClicked() {
-        this.listener.onModifyTeam(this.getSelectedTeamName());
+        this.listener.onModifyTeam();
     }
 
     @FXML

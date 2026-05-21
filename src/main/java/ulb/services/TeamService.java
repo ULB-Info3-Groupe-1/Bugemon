@@ -11,6 +11,9 @@ import ulb.repositories.TeamRepository;
 import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
+import ulb.services.exceptions.TeamNameEmptyException;
+import ulb.services.exceptions.TeamNotFoundException;
+
 
 // TODO: perform checks for arguments (team contains at least one bugemon, has a name etc.)
 
@@ -63,7 +66,10 @@ public class TeamService {
         return team;
     }
 
-    public void deleteTeam(String teamName) {
+    public void deleteTeam(String teamName) throws TeamNotFoundException {
+        if (teamName == null || teamName.isEmpty() || this.getTeam(teamName).isEmpty()) {
+            throw new TeamNotFoundException("Team not found");
+        }
         this.teamRepository.delete(this.playerName, teamName);
     }
 
@@ -71,10 +77,19 @@ public class TeamService {
         this.teamRepository.deleteAll(this.playerName);
     }
 
-    public void renameTeam(Team team, String newName) {
+    public void renameTeam(Team team, String newName) throws TeamNameEmptyException, TeamNotFoundException {
+        if (newName == null || newName.isEmpty()) {
+            throw new TeamNameEmptyException("New name is empty");
+        }
+
         this.deleteTeam(team.getName());
         team.setName(newName);
-        this.createTeam(this.teamToDTO(team));
+        this.save(team);
+    }
+
+    public void modify(Team team) throws TeamNotFoundException {
+        this.deleteTeam(team.getName());
+        this.save(team);
     }
 
     public void save(Team team) {
