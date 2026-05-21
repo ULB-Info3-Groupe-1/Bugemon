@@ -20,7 +20,7 @@ public class LevelUpService {
     }
 
     public void applyLevelUp(RunBugemon bugemon, BonusStats bonus) {
-        bugemon.applyUpgrade(bonus);
+        bugemon.applyBonus(bonus);
         this.bugemonRepository.save(bugemon.getPlayerBugemon().toDTO(this.playername));
     }
 
