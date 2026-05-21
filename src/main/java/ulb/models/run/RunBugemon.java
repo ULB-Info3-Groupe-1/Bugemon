@@ -92,6 +92,10 @@ public class RunBugemon {
         return this.playerBugemon;
     }
 
+    public int addXp(int xp) {
+        return this.playerBugemon.addXp(xp);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

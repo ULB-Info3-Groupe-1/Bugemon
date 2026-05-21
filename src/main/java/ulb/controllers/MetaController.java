@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import ulb.Configuration;
 import ulb.bootstrap.ServiceRegistry;
 import ulb.common.CombatSummary;
+import ulb.common.LevelUpResult;
 import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
@@ -70,6 +71,7 @@ public class MetaController {
     private final BugemonService bugemonService;
     private final PlayerState playerState;
 
+    private CombatSummary lastCombatSummary;
     private boolean isTowerActive;
 
     /**
@@ -105,9 +107,12 @@ public class MetaController {
         this.switchTo(Window.SAVE_MENU);
     }
 
-    public void onCombatFinished(boolean won) {
+    public void onCombatFinished(boolean won, CombatSummary summary) {
         LOG.info("onCombatFinished, won: {}", won);
+        this.lastCombatSummary = summary;
+
         if (this.isTowerActive()) {
+            // TODO : gérer la suite de la tour
             return;
         }
 
@@ -115,8 +120,12 @@ public class MetaController {
     }
 
     public void onCombatVictoryFinished() {
-        // TODO
-        this.switchTo(Window.MAIN_MENU);
+        if (this.lastCombatSummary != null) {
+            this.receiveCombatSummary(this.lastCombatSummary);
+            this.lastCombatSummary = null;
+        } else {
+            this.switchTo(Window.MAIN_MENU);
+        }
     }
 
     public void onCombatDefeatRetry() {
@@ -148,7 +157,13 @@ public class MetaController {
     }
 
     public void receiveCombatSummary(CombatSummary combatSummary) {
-        // TODO
+        List<LevelUpResult> levelUps = combatSummary.levelUpResults();
+        if (levelUps != null && !levelUps.isEmpty()) {
+            this.levelUpController.initialize(levelUps);
+            this.switchTo(Window.LEVEL_UP);
+        } else {
+            this.onAllPendingLevelUpsConsumed();
+        }
     }
 
     public void onStartManualCombat() {

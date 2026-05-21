@@ -7,6 +7,7 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.CombatSummary;
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
 import ulb.models.bugemon.Attack;
@@ -214,8 +215,8 @@ public class CombatController extends Controller<CombatView>
         boolean won = this.combat.getResult() == CombatResult.VICTORY;
         LOG.info("Combat ended. Victory: {}", won);
 
-        this.combatService.finalizeCombat(this.combat, this.combat.getPlayerSkillContext());
-        this.metaController.onCombatFinished(won);
+        CombatSummary summary = this.combatService.finalizeCombat(this.combat, this.combat.getPlayerSkillContext());
+        this.metaController.onCombatFinished(won, summary);
     }
 
     @Override

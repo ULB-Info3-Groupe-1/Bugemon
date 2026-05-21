@@ -10,19 +10,12 @@ import ulb.services.LevelUpService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 
-/**
- * Controller responsible for the level-up screen.
- */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
     private final LevelUpService levelUpService;
     private final Queue<LevelUpResult> pendingLevelUps;
 
-    /**
-     * Constructs a {@code LevelUpController}, initialises its {@link LevelUpView}, and registers the choice callback.
-     *
-     * @param metaController
-     *            the application-level controller used for navigation.
-     */
+    private LevelUpResult currentLevelUp;
+
     public LevelUpController(MetaController metaController, LevelUpService levelUpService) {
         super(metaController, ViewLoader.load(LevelUpView::new));
         this.levelUpService = levelUpService;
@@ -30,23 +23,25 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
         this.view.setListener(this);
     }
 
-    // TODO: name? initialize or show or sth else ?
     public void initialize(List<LevelUpResult> levelUps) {
+        this.pendingLevelUps.clear();
         this.pendingLevelUps.addAll(levelUps);
         this.processNextLevelUp();
     }
 
     public void processNextLevelUp() {
-        // TODO
+        if (this.pendingLevelUps.isEmpty()) {
+            this.metaController.onAllPendingLevelUpsConsumed();
+            return;
+        }
+        this.currentLevelUp = this.pendingLevelUps.poll();
+        this.view.displayLevelUpOptions(this.currentLevelUp.bugemon().getName(),
+                this.currentLevelUp.bugemon().getSpritePath(), this.levelUpService.generateLevelUpOptions());
     }
 
     @Override
     public void onBonusChosen(BonusStats bonus) {
-        // TODO
-    }
-
-    @Override
-    protected void show() {
-        super.show();
+        this.levelUpService.applyLevelUp(this.currentLevelUp.bugemon(), bonus);
+        this.processNextLevelUp();
     }
 }

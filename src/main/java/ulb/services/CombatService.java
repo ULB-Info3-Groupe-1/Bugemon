@@ -19,8 +19,8 @@ import ulb.models.combat.factory.CombatFactory;
 import ulb.models.combat.factory.ManualCombatFactory;
 import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
-import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerInputHandler;
+import ulb.models.run.RunBugemon;
 import ulb.models.skills.SkillContext;
 import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
@@ -73,10 +73,10 @@ public class CombatService {
             int xpPerBugemon = this.computeXpPerBugemon(totalXp, playerTeam.size());
             List<CombatBugemon> participants = playerTeam.getParticipants();
             for (CombatBugemon participant : participants) {
-                PlayerBugemon playerBugemon = participant.getPlayerBugemon();
-                int numLevelPassed = playerBugemon.addXp(xpPerBugemon);
+                RunBugemon runBugemon = participant.getRunBugemon();
+                int numLevelPassed = runBugemon.addXp(xpPerBugemon);
                 for (int i = 0; i < numLevelPassed; i++) {
-                    levelUpResults.add(new LevelUpResult(playerBugemon, playerBugemon.getLevel() - numLevelPassed + i));
+                    levelUpResults.add(new LevelUpResult(runBugemon, runBugemon.getLevel() - numLevelPassed + i));
                 }
             }
         }

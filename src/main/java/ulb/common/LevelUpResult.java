@@ -1,6 +1,6 @@
 package ulb.common;
 
-import ulb.models.player.PlayerBugemon;
+import ulb.models.run.RunBugemon;
 
-public record LevelUpResult(PlayerBugemon bugemon, int levelPassed) {
+public record LevelUpResult(RunBugemon bugemon, int levelPassed) {
 }

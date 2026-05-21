@@ -8,7 +8,6 @@ import ulb.common.StatType;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.ElementType;
 import ulb.models.combat.effect.StatusEffect;
-import ulb.models.player.PlayerBugemon;
 import ulb.models.run.RunBugemon;
 
 public class CombatBugemon {
@@ -110,8 +109,8 @@ public class CombatBugemon {
         this.runBugemon.setCurrentHp(this.currentHp);
     }
 
-    public PlayerBugemon getPlayerBugemon() {
-        return this.runBugemon.getPlayerBugemon();
+    public RunBugemon getRunBugemon() {
+        return this.runBugemon;
     }
 
     public boolean hasAttack(Attack attack) {
