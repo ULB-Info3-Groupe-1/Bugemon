@@ -106,7 +106,7 @@ public class MetaController {
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.skillTreeController = new SkillTreeController(this, skillService, playerState);
-        this.towerController = new TowerController(this, playerState, saveService, towerService);
+        this.towerController = new TowerController(this, playerState, towerService);
         this.initTransitions();
     }
 
