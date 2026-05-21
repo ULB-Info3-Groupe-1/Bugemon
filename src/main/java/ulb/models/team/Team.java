@@ -3,6 +3,7 @@ package ulb.models.team;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Bugemon;
@@ -67,25 +68,21 @@ public class Team {
         if (this.size() == 0) {
             throw new TeamAlreadyEmptyException("Team already empty!");
         }
-        if (!this.contains(bugemon)) {
-            throw new BugemonNotInTeamException("This Bugemon is not in the team!");
-        }
-        this.members.remove(bugemon);
+        PlayerBugemon toRemove = this.findByName(bugemon.getName())
+                .orElseThrow(() -> new BugemonNotInTeamException("This Bugemon is not in the team!"));
+        this.members.remove(toRemove);
     }
 
     public List<PlayerBugemon> getMembers() {
         return Collections.unmodifiableList(this.members);
     }
 
-    /**
-     * Checks if a Bugemon with the same name is already in the team
-     *
-     * @param bugemon
-     *            (Bugemon) the Bugemon to search for
-     * @return (boolean) true if a Bugemon with the same name is already in the team, false otherwise
-     */
     public boolean contains(PlayerBugemon bugemon) {
-        return this.members.contains(bugemon);
+        return this.members.stream().anyMatch(m -> m.getName().equals(bugemon.getName()));
+    }
+
+    public Optional<PlayerBugemon> findByName(String bugemonName) {
+        return this.members.stream().filter(m -> m.getName().equals(bugemonName)).findFirst();
     }
 
     public void clear() {

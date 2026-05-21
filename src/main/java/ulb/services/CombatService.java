@@ -33,15 +33,18 @@ public class CombatService {
     private final DamageCalculator damageCalculator;
     private final EffectProcessor effectProcessor;
     private final Random random;
+    private final BugemonService bugemonService;
 
-    public CombatService(Random random) {
-        this(new DamageCalculator(), new EffectProcessor(), random);
+    public CombatService(Random random, BugemonService bugemonService) {
+        this(new DamageCalculator(), new EffectProcessor(), random, bugemonService);
     }
 
-    public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random) {
+    public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
+            BugemonService bugemonService) {
         this.damageCalculator = damageCalculator;
         this.effectProcessor = effectProcessor;
         this.random = random;
+        this.bugemonService = bugemonService;
     }
 
     public TeamFactory createRandomOpponentFactory() {
@@ -75,6 +78,7 @@ public class CombatService {
             for (CombatBugemon participant : participants) {
                 PlayerBugemon playerBugemon = participant.getPlayerBugemon();
                 int numLevelPassed = playerBugemon.addXp(xpPerBugemon);
+                this.bugemonService.savePlayerBugemon(playerBugemon);
                 for (int i = 0; i < numLevelPassed; i++) {
                     levelUpResults.add(new LevelUpResult(playerBugemon, playerBugemon.getLevel() - numLevelPassed + i));
                 }

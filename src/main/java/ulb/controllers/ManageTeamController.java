@@ -1,8 +1,8 @@
 package ulb.controllers;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import ulb.common.dto.BugemonDisplayDTO;
 import ulb.models.player.PlayerBugemon;
@@ -64,8 +64,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     private void updateDisplayedAvailableBugemons() {
         List<BugemonDisplayDTO> allDTOs = this.bugemonService.getPlayerBugemons().stream()
                 .map(PlayerBugemon::toDisplayDTO).toList();
-        Set<BugemonDisplayDTO> selectedDTOs = new HashSet<>(
-                this.tmpTeam.getMembers().stream().map(PlayerBugemon::toDisplayDTO).toList());
+        Set<String> selectedNames = this.tmpTeam.getMembers().stream().map(PlayerBugemon::getName)
+                .collect(Collectors.toSet());
+        Set<BugemonDisplayDTO> selectedDTOs = allDTOs.stream().filter(dto -> selectedNames.contains(dto.getName()))
+                .collect(Collectors.toSet());
         this.view.refreshAvailableBugemons(allDTOs, selectedDTOs);
     }
 
@@ -208,11 +210,15 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onReturnToMainMenu() {
-        if (!this.teamService.isTeamSaved(this.tmpTeam) && this.view.showAlertTeamChangesNotSave()) {
-            this.clearTmpTeam();
+        if (!this.teamService.isTeamSaved(this.tmpTeam) && !this.tmpTeam.isEmpty()) {
+            if (this.view.showAlertTeamChangesNotSave()) {
+                this.clearTmpTeam();
+            } else {
+                return;
+            }
         }
-
         this.metaController.onMainMenu();
+
     }
 
     private void clearTmpTeam() {
