@@ -1,13 +1,10 @@
-package ulb.models.level_up;
+package ulb.models.player;
 
-import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 import ulb.Configuration;
-import ulb.models.player.BonusStats;
 
-public class LevelUpGenerator {
+public class BonusStatsGenerator {
     enum Stat {
         HP,
         ATTACK,
@@ -17,16 +14,11 @@ public class LevelUpGenerator {
 
     private final Random random;
 
-    public LevelUpGenerator(Random random) {
+    public BonusStatsGenerator(Random random) {
         this.random = random;
     }
 
-    public List<BonusStats> generateOptions() {
-        return IntStream.range(0, Configuration.Game.NUM_BONUS_PER_LEVEL_UP).mapToObj(i -> this.generateBonusStats())
-                .toList();
-    }
-
-    private BonusStats generateBonusStats() {
+    public BonusStats generateBonusStats() {
         int hp = 0;
         int attack = 0;
         int defense = 0;
