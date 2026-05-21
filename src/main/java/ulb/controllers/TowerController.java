@@ -97,11 +97,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         }
     }
 
-    public boolean isRunActive() {
-        return this.towerState != null;
-    }
-
-    private void onBonusRoomExited() {
+    void onBonusRoomExited() {
         this.towerService.save();
         this.udpateDisplayedFloor();
     }
@@ -116,7 +112,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
                     this.towerState.getCurrentFloor(), false);
             case BOSS -> this.metaController.onStartTowerCombat(this.towerState.getRunTeam(),
                     this.towerState.getCurrentFloor(), true);
-            case REWARD -> this.onBonusRoomExited();
+            case REWARD -> this.metaController.startRewardFlow(this.towerState.getRunTeam());
             default -> this.udpateDisplayedFloor();
         }
     }

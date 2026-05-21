@@ -29,6 +29,7 @@ import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.LevelUpService;
 import ulb.services.MusicService;
+import ulb.services.RewardService;
 import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
@@ -90,9 +91,10 @@ public class GameBootstrapper {
                 CombatService combatService = new CombatService(this.random, bugemonService);
                 LevelUpService levelUpService = new LevelUpService(playerName, bugemonRepository, this.random);
                 MusicService musicService = new MusicService(musicRepository);
+                RewardService rewardService = new RewardService(bugemonService, inventoryService, this.random);
 
                 return new ServiceRegistry(bugemonService, teamService, inventoryService, skillService, towerService,
-                                combatService, saveService, levelUpService, musicService);
+                                combatService, saveService, levelUpService, musicService, rewardService);
         }
 
         public PlayerState createPlayerState(String playerName, InventoryService inventoryService,

@@ -23,20 +23,24 @@ import ulb.models.music.SoundEffect;
 import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
 import ulb.models.team.factory.TeamFactory;
+import ulb.models.tower.reward.Reward;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.MusicService;
+import ulb.services.RewardService;
 import ulb.views.View;
 
 /**
- * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
+ * Instantiated once at startup; owns every concrete {@link Controller} and is
+ * the single authority for screen
  * navigation via {@link #switchTo(Window)}.
  */
 public class MetaController {
     private static final Logger LOG = LoggerFactory.getLogger(MetaController.class);
 
     /**
-     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a transition.
+     * All navigable screens — pass to {@link #switchTo(Window)} to trigger a
+     * transition.
      */
     public enum Window {
         MAIN_MENU,
@@ -51,6 +55,7 @@ public class MetaController {
         COMBAT_DEFEAT,
         LEVEL_UP,
         SKILL_TREE,
+        REWARD,
     }
 
     private final Stage stage;
@@ -67,10 +72,12 @@ public class MetaController {
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
     private final TowerController towerController;
+    private final RewardController rewardController;
 
     private final CombatService combatService;
     private final MusicService musicService;
     private final BugemonService bugemonService;
+    private final RewardService rewardService;
     private final PlayerState playerState;
 
     private CombatSummary lastCombatSummary;
@@ -80,15 +87,16 @@ public class MetaController {
      * Creates the meta-controller and initializes all screen controllers.
      *
      * @param primaryStage
-     *            main JavaFX stage of the application
+     *                     main JavaFX stage of the application
      * @throws IOException
-     *             if the music fails to be initialized
+     *                     if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, ServiceRegistry services, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
         this.combatService = services.combat;
         this.bugemonService = services.bugemon;
         this.musicService = services.music;
+        this.rewardService = services.reward;
         this.playerState = playerState;
 
         this.saveMenuController = new SaveMenuController(this, services.save, playerState);
@@ -104,11 +112,30 @@ public class MetaController {
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.towerController = new TowerController(this, playerState, services.tower, services.team);
+        this.rewardController = new RewardController(this, this.rewardService);
         this.initTransitions();
     }
 
     public void start() {
         this.switchTo(Window.SAVE_MENU);
+    }
+
+    public void endTowerFlow() {
+        this.isTowerActive = false;
+    }
+
+    public void startRewardFlow(RunTeam runTeam) {
+        List<Reward> rewards = this.rewardService.generateRewards(runTeam);
+        this.rewardController.initialize(rewards, runTeam, this.playerState.getInventory());
+        this.switchTo(Window.REWARD);
+    }
+
+    public void onRewardFlowFinished() {
+        this.towerController.onBonusRoomExited();
+    }
+
+    public void onCombatFinished(boolean won) {
+        this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
     }
 
     public void onCombatFinished(boolean won, CombatSummary summary) {
@@ -267,15 +294,16 @@ public class MetaController {
             this.musicService.playSoundEffect(SoundEffect.DEFEAT);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
+        this.transitions.put(Window.REWARD, this.rewardController::show);
     }
 
     /**
      * Switches the current screen to the specified window.
      *
      * @param window
-     *            target screen to display
+     *               target screen to display
      * @throws IllegalArgumentException
-     *             if the window is invalid
+     *                                  if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);

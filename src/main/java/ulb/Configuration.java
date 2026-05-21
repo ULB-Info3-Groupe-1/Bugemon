@@ -51,6 +51,7 @@ public abstract class Configuration {
 
             public static final String FLOOR_VIEW = "/fxml/Floor.fxml";
             public static final String SKILL_TREE_VIEW = "/fxml/SkillTree.fxml";
+            public static final String REWARD_VIEW = "/fxml/Reward.fxml";
         }
     }
 

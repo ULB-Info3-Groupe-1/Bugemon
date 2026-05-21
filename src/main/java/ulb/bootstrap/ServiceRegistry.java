@@ -5,6 +5,7 @@ import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.LevelUpService;
 import ulb.services.MusicService;
+import ulb.services.RewardService;
 import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
@@ -20,10 +21,11 @@ public class ServiceRegistry {
     public final SaveService save;
     public final LevelUpService levelUpService;
     public final MusicService music;
+    public final RewardService reward;
 
     public ServiceRegistry(BugemonService bugemon, TeamService team, InventoryService inventory, SkillService skill,
             TowerService tower, CombatService combat, SaveService save, LevelUpService levelUpService,
-            MusicService music) {
+            MusicService music, RewardService reward) {
         this.bugemon = bugemon;
         this.team = team;
         this.inventory = inventory;
@@ -33,5 +35,6 @@ public class ServiceRegistry {
         this.save = save;
         this.levelUpService = levelUpService;
         this.music = music;
+        this.reward = reward;
     }
 }
