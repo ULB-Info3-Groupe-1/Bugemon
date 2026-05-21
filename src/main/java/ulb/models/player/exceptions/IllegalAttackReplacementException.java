@@ -5,4 +5,3 @@ public class IllegalAttackReplacementException extends Exception {
         super(message);
     }
 }
-

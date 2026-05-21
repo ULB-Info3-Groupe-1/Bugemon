@@ -14,43 +14,41 @@ import ulb.models.tower.reward.BonusStatsReward;
 import ulb.models.tower.reward.ItemReward;
 import ulb.models.tower.reward.Reward;
 import ulb.models.tower.reward.RewardGenerator;
-import ulb.repositories.InventoryRepository;
-import ulb.repositories.StaticRepository;
-
-// TODO: update services states
 
 public class RewardService {
     private final RewardGenerator rewardGenerator;
-    private final StaticRepository staticRepository;
-    private final InventoryRepository inventoryRepository;
+    private final BugemonService bugemonService;
+    private final InventoryService inventoryService;
 
-    public RewardService(StaticRepository staticRepository, InventoryRepository inventoryRepository, Random random) {
+    public RewardService(BugemonService bugemonService, InventoryService inventoryService, Random random) {
         this.rewardGenerator = new RewardGenerator(random);
-        this.staticRepository = staticRepository;
-        this.inventoryRepository = inventoryRepository;
+        this.bugemonService = bugemonService;
+        this.inventoryService = inventoryService;
     }
 
     public List<Reward> generateRewards(RunTeam runTeam) {
-        List<Reward> rewards = this.rewardGenerator.generate(this.staticRepository.attacks(),
-                this.staticRepository.items(), runTeam);
-        return rewards;
+        return this.rewardGenerator.generate(this.bugemonService.getAttacks(), this.inventoryService.getItems(),
+                runTeam);
     }
 
     public void applyItemReward(ItemReward reward, Inventory inventory) {
         inventory.addItem(reward.getItem(), reward.getQuantity());
+        this.inventoryService.save(inventory);
     }
 
     public void applyStatBonusReward(BonusStatsReward reward, RunBugemon bugemon) {
         bugemon.applyUpgrade(reward.getBonus());
+        this.bugemonService.savePlayerBugemon(bugemon.getPlayerBugemon());
     }
 
-    private void applyAttackReward(AttackReward reward, RunBugemon bugemon, Attack toReplace) { 
+    public void applyAttackReward(AttackReward reward, RunBugemon bugemon, Attack toReplace) {
         this.applyAttackReward(reward, bugemon.getPlayerBugemon(), toReplace);
     }
 
-    private void applyAttackReward(AttackReward reward, PlayerBugemon bugemon, Attack toReplace) {
+    public void applyAttackReward(AttackReward reward, PlayerBugemon bugemon, Attack toReplace) {
         try {
             bugemon.replaceAttack(toReplace, reward.getAttack());
+            this.bugemonService.savePlayerBugemon(bugemon);
         } catch (IllegalAttackReplacementException e) {
             // do nothing
         }

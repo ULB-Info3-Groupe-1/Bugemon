@@ -40,11 +40,10 @@ public class RewardGenerator {
     private Reward generateAttackReward(List<Attack> availableAttacks, RunTeam runTeam) {
         Set<ElementType> teamTypes = runTeam.getMembers().stream().map(RunBugemon::getType).collect(Collectors.toSet());
 
-        List<Attack> compatible = availableAttacks.stream()
-                .filter(attack -> teamTypes.stream().anyMatch(
-                        // keep only attacks such that there exists a bugemon in the team that is at
-                        // least "normal efficiency" against the type of the attack
-                        teamType -> Efficiency.preview(teamType, attack.type()).isAtLeastNormal()))
+        List<Attack> compatible = availableAttacks.stream().filter(attack -> teamTypes.stream().anyMatch(
+                // keep only attacks such that there exists a bugemon in the team that is at
+                // least "normal efficiency" against the type of the attack
+                teamType -> Efficiency.preview(teamType, attack.type()).isAtLeastNormal()))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if (compatible.isEmpty()) {

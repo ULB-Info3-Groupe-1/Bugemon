@@ -1,7 +1,10 @@
 package ulb.services;
 
+import java.util.List;
+
 import ulb.common.dto.persistence.InventoryDTO;
 import ulb.models.item.Inventory;
+import ulb.models.item.Item;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.StaticRepository;
 
@@ -32,6 +35,10 @@ public class InventoryService {
 
     public Inventory getDefaultInventory() {
         return new Inventory(this.staticRepository.defaultInventory().items());
+    }
+
+    public List<Item> getItems() {
+        return this.staticRepository.items();
     }
 
     public void save(Inventory inventory) {

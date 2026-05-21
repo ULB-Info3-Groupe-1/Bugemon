@@ -33,6 +33,10 @@ public class BugemonService {
         return this.staticDataRepository.bugemons();
     }
 
+    public List<Attack> getAttacks() {
+        return this.staticDataRepository.attacks();
+    }
+
     public List<Attack> getAttacks(ElementType bugemonType) {
         return this.staticDataRepository.attacks().stream().filter(attack -> attack.type() == bugemonType).toList();
     }
