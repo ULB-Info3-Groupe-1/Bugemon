@@ -81,8 +81,8 @@ public class GameBootstrapper {
         CombatService combatService = new CombatService(this.random);
         MusicService musicService = new MusicService(musicRepository);
 
-        return new ServiceRegistry(bugemonService, teamService, inventoryService, skillService,
-                towerService, combatService, saveService, musicService);
+        return new ServiceRegistry(bugemonService, teamService, inventoryService, skillService, towerService,
+                combatService, saveService, musicService);
     }
 
     public PlayerState createPlayerState(String playerName, InventoryService inventoryService,

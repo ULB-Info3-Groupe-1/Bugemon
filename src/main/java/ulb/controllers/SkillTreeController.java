@@ -1,7 +1,7 @@
 package ulb.controllers;
 
-import ulb.models.skills.SkillNode;
 import ulb.models.player.PlayerState;
+import ulb.models.skills.SkillNode;
 import ulb.models.skills.exceptions.IllegalNodeStateException;
 import ulb.services.SkillService;
 import ulb.views.SkillTreeView;

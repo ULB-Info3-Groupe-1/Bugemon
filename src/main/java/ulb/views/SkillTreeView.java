@@ -14,8 +14,8 @@ import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 import ulb.Configuration;
-import ulb.models.skills.SkillStatus;
 import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillStatus;
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
 
@@ -122,9 +122,9 @@ public class SkillTreeView extends View {
         }
     }
 
-    public void renderTree(SkillTree tree, SkillTreeState state) {
-        this.tree = tree;
-        this.state = state;
+    public void renderTree(SkillTree skillTree, SkillTreeState skillTreeState) {
+        this.tree = skillTree;
+        this.state = skillTreeState;
         this.doRender();
     }
 
@@ -255,8 +255,8 @@ public class SkillTreeView extends View {
         return content;
     }
 
-    String stateClass(SkillStatus state) {
-        return switch (state) {
+    String stateClass(SkillStatus skillStatus) {
+        return switch (skillStatus) {
             case ACTIVE -> "skill-node-active";
             case AVAILABLE -> "skill-node-available";
             case LOCKED -> "skill-node-locked";
