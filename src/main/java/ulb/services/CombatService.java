@@ -76,7 +76,7 @@ public class CombatService {
                 RunBugemon runBugemon = participant.getRunBugemon();
                 int numLevelPassed = runBugemon.addXp(xpPerBugemon);
                 for (int i = 0; i < numLevelPassed; i++) {
-                    levelUpResults.add(new LevelUpResult(runBugemon, runBugemon.getLevel() - numLevelPassed + i));
+                    levelUpResults.add(new LevelUpResult(runBugemon, runBugemon.getLevel() - numLevelPassed + i + 1));
                 }
             }
         }

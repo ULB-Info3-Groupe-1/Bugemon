@@ -31,9 +31,9 @@ public class LevelUpView extends View {
         this.listener = listener;
     }
 
-    public void displayLevelUpOptions(String bugemonName, String spritePath, List<BonusStats> options) {
+    public void displayLevelUpOptions(String bugemonName, int newLevel, String spritePath, List<BonusStats> options) {
         this.currentOptions = options;
-        this.levelUpText.setText(bugemonName + " a monté de niveau ! Choisis un bonus :");
+        this.levelUpText.setText(bugemonName + " vient juste de passer au niveau " + newLevel + " !");
 
         if (spritePath != null) {
             File spriteFile = new File(Configuration.Paths.SPRITES + spritePath);
@@ -46,7 +46,7 @@ public class LevelUpView extends View {
     }
 
     private String formatBonus(BonusStats b) {
-        return String.format("+%d PV, +%d Att, +%d Def, +%d Init", b.getBonusHp(), b.getBonusAttack(),
+        return String.format("+%d HP, +%d Attack, +%d Defense, +%d Initiative", b.getBonusHp(), b.getBonusAttack(),
                 b.getBonusDefense(), b.getBonusInitiative());
     }
 

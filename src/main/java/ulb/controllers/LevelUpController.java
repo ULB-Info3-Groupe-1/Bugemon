@@ -35,7 +35,7 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
             return;
         }
         this.currentLevelUp = this.pendingLevelUps.poll();
-        this.view.displayLevelUpOptions(this.currentLevelUp.bugemon().getName(),
+        this.view.displayLevelUpOptions(this.currentLevelUp.bugemon().getName(), this.currentLevelUp.levelPassed(),
                 this.currentLevelUp.bugemon().getSpritePath(), this.levelUpService.generateLevelUpOptions());
     }
 
