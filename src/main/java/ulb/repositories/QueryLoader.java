@@ -20,7 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import ulb.Configuration;
+
 public class QueryLoader {
+
+    private static final String QUERY_NAME_PREFIX = "-- ";
+    private static final String QUERY_START_PREFIX = "-- Query";
+    private static final int MAX_FILE_WALK_DEPTH = 1;
 
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
@@ -55,14 +61,14 @@ public class QueryLoader {
 
             // see rules.md for the format of the SQL files
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("-- Query")) {
+                if (line.startsWith(QUERY_START_PREFIX)) {
                     if (currentQueryName != null && !currentSql.isEmpty()) {
                         this.queries.put(currentQueryName, currentSql.toString().trim());
                         currentSql.setLength(0); // We reset the StringBuilder for the next query
                     }
                     currentQueryName = null;
-                } else if (currentQueryName == null && line.startsWith("-- ")) {
-                    currentQueryName = line.substring(3).trim();
+                } else if (currentQueryName == null && line.startsWith(QUERY_NAME_PREFIX)) {
+                    currentQueryName = line.substring(QUERY_NAME_PREFIX.length()).trim();
                 } else if (currentQueryName != null) {
                     currentSql.append(line).append("\n");
                 }
@@ -79,7 +85,7 @@ public class QueryLoader {
     private List<String> getSqlFiles() {
         List<String> result = new ArrayList<>();
         try {
-            URL url = QueryLoader.class.getResource("/sql/");
+            URL url = QueryLoader.class.getResource(Configuration.Paths.SQL_BASE_PATH);
             if (url == null) {
                 throw new IllegalStateException("SQL directory not found");
             }
@@ -110,9 +116,9 @@ public class QueryLoader {
     }
 
     private void walkAndAddFiles(Path path, List<String> result) throws IOException {
-        try (Stream<Path> walk = Files.walk(path, 1)) {
+        try (Stream<Path> walk = Files.walk(path, MAX_FILE_WALK_DEPTH)) {
             walk.filter(p -> p.toString().endsWith(".sql"))
-                    .forEach(p -> result.add("/sql/" + p.getFileName().toString()));
+                    .forEach(p -> result.add(Configuration.Paths.SQL_BASE_PATH + p.getFileName().toString()));
         }
     }
 
