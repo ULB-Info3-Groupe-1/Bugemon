@@ -47,6 +47,8 @@ public class RewardService {
 
     public void applyAttackReward(AttackReward reward, PlayerBugemon bugemon, Attack toReplace) {
         try {
+            // TODO: Should throw if the bugemon is weak against the new attack's type (not
+            // doing it now)
             bugemon.replaceAttack(toReplace, reward.getAttack());
             this.bugemonService.savePlayerBugemon(bugemon);
         } catch (IllegalAttackReplacementException e) {

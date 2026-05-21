@@ -42,6 +42,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
 
     @Override
     public void onRewardChosen(Reward reward) {
+        // TODO: Remove string formatting from controller and move it to the view layer
         this.selectedReward = reward;
         if (reward instanceof ItemReward itemReward) {
             this.rewardService.applyItemReward(itemReward, this.inventory);

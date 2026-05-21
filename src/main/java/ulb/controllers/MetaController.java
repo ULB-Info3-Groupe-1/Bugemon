@@ -120,10 +120,6 @@ public class MetaController {
         this.switchTo(Window.SAVE_MENU);
     }
 
-    public void endTowerFlow() {
-        this.isTowerActive = false;
-    }
-
     public void startRewardFlow(RunTeam runTeam) {
         List<Reward> rewards = this.rewardService.generateRewards(runTeam);
         this.rewardController.initialize(rewards, runTeam, this.playerState.getInventory());

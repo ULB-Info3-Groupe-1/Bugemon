@@ -58,6 +58,7 @@ public class Combat {
     private boolean finished;
 
     public static class Builder {
+        // TODO/ move to a separate file.
         private CombatTeam playerTeam;
         private CombatTeam opponentTeam;
         private int floor;
@@ -228,7 +229,8 @@ public class Combat {
             return;
         }
 
-        // handle potential Ko of second actor — controller will request forced switch after displaying steps
+        // handle potential Ko of second actor — controller will request forced switch
+        // after displaying steps
         if (secondActorBefore.isKo()) {
             LOG.debug("Second actor KO - returning steps, controller will handle forced switch for {}",
                     secondIsPlayer ? STR_PLAYER : STR_OPPONENT);
@@ -251,7 +253,8 @@ public class Combat {
         CombatTeam firstTeam = firstIsPlayer ? this.playerTeam : this.opponentTeam;
         CombatBugemon firstActor = firstTeam.getActive();
 
-        // handle potential Ko of first actor — controller will request forced switch after displaying steps
+        // handle potential Ko of first actor — controller will request forced switch
+        // after displaying steps
         if (firstActor.isKo()) {
             LOG.debug("First actor KO - returning steps, controller will handle forced switch for {}",
                     firstIsPlayer ? STR_PLAYER : STR_OPPONENT);

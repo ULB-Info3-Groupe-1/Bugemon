@@ -83,6 +83,10 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.metaController.onMainMenu();
     }
 
+    public boolean isRunActive() {
+        return this.towerState != null;
+    }
+
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
         if (!playerWon) {
@@ -108,6 +112,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             return;
         }
         switch (room.getType()) {
+            // TODO: Found multiple times a Boss in normal combat rooms.
             case COMBAT -> this.metaController.onStartTowerCombat(this.towerState.getRunTeam(),
                     this.towerState.getCurrentFloor(), false);
             case BOSS -> this.metaController.onStartTowerCombat(this.towerState.getRunTeam(),

@@ -1,5 +1,6 @@
 package ulb.models.player;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public class PlayerBugemon {
         this.bonusStats = bonusStats;
 
         Bugemon.checkAttacks(currentAttacks);
-        this.currentAttacks = currentAttacks;
+        this.currentAttacks = new ArrayList<>(currentAttacks);
     }
 
     public String getName() {
@@ -115,7 +116,7 @@ public class PlayerBugemon {
     }
 
     public boolean replaceAttack(Attack oldAttack, Attack newAttack) throws IllegalAttackReplacementException {
-        if (!Efficiency.preview(this.getType(), newAttack.type()).isAtLeastNormal()) {
+        if (!Efficiency.preview(newAttack.type(), this.getType()).isAtLeastNormal()) {
             throw new IllegalAttackReplacementException("bugemon is weak against the type of the given attack");
         }
 
