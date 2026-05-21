@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
 import ulb.bootstrap.ServiceRegistry;
+import ulb.common.CombatSummary;
 import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.factory.CombatFactory;
-import ulb.models.level_up.LevelUp;
 import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.SoundEffect;
 import ulb.models.player.PlayerState;
@@ -95,7 +95,7 @@ public class MetaController {
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
                 this.bugemonService, playerState);
         this.createBugemonController = new CreateBugemonController(this, this.bugemonService);
-        this.levelUpController = new LevelUpController(this, this.bugemonService);
+        this.levelUpController = new LevelUpController(this, services.levelUpService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
         this.initTransitions();
@@ -115,11 +115,8 @@ public class MetaController {
     }
 
     public void onCombatVictoryFinished() {
-        if (this.levelUpController.hasWorkToDo()) {
-            this.switchTo(Window.LEVEL_UP);
-        } else {
-            this.switchTo(Window.MAIN_MENU);
-        }
+        // TODO
+        this.switchTo(Window.MAIN_MENU);
     }
 
     public void onCombatDefeatRetry() {
@@ -150,8 +147,8 @@ public class MetaController {
         }
     }
 
-    public void receiveCombatResults(List<LevelUp> levels) {
-        this.levelUpController.addLevelUps(levels);
+    public void receiveCombatSummary(CombatSummary combatSummary) {
+        // TODO
     }
 
     public void onStartManualCombat() {

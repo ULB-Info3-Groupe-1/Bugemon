@@ -3,6 +3,7 @@ package ulb.bootstrap;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
+import ulb.services.LevelUpService;
 import ulb.services.MusicService;
 import ulb.services.SaveService;
 import ulb.services.SkillService;
@@ -17,10 +18,12 @@ public class ServiceRegistry {
     public final TowerService tower;
     public final CombatService combat;
     public final SaveService save;
+    public final LevelUpService levelUpService;
     public final MusicService music;
 
     public ServiceRegistry(BugemonService bugemon, TeamService team, InventoryService inventory, SkillService skill,
-            TowerService tower, CombatService combat, SaveService save, MusicService music) {
+            TowerService tower, CombatService combat, SaveService save, LevelUpService levelUpService,
+            MusicService music) {
         this.bugemon = bugemon;
         this.team = team;
         this.inventory = inventory;
@@ -28,6 +31,7 @@ public class ServiceRegistry {
         this.tower = tower;
         this.combat = combat;
         this.save = save;
+        this.levelUpService = levelUpService;
         this.music = music;
     }
 }

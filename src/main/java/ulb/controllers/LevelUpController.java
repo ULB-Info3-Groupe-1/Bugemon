@@ -5,17 +5,13 @@ import java.util.List;
 import java.util.Queue;
 
 import ulb.common.LevelUpResult;
-import ulb.models.level_up.LevelUp;
-import ulb.models.level_up.Upgrade;
+import ulb.models.player.BonusStats;
 import ulb.services.LevelUpService;
 import ulb.views.LevelUpView;
 import ulb.views.ViewLoader;
 
 /**
  * Controller responsible for the level-up screen.
- *
- * The {@link LevelUp} instances ares stored in a queue. The {@link LevelUp} at the head of the queue is always the one
- * being displayed. When an {@link Upgrade} is chosen, the head is popped.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
     private final LevelUpService levelUpService;
@@ -45,24 +41,12 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
     }
 
     @Override
-    public void onUpgradeChosen(int upgradeIdx) {
-        LevelUp current = this.pendingLevelUps.peek();
-        if (current != null) {
-            current.apply(upgradeIdx);
-            // TODO: this.bugemonService.saveLevelUp(current);
-            this.pendingLevelUps.poll();
-        }
-
-        if (!this.pendingLevelUps.isEmpty()) {
-            this.updateDisplayedLevelUp();
-        } else {
-            this.metaController.onAllPendingLevelUpsConsumed();
-        }
+    public void onBonusChosen(BonusStats bonus) {
+        // TODO
     }
 
     @Override
     protected void show() {
-        this.updateDisplayedLevelUp();
         super.show();
     }
 }
