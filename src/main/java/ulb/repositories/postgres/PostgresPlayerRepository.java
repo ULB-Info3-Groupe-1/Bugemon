@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerRepository;
+import ulb.repositories.dto.DefaultInventoryDTO;
 import ulb.repositories.dto.InventoryDTO;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
@@ -23,7 +24,8 @@ public class PostgresPlayerRepository extends AbstractRepository implements Play
     }
 
     @Override
-    public void createPlayer(String playername, InventoryDTO defaulInventory) throws PlayernameAlreadyExistsException {
+    public void createPlayer(String playername, DefaultInventoryDTO defaulInventory)
+            throws PlayernameAlreadyExistsException {
         LOG.debug("Creating player with name: {}", playername);
         try {
             this.executeUpdate("CreatePlayer", playername);
@@ -35,7 +37,8 @@ public class PostgresPlayerRepository extends AbstractRepository implements Play
             }
             throw e;
         }
-        this.inventoryRepository.save(playername, defaulInventory);
+        InventoryDTO playerInventory = new InventoryDTO(playername, defaulInventory.items());
+        this.inventoryRepository.save(playerInventory);
     }
 
     @Override

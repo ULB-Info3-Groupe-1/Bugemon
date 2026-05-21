@@ -46,7 +46,7 @@ public class LevelUpController extends Controller<LevelUpView> implements LevelU
         LevelUp current = this.pendingLevelUps.peek();
         if (current != null) {
             current.apply(upgradeIdx);
-            this.bugemonService.saveLevelUp(current);
+            // TODO: this.bugemonService.saveLevelUp(current);
             this.pendingLevelUps.poll();
         }
 

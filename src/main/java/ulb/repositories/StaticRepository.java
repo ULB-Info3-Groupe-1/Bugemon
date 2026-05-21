@@ -7,7 +7,7 @@ import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.InventoryDTO;
+import ulb.repositories.dto.DefaultInventoryDTO;
 
 public interface StaticRepository {
 
@@ -19,7 +19,7 @@ public interface StaticRepository {
 
     List<Attack> attacks();
 
-    InventoryDTO defaultInventory();
+    DefaultInventoryDTO defaultInventory();
 
     SkillTree skillTree();
 }

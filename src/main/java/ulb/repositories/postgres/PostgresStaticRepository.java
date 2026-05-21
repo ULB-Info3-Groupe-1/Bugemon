@@ -35,17 +35,17 @@ import ulb.models.skills.SkillTree;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.InventoryDTO;
+import ulb.repositories.dto.DefaultInventoryDTO;
 
 public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {
 
     private final Map<String, Attack> attackCache;
     private final Map<String, Bugemon> bugemonCache;
-    private final InventoryDTO defaultInventoryCache;
+    private final DefaultInventoryDTO defaultInventoryCache;
     private final SkillTree skillTreeCache;
 
     public PostgresStaticRepository(DatabaseConnection dbConnection, Map<String, String> queries,
-            InventoryDTO defaultInventory) {
+            DefaultInventoryDTO defaultInventory) {
         super(dbConnection, queries);
         this.attackCache = Collections.unmodifiableMap(this.loadAllAttacks());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
@@ -84,7 +84,7 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     }
 
     @Override
-    public InventoryDTO defaultInventory() {
+    public DefaultInventoryDTO defaultInventory() {
         return this.defaultInventoryCache;
     }
 

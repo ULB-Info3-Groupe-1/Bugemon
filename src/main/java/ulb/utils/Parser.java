@@ -42,7 +42,7 @@ import ulb.models.item.Item;
 import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
-import ulb.repositories.dto.InventoryDTO;
+import ulb.repositories.dto.DefaultInventoryDTO;
 
 /**
  * Parses the three bundled JSON resource files (attacks, Bugemons, items/inventory). The main entry point is
@@ -67,7 +67,7 @@ public class Parser {
     private static Map<String, Attack> attacks;
     private static List<Bugemon> bugemons;
     private static List<Item> items;
-    private static InventoryDTO inventory;
+    private static DefaultInventoryDTO inventory;
     private static SkillTree skillTree; // represent the tree data structure
 
     /**
@@ -113,7 +113,7 @@ public class Parser {
         return items;
     }
 
-    public final InventoryDTO getInventory() {
+    public final DefaultInventoryDTO getInventory() {
         return inventory;
     }
 
@@ -248,7 +248,7 @@ public class Parser {
                     .orElseThrow(() -> new RuntimeException("Item with ID " + itemId + " not found"));
             inventoryMap.put(obj, quantity);
         }
-        inventory = new InventoryDTO(inventoryMap);
+        inventory = new DefaultInventoryDTO(inventoryMap);
     }
 
     private static void parseSkills(Reader reader) {
