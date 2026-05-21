@@ -2,18 +2,14 @@ package ulb.repositories;
 
 import java.util.List;
 
-import ulb.models.music.Ambiance;
+import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.Music;
+import ulb.models.music.SoundEffect;
 
 public interface MusicRepository {
 
-    /**
-     * Returns all musics with the given ambiance
-     *
-     * @param ambiance
-     *            the ambiance of the musics to return
-     * @return a list of musics matching the ambiance
-     */
-    List<Music> findByAmbiance(Ambiance ambiance);
+    List<Music> findByAmbiance(BackgroundAmbiance ambiance);
+
+    List<Music> findByEffect(SoundEffect effect);
 
 }

@@ -10,8 +10,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -19,8 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
-import ulb.models.music.Ambiance;
+import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.Music;
+import ulb.models.music.SoundEffect;
 import ulb.repositories.MusicRepository;
 
 /**
@@ -29,50 +31,58 @@ import ulb.repositories.MusicRepository;
 public class ResourceMusicRepository implements MusicRepository {
     private static final Logger LOG = LoggerFactory.getLogger(ResourceMusicRepository.class);
 
-    private final List<Music> musics = new ArrayList<>();
+    private final Map<BackgroundAmbiance, List<Music>> backgroundTracks = new EnumMap<>(BackgroundAmbiance.class);
+    private final Map<SoundEffect, List<Music>> soundEffectTracks = new EnumMap<>(SoundEffect.class);
 
     public ResourceMusicRepository() {
         this.loadAllResources();
     }
 
     @Override
-    public List<Music> findByAmbiance(Ambiance ambiance) {
-        return this.musics.stream().filter(music -> music.ambiance() == ambiance).toList();
+    public List<Music> findByAmbiance(BackgroundAmbiance ambiance) {
+        return this.backgroundTracks.getOrDefault(ambiance, List.of());
+    }
+
+    @Override
+    public List<Music> findByEffect(SoundEffect effect) {
+        return this.soundEffectTracks.getOrDefault(effect, List.of());
     }
 
     private void loadAllResources() {
         try {
-            this.musics.addAll(this.loadFromDirectory(Configuration.Music.MUSIC_PATH_COMBAT, Ambiance.COMBAT));
-            this.musics.addAll(this.loadFromDirectory(Configuration.Music.MUSIC_PATH_MENU, Ambiance.MENU));
-            this.musics
-                    .addAll(this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_VICTORY, Ambiance.VICTORY));
-            this.musics.addAll(this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_DEFEAT, Ambiance.DEFEAT));
+            this.backgroundTracks.put(BackgroundAmbiance.COMBAT,
+                    this.loadFromDirectory(Configuration.Music.MUSIC_PATH_COMBAT));
+            this.backgroundTracks.put(BackgroundAmbiance.MENU,
+                    this.loadFromDirectory(Configuration.Music.MUSIC_PATH_MENU));
+            this.soundEffectTracks.put(SoundEffect.VICTORY,
+                    this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_VICTORY));
+            this.soundEffectTracks.put(SoundEffect.DEFEAT,
+                    this.loadFromDirectory(Configuration.Music.SOUND_EFFECTS_PATH_DEFEAT));
         } catch (IOException e) {
             LOG.error("Error loading musics: {}", e.getMessage());
         }
         LOG.debug("All musics have been loaded successfully into the repository");
     }
 
-    private List<Music> loadFromDirectory(String resourceDir, Ambiance ambiance) throws IOException {
+    private List<Music> loadFromDirectory(String resourceDir) throws IOException {
         URI uri = this.getResourceURI(resourceDir);
 
         if (!"jar".equals(uri.getScheme())) {
-            return this.collectMusic(Paths.get(uri), ambiance);
+            return this.collectMusic(Paths.get(uri));
         }
 
         try {
             FileSystem fs = FileSystems.getFileSystem(uri);
-            return this.collectMusic(fs.getPath(resourceDir), ambiance);
+            return this.collectMusic(fs.getPath(resourceDir));
         } catch (java.nio.file.FileSystemNotFoundException e) {
             try (FileSystem fs = FileSystems.newFileSystem(uri, java.util.Map.of())) {
-                return this.collectMusic(fs.getPath(resourceDir), ambiance);
+                return this.collectMusic(fs.getPath(resourceDir));
             }
         }
     }
 
-    private List<Music> collectMusic(Path dir, Ambiance ambiance) throws IOException {
-        return this.listFiles(dir).stream().map(path -> this.loadMusic(path, ambiance)).flatMap(Optional::stream)
-                .toList();
+    private List<Music> collectMusic(Path dir) throws IOException {
+        return this.listFiles(dir).stream().map(this::loadMusic).flatMap(Optional::stream).toList();
     }
 
     private URI getResourceURI(String resourceDir) {
@@ -94,9 +104,9 @@ public class ResourceMusicRepository implements MusicRepository {
         }
     }
 
-    private Optional<Music> loadMusic(Path path, Ambiance ambiance) {
+    private Optional<Music> loadMusic(Path path) {
         try {
-            return Optional.of(new Music(path.toUri().toURL(), ambiance));
+            return Optional.of(new Music(path.toUri().toURL()));
         } catch (MalformedURLException e) {
             LOG.error("Error loading song: {}", path);
             return Optional.empty();
