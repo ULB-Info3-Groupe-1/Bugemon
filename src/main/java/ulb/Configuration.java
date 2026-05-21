@@ -99,6 +99,13 @@ public abstract class Configuration {
         public static final int BOSS_MULTIPLIER = 2;
         public static final int NORMAL_MULTIPLIER = 1;
 
+        public static final int NUM_POINTS_PER_BONUS = 10;
+        public static final int NUM_BONUS_PER_LEVEL_UP = 3;
+        public static final int HP_GAIN_PER_POINT = 2; // one point -> +2 hp
+        public static final int ATTACK_GAIN_PER_POINT = 1;
+        public static final int DEFENSE_GAIN_PER_POINT = 1;
+        public static final int INITIATIVE_GAIN_PER_POINT = 2; // one point -> +2 initiative
+
         public static final AttackFactorFormula ATTACK_FACTOR_FORMULA = //
                 effectiveAttack -> (100.0 + effectiveAttack) / 100.0;
         public static final ReductionFactorFormula REDUCTION_FACTOR_FORMULA = //
