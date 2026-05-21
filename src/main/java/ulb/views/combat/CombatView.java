@@ -3,11 +3,18 @@ package ulb.views.combat;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
@@ -27,9 +34,9 @@ import ulb.views.combat.components.SwitchMenuView;
 import ulb.views.components.DialogZoneView;
 import ulb.views.components.HoverInfoView;
 
-public class CombatView extends View {
+// TODO: remove magic numbers
 
-    private CombatAnimationView attackAnimationView;
+public class CombatView extends View {
 
     @FXML
     private BugemonInfoView bugemonPlayerInfo;
@@ -69,7 +76,6 @@ public class CombatView extends View {
 
     @FXML
     protected void initialize() {
-        this.attackAnimationView = new CombatAnimationView(this.bugemonPlayerImage, this.bugemonOpponentImage);
         this.dialogZoneView.setListener(() -> {
             if (this.nextListener != null) {
                 this.nextListener.onNext();
@@ -286,7 +292,22 @@ public class CombatView extends View {
         this.actionMenuSlot.setManaged(true);
     }
 
-    public void showStepDialog(TurnStep step) {
+    public void showStep(TurnStep step) {
+        this.showStepAnimation(step);
+        this.showStepDialog(step);
+    }
+
+    private void showStepAnimation(TurnStep step) {
+        switch (step) {
+            case AttackStep s -> this.playAttackAnimation(s);
+            case KoStep s -> this.playKoAnimation(s);
+            default -> {
+                // no animation for other steps
+            }
+        }
+    }
+
+    private void showStepDialog(TurnStep step) {
         this.hideAttackPreview();
         this.hideActionMenu();
 
@@ -327,36 +348,45 @@ public class CombatView extends View {
         this.hideActionMenu();
     }
 
-    public void updatePlayerBugemon(CombatBugemon playerCombatBugemon) {
-        if (!playerCombatBugemon.isKo()) {
-            this.makePlayerBugemonReappear();
-        }
-        this.bugemonPlayerInfo.setBugemonInfo(playerCombatBugemon);
-        this.setSprite(this.bugemonPlayerImage, playerCombatBugemon.getSpritePath());
+    private void playAttackAnimation(TurnStep.AttackStep step) {
+        boolean attackerIsAlly = (this.playerBugemon != null) && (step.attacker() == this.playerBugemon);
+        ImageView attackerSprite = attackerIsAlly ? this.bugemonPlayerImage : this.bugemonOpponentImage;
+        ImageView defenderSprite = attackerIsAlly ? this.bugemonOpponentImage : this.bugemonPlayerImage;
+        double direction = attackerIsAlly ? 1.0 : -1.0;
+
+        this.dialogZoneView.setNextButtonDisabled(true);
+
+        TranslateTransition forward = new TranslateTransition(Duration.millis(300), attackerSprite);
+        forward.setByX(direction * 40);
+
+        TranslateTransition back = new TranslateTransition(Duration.millis(200), attackerSprite);
+        back.setByX(direction * -40);
+        back.setOnFinished(e -> this.dialogZoneView.setNextButtonDisabled(false));
+
+        DropShadow redGlow = new DropShadow(20, Color.RED);
+        redGlow.setSpread(0.8);
+        forward.setOnFinished(e -> {
+            defenderSprite.setEffect(redGlow);
+            Timeline clearFlash = new Timeline(
+                    new KeyFrame(Duration.millis(300), ev -> defenderSprite.setEffect(null)));
+            clearFlash.play();
+            back.play();
+        });
+
+        forward.play();
     }
 
-    public void playPlayerAttackAnimation(Runnable onFinished) {
-        this.attackAnimationView.playPlayerAttackAnimation(onFinished);
-    }
+    private void playKoAnimation(TurnStep.KoStep step) {
+        boolean bugemonIsAlly = (this.playerBugemon != null) && (step.koBugemon() == this.playerBugemon);
+        ImageView sprite = bugemonIsAlly ? this.bugemonPlayerImage : this.bugemonOpponentImage;
 
-    public void playOpponentAttackAnimation(Runnable onFinished) {
-        this.attackAnimationView.playOpponentAttackAnimation(onFinished);
-    }
+        this.dialogZoneView.setNextButtonDisabled(true);
 
-    public void playDeathAnimationForPlayer(Runnable onFinished) {
-        this.attackAnimationView.playDeathAnimationForPlayer(onFinished);
-    }
-
-    public void playDeathAnimationForOpponent(Runnable onFinished) {
-        this.attackAnimationView.playDeathAnimationForOpponent(onFinished);
-    }
-
-    public void makePlayerBugemonReappear() {
-        this.attackAnimationView.makeBugemonReappear(this.bugemonPlayerImage);
-    }
-
-    public void makeOpponentBugemonReappear() {
-        this.attackAnimationView.makeBugemonReappear(this.bugemonOpponentImage);
+        FadeTransition fade = new FadeTransition(Duration.millis(500), sprite);
+        fade.setFromValue(1.0);
+        fade.setToValue(0.0);
+        fade.setOnFinished(e -> this.dialogZoneView.setNextButtonDisabled(false));
+        fade.play();
     }
 
     public interface NextListener {

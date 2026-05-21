@@ -173,15 +173,13 @@ public class CombatController extends Controller<CombatView>
         }
     }
 
-    // ── Step Iteration and Animations ─────────────────────────────────────────
+    // ── Step Iteration ─────────────────────────────────────────
 
     private void advanceStep() {
-        // TODO: add back animation
-
         if (!this.pendingSteps.isEmpty()) {
             TurnStep step = this.pendingSteps.poll();
             LOG.debug("Advancing step: {}", step);
-            this.view.showStepDialog(step);
+            this.view.showStep(step);
             this.refreshHpForStep(step);
         } else {
             this.view.hideDialog();
