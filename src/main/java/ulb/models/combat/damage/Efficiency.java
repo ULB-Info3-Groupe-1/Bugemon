@@ -1,9 +1,11 @@
 package ulb.models.combat.damage;
 
+import ulb.models.bugemon.ElementType;
+
 public enum Efficiency {
-    SUPER_EFFICIENT(1.5),
+    NOT_VERY_EFFICIENT(0.75),
     NORMAL(1.0),
-    NOT_VERY_EFFICIENT(0.75);
+    SUPER_EFFICIENT(1.5);
 
     private final double multiplier;
 
@@ -23,5 +25,14 @@ public enum Efficiency {
             return NOT_VERY_EFFICIENT;
         }
         return NORMAL;
+    }
+
+    // TODO: this likely introduces code dup with other methods (notably in CombatService)
+    public static Efficiency preview(ElementType type1, ElementType type2) {
+        return fromMultiplier(type1.getMultiplierAgainst(type2));
+    }
+
+    public boolean isAtLeastNormal() {
+        return this.compareTo(NORMAL) >= 0;
     }
 }

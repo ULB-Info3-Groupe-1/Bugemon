@@ -8,6 +8,7 @@ import ulb.Configuration;
 import ulb.common.CombatSummary;
 import ulb.common.LevelUpResult;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
@@ -95,7 +96,11 @@ public class CombatService {
     }
 
     public Efficiency previewEfficiency(Attack attack, CombatBugemon defender) {
-        return this.damageCalculator.previewEfficiency(attack.type(), defender.getType());
+        return this.previewEfficiency(attack, defender.getType());
+    }
+
+    public Efficiency previewEfficiency(Attack attack, ElementType typeDefender) {
+        return this.damageCalculator.previewEfficiency(attack.type(), typeDefender);
     }
 
     private int computeCombatXp(int floorNumber, boolean isBoss, int opponentCount) {

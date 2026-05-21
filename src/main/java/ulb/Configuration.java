@@ -107,6 +107,8 @@ public abstract class Configuration {
         public static final int DEFENSE_GAIN_PER_POINT = 1;
         public static final int INITIATIVE_GAIN_PER_POINT = 2; // one point -> +2 initiative
 
+        public static final int ITEM_QUANTITY_FOR_ITEM_REWARD = 1;
+
         public static final AttackFactorFormula ATTACK_FACTOR_FORMULA = //
                 effectiveAttack -> (100.0 + effectiveAttack) / 100.0;
         public static final ReductionFactorFormula REDUCTION_FACTOR_FORMULA = //
