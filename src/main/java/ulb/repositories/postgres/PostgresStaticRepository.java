@@ -1,13 +1,7 @@
 package ulb.repositories.postgres;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import ulb.Configuration;
 import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
@@ -36,13 +29,14 @@ import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.dto.CreateBugemonDTO;
 import ulb.repositories.dto.DefaultInventoryDTO;
+import ulb.utils.SpriteUtils;
 
 public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {
 
     private final Map<String, Attack> attackCache;
-    private final Map<String, Bugemon> bugemonCache;
     private final DefaultInventoryDTO defaultInventoryCache;
     private final SkillTree skillTreeCache;
+    private Map<String, Bugemon> bugemonCache;
 
     public PostgresStaticRepository(DatabaseConnection dbConnection, Map<String, String> queries,
             DefaultInventoryDTO defaultInventory) {
@@ -71,16 +65,14 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     public void saveBugemon(CreateBugemonDTO bugemon) {
         String fileName = bugemon.name().toLowerCase().replaceAll("[^a-z0-9]", "_") + ".png";
         try {
-            this.saveSpriteFile(bugemon.spriteUrl(), fileName);
+            SpriteUtils.saveSpriteFile(bugemon.spriteUrl(), fileName);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
         this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName, bugemon.defense(),
                 bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(),
                 bugemon.attacks().get(0).id(), bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
-        this.bugemonCache.put(bugemon.name(),
-                new Bugemon(bugemon.name(), bugemon.maxHp(), bugemon.attack(), bugemon.defense(), bugemon.initiative(),
-                        bugemon.type(), bugemon.attacks(), fileName, bugemon.isStarter()));
+        this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
     }
 
     @Override
@@ -228,19 +220,6 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
             this.maxLevel = maxLevel;
             this.cost = cost;
             this.effect = effect;
-        }
-    }
-
-    private void saveSpriteFile(URL spriteUrl, String spriteFileName) throws IOException {
-        Path dirDestination = Paths.get(Configuration.Paths.SPRITES);
-        if (!Files.exists(dirDestination)) {
-            Files.createDirectories(dirDestination);
-        }
-        Path fileTarget = dirDestination.resolve(spriteFileName);
-        try (InputStream in = spriteUrl.openStream()) {
-            Files.copy(in, fileTarget, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new IOException("Impossible to save sprite file: " + fileTarget, e);
         }
     }
 

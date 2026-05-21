@@ -1,20 +1,14 @@
 package ulb.repositories.postgres;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
-import ulb.Configuration;
 import ulb.common.EffectDuration;
 import ulb.common.StatType;
 import ulb.models.bugemon.Attack;
@@ -35,6 +29,7 @@ import ulb.models.skills.SkillEffect.TypeMultiplierEffect;
 import ulb.models.skills.SkillEffect.XpMultiplierEffect;
 import ulb.models.skills.SkillNode;
 import ulb.repositories.DatabaseConnection;
+import ulb.utils.SpriteUtils;
 
 public class DatabaseInitializer extends AbstractRepository {
 
@@ -118,7 +113,7 @@ public class DatabaseInitializer extends AbstractRepository {
             throw new IllegalStateException("Sprite resource not found: /png/" + bugemon.spritePath());
         }
         try {
-            this.saveSpriteFile(spriteUrl, bugemon.spritePath());
+            SpriteUtils.saveSpriteFile(spriteUrl, bugemon.spritePath());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -211,19 +206,6 @@ public class DatabaseInitializer extends AbstractRepository {
                     "recompense_choix", null, null, null, totalChoices, null);
             default ->
                 throw new IllegalStateException("Unknown skill effect type: " + effect.getClass().getSimpleName());
-        }
-    }
-
-    private void saveSpriteFile(URL spriteUrl, String spriteFileName) throws IOException {
-        Path dirDestination = Paths.get(Configuration.Paths.SPRITES);
-        if (!Files.exists(dirDestination)) {
-            Files.createDirectories(dirDestination);
-        }
-        Path fileTarget = dirDestination.resolve(spriteFileName);
-        try (InputStream in = spriteUrl.openStream()) {
-            Files.copy(in, fileTarget, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new IOException("Impossible to save sprite file: " + fileTarget, e);
         }
     }
 }
