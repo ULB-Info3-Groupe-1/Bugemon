@@ -141,8 +141,8 @@ public class SkillTreeState {
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
             int level = entry.getValue();
-            if (node.effect() instanceof StatBonusEffect(StatType stat, int bonus)) { // visitor pattern would be
-                                                                                      // cleaner
+            // visitor pattern would be cleaner
+            if (node.effect() instanceof StatBonusEffect(StatType stat, int bonus)) {
                 int b = bonus;
                 switch (stat) {
                     case HP -> hp += b * level;

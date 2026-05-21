@@ -32,7 +32,7 @@ public class PostgresPlayerRepository extends AbstractRepository implements Play
         } catch (RuntimeException e) {
             if (e.getMessage().contains("duplicate key")
                     || (e.getCause() != null && e.getCause().getMessage().contains("duplicate key"))) {
-                LOG.warn("Player creation failed due to duplicate playername: {}", playername);
+                LOG.warn("Player creation failed due to duplicate playername: {} (expected on startup)", playername);
                 throw new PlayernameAlreadyExistsException("Player name already exists: " + playername);
             }
             throw e;

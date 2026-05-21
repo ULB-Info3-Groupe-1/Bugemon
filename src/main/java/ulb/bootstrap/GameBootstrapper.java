@@ -65,9 +65,10 @@ public class GameBootstrapper {
         this.playerRepository = new PostgresPlayerRepository(this.dbConnection, this.loader.getQueries(),
                 inventoryRepository);
         SkillRepository skillRepository = new PostgresSkillRepository(this.dbConnection, this.loader.getQueries());
-        TeamRepository teamRepository = new PostgresTeamRepository(this.dbConnection, this.loader.getQueries());
         BugemonRepository bugemonRepository = new PostgresBugemonRepository(this.dbConnection, this.loader.getQueries(),
                 this.staticDataRepository);
+        TeamRepository teamRepository = new PostgresTeamRepository(this.dbConnection, this.loader.getQueries(),
+                bugemonRepository);
         MusicRepository musicRepository = new ResourceMusicRepository();
 
         BugemonService bugemonService = new BugemonService(this.staticDataRepository, bugemonRepository, playerName);

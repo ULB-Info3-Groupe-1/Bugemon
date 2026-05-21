@@ -9,16 +9,22 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.TeamRepository;
+import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.dto.TeamDTO;
 import ulb.repositories.dto.TeamMemberDTO;
 
 public class PostgresTeamRepository extends AbstractRepository implements TeamRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresTeamRepository.class);
 
-    public PostgresTeamRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
+    private final BugemonRepository bugemonRepository;
+
+    public PostgresTeamRepository(DatabaseConnection dbConnection, Map<String, String> queries,
+            BugemonRepository bugemonRepository) {
         super(dbConnection, queries);
+        this.bugemonRepository = bugemonRepository;
     }
 
     @Override
@@ -42,7 +48,14 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
         LOG.debug("Saving team '{}' for playername: {}", team.teamName(), playerName);
         executeUpdate("CreateTeam", playerName, team.teamName());
         executeUpdate("RemoveTeamComposition", playerName, team.teamName());
-        team.members().forEach(member -> this.addTeamMember(playerName, team.teamName(), member));
+        team.members().forEach(member -> {
+            if (this.bugemonRepository.findByName(playerName, member.bugemonName()).isEmpty()) {
+                LOG.debug("PlayerBugemon '{}' does not exist for player '{}', creating it", member.bugemonName(),
+                        playerName);
+                this.bugemonRepository.save(new PlayerBugemonDTO(playerName, member.bugemonName(), 0, 0, 0, 0, 0, 1));
+            }
+            this.addTeamMember(playerName, team.teamName(), member);
+        });
     }
 
     @Override
