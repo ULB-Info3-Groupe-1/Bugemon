@@ -43,6 +43,8 @@ public class BugemonDetailPopupView extends ComponentView {
     @FXML
     private VBox attacksContainer;
 
+    private Stage popupStage;
+
     public BugemonDetailPopupView(BugemonDisplayDTO bugemon) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_DETAIL_POPUP);
         File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.base().spritePath());
@@ -70,22 +72,25 @@ public class BugemonDetailPopupView extends ComponentView {
         Node source = (Node) event.getSource();
         Window owner = source.getScene().getWindow();
 
-        Stage popup = new Stage(StageStyle.TRANSPARENT);
-        popup.initOwner(owner);
+        if (this.popupStage == null) {
+            this.popupStage = new Stage(StageStyle.TRANSPARENT);
+            this.popupStage.initOwner(owner);
 
-        Scene scene = new Scene(this);
-        scene.setFill(Color.TRANSPARENT);
-        scene.getStylesheets().addAll(source.getScene().getStylesheets());
+            Scene scene = new Scene(this);
+            scene.setFill(Color.TRANSPARENT);
+            scene.getStylesheets().addAll(source.getScene().getStylesheets());
 
-        popup.setScene(scene);
-        popup.show();
-        popup.setX(owner.getX() + (owner.getWidth() - popup.getWidth()) / 2);
-        popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
+            this.popupStage.setScene(scene);
 
-        popup.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-            if (Boolean.FALSE.equals(isFocused)) {
-                popup.close();
-            }
-        });
+            this.popupStage.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+                if (Boolean.FALSE.equals(isFocused)) {
+                    this.popupStage.close();
+                }
+            });
+        }
+
+        this.popupStage.show();
+        this.popupStage.setX(owner.getX() + (owner.getWidth() - this.popupStage.getWidth()) / 2);
+        this.popupStage.setY(owner.getY() + (owner.getHeight() - this.popupStage.getHeight()) / 2);
     }
 }
