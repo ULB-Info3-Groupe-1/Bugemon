@@ -45,6 +45,7 @@ de cette information, et a par conséquent réimplémenté un algorithme permett
 
 Afin de rendre le refactoring le plus efficace possible, nous nous sommes fortement aidés de LLMs (claude).
 (Majoritairement pour comprendre nos mauvais choix de conceptions, et les erreurs de compréhensions de certains concepts tels que les services).
+Ainsi que pour générer la javadoc (supervisés par nos soins).
 
 == Mauvais choix initiaux
 
@@ -108,7 +109,7 @@ Notre `SaveService` sert de _facade pattern_ pour la sauvegarde du jeu, et prend
 Nous avons ajouté des interface à nos repositories. Ceci a permis de grandement simplifier le code de ceux-ci,
 en limitant le nombre de méthodes à implémenter.
 
-=== Différents types de bugemons (composition)
+=== Différents types de bugemons (composition) <sec:bugemon_composition>
 
 Nous utilisons différents types de Bugemons, en tirant parti de la composition.
 Ce design est inspiré du schéma dans la base de donnée.
@@ -199,4 +200,17 @@ Notre refactoring tente de repousser la création des objets le plus tard possib
 La `Room` contient simplement un `RoomType`, au lieu de stocker les combats dans les CombatRooms.
 Le combat est créé lorsque le joueur visite la room si le RoomType indique qu'il s'agit d'une combat room.
 
-// TODO: refactoring process: refac model -> ajuster controller/vue pour nouveau model -> refac repository -> refac service -> refac controller -> refac views
+== Processus de refactoring
+
+1. création de la branche `global-refactor`
+2. suppression de la globalité code
+3. focaliser sur notre composition de bugemons, être certain que ce modèle est bon (cf. @sec:bugemon_composition).
+4. une fois satisfaits de notre composition de bugemons, nous avons en parallèle attaqué :
+  - la vue de la gestion de l'équipe, car celle-ci ne nécessitait pas beaucoup de modèle.
+  - la logique de combat.
+5. controller et vue de combat
+6. repositories (ajout des interfaces notamment)
+7. services
+8. controllers et vues (plus ou moins en parallèle)
+
+Durant ce processus, nous rajoutions essentillement du code provenant de la branche `development`, en l'adaptant à la nouvelle architecture.
