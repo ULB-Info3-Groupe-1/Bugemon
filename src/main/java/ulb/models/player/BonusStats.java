@@ -1,5 +1,13 @@
 package ulb.models.player;
 
+/**
+ * Stores additive stat bonuses (HP, attack, defense, initiative) accumulated by the player through skill rewards and
+ * tower progression.
+ *
+ * <p>
+ * Bonuses are applied on top of a Bugemon's base stats at the start of a run. The no-arg constructor (package private)
+ * creates a zero-bonus instance used as a default.
+ */
 public class BonusStats {
     private int bonusHp;
     private int bonusAttack;
@@ -49,6 +57,12 @@ public class BonusStats {
         this.bonusInitiative = bonusInitiative;
     }
 
+    /**
+     * Adds every field of {@code bonusStats} to the corresponding field of this instance.
+     *
+     * @param bonusStats
+     *            the bonus increments to merge into this object
+     */
     public void add(BonusStats bonusStats) {
         this.bonusHp += bonusStats.getBonusHp();
         this.bonusAttack += bonusStats.getBonusAttack();

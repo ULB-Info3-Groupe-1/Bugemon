@@ -16,6 +16,13 @@ import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.TeamRepository;
 
+/**
+ * PostgreSQL implementation of {@link TeamRepository}.
+ *
+ * <p>
+ * When saving a team, any member whose player-Bugemon record does not yet exist is created automatically (with zeroed
+ * bonuses and level 1) via the injected {@link BugemonRepository}.
+ */
 public class PostgresTeamRepository extends AbstractRepository implements TeamRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresTeamRepository.class);
 

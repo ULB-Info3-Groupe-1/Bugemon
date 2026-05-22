@@ -14,8 +14,18 @@ import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Inventory;
 
+/**
+ * {@link CombatStrategy} that uses a {@link MiniMax} tree search to select the best action.
+ *
+ * <p>
+ * On each decision point the strategy freezes the current combat state into a
+ * {@link ulb.models.combat.snapshot.CombatSnapshot} and delegates to {@link MiniMax#chooseBestAction} with the
+ * configured search depth ({@link ulb.Configuration.Game#MIN_MAX_MAXIMAL_DEPTH}). If the minimax result is a switch but
+ * the switch is unavailable, the strategy falls back to the first available Bugemon.
+ */
 public class MiniMaxStrategy implements CombatStrategy {
 
+    /** {@inheritDoc} */
     @Override
     public void chooseAction(CombatContext ctx, ActionCallback callback) {
         CombatTeam ally = ctx.allyTeam();
@@ -49,6 +59,7 @@ public class MiniMaxStrategy implements CombatStrategy {
         callback.onActionChosen(ta);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void chooseSwitch(CombatContext ctx, ActionCallback callback) {
         CombatTeam ally = ctx.allyTeam();

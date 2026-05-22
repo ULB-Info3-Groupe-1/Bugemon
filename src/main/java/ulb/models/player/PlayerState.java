@@ -6,6 +6,14 @@ import ulb.models.item.Inventory;
 import ulb.models.skills.SkillTreeState;
 import ulb.models.team.Team;
 
+/**
+ * Aggregates all persistent state associated with a single player profile.
+ *
+ * <p>
+ * Holds the player's name, currently selected {@link ulb.models.team.Team}, {@link ulb.models.item.Inventory}, and
+ * {@link ulb.models.skills.SkillTreeState}. A call to {@link #clear()} resets everything except the name, allowing a
+ * fresh run to begin without recreating the object.
+ */
 public class PlayerState {
 
     private final String playerName;
@@ -25,6 +33,11 @@ public class PlayerState {
         return this.playerName;
     }
 
+    /**
+     * Returns the currently selected team, or {@link java.util.Optional#empty()} if none has been chosen yet.
+     *
+     * @return an {@link java.util.Optional} containing the active team, or empty
+     */
     public Optional<Team> getActiveTeam() {
         return Optional.ofNullable(this.activeTeam);
     }
@@ -49,6 +62,10 @@ public class PlayerState {
         this.skillTreeState.addPoint();
     }
 
+    /**
+     * Resets the player's run-specific state: clears the active team, empties the inventory, and resets the skill tree
+     * state. The player name is preserved.
+     */
     public void clear() {
         this.activeTeam = null;
         this.inventory.clear();

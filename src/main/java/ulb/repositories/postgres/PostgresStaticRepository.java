@@ -34,6 +34,18 @@ import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
 import ulb.utils.SpriteUtils;
 
+/**
+ * PostgreSQL implementation of {@link StaticRepository}.
+ *
+ * <p>
+ * All static data (attacks, Bugemon archetypes, items, skill tree, default inventory) is loaded eagerly on construction
+ * and kept in immutable in-memory caches. The only write operation, {@link #saveBugemon}, also refreshes the Bugemon
+ * cache so that the new archetype is immediately visible without a restart.
+ *
+ * <p>
+ * Inner records ({@code AttackInfo}, {@code SkillNodeData}) are local value carriers used during the multi-pass loading
+ * of attacks and skill nodes that involve LEFT-JOINed effect rows.
+ */
 public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {
 
     private final Map<String, Attack> attackCache;

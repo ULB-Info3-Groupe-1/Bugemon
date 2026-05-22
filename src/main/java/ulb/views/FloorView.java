@@ -19,6 +19,11 @@ import ulb.common.dto.display.FloorDisplayDTO;
 import ulb.common.dto.display.RoomDisplayDTO;
 import ulb.views.components.RoomNodeView;
 
+/**
+ * View for the tower floor map. Renders room nodes and connecting lines on an absolute-positioned {@link Pane} scaled
+ * by a fixed cell grid, animates the player icon between rooms, and forwards click and navigation events through
+ * {@link Listener}.
+ */
 public class FloorView extends View {
 
     private static final int CELL_SIZE = 110;
@@ -52,6 +57,14 @@ public class FloorView extends View {
         this.listener = listener;
     }
 
+    /**
+     * Stores the floor number and layout data that will be rendered on the next {@link #refresh()} call.
+     *
+     * @param floor
+     *            the current floor index, displayed in the header label
+     * @param dto
+     *            the room and connection layout for the floor
+     */
     public void setFloorState(int floor, FloorDisplayDTO dto) {
         this.currentFloor = floor;
         this.floorDTO = dto;
@@ -88,6 +101,17 @@ public class FloorView extends View {
         });
     }
 
+    /**
+     * Smoothly moves the player icon to the specified grid cell over the configured animation duration, then invokes
+     * the callback.
+     *
+     * @param x
+     *            target column in the room grid
+     * @param y
+     *            target row in the room grid
+     * @param onFinished
+     *            called on the JavaFX thread after the animation completes
+     */
     public void animatePlayerTo(int x, int y, Runnable onFinished) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(Configuration.Ui.FLOOR_MOVE_ANIMATION_MS),
                 new KeyValue(this.playerIcon.layoutXProperty(), this.playerX(x)),
@@ -146,9 +170,19 @@ public class FloorView extends View {
         return row * CELL_SIZE + (CELL_SIZE - ROOM_SIZE) / 2.0;
     }
 
+    /** Callback interface for floor map user interactions. */
     public interface Listener {
+        /**
+         * Called when the player clicks a room node.
+         *
+         * @param row
+         *            row (y) coordinate of the clicked room
+         * @param col
+         *            column (x) coordinate of the clicked room
+         */
         void onRoomClicked(int row, int col);
 
+        /** Called when the player chooses to return to the main menu. */
         void onReturnToMainMenu();
     }
 }

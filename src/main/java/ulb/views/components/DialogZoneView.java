@@ -6,7 +6,10 @@ import javafx.scene.text.Text;
 
 import ulb.Configuration;
 
-/** Reusable custom component displaying a dialog zone with text and a next button. */
+/**
+ * Reusable custom component displaying a scrolling dialog text area with a configurable "Next" button. The button can
+ * be disabled to block progression until an animation finishes; clicks are forwarded through {@link Listener}.
+ */
 public class DialogZoneView extends ComponentView {
 
     @FXML
@@ -45,8 +48,10 @@ public class DialogZoneView extends ComponentView {
         this.nextButton.setDisable(disabled);
     }
 
+    /** Callback interface for the dialog zone next button. */
     public interface Listener {
 
+        /** Called when the player clicks the next button. */
         void onNext();
 
     }

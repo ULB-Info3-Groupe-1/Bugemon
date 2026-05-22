@@ -7,7 +7,10 @@ import javafx.scene.layout.GridPane;
 import ulb.Configuration;
 import ulb.common.dto.display.BugemonDisplayDTO;
 
-/** Reusable custom component displaying a Bugemon team in a grid. */
+/**
+ * Reusable custom component displaying a Bugemon team in a fixed {@value #GRID_COLUMNS}-column grid. Click events on
+ * individual cards are forwarded through {@link Listener}.
+ */
 public class BugemonTeamView extends ComponentView {
     private static final int GRID_COLUMNS = 3;
 
@@ -24,7 +27,12 @@ public class BugemonTeamView extends ComponentView {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the grid with the alive members of the given team. */
+    /**
+     * Clears the grid and fills it with a card for each team member.
+     *
+     * @param members
+     *            the team members to display, in slot order
+     */
     public void showTeam(List<BugemonDisplayDTO> members) {
         this.clearBugemons();
 
@@ -39,7 +47,9 @@ public class BugemonTeamView extends ComponentView {
         this.gridPane.getChildren().clear();
     }
 
+    /** Callback interface for team grid click interactions. */
     public interface Listener {
+        /** Called when the player clicks a Bugemon card in the team grid. */
         void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

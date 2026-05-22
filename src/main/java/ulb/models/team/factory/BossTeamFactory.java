@@ -9,10 +9,19 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Produces a {@link Team} led by a named boss Bugémon, padded with random members.
+ * Produces a {@link Team} led by the designated boss Bugémon, with remaining slots filled by randomly selected non-boss
+ * members.
+ *
+ * <p>
+ * Exactly one Bugémon in the pool must be marked with {@link ulb.models.bugemon.Bugemon#isBoss()}; if none is found,
+ * {@link #create(int, List)} throws {@link IllegalStateException}.
  */
 public class BossTeamFactory extends TeamFactory {
 
+    /**
+     * @param random
+     *            the seeded random number generator used for non-boss member selection
+     */
     public BossTeamFactory(Random random) {
         super(random);
     }

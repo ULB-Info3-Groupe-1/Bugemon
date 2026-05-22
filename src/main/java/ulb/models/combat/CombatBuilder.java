@@ -8,6 +8,23 @@ import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.skills.SkillContext;
 
+/**
+ * Fluent builder for constructing a {@link Combat} instance.
+ *
+ * <p>
+ * All setter methods return {@code this} for chaining. {@link #build()} validates that every mandatory field is
+ * non-null before constructing the {@code Combat}; if {@code playerSkillContext} is not provided,
+ * {@link ulb.models.skills.SkillContext#NONE} is used as a safe default.
+ *
+ * <p>
+ * Example usage:
+ *
+ * <pre>{@code
+ * Combat combat = new CombatBuilder().playerTeam(playerTeam).opponentTeam(opponentTeam).floor(currentFloor)
+ *         .bossMode(false).playerInventory(inv).opponentInventory(emptyInv).playerStrategy(humanStrategy)
+ *         .opponentStrategy(aiStrategy).damageCalculator(calculator).effectProcessor(processor).build();
+ * }</pre>
+ */
 public final class CombatBuilder {
 
     private CombatTeam playerTeam;
@@ -77,6 +94,13 @@ public final class CombatBuilder {
         return this;
     }
 
+    /**
+     * Validates all mandatory fields and constructs the {@link Combat}.
+     *
+     * @return a new, fully initialised {@code Combat}
+     * @throws NullPointerException
+     *             if any mandatory field has not been set
+     */
     public Combat build() {
         Objects.requireNonNull(this.playerTeam, "Player team cannot be null");
         Objects.requireNonNull(this.opponentTeam, "Opponent team cannot be null");

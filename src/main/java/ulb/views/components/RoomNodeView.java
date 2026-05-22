@@ -86,7 +86,16 @@ public class RoomNodeView extends StackPane {
         return new Image(stream);
     }
 
+    /** Callback interface for room node click interactions. */
     public interface Listener {
+        /**
+         * Called when the player clicks an available room node.
+         *
+         * @param row
+         *            row (y) coordinate of the clicked room
+         * @param col
+         *            column (x) coordinate of the clicked room
+         */
         void onRoomClicked(int row, int col);
     }
 }

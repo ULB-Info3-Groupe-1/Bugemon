@@ -23,6 +23,11 @@ import ulb.models.skills.SkillStatus;
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
 
+/**
+ * View for the skill tree screen. Renders {@link ulb.models.skills.SkillNode} widgets on an absolute-positioned
+ * {@link Pane} using pre-computed (x, y) coordinates, draws prerequisite connection lines between them, and forwards
+ * left-click (unlock) and right-click (downgrade) events through {@link Listener}.
+ */
 public class SkillTreeView extends View {
 
     private static final int NODE_WIDTH = 160;
@@ -54,6 +59,12 @@ public class SkillTreeView extends View {
         // Nothing to refresh
     }
 
+    /**
+     * Rebuilds the entire skill tree canvas to reflect the given skill state and updates the available-points counter.
+     *
+     * @param state
+     *            current skill tree state including point count and per-node levels
+     */
     public void refreshSkillState(SkillTreeState state) {
         this.availablePoints.setText(String.valueOf(state.getSkillPoints()));
         this.buildTree(state);
@@ -63,6 +74,13 @@ public class SkillTreeView extends View {
         this.listener = listener;
     }
 
+    /**
+     * Stores the skill tree structure used by {@link #refreshSkillState(SkillTreeState)} to look up node coordinates
+     * and prerequisites.
+     *
+     * @param tree
+     *            the skill tree definition
+     */
     public void setTree(SkillTree tree) {
         this.skillTree = tree;
     }
@@ -210,11 +228,25 @@ public class SkillTreeView extends View {
         return (node.y() - minY) * CELL_H + PADDING + (CELL_H - NODE_HEIGHT) / 2.0;
     }
 
+    /** Callback interface for skill tree interactions. */
     public interface Listener {
+        /**
+         * Called when the player right-clicks a skill node (downgrade / refund).
+         *
+         * @param skillNode
+         *            the node that was right-clicked
+         */
         void onSkillRightClicked(SkillNode skillNode);
 
+        /**
+         * Called when the player left-clicks a skill node (unlock / upgrade).
+         *
+         * @param skillNode
+         *            the node that was left-clicked
+         */
         void onSkillLeftClicked(SkillNode skillNode);
 
+        /** Called when the player navigates back from the skill tree. */
         void onReturnClicked();
     }
 }

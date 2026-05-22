@@ -1,6 +1,8 @@
 package ulb.models.team.exceptions;
 
-/** Thrown when trying to remove a Bugemon from an already empty team. */
+/**
+ * Thrown when attempting to remove a member from a {@link ulb.models.team.Team} that is already empty.
+ */
 public class TeamAlreadyEmptyException extends RuntimeException {
     public TeamAlreadyEmptyException(String message) {
         super(message);

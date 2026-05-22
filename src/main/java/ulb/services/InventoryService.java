@@ -12,6 +12,12 @@ import ulb.models.skills.SkillContext;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.StaticRepository;
 
+/**
+ * Service that manages a player's {@link ulb.models.item.Inventory}.
+ *
+ * <p>
+ * Provides inventory loading, persistence, reset, and the application of skill-based starter item bonuses.
+ */
 public class InventoryService {
 
     private final String playerName;
@@ -21,6 +27,18 @@ public class InventoryService {
 
     private final Random random;
 
+    /**
+     * Constructs an {@code InventoryService} bound to the given player.
+     *
+     * @param inventoryRepository
+     *            repository for reading and writing player inventory data
+     * @param staticRepository
+     *            repository providing static item definitions and default inventory
+     * @param random
+     *            random-number source used when selecting starter items
+     * @param playerName
+     *            the name of the player whose inventory this service manages
+     */
     public InventoryService(InventoryRepository inventoryRepository, StaticRepository staticRepository, Random random,
             String playerName) {
         this.inventoryRepository = inventoryRepository;
@@ -46,6 +64,16 @@ public class InventoryService {
         return this.staticRepository.items();
     }
 
+    /**
+     * Adds skill-unlocked starter items to {@code inventory} based on the active
+     * {@link ulb.models.skills.SkillContext}. For each {@link ulb.models.item.ItemType} that the skill grants bonus
+     * quantities of, a random eligible item of that type is chosen and added for each bonus unit.
+     *
+     * @param inventory
+     *            the inventory to receive the bonus items
+     * @param skillContext
+     *            the context derived from the player's current skill-tree state
+     */
     public void applyStarterItemsBonus(Inventory inventory, SkillContext skillContext) {
         for (ItemType type : ItemType.values()) {
             int quantity = skillContext.getStarterItemQuantity(type);

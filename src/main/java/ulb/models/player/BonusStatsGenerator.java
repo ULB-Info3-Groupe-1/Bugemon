@@ -4,6 +4,14 @@ import java.util.Random;
 
 import ulb.Configuration;
 
+/**
+ * Randomly allocates a fixed pool of stat points across HP, attack, defense, and initiative to produce a
+ * {@link BonusStats} reward.
+ *
+ * <p>
+ * The pool size and per-point gain values are read from {@link ulb.Configuration.Game}. Inject a seeded
+ * {@link java.util.Random} to make generation reproducible.
+ */
 public class BonusStatsGenerator {
     enum Stat {
         HP,
@@ -18,6 +26,12 @@ public class BonusStatsGenerator {
         this.random = random;
     }
 
+    /**
+     * Generates a new {@link BonusStats} by distributing {@link ulb.Configuration.Game#NUM_POINTS_PER_BONUS} points
+     * randomly across the four stat categories.
+     *
+     * @return a freshly generated {@link BonusStats} instance
+     */
     public BonusStats generateBonusStats() {
         int hp = 0;
         int attack = 0;

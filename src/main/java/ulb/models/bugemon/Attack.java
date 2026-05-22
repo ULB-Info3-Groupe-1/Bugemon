@@ -8,6 +8,23 @@ import ulb.models.effect.Effect;
 
 /**
  * Immutable record representing an attack a {@link Bugemon} can use in battle.
+ *
+ * <p>
+ * Attacks are loaded from JSON via Gson ({@code nom}, {@code puissance}, {@code effets} are French-named fields in the
+ * data file). Equality is based solely on {@code id}.
+ *
+ * @param id
+ *            unique identifier of the attack
+ * @param name
+ *            display name (mapped from JSON field {@code nom})
+ * @param description
+ *            human-readable description
+ * @param power
+ *            base damage power (mapped from JSON field {@code puissance})
+ * @param type
+ *            elemental type of the attack
+ * @param effects
+ *            list of additional {@link Effect}s applied on use (mapped from JSON field {@code effets})
  */
 public record Attack(
 
@@ -24,6 +41,9 @@ public record Attack(
         @SerializedName("effets") List<Effect> effects
 
 ) {
+    /**
+     * Returns {@code true} if this attack applies at least one {@link Effect} on use.
+     */
     public boolean hasEffects() {
         return !this.effects.isEmpty();
     }

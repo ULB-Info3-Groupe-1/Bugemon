@@ -28,8 +28,10 @@ public class CombatVictoryView extends View {
         // No dynamic data to display on the victory screen.
     }
 
+    /** Callback interface for the victory screen actions. */
     public interface Listener {
 
+        /** Called when the player chooses to continue after winning. */
         void onContinue();
 
     }

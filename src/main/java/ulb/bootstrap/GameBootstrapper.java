@@ -36,6 +36,15 @@ import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.utils.Parser;
 
+/**
+ * Wires together all infrastructure objects (database, repositories, services) and hands the fully-assembled
+ * {@link ServiceRegistry} to the rest of the application.
+ *
+ * <p>
+ * This class is the sole entry point for application startup: it initialises the database schema, parses static game
+ * data, constructs every repository and service with their correct dependencies, and creates or resumes a player
+ * session.
+ */
 public class GameBootstrapper {
 
     private final DatabaseConnection dbConnection;
@@ -45,6 +54,10 @@ public class GameBootstrapper {
 
     private PlayerRepository playerRepository;
 
+    /**
+     * Creates a new bootstrapper, opens the database connection, loads SQL queries and parses all static game data
+     * (Bugemons, attacks, items, skill tree) from bundled resources.
+     */
     public GameBootstrapper() {
         this.dbConnection = new PostgresDatabaseConnection();
         this.loader = new QueryLoader();
@@ -53,6 +66,10 @@ public class GameBootstrapper {
         this.random = new Random();
     }
 
+    /**
+     * Runs the database initialiser, creating tables and seeding static data (Bugemons, attacks, items, skill-tree
+     * nodes) if they do not already exist.
+     */
     public void initializeDatabase() {
         DatabaseInitializer dbInitializer = new DatabaseInitializer(this.dbConnection, this.loader.getQueries(),
                 this.parser.getBugemons(), this.parser.getAttacks(), this.parser.getItems(),
@@ -60,6 +77,13 @@ public class GameBootstrapper {
         dbInitializer.initialize();
     }
 
+    /**
+     * Instantiates every repository and service for the given player and returns them as a {@link ServiceRegistry}.
+     *
+     * @param playerName
+     *            the unique name identifying the current player session
+     * @return a fully wired {@code ServiceRegistry} ready for use by controllers
+     */
     public ServiceRegistry createServices(String playerName) {
         StaticRepository staticDataRepository = new PostgresStaticRepository(this.dbConnection,
                 this.loader.getQueries(), this.parser.getInventory());
@@ -92,6 +116,20 @@ public class GameBootstrapper {
                 combatService, saveService, levelUpService, musicService, rewardService);
     }
 
+    /**
+     * Loads (or creates) a player and returns the in-memory {@link PlayerState} that controllers share throughout the
+     * session.
+     *
+     * @param playerName
+     *            the unique name of the player
+     * @param teamService
+     *            used to load the player's active team
+     * @param inventoryService
+     *            used to load the player's inventory and create a default one on first login
+     * @param skillService
+     *            used to load the player's skill-tree progress
+     * @return a {@code PlayerState} populated with the player's current team, inventory and skill-tree state
+     */
     public PlayerState createPlayerState(String playerName, TeamService teamService, InventoryService inventoryService,
             SkillService skillService) {
         this.createUserIfNotExists(playerName, inventoryService);

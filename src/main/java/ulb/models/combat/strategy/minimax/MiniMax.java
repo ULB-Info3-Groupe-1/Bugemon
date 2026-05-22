@@ -16,10 +16,17 @@ import ulb.models.effect.HealEffect;
 import ulb.models.item.Item;
 
 /**
- * Minimal MiniMax implementation that operates on immutable snapshots.
+ * Alpha-beta pruning MiniMax search that selects the best combat action from a {@link CombatSnapshot}.
  *
- * Notes: - This simplified version only considers attack actions (no items/switches). - Damage is approximated by the
- * attack's `power()` value (snapshots don't expose full combatant stats required by the real DamageCalculator).
+ * <p>
+ * The search operates entirely on immutable snapshot objects so it produces no side effects on the live combat model.
+ * Supported action types are attacks, voluntary switches, forced switches, and item usage (healing items only). Damage
+ * is computed via {@link DamageCalculator} using the effective stats exposed by each snapshot.
+ *
+ * <p>
+ * The search depth is bounded by the {@code maxDepth} value supplied at construction time (see
+ * {@link ulb.Configuration.Game#MIN_MAX_MAXIMAL_DEPTH}). A terminal win state is scored at ±{@value #WIN_SCORE}; leaf
+ * nodes use a simple total-HP difference heuristic.
  */
 public class MiniMax {
     private static final int WIN_SCORE = 1_000_000;
@@ -30,6 +37,14 @@ public class MiniMax {
 
     private final DamageCalculator damageCalculator;
 
+    /**
+     * Creates a {@code MiniMax} searcher with the given depth limit.
+     *
+     * @param maxDepth
+     *            maximum number of half-turns (plies) to search; must be positive
+     * @throws IllegalArgumentException
+     *             if {@code maxDepth} is not positive
+     */
     public MiniMax(int maxDepth) {
         if (maxDepth <= 0) {
             throw new IllegalArgumentException("maxDepth must be > 0");
@@ -38,6 +53,15 @@ public class MiniMax {
         this.damageCalculator = new DamageCalculator();
     }
 
+    /**
+     * Returns the best {@link SimAction} for the indicated side given the current combat state.
+     *
+     * @param state
+     *            snapshot of the current combat state
+     * @param chooseForAiTeam
+     *            {@code true} to choose for the AI team, {@code false} for the opponent
+     * @return the highest-scoring action, or {@link SimAction#none()} if no actions are available
+     */
     public SimAction chooseBestAction(CombatSnapshot state, boolean chooseForAiTeam) {
         Objects.requireNonNull(state);
 

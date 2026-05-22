@@ -23,6 +23,16 @@ import java.util.stream.Stream;
 
 import ulb.Configuration;
 
+/**
+ * Scans {@code resources/sql/*.sql} at startup and indexes every named query into an in-memory map.
+ *
+ * <p>
+ * SQL files must follow the project convention (see {@code team/rules.md}): each query is preceded by a
+ * {@code -- Query} section marker and a {@code -- <name>} name line; the SQL body follows immediately after.
+ *
+ * <p>
+ * Works on both a regular filesystem and inside a JAR by delegating to {@link java.nio.file.FileSystems}.
+ */
 public class QueryLoader {
 
     private static final String QUERY_NAME_PREFIX = "-- ";
@@ -137,6 +147,11 @@ public class QueryLoader {
         return sql;
     }
 
+    /**
+     * Returns the full query map (query name to SQL string).
+     *
+     * @return unmodifiable view of all loaded queries
+     */
     public Map<String, String> getQueries() {
         return this.queries;
     }

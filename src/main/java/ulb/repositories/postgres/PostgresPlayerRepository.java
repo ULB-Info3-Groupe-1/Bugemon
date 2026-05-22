@@ -12,6 +12,13 @@ import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
+/**
+ * PostgreSQL implementation of {@link PlayerRepository}.
+ *
+ * <p>
+ * Player creation also seeds the player's inventory via the injected {@link InventoryRepository}; a duplicate-key
+ * constraint violation is translated into {@link ulb.repositories.exceptions.PlayernameAlreadyExistsException}.
+ */
 public class PostgresPlayerRepository extends AbstractRepository implements PlayerRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresPlayerRepository.class);
 

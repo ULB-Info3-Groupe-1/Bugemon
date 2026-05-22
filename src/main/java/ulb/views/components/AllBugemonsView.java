@@ -8,7 +8,10 @@ import javafx.scene.layout.FlowPane;
 import ulb.Configuration;
 import ulb.common.dto.display.BugemonDisplayDTO;
 
-/** Reusable custom component displaying all the bugemons inside of a grid. */
+/**
+ * Reusable custom component displaying all available Bugemons in a scrollable flow grid. Selected Bugemons are visually
+ * highlighted; clicks are forwarded through {@link Listener}.
+ */
 public class AllBugemonsView extends ComponentView {
 
     @FXML
@@ -24,7 +27,14 @@ public class AllBugemonsView extends ComponentView {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the grid with the given list of Bugemons. */
+    /**
+     * Clears and repopulates the grid, marking each card as selected or unselected.
+     *
+     * @param bugemonList
+     *            the complete list of Bugemons to display
+     * @param selectedBugemons
+     *            the subset that should appear selected
+     */
     public void showAll(List<BugemonDisplayDTO> bugemonList, Set<BugemonDisplayDTO> selectedBugemons) {
         this.flowPane.getChildren().clear();
 
@@ -48,7 +58,9 @@ public class AllBugemonsView extends ComponentView {
         return card;
     }
 
+    /** Callback interface for Bugemon grid interactions. */
     public interface Listener {
+        /** Called when the player clicks a Bugemon card. */
         void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

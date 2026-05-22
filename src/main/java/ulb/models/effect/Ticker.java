@@ -1,5 +1,11 @@
 package ulb.models.effect;
 
+/**
+ * Counts down a fixed number of ticks and signals expiry when the count reaches zero.
+ *
+ * <p>
+ * Used to track the remaining duration of temporary effects across combat turns.
+ */
 public class Ticker {
     private int remainingTicks;
 

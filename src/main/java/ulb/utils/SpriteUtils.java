@@ -10,12 +10,29 @@ import java.nio.file.StandardCopyOption;
 
 import ulb.Configuration;
 
+/**
+ * Utility class for copying custom Bugemon sprite files to the application's sprite directory.
+ */
 public class SpriteUtils {
 
     private SpriteUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
 
+    /**
+     * Copies the sprite at {@code spriteUrl} to the configured sprites directory under {@code spriteFileName}.
+     *
+     * <p>
+     * If the source is a local file that is already at the target path, the copy is skipped. The destination directory
+     * is created if it does not exist. Any existing file at the target is replaced.
+     *
+     * @param spriteUrl
+     *            the source URL of the sprite image
+     * @param spriteFileName
+     *            the file name (not path) to use in the destination directory
+     * @throws IOException
+     *             if the file cannot be copied to the destination
+     */
     public static void saveSpriteFile(URL spriteUrl, String spriteFileName) throws IOException {
         Path dirDestination = Paths.get(Configuration.Paths.SPRITES);
         if (!Files.exists(dirDestination)) {

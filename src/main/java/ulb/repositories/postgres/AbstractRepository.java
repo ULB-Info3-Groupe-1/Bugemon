@@ -9,11 +9,28 @@ import java.util.Map;
 
 import ulb.repositories.DatabaseConnection;
 
+/**
+ * Base class for all PostgreSQL repository implementations.
+ *
+ * <p>
+ * Provides named-query lookup via an injected query map and three template methods — {@link #executeUpdate},
+ * {@link #executeQuery}, and {@link #executeSingleQuery} — that handle {@link PreparedStatement} preparation, parameter
+ * binding, and {@link ResultSet} iteration. Subclasses supply domain-specific {@link RowMapper} implementations to
+ * convert rows into model objects.
+ */
 public abstract class AbstractRepository {
 
     private final Map<String, String> queries;
     protected final DatabaseConnection dbConnection;
 
+    /**
+     * Constructs the repository with a shared database connection and the pre-loaded query map.
+     *
+     * @param dbConnection
+     *            the live database connection
+     * @param queries
+     *            map of query name to SQL string, produced by {@link ulb.repositories.QueryLoader}
+     */
     protected AbstractRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
         this.dbConnection = dbConnection;
         this.queries = queries;
@@ -33,6 +50,16 @@ public abstract class AbstractRepository {
         return sql;
     }
 
+    /**
+     * Executes a named DML statement (INSERT / UPDATE / DELETE) with the supplied positional parameters.
+     *
+     * @param queryName
+     *            the name key used to look up the SQL string
+     * @param params
+     *            positional parameter values bound left-to-right
+     * @throws IllegalStateException
+     *             if the query fails or the name is unknown
+     */
     protected void executeUpdate(String queryName, Object... params) {
         try (PreparedStatement ps = this.prepare(queryName, params)) {
             ps.executeUpdate();
@@ -41,11 +68,41 @@ public abstract class AbstractRepository {
         }
     }
 
+    /**
+     * Single-row mapping function consumed by {@link #executeQuery} and {@link #executeSingleQuery}.
+     *
+     * @param <T>
+     *            the domain type produced from one {@link ResultSet} row
+     */
     @FunctionalInterface
     protected interface RowMapper<T> {
+        /**
+         * Maps the current row of {@code rs} to a domain object.
+         *
+         * @param rs
+         *            the result set positioned at the current row
+         * @return the mapped domain object
+         * @throws SQLException
+         *             if a column cannot be read
+         */
         T map(ResultSet rs) throws SQLException;
     }
 
+    /**
+     * Executes a named SELECT query and maps every result row to a domain object.
+     *
+     * @param <T>
+     *            the domain type
+     * @param queryName
+     *            the name key used to look up the SQL string
+     * @param mapper
+     *            row-to-domain mapping function
+     * @param params
+     *            positional parameter values
+     * @return list of mapped objects, possibly empty
+     * @throws IllegalStateException
+     *             if the query fails or the name is unknown
+     */
     protected <T> List<T> executeQuery(String queryName, RowMapper<T> mapper, Object... params) {
         List<T> result = new ArrayList<>();
         try (PreparedStatement ps = this.prepare(queryName, params); ResultSet rs = ps.executeQuery()) {
@@ -58,6 +115,21 @@ public abstract class AbstractRepository {
         return result;
     }
 
+    /**
+     * Executes a named SELECT query and returns the first row, throwing if no rows are returned.
+     *
+     * @param <T>
+     *            the domain type
+     * @param queryName
+     *            the name key used to look up the SQL string
+     * @param mapper
+     *            row-to-domain mapping function
+     * @param params
+     *            positional parameter values
+     * @return the first mapped object
+     * @throws IllegalStateException
+     *             if the query returns no rows or fails
+     */
     protected <T> T executeSingleQuery(String queryName, RowMapper<T> mapper, Object... params) {
         List<T> results = this.executeQuery(queryName, mapper, params);
 

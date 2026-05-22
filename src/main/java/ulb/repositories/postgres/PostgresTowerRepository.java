@@ -18,6 +18,14 @@ import ulb.models.utils.Position;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.TowerRepository;
 
+/**
+ * PostgreSQL implementation of {@link TowerRepository}.
+ *
+ * <p>
+ * Persists a tower-run snapshot as three related record sets: the run header (seed, team name, current floor/position),
+ * visited room positions, and per-member HP values. Saving replaces all three sets atomically via
+ * upsert/delete-then-insert operations.
+ */
 public class PostgresTowerRepository extends AbstractRepository implements TowerRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresTowerRepository.class);
 

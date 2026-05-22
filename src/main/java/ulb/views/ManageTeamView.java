@@ -17,9 +17,9 @@ import ulb.views.components.AllBugemonsView;
 import ulb.views.components.BugemonTeamView;
 
 /**
- * View for the team creation screen. Holds a reference to the {@link BugemonTeam} model and reads from it directly in
- * {@link #refresh()}. Dispatches player interactions through a {@link Listener}; holds no reference to any concrete
- * controller class.
+ * View for the team management screen. Supports both the {@code CREATE} and {@code EDIT} modes of
+ * {@link ulb.controllers.ManageTeamController.TeamFormMode}: edit-only buttons are hidden in create mode. Dispatches
+ * player interactions through a {@link Listener}; holds no reference to any concrete controller class.
  */
 public class ManageTeamView extends View {
 
@@ -64,6 +64,12 @@ public class ManageTeamView extends View {
 
     private Listener listener;
 
+    /**
+     * Constructs the view in the given mode; mode-specific buttons are shown or hidden during {@code initialize()}.
+     *
+     * @param mode
+     *            {@code CREATE} to hide edit-only buttons, {@code EDIT} to show them
+     */
     public ManageTeamView(TeamFormMode mode) {
         this.mode = mode;
     }
@@ -105,6 +111,7 @@ public class ManageTeamView extends View {
         this.bugemonsTeamView.setListener(listener::onBugemonSelected);
     }
 
+    /** Callback interface for all team management user interactions. */
     public interface Listener {
         void onReturnToMainMenu();
 
@@ -136,6 +143,12 @@ public class ManageTeamView extends View {
         // Nothing to do
     }
 
+    /**
+     * Refreshes the team panel to show the given members.
+     *
+     * @param members
+     *            Bugemons currently in the working team
+     */
     public void refreshWorkingTeam(List<BugemonDisplayDTO> members) {
         this.bugemonsTeamView.showTeam(members);
     }
@@ -152,6 +165,14 @@ public class ManageTeamView extends View {
         this.refreshWorkingTeamNameToShow(TEAM_NOT_SAVED_MESSAGE);
     }
 
+    /**
+     * Refreshes the full Bugemon grid, marking already-selected entries as selected.
+     *
+     * @param availableBugemons
+     *            all Bugemons available for selection
+     * @param selectedBugemons
+     *            the subset that is currently in the working team
+     */
     public void refreshAvailableBugemons(List<BugemonDisplayDTO> availableBugemons,
             Set<BugemonDisplayDTO> selectedBugemons) {
         this.allBugemonsGridView.showAll(availableBugemons, selectedBugemons);

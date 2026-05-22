@@ -1,6 +1,12 @@
 package ulb.repositories.postgres;
 
-/** Centralised database column name constants. */
+/**
+ * Centralised string constants for every PostgreSQL column name used by the repository layer.
+ *
+ * <p>
+ * Using these constants instead of inline string literals prevents typos and makes column renames a
+ * single-point-of-change operation. The class is non-instantiable.
+ */
 public class DatabaseColumns {
     private DatabaseColumns() {
         // Private constructor to prevent instantiation

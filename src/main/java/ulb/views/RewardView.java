@@ -16,6 +16,11 @@ import ulb.models.tower.reward.BonusStatsReward;
 import ulb.models.tower.reward.ItemReward;
 import ulb.models.tower.reward.Reward;
 
+/**
+ * View for the post-room reward flow. Switches between two panels: a reward selection panel showing up to three reward
+ * cards, and a Bugemon selection panel used to pick the target of an attack or stat-bonus reward. All choices are
+ * forwarded through {@link Listener}.
+ */
 public class RewardView extends View {
 
     @FXML
@@ -44,6 +49,12 @@ public class RewardView extends View {
         this.listener = listener;
     }
 
+    /**
+     * Populates the reward panel with one card per option and switches to the reward panel.
+     *
+     * @param options
+     *            the reward options to present (typically three)
+     */
     public void displayRewardOptions(List<Reward> options) {
         this.rewardCardsBox.getChildren().clear();
         this.feedbackLabel.setText("");
@@ -53,6 +64,14 @@ public class RewardView extends View {
         this.setPanel(Panel.REWARD);
     }
 
+    /**
+     * Switches to the Bugemon selection panel, listing team members as buttons so the player can pick a target.
+     *
+     * @param members
+     *            the current run team members to list
+     * @param reward
+     *            the reward being applied; used to tailor the prompt text
+     */
     public void displayTeamForSelection(List<RunBugemonDisplayDTO> members, Reward reward) {
         this.promptLabel.setText(this.formatTeamSelectionPrompt(reward));
         this.bugemonListBox.getChildren().clear();
@@ -75,6 +94,16 @@ public class RewardView extends View {
         this.setPanel(Panel.SELECTION);
     }
 
+    /**
+     * Shows the attack replacement sub-panel, listing the Bugemon's current attacks as buttons the player can replace.
+     *
+     * @param bugemon
+     *            the Bugemon whose attack will be replaced
+     * @param attackReward
+     *            the new attack to learn
+     * @param currentAttacks
+     *            the Bugemon's existing attacks (one will be replaced)
+     */
     public void showAttackReplacement(RunBugemonDisplayDTO bugemon, AttackReward attackReward,
             List<Attack> currentAttacks) {
         this.attackReplacementTitle.setText(
@@ -97,6 +126,12 @@ public class RewardView extends View {
         this.attackReplacementBox.setManaged(true);
     }
 
+    /**
+     * Updates the feedback label to confirm the item reward that was applied.
+     *
+     * @param itemReward
+     *            the item reward that was applied
+     */
     public void showItemRewardApplied(ItemReward itemReward) {
         this.feedbackLabel.setText("Récompense choisie : " + itemReward.getItem().name());
     }
@@ -226,11 +261,25 @@ public class RewardView extends View {
         SELECTION
     }
 
+    /** Callback interface for all reward flow user interactions. */
     public interface Listener {
+        /** Called when the player picks one of the offered rewards. */
         void onRewardChosen(Reward reward);
 
+        /**
+         * Called when the player selects the team member to receive the reward.
+         *
+         * @param index
+         *            zero-based index into the team list
+         */
         void onBugemonSelected(int index);
 
+        /**
+         * Called when the player selects the attack to be replaced.
+         *
+         * @param attack
+         *            the existing attack to replace with the reward attack
+         */
         void onAttackChosen(Attack attack);
     }
 }
