@@ -14,7 +14,7 @@ SELECT COUNT(*) as item_count FROM items;
 
 
 -- Query
--- areTablesPresent
+-- AreTablesPresent
 SELECT COUNT(*) as existing_critical_tables
 FROM pg_tables
 WHERE schemaname = 'public'

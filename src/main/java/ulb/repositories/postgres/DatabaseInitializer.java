@@ -52,7 +52,7 @@ public class DatabaseInitializer extends AbstractRepository {
     }
 
     public void initialize() {
-        Integer tableCount = this.executeQuery("areTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
+        Integer tableCount = this.executeQuery("AreTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
                 .findFirst().orElse(0);
 
         if (tableCount < CRITICAL_TABLES_COUNT) {
