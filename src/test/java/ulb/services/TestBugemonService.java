@@ -2,54 +2,98 @@ package ulb.services;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import ulb.common.dto.persistence.CreateBugemonDTO;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 import ulb.repositories.BugemonRepository;
-import ulb.repositories.StaticDataRepository;
-import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.repositories.StaticRepository;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
-import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemonService {
 
-    private static final String PLAYER = "Player1";
-    private StaticDataRepository staticRepo;
+    private StaticRepository staticRepo;
     private BugemonRepository bugemonRepo;
-    private BugemonService bugemonService;
+    private BugemonService service;
 
     @Before
     public void setUp() {
-        this.staticRepo = mock(StaticDataRepository.class);
+        this.staticRepo = mock(StaticRepository.class);
         this.bugemonRepo = mock(BugemonRepository.class);
-
-        when(this.staticRepo.getAllDefaultBugemons()).thenReturn(new ArrayList<>());
-        this.bugemonService = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER, List.of());
+        this.service = new BugemonService(this.staticRepo, this.bugemonRepo, "testPlayer");
     }
 
     @Test
-    public void testSaveNewBugemon_EmptyNameThrowsException() {
-        CreateBugemonDTO dto = new CreateBugemonDTO("", null, null, 0, 0, 0, 0, false, null, null, null);
-        assertThrows(BugemonNameIsEmptyException.class, () -> this.bugemonService.saveNewBugemon(dto));
+    public void shouldThrowBugemonNameIsEmptyException_whenNameIsEmpty() {
+        CreateBugemonDTO dto = new CreateBugemonDTO("", ElementType.PYRO, null, 10, 10, 10, 100, false, List.of());
+        when(this.staticRepo.bugemons()).thenReturn(List.of());
+
+        assertThrows(BugemonNameIsEmptyException.class, () -> this.service.saveNewBugemon(dto));
     }
 
     @Test
-    public void testSaveNewBugemon_DuplicateNameThrowsException() {
-        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("Pikachu");
-        List<Bugemon> cache = new ArrayList<>(List.of(bugemon));
-        when(this.staticRepo.getAllDefaultBugemons()).thenReturn(cache);
+    public void shouldThrowBugemonNameIsEmptyException_whenNameIsBlankSpaces() {
+        CreateBugemonDTO dto = new CreateBugemonDTO("", ElementType.AQUA, null, 5, 5, 5, 50, false, List.of());
+        when(this.staticRepo.bugemons()).thenReturn(List.of());
 
-        BugemonService serviceWithData = new BugemonService(this.staticRepo, this.bugemonRepo, PLAYER, List.of());
-        CreateBugemonDTO dto = new CreateBugemonDTO("Pikachu", null, null, 10, 10, 10, 10, false, null, null, null);
-
-        assertThrows(BugemonNameAlreadyExistsException.class, () -> serviceWithData.saveNewBugemon(dto));
+        assertThrows(BugemonNameIsEmptyException.class, () -> this.service.saveNewBugemon(dto));
     }
 
+    @Test
+    public void shouldThrowBugemonNameAlreadyExistsException_whenNameAlreadyExists() {
+        Bugemon existingBugemon = mock(Bugemon.class);
+        when(existingBugemon.name()).thenReturn("Flamby");
+        when(this.staticRepo.bugemons()).thenReturn(List.of(existingBugemon));
+
+        CreateBugemonDTO dto = new CreateBugemonDTO("Flamby", ElementType.PYRO, null, 10, 10, 10, 100, false,
+                List.of());
+
+        assertThrows(BugemonNameAlreadyExistsException.class, () -> this.service.saveNewBugemon(dto));
+    }
+
+    @Test
+    public void shouldThrowBugemonNameAlreadyExistsException_whenNameMatchesExistingCaseSensitive() {
+        Bugemon existingBugemon = mock(Bugemon.class);
+        when(existingBugemon.name()).thenReturn("Aquamon");
+        when(this.staticRepo.bugemons()).thenReturn(List.of(existingBugemon));
+
+        CreateBugemonDTO dto = new CreateBugemonDTO("Aquamon", ElementType.AQUA, null, 5, 5, 5, 80, false, List.of());
+
+        assertThrows(BugemonNameAlreadyExistsException.class, () -> this.service.saveNewBugemon(dto));
+    }
+
+    @Test
+    public void shouldSaveBugemon_whenNameIsUniqueAndNonEmpty()
+            throws BugemonNameIsEmptyException, BugemonNameAlreadyExistsException {
+        Bugemon existingBugemon = mock(Bugemon.class);
+        when(existingBugemon.name()).thenReturn("Flamby");
+        when(this.staticRepo.bugemons()).thenReturn(List.of(existingBugemon));
+
+        CreateBugemonDTO dto = new CreateBugemonDTO("Terrabyte", ElementType.LITHO, null, 8, 8, 8, 90, false,
+                List.of());
+
+        this.service.saveNewBugemon(dto);
+
+        verify(this.staticRepo).saveBugemon(dto);
+    }
+
+    @Test
+    public void shouldSaveBugemon_whenRepoIsEmpty()
+            throws BugemonNameIsEmptyException, BugemonNameAlreadyExistsException {
+        when(this.staticRepo.bugemons()).thenReturn(List.of());
+
+        CreateBugemonDTO dto = new CreateBugemonDTO("Newmon", ElementType.PYRO, null, 6, 6, 6, 60, false, List.of());
+
+        this.service.saveNewBugemon(dto);
+
+        verify(this.staticRepo).saveBugemon(dto);
+    }
 }

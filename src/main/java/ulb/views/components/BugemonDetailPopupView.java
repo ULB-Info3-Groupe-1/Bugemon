@@ -15,12 +15,12 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import ulb.Configuration;
+import ulb.common.dto.display.BugemonDisplayDTO;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
 
 /**
- * Read-only component displaying a {@link Bugemon}'s stats and attacks. Call {@link #show(Bugemon, ContextMenuEvent)}
- * to open it as a floating popup centred over the owner window.
+ * Read-only popup displaying a Bugemon's stats and attacks. Instantiate with the bugemon to display, then call
+ * {@link #show(ContextMenuEvent)} to open it centred over the owner window.
  */
 public class BugemonDetailPopupView extends ComponentView {
 
@@ -43,48 +43,54 @@ public class BugemonDetailPopupView extends ComponentView {
     @FXML
     private VBox attacksContainer;
 
-    private BugemonDetailPopupView(Bugemon bugemon) {
+    private Stage popupStage;
+
+    public BugemonDetailPopupView(BugemonDisplayDTO bugemon) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_DETAIL_POPUP);
-        File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.getSpriteURL());
+        File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.base().spritePath());
         this.sprite.setImage(new Image(spriteFile.toURI().toString(), 72, 72, true, false));
-        this.nameLabel.setText(bugemon.getName());
-        this.nameLabel.getStyleClass().addAll("bugemon-name", bugemon.getType().toString());
-        this.typeLabel.setText(bugemon.getType().toString());
-        this.typeLabel.getStyleClass().add(bugemon.getType().toString());
-        this.levelLabel.setText("Nv. " + bugemon.getLevel());
-        this.hpValue.setText(bugemon.getHp() + " / " + bugemon.getMaxHp());
+        this.nameLabel.setText(bugemon.base().name());
+        this.nameLabel.getStyleClass().addAll("bugemon-name", bugemon.base().type().toString());
+        this.typeLabel.setText(bugemon.base().type().toString());
+        this.typeLabel.getStyleClass().add(bugemon.base().type().toString());
+        this.levelLabel.setText("Nv. " + bugemon.level());
+        this.hpValue.setText(String.valueOf(bugemon.getMaxHp()));
         this.attackValue.setText(String.valueOf(bugemon.getAttack()));
         this.defenseValue.setText(String.valueOf(bugemon.getDefense()));
         this.initiativeValue.setText(String.valueOf(bugemon.getInitiative()));
-        for (Attack attack : bugemon.getAttackList()) {
+        for (Attack attack : bugemon.attacks()) {
             Label row = new Label("• " + attack.name() + "  (" + attack.type() + ")  [" + attack.power() + "]");
             row.getStyleClass().add("bugemon-popup-attack");
             this.attacksContainer.getChildren().add(row);
         }
     }
 
-    /** Builds and shows a transparent popup with the Bugemon's details, closing it when it loses focus. */
-    public static void show(Bugemon bugemon, ContextMenuEvent event) {
+    /**
+     * Shows the popup centred over the owner window, closing it when it loses focus.
+     */
+    public void show(ContextMenuEvent event) {
         Node source = (Node) event.getSource();
         Window owner = source.getScene().getWindow();
 
-        Stage popup = new Stage(StageStyle.TRANSPARENT);
-        popup.initOwner(owner);
+        if (this.popupStage == null) {
+            this.popupStage = new Stage(StageStyle.TRANSPARENT);
+            this.popupStage.initOwner(owner);
 
-        BugemonDetailPopupView content = new BugemonDetailPopupView(bugemon);
-        Scene scene = new Scene(content);
-        scene.setFill(Color.TRANSPARENT);
-        scene.getStylesheets().addAll(source.getScene().getStylesheets());
+            Scene scene = new Scene(this);
+            scene.setFill(Color.TRANSPARENT);
+            scene.getStylesheets().addAll(source.getScene().getStylesheets());
 
-        popup.setScene(scene);
-        popup.show();
-        popup.setX(owner.getX() + (owner.getWidth() - popup.getWidth()) / 2);
-        popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
+            this.popupStage.setScene(scene);
 
-        popup.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-            if (Boolean.FALSE.equals(isFocused)) {
-                popup.close();
-            }
-        });
+            this.popupStage.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+                if (Boolean.FALSE.equals(isFocused)) {
+                    this.popupStage.close();
+                }
+            });
+        }
+
+        this.popupStage.show();
+        this.popupStage.setX(owner.getX() + (owner.getWidth() - this.popupStage.getWidth()) / 2);
+        this.popupStage.setY(owner.getY() + (owner.getHeight() - this.popupStage.getHeight()) / 2);
     }
 }

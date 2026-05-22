@@ -3,48 +3,43 @@ package ulb.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ulb.services.BugemonService;
-import ulb.services.InventoryService;
-import ulb.services.TeamService;
-import ulb.services.TowerService;
+import ulb.models.player.PlayerState;
+import ulb.services.SaveService;
 import ulb.views.SaveMenuView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller for the save menu screen.
+ * Controller for the save/load screen shown on application startup.
+ *
+ * <p>
+ * Offers three actions: start a new game (clears all player data), continue an existing game, or quit. Delegates to
+ * {@link SaveService} for persistence and to {@link MetaController} for navigation.
  */
 public class SaveMenuController extends Controller<SaveMenuView> implements SaveMenuView.Listener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SaveMenuController.class);
 
-    private final BugemonService bugemonService;
-    private final TeamService teamService;
-    private final TowerService towerService;
+    private final SaveService saveService;
+    private final PlayerState playerState;
 
-    public SaveMenuController(MetaController metaController, BugemonService bugemonService, TeamService teamService,
-            TowerService towerService) {
+    public SaveMenuController(MetaController metaController, SaveService saveService, PlayerState playerState) {
         super(metaController, ViewLoader.load(SaveMenuView::new));
-        this.bugemonService = bugemonService;
-        this.teamService = teamService;
-        this.towerService = towerService;
+        this.saveService = saveService;
+        this.playerState = playerState;
+
         this.view.setListener(this);
     }
 
     @Override
     public void onNewGame() {
         LOG.info("Starting new game - clearing player data");
-        this.bugemonService.clearAllPlayerBugemons();
-        this.teamService.clearTeamsAndActiveTeam();
-        this.towerService.clearTowerProgress();
-        InventoryService.getInstance().resetInventory();
+        this.saveService.clear(this.playerState);
         this.metaController.onMainMenu();
     }
 
     @Override
     public void onContinue() {
         LOG.info("Continuing game - loading player data");
-        this.teamService.loadTeamsAndActiveTeam();
-        InventoryService.getInstance().loadInventory();
         this.metaController.onMainMenu();
     }
 

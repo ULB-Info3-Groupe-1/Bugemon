@@ -1,85 +1,101 @@
 package ulb.services;
 
-import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon.Item;
-import ulb.models.bugemon.Item.ItemType;
-import ulb.models.skills.Skill;
-import ulb.models.skills.SkillEffect.StarterItemsEffect;
-import ulb.repositories.InventoryRepository;
+import java.util.List;
+import java.util.Random;
 
+import ulb.common.dto.persistence.DefaultInventoryDTO;
+import ulb.common.dto.persistence.InventoryDTO;
+import ulb.models.item.Inventory;
+import ulb.models.item.Item;
+import ulb.models.item.ItemType;
+import ulb.models.skills.SkillContext;
+import ulb.repositories.InventoryRepository;
+import ulb.repositories.StaticRepository;
+
+/**
+ * Service that manages a player's {@link ulb.models.item.Inventory}.
+ *
+ * <p>
+ * Provides inventory loading, persistence, reset, and the application of skill-based starter item bonuses.
+ */
 public class InventoryService {
 
-    private static InventoryService instance;
+    private final String playerName;
 
     private final InventoryRepository inventoryRepository;
-    private final SkillService skillService;
-    private final String playername;
+    private final StaticRepository staticRepository;
 
-    private InventoryService(String playername, InventoryRepository inventoryRepository, SkillService skillService) {
+    private final Random random;
+
+    /**
+     * Constructs an {@code InventoryService} bound to the given player.
+     *
+     * @param inventoryRepository
+     *            repository for reading and writing player inventory data
+     * @param staticRepository
+     *            repository providing static item definitions and default inventory
+     * @param random
+     *            random-number source used when selecting starter items
+     * @param playerName
+     *            the name of the player whose inventory this service manages
+     */
+    public InventoryService(InventoryRepository inventoryRepository, StaticRepository staticRepository, Random random,
+            String playerName) {
         this.inventoryRepository = inventoryRepository;
-        this.playername = playername;
-        this.skillService = skillService;
+        this.staticRepository = staticRepository;
+        this.random = random;
+        this.playerName = playerName;
     }
 
-    public static synchronized void init(String playername, InventoryRepository inventoryRepository,
-            SkillService skillService) {
-        if (instance == null) {
-            instance = new InventoryService(playername, inventoryRepository, skillService);
-        }
+    public Inventory getInventory() {
+        InventoryDTO inventoryDTO = this.inventoryRepository.findInventory(this.playerName);
+        return new Inventory(inventoryDTO.items());
     }
 
-    public static synchronized InventoryService getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("InventoryService is not initialized");
-        }
-        return instance;
-    }
-
-    public static synchronized void resetInstance() {
-        instance = null;
-    }
-
-    public Inventory loadInventory() {
-        Inventory inventory = this.inventoryRepository.getPlayerInventory(this.playername);
-        this.applyStarterItemsSkills(inventory);
-        return inventory;
-    }
-
-    public void saveInventory(Inventory inventory) {
-        this.inventoryRepository.saveInventory(this.playername, inventory);
-    }
-
-    /**
-     * Resets the player's inventory to a default state with the default items, then grants the starter items granted by
-     * every unlocked {@link StarterItemsEffect} skill.
-     */
     public void resetInventory() {
-        this.inventoryRepository.addDefaultInventory(this.playername);
+        this.inventoryRepository.delete(this.playerName);
     }
 
-    // TODO: UI should permit the player to select the +x items granted by the skill
+    public DefaultInventoryDTO getDefaultInventory() {
+        return this.staticRepository.defaultInventory();
+    }
+
+    public List<Item> getItems() {
+        return this.staticRepository.items();
+    }
+
     /**
-     * For every unlocked {@link StarterItemsEffect}, adds {@code quantity} units of every item in the inventory whose
-     * category matches the effect's category.
+     * Adds skill-unlocked starter items to {@code inventory} based on the active
+     * {@link ulb.models.skills.SkillContext}. For each {@link ulb.models.item.ItemType} that the skill grants bonus
+     * quantities of, a random eligible item of that type is chosen and added for each bonus unit.
+     *
+     * @param inventory
+     *            the inventory to receive the bonus items
+     * @param skillContext
+     *            the context derived from the player's current skill-tree state
      */
-    private void applyStarterItemsSkills(Inventory inventory) {
-        for (Skill skill : this.skillService.getSkills(StarterItemsEffect.class)) {
-            StarterItemsEffect effect = (StarterItemsEffect) skill.getEffect();
-            ItemType targetType = mapCategoryToItemType(effect.category());
-            for (Item item : inventory.getMap().keySet()) {
-                if (item.type() == targetType) {
-                    inventory.addItem(item, effect.quantity());
+    public void applyStarterItemsBonus(Inventory inventory, SkillContext skillContext) {
+        for (ItemType type : ItemType.values()) {
+            int quantity = skillContext.getStarterItemQuantity(type);
+            if (quantity > 0) {
+                List<Item> eligible = this.staticRepository.items().stream().filter(item -> item.type() == type)
+                        .toList();
+
+                if (!eligible.isEmpty()) {
+                    for (int i = 0; i < quantity; i++) {
+                        inventory.addItem(eligible.get(this.random.nextInt(eligible.size())), 1);
+                    }
                 }
             }
         }
     }
 
-    private static ItemType mapCategoryToItemType(String category) {
-        return switch (category) {
-            case "soin" -> ItemType.HEALING;
-            case "boost" -> ItemType.BOOST;
-            default -> throw new IllegalArgumentException("Unknown starter item category: " + category);
-        };
+    public void save(Inventory inventory) {
+        this.inventoryRepository.save(this.toDTO(inventory));
+    }
+
+    private InventoryDTO toDTO(Inventory inventory) {
+        return new InventoryDTO(this.playerName, inventory.getMap());
     }
 
 }

@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import ulb.Configuration;
 
 /**
- * View for the combat menu screen. Dispatches player interactions to the controller exclusively through callbacks
+ * View for the main menu screen. Dispatches player interactions to the controller exclusively through callbacks
  * registered via setters. The view holds no reference to any concrete controller class.
  */
 public class MainMenuView extends View {
@@ -71,6 +71,7 @@ public class MainMenuView extends View {
         // No dynamic content to refresh in the main menu, so this method is empty.
     }
 
+    /** Callback interface for all main menu navigation actions. */
     public interface Listener {
         void onCreateTeam();
 

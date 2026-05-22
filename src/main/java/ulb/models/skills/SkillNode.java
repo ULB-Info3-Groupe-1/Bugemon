@@ -1,94 +1,33 @@
 package ulb.models.skills;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ulb.models.utils.Position;
-
 /**
- * Represents a node in the skill tree, containing a skill and its relationships to other skills.
+ * Immutable definition of a single node in the skill tree.
+ *
+ * <p>
+ * Coordinates {@code x} and {@code y} are used by the skill-tree view to position the node. The {@code prerequisites}
+ * list contains the IDs of nodes that must be at their maximum level before this node can be unlocked.
+ *
+ * @param id
+ *            unique identifier for this node
+ * @param name
+ *            display name shown in the UI
+ * @param description
+ *            human-readable description of the effect
+ * @param x
+ *            horizontal position in the skill-tree layout
+ * @param y
+ *            vertical position in the skill-tree layout
+ * @param maxLevel
+ *            maximum number of times this node can be unlocked
+ * @param cost
+ *            skill points required per unlock level
+ * @param effect
+ *            the gameplay effect applied when the node is unlocked
+ * @param prerequisites
+ *            IDs of nodes that must be fully unlocked first
  */
-public class SkillNode {
-
-    private Skill skill;
-    private List<SkillNode> parents = new ArrayList<>();
-    private List<SkillNode> children = new ArrayList<>();
-
-    private Position position;
-
-    public SkillNode(Skill skill, Position position) {
-        this.skill = skill;
-        this.position = position;
-    }
-
-    public Skill getSkill() {
-        return this.skill;
-    }
-
-    public List<SkillNode> getParents() {
-        return this.parents;
-    }
-
-    public List<SkillNode> getChildren() {
-        return this.children;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public String getDescription() {
-        return this.skill.getDescription();
-    }
-
-    public boolean isUnlockable() {
-        if (this.skill.isUnlocked()) {
-            return false; // already unlocked
-        }
-        if (this.parents.isEmpty()) {
-            return true; // no prerequisites
-        }
-
-        // FIX au moins un des parents doivent être unlock pas nécessairement tous...
-        return this.parents.stream().anyMatch(parent -> parent.getSkill().isUnlocked());
-    }
-
-    public SkillNodeState getState() {
-        if (this.skill.isUnlocked()) {
-            return SkillNodeState.ACTIVE;
-        }
-        if (this.isUnlockable()) {
-            return SkillNodeState.AVAILABLE;
-        }
-        return SkillNodeState.LOCKED;
-    }
-
-    public String getName() {
-        return this.skill.getName();
-    }
-
-    public int getCost() {
-        return this.skill.getCost();
-    }
-
-    public int getCurrentLevel() {
-        return this.skill.getCurrentLevel();
-    }
-
-    public int getMaxLevel() {
-        return this.skill.getMaxLevel();
-    }
-
-    // setters
-    public void setSkill(Skill skill) {
-        this.skill = skill;
-    }
-
-    public void addChild(SkillNode child) {
-        this.children.add(child);
-    }
-
-    public void addParent(SkillNode parent) {
-        this.parents.add(parent);
-    }
+public record SkillNode(String id, String name, String description, int x, int y, int maxLevel, int cost,
+        SkillEffect effect, List<String> prerequisites) {
 }

@@ -33,7 +33,7 @@
                 <Label text="Nom de l'équipe à sauvegarder :"
                     styleClass="team-input-label" />
                 <TextField fx:id="saveTeamNameInput"
-                    styleClass="text-field,btn-team" promptText="Nouveau nom..."
+                    styleClass="text-field btn-team" promptText="Nouveau nom..."
                     onAction="#onSaveClicked" />
             </VBox>
         </HBox>

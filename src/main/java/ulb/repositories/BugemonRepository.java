@@ -1,46 +1,72 @@
 package ulb.repositories;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ulb.common.dto.persistence.PlayerBugemonDTO;
+import ulb.models.bugemon.Bugemon;
 
-import ulb.repositories.dto.PlayerBugemonDTO;
+/**
+ * Repository for persisting and querying player-owned Bugemon instances.
+ *
+ * <p>
+ * Distinguishes between <b>player Bugemon</b> (levelled-up copies owned by a specific player, represented as
+ * {@link PlayerBugemonDTO}) and <b>base Bugemon</b> (immutable archetypes loaded from static game data).
+ */
+public interface BugemonRepository {
 
-public class BugemonRepository extends AbstractRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(BugemonRepository.class);
+    /**
+     * Returns all Bugemon owned by the given player.
+     *
+     * @param playerName
+     *            the player's unique name
+     * @return list of player-Bugemon DTOs, possibly empty
+     */
+    List<PlayerBugemonDTO> findAll(String playerName);
 
-    public BugemonRepository(DatabaseConnection dbConnection, Map<String, String> queries) {
-        super(dbConnection, queries);
-    }
+    /**
+     * Deletes every Bugemon record owned by the given player.
+     *
+     * @param playerName
+     *            the player's unique name
+     */
+    void removeAll(String playerName);
 
-    public void removeAllPlayerBugemon(String playername) {
-        LOG.debug("Removing all bugemons for playername: {}", playername);
-        this.executeUpdate("RemoveAllPlayerBugemons", playername);
-    }
+    /**
+     * Finds a single player-owned Bugemon by its display name.
+     *
+     * @param playerName
+     *            the player's unique name
+     * @param bugemonName
+     *            the Bugemon's display name
+     * @return an {@link Optional} containing the DTO, or empty if not found
+     */
+    Optional<PlayerBugemonDTO> findByName(String playerName, String bugemonName);
 
-    public void savePlayerBugemon(PlayerBugemonDTO d) {
-        LOG.debug("Saving player bugemon: {}", d);
-        executeUpdate("SavePlayerBugemon", d.playername(), d.bugemonName(), d.currentDefense(), d.currentAttackPower(),
-                d.currentInitiative(), d.currentMaxHp(), d.currentXp(), d.currentLevel());
-    }
+    /**
+     * Returns the base (archetype) Bugemon for the given name from static game data.
+     *
+     * @param bugemonName
+     *            the Bugemon's canonical name
+     * @return an {@link Optional} containing the base {@link Bugemon}, or empty if unknown
+     */
+    Optional<Bugemon> findBase(String bugemonName);
 
-    public void updatePlayerBugemon(PlayerBugemonDTO d) {
-        LOG.debug("Updating player bugemon: {}", d);
-        executeUpdate("UpdatePlayerBugemon", d.currentDefense(), d.currentAttackPower(), d.currentInitiative(),
-                d.currentMaxHp(), d.currentXp(), d.currentLevel(), d.playername(), d.bugemonName());
-    }
+    /**
+     * Inserts or updates a player-owned Bugemon record.
+     *
+     * @param playerBugemon
+     *            the DTO to persist
+     */
+    void save(PlayerBugemonDTO playerBugemon);
 
-    public List<PlayerBugemonDTO> getPlayerBugemons(String playername) {
-        LOG.debug("Getting bugemons for playername: {}", playername);
-        return executeQuery("GetPlayerBugemons",
-                rs -> new PlayerBugemonDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),
-                        rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
-                        rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)),
-                playername);
-    }
+    /**
+     * Deletes a single player-owned Bugemon by name.
+     *
+     * @param playerName
+     *            the player's unique name
+     * @param bugemonName
+     *            the Bugemon's display name
+     */
+    void delete(String playerName, String bugemonName);
 }

@@ -1,7 +1,6 @@
 package ulb.views.components;
 
 import java.io.File;
-import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -10,9 +9,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Bugemon;
+import ulb.common.dto.display.BugemonDisplayDTO;
 
-/** Reusable custom component representing a single Bugemon cell with an image and name label. */
+/**
+ * Reusable custom component representing a single Bugemon cell with an image and name label.
+ */
 public class BugemonCardView extends ComponentView {
     private static final String EMPTY_NAME = "?";
     private static final Image EMPTY_IMAGE = new Image(Configuration.Paths.DEFAULT_SPRITE);
@@ -26,26 +27,36 @@ public class BugemonCardView extends ComponentView {
 
     private Listener listener;
 
-    private final Optional<Bugemon> bugemonData;
+    private final BugemonDisplayDTO bugemon;
+    private final BugemonDetailPopupView detailPopup;
 
-    /** Constructs an empty placeholder card with a default image and {@code "?"} as name. */
+    /** Constructs an empty placeholder card with a default sprite and a {@code "?"} name. */
     public BugemonCardView() {
-        this(Optional.empty());
-    }
-
-    public BugemonCardView(Bugemon bugemon) {
-        this(Optional.of(bugemon));
-    }
-
-    private BugemonCardView(Optional<Bugemon> bugemonData) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
-        this.bugemonData = bugemonData;
-        this.nameLabel.setText(bugemonData.map(Bugemon::getName).orElse(EMPTY_NAME));
-        this.levelLabel.setText(bugemonData.map(b -> "Lv." + b.getLevel()).orElse(""));
-        this.imageView.setImage(bugemonData
-                .map(d -> new Image(new File(Configuration.Paths.SPRITES + d.getSpriteURL()).toURI().toString()))
-                .orElse(EMPTY_IMAGE));
-        bugemonData.ifPresent(b -> this.setOnContextMenuRequested(e -> BugemonDetailPopupView.show(b, e)));
+        this.bugemon = null;
+        this.detailPopup = null;
+
+        this.nameLabel.setText(EMPTY_NAME);
+        this.imageView.setImage(EMPTY_IMAGE);
+    }
+
+    /**
+     * Constructs a card populated with the given Bugemon's sprite, name, and level; also registers a right-click
+     * context menu that opens a {@link BugemonDetailPopupView}.
+     *
+     * @param bugemon
+     *            the Bugemon data to display
+     */
+    public BugemonCardView(BugemonDisplayDTO bugemon) {
+        super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
+        this.bugemon = bugemon;
+        this.detailPopup = new BugemonDetailPopupView(bugemon);
+
+        this.nameLabel.setText(bugemon.getName());
+        this.levelLabel.setText(String.valueOf(bugemon.level()));
+        File spriteFile = new File(Configuration.Paths.SPRITES + bugemon.getSpritePath());
+        this.imageView.setImage(new Image(spriteFile.toURI().toString()));
+        this.setOnContextMenuRequested(this.detailPopup::show);
     }
 
     public void hideLevelLabel() {
@@ -59,27 +70,13 @@ public class BugemonCardView extends ComponentView {
             return;
         }
 
-        this.bugemonData.ifPresent(b -> this.listener.onClick(b));
+        if (this.listener != null && this.bugemon != null) {
+            this.listener.onBugemonSelected(this.bugemon);
+        }
     }
 
     public void setListener(Listener listener) {
         this.listener = listener;
-    }
-
-    public void setSprite(File file) {
-        Image image = new Image(file.toURI().toString());
-        this.imageView.setImage(image);
-    }
-
-    public void removeSprite() {
-        this.imageView.setImage(EMPTY_IMAGE);
-    }
-
-    public void setName(String name) {
-        if (name == null || name.isBlank()) {
-            name = EMPTY_NAME;
-        }
-        this.nameLabel.setText(name);
     }
 
     public void select() {
@@ -94,9 +91,21 @@ public class BugemonCardView extends ComponentView {
         this.getStyleClass().add("bugemon-cell");
     }
 
+    public void setName(String name) {
+        this.nameLabel.setText(name.isEmpty() ? EMPTY_NAME : name);
+    }
+
+    public void setSprite(File file) {
+        this.imageView.setImage(new Image(file.toURI().toString()));
+    }
+
+    public void removeSprite() {
+        this.imageView.setImage(EMPTY_IMAGE);
+    }
+
+    /** Callback interface for Bugemon card click interactions. */
     public interface Listener {
-
-        void onClick(Bugemon bugemon);
-
+        /** Called when the player left-clicks this card. */
+        void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

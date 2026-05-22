@@ -4,10 +4,12 @@ import java.util.Map;
 import javafx.scene.control.Button;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Item;
+import ulb.models.item.Item;
 import ulb.views.components.ComponentView;
 
-/** Reusable component displaying the player's inventory as a list of clickable item buttons. */
+/**
+ * Reusable component displaying the player's inventory as a list of clickable item buttons.
+ */
 public class ItemMenuView extends ComponentView {
 
     private Listener listener;
@@ -41,20 +43,35 @@ public class ItemMenuView extends ComponentView {
         btn.getStyleClass().addAll("btn", "btn-warning", "menu-btn-min");
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setWrapText(true);
-        btn.setOnAction(e -> this.listener.onItemSelected(item));
+        btn.setOnAction(e -> this.listener.onItemChosen(item));
         btn.setOnMouseEntered(e -> this.listener.onItemHovered(item));
-        btn.setOnMouseExited(e -> this.listener.onItemLeft());
+        btn.setOnMouseExited(e -> this.listener.onItemUnhovered());
         return btn;
     }
 
+    /** Callback interface for item menu interactions. */
     public interface Listener {
 
-        void onItemSelected(Item item);
+        /**
+         * Called when the player clicks an item button.
+         *
+         * @param item
+         *            the chosen item
+         */
+        void onItemChosen(Item item);
 
+        /**
+         * Called when the mouse enters an item button, typically to show a tooltip.
+         *
+         * @param item
+         *            the hovered item
+         */
         void onItemHovered(Item item);
 
-        void onItemLeft();
+        /** Called when the mouse leaves an item button. */
+        void onItemUnhovered();
 
+        /** Called when the player clicks the back button. */
         void onBack();
 
     }

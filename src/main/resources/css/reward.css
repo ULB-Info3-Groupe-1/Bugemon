@@ -1,0 +1,100 @@
+.reward-container {
+    -fx-background-color: transparent;
+    -fx-padding: 48;
+    -fx-alignment: center;
+    -fx-spacing: 28;
+}
+
+.reward-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+}
+
+.reward-subtitle {
+    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
+}
+
+.reward-feedback {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-success;
+}
+
+.reward-prompt {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+    -fx-wrap-text: true;
+}
+
+.reward-attack-hint {
+    -fx-font-size: 16px;
+    -fx-text-fill: color-text-muted;
+    -fx-wrap-text: true;
+}
+
+.reward-card {
+    -fx-background-radius: 10;
+    -fx-padding: 20;
+    -fx-pref-width: 260;
+    -fx-pref-height: 300;
+    -fx-alignment: center;
+    -fx-spacing: 14;
+}
+
+.reward-card-item {
+    -fx-background-color: color-warning-hover;
+}
+
+.reward-card-attack {
+    -fx-background-color: color-primary-hover;
+}
+
+.reward-card-bonus {
+    -fx-background-color: color-success-hover;
+}
+
+.reward-card-type-label {
+    -fx-text-fill: color-gold;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.reward-card-name {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.reward-card-desc {
+    -fx-text-fill: #dddddd;
+    -fx-font-size: 16px;
+    -fx-wrap-text: true;
+}
+
+.reward-card-btn {
+    -fx-background-color: color-gold;
+    -fx-text-fill: color-text-dark;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 10 20;
+}
+
+.reward-card-btn:hover,
+.reward-card-btn:active {
+    -fx-background-color: #e6c200;
+}
+
+.reward-bugemon-btn {
+    -fx-pref-width: 400;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.reward-attack-btn {
+    -fx-pref-width: 150;
+    -fx-pref-height: 70;
+}

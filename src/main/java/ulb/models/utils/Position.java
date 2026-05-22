@@ -1,8 +1,17 @@
 package ulb.models.utils;
 
 /**
- * Simple record class for representing a position in the game world. Contains x and y coordinates. This class is used
- * mainly in the view to represent the position of UI elements.
+ * An immutable grid coordinate used throughout the model and view layers.
+ *
+ * <p>
+ * Coordinates are expressed as integer column ({@code x}) and row ({@code y}) indices within a bounded grid. Used
+ * primarily by {@link ulb.models.tower.FloorMap} to record room positions and by the floor-map view to place UI
+ * elements.
+ *
+ * @param x
+ *            column index (0-based)
+ * @param y
+ *            row index (0-based)
  */
 public record Position(int x, int y) {
 }

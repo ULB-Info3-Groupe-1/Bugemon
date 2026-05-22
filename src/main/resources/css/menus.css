@@ -1,0 +1,80 @@
+.main-menu {
+    -fx-background-color: transparent;
+    -fx-padding: 60 60 80 60;
+    -fx-alignment: center;
+    -fx-spacing: 30;
+}
+
+.main-title {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.create-team-title {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.section-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.team-input-label {
+    -fx-text-fill: color-text-dark;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}
+
+.text-field {
+    -fx-background-color: color-white;
+    -fx-text-fill: color-text-dark;
+    -fx-prompt-text-fill: color-text-light;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 16;
+}
+
+.text-field:focus {
+    -fx-border-color: color-success;
+    -fx-background-color: #f4fff9;
+}
+
+.team-list-view {
+    -fx-background-color: color-surface-border, color-white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 4, 3;
+}
+
+.team-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: color-text-dark;
+    -fx-padding: 8 14;
+    -fx-font-size: 18px;
+}
+
+.team-list-view .list-cell:selected {
+    -fx-background-color: color-primary;
+    -fx-text-fill: white;
+}
+
+.team-list-view .list-cell:hover:!selected {
+    -fx-background-color: color-surface;
+}
+
+.level-up-title {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+}
+
+.level-up-subtitle {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+}

@@ -1,158 +1,227 @@
 package ulb.controllers;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
-import ulb.repositories.exceptions.TeamEmptyException;
-import ulb.repositories.exceptions.TeamNameAlreadyExistsException;
-import ulb.repositories.exceptions.TeamNameEmptyException;
-import ulb.repositories.exceptions.TeamNotFoundException;
+import ulb.common.dto.display.BugemonDisplayDTO;
+import ulb.models.player.PlayerBugemon;
+import ulb.models.player.PlayerState;
+import ulb.models.team.Team;
 import ulb.services.BugemonService;
 import ulb.services.TeamService;
-import ulb.services.exceptions.NoActiveTeamException;
+import ulb.services.exceptions.TeamNameEmptyException;
+import ulb.services.exceptions.TeamNotFoundException;
 import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to player
- * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
- * controller never pushes data into the view.
+ * Controller responsible for the team creation and editing screen.
+ *
+ * <p>
+ * Mutates a temporary {@link ulb.models.team.Team} in response to player actions, then triggers a view refresh so the
+ * view can pull the updated state. The controller never pushes data directly into the view. Operates in either
+ * {@link TeamFormMode#CREATE} or {@link TeamFormMode#EDIT} mode.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
+
     private final TeamService teamService;
+    private final PlayerState playerState;
     private final BugemonService bugemonService;
 
+    private Team tmpTeam; // The team that gets edited in this screen
+
+    /**
+     * Operating modes for the team management form.
+     *
+     * <p>
+     * In {@link #CREATE} mode the working team starts empty. In {@link #EDIT} mode it is seeded from the player's
+     * current active team on every {@code show()} call.
+     */
     public enum TeamFormMode {
         EDIT,
         CREATE
     }
 
     /**
-     * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
-     * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
+     * Constructs a {@code ManageTeamController}, wires the view callbacks, and configures the view for the given mode.
      *
+     * @param mode
+     *            whether the screen is used for creating or editing a team
+     * @param metaController
+     *            the application-wide navigation controller
+     * @param teamService
+     *            service for team persistence
+     * @param bugemonService
+     *            service for loading player Bugemon data
+     * @param playerState
+     *            the current player state, used to read and set the active team
      */
     public ManageTeamController(TeamFormMode mode, MetaController metaController, TeamService teamService,
-            BugemonService bugemonService) {
+            BugemonService bugemonService, PlayerState playerState) {
         super(metaController, ViewLoader.load(() -> new ManageTeamView(mode)));
         this.teamService = teamService;
         this.bugemonService = bugemonService;
+        this.playerState = playerState;
 
         this.view.setListener(this);
     }
 
     @Override
     protected void show() {
-        this.teamService.setWorkingTeamAsActiveTeam();
-        this.view.refresh();
+        this.playerState.getActiveTeam().ifPresent(t -> this.tmpTeam = new Team(t));
+        if (this.tmpTeam == null) {
+            this.tmpTeam = new Team();
+        }
+        this.updateAllUI();
         super.show();
     }
 
-    @Override
-    public List<Bugemon> getAvailableBugemons() {
-        return this.bugemonService.getAllDefaultBugemons();
+    /**
+     * Refreshes the available-Bugemon list, marking already-selected members as selected in the view.
+     */
+    private void updateDisplayedAvailableBugemons() {
+        List<BugemonDisplayDTO> allDTOs = this.bugemonService.getPlayerBugemons().stream()
+                .map(PlayerBugemon::toDisplayDTO).toList();
+        Set<String> selectedNames = this.tmpTeam.getMembers().stream().map(PlayerBugemon::getName)
+                .collect(Collectors.toSet());
+        Set<BugemonDisplayDTO> selectedDTOs = allDTOs.stream().filter(dto -> selectedNames.contains(dto.getName()))
+                .collect(Collectors.toSet());
+        this.view.refreshAvailableBugemons(allDTOs, selectedDTOs);
+    }
+
+    /**
+     * Refreshes the working-team display, including member list and team-name label (showing the saved name, "not
+     * saved" notice, or an empty-team placeholder).
+     */
+    private void updateWorkingTeamToShow() {
+        List<BugemonDisplayDTO> memberDTOs = this.tmpTeam.getMembers().stream().map(PlayerBugemon::toDisplayDTO)
+                .toList();
+        this.view.refreshWorkingTeam(memberDTOs);
+        if (this.tmpTeam.isEmpty()) {
+            this.view.refreshWorkingTeamNameNoTeamSelected();
+        } else if (this.teamService.isTeamSaved(this.tmpTeam)) {
+            this.view.refreshWorkingTeamNameToShow(this.tmpTeam.getName());
+        } else {
+            this.view.refreshWorkingTeamNameTeamNotSaved();
+        }
+    }
+
+    /** Updates the active-team indicator in the view. */
+    private void updateTeamSelected() {
+        this.view.refreshTeamSelected(this.playerState.getActiveTeamName().orElse(null));
+    }
+
+    /** Refreshes the list of saved team names shown in the view. */
+    private void updateDisplayedTeamNames() {
+        this.view.refreshTeamNames(this.teamService.getTeamNames());
+    }
+
+    /** Calls all four view-refresh helpers in the correct order. */
+    private void updateAllUI() {
+        this.updateWorkingTeamToShow();
+        this.updateTeamSelected();
+        this.updateDisplayedTeamNames();
+        this.updateDisplayedAvailableBugemons();
     }
 
     @Override
-    public BugemonTeam getWorkingTeam() {
-        return this.teamService.getWorkingTeam();
-    }
-
-    @Override
-    public boolean isWorkingTeamSaved() {
-        return this.teamService.isWorkingTeamSaved();
-    }
-
-    @Override
-    public List<String> getTeamNames() {
-        return this.teamService.getTeamNames();
-    }
-
-    @Override
-    public Optional<String> getActiveTeamName() {
-        return this.teamService.getActiveTeamName();
-    }
-
-    @Override
-    public void onBugemonSelected(Bugemon bugemon) {
-        this.teamService.addOrRemoveBugemon(bugemon);
-        this.view.refresh();
+    public void onBugemonSelected(BugemonDisplayDTO dto) {
+        PlayerBugemon playerBugemon = this.bugemonService.getPlayerBugemon(dto.getName());
+        if (this.tmpTeam.contains(playerBugemon)) {
+            this.tmpTeam.remove(playerBugemon);
+        } else if (!this.tmpTeam.isFull()) {
+            this.tmpTeam.add(playerBugemon);
+        }
+        this.updateAllUI();
     }
 
     @Override
     public void onSave(String teamName) {
-        try {
-            this.teamService.saveTeam(teamName);
-        } catch (TeamNameAlreadyExistsException e) {
-            this.view.showTeamNameAlreadyExistsAlert(teamName);
-        } catch (TeamEmptyException e) {
-            this.view.showEmptyTeamAlert();
-        } catch (TeamNameEmptyException e) {
+        if (teamName.isBlank()) {
             this.view.showEmptyTeamNameAlert();
+            return;
         }
-        this.view.refresh();
+        if (this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
+            return;
+        }
+        boolean isUpdate = teamName.equals(this.tmpTeam.getName());
+        if (!isUpdate && this.teamService.teamExists(teamName)) {
+            this.view.showTeamNameAlreadyExistsAlert(teamName);
+            return;
+        }
+
+        this.tmpTeam.setName(teamName);
+        if (this.validateTeam()) {
+            this.teamService.save(this.tmpTeam);
+            this.clearTmpTeam();
+            this.updateAllUI();
+        }
     }
 
     @Override
     public void onDelete(String teamName) {
         try {
             this.teamService.deleteTeam(teamName);
-        } catch (NoActiveTeamException | TeamNotFoundException e) {
+            this.clearTmpTeam();
+            this.updateAllUI();
+        } catch (TeamNotFoundException e) {
             this.view.showDeleteTeamNoActiveTeamAlert();
-        } catch (TeamNameEmptyException e) {
-            this.view.showEmptyTeamAlert();
         }
-        this.view.refresh();
     }
 
     @Override
     public void onRename(String newName) {
-        try {
-            this.teamService.renameActiveTeam(newName);
-        } catch (TeamNotFoundException | NoActiveTeamException e) {
-            this.view.showSelectTeamToRenameAlert();
-        } catch (TeamNameAlreadyExistsException e) {
+        if (this.teamService.teamExists(newName)) {
             this.view.showTeamNameAlreadyExistsAlert(newName);
+            return;
+        }
+
+        try {
+            this.teamService.renameTeam(this.tmpTeam, newName);
+            this.updateAllUI();
         } catch (TeamNameEmptyException e) {
             this.view.showEmptyTeamNameAlert();
+        } catch (TeamNotFoundException e) {
+            this.view.showSelectTeamToRenameAlert();
         }
-        this.view.refresh();
     }
 
     @Override
     public void onAddNewTeam() {
-        this.teamService.clearWorkingTeam();
+        this.clearTmpTeam();
         this.view.clearTeamNameToSave();
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
-    public void onModifyTeam(String teamName) {
-        if (teamName == null || teamName.isEmpty() || this.teamService.isActiveTeamEmpty()) {
-            this.view.showAlertChooseTeamToModify();
+    public void onModifyTeam() {
+        if (this.tmpTeam == null || this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
             return;
         }
+
         try {
-            this.teamService.modifyActiveTeam();
-        } catch (TeamEmptyException e) {
-            this.view.showEmptyTeamAlert();
-        } catch (TeamNotFoundException | NoActiveTeamException e) {
-            this.view.showTeamNotFoundAlert(teamName);
+            this.teamService.modify(this.tmpTeam);
+            this.updateAllUI();
+        } catch (TeamNotFoundException e) {
+            this.view.showAlertChooseTeamToModify();
         }
-        this.view.refresh();
     }
 
     @Override
     public void onTeamSelected(String teamName) {
         try {
+            this.playerState.setActiveTeam(this.teamService.getTeam(teamName)
+                    .orElseThrow(() -> new TeamNotFoundException("Active team not found")));
             this.teamService.setActiveTeam(teamName);
+            this.tmpTeam = this.teamService.getTeam(teamName)
+                    .orElseThrow(() -> new TeamNotFoundException("Active team not found"));
         } catch (TeamNotFoundException e) {
             this.view.showTeamNotFoundAlert(teamName);
         }
-        this.teamService.setWorkingTeamAsActiveTeam();
-        this.view.refresh();
+        this.updateAllUI();
     }
 
     @Override
@@ -170,25 +239,54 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.executeIfActiveTeamNotEmpty(this.metaController::onTower);
     }
 
-    private void executeIfActiveTeamNotEmpty(Runnable combatAction) {
-        if (this.teamService.isActiveTeamEmpty()) {
+    /**
+     * Executes the given action only when the player has a non-empty active team selected; shows an alert otherwise.
+     *
+     * @param combat
+     *            the action to run when the guard passes
+     */
+    private void executeIfActiveTeamNotEmpty(Runnable combat) {
+        if (this.playerState.getActiveTeam().isEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
         } else {
-            combatAction.run();
+            combat.run();
         }
     }
 
     @Override
     public void onReturnToMainMenu() {
-        boolean canLeave = this.teamService.isWorkingTeamSaved();
+        if (!this.teamService.isTeamSaved(this.tmpTeam) && !this.tmpTeam.isEmpty()) {
+            if (this.view.showAlertTeamChangesNotSave()) {
+                this.clearTmpTeam();
+            } else {
+                return;
+            }
+        }
+        this.metaController.onMainMenu();
 
-        if (!canLeave && this.view.showAlertTeamChangesNotSave()) {
-            this.teamService.clearWorkingTeam();
-            canLeave = true;
+    }
+
+    /** Resets the working team to an empty, nameless state. */
+    private void clearTmpTeam() {
+        this.tmpTeam = new Team();
+    }
+
+    /**
+     * Validates that the working team is non-null, non-empty, and has a non-blank name. Shows the appropriate alert and
+     * returns {@code false} on the first failure.
+     *
+     * @return {@code true} if the team passes all checks
+     */
+    private boolean validateTeam() {
+        if (this.tmpTeam == null || this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
+            return false;
         }
 
-        if (canLeave) {
-            this.metaController.onMainMenu();
+        if (this.tmpTeam.getName() == null || this.tmpTeam.getName().isBlank()) {
+            this.view.showEmptyTeamNameAlert();
+            return false;
         }
+        return true;
     }
 }

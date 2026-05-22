@@ -1,70 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import ulb.views.components.BugemonTeamView?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.RewardView" styleClass="reward-container"
+    prefWidth="760" prefHeight="560">
 
+    <Label text="Récompense d'étage" styleClass="reward-title" />
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.RewardView">
+    <VBox fx:id="rewardPanel" alignment="CENTER" spacing="16">
+        <Label text="Choisissez une récompense"
+            styleClass="reward-subtitle" />
+        <HBox fx:id="rewardCardsBox" spacing="20" alignment="CENTER" />
+        <Label fx:id="feedbackLabel" text=""
+            styleClass="reward-feedback" />
+    </VBox>
 
-    <center>
+    <VBox fx:id="selectionPanel" alignment="CENTER" spacing="20"
+        visible="false" managed="false">
+        <Label fx:id="promptLabel" text="" styleClass="reward-prompt"
+            wrapText="true" />
+        <VBox fx:id="bugemonListBox" spacing="10" alignment="CENTER" />
+        <VBox fx:id="attackReplacementBox" spacing="16"
+            alignment="CENTER" visible="false" managed="false">
+            <Label fx:id="attackReplacementTitle" text=""
+                styleClass="reward-attack-hint" wrapText="true" />
+            <HBox fx:id="attackButtonsBox" spacing="12" alignment="CENTER" />
+        </VBox>
+    </VBox>
 
-        <StackPane>
-
-            <VBox fx:id="rewardsContainer" alignment="CENTER" spacing="28">
-
-                <padding>
-                    <Insets top="56" right="56" bottom="28" left="56" />
-                </padding>
-
-                <Label fx:id="rewardLabel" styleClass="level-up-title" />
-
-                <HBox alignment="CENTER" spacing="56">
-
-                    <Button fx:id="choiceStatButton"
-                        styleClass="btn,btn-success,btn-choice"
-                        onAction="#onChoiceStatClicked" />
-
-                    <Button fx:id="choiceAttackButton"
-                        styleClass="btn,btn-warning,btn-choice"
-                        onAction="#onChoiceAttackClicked" />
-
-                    <Button fx:id="choiceItemButton"
-                        styleClass="btn,btn-primary,btn-choice"
-                        onAction="#onChoiceItemClicked" />
-
-                </HBox>
-
-            </VBox>
-            <HBox fx:id="bugemonSelectionContainer" alignment="CENTER"
-                spacing="28" visible="false" managed="false">
-
-                <VBox fx:id="teamContainer" alignment="CENTER" spacing="28"
-                    visible="false" managed="false">
-                    <Label text="Sur quel Bugemon appliquer le bonus ?" />
-                    <BugemonTeamView fx:id="bugemonsTeamView" />
-                </VBox>
-
-                <VBox alignment="CENTER" spacing="28" visible="false"
-                    managed="false" fx:id="attackSelectionContainer">
-                    <Label text="Choisissez une attaque à remplacer :" />
-                    <ListView fx:id="bugemonAttackListView" prefHeight="200"
-                        styleClass="attack-list-view" />
-                    <Button text="Confirmer" styleClass="btn,btn-success"
-                        onAction="#onConfirmAttackChangeClicked" />
-                </VBox>
-            </HBox>
-
-        </StackPane>
-
-    </center>
-
-</BorderPane>
+</VBox>

@@ -32,10 +32,13 @@ public class CombatDefeatView extends View {
         // No dynamic data to display on the defeat screen.
     }
 
+    /** Callback interface for the defeat screen actions. */
     public interface Listener {
 
+        /** Called when the player chooses to retry the combat. */
         void onRetry();
 
+        /** Called when the player chooses to return to the main menu. */
         void onReturnToMainMenu();
 
     }

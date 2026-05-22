@@ -1,45 +1,32 @@
 package ulb.models.tower.room;
 
-public abstract class Room {
-    RoomState state = RoomState.LOCKED; // default state
-    private boolean visited = false;
+import ulb.common.RoomType;
 
-    public boolean hasPlayerWon() {
-        return false;
+/**
+ * A single room on a tower floor, characterised by its {@link ulb.common.RoomType} and visited status.
+ *
+ * <p>
+ * Rooms are created by {@link ulb.models.tower.utils.FloorMapFactory} and are not reused across floors. Once marked
+ * visited via {@link #markAsVisited()}, the state cannot be reversed.
+ */
+public class Room {
+    private final RoomType type;
+    private boolean visited;
+
+    public Room(RoomType type) {
+        this.type = type;
+        this.visited = false;
     }
 
-    public RoomState getState() {
-        return this.state;
+    public RoomType getType() {
+        return this.type;
     }
 
     public boolean isVisited() {
         return this.visited;
     }
 
-    public void setVisited() {
+    public void markAsVisited() {
         this.visited = true;
-        this.state = RoomState.VISITED;
-    }
-
-    public void setState(RoomState roomState) {
-        this.state = roomState;
-    }
-
-    public abstract void visit(RoomVisitor roomVisitor);
-
-    public abstract RoomType getType();
-
-    public enum RoomState {
-        AVAILABLE,
-        VISITED,
-        VISITED_AVAILABLE,
-        LOCKED
-    }
-
-    public enum RoomType {
-        COMBAT,
-        BOSS,
-        REWARD,
-        EMPTY,
     }
 }

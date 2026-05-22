@@ -1,18 +1,24 @@
 package ulb.controllers;
 
-import ulb.services.TeamService;
+import ulb.models.player.PlayerState;
 import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller for the combat menu screen.
+ * Controller for the main menu screen.
+ *
+ * <p>
+ * Delegates all navigation actions to {@link MetaController}. Guards combat and tower entry points by checking that an
+ * active team has been selected before forwarding the request.
  */
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
-    TeamService teamService;
 
-    public MainMenuController(MetaController metaController, TeamService teamService) {
+    private final PlayerState playerState;
+
+    public MainMenuController(MetaController metaController, PlayerState playerState) {
         super(metaController, ViewLoader.load(MainMenuView::new));
-        this.teamService = teamService;
+        this.playerState = playerState;
+
         this.view.setListener(this);
     }
 
@@ -34,7 +40,7 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     /** Starts an automatic combat session. */
     @Override
     public void onStartAutomaticCombat() {
-        if (!this.isActiveTeamEmpty()) {
+        if (this.isActiveTeamPresent()) {
             this.metaController.onStartAutomaticCombat();
         }
     }
@@ -42,14 +48,14 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     /** Starts a manual combat session. */
     @Override
     public void onStartManualCombat() {
-        if (!this.isActiveTeamEmpty()) {
+        if (this.isActiveTeamPresent()) {
             this.metaController.onStartManualCombat();
         }
     }
 
     @Override
     public void onTower() {
-        if (!this.isActiveTeamEmpty()) {
+        if (this.isActiveTeamPresent()) {
             this.metaController.onTower();
         }
     }
@@ -69,11 +75,10 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
         javafx.application.Platform.exit();
     }
 
-    private boolean isActiveTeamEmpty() {
-        if (this.teamService.isActiveTeamEmpty()) {
+    private boolean isActiveTeamPresent() {
+        return this.playerState.getActiveTeam().map(team -> true).orElseGet(() -> {
             this.view.showAlertChooseTeamToLaunchCombat();
-            return true;
-        }
-        return false;
+            return false;
+        });
     }
 }

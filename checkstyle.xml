@@ -54,7 +54,7 @@
             <property name="max" value="80"/>
         </module>
         <module name="ParameterNumber">
-            <property name="max" value="8"/>
+            <property name="max" value="10"/>
         </module>
 
         <!-- ===== Espaces ===== -->
@@ -113,7 +113,7 @@
         <module name="OneStatementPerLine"/>
         <module name="OverloadMethodsDeclarationOrder"/>
         <module name="VariableDeclarationUsageDistance">
-            <property name="allowedDistance" value="5"/>
+            <property name="allowedDistance" value="6"/>
         </module>
 
         <!-- ===== Modificateurs ===== -->

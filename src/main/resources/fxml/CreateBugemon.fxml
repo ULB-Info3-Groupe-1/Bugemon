@@ -13,8 +13,8 @@
 <?import javafx.scene.control.ToggleGroup?>
 
 <?import ulb.views.components.BugemonCardView?>
-<?import ulb.models.bugemon.effect.EffectStat?>
-<?import ulb.models.bugemon.BugemonType?>
+<?import ulb.common.StatType?>
+<?import ulb.models.bugemon.ElementType?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CreateBugemonView" alignment="CENTER"
@@ -55,28 +55,28 @@
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-FLORA">
                     <userData>
-                        <BugemonType fx:constant="FLORA" />
+                        <ElementType fx:constant="FLORA" />
                     </userData>
                 </ToggleButton>
                 <ToggleButton text="AQUA"
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-AQUA">
                     <userData>
-                        <BugemonType fx:constant="AQUA" />
+                        <ElementType fx:constant="AQUA" />
                     </userData>
                 </ToggleButton>
                 <ToggleButton text="PYRO"
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-PYRO">
                     <userData>
-                        <BugemonType fx:constant="PYRO" />
+                        <ElementType fx:constant="PYRO" />
                     </userData>
                 </ToggleButton>
                 <ToggleButton text="LITHO"
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-LITHO">
                     <userData>
-                        <BugemonType fx:constant="LITHO" />
+                        <ElementType fx:constant="LITHO" />
                     </userData>
                 </ToggleButton>
             </HBox>
@@ -86,7 +86,7 @@
             <Slider fx:id="healthSlider" min="1" max="100"
                 showTickLabels="true" showTickMarks="true" blockIncrement="1">
                 <userData>
-                    <EffectStat fx:constant="HP" />
+                    <StatType fx:constant="HP" />
                 </userData>
             </Slider>
 
@@ -94,7 +94,7 @@
             <Slider fx:id="attackSlider" min="1" max="100"
                 showTickLabels="true" showTickMarks="true" blockIncrement="1">
                 <userData>
-                    <EffectStat fx:constant="ATTACK" />
+                    <StatType fx:constant="ATTACK" />
                 </userData>
             </Slider>
 
@@ -102,7 +102,7 @@
             <Slider fx:id="defenseSlider" min="1" max="100"
                 showTickLabels="true" showTickMarks="true" blockIncrement="1">
                 <userData>
-                    <EffectStat fx:constant="DEFENSE" />
+                    <StatType fx:constant="DEFENSE" />
                 </userData>
             </Slider>
 
@@ -110,7 +110,7 @@
             <Slider fx:id="initiativeSlider" min="1" max="100"
                 showTickLabels="true" showTickMarks="true" blockIncrement="1">
                 <userData>
-                    <EffectStat fx:constant="INITIATIVE" />
+                    <StatType fx:constant="INITIATIVE" />
                 </userData>
             </Slider>
 

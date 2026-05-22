@@ -8,7 +8,4 @@ public class PlayernameAlreadyExistsException extends Exception {
         super(message);
     }
 
-    public PlayernameAlreadyExistsException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

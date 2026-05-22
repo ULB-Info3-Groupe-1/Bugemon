@@ -1,8 +1,11 @@
 /**
- * JSON parsing pipeline that loads game data files into model objects at startup.
+ * General-purpose utilities for the Bugemon game.
  *
- * JSON field names follow French conventions ({@code nom}, {@code attaques}, …); Gson {@code @SerializedName}
- * annotations bridge them to Java names. Sprite paths without a {@code "png/"} prefix are automatically prefixed by
- * {@link ulb.utils.BugemonDeserializer}.
+ * <ul>
+ * <li>{@link ulb.utils.Parser} — parses the bundled JSON resource files (attacks, Bugemons, items, skill tree)</li>
+ * <li>{@link ulb.utils.BugemonDeserializer} — custom Gson deserialiser for {@link ulb.models.bugemon.Bugemon}</li>
+ * <li>{@link ulb.utils.SpriteUtils} — copies custom sprite files to the application sprite directory</li>
+ * <li>{@link ulb.utils.LevelColorConverter} — Logback ANSI colour converter for console log output</li>
+ * </ul>
  */
 package ulb.utils;

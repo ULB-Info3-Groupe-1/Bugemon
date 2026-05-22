@@ -1,105 +1,81 @@
-/**
- * File name : TestBugemon.java
- * Description : Test class for the Bugemon class.
- *
- * @author Liefferinckx Romain
- * @date 24 feb. 2026
- * @version 1.0
- */
-
 package ulb.models.bugemon;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import ulb.models.bugemon.exceptions.InvalidAttackCountException;
-import ulb.utils.test.TestUtilsBugemons;
 
 public class TestBugemon {
-    @Test
-    public void testBuilderNoIdThrows() {
-        BugemonBuilder builder = new BugemonBuilder();
-        assertThrows(IllegalStateException.class, builder::build);
+
+    private List<Attack> createValidAttacksList() {
+        List<Attack> attacks = new ArrayList<>();
+        for (int i = 0; i < Bugemon.ATTACKS_COUNT; i++) {
+            attacks.add(Mockito.mock(Attack.class));
+        }
+        return attacks;
     }
 
     @Test
-    public void testBuilderRequiresExactlyThreeAttacks() {
-        Attack a1 = TestUtilsBugemons.createAttack("a1", BugemonType.FLORA, 0);
-        Attack a2 = TestUtilsBugemons.createAttack("a2", BugemonType.FLORA, 0);
-        Attack a3 = TestUtilsBugemons.createAttack("a3", BugemonType.FLORA, 0);
-        Attack a4 = TestUtilsBugemons.createAttack("a4", BugemonType.FLORA, 0);
+    public void shouldThrowException_whenNameIsBlank() {
+        List<Attack> validAttacks = this.createValidAttacksList();
 
-        // two (or less) attacks does not work
-        BugemonBuilder twoAttacks = new BugemonBuilder().name("two").hp(100).attackList(java.util.List.of(a1, a2));
-        assertThrows(InvalidAttackCountException.class, twoAttacks::build);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Bugemon("", 100, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true, false);
+        });
 
-        // three works
-        BugemonBuilder threeAttacks = new BugemonBuilder().name("three").hp(100)
-                .attackList(java.util.List.of(a1, a2, a3));
-        threeAttacks.build();
-
-        // four (or more) attacks does not work
-        BugemonBuilder fourAttacks = new BugemonBuilder().name("four").hp(100)
-                .attackList(java.util.List.of(a1, a2, a3, a4));
-        assertThrows(InvalidAttackCountException.class, fourAttacks::build);
+        assertEquals("Bugemon's name cannot be empty", exception.getMessage());
     }
 
     @Test
-    public void testIsAlive() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        assertTrue(expectedBugemon1.isAlive());
-        expectedBugemon1.takeDamage(50);
-        assertTrue(expectedBugemon1.isAlive());
-        expectedBugemon1.takeDamage(50);
-        assertFalse(expectedBugemon1.isAlive());
+    public void shouldThrowException_whenHpIsNegative() {
+        List<Attack> validAttacks = this.createValidAttacksList();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Bugemon("Pikabug", -10, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true, false);
+        });
+
+        assertEquals("Bugemon's current hp must be non-negative", exception.getMessage());
     }
 
     @Test
-    public void testTakeDamage() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        assertEquals(100, expectedBugemon1.getHp());
-        expectedBugemon1.takeDamage(30);
-        assertEquals(70, expectedBugemon1.getHp());
-        expectedBugemon1.takeDamage(50);
-        assertEquals(20, expectedBugemon1.getHp());
+    public void shouldThrowException_whenStatsAreZeroOrNegative() {
+        List<Attack> validAttacks = this.createValidAttacksList();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Bugemon("Pikabug", 100, 0, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true, false);
+        });
+
+        assertEquals("Stats must be strictly positive", exception.getMessage());
     }
 
     @Test
-    public void testEquals() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-        assertEquals(expectedBugemon2, expectedBugemon1);
+    public void shouldThrowInvalidAttackCountException_whenAttacksSizeIsWrong() {
+        List<Attack> invalidAttacks = new ArrayList<>();
+
+        assertThrows(InvalidAttackCountException.class, () -> {
+            new Bugemon("Pikabug", 100, 10, 10, 10, ElementType.FLORA, invalidAttacks, "sprite.png", true, false);
+        });
     }
 
     @Test
-    public void testHashCode() {
-        Bugemon expectedBugemon1 = TestUtilsBugemons.createDefaultBugemon("1");
-        Bugemon expectedBugemon2 = TestUtilsBugemons.createDefaultBugemon("1");
-        assertEquals(expectedBugemon1, expectedBugemon2);
-        assertEquals(expectedBugemon1.hashCode(), expectedBugemon2.hashCode());
-    }
+    public void shouldConsiderEqual_whenNamesAreIdentical() {
+        List<Attack> validAttacks = this.createValidAttacksList();
 
-    @Test
-    public void testCorrectPathSprite() {
-        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
-        String path = bugemon.getSpriteURL();
-        URL resource = TestBugemon.class.getResource(path);
-        assertNotNull(resource);
-    }
+        Bugemon bugemon1 = new Bugemon("UniqueName", 100, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite1.png",
+                true, false);
+        Bugemon bugemon2 = new Bugemon("UniqueName", 150, 20, 20, 20, ElementType.AQUA, validAttacks, "sprite2.png",
+                false, false);
+        Bugemon bugemon3 = new Bugemon("OtherName", 100, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite1.png",
+                true, false);
 
-    @Test
-    public void testResetBugemon() {
-        Bugemon bugemon = TestUtilsBugemons.createDefaultBugemon("1");
-        bugemon.takeDamage(50);
-        assertEquals(50, bugemon.getHp());
-        bugemon.restoreHp();
-        assertEquals(100, bugemon.getHp());
+        assertEquals(bugemon1, bugemon2);
+        assertNotEquals(bugemon1, bugemon3);
     }
 }

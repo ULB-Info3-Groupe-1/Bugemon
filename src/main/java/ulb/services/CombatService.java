@@ -1,162 +1,114 @@
 package ulb.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import ulb.Configuration;
+import ulb.common.CombatSummary;
+import ulb.common.LevelUpResult;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.Efficiency;
-import ulb.models.bugemon.effect.EffectDuration;
-import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.bugemon.effect.EffectTarget;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.Combat;
-import ulb.models.skills.Skill;
-import ulb.models.skills.SkillEffect.CritBonusEffect;
-import ulb.models.skills.SkillEffect.StatBonusEffect;
-import ulb.models.skills.SkillEffect.TypeMultiplierEffect;
-import ulb.models.trainer.Trainer;
+import ulb.models.combat.CombatBugemon;
+import ulb.models.combat.CombatResult;
+import ulb.models.combat.CombatTeam;
+import ulb.models.combat.damage.DamageCalculator;
+import ulb.models.combat.damage.Efficiency;
+import ulb.models.combat.factory.AutoCombatFactory;
+import ulb.models.combat.factory.CombatFactory;
+import ulb.models.combat.factory.ManualCombatFactory;
+import ulb.models.combat.utils.EffectProcessor;
+import ulb.models.item.Inventory;
+import ulb.models.player.PlayerInputHandler;
+import ulb.models.run.RunBugemon;
+import ulb.models.skills.SkillContext;
+import ulb.models.team.factory.BossTeamFactory;
+import ulb.models.team.factory.RandomTeamFactory;
+import ulb.models.team.factory.TeamFactory;
 
 /**
- * Stateless utility for combat calculations: attack priority, damage formula.
+ * Handles combat lifecycle (XP finalisation, damage preview) and creates {@link CombatFactory} instances.
  */
 public class CombatService {
 
-    /**
-     * Creates a combat.
-     *
-     * At the end of the combat, HPs are restored and XP is distributed.
-     */
-    public Combat createUniqueCombat(List<Skill> skills, Trainer playerTrainer, Trainer opponentTrainer) {
-        this.applyStatBonusSkills(skills, playerTrainer);
-        return new Combat(playerTrainer, opponentTrainer, skills);
+    private final DamageCalculator damageCalculator;
+    private final EffectProcessor effectProcessor;
+    private final Random random;
+
+    public CombatService(Random random) {
+        this(new DamageCalculator(), new EffectProcessor(), random);
     }
 
-    /**
-     * Skill-aware damage calculation. When {@code isPlayerAttacking} is true, every unlocked
-     * {@link TypeMultiplierEffect} matching the attack's type is applied to the damage, and every unlocked
-     * {@link CritBonusEffect} adds to the base 10% crit chance.
-     */
-    public int calculateDamage(List<Skill> skills, final Attack attack, final Bugemon offenderBugemon,
-            final Bugemon defenderBugemon, final boolean isPlayerAttacking) {
-        final double critFactor = this.computeCritFactor(skills, isPlayerAttacking);
-        final double skillTypeMultiplier = isPlayerAttacking ? this.computeTypeMultiplier(skills, attack) : 1.0;
-        return (int) Math
-                .ceil(this.calculateDamage(attack, offenderBugemon, defenderBugemon, critFactor) * skillTypeMultiplier);
+    public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random) {
+        this.damageCalculator = damageCalculator;
+        this.effectProcessor = effectProcessor;
+        this.random = random;
     }
 
-    /**
-     * Calculates the damage dealt by an attack using an explicit critical hit factor, factoring in the offender's
-     * attack stat, the defender's defense stat, and type effectiveness. Formula:
-     * {@code power * ((100 + offenderAttack) / 100) * (100 / (defenderDefense + 100)) * typeFactor * criticFactor}
-     *
-     * @param attack
-     *            the attack being used
-     * @param offenderBugemon
-     *            the attacking Bugemon, used to access its attack stat
-     * @param defenderBugemon
-     *            the defending Bugemon, used to access its defense stat and type
-     * @param criticFactor
-     *            the critical hit multiplier to apply (e.g. {@code 1.0} for normal, {@code 1.5} for a critical hit)
-     * @return the computed damage as a double
-     */
-    public int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon,
-            final double criticFactor) {
-
-        final int basePower = attack.power();
-        final double atkFactor = (100.0 + offenderBugemon.getAttack()) / 100.0;
-        final double defFactor = 100.0 / (defenderBugemon.getDefense() + 100.0);
-        final double typeMultiplier = getEfficiencyFactor(attack, defenderBugemon);
-        final double damage = basePower * atkFactor * defFactor * typeMultiplier * criticFactor;
-
-        return (int) Math.ceil(damage);
+    public TeamFactory createOpponentFactory(boolean isBoss) {
+        return isBoss ? new BossTeamFactory(this.random) : new RandomTeamFactory(this.random);
     }
 
-    /**
-     * Overload of {@link #calculateDamage(Attack, Bugemon, Bugemon, double)} with a random crit factor (10% chance of
-     * 1.5×).
-     */
-    public int calculateDamage(final Attack attack, final Bugemon offenderBugemon, final Bugemon defenderBugemon) {
-        final double critMultiplier = Math.random() <= 0.1 ? 1.5 : 1.0;
-        return this.calculateDamage(attack, offenderBugemon, defenderBugemon, critMultiplier);
+    public TeamFactory createBossOpponentFactory() {
+        return new BossTeamFactory(this.random);
     }
 
-    private double computeCritFactor(List<Skill> skills, boolean isPlayerAttacking) {
-        double critChance = Configuration.Game.BASE_CRIT_CHANCE;
-        if (isPlayerAttacking) {
-            for (Skill skill : skills) {
-                if (skill.getEffect() instanceof CritBonusEffect(var extraChance)) {
-                    critChance += extraChance;
+    public CombatFactory createManualCombatFactory(Inventory defaultInventory, PlayerInputHandler handler,
+            TeamFactory opponentFactory, int floor, boolean bossMode) {
+        return new ManualCombatFactory(defaultInventory, this.damageCalculator, this.effectProcessor, this.random,
+                handler, opponentFactory, floor, bossMode);
+    }
+
+    public CombatFactory createAutoCombatFactory(TeamFactory opponentFactory, int floor, boolean bossMode) {
+        return new AutoCombatFactory(this.damageCalculator, this.effectProcessor, this.random, opponentFactory, floor,
+                bossMode);
+    }
+
+    public CombatSummary finalizeCombat(Combat combat, SkillContext skillContext) {
+        CombatTeam playerTeam = combat.getPlayerTeam();
+        CombatResult result = combat.getResult();
+
+        int totalXp = 0;
+        List<LevelUpResult> levelUpResults = new ArrayList<>();
+
+        if (result == CombatResult.VICTORY) {
+            int opponentCount = combat.getOpponentTeamSize();
+            int baseXp = this.computeCombatXp(combat.getFloor(), combat.isBossMode(), opponentCount);
+            totalXp = (int) (baseXp * skillContext.getXpMultiplier());
+            int xpPerBugemon = this.computeXpPerBugemon(totalXp, playerTeam.size());
+            List<CombatBugemon> participants = playerTeam.getParticipants();
+            for (CombatBugemon participant : participants) {
+                RunBugemon runBugemon = participant.getRunBugemon();
+                int numLevelPassed = runBugemon.addXp(xpPerBugemon);
+                for (int i = 0; i < numLevelPassed; i++) {
+                    levelUpResults.add(new LevelUpResult(runBugemon, runBugemon.getLevel() - numLevelPassed + i + 1));
                 }
             }
         }
-        return Math.random() <= critChance ? Configuration.Game.CRIT_DAMAGE_FACTOR : 1.0;
+
+        playerTeam.syncToRunTeam();
+
+        return new CombatSummary(result, levelUpResults);
     }
 
-    private double computeTypeMultiplier(List<Skill> skills, Attack attack) {
-        double mult = 1.0;
-        for (Skill skill : skills) {
-            if (skill.getEffect() instanceof TypeMultiplierEffect(var type, var effectMult) && type == attack.type()) {
-                mult *= effectMult;
-            }
-        }
-        return mult;
+    public Efficiency previewEfficiency(Attack attack, CombatBugemon defender) {
+        return this.previewEfficiency(attack, defender.getType());
     }
 
-    /**
-     * Applies every unlocked {@link StatBonusEffect} skill as a permanent {@link EffectStatModifier} on each Bugemon of
-     * the player's team — these bonuses are re-applied at the start of every combat.
-     */
-    private void applyStatBonusSkills(List<Skill> skills, Trainer playerTrainer) {
-        for (Skill skill : skills) {
-            StatBonusEffect bonus = (StatBonusEffect) skill.getEffect();
-            EffectStatModifier modifier = new EffectStatModifier(EffectTarget.TEAM, bonus.stat(), bonus.bonus(),
-                    EffectDuration.PERMANENT);
-            playerTrainer.applyEffectToCurrentTeam(modifier);
-        }
+    public Efficiency previewEfficiency(Attack attack, ElementType typeDefender) {
+        return this.damageCalculator.previewEfficiency(attack.type(), typeDefender);
     }
 
-    /**
-     * Determines which trainer's Bugemon attacks first based on initiative. In case of a tie, the winner is chosen
-     * randomly.
-     *
-     * @param trainer1
-     *            the first trainer
-     * @param trainer2
-     *            the second trainer
-     * @return the trainer whose Bugemon attacks first
-     */
-    public static Trainer attackPriority(final Trainer trainer1, final Trainer trainer2) {
-        final int initiative1 = trainer1.getCurrentBugemonInitiative();
-        final int initiative2 = trainer2.getCurrentBugemonInitiative();
-
-        if (initiative1 < initiative2) {
-            return trainer2;
-        } else if (initiative1 > initiative2) {
-            return trainer1;
-        } else {
-            return Math.random() <= 0.5 ? trainer1 : trainer2;
-        }
+    private int computeCombatXp(int floorNumber, boolean isBoss, int opponentCount) {
+        int typeMultiplier = isBoss ? Configuration.Game.BOSS_MULTIPLIER : Configuration.Game.NORMAL_MULTIPLIER;
+        return Configuration.Game.BASE_XP * floorNumber * typeMultiplier * opponentCount;
     }
 
-    /**
-     * Returns the damage multiplier corresponding to the effectiveness of an attack's type against the defender's type.
-     *
-     * @param attack
-     *            the attack being used
-     * @param defender
-     *            the defending Bugemon
-     * @return {@code 0.75} for {@link Efficiency#LOW}, {@code 1.50} for {@link Efficiency#HIGH}, or {@code 1.00} for
-     *         {@link Efficiency#NEUTRAL}
-     */
-    public static double getEfficiencyFactor(final Attack attack, final Bugemon defender) {
-        final Efficiency matchup = attack.getEfficiencyAgainst(defender);
-
-        if (matchup.equals(Efficiency.LOW)) {
-            return 0.75;
-        } else if (matchup.equals(Efficiency.HIGH)) {
-            return 1.50;
-        } else {
-            return 1.00;
+    private int computeXpPerBugemon(int totalXp, int participantCount) {
+        if (participantCount <= 0) {
+            return 0;
         }
+        return totalXp / participantCount;
     }
 }

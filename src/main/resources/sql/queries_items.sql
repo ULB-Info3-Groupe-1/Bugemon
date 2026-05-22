@@ -32,8 +32,26 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
 -- Query
 -- SaveItemForPlayer
 INSERT INTO item_player (playername, item_id, amount)
-VALUES (?, ?, ?);
+VALUES (?, ?, ?)
+ON CONFLICT (playername, item_id) DO UPDATE SET amount = item_player.amount + EXCLUDED.amount;
 
 -- Query
 -- RemoveItemsOfPlayer
 DELETE FROM item_player WHERE playername = ?;
+
+-- Query
+-- GetAllItems
+SELECT
+  i.item_id,
+  i.name,
+  i.description,
+  i.category,
+  i.sprite,
+  ie.type AS effect_type,
+  ie.target AS effect_target,
+  ie.value AS effect_value,
+  ie.stat AS effect_stat,
+  ie.modifier AS effect_modifier,
+  ie.duration AS effect_duration
+FROM items i
+LEFT JOIN item_effects ie ON i.item_id = ie.item_id;

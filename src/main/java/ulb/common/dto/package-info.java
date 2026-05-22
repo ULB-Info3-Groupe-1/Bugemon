@@ -1,6 +1,11 @@
 /**
- * DTO interfaces exposing read-only views of model objects for safe consumption by the view and controller layers.
+ * Data Transfer Object (DTO) hierarchy used to move data between application layers without exposing domain internals.
  *
- * {@link ulb.common.dto.BugemonDTO} is implemented by {@link ulb.models.bugemon.Bugemon};
+ * <p>
+ * DTOs in this package tree are plain Java records with no business logic. They are organised into two sub-packages:
+ * <ul>
+ * <li>{@link ulb.common.dto.display} — read-only snapshots consumed by controllers and views to render UI screens</li>
+ * <li>{@link ulb.common.dto.persistence} — records used by repositories to read from and write to the database</li>
+ * </ul>
  */
 package ulb.common.dto;

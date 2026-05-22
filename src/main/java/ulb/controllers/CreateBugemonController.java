@@ -7,20 +7,28 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.Configuration;
+import ulb.common.dto.persistence.CreateBugemonDTO;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.BugemonType;
-import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.models.bugemon.ElementType;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.BugemonService;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 
+/**
+ * Controller for the custom Bugemon creation screen.
+ *
+ * <p>
+ * Manages element-type and sprite selection state, validates form input, assembles a
+ * {@link ulb.common.dto.persistence.CreateBugemonDTO}, and delegates persistence to
+ * {@link ulb.services.BugemonService}.
+ */
 public class CreateBugemonController extends Controller<CreateBugemonView> implements CreateBugemonView.Listener {
 
     private final BugemonService bugemonService;
 
-    private Optional<BugemonType> selectedBugemonType = Optional.empty();
+    private Optional<ElementType> selectedBugemonType = Optional.empty();
     private Optional<URL> selectedBugemonSpriteUrl = Optional.empty();
 
     public CreateBugemonController(MetaController metaController, BugemonService bugemonService) {
@@ -30,7 +38,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
     }
 
     @Override
-    public void onTypeSelected(BugemonType selectedType) {
+    public void onTypeSelected(ElementType selectedType) {
         this.selectedBugemonType = Optional.of(selectedType);
         this.updateAvailableAttacks();
     }
@@ -39,14 +47,19 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
     public void onSpriteSelected(File selectedSpriteFile) {
         try {
             this.selectedBugemonSpriteUrl = Optional.of(selectedSpriteFile.toURI().toURL());
+            this.view.setSprite(selectedSpriteFile);
         } catch (MalformedURLException e) {
             this.selectedBugemonSpriteUrl = Optional.empty();
         }
     }
 
+    /**
+     * Refreshes the view's attack selection list to show only attacks matching the currently selected element type.
+     * Does nothing if no type has been selected yet.
+     */
     public void updateAvailableAttacks() {
         this.selectedBugemonType.ifPresent(bugemonType -> {
-            List<Attack> attacks = this.bugemonService.getAttacksByType(bugemonType);
+            List<Attack> attacks = this.bugemonService.getAttacks(bugemonType);
             this.view.setAvailableAttacks(attacks);
         });
     }
@@ -64,10 +77,6 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
             return;
         }
 
-        Attack attack1 = attacks.get(0);
-        Attack attack2 = attacks.get(1);
-        Attack attack3 = attacks.get(2);
-
         if (this.selectedBugemonSpriteUrl.isEmpty()) {
             this.view.showInvalidFormChooseSprite();
             return;
@@ -78,8 +87,9 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
             return;
         }
 
-        CreateBugemonDTO bugemonToCreate = new CreateBugemonDTO(bugemonName, this.selectedBugemonType.get(),
-                this.selectedBugemonSpriteUrl.get(), defense, attack, initiative, hp, false, attack1, attack2, attack3);
+        CreateBugemonDTO bugemonToCreate = this.bugemonService.createBugemon(bugemonName,
+                this.selectedBugemonType.get(), this.selectedBugemonSpriteUrl.get(), attack, defense, initiative, hp,
+                attacks);
 
         try {
             this.bugemonService.saveNewBugemon(bugemonToCreate);

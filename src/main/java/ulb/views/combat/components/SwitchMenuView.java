@@ -9,16 +9,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Bugemon;
+import ulb.models.combat.CombatBugemon;
 import ulb.views.components.ComponentView;
 
 /**
- * Action menu listing the Bugemons available for the player to switch into. Dispatches switch selections through the
- * callback registered via {@link Listener#onSwitch(Bugemon)}. When not a forced switch, a back button is shown and
- * dispatches through the callback registered via {@link Listener#onBack()}.
+ * Action menu listing the Bugemons available for the player to switch into. Each entry is rendered as a row containing
+ * the Bugemon's sprite thumbnail and a button showing its name, level, and current HP.
+ *
+ * <p>
+ * When the switch is not forced, a back button is appended at the bottom so the player can return to the main action
+ * menu without switching. All selections are forwarded through {@link Listener}.
  */
 public class SwitchMenuView extends ComponentView {
-    /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */
     private static final int SPRITE_SIZE = 40;
 
     private Listener listener;
@@ -31,10 +33,18 @@ public class SwitchMenuView extends ComponentView {
         this.listener = listener;
     }
 
-    public void show(List<Bugemon> available, boolean forced) {
+    /**
+     * Clears and repopulates the menu with the given Bugemons available for switching.
+     *
+     * @param available
+     *            Bugemons that can be switched in (typically alive, non-active team members)
+     * @param forced
+     *            {@code true} if this switch cannot be cancelled; hides the back button when set
+     */
+    public void show(List<CombatBugemon> available, boolean forced) {
         this.getChildren().clear();
 
-        for (Bugemon b : available) {
+        for (CombatBugemon b : available) {
             this.getChildren().add(this.createSwitchRow(b));
         }
 
@@ -48,17 +58,18 @@ public class SwitchMenuView extends ComponentView {
         }
     }
 
-    private HBox createSwitchRow(Bugemon b) {
+    private HBox createSwitchRow(CombatBugemon b) {
         HBox row = new HBox();
         row.getStyleClass().add("switch-row");
 
-        File file = new File(Configuration.Paths.SPRITES + b.getSpriteURL());
+        File file = new File(Configuration.Paths.SPRITES + b.getSpritePath());
         ImageView sprite = new ImageView(new Image(file.toURI().toString(), SPRITE_SIZE, SPRITE_SIZE, true, false));
         sprite.setFitWidth(SPRITE_SIZE);
         sprite.setFitHeight(SPRITE_SIZE);
         sprite.setPreserveRatio(true);
 
-        Button btn = new Button(b.getName() + " Nv." + b.getLevel() + "  " + b.getHp() + "/" + b.getMaxHp() + " PV");
+        Button btn = new Button(
+                b.getName() + " Nv." + b.getLevel() + "  " + b.getCurrentHp() + "/" + b.getMaxHp() + " PV");
         btn.getStyleClass().addAll("btn", "btn-action-blue");
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setWrapText(true);
@@ -69,10 +80,18 @@ public class SwitchMenuView extends ComponentView {
         return row;
     }
 
+    /** Callback interface for switch menu interactions. */
     public interface Listener {
 
-        void onSwitch(Bugemon bugemon);
+        /**
+         * Called when the player selects a Bugemon to switch in.
+         *
+         * @param bugemon
+         *            the {@link CombatBugemon} chosen for the switch
+         */
+        void onSwitch(CombatBugemon bugemon);
 
+        /** Called when the player clicks the back button (voluntary switch only). */
         void onBack();
 
     }
