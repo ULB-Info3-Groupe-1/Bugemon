@@ -204,11 +204,11 @@ public class SkillTreeView extends View {
     }
 
     private double nodeX(SkillNode node, int minX) {
-        return (node.x() - minX) * CELL_W + PADDING;
+        return (node.x() - minX) * CELL_W + PADDING + (CELL_W - NODE_WIDTH) / 2.0;
     }
 
     private double nodeY(SkillNode node, int minY) {
-        return (node.y() - minY) * CELL_H + PADDING;
+        return (node.y() - minY) * CELL_H + PADDING + (CELL_H - NODE_HEIGHT) / 2.0;
     }
 
     public interface Listener {
