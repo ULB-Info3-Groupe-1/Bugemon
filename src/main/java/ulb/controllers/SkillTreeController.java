@@ -46,7 +46,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
             this.view.refreshSkillState(state);
             LOG.info("Added point to skill node: {}", skillNode.id());
         } catch (IllegalNodeStateException e) {
-            // Show alert 
+            // Show alert
             LOG.debug("Failed to add point to skill node: {}", skillNode.id());
         }
     }
