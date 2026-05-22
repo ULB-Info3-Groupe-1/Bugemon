@@ -177,7 +177,7 @@ puisqu'il nous suffit de recréer des RunBugemons (la run étant finie après un
 
 Pour les combats, nous utilisons le strategy pattern, avec le type `CombatStrategy`.
 
-```
+```java
 public interface CombatStrategy {
     void chooseAction(CombatContext ctx, ActionCallback callback);
 
