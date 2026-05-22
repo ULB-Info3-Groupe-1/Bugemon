@@ -267,7 +267,7 @@ public class Combat {
     }
 
     private List<TurnAction> computeActionOrder(TurnAction playerAction, TurnAction opponentAction) {
-        // two attacks -> order by prio
+        // two attacks -> order by initiative
         if (playerAction.phase().equals(TurnPhase.ATTACK) && opponentAction.phase().equals(TurnPhase.ATTACK)) {
             int playerInitiative = this.playerTeam.getActive().getEffectiveInitiative();
             int opponentInitiative = this.opponentTeam.getActive().getEffectiveInitiative();
