@@ -4,6 +4,7 @@ public enum RoomState {
     CURRENT,
     AVAILABLE,
     VISITED,
+    VISITED_AVAILABLE,
     LOCKED;
 
     public String cssClass() {
