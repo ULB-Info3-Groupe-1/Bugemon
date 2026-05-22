@@ -13,8 +13,6 @@ import ulb.repositories.TeamRepository;
 import ulb.services.exceptions.TeamNameEmptyException;
 import ulb.services.exceptions.TeamNotFoundException;
 
-// TODO: perform checks for arguments (team contains at least one bugemon, has a name etc.)
-
 /**
  * Service responsible for team persistence.
  */
