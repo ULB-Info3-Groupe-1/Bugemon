@@ -1,7 +1,6 @@
 package ulb.models.combat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import ulb.models.combat.turn.TurnAction.ItemAction;
 import ulb.models.combat.turn.TurnAction.SwitchAction;
 import ulb.models.combat.turn.TurnActionVisitor;
 import ulb.models.combat.turn.TurnActionsReadyCallback;
-import ulb.models.combat.turn.TurnPhase;
 import ulb.models.combat.turn.TurnResolvedCallback;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
@@ -267,20 +265,11 @@ public class Combat {
     }
 
     private List<TurnAction> computeActionOrder(TurnAction playerAction, TurnAction opponentAction) {
-        // two attacks -> order by initiative
-        if (playerAction.phase().equals(TurnPhase.ATTACK) && opponentAction.phase().equals(TurnPhase.ATTACK)) {
-            int playerInitiative = this.playerTeam.getActive().getEffectiveInitiative();
-            int opponentInitiative = this.opponentTeam.getActive().getEffectiveInitiative();
+        int playerInitiative = this.playerTeam.getActive().getEffectiveInitiative();
+        int opponentInitiative = this.opponentTeam.getActive().getEffectiveInitiative();
 
-            return (playerInitiative >= opponentInitiative) ? List.of(playerAction, opponentAction)
-                    : List.of(opponentAction, playerAction);
-        } else /* order by phases priority */ {
-            List<TurnAction> actions = new ArrayList<>();
-            actions.add(playerAction);
-            actions.add(opponentAction);
-            Collections.sort(actions);
-            return actions;
-        }
+        return (playerInitiative >= opponentInitiative) ? List.of(playerAction, opponentAction)
+                : List.of(opponentAction, playerAction);
     }
 
     private boolean checkCombatFinished() {
