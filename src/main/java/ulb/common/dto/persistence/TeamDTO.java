@@ -14,6 +14,7 @@ import java.util.List;
  */
 public record TeamDTO(String playerName, String teamName, List<TeamMemberDTO> members) {
 
+    /** Returns the number of Bugemons in this team. */
     public int size() {
         return this.members().size();
     }

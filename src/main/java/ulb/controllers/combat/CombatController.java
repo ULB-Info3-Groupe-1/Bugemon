@@ -42,9 +42,17 @@ import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 
 /**
- * Main controller for the combat screen. Integrates both the step-by-step animation logic and the manual player input
- * logic, replacing the old ManualCombatController. * It acts as the {@link CombatStrategy} for the player, intercepting
- * the request for actions/switches from the Combat model and opening the UI menus accordingly.
+ * Main controller for the combat screen. Integrates step-by-step turn animation with manual player input.
+ *
+ * <p>
+ * Implements {@link PlayerInputHandler} so that it acts as the {@link CombatStrategy} for the player side: the
+ * {@link ulb.models.combat.Combat} model calls back into this controller when it needs an action or a forced switch, at
+ * which point the appropriate UI menu is opened. Once the player responds, the chosen {@link TurnAction} is dispatched
+ * back to the model to resolve the turn.
+ *
+ * <p>
+ * Turn resolution produces a list of {@link TurnStep} events that are queued and replayed one at a time; each step
+ * waits for a "Next" click before advancing.
  */
 public class CombatController extends Controller<CombatView>
         implements CombatView.Listener, CombatView.NextListener, PlayerInputHandler {
@@ -75,7 +83,14 @@ public class CombatController extends Controller<CombatView>
     }
 
     /**
-     * Builds and initializes a manual standalone combat; the opponent team is produced by {@code opponentFactory}.
+     * Builds and starts a new combat session via the supplied factory.
+     *
+     * @param playerRunTeam
+     *            the player's team for this run
+     * @param combatFactory
+     *            factory that assembles the {@link ulb.models.combat.Combat} instance
+     * @param availableBugemons
+     *            pool of static Bugemon data passed to the factory for opponent generation
      */
     public void startCombat(RunTeam playerRunTeam, CombatFactory combatFactory, List<Bugemon> availableBugemons) {
         SkillContext skillContext = this.skillService.buildSkillContext(this.playerState.getSkillTreeState());
@@ -165,7 +180,10 @@ public class CombatController extends Controller<CombatView>
         this.resolvePlayerAction(new ForfeitAction());
     }
 
-    /** Dispatch the resolved action back to the Combat model */
+    /**
+     * Dispatches the resolved player action back to the {@link ulb.models.combat.Combat} model via the stored callback.
+     * Clears the pending callback before invoking it to prevent double-invocation.
+     */
     private void resolvePlayerAction(TurnAction action) {
         if (this.pendingActionCallback != null) {
             ActionCallback cb = this.pendingActionCallback;
@@ -190,6 +208,9 @@ public class CombatController extends Controller<CombatView>
 
     // ── Step Iteration ─────────────────────────────────────────
 
+    /**
+     * Pops the next {@link TurnStep} from the queue and shows it, or finalises the turn if the queue is empty.
+     */
     private void advanceStep() {
         if (!this.pendingSteps.isEmpty()) {
             TurnStep step = this.pendingSteps.poll();
@@ -202,6 +223,12 @@ public class CombatController extends Controller<CombatView>
         }
     }
 
+    /**
+     * Updates the HP display in the view for the step that was just shown, if that step mutates HP.
+     *
+     * @param step
+     *            the step whose HP changes are to be reflected in the view
+     */
     private void refreshHpForStep(TurnStep step) {
         switch (step) {
             case TurnStep.AttackStep atk -> this.view.updateHp(atk.defender(), atk.defenderHpAfter());
@@ -216,6 +243,10 @@ public class CombatController extends Controller<CombatView>
         }
     }
 
+    /**
+     * Checks the post-turn state and either requests the next turn, triggers a forced switch for a KO'd Bugemon, or
+     * finalises the combat.
+     */
     private void processEndOfTurn() {
         if (this.combat.isFinished()) {
             this.onCombatFinished();
@@ -228,6 +259,10 @@ public class CombatController extends Controller<CombatView>
         }
     }
 
+    /**
+     * Finalises XP, persists the player state, and delegates to
+     * {@link ulb.controllers.MetaController#onCombatFinished(boolean, CombatSummary)}.
+     */
     private void onCombatFinished() {
         boolean won = this.combat.getResult() == CombatResult.VICTORY;
         LOG.info("Combat ended. Victory: {}", won);
@@ -249,6 +284,10 @@ public class CombatController extends Controller<CombatView>
         this.view.showSwitchMenu(context.allyTeam().getAvailable(), true);
     }
 
+    /**
+     * Callback invoked when a forced switch (KO replacement) has been resolved. Adds the resulting steps to the queue
+     * and advances.
+     */
     private void onForcedSwitchResolved(List<TurnStep> steps) {
         this.pendingSteps.addAll(steps);
         this.advanceStep();

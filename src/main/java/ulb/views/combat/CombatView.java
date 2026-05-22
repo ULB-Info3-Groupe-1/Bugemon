@@ -35,6 +35,16 @@ import ulb.views.combat.components.SwitchMenuView;
 import ulb.views.components.DialogZoneView;
 import ulb.views.components.HoverInfoView;
 
+/**
+ * Root view for the combat screen. Manages two {@link BugemonInfoView} HUD panels (player and opponent), both Bugemon
+ * sprite {@link ImageView}s, an action-menu slot that swaps between {@link ActionMenuView}, {@link AttackMenuView},
+ * {@link SwitchMenuView}, and {@link ItemMenuView}, a {@link HoverInfoView} for attack or item previews, and a
+ * {@link DialogZoneView} for turn narration.
+ *
+ * <p>
+ * User actions flow out through {@link Listener}; turn-step acknowledgements flow out through {@link NextListener}.
+ * Animations (lunge-and-recoil on attack, fade-out on KO) automatically disable the Next button for their duration.
+ */
 public class CombatView extends View {
 
     @FXML
@@ -83,6 +93,14 @@ public class CombatView extends View {
         this.showMainActionMenu();
     }
 
+    /**
+     * Displays both Bugemons in their initial state — loads sprites and HUD data, then hides the dialog zone.
+     *
+     * @param newPlayerBugemon
+     *            the player's active Bugemon
+     * @param newOpponentBugemon
+     *            the opponent's active Bugemon
+     */
     public void displayBugemons(CombatBugemon newPlayerBugemon, CombatBugemon newOpponentBugemon) {
         this.playerBugemon = newPlayerBugemon;
         this.opponentBugemon = newOpponentBugemon;
@@ -92,6 +110,13 @@ public class CombatView extends View {
         this.hideDialog();
     }
 
+    /**
+     * Updates the HUD for the Bugemon that just switched in, then synchronises its HP bar to the HP it had at the
+     * moment of the switch.
+     *
+     * @param switchStep
+     *            the switch step describing which Bugemon entered and its HP at that point
+     */
     public void switchBugemon(TurnStep.SwitchStep switchStep) {
         if (switchStep.isPlayer()) {
             this.playerBugemon = switchStep.bugemon();
@@ -104,6 +129,14 @@ public class CombatView extends View {
         this.updateHp(switchStep.bugemon(), switchStep.hpAtSwitch());
     }
 
+    /**
+     * Updates the HP bar for the given Bugemon.
+     *
+     * @param bugemon
+     *            the Bugemon whose HP changed
+     * @param currentHp
+     *            the new current HP value
+     */
     public void updateHp(CombatBugemon bugemon, int currentHp) {
         if (bugemon == this.playerBugemon) {
             this.bugemonPlayerInfo.setHp(currentHp, bugemon.getMaxHp());
@@ -250,51 +283,101 @@ public class CombatView extends View {
         this.nextListener = nextlistener;
     }
 
+    /**
+     * Replaces the content of the action-menu slot with the given node.
+     *
+     * @param content
+     *            the new menu component to display
+     */
     protected void setActionMenuContent(Node content) {
         this.actionMenuSlot.getChildren().setAll(content);
     }
 
+    /** Switches the action-menu slot back to the main four-button menu. */
     public void showMainActionMenu() {
         this.setActionMenuContent(this.actionMenu);
     }
 
+    /**
+     * Populates the attack menu with the given attacks and switches the action-menu slot to it.
+     *
+     * @param attacks
+     *            the attacks available to the player's active Bugemon
+     */
     public void showAttackMenu(List<Attack> attacks) {
         this.attackMenu.show(attacks);
         this.setActionMenuContent(this.attackMenu);
     }
 
+    /**
+     * Shows the hover info panel with attack details and the computed type-matchup efficiency badge.
+     *
+     * @param attack
+     *            the attack being previewed
+     * @param efficiency
+     *            the type-matchup efficiency against the current opponent
+     */
     public void showAttackPreview(Attack attack, Efficiency efficiency) {
         this.hoverInfoView.show(attack, efficiency);
     }
 
+    /** Hides the hover info panel. */
     public void hideAttackPreview() {
         this.hoverInfoView.hide();
     }
 
+    /**
+     * Populates the switch menu with the available Bugemons and switches the action-menu slot to it.
+     *
+     * @param available
+     *            Bugemons that can be switched in
+     * @param forced
+     *            {@code true} if this is a forced switch (no back button is shown)
+     */
     public void showSwitchMenu(List<CombatBugemon> available, boolean forced) {
         this.switchMenu.show(available, forced);
         this.setActionMenuContent(this.switchMenu);
     }
 
+    /**
+     * Populates the item menu with the player's current inventory and switches the action-menu slot to it.
+     *
+     * @param inventory
+     *            mapping of each item to its remaining quantity
+     */
     public void showInventory(Map<Item, Integer> inventory) {
         this.itemMenuView.show(inventory);
         this.setActionMenuContent(this.itemMenuView);
     }
 
+    /**
+     * Shows the hover info panel with item details.
+     *
+     * @param item
+     *            the item being previewed
+     */
     public void showItemPreview(Item item) {
         this.hoverInfoView.show(item);
     }
 
+    /** Hides the action-menu slot entirely (used while a dialog is visible). */
     protected void hideActionMenu() {
         this.actionMenuSlot.setVisible(false);
         this.actionMenuSlot.setManaged(false);
     }
 
+    /** Restores the action-menu slot visibility after a dialog is dismissed. */
     protected void showActionMenu() {
         this.actionMenuSlot.setVisible(true);
         this.actionMenuSlot.setManaged(true);
     }
 
+    /**
+     * Displays the narration text and plays the animation for the given turn step.
+     *
+     * @param step
+     *            the step to narrate and animate
+     */
     public void showStep(TurnStep step) {
         this.showStepDialog(step);
         this.showStepAnimation(step);
@@ -344,17 +427,26 @@ public class CombatView extends View {
         this.dialogZoneView.setManaged(true);
     }
 
+    /** Hides the dialog zone and restores the action-menu slot. */
     public void hideDialog() {
         this.dialogZoneView.setVisible(false);
         this.dialogZoneView.setManaged(false);
         this.showActionMenu();
     }
 
+    /**
+     * Disables the Next button and hides the action menu, preventing any player input until the current animation or
+     * step concludes.
+     */
     public void lockNextButton() {
         this.dialogZoneView.setNextButtonDisabled(true);
         this.hideActionMenu();
     }
 
+    /**
+     * Plays the lunge-and-recoil sprite animation for an attack step, then re-enables the Next button when done. The
+     * attacker slides toward the defender, triggers a red-glow flash on impact, and returns to its original position.
+     */
     private void playAttackAnimation(TurnStep.AttackStep step) {
         boolean attackerIsAlly = (this.playerBugemon != null) && (step.attacker() == this.playerBugemon);
         ImageView attackerSprite = attackerIsAlly ? this.bugemonPlayerImage : this.bugemonOpponentImage;
@@ -383,6 +475,9 @@ public class CombatView extends View {
         forward.play();
     }
 
+    /**
+     * Fades the KO'd Bugemon's sprite to transparent, then re-enables the Next button.
+     */
     private void playKoAnimation(TurnStep.KoStep step) {
         boolean bugemonIsAlly = (this.playerBugemon != null) && (step.koBugemon() == this.playerBugemon);
         ImageView sprite = bugemonIsAlly ? this.bugemonPlayerImage : this.bugemonOpponentImage;
@@ -396,27 +491,65 @@ public class CombatView extends View {
         fade.play();
     }
 
+    /** Callback interface for player turn acknowledgements (Next button clicks). */
     public interface NextListener {
+        /** Called when the player clicks the Next button to advance the turn. */
         void onNext();
     }
 
+    /** Callback interface for all combat action choices made by the player. */
     public interface Listener {
+
+        /** Called when the player selects the Attack action. */
         void onAttack();
 
+        /**
+         * Called when the mouse enters an attack button.
+         *
+         * @param attack
+         *            the hovered attack
+         */
         void onAttackHovered(Attack attack);
 
+        /**
+         * Called when the player confirms an attack.
+         *
+         * @param attack
+         *            the chosen attack
+         */
         void onAttackChosen(Attack attack);
 
+        /** Called when the player selects the Switch action. */
         void onSwitch();
 
+        /**
+         * Called when the player selects the Bugemon to switch in.
+         *
+         * @param bugemon
+         *            the Bugemon chosen for the switch
+         */
         void onSwitchChosen(CombatBugemon bugemon);
 
+        /** Called when the player forfeits the combat. */
         void onForfeit();
 
+        /** Called when the player opens the inventory. */
         void onInventory();
 
+        /**
+         * Called when the mouse enters an item button.
+         *
+         * @param item
+         *            the hovered item
+         */
         void onItemHovered(Item item);
 
+        /**
+         * Called when the player selects an item to use.
+         *
+         * @param item
+         *            the chosen item
+         */
         void onItemChosen(Item item);
     }
 

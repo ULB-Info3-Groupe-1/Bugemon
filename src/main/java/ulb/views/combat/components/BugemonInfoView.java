@@ -10,7 +10,8 @@ import ulb.models.combat.CombatBugemon;
 import ulb.views.components.ComponentView;
 
 /**
- * Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link BugemonDTO}.
+ * Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link CombatBugemon}. The
+ * component's root node also receives a CSS class matching the Bugemon's {@link ElementType} for type-coloured theming.
  */
 public class BugemonInfoView extends ComponentView {
 
@@ -30,7 +31,11 @@ public class BugemonInfoView extends ComponentView {
     }
 
     /**
-     * Refreshes all displayed fields from the given {@link BugemonDTO} and applies the type style class.
+     * Refreshes all displayed fields from the given {@link CombatBugemon} and applies the corresponding element-type
+     * style class to the component root.
+     *
+     * @param bugemon
+     *            the Bugemon whose data should be reflected in the HUD
      */
     public void setBugemonInfo(CombatBugemon bugemon) {
         for (ElementType type : ElementType.values()) {
@@ -44,6 +49,14 @@ public class BugemonInfoView extends ComponentView {
         this.bugemonHpLabel.setText(bugemon.getCurrentHp() + " / " + bugemon.getMaxHp() + " PV");
     }
 
+    /**
+     * Updates only the HP bar and label without re-rendering the full HUD; used after damage or healing events.
+     *
+     * @param currentHp
+     *            the Bugemon's remaining HP
+     * @param maxHp
+     *            the Bugemon's maximum HP
+     */
     public void setHp(int currentHp, int maxHp) {
         this.bugemonHPBar.setProgress((double) currentHp / maxHp);
         this.bugemonHpLabel.setText(currentHp + " / " + maxHp + " PV");

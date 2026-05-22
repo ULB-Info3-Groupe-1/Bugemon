@@ -111,6 +111,12 @@ public abstract class CombatFactory {
         return CombatTeam.fromRunTeam(RunTeam.fromTeam(this.opponentFactory.create(playerTeamSize, bugemons)));
     }
 
+    /**
+     * Returns the {@link Inventory} to assign to the opponent at the start of combat. The default implementation
+     * returns an empty inventory; subclasses may override to provide a pre-stocked set of items.
+     *
+     * @return the opponent's starting inventory
+     */
     protected Inventory buildOpponentInventory() {
         return new Inventory();
     }

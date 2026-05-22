@@ -153,14 +153,22 @@ public class ManageTeamView extends View {
         this.bugemonsTeamView.showTeam(members);
     }
 
+    /**
+     * Sets the header label to display the given team name.
+     *
+     * @param teamName
+     *            the name to display above the working team panel
+     */
     public void refreshWorkingTeamNameToShow(String teamName) {
         this.selectedTeamName.setText(teamName);
     }
 
+    /** Sets the header label to the "no team selected" placeholder text. */
     public void refreshWorkingTeamNameNoTeamSelected() {
         this.refreshWorkingTeamNameToShow(NO_TEAM_SELECTED);
     }
 
+    /** Sets the header label to the "team not saved" placeholder text. */
     public void refreshWorkingTeamNameTeamNotSaved() {
         this.refreshWorkingTeamNameToShow(TEAM_NOT_SAVED_MESSAGE);
     }
@@ -178,10 +186,22 @@ public class ManageTeamView extends View {
         this.allBugemonsGridView.showAll(availableBugemons, selectedBugemons);
     }
 
+    /**
+     * Replaces the team list with the given names.
+     *
+     * @param teamNames
+     *            the updated list of saved team names
+     */
     public void refreshTeamNames(List<String> teamNames) {
         this.teamListView.setItems(FXCollections.observableArrayList(teamNames));
     }
 
+    /**
+     * Selects the given team in the list, or clears the selection if {@code teamName} is {@code null}.
+     *
+     * @param teamName
+     *            the team to select, or {@code null} to deselect all
+     */
     public void refreshTeamSelected(String teamName) {
         if (teamName == null) {
             this.teamListView.getSelectionModel().clearSelection();
@@ -192,6 +212,7 @@ public class ManageTeamView extends View {
 
     // --- Utils ---
 
+    /** Clears the team-name text field used for saving or renaming. */
     public void clearTeamNameToSave() {
         this.saveTeamNameInput.setText("");
     }

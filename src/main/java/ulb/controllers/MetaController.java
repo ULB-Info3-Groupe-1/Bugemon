@@ -116,24 +116,51 @@ public class MetaController {
         this.initTransitions();
     }
 
+    /** Navigates to the save-menu screen to begin the application flow. */
     public void start() {
         this.switchTo(Window.SAVE_MENU);
     }
 
+    /**
+     * Generates rewards for the cleared tower room and navigates to the reward screen.
+     *
+     * @param runTeam
+     *            the player's current run team, used to tailor reward generation
+     */
     public void startRewardFlow(RunTeam runTeam) {
         List<Reward> rewards = this.rewardService.generateRewards(runTeam);
         this.rewardController.initialize(rewards, runTeam, this.playerState.getInventory());
         this.switchTo(Window.REWARD);
     }
 
+    /** Called when the player finishes choosing rewards; returns control to the tower floor screen. */
     public void onRewardFlowFinished() {
         this.towerController.onBonusRoomExited();
     }
 
+    /**
+     * Routes to the appropriate post-combat screen for a standalone (non-tower) combat.
+     *
+     * @param won
+     *            {@code true} if the player won
+     */
     public void onCombatFinished(boolean won) {
         this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
     }
 
+    /**
+     * Routes to the appropriate post-combat screen after a combat that produced a {@link CombatSummary}.
+     *
+     * <p>
+     * During a tower run, a defeat clears the active tower and goes to the defeat screen; a victory may trigger floor
+     * advancement and then XP / level-up processing. Outside a tower run, behaviour is the same as
+     * {@link #onCombatFinished(boolean)}.
+     *
+     * @param won
+     *            {@code true} if the player won
+     * @param summary
+     *            the summary produced by {@link ulb.services.CombatService#finalizeCombat}
+     */
     public void onCombatFinished(boolean won, CombatSummary summary) {
         LOG.info("onCombatFinished, won: {}", won);
         this.lastCombatSummary = summary;
@@ -155,6 +182,13 @@ public class MetaController {
         this.switchTo(won ? Window.COMBAT_VICTORY : Window.COMBAT_DEFEAT);
     }
 
+    /**
+     * Called when the player dismisses the victory screen.
+     *
+     * <p>
+     * Processes any pending {@link CombatSummary} (level-ups, etc.) and then hands control back to the main menu or
+     * tower floor screen.
+     */
     public void onCombatVictoryFinished() {
         if (this.lastCombatSummary != null) {
             this.receiveCombatSummary(this.lastCombatSummary);
@@ -174,6 +208,12 @@ public class MetaController {
         }
     }
 
+    /**
+     * Called by {@link LevelUpController} when all queued level-ups have been processed.
+     *
+     * <p>
+     * Returns to the tower floor screen if a run is active, otherwise to the main menu.
+     */
     public void onAllPendingLevelUpsConsumed() {
         if (this.isTowerActive) {
             this.switchTo(Window.TOWER);
@@ -182,26 +222,35 @@ public class MetaController {
         }
     }
 
+    /** Routes to the team-edit screen after a defeat, allowing the player to adjust their team. */
     public void onCombatDefeatRetry() {
         this.onEditTeam();
     }
 
+    /** Navigates to the team-creation screen. */
     public void onCreateTeam() {
         this.switchTo(Window.CREATE_TEAM);
     }
 
+    /** Navigates to the custom-Bugemon creation screen. */
     public void onCreateBugemon() {
         this.switchTo(Window.CREATE_BUGEMON);
     }
 
+    /** Navigates to the save/load menu. */
     public void onSaveMenu() {
         this.switchTo(Window.SAVE_MENU);
     }
 
+    /** Navigates to the main menu. */
     public void onMainMenu() {
         this.switchTo(Window.MAIN_MENU);
     }
 
+    /**
+     * Starts a player-controlled (manual) combat session using the active team and navigates to the combat screen. Does
+     * nothing if no active team is set.
+     */
     public void onStartManualCombat() {
         this.playerState.getActiveTeam().ifPresent(team -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(team);
@@ -214,6 +263,10 @@ public class MetaController {
         });
     }
 
+    /**
+     * Starts an AI-driven (automatic) combat session using the active team and navigates to the combat screen. Does
+     * nothing if no active team is set.
+     */
     public void onStartAutomaticCombat() {
         this.playerState.getActiveTeam().ifPresent(team -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(team);
@@ -226,20 +279,27 @@ public class MetaController {
         });
     }
 
+    /**
+     * Starts or resumes a tower run for the active team and navigates to the tower floor screen. Does nothing if no
+     * active team is set.
+     */
     public void onTower() {
         this.isTowerActive = true;
         this.towerController.startRun();
         this.switchTo(Window.TOWER);
     }
 
+    /** Marks the tower flow as inactive without navigating away from the current screen. */
     public void endTowerFlow() {
         this.isTowerActive = false;
     }
 
+    /** Navigates to the team-editing screen. */
     public void onEditTeam() {
         this.switchTo(Window.EDIT_TEAM);
     }
 
+    /** Navigates to the skill-tree screen. */
     public void onSkillTree() {
         this.switchTo(Window.SKILL_TREE);
     }
@@ -309,10 +369,26 @@ public class MetaController {
         transition.run();
     }
 
+    /**
+     * Delegates to {@link View#show(javafx.stage.Stage)} to display the given view on the primary stage.
+     *
+     * @param view
+     *            the view to display
+     */
     void showView(View view) {
         view.show(this.stage);
     }
 
+    /**
+     * Starts a tower-combat session for the given run team and navigates to the manual-combat screen.
+     *
+     * @param runTeam
+     *            the player's current run team
+     * @param floor
+     *            the floor number, used for XP and difficulty scaling
+     * @param isBoss
+     *            {@code true} to generate a boss opponent, {@code false} for a regular combat
+     */
     public void onStartTowerCombat(RunTeam runTeam, int floor, boolean isBoss) {
         List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
         TeamFactory opponentFactory = this.combatService.createOpponentFactory(isBoss);

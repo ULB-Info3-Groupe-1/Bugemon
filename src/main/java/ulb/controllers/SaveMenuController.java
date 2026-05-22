@@ -9,7 +9,11 @@ import ulb.views.SaveMenuView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller for the save menu screen.
+ * Controller for the save/load screen shown on application startup.
+ *
+ * <p>
+ * Offers three actions: start a new game (clears all player data), continue an existing game, or quit. Delegates to
+ * {@link SaveService} for persistence and to {@link MetaController} for navigation.
  */
 public class SaveMenuController extends Controller<SaveMenuView> implements SaveMenuView.Listener {
 

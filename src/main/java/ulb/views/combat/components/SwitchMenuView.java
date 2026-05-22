@@ -9,14 +9,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.CombatBugemon;
 import ulb.views.components.ComponentView;
 
 /**
- * Action menu listing the Bugemons available for the player to switch into. Dispatches switch selections through the
- * callback registered via {@link Listener#onSwitch(Bugemon)}. When not a forced switch, a back button is shown and
- * dispatches through the callback registered via {@link Listener#onBack()}.
+ * Action menu listing the Bugemons available for the player to switch into. Each entry is rendered as a row containing
+ * the Bugemon's sprite thumbnail and a button showing its name, level, and current HP.
+ *
+ * <p>
+ * When the switch is not forced, a back button is appended at the bottom so the player can return to the main action
+ * menu without switching. All selections are forwarded through {@link Listener}.
  */
 public class SwitchMenuView extends ComponentView {
     private static final int SPRITE_SIZE = 40;
@@ -31,6 +33,14 @@ public class SwitchMenuView extends ComponentView {
         this.listener = listener;
     }
 
+    /**
+     * Clears and repopulates the menu with the given Bugemons available for switching.
+     *
+     * @param available
+     *            Bugemons that can be switched in (typically alive, non-active team members)
+     * @param forced
+     *            {@code true} if this switch cannot be cancelled; hides the back button when set
+     */
     public void show(List<CombatBugemon> available, boolean forced) {
         this.getChildren().clear();
 
@@ -70,10 +80,18 @@ public class SwitchMenuView extends ComponentView {
         return row;
     }
 
+    /** Callback interface for switch menu interactions. */
     public interface Listener {
 
+        /**
+         * Called when the player selects a Bugemon to switch in.
+         *
+         * @param bugemon
+         *            the {@link CombatBugemon} chosen for the switch
+         */
         void onSwitch(CombatBugemon bugemon);
 
+        /** Called when the player clicks the back button (voluntary switch only). */
         void onBack();
 
     }

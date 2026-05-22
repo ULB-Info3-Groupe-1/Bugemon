@@ -9,10 +9,28 @@ package ulb.models.effect;
  */
 public interface EffectVisitor {
 
+    /**
+     * Handles a {@link HealEffect}.
+     *
+     * @param healEffect
+     *            the heal effect to process
+     */
     void visit(HealEffect healEffect);
 
+    /**
+     * Handles a {@link ResetMalusEffect}.
+     *
+     * @param resetMalusEffect
+     *            the reset-malus effect to process
+     */
     void visit(ResetMalusEffect resetMalusEffect);
 
+    /**
+     * Handles a {@link StatModifierEffect}.
+     *
+     * @param statModifierEffect
+     *            the stat-modifier effect to process
+     */
     void visit(StatModifierEffect statModifierEffect);
 
 }

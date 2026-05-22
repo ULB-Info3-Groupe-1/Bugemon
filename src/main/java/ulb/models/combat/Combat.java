@@ -367,10 +367,20 @@ public class Combat {
         this.tickEndOfTurn(this.opponentTeam.getActive());
     }
 
+    /**
+     * Returns the player's active {@link SkillContext} for this combat session.
+     *
+     * @return the skill context supplying stat bonuses and type multipliers for the player
+     */
     public SkillContext getPlayerSkillContext() {
         return this.playerSkillContext;
     }
 
+    /**
+     * Returns {@code true} if the combat has ended, either by a team defeat or a player forfeit.
+     *
+     * @return {@code true} once the combat is over
+     */
     public boolean isFinished() {
         return this.finished;
     }
@@ -390,34 +400,74 @@ public class Combat {
         return this.result;
     }
 
+    /**
+     * Returns the player's {@link CombatTeam}.
+     *
+     * @return the player team
+     */
     public CombatTeam getPlayerTeam() {
         return this.playerTeam;
     }
 
+    /**
+     * Returns the currently active Bugemon on the player's team.
+     *
+     * @return the player's active {@link CombatBugemon}
+     */
     public CombatBugemon getActivePlayerBugemon() {
         return this.playerTeam.getActive();
     }
 
+    /**
+     * Returns the currently active Bugemon on the opponent's team.
+     *
+     * @return the opponent's active {@link CombatBugemon}
+     */
     public CombatBugemon getActiveOpponentBugemon() {
         return this.opponentTeam.getActive();
     }
 
+    /**
+     * Returns the opponent's {@link CombatTeam}.
+     *
+     * @return the opponent team
+     */
     public CombatTeam getOpponentTeam() {
         return this.opponentTeam;
     }
 
+    /**
+     * Returns an unmodifiable view of the player's item inventory as a quantity map.
+     *
+     * @return map from {@link Item} to remaining quantity
+     */
     public Map<Item, Integer> getPlayerInventory() {
         return this.playerInventory.getMap();
     }
 
+    /**
+     * Returns the total number of Bugemon on the opponent's team (alive and fainted).
+     *
+     * @return the opponent team size
+     */
     public int getOpponentTeamSize() {
         return this.opponentTeam.size();
     }
 
+    /**
+     * Returns the tower floor on which this combat takes place.
+     *
+     * @return the floor number
+     */
     public int getFloor() {
         return this.floor;
     }
 
+    /**
+     * Returns {@code true} if this combat is a boss encounter.
+     *
+     * @return {@code true} for a boss fight, {@code false} for a regular encounter
+     */
     public boolean isBossMode() {
         return this.bossMode;
     }

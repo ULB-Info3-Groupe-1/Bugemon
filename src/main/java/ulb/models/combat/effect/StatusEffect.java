@@ -38,14 +38,31 @@ public class StatusEffect {
         this.ticker = (duration == EffectDuration.PERMANENT) ? null : new Ticker(1);
     }
 
+    /**
+     * Returns the stat that this effect modifies.
+     *
+     * @return the targeted {@link StatType}
+     */
     public StatType getStat() {
         return this.stat;
     }
 
+    /**
+     * Returns the signed amount by which this effect modifies its target stat. Positive values are bonuses; negative
+     * values are maluses.
+     *
+     * @return the stat modifier
+     */
     public int getModifier() {
         return this.modifier;
     }
 
+    /**
+     * Returns {@code true} if this effect's lifespan has elapsed and it should be removed. Permanent effects (no
+     * ticker) never expire.
+     *
+     * @return {@code true} when the effect has run its course
+     */
     public boolean isExpired() {
         return this.ticker != null && this.ticker.isExpired();
     }
@@ -59,6 +76,11 @@ public class StatusEffect {
         }
     }
 
+    /**
+     * Returns {@code true} if this effect applies a penalty (negative modifier) to its target stat.
+     *
+     * @return {@code true} when the modifier is less than zero
+     */
     public boolean isNegative() {
         return this.modifier < 0;
     }

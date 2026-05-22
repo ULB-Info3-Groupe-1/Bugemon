@@ -49,6 +49,11 @@ public class CombatTeam {
         return new CombatTeam(combatMembers);
     }
 
+    /**
+     * Returns the currently active (fighting) Bugemon.
+     *
+     * @return the active {@link CombatBugemon}
+     */
     public CombatBugemon getActive() {
         return this.active;
     }
@@ -79,14 +84,29 @@ public class CombatTeam {
         return this.members.stream().filter(CombatBugemon::hasParticipated).toList();
     }
 
+    /**
+     * Returns the total number of Bugemon on this team, including fainted members.
+     *
+     * @return total team size
+     */
     public int size() {
         return this.members.size();
     }
 
+    /**
+     * Returns {@code true} if every Bugemon on this team has been KO'd.
+     *
+     * @return {@code true} when the team has no surviving members
+     */
     public boolean isDefeated() {
         return this.members.stream().allMatch(CombatBugemon::isKo);
     }
 
+    /**
+     * Returns all Bugemon on this team that have not yet been KO'd.
+     *
+     * @return list of alive {@link CombatBugemon}s; may be empty if the team is defeated
+     */
     public List<CombatBugemon> getAlive() {
         return this.members.stream().filter(b -> !b.isKo()).toList();
     }
@@ -100,6 +120,11 @@ public class CombatTeam {
         return this.getAlive().stream().filter(b -> b != this.active).toList();
     }
 
+    /**
+     * Returns {@code true} if at least one Bugemon other than the active one is still alive and can be switched in.
+     *
+     * @return {@code true} when a voluntary switch is possible
+     */
     public boolean hasAvailable() {
         return !this.getAvailable().isEmpty();
     }

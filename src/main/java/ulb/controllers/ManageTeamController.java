@@ -31,6 +31,13 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     private Team tmpTeam; // The team that gets edited in this screen
 
+    /**
+     * Operating modes for the team management form.
+     *
+     * <p>
+     * In {@link #CREATE} mode the working team starts empty. In {@link #EDIT} mode it is seeded from the player's
+     * current active team on every {@code show()} call.
+     */
     public enum TeamFormMode {
         EDIT,
         CREATE
@@ -70,6 +77,9 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         super.show();
     }
 
+    /**
+     * Refreshes the available-Bugemon list, marking already-selected members as selected in the view.
+     */
     private void updateDisplayedAvailableBugemons() {
         List<BugemonDisplayDTO> allDTOs = this.bugemonService.getPlayerBugemons().stream()
                 .map(PlayerBugemon::toDisplayDTO).toList();
@@ -80,6 +90,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.view.refreshAvailableBugemons(allDTOs, selectedDTOs);
     }
 
+    /**
+     * Refreshes the working-team display, including member list and team-name label (showing the saved name, "not
+     * saved" notice, or an empty-team placeholder).
+     */
     private void updateWorkingTeamToShow() {
         List<BugemonDisplayDTO> memberDTOs = this.tmpTeam.getMembers().stream().map(PlayerBugemon::toDisplayDTO)
                 .toList();
@@ -93,14 +107,17 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         }
     }
 
+    /** Updates the active-team indicator in the view. */
     private void updateTeamSelected() {
         this.view.refreshTeamSelected(this.playerState.getActiveTeamName().orElse(null));
     }
 
+    /** Refreshes the list of saved team names shown in the view. */
     private void updateDisplayedTeamNames() {
         this.view.refreshTeamNames(this.teamService.getTeamNames());
     }
 
+    /** Calls all four view-refresh helpers in the correct order. */
     private void updateAllUI() {
         this.updateWorkingTeamToShow();
         this.updateTeamSelected();
@@ -222,6 +239,12 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.executeIfActiveTeamNotEmpty(this.metaController::onTower);
     }
 
+    /**
+     * Executes the given action only when the player has a non-empty active team selected; shows an alert otherwise.
+     *
+     * @param combat
+     *            the action to run when the guard passes
+     */
     private void executeIfActiveTeamNotEmpty(Runnable combat) {
         if (this.playerState.getActiveTeam().isEmpty()) {
             this.view.showAlertChooseTeamToLaunchCombat();
@@ -243,10 +266,17 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     }
 
+    /** Resets the working team to an empty, nameless state. */
     private void clearTmpTeam() {
         this.tmpTeam = new Team();
     }
 
+    /**
+     * Validates that the working team is non-null, non-empty, and has a non-blank name. Shows the appropriate alert and
+     * returns {@code false} on the first failure.
+     *
+     * @return {@code true} if the team passes all checks
+     */
     private boolean validateTeam() {
         if (this.tmpTeam == null || this.tmpTeam.isEmpty()) {
             this.view.showEmptyTeamAlert();

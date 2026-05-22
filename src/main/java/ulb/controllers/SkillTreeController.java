@@ -32,12 +32,17 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
         this.initialize();
     }
 
+    /** Refreshes the view with the current skill-tree state before displaying it. */
     @Override
     protected void show() {
         this.view.refreshSkillState(this.playerState.getSkillTreeState());
         super.show();
     }
 
+    /**
+     * Wires the view listener, loads the static skill tree definition, and refreshes the displayed skill state. Called
+     * once during construction and can be called again to reset the view.
+     */
     public void initialize() {
         this.view.setListener(this);
         this.view.setTree(this.skillService.getSkillTree());

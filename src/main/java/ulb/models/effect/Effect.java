@@ -12,10 +12,15 @@ import ulb.common.EffectTarget;
 public abstract class Effect {
     private final EffectTarget target;
 
+    /**
+     * @param target
+     *            which combatant this effect applies to (e.g. self or opponent)
+     */
     protected Effect(EffectTarget target) {
         this.target = target;
     }
 
+    /** Returns which combatant this effect targets. */
     public EffectTarget getTarget() {
         return this.target;
     }
