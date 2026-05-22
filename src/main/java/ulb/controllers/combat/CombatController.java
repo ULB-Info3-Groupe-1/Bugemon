@@ -119,8 +119,6 @@ public class CombatController extends Controller<CombatView>
 
     // ── View Listener (Player Input) ──────────────────────────────────────────
 
-    // TODO: remove code dup with extracting, resetting and calling callback
-
     @Override
     public void onAttack() {
         this.view.showAttackMenu(this.combat.getPlayerTeam().getActive().getAttacks());
@@ -144,13 +142,7 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onSwitchChosen(CombatBugemon bugemon) {
-        if (this.pendingSwitchCallback != null) {
-            ActionCallback cb = this.pendingSwitchCallback;
-            this.pendingSwitchCallback = null;
-            cb.onActionChosen(new SwitchAction(bugemon));
-        } else {
-            this.resolvePlayerAction(new SwitchAction(bugemon));
-        }
+        this.resolveSwitchAction(new SwitchAction(bugemon));
     }
 
     @Override
@@ -179,6 +171,20 @@ public class CombatController extends Controller<CombatView>
             ActionCallback cb = this.pendingActionCallback;
             this.pendingActionCallback = null;
             cb.onActionChosen(action);
+        }
+    }
+
+    /**
+     * Dispatch a resolved switch action taking into account a pending switch callback. If there is no pending switch
+     * callback the action is forwarded to the regular player action resolver.
+     */
+    private void resolveSwitchAction(TurnAction action) {
+        if (this.pendingSwitchCallback != null) {
+            ActionCallback cb = this.pendingSwitchCallback;
+            this.pendingSwitchCallback = null;
+            cb.onActionChosen(action);
+        } else {
+            this.resolvePlayerAction(action);
         }
     }
 

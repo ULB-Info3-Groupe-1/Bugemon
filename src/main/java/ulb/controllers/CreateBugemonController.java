@@ -39,6 +39,7 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
     public void onSpriteSelected(File selectedSpriteFile) {
         try {
             this.selectedBugemonSpriteUrl = Optional.of(selectedSpriteFile.toURI().toURL());
+            this.view.setSprite(selectedSpriteFile);
         } catch (MalformedURLException e) {
             this.selectedBugemonSpriteUrl = Optional.empty();
         }

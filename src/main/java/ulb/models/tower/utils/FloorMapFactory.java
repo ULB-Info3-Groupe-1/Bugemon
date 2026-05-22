@@ -9,32 +9,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import ulb.Configuration;
 import ulb.common.RoomType;
 import ulb.models.tower.FloorMap;
 import ulb.models.tower.room.Room;
 import ulb.models.utils.Position;
 
 public class FloorMapFactory {
-    // TODO: those constants shouldn't be here
-    static final int GRID_SIZE = 5;
-    static final int MAX_DEPTH = 6;
-    static final int CENTER = GRID_SIZE / 2;
-
-    static final int MIN_BRANCHES = 3;
-    static final int MAX_BRANCHES = 4;
-
-    static final int MIN_COMBATS = 4;
-    static final int MAX_COMBATS = 6;
-
-    static final int MIN_REWARD = 2;
-    static final int MAX_REWARD = 3;
-
-    private static final int MAX_GENERATION_ATTEMPTS = 10;
-
-    // Probability of continuing growth of a branch in the same direction
-    private static final double BIAS_SAME_DIRECTION_PROB = 0.7;
-
-    private static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     private final int seed;
 
@@ -43,7 +24,7 @@ public class FloorMapFactory {
     }
 
     public FloorMap create(int floor) {
-        for (int i = 0; i < MAX_GENERATION_ATTEMPTS; i++) {
+        for (int i = 0; i < Configuration.FloorMap.MAX_GENERATION_ATTEMPTS; i++) {
             Optional<FloorMap> floormap = this.tryCreate(floor, i);
 
             if (floormap.isPresent()) {
@@ -51,7 +32,8 @@ public class FloorMapFactory {
             }
         }
 
-        throw new IllegalStateException("Failed to create FloorMap after " + MAX_GENERATION_ATTEMPTS + " attempts");
+        throw new IllegalStateException(
+                "Failed to create FloorMap after " + Configuration.FloorMap.MAX_GENERATION_ATTEMPTS + " attempts");
     }
 
     private Optional<FloorMap> tryCreate(int floor, int attempt) {
@@ -64,17 +46,17 @@ public class FloorMapFactory {
         Map<String, List<String>> childrenOf = new HashMap<>();
 
         // start node setup
-        String startKey = nodeKey(CENTER, CENTER);
-        nodeCoords.put(startKey, new int[]{CENTER, CENTER});
+        String startKey = nodeKey(Configuration.FloorMap.CENTER, Configuration.FloorMap.CENTER);
+        nodeCoords.put(startKey, new int[]{Configuration.FloorMap.CENTER, Configuration.FloorMap.CENTER});
         nodeDepths.put(startKey, 0);
         childrenOf.put(startKey, new ArrayList<>());
         parentOf.put(startKey, null);
 
         // compute branch count (between MIN_BRANCHES and MAX_BRANCHES)
-        int branchCount = random.nextInt(MIN_BRANCHES, MAX_BRANCHES);
+        int branchCount = random.nextInt(Configuration.FloorMap.MIN_BRANCHES, Configuration.FloorMap.MAX_BRANCHES);
 
         // shuffle directions in which to grow the branches
-        List<int[]> shuffledDirs = new ArrayList<>(Arrays.asList(DIRECTIONS));
+        List<int[]> shuffledDirs = new ArrayList<>(Arrays.asList(Configuration.FloorMap.DIRECTIONS));
         Collections.shuffle(shuffledDirs, random);
 
         // keep track of number of generated branches to return empty if could not generate enough branches.
@@ -85,8 +67,8 @@ public class FloorMapFactory {
             int[] dir = shuffledDirs.get(b); // allows us to grow every branch in a different direction
 
             // compute start position of branch to grow
-            int x = CENTER + dir[0];
-            int y = CENTER + dir[1];
+            int x = Configuration.FloorMap.CENTER + dir[0];
+            int y = Configuration.FloorMap.CENTER + dir[1];
 
             boolean branchStartPosInBounds = inBounds(x, y);
             boolean branchStartPosAvailable = !nodeCoords.containsKey(nodeKey(x, y));
@@ -100,7 +82,7 @@ public class FloorMapFactory {
             numBranchesGenerated++;
         }
 
-        if (numBranchesGenerated < MIN_BRANCHES) {
+        if (numBranchesGenerated < Configuration.FloorMap.MIN_BRANCHES) {
             return Optional.empty();
         }
 
@@ -113,7 +95,7 @@ public class FloorMapFactory {
             Map<String, int[]> nodeCoords, Map<String, Integer> nodeDepths, Map<String, List<String>> childrenOf,
             Map<String, String> parentOf, Random random) {
 
-        for (int d = depth; d <= MAX_DEPTH; d++) {
+        for (int d = depth; d <= Configuration.FloorMap.MAX_DEPTH; d++) {
             String key = nodeKey(x, y);
             nodeCoords.put(key, new int[]{x, y}); // current node here
             nodeDepths.put(key, d); // current node at depth d
@@ -135,7 +117,8 @@ public class FloorMapFactory {
 
             // Prefer continuing in the same direction when possible.
             // This was not asked by the client but is a cool feature.
-            int[] chosen = (straightFree && random.nextDouble() < BIAS_SAME_DIRECTION_PROB) ? currentDir
+            int[] chosen = (straightFree && random.nextDouble() < Configuration.FloorMap.BIAS_SAME_DIRECTION_PROB)
+                    ? currentDir
                     : candidates.get(random.nextInt(candidates.size()));
 
             x = x + chosen[0];
@@ -182,7 +165,7 @@ public class FloorMapFactory {
 
     private static List<int[]> validNextDirs(int x, int y, int[] lastDir, Map<String, int[]> nodeCoords) {
         List<int[]> result = new ArrayList<>();
-        for (int[] d : DIRECTIONS) {
+        for (int[] d : Configuration.FloorMap.DIRECTIONS) {
             if (d[0] == -lastDir[0] && d[1] == -lastDir[1]) {
                 continue;
             }
@@ -218,7 +201,7 @@ public class FloorMapFactory {
 
         Collections.shuffle(candidates, random);
 
-        int combatCount = random.nextInt(MIN_COMBATS, MAX_COMBATS + 1);
+        int combatCount = random.nextInt(Configuration.FloorMap.MIN_COMBATS, Configuration.FloorMap.MAX_COMBATS + 1);
 
         // keeps tracks of which rooms haven't been assigned a type yet
         List<String> remaining = new ArrayList<>(candidates);
@@ -239,7 +222,7 @@ public class FloorMapFactory {
             types.put(key, RoomType.EMPTY);
         }
 
-        int rewardCount = random.nextInt(MIN_REWARD, MAX_REWARD + 1);
+        int rewardCount = random.nextInt(Configuration.FloorMap.MIN_REWARD, Configuration.FloorMap.MAX_REWARD + 1);
         int rewardAssigned = 0;
 
         List<String> emptyKeys = new ArrayList<>(remaining);
@@ -279,6 +262,6 @@ public class FloorMapFactory {
     }
 
     private static boolean inBounds(int x, int y) {
-        return x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
+        return x >= 0 && x < Configuration.FloorMap.GRID_SIZE && y >= 0 && y < Configuration.FloorMap.GRID_SIZE;
     }
 }

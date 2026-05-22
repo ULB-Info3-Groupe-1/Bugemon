@@ -162,9 +162,6 @@ public class CreateBugemonView extends View {
         if (file != null) {
             this.listener.onSpriteSelected(file);
 
-            // TODO: this should be decided by the controller, not in this func
-            this.bugemonCardView.setSprite(file);
-
         }
     }
 
@@ -255,6 +252,10 @@ public class CreateBugemonView extends View {
         this.attackListView.setItems(FXCollections.observableArrayList(this.attacksByName.keySet()));
         this.attackListView.getSelectionModel().clearSelection();
         this.updateAttackCountLabel();
+    }
+
+    public void setSprite(File file) {
+        this.bugemonCardView.setSprite(file);
     }
 
     public Attack getSelectedAttack(int index) {

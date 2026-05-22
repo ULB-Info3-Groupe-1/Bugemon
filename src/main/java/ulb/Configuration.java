@@ -144,4 +144,29 @@ public abstract class Configuration {
         public static final String SKILL_TREE_PATH = "/json/skill_tree.json";
 
     }
+
+    public static final class FloorMap {
+        private FloorMap() {
+            // Private constructor to prevent instantiation
+        }
+
+        public static final int GRID_SIZE = 5;
+        public static final int MAX_DEPTH = 6;
+        public static final int CENTER = GRID_SIZE / 2;
+
+        public static final int MIN_BRANCHES = 3;
+        public static final int MAX_BRANCHES = 4;
+
+        public static final int MIN_COMBATS = 4;
+        public static final int MAX_COMBATS = 6;
+
+        public static final int MIN_REWARD = 2;
+        public static final int MAX_REWARD = 3;
+
+        public static final int MAX_GENERATION_ATTEMPTS = 10;
+
+        public static final double BIAS_SAME_DIRECTION_PROB = 0.7;
+
+        public static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    }
 }

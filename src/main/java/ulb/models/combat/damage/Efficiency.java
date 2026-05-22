@@ -27,7 +27,10 @@ public enum Efficiency {
         return NORMAL;
     }
 
-    // TODO: this likely introduces code dup with other methods (notably in CombatService)
+    /**
+     * Convenience helper returning the efficiency of an attack of {@code type1} against a defender of {@code type2}
+     * based on element multipliers.
+     */
     public static Efficiency preview(ElementType type1, ElementType type2) {
         return fromMultiplier(type1.getMultiplierAgainst(type2));
     }

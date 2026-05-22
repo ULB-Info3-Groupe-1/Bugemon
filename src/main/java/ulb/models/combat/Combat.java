@@ -87,7 +87,6 @@ public class Combat {
                 bugemon.addEffect(effect);
             }
         }
-        return;
     }
 
     private CombatContext makePlayerContext() {
@@ -134,10 +133,9 @@ public class Combat {
         boolean firstIsPlayer = actions.get(0) == playerAction;
         boolean secondIsPlayer = !firstIsPlayer;
 
-        // TODO: fix code dup with second team/actor
-        // retrieve the bugemon corresponding to the second action
-        // to later check if it died from the first action.
-        CombatTeam secondTeam = firstIsPlayer ? this.opponentTeam : this.playerTeam;
+        // retrieve the bugemon corresponding to the second action to later check if it died from the first
+        // action.
+        CombatTeam secondTeam = this.teamFor(!firstIsPlayer);
         CombatBugemon secondActorBefore = secondTeam.getActive();
 
         LOG.debug("Resolving turn: first={}", firstIsPlayer ? STR_PLAYER : STR_OPPONENT);
@@ -173,7 +171,7 @@ public class Combat {
             return;
         }
 
-        CombatTeam firstTeam = firstIsPlayer ? this.playerTeam : this.opponentTeam;
+        CombatTeam firstTeam = this.teamFor(firstIsPlayer);
         CombatBugemon firstActor = firstTeam.getActive();
 
         // handle potential Ko of first actor — controller will request forced switch
@@ -190,6 +188,10 @@ public class Combat {
 
         LOG.debug("Turn resolved normally with {} steps", steps.size());
         callback.onTurnResolved(steps);
+    }
+
+    private CombatTeam teamFor(boolean isPlayer) {
+        return isPlayer ? this.playerTeam : this.opponentTeam;
     }
 
     public void requestForcedSwitch(boolean isPlayer, TurnResolvedCallback onDone) {
