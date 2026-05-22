@@ -161,7 +161,7 @@ public class TowerService {
     }
 
     private List<Position> getVisitedRoomsPosition(FloorMap floorMap) {
-        return floorMap.getVisitedRooms().stream().map(r -> floorMap.getPosition(r))
-                .map(p -> new Position(p.x(), p.y())).toList();
+        return floorMap.getVisitedRooms().stream().map(floorMap::getPosition).map(p -> new Position(p.x(), p.y()))
+                .toList();
     }
 }

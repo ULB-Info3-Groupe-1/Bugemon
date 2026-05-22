@@ -105,7 +105,7 @@ public class FloorView extends View {
     private void resizePane() {
         int maxX = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::x).max().orElse(0);
         int maxY = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::y).max().orElse(0);
-        this.innerMapPane.setPrefSize((maxX + 1) * CELL_SIZE, (maxY + 1) * CELL_SIZE);
+        this.innerMapPane.setPrefSize((maxX + 1) * (double) CELL_SIZE, (maxY + 1) * (double) CELL_SIZE);
         this.innerMapPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     }
 
