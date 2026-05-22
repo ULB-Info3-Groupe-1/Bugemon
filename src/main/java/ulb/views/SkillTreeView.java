@@ -112,7 +112,7 @@ public class SkillTreeView extends View {
         Label nameLabel = new Label(node.name());
         nameLabel.getStyleClass().add("section-label");
         nameLabel.setWrapText(true);
-        nameLabel.setMaxWidth((double) (NODE_WIDTH - 8));
+        nameLabel.setMaxWidth(NODE_WIDTH - 8);
         nameLabel.setAlignment(Pos.CENTER);
 
         Label levelLabel = new Label(level + " / " + node.maxLevel());
@@ -121,21 +121,21 @@ public class SkillTreeView extends View {
         Label costLabel = new Label(node.cost() + " pt(s)");
         costLabel.getStyleClass().add("section-label");
 
-        VBox content = new VBox(4, nameLabel, new HBox((double) NODE_WIDTH / 4.0, levelLabel, costLabel));
+        VBox content = new VBox(4, nameLabel, new HBox(NODE_WIDTH / 4.0, levelLabel, costLabel));
         content.setAlignment(Pos.CENTER);
         content.setMouseTransparent(true);
 
         HBox actionMenu = new HBox(content);
         actionMenu.getStyleClass().add("action-menu");
         actionMenu.setAlignment(Pos.CENTER);
-        actionMenu.setPrefWidth((double) NODE_WIDTH);
-        actionMenu.setPrefHeight((double) NODE_HEIGHT);
+        actionMenu.setPrefWidth(NODE_WIDTH);
+        actionMenu.setPrefHeight(NODE_HEIGHT);
 
         StackPane skillNode = new StackPane(actionMenu);
         skillNode.getStyleClass().add("skill-node");
-        skillNode.setPrefSize((double) NODE_WIDTH, (double) NODE_HEIGHT);
-        skillNode.setMinSize((double) NODE_WIDTH, (double) NODE_HEIGHT);
-        skillNode.setMaxSize((double) NODE_WIDTH, (double) NODE_HEIGHT);
+        skillNode.setPrefSize(NODE_WIDTH, NODE_HEIGHT);
+        skillNode.setMinSize(NODE_WIDTH, NODE_HEIGHT);
+        skillNode.setMaxSize(NODE_WIDTH, NODE_HEIGHT);
         this.applyStatusStyle(skillNode, status);
         skillNode.setLayoutX(this.nodeX(node, minX));
         skillNode.setLayoutY(this.nodeY(node, minY));
