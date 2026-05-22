@@ -25,6 +25,7 @@ import ulb.models.combat.turn.TurnPhase;
 import ulb.models.combat.turn.TurnResolvedCallback;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
+import ulb.models.combat.turn.TurnStep.ItemStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.combat.utils.CombatContext;
@@ -297,10 +298,13 @@ public class Combat {
                 if (actor.isKo()) {
                     return List.of();
                 }
-                return Combat.this.playerInventory
-                        .useItem(itemAction.item()).map(item -> Combat.this.effectProcessor
-                                .applySingleEffect(item.effect(), actor, opposingTeam.getActive(), actingTeam))
-                        .orElse(new ArrayList<>());
+                return Combat.this.playerInventory.useItem(itemAction.item()).map(item -> {
+                    List<TurnStep> steps = new ArrayList<>();
+                    steps.add(new ItemStep());
+                    steps.addAll(Combat.this.effectProcessor.applySingleEffect(item.effect(), actor,
+                            opposingTeam.getActive(), actingTeam));
+                    return steps;
+                }).orElse(new ArrayList<>());
             }
 
             public List<TurnStep> visit(ForfeitAction a) {

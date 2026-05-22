@@ -107,9 +107,9 @@ public class CombatView extends View {
     }
 
     public void updateHp(CombatBugemon bugemon, int currentHp) {
-        if (bugemon.equals(this.playerBugemon)) {
+        if (bugemon == this.playerBugemon) {
             this.bugemonPlayerInfo.setHp(currentHp, bugemon.getMaxHp());
-        } else if (bugemon.equals(this.opponentBugemon)) {
+        } else if (bugemon == this.opponentBugemon) {
             this.bugemonOpponentInfo.setHp(currentHp, bugemon.getMaxHp());
         }
     }
@@ -329,7 +329,8 @@ public class CombatView extends View {
             case SwitchStep s ->
                 (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
             case KoStep(CombatBugemon koBugemon) -> koBugemon.getName() + " est K.O. !";
-            case HealBugemonStep(CombatBugemon healedBugemon) -> healedBugemon.getName() + " récupère des PV !";
+            case HealBugemonStep(CombatBugemon healedBugemon, int ignored) ->
+                healedBugemon.getName() + " récupère des PV !";
             case TurnStep.HealTeamStep ignored -> "Toute l'équipe récupère des PV !";
             case TurnStep.ItemStep ignored -> "Objet utilisé !";
             default -> "Action effectuée.";

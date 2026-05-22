@@ -16,7 +16,6 @@ public class InventoryService {
     private final StaticRepository staticRepository;
 
     // TODO: UI should permit the player to select the +x items granted by the skill
-    // TODO: Default inventory is not loading properly, missing in combat.
 
     public InventoryService(String playername, InventoryRepository inventoryRepository,
             StaticRepository staticRepository) {

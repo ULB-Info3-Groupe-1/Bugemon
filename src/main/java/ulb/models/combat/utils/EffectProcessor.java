@@ -40,12 +40,12 @@ public class EffectProcessor {
             public void visit(HealEffect healEffect) {
                 switch (target) {
                     case TEAM :
-                        steps.add(new HealTeamStep(throwerTeam));
                         throwerTeam.getAlive().forEach(b -> b.heal(healEffect.getAmount()));
+                        steps.add(new HealTeamStep(throwerTeam, throwerTeam.getActive().getCurrentHp()));
                         break;
                     case THROWER :
-                        steps.add(new HealBugemonStep(thrower));
                         thrower.heal(healEffect.getAmount());
+                        steps.add(new HealBugemonStep(thrower, thrower.getCurrentHp()));
                         break;
                     default :
                         return;

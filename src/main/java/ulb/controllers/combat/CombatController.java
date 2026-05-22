@@ -198,13 +198,12 @@ public class CombatController extends Controller<CombatView>
             case TurnStep.AttackStep atk -> this.view.updateHp(atk.defender(), atk.defenderHpAfter());
             case KoStep(CombatBugemon koBugemon) -> this.view.updateHp(koBugemon, 0);
             case TurnStep.SwitchStep sw -> this.view.switchBugemon(sw);
-            case HealBugemonStep(CombatBugemon healedBugemon) ->
-                this.view.updateHp(healedBugemon, healedBugemon.getCurrentHp());
-            case HealTeamStep(CombatTeam healedTeam) -> {
-                CombatBugemon active = healedTeam.getActive();
-                this.view.updateHp(active, active.getCurrentHp());
-            }
-            default -> { /* ItemStep */ }
+            case HealBugemonStep(CombatBugemon healedBugemon, int hpAfterHeal) ->
+                this.view.updateHp(healedBugemon, hpAfterHeal);
+            case HealTeamStep(CombatTeam healedTeam, int activeHpAfterHeal) ->
+                this.view.updateHp(healedTeam.getActive(), activeHpAfterHeal);
+            default -> {
+                /* ItemStep */ }
         }
     }
 

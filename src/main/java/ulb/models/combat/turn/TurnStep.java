@@ -34,9 +34,9 @@ public sealed interface TurnStep {
     record ItemStep() implements TurnStep {
     }
 
-    record HealBugemonStep(CombatBugemon healedBugemon) implements TurnStep {
+    record HealBugemonStep(CombatBugemon healedBugemon, int hpAfterHeal) implements TurnStep {
     }
 
-    record HealTeamStep(CombatTeam healedTeam) implements TurnStep {
+    record HealTeamStep(CombatTeam healedTeam, int activeHpAfterHeal) implements TurnStep {
     }
 }
