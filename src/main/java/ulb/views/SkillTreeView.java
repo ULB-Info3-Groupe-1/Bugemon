@@ -122,9 +122,9 @@ public class SkillTreeView extends View {
         }
     }
 
-    public void renderTree(SkillTree tree, SkillTreeState state) {
-        this.tree = tree;
-        this.state = state;
+    public void renderTree(SkillTree skillTree, SkillTreeState treeState) {
+        this.tree = skillTree;
+        this.state = treeState;
         this.doRender();
     }
 

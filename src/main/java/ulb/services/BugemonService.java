@@ -50,18 +50,14 @@ public class BugemonService {
     public List<PlayerBugemon> getPlayerBugemons() {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
 
-        return this.staticDataRepository.bugemons().stream().filter(bugemon -> !bugemon.isBoss()) // players cannot own
-                                                                                                  // boss bugemons
-                .map(bugemon -> playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())) // search
-                                                                                                              // for the
-                                                                                                              // PlayerBugemon
-                                                                                                              // corresponding
-                                                                                                              // to this
-                                                                                                              // Bugemon
-                        .findFirst().map(dto -> PlayerBugemon.from(bugemon, dto)) // if one was found then take that
-                                                                                  // PlayerBugemon
-                        .orElseGet(() -> new PlayerBugemon(bugemon))) // otherwise create a new PlayerBugemon based on
-                                                                      // the bugemon
+        // players cannot own boss bugemons
+        return this.staticDataRepository.bugemons().stream().filter(bugemon -> !bugemon.isBoss())
+                // search for the PlayerBugemon corresponding to this Bugemon
+                .map(bugemon -> playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name()))
+                        // if one was found then take that PlayerBugemon
+                        .findFirst().map(dto -> PlayerBugemon.from(bugemon, dto))
+                        // otherwise create a new PlayerBugemon based on the bugemon
+                        .orElseGet(() -> new PlayerBugemon(bugemon)))
                 .toList();
     }
 

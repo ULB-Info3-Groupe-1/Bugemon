@@ -45,9 +45,8 @@ public class FloorMap {
      * Returns the neighboring rooms, (excluding the current room).
      */
     public List<Room> getClickableRooms() { // TODO: name is bad
-        return this.neighbors.get(this.currentRoom).stream().filter(r -> !r.equals(this.currentRoom)) // filter out
-                                                                                                      // current room
-                .toList();
+        // filter out current room
+        return this.neighbors.get(this.currentRoom).stream().filter(r -> !r.equals(this.currentRoom)).toList();
     }
 
     public List<Room> getNeighbors(Room room) {

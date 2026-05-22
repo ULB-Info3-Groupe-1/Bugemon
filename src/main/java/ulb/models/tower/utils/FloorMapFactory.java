@@ -77,8 +77,8 @@ public class FloorMapFactory {
         List<int[]> shuffledDirs = new ArrayList<>(Arrays.asList(DIRECTIONS));
         Collections.shuffle(shuffledDirs, random);
 
-        int numBranchesGenerated = 0; // keep track of number of generated branches to return empty if could not
-                                      // generate enough branches.
+        // keep track of number of generated branches to return empty if could not generate enough branches.
+        int numBranchesGenerated = 0;
 
         // grow the branches
         for (int b = 0; b < branchCount; b++) {

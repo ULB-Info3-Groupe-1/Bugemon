@@ -80,18 +80,14 @@ public class FloorView extends View {
 
         this.innerMapPane.getChildren().add(this.playerIcon);
         this.playerIcon.toFront();
-        this.floorDTO.rooms().stream()
-                .filter(r -> r.state() == RoomState.CURRENT)
-                .findFirst()
-                .ifPresent(r -> {
-                    this.playerIcon.setLayoutX(this.playerX(r.x()));
-                    this.playerIcon.setLayoutY(playerY(r.y()));
-                });
+        this.floorDTO.rooms().stream().filter(r -> r.state() == RoomState.CURRENT).findFirst().ifPresent(r -> {
+            this.playerIcon.setLayoutX(this.playerX(r.x()));
+            this.playerIcon.setLayoutY(playerY(r.y()));
+        });
     }
 
     public void animatePlayerTo(int x, int y, Runnable onFinished) {
-        Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(Configuration.Ui.FLOOR_MOVE_ANIMATION_MS),
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(Configuration.Ui.FLOOR_MOVE_ANIMATION_MS),
                 new KeyValue(this.playerIcon.layoutXProperty(), this.playerX(x)),
                 new KeyValue(this.playerIcon.layoutYProperty(), playerY(y))));
         timeline.setOnFinished(e -> onFinished.run());
