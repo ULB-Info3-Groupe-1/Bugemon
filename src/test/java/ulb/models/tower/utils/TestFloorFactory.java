@@ -14,6 +14,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import ulb.Configuration;
 import ulb.common.RoomType;
 import ulb.models.tower.FloorMap;
 import ulb.models.tower.room.Room;
@@ -85,8 +86,8 @@ public class TestFloorFactory {
     public void testAllRoomsInGrid() {
         for (Room room : this.allRooms) {
             Position pos = this.floorMap.getPosition(room);
-            assertThat(pos.x()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
-            assertThat(pos.y()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
+            assertThat(pos.x()).isBetween(0, Configuration.FloorMap.GRID_SIZE - 1);
+            assertThat(pos.y()).isBetween(0, Configuration.FloorMap.GRID_SIZE - 1);
         }
     }
 
@@ -97,7 +98,7 @@ public class TestFloorFactory {
 
     @Test
     public void testMaxDepth() {
-        assertThat(this.maxDepth).isLessThanOrEqualTo(FloorMapFactory.MAX_DEPTH);
+        assertThat(this.maxDepth).isLessThanOrEqualTo(Configuration.FloorMap.MAX_DEPTH);
     }
 
     @Test
@@ -116,15 +117,14 @@ public class TestFloorFactory {
     @Test
     public void testRewardRoomCountInRange() {
         long rewardCount = this.allRooms.stream().filter(r -> r.getType() == RoomType.REWARD).count();
-        assertThat(rewardCount).isGreaterThanOrEqualTo(FloorMapFactory.MIN_REWARD);
-        assertThat(rewardCount).isLessThanOrEqualTo(FloorMapFactory.MAX_REWARD);
+        assertThat(rewardCount).isBetween((long) Configuration.FloorMap.MIN_REWARD,
+                (long) Configuration.FloorMap.MAX_REWARD);
     }
 
     @Test
     public void testStartRoomBranchCountInRange() {
         int branches = this.floorMap.getNeighbors(this.startRoom).size();
-        assertThat(branches).isGreaterThanOrEqualTo(FloorMapFactory.MIN_BRANCHES);
-        assertThat(branches).isLessThanOrEqualTo(FloorMapFactory.MAX_BRANCHES);
+        assertThat(branches).isBetween(Configuration.FloorMap.MIN_BRANCHES, Configuration.FloorMap.MAX_BRANCHES);
     }
 
     @Test
