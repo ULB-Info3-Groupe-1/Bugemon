@@ -162,7 +162,8 @@ public class SkillTreeView extends View {
                 String connectionId = node.id() + "-" + prerequisite.id();
 
                 if (!connectedNodes.contains(connectionId)) {
-                    this.addLine(nodePanes.get(prerequisite.id()), nodePanes.get(node.id()), state.getStatus(node.id(), this.skillTree));
+                    this.addLine(nodePanes.get(prerequisite.id()), nodePanes.get(node.id()),
+                            state.getStatus(node.id(), this.skillTree));
                     connectedNodes.add(connectionId);
                 }
             }
