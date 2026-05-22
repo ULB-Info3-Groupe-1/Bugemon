@@ -73,7 +73,88 @@ Notamment car, le niveau dépend du joueur, stocker ce dernier dans les Bugemons
 
 Lorsque le joueur lancait un combat _standalone_ (pas tower), nous devions restaurer l'attribut hp des bugemons que le joueur jouait.
 
-// TODO: systeme d'actions async
+=== Gestion des actions en combat
+
+Afin de récupérer les actions effectuées en combat, nous utilisions un objet `Trainer` par joueur.
+Ceux-ci étaient concus pour être utilisé pendant un seul combat et possédaient notamment un field stockant une action et un autre pour l'équipe, et étaient passé en paramètre de `Combat`.
+
+Le controller de combat passait les `Trainer`s au `Combat`.
+A chaque tour, celui-ci mettait à jour l'action stockée dans le `Trainer` correspondant au joueur.
+Puis, demandait aucombat d'effectuer le tour.
+Le `Combat` demandait ensuite au `Trainer` les actions qu'ils stockaient.
+
+Ce système est fragile, l'ownership n'est pas claire car le Combat et le Controller partage clairement le Trainer du joueur.
+
+=== Création précoce de certains objets
+
+Plusieurs fois où on créait des objets plus tôt que nécessaire, rendant la gestion de ceux-ci inutilement complexe.
+
+*Exemple :* dans le mode Tour NO, les `Room`s pouvaient contenir des `Combat`s. Nous créions ces combats directement lorsque nous créions ces `Room`s,
+
+Créer le `Combat` à la création de la `Room` était difficile pusique cela nécessitait également de déjà créer un Trainer pour le joueur, ainsi qu'un autre pour son adversaire.
+
+== Améliorations
+
+=== Services
+
+Nos services sont pratiquement tous stateless.
+
+Nous avons limité le plus possible le nombre de services injectés à l'intérieur d'autres services.
+
+Notre `SaveService` sert de _facade pattern_ pour la sauvegarde du jeu, et prend donc en paramètre d'autres services.
+
+=== Interface pour les repositories
+
+Nous avons ajouté des interface à nos repositories. Ceci a permis de grandement simplifier le code de ceux-ci,
+en limitant le nombre de méthodes à implémenter.
+
+=== Différents types de bugemons (composition)
+
+Nous utilisons différents types de Bugemons, en tirant parti de la composition.
+Ce design est inspiré du schéma dans la base de donnée.
+
+// TODO: this should be part of "Différents types de bugemons (composition)"
+
+#table(
+  [*Bugemon (partagé par tout)*],
+  [ id ],
+  [ name ],
+  [ hp (default hp) ],
+  [ attack (default attack) ],
+  [ defense (default defense) ],
+  [ initiative (default initiative) ],
+  [ type ],
+  [ attacks (default attacks) ],
+  [ spritePath ],
+  [ isStarter ],
+  [ isBoss ],
+)
+
+#table(
+  [*PlayerBugemon (Le bugemon d'un joueur)*],
+  [ Bugemon (base) ],
+  [ level ],
+  [ xp ],
+  [ bonusHp ],
+  [ bonusAttack ],
+  [ bonusDefense ],
+  [ bonusInitiative ],
+  [ attacks ],
+)
+
+#table(
+  [*PlayerBugemon*],
+  [currentHp],
+)
+
+#table(
+  [*CombatBugemon*],
+  [ RunBugemon (base)],
+  [ participated],
+  [ currentHp ],
+  [ effets ],
+)
+
 // TODO: composition de Bugemons
 // TODO: interface des repos -> permette de se concentrer sur les méthodes importantes de ces derniers
 // TODO: refactoring process: refac model -> ajuster controller/vue pour nouveau model -> refac repository -> refac service -> refac controller -> refac views
