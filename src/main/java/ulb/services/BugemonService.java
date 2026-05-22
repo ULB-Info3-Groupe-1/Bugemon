@@ -42,11 +42,11 @@ public class BugemonService {
     }
 
     public PlayerBugemon getPlayerBugemon(String bugemonName) {
+        Bugemon base = this.staticDataRepository.bugemons().stream()
+                .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow();
         return this.bugemonRepository.findByName(this.playername, bugemonName)
-                .map(dto -> PlayerBugemon.from(this.staticDataRepository.bugemons().stream()
-                        .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow(), dto))
-                .orElse(new PlayerBugemon(this.staticDataRepository.bugemons().stream()
-                        .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow()));
+                .map(dto -> PlayerBugemon.from(base, dto))
+                .orElse(new PlayerBugemon(base));
     }
 
     public List<PlayerBugemon> getPlayerBugemons() {

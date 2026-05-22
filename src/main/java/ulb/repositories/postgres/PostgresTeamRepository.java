@@ -52,7 +52,8 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
             if (this.bugemonRepository.findByName(playerName, member.bugemonName()).isEmpty()) {
                 LOG.debug("PlayerBugemon '{}' does not exist for player '{}', creating it", member.bugemonName(),
                         playerName);
-                this.bugemonRepository.save(new PlayerBugemonDTO(playerName, member.bugemonName(), 0, 0, 0, 0, 0, 1));
+                this.bugemonRepository.save(new PlayerBugemonDTO(playerName, member.bugemonName(), 0, 0, 0, 0, 0, 1,
+                        this.bugemonRepository.findBase(member.bugemonName()).orElseThrow().attacks()));
             }
             this.addTeamMember(playerName, team.teamName(), member);
         });

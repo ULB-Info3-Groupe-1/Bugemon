@@ -1,4 +1,10 @@
 -- Query
+-- MigratePlayerBugemonsAttackColumns
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_1_id" varchar;
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_2_id" varchar;
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_3_id" varchar;
+
+-- Query
 -- SavePlayerBugemon
 INSERT INTO player_bugemons
   (playername, bugemon_name, current_defense, current_attack,

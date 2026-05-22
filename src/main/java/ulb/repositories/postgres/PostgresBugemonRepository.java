@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.common.dto.persistence.PlayerBugemonDTO;
+import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
@@ -48,9 +49,12 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     public void save(PlayerBugemonDTO dto) {
         LOG.debug("Saving player bugemon '{}' for playername: {}", dto.bugemonName(), dto.playername());
         executeUpdate("SavePlayerBugemon", dto.playername(), dto.bugemonName(), dto.bonusDefense(),
-                dto.bonusAttackPower(), dto.bonusInitiative(), dto.bonusMaxHp(), dto.xp(), dto.level());
+                dto.bonusAttackPower(), dto.bonusInitiative(), dto.bonusMaxHp(), dto.xp(), dto.level(),
+                dto.attacks().get(0).id(), dto.attacks().get(1).id(), dto.attacks().get(2).id());
         executeUpdate("UpdatePlayerBugemon", dto.bonusDefense(), dto.bonusAttackPower(), dto.bonusInitiative(),
-                dto.bonusMaxHp(), dto.xp(), dto.level(), dto.playername(), dto.bugemonName());
+                dto.bonusMaxHp(), dto.xp(), dto.level(),
+                dto.attacks().get(0).id(), dto.attacks().get(1).id(), dto.attacks().get(2).id(),
+                dto.playername(), dto.bugemonName());
     }
 
     @Override
@@ -66,10 +70,15 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     }
 
     private PlayerBugemonDTO mapPlayerBugemon(ResultSet rs) throws SQLException {
+        List<Attack> allAttacks = this.staticDataRepository.attacks();
+        List<Attack> attacks = List.of(rs.getString(DatabaseColumns.COL_ATTACK_ID_1),
+                rs.getString(DatabaseColumns.COL_ATTACK_ID_2), rs.getString(DatabaseColumns.COL_ATTACK_ID_3))
+                .stream().map(id -> allAttacks.stream().filter(a -> a.id().equals(id)).findFirst().orElseThrow())
+                .toList();
         return new PlayerBugemonDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),
                 rs.getString(DatabaseColumns.COL_BUGEMON_NAME), rs.getInt(DatabaseColumns.COL_CURRENT_DEFENSE),
                 rs.getInt(DatabaseColumns.COL_CURRENT_ATTACK), rs.getInt(DatabaseColumns.COL_CURRENT_INITIATIVE),
                 rs.getInt(DatabaseColumns.COL_CURRENT_MAX_HP), rs.getInt(DatabaseColumns.COL_CURRENT_XP),
-                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL));
+                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL), attacks);
     }
 }

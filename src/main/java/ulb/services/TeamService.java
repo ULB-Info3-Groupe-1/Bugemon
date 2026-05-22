@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.common.dto.persistence.TeamDTO;
 import ulb.common.dto.persistence.TeamMemberDTO;
 import ulb.models.player.PlayerBugemon;
@@ -57,7 +56,7 @@ public class TeamService {
                 .sorted(Comparator.comparingInt(TeamMemberDTO::slotPosition))
                 .map(member -> this.bugemonRepository.findBase(member.bugemonName())
                         .flatMap(base -> this.bugemonRepository.findByName(this.playerName, member.bugemonName())
-                                .map((PlayerBugemonDTO dto) -> PlayerBugemon.from(base, dto)))
+                                .map(dto -> PlayerBugemon.from(base, dto)))
                         .orElseThrow())
                 .toList();
         Team team = new Team(members);

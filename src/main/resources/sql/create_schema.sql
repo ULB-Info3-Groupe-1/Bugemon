@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS "player_bugemons" (
   "current_level" integer DEFAULT 1,
   "attack_1_id" varchar,
   "attack_2_id" varchar,
-  "attack_3_id" varchar
+  "attack_3_id" varchar,
   PRIMARY KEY ("playername", "bugemon_name")
 );
 
@@ -182,3 +182,7 @@ ALTER TABLE "players" ADD FOREIGN KEY ("playername", "current_team") REFERENCES 
 
 ALTER TABLE "tower_runs" ADD COLUMN IF NOT EXISTS "current_row" integer NOT NULL DEFAULT 2;
 ALTER TABLE "tower_runs" ADD COLUMN IF NOT EXISTS "current_col" integer NOT NULL DEFAULT 2;
+
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_1_id" varchar;
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_2_id" varchar;
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_3_id" varchar;

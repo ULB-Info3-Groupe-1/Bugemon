@@ -52,6 +52,8 @@ public class DatabaseInitializer extends AbstractRepository {
     }
 
     public void initialize() {
+        this.executeUpdate("MigratePlayerBugemonsAttackColumns");
+
         Integer tableCount = this.executeQuery("areTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
                 .findFirst().orElse(0);
 
