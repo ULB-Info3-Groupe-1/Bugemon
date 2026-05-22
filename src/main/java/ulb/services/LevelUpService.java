@@ -11,19 +11,19 @@ import ulb.models.run.RunBugemon;
 import ulb.repositories.BugemonRepository;
 
 public class LevelUpService {
-    String playername;
+    String playerName;
     BugemonRepository bugemonRepository;
     BonusStatsGenerator bonusStatsGenerator;
 
-    public LevelUpService(String playername, BugemonRepository bugemonRepository, Random random) {
-        this.playername = playername;
+    public LevelUpService(String playerName, BugemonRepository bugemonRepository, Random random) {
+        this.playerName = playerName;
         this.bugemonRepository = bugemonRepository;
         this.bonusStatsGenerator = new BonusStatsGenerator(random);
     }
 
     public void applyLevelUp(RunBugemon bugemon, BonusStats bonus) {
         bugemon.applyBonus(bonus);
-        this.bugemonRepository.save(bugemon.getPlayerBugemon().toDTO(this.playername));
+        this.bugemonRepository.save(bugemon.getPlayerBugemon().toDTO(this.playerName));
     }
 
     public List<BonusStats> generateLevelUpOptions() {

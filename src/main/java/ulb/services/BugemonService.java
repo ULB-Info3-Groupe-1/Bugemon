@@ -17,13 +17,13 @@ import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 
 public class BugemonService {
 
-    private final String playername;
+    private final String playerName;
     private final StaticRepository staticDataRepository;
     private final BugemonRepository bugemonRepository;
 
     public BugemonService(StaticRepository staticDataRepository, BugemonRepository bugemonRepository,
-            String playername) {
-        this.playername = playername;
+            String playerName) {
+        this.playerName = playerName;
         this.staticDataRepository = staticDataRepository;
         this.bugemonRepository = bugemonRepository;
     }
@@ -43,12 +43,12 @@ public class BugemonService {
     public PlayerBugemon getPlayerBugemon(String bugemonName) {
         Bugemon base = this.staticDataRepository.bugemons().stream().filter(b -> b.name().equals(bugemonName))
                 .findFirst().orElseThrow();
-        return this.bugemonRepository.findByName(this.playername, bugemonName).map(dto -> PlayerBugemon.from(base, dto))
+        return this.bugemonRepository.findByName(this.playerName, bugemonName).map(dto -> PlayerBugemon.from(base, dto))
                 .orElse(new PlayerBugemon(base));
     }
 
     public List<PlayerBugemon> getPlayerBugemons() {
-        List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
+        List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playerName);
 
         // players cannot own boss bugemons
         return this.staticDataRepository.bugemons().stream().filter(bugemon -> !bugemon.isBoss())
@@ -66,7 +66,7 @@ public class BugemonService {
     }
 
     public void savePlayerBugemon(PlayerBugemon bugemon) {
-        this.bugemonRepository.save(bugemon.toDTO(this.playername));
+        this.bugemonRepository.save(bugemon.toDTO(this.playerName));
     }
 
     public CreateBugemonDTO createBugemon(String name, ElementType type, URL spriteUrl, int defense, int attack,
@@ -88,6 +88,6 @@ public class BugemonService {
     }
 
     public void removePlayerBugemons() {
-        this.bugemonRepository.removeAll(this.playername);
+        this.bugemonRepository.removeAll(this.playerName);
     }
 }

@@ -31,8 +31,8 @@ public class PostgresInventoryRepository extends AbstractRepository implements I
     }
 
     @Override
-    public InventoryDTO findInventory(String playername) {
-        LOG.debug("Finding inventory for playername: {}", playername);
+    public InventoryDTO findInventory(String playerName) {
+        LOG.debug("Finding inventory for playerName: {}", playerName);
         Map<Item, Integer> inventoryMap = new HashMap<>();
         this.executeQuery("GetPlayerInventory", rs -> {
             String effectType = rs.getString(DatabaseColumns.COL_EFFECT_TYPE);
@@ -42,26 +42,26 @@ public class PostgresInventoryRepository extends AbstractRepository implements I
                     ItemType.valueOf(rs.getString(DatabaseColumns.COL_CATEGORY)), effect);
             inventoryMap.put(item, rs.getInt(DatabaseColumns.COL_AMOUNT));
             return null;
-        }, playername);
-        return new InventoryDTO(playername, inventoryMap);
+        }, playerName);
+        return new InventoryDTO(playerName, inventoryMap);
     }
 
     @Override
     public void save(InventoryDTO inventory) {
-        LOG.debug("Saving inventory for playername: {}", inventory.playername());
-        this.clearInventory(inventory.playername());
-        inventory.items().forEach((item, quantity) -> this.executeUpdate("SaveItemForPlayer", inventory.playername(),
+        LOG.debug("Saving inventory for playerName: {}", inventory.playerName());
+        this.clearInventory(inventory.playerName());
+        inventory.items().forEach((item, quantity) -> this.executeUpdate("SaveItemForPlayer", inventory.playerName(),
                 item.id(), quantity));
     }
 
     @Override
-    public void delete(String playername) {
-        LOG.debug("Deleting inventory for playername: {}", playername);
-        this.clearInventory(playername);
+    public void delete(String playerName) {
+        LOG.debug("Deleting inventory for playerName: {}", playerName);
+        this.clearInventory(playerName);
     }
 
-    private void clearInventory(String playername) {
-        this.executeUpdate("RemoveItemsOfPlayer", playername);
+    private void clearInventory(String playerName) {
+        this.executeUpdate("RemoveItemsOfPlayer", playerName);
     }
 
     private Effect buildItemEffect(ResultSet rs, String effectType) throws SQLException {

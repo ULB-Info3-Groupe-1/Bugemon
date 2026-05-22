@@ -6,15 +6,15 @@ import ulb.common.dto.persistence.SkillDTO;
 
 public interface SkillRepository {
 
-    List<SkillDTO> findAll(String playername);
+    List<SkillDTO> findAll(String playerName);
 
-    SkillDTO findById(String playername, String skillId);
+    SkillDTO findById(String playerName, String skillId);
 
-    int findSkillLevel(String playername, String skillId);
+    int findSkillLevel(String playerName, String skillId);
 
-    int findSkillPoints(String playername);
+    int findSkillPoints(String playerName);
 
-    void save(String playername, List<SkillDTO> skills, int skillPoints);
+    void save(String playerName, List<SkillDTO> skills, int skillPoints);
 
-    void delete(String playername);
+    void delete(String playerName);
 }

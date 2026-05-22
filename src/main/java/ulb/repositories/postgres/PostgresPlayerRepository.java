@@ -24,46 +24,46 @@ public class PostgresPlayerRepository extends AbstractRepository implements Play
     }
 
     @Override
-    public void createPlayer(String playername, DefaultInventoryDTO defaulInventory)
+    public void createPlayer(String playerName, DefaultInventoryDTO defaulInventory)
             throws PlayernameAlreadyExistsException {
-        LOG.debug("Creating player with name: {}", playername);
+        LOG.debug("Creating player with name: {}", playerName);
         try {
-            this.executeUpdate("CreatePlayer", playername);
+            this.executeUpdate("CreatePlayer", playerName);
         } catch (RuntimeException e) {
             if (e.getMessage().contains("duplicate key")
                     || (e.getCause() != null && e.getCause().getMessage().contains("duplicate key"))) {
-                LOG.warn("Player creation failed due to duplicate playername: {} (expected on startup)", playername);
-                throw new PlayernameAlreadyExistsException("Player name already exists: " + playername);
+                LOG.warn("Player creation failed due to duplicate playerName: {} (expected on startup)", playerName);
+                throw new PlayernameAlreadyExistsException("Player name already exists: " + playerName);
             }
             throw e;
         }
-        InventoryDTO playerInventory = new InventoryDTO(playername, defaulInventory.items());
+        InventoryDTO playerInventory = new InventoryDTO(playerName, defaulInventory.items());
         this.inventoryRepository.save(playerInventory);
     }
 
     @Override
-    public boolean playerExists(String playername) {
-        LOG.debug("Checking if player exists: {}", playername);
-        return !this.executeQuery("GetPlayerByPlayername", rs -> rs.getInt(DatabaseColumns.COL_ID), playername)
+    public boolean playerExists(String playerName) {
+        LOG.debug("Checking if player exists: {}", playerName);
+        return !this.executeQuery("GetPlayerByPlayername", rs -> rs.getInt(DatabaseColumns.COL_ID), playerName)
                 .isEmpty();
     }
 
     @Override
-    public int getPlayerCurrentFloor(String playername) {
-        LOG.debug("Getting current floor for playername: {}", playername);
+    public int getPlayerCurrentFloor(String playerName) {
+        LOG.debug("Getting current floor for playerName: {}", playerName);
         return this.executeQuery("GetPlayerCurrentTowerFloor", rs -> rs.getInt(DatabaseColumns.COL_CURRENT_TOWER_FLOOR),
-                playername).get(0);
+                playerName).get(0);
     }
 
     @Override
-    public void setPlayerCurrentFloor(String playername, int floorNumber) {
-        LOG.debug("Setting current floor {} for playername: {}", floorNumber, playername);
-        this.executeUpdate("SetPlayerCurrentTowerFloor", floorNumber, playername);
+    public void setPlayerCurrentFloor(String playerName, int floorNumber) {
+        LOG.debug("Setting current floor {} for playerName: {}", floorNumber, playerName);
+        this.executeUpdate("SetPlayerCurrentTowerFloor", floorNumber, playerName);
     }
 
     @Override
-    public void resetPlayerCurrentFloor(String playername) {
-        LOG.debug("Resetting current floor for playername: {}", playername);
-        this.executeUpdate("ResetPlayerCurrentTowerFloor", playername);
+    public void resetPlayerCurrentFloor(String playerName) {
+        LOG.debug("Resetting current floor for playerName: {}", playerName);
+        this.executeUpdate("ResetPlayerCurrentTowerFloor", playerName);
     }
 }

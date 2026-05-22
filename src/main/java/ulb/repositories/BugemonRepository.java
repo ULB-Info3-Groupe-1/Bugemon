@@ -8,15 +8,15 @@ import ulb.models.bugemon.Bugemon;
 
 public interface BugemonRepository {
 
-    List<PlayerBugemonDTO> findAll(String playername);
+    List<PlayerBugemonDTO> findAll(String playerName);
 
-    void removeAll(String playername);
+    void removeAll(String playerName);
 
-    Optional<PlayerBugemonDTO> findByName(String playername, String bugemonName);
+    Optional<PlayerBugemonDTO> findByName(String playerName, String bugemonName);
 
     Optional<Bugemon> findBase(String bugemonName);
 
     void save(PlayerBugemonDTO playerBugemon);
 
-    void delete(String playername, String bugemonName);
+    void delete(String playerName, String bugemonName);
 }

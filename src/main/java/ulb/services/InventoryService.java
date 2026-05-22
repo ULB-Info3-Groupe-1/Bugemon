@@ -14,28 +14,28 @@ import ulb.repositories.StaticRepository;
 
 public class InventoryService {
 
-    private final String playername;
+    private final String playerName;
 
     private final InventoryRepository inventoryRepository;
     private final StaticRepository staticRepository;
 
     private final Random random;
 
-    public InventoryService(String playername, InventoryRepository inventoryRepository,
+    public InventoryService(String playerName, InventoryRepository inventoryRepository,
             StaticRepository staticRepository, Random random) {
         this.inventoryRepository = inventoryRepository;
         this.staticRepository = staticRepository;
         this.random = random;
-        this.playername = playername;
+        this.playerName = playerName;
     }
 
     public Inventory getInventory() {
-        InventoryDTO inventoryDTO = this.inventoryRepository.findInventory(this.playername);
+        InventoryDTO inventoryDTO = this.inventoryRepository.findInventory(this.playerName);
         return new Inventory(inventoryDTO.items());
     }
 
     public void resetInventory() {
-        this.inventoryRepository.delete(this.playername);
+        this.inventoryRepository.delete(this.playerName);
     }
 
     public DefaultInventoryDTO getDefaultInventory() {
@@ -67,7 +67,7 @@ public class InventoryService {
     }
 
     private InventoryDTO toDTO(Inventory inventory) {
-        return new InventoryDTO(this.playername, inventory.getMap());
+        return new InventoryDTO(this.playerName, inventory.getMap());
     }
 
 }

@@ -29,14 +29,14 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
 
     @Override
     public List<TeamDTO> findAll(String playerName) {
-        LOG.debug("Finding all teams for playername: {}", playerName);
+        LOG.debug("Finding all teams for playerName: {}", playerName);
         return this.getPlayerTeamNames(playerName).stream()
                 .map(name -> new TeamDTO(playerName, name, this.getTeamMembers(playerName, name))).toList();
     }
 
     @Override
     public Optional<TeamDTO> findByName(String playerName, String teamName) {
-        LOG.debug("Finding team '{}' for playername: {}", teamName, playerName);
+        LOG.debug("Finding team '{}' for playerName: {}", teamName, playerName);
         if (!this.teamExists(playerName, teamName)) {
             return Optional.empty();
         }
@@ -45,7 +45,7 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
 
     @Override
     public void save(String playerName, TeamDTO team) {
-        LOG.debug("Saving team '{}' for playername: {}", team.teamName(), playerName);
+        LOG.debug("Saving team '{}' for playerName: {}", team.teamName(), playerName);
         executeUpdate("CreateTeam", playerName, team.teamName());
         executeUpdate("RemoveTeamComposition", playerName, team.teamName());
         team.members().forEach(member -> {
@@ -61,39 +61,39 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
 
     @Override
     public void delete(String playerName, String teamName) {
-        LOG.debug("Deleting team '{}' for playername: {}", teamName, playerName);
+        LOG.debug("Deleting team '{}' for playerName: {}", teamName, playerName);
         executeUpdate("DeleteTeamMembers", playerName, teamName);
         executeUpdate("DeleteTeam", playerName, teamName);
     }
 
     @Override
     public void deleteAll(String playerName) {
-        LOG.debug("Removing all teams for playername: {}", playerName);
+        LOG.debug("Removing all teams for playerName: {}", playerName);
         executeUpdate("ClearTeamMembers", playerName);
         executeUpdate("ClearTeams", playerName);
     }
 
     @Override
     public Optional<TeamDTO> getActiveTeam(String playerName) {
-        LOG.debug("Finding active team for playername: {}", playerName);
+        LOG.debug("Finding active team for playerName: {}", playerName);
         String teamName = executeQuery("GetPlayerCurrentTeamName", rs -> rs.getString(DatabaseColumns.COL_CURRENT_TEAM),
                 playerName).get(0);
         if (teamName == null) {
             return Optional.empty();
         }
-        LOG.debug("Active team {} for playername {} found", teamName, playerName);
+        LOG.debug("Active team {} for playerName {} found", teamName, playerName);
         return this.findByName(playerName, teamName);
     }
 
     @Override
     public void setActiveTeam(String playerName, String teamName) {
-        LOG.debug("Setting active team '{}' for playername: {}", teamName, playerName);
+        LOG.debug("Setting active team '{}' for playerName: {}", teamName, playerName);
         executeUpdate("SetPlayerCurrentTeam", teamName, playerName);
     }
 
     @Override
     public void unSetActiveTeam(String playerName) {
-        LOG.debug("Removing active team for playername: {}", playerName);
+        LOG.debug("Removing active team for playerName: {}", playerName);
         executeUpdate("UnsetPlayerCurrentTeam", playerName);
     }
 

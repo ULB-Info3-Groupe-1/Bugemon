@@ -29,12 +29,12 @@ import ulb.repositories.TowerRepository;
 
 public class TowerService {
 
-    private final String playername;
+    private final String playerName;
     private final TowerRepository towerRepository;
     private TowerState activeTower = null;
 
-    public TowerService(TowerRepository towerRepository, String playername) {
-        this.playername = playername;
+    public TowerService(TowerRepository towerRepository, String playerName) {
+        this.playerName = playerName;
         this.towerRepository = towerRepository;
     }
 
@@ -62,12 +62,12 @@ public class TowerService {
 
     public void save() {
         if (this.activeTower != null) {
-            this.towerRepository.save(this.playername, this.toDTO(this.activeTower));
+            this.towerRepository.save(this.playerName, this.toDTO(this.activeTower));
         }
     }
 
     public void delete() {
-        this.towerRepository.delete(this.playername);
+        this.towerRepository.delete(this.playerName);
         this.activeTower = null;
     }
 
@@ -119,11 +119,11 @@ public class TowerService {
     }
 
     public Optional<String> getSavedTeamName() {
-        return this.towerRepository.find(this.playername).map(dto -> dto.team().teamName());
+        return this.towerRepository.find(this.playerName).map(dto -> dto.team().teamName());
     }
 
     public Optional<TowerState> loadSaved(Team team) {
-        return this.towerRepository.find(this.playername).map(dto -> {
+        return this.towerRepository.find(this.playerName).map(dto -> {
             FloorMap floorMap = this.generateFloor(dto.seed(), dto.floorMap().floor());
 
             Set<Position> visitedPositions = new HashSet<>(dto.floorMap().visitedRoomsPosition());
@@ -155,7 +155,7 @@ public class TowerService {
         Position currentRoomPos = floorMap.getPosition(floorMap.getCurrentRoom());
         FloorMapDTO floorMapDTO = new FloorMapDTO(towerState.getCurrentFloor(), this.getVisitedRoomsPosition(floorMap),
                 new Position(currentRoomPos.x(), currentRoomPos.y()));
-        RunTeamDTO teamDTO = new RunTeamDTO(this.playername, towerState.getTeamName(), hpPerMember);
+        RunTeamDTO teamDTO = new RunTeamDTO(this.playerName, towerState.getTeamName(), hpPerMember);
 
         return new TowerDTO(towerState.getSeed(), floorMapDTO, teamDTO);
     }

@@ -4,10 +4,10 @@ import ulb.common.dto.persistence.InventoryDTO;
 
 public interface InventoryRepository {
 
-    InventoryDTO findInventory(String playername);
+    InventoryDTO findInventory(String playerName);
 
     void save(InventoryDTO inventory);
 
-    void delete(String playername);
+    void delete(String playerName);
 
 }

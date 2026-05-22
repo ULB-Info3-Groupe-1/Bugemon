@@ -14,25 +14,25 @@ import ulb.repositories.StaticRepository;
 
 public class SkillService {
 
-    private final String playername;
+    private final String playerName;
 
     private final SkillRepository skillRepository;
     private final StaticRepository staticRepository;
 
-    public SkillService(SkillRepository skillRepository, StaticRepository staticRepository, String playername) {
+    public SkillService(SkillRepository skillRepository, StaticRepository staticRepository, String playerName) {
         this.skillRepository = skillRepository;
         this.staticRepository = staticRepository;
 
-        this.playername = playername;
+        this.playerName = playerName;
     }
 
     public void save(SkillTreeState skillTreeState) {
-        this.skillRepository.save(this.playername, this.toDTO(skillTreeState), skillTreeState.getSkillPoints());
+        this.skillRepository.save(this.playerName, this.toDTO(skillTreeState), skillTreeState.getSkillPoints());
     }
 
     public SkillTreeState getSkillTreeState() {
-        List<SkillDTO> dtos = this.skillRepository.findAll(this.playername);
-        int skillPoints = this.skillRepository.findSkillPoints(this.playername);
+        List<SkillDTO> dtos = this.skillRepository.findAll(this.playerName);
+        int skillPoints = this.skillRepository.findSkillPoints(this.playerName);
         Map<String, Integer> levels = dtos.stream().collect(Collectors.toMap(SkillDTO::skillId, SkillDTO::level));
         return SkillTreeState.restore(levels, skillPoints);
     }

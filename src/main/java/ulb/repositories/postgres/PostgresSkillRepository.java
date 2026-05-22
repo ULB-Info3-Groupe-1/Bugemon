@@ -18,42 +18,42 @@ public class PostgresSkillRepository extends AbstractRepository implements Skill
     }
 
     @Override
-    public List<SkillDTO> findAll(String playername) {
-        LOG.debug("Finding all skills for playername: {}", playername);
+    public List<SkillDTO> findAll(String playerName) {
+        LOG.debug("Finding all skills for playerName: {}", playerName);
         return this.executeQuery("GetPlayerSkills", rs -> new SkillDTO(rs.getString(DatabaseColumns.COL_SKILL_ID),
-                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)), playername);
+                rs.getInt(DatabaseColumns.COL_CURRENT_LEVEL)), playerName);
     }
 
     @Override
-    public SkillDTO findById(String playername, String skillId) {
-        LOG.debug("Finding skill '{}' for playername: {}", skillId, playername);
-        return this.findAll(playername).stream().filter(s -> s.skillId().equals(skillId)).findFirst().orElse(null);
+    public SkillDTO findById(String playerName, String skillId) {
+        LOG.debug("Finding skill '{}' for playerName: {}", skillId, playerName);
+        return this.findAll(playerName).stream().filter(s -> s.skillId().equals(skillId)).findFirst().orElse(null);
     }
 
     @Override
-    public int findSkillLevel(String playername, String skillId) {
-        SkillDTO dto = this.findById(playername, skillId);
+    public int findSkillLevel(String playerName, String skillId) {
+        SkillDTO dto = this.findById(playerName, skillId);
         return dto != null ? dto.level() : 0;
     }
 
     @Override
-    public int findSkillPoints(String playername) {
-        LOG.debug("Finding skill points for playername: {}", playername);
-        return this.executeQuery("GetPlayerSkillPoints", rs -> rs.getInt(DatabaseColumns.COL_SKILL_POINTS), playername)
+    public int findSkillPoints(String playerName) {
+        LOG.debug("Finding skill points for playerName: {}", playerName);
+        return this.executeQuery("GetPlayerSkillPoints", rs -> rs.getInt(DatabaseColumns.COL_SKILL_POINTS), playerName)
                 .get(0);
     }
 
     @Override
-    public void save(String playername, List<SkillDTO> skills, int skillPoints) {
-        LOG.debug("Saving {} skills and {} skill points for playername: {}", skills.size(), skillPoints, playername);
-        this.executeUpdate("SetPlayerSkillPoints", skillPoints, playername);
-        this.executeUpdate("DeleteAllPlayerSkills", playername);
-        skills.forEach(skill -> this.executeUpdate("AddPlayerSkill", playername, skill.skillId(), skill.level()));
+    public void save(String playerName, List<SkillDTO> skills, int skillPoints) {
+        LOG.debug("Saving {} skills and {} skill points for playerName: {}", skills.size(), skillPoints, playerName);
+        this.executeUpdate("SetPlayerSkillPoints", skillPoints, playerName);
+        this.executeUpdate("DeleteAllPlayerSkills", playerName);
+        skills.forEach(skill -> this.executeUpdate("AddPlayerSkill", playerName, skill.skillId(), skill.level()));
     }
 
     @Override
-    public void delete(String playername) {
-        LOG.debug("Deleting all skills for playername: {}", playername);
-        this.executeUpdate("DeleteAllPlayerSkills", playername);
+    public void delete(String playerName) {
+        LOG.debug("Deleting all skills for playerName: {}", playerName);
+        this.executeUpdate("DeleteAllPlayerSkills", playerName);
     }
 }

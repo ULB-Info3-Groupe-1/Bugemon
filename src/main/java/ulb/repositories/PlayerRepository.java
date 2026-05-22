@@ -5,13 +5,13 @@ import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
 public interface PlayerRepository {
 
-    void createPlayer(String playername, DefaultInventoryDTO defaultInventory) throws PlayernameAlreadyExistsException;
+    void createPlayer(String playerName, DefaultInventoryDTO defaultInventory) throws PlayernameAlreadyExistsException;
 
-    boolean playerExists(String playername);
+    boolean playerExists(String playerName);
 
-    int getPlayerCurrentFloor(String playername);
+    int getPlayerCurrentFloor(String playerName);
 
-    void setPlayerCurrentFloor(String playername, int floorNumber);
+    void setPlayerCurrentFloor(String playerName, int floorNumber);
 
-    void resetPlayerCurrentFloor(String playername);
+    void resetPlayerCurrentFloor(String playerName);
 }

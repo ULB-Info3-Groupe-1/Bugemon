@@ -4,5 +4,5 @@ import java.util.Map;
 
 import ulb.models.item.Item;
 
-public record InventoryDTO(String playername, Map<Item, Integer> items) {
+public record InventoryDTO(String playerName, Map<Item, Integer> items) {
 }

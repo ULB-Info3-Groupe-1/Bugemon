@@ -4,6 +4,6 @@ import java.util.List;
 
 import ulb.models.bugemon.Attack;
 
-public record PlayerBugemonDTO(String playername, String bugemonName, int bonusDefense, int bonusAttackPower,
+public record PlayerBugemonDTO(String playerName, String bugemonName, int bonusDefense, int bonusAttackPower,
         int bonusInitiative, int bonusMaxHp, int xp, int level, List<Attack> attacks) {
 }

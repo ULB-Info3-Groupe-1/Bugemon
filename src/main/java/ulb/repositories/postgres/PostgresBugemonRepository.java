@@ -27,15 +27,15 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
     }
 
     @Override
-    public List<PlayerBugemonDTO> findAll(String playername) {
-        LOG.debug("Finding all bugemons for playername: {}", playername);
-        return executeQuery("GetPlayerBugemons", this::mapPlayerBugemon, playername);
+    public List<PlayerBugemonDTO> findAll(String playerName) {
+        LOG.debug("Finding all bugemons for playerName: {}", playerName);
+        return executeQuery("GetPlayerBugemons", this::mapPlayerBugemon, playerName);
     }
 
     @Override
-    public Optional<PlayerBugemonDTO> findByName(String playername, String bugemonName) {
-        LOG.debug("Finding bugemon '{}' for playername: {}", bugemonName, playername);
-        return executeQuery("GetPlayerBugemonByName", this::mapPlayerBugemon, playername, bugemonName).stream()
+    public Optional<PlayerBugemonDTO> findByName(String playerName, String bugemonName) {
+        LOG.debug("Finding bugemon '{}' for playerName: {}", bugemonName, playerName);
+        return executeQuery("GetPlayerBugemonByName", this::mapPlayerBugemon, playerName, bugemonName).stream()
                 .findFirst();
     }
 
@@ -47,25 +47,25 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
 
     @Override
     public void save(PlayerBugemonDTO dto) {
-        LOG.debug("Saving player bugemon '{}' for playername: {}", dto.bugemonName(), dto.playername());
-        executeUpdate("SavePlayerBugemon", dto.playername(), dto.bugemonName(), dto.bonusDefense(),
+        LOG.debug("Saving player bugemon '{}' for playerName: {}", dto.bugemonName(), dto.playerName());
+        executeUpdate("SavePlayerBugemon", dto.playerName(), dto.bugemonName(), dto.bonusDefense(),
                 dto.bonusAttackPower(), dto.bonusInitiative(), dto.bonusMaxHp(), dto.xp(), dto.level(),
                 dto.attacks().get(0).id(), dto.attacks().get(1).id(), dto.attacks().get(2).id());
         executeUpdate("UpdatePlayerBugemon", dto.bonusDefense(), dto.bonusAttackPower(), dto.bonusInitiative(),
                 dto.bonusMaxHp(), dto.xp(), dto.level(), dto.attacks().get(0).id(), dto.attacks().get(1).id(),
-                dto.attacks().get(2).id(), dto.playername(), dto.bugemonName());
+                dto.attacks().get(2).id(), dto.playerName(), dto.bugemonName());
     }
 
     @Override
-    public void delete(String playername, String bugemonName) {
-        LOG.debug("Deleting player bugemon '{}' for playername: {}", bugemonName, playername);
-        executeUpdate("DeletePlayerBugemon", playername, bugemonName);
+    public void delete(String playerName, String bugemonName) {
+        LOG.debug("Deleting player bugemon '{}' for playerName: {}", bugemonName, playerName);
+        executeUpdate("DeletePlayerBugemon", playerName, bugemonName);
     }
 
     @Override
-    public void removeAll(String playername) {
-        LOG.debug("Removing all bugemons for playername: {}", playername);
-        executeUpdate("RemoveAllPlayerBugemons", playername);
+    public void removeAll(String playerName) {
+        LOG.debug("Removing all bugemons for playerName: {}", playerName);
+        executeUpdate("RemoveAllPlayerBugemons", playerName);
     }
 
     private PlayerBugemonDTO mapPlayerBugemon(ResultSet rs) throws SQLException {
