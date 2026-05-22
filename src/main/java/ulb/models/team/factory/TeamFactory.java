@@ -9,7 +9,7 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Abstract creator — declares the factory method {@link #create(int, List)} that each concrete subclass overrides to
+ * Abstract creator. Declares the factory method {@link #create(int, List)} that each concrete subclass overrides to
  * instantiate a specific {@link Team} variant.
  *
  * The list of available bugemons is passed at call time so the factory always uses the current pool.

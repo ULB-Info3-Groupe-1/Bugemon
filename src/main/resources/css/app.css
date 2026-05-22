@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   app.css — all visual styles, loaded at scene level in Main.java
+   app.css All visual styles, loaded at scene level in Main.java
    Color and layout tokens are in tokens.css (loaded first).
    ══════════════════════════════════════════════════════════════ */
 
@@ -435,7 +435,7 @@
     -fx-text-fill: white;
 }
 
-/* Efficiency badges — background badge so they're visible on any type colour */
+/* Efficiency badges. Background badge so they're visible on any type colour */
 .hover-info-efficiency-high {
     -fx-background-color: color-efficiency-high;
     -fx-text-fill: color-efficiency-high-text;

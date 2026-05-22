@@ -14,7 +14,7 @@ import ulb.bootstrap.ServiceRegistry;
 import ulb.controllers.MetaController;
 import ulb.models.player.PlayerState;
 
-/** JavaFX entry point — bootstraps the Bugemon game. */
+/** JavaFX entry point, bootstraps the Bugemon game. */
 public class Main extends Application {
 
     public static void main(String[] args) {

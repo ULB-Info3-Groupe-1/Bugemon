@@ -16,7 +16,7 @@ import ulb.models.skills.SkillContext;
 import ulb.models.team.factory.TeamFactory;
 
 /**
- * Template method — {@link #create} defines the assembly algorithm; subclasses supply the variable parts via the
+ * Template method: {@link #create} defines the assembly algorithm; subclasses supply the variable parts via the
  * abstract factory methods {@link #buildPlayerStrategy()} and {@link #buildOpponentStrategy()}.
  */
 public abstract class CombatFactory {

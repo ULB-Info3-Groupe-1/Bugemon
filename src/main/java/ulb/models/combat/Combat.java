@@ -150,7 +150,7 @@ public class Combat {
             return;
         }
 
-        // handle potential Ko of second actor — controller will request forced switch
+        // handle potential Ko of second actor. Controller will request forced switch
         // after displaying steps
         if (secondActorBefore.isKo()) {
             LOG.debug("Second actor KO - returning steps, controller will handle forced switch for {}",
@@ -174,7 +174,7 @@ public class Combat {
         CombatTeam firstTeam = this.teamFor(firstIsPlayer);
         CombatBugemon firstActor = firstTeam.getActive();
 
-        // handle potential Ko of first actor — controller will request forced switch
+        // handle potential Ko of first actor. Controller will request forced switch
         // after displaying steps
         if (firstActor.isKo()) {
             LOG.debug("First actor KO - returning steps, controller will handle forced switch for {}",

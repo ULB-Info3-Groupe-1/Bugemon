@@ -25,7 +25,7 @@
   -fx-background-color: transparent;
 }
 
-/* --- ROOM NODE — base --- */
+/* --- ROOM NODE - base --- */
 .room-node {
   -fx-cursor: default;
 }
@@ -45,7 +45,7 @@
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 6, 0.2, 0, 1);
 }
 
-/* --- ROOM TYPES — border color & icon glow --- */
+/* --- ROOM TYPES - border color & icon glow --- */
 .room-node.room-start .room-background {
   -fx-stroke: color-room-start;
 }
@@ -83,7 +83,7 @@
   -fx-stroke: color-litho;
 }
 
-/* --- ROOM STATES — visual feedback --- */
+/* --- ROOM STATES - visual feedback --- */
 
 /* Current room: highlighted */
 .room-node.current .room-background {

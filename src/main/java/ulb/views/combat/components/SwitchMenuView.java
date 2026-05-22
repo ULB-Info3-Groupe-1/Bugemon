@@ -19,7 +19,6 @@ import ulb.views.components.ComponentView;
  * dispatches through the callback registered via {@link Listener#onBack()}.
  */
 public class SwitchMenuView extends ComponentView {
-    /** Sprite dimensions — not CSS-styleable on ImageView in JavaFX. */
     private static final int SPRITE_SIZE = 40;
 
     private Listener listener;

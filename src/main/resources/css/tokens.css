@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Design tokens — loaded once at scene level in Main.java.
+   Design tokens. Loaded once at scene level in Main.java.
 
    ⚠ JavaFX CSS limitation: custom properties resolve to Double.
    Only use them for Double-typed properties:
@@ -64,7 +64,7 @@
     color-efficiency-high-text: #0a2e18;
     color-efficiency-low: #ff7043;
 
-    /* ── Layout sizes (Double — safe for pref/min/max-width/height) */
+    /* ── Layout sizes ── */
     size-hp-bar-height: 22;
     size-hp-bar-width: 280;
     size-xp-bar-height: 9;
