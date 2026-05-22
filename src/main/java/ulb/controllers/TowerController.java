@@ -8,12 +8,15 @@ import org.slf4j.LoggerFactory;
 import ulb.Configuration;
 import ulb.common.RoomType;
 import ulb.models.player.PlayerState;
+import ulb.models.skills.SkillContext;
 import ulb.models.team.Team;
 import ulb.models.tower.FloorMap;
 import ulb.models.tower.TowerState;
 import ulb.models.tower.exceptions.IllegalMoveException;
 import ulb.models.tower.room.Room;
 import ulb.models.utils.Position;
+import ulb.services.InventoryService;
+import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 import ulb.views.FloorView;
@@ -24,17 +27,21 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     private final TowerService towerService;
     private final TeamService teamService;
+    private final SkillService skillService;
+    private final InventoryService inventoryService;
 
     private PlayerState playerState;
     private TowerState towerState;
 
     public TowerController(MetaController metaController, PlayerState playerState, TowerService towerService,
-            TeamService teamService) {
+            TeamService teamService, SkillService skillService, InventoryService inventoryService) {
         super(metaController, ViewLoader.load(FloorView::new));
         this.view.setListener(this);
         this.playerState = playerState;
         this.towerService = towerService;
         this.teamService = teamService;
+        this.skillService = skillService;
+        this.inventoryService = inventoryService;
     }
 
     public void startRun() {
@@ -52,6 +59,12 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             this.towerService.delete();
         }
         this.towerState = this.towerService.createTower(activeTeam);
+        this.applyStarterItemsBonus();
+    }
+
+    private void applyStarterItemsBonus() {
+        SkillContext ctx = this.skillService.buildSkillContext(this.playerState.getSkillTreeState());
+        this.inventoryService.applyStarterItemsBonus(this.playerState.getInventory(), ctx);
     }
 
     @Override

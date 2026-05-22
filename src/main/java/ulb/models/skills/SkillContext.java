@@ -1,6 +1,7 @@
 package ulb.models.skills;
 
 import ulb.models.bugemon.ElementType;
+import ulb.models.item.ItemType;
 
 public class SkillContext {
 
@@ -40,5 +41,12 @@ public class SkillContext {
             return 1.0;
         }
         return this.state.getXpMultiplier(this.tree);
+    }
+
+    public int getStarterItemQuantity(ItemType type) {
+        if (this.state == null) {
+            return 0;
+        }
+        return this.state.getStarterItemQuantity(this.tree, type);
     }
 }

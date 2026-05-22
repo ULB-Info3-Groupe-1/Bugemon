@@ -40,6 +40,7 @@ import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Item;
+import ulb.models.item.ItemType;
 import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
@@ -138,6 +139,13 @@ public class Parser {
         }
     }
 
+    private static class ItemTypeDeserializer implements JsonDeserializer<ItemType> {
+        @Override
+        public ItemType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            return parseItemType(json.getAsString());
+        }
+    }
+
     private static class DurationDeserializer implements JsonDeserializer<EffectDuration> {
         @Override
         public EffectDuration deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
@@ -215,7 +223,8 @@ public class Parser {
     private static void parseItemsAndInventory(Reader reader) {
         LOG.debug("Parsing Items and inventory");
         Gson gson = new GsonBuilder().registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
-                .registerTypeAdapter(Effect.class, new EffectDeserializer()).create();
+                .registerTypeAdapter(Effect.class, new EffectDeserializer())
+                .registerTypeAdapter(ItemType.class, new ItemTypeDeserializer()).create();
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
@@ -304,7 +313,8 @@ public class Parser {
             case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(obj.get("valeur_pourcent").getAsDouble());
             case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(obj.get(STR_VALEUR).getAsDouble());
             case "objets_bonus" ->
-                new SkillEffect.StarterItemsEffect(obj.get("quantite").getAsInt(), obj.get("categorie").getAsString());
+                new SkillEffect.StarterItemsEffect(obj.get("quantite").getAsInt(),
+                        parseItemType(obj.get("categorie").getAsString()));
             case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(obj.get(STR_VALEUR).getAsInt());
             default -> throw new IllegalArgumentException("Unknown skill effect type: " + type);
         };
@@ -317,6 +327,14 @@ public class Parser {
             case "defense" -> StatType.DEFENSE;
             case "initiative" -> StatType.INITIATIVE;
             default -> throw new IllegalArgumentException("Unknown stat type: " + statStr);
+        };
+    }
+
+    private static ItemType parseItemType(String category) {
+        return switch (category) {
+            case "soin" -> ItemType.HEALING;
+            case "boost" -> ItemType.BOOST;
+            default -> throw new IllegalArgumentException("Unknown item category: " + category);
         };
     }
 }

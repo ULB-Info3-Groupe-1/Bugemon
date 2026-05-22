@@ -2,6 +2,7 @@ package ulb.models.skills;
 
 import ulb.common.StatType;
 import ulb.models.bugemon.ElementType;
+import ulb.models.item.ItemType;
 
 public sealed interface SkillEffect {
 
@@ -21,7 +22,7 @@ public sealed interface SkillEffect {
     record XpMultiplierEffect(double multiplier) implements SkillEffect {
     }
 
-    record StarterItemsEffect(int quantity, String category) implements SkillEffect {
+    record StarterItemsEffect(int quantity, ItemType type) implements SkillEffect {
     }
 
     record RewardChoiceEffect(int totalChoices) implements SkillEffect {

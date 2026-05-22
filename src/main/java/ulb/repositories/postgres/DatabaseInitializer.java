@@ -19,6 +19,7 @@ import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
 import ulb.models.item.Item;
+import ulb.models.item.ItemType;
 import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillEffect.CritBonusEffect;
 import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
@@ -200,8 +201,8 @@ public class DatabaseInitializer extends AbstractRepository {
                     "regen_post_combat", null, null, percent, null, null);
             case XpMultiplierEffect(double multiplier) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
                     "xp_multiplicateur", null, null, multiplier, null, null);
-            case StarterItemsEffect(int quantity, String category) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY,
-                    skillId, "objets_bonus", null, null, null, quantity, category);
+            case StarterItemsEffect(int quantity, ItemType type) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY,
+                    skillId, "objets_bonus", null, null, null, quantity, type.name());
             case RewardChoiceEffect(int totalChoices) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
                     "recompense_choix", null, null, null, totalChoices, null);
             default ->

@@ -244,8 +244,8 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
                 new SkillEffect.RegenPostCombatEffect(rs.getDouble(DatabaseColumns.COL_DOUBLE_VALUE));
             case "xp_multiplicateur" ->
                 new SkillEffect.XpMultiplierEffect(rs.getDouble(DatabaseColumns.COL_DOUBLE_VALUE));
-            case "objets_bonus" ->
-                new SkillEffect.StarterItemsEffect(rs.getInt(DatabaseColumns.COL_INT_VALUE), rs.getString("category"));
+            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(rs.getInt(DatabaseColumns.COL_INT_VALUE),
+                    ItemType.valueOf(rs.getString("category")));
             case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(rs.getInt(DatabaseColumns.COL_INT_VALUE));
             default -> throw new IllegalStateException("Unknown skill effect type: " + type);
         };

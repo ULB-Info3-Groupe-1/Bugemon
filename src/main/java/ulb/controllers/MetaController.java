@@ -110,7 +110,8 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this, services.levelUp);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.towerController = new TowerController(this, playerState, services.tower, services.team);
+        this.towerController = new TowerController(this, playerState, services.tower, services.team, services.skill,
+                services.inventory);
         this.rewardController = new RewardController(this, this.rewardService);
         this.initTransitions();
     }

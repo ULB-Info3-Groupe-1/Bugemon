@@ -11,6 +11,8 @@ import ulb.models.player.BonusStats;
 import ulb.models.skills.SkillEffect.CritBonusEffect;
 import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
 import ulb.models.skills.SkillEffect.RewardChoiceEffect;
+import ulb.models.item.ItemType;
+import ulb.models.skills.SkillEffect.StarterItemsEffect;
 import ulb.models.skills.SkillEffect.StatBonusEffect;
 import ulb.models.skills.SkillEffect.TypeMultiplierEffect;
 import ulb.models.skills.SkillEffect.XpMultiplierEffect;
@@ -196,6 +198,17 @@ public class SkillTreeState {
             SkillNode node = tree.getById(entry.getKey());
             if (node.effect() instanceof RegenPostCombatEffect(double percent)) {
                 total += percent * entry.getValue();
+            }
+        }
+        return total;
+    }
+
+    public int getStarterItemQuantity(SkillTree tree, ItemType type) {
+        int total = 0;
+        for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
+            SkillNode node = tree.getById(entry.getKey());
+            if (node.effect() instanceof StarterItemsEffect(int qty, ItemType t) && t == type) {
+                total += qty * entry.getValue();
             }
         }
         return total;
