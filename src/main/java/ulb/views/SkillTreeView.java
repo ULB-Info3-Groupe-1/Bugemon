@@ -48,10 +48,11 @@ public class SkillTreeView extends View {
 
     @Override
     public void refresh() {
+        // Nothing to refresh
     }
 
     public void refreshSkillState(SkillTreeState state) {
-        availablePoints.setText(String.valueOf(state.getSkillPoints()));
+        this.availablePoints.setText(String.valueOf(state.getSkillPoints()));
         this.buildTree(state);
     }
 
@@ -59,8 +60,8 @@ public class SkillTreeView extends View {
         this.listener = listener;
     }
 
-    public void setTree(SkillTree skillTree) {
-        this.skillTree = skillTree;
+    public void setTree(SkillTree tree) {
+        this.skillTree = tree;
     }
 
     @FXML
@@ -119,16 +120,17 @@ public class SkillTreeView extends View {
         StackPane skillNode = new StackPane(actionMenu);
         skillNode.getStyleClass().add("skill-node");
         this.applyStatusStyle(skillNode, status);
-        skillNode.setLayoutX(nodeX(node, minX));
-        skillNode.setLayoutY(nodeY(node, minY));
+        skillNode.setLayoutX(this.nodeX(node, minX));
+        skillNode.setLayoutY(this.nodeY(node, minY));
 
-        Tooltip.install(skillNode, new Tooltip(buildTooltip(node)));
+        Tooltip.install(skillNode, new Tooltip(this.buildTooltip(node)));
 
         skillNode.setOnMouseClicked(e -> {
-            if (e.getButton() == MouseButton.PRIMARY)
-                listener.onSkillLeftClicked(node);
-            else if (e.getButton() == MouseButton.SECONDARY)
-                listener.onSkillRightClicked(node);
+            if (e.getButton() == MouseButton.PRIMARY) {
+                this.listener.onSkillLeftClicked(node);
+            } else if (e.getButton() == MouseButton.SECONDARY) {
+                this.listener.onSkillRightClicked(node);
+            }
             e.consume();
         });
 
@@ -151,10 +153,10 @@ public class SkillTreeView extends View {
     }
 
     private void addLine(SkillNode from, SkillNode to, int minX, int minY, SkillStatus fromStatus) {
-        double x1 = nodeX(from, minX) + NODE_WIDTH / 2.0;
-        double y1 = nodeY(from, minY) + NODE_HEIGHT / 2.0;
-        double x2 = nodeX(to, minX) + NODE_WIDTH / 2.0;
-        double y2 = nodeY(to, minY) + NODE_HEIGHT / 2.0;
+        double x1 = this.nodeX(from, minX) + NODE_WIDTH / 2.0;
+        double y1 = this.nodeY(from, minY) + NODE_HEIGHT / 2.0;
+        double x2 = this.nodeX(to, minX) + NODE_WIDTH / 2.0;
+        double y2 = this.nodeY(to, minY) + NODE_HEIGHT / 2.0;
 
         Line line = new Line(x1, y1, x2, y2);
         line.getStyleClass().add("skill-connection");
@@ -170,9 +172,9 @@ public class SkillTreeView extends View {
     private void applyStatusStyle(StackPane widget, SkillStatus status) {
         widget.getStyleClass().removeIf(c -> c.startsWith("skill-node-"));
         widget.getStyleClass().add(switch (status) {
-        case ACTIVE -> "skill-node-active";
-        case AVAILABLE -> "skill-node-available";
-        case LOCKED -> "skill-node-locked";
+            case ACTIVE -> "skill-node-active";
+            case AVAILABLE -> "skill-node-available";
+            case LOCKED -> "skill-node-locked";
         });
     }
 

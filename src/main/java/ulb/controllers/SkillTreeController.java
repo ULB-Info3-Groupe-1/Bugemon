@@ -28,7 +28,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     @Override
     public void onSkillLeftClicked(SkillNode skillNode) {
         try {
-            this.skillService.addPoint(playerState.getSkillTreeState(), this.skillService.getSkillTree(),
+            this.skillService.addPoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
                     skillNode.id());
             this.view.refreshSkillState(this.skillService.getSkillTreeState());
         } catch (IllegalNodeStateException e) {
@@ -39,7 +39,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     @Override
     public void onSkillRightClicked(SkillNode skillNode) {
         try {
-            this.skillService.removePoint(playerState.getSkillTreeState(), this.skillService.getSkillTree(),
+            this.skillService.removePoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
                     skillNode.id());
             this.view.refreshSkillState(this.skillService.getSkillTreeState());
         } catch (IllegalNodeStateException e) {

@@ -79,8 +79,10 @@ public class MetaController {
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
-     * @param primaryStage main JavaFX stage of the application
-     * @throws IOException if the music fails to be initialized
+     * @param primaryStage
+     *            main JavaFX stage of the application
+     * @throws IOException
+     *             if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, ServiceRegistry services, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
@@ -251,8 +253,10 @@ public class MetaController {
     /**
      * Switches the current screen to the specified window.
      *
-     * @param window target screen to display
-     * @throws IllegalArgumentException if the window is invalid
+     * @param window
+     *            target screen to display
+     * @throws IllegalArgumentException
+     *             if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);
