@@ -23,6 +23,14 @@ public class Main extends Application {
         launch(args);
     }
 
+    private static String loadStylesheet(String path) {
+        java.net.URL url = Main.class.getResource(path);
+        if (url == null) {
+            throw new IllegalStateException("CSS resource not found: " + path);
+        }
+        return url.toExternalForm();
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
@@ -34,13 +42,9 @@ public class Main extends Application {
         stage.setMaximized(true);
 
         Scene scene = new Scene(new StackPane());
-        scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/base.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/buttons.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/bugemon.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/combat.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/menus.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/reward.css").toExternalForm());
+        for (String path : Configuration.Paths.Css.LOAD_ORDER) {
+            scene.getStylesheets().add(loadStylesheet(path));
+        }
         stage.setScene(scene);
 
         GameBootstrapper bootstrapper = new GameBootstrapper();

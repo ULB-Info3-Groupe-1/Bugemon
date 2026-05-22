@@ -20,6 +20,24 @@ public abstract class Configuration {
         public static final String ROOM_BASE_PATH = "/png/rooms/";
         public static final String SQL_BASE_PATH = "/sql/";
 
+        public static final class Css {
+
+            private Css() {
+                // Private constructor to prevent instantiation
+            }
+
+            public static final String TOKENS = "/css/tokens.css";
+            public static final String BASE = "/css/base.css";
+            public static final String BUTTONS = "/css/buttons.css";
+            public static final String BUGEMON = "/css/bugemon.css";
+            public static final String COMBAT = "/css/combat.css";
+            public static final String MENUS = "/css/menus.css";
+            public static final String REWARD = "/css/reward.css";
+
+            public static final java.util.List<String> LOAD_ORDER = java.util.List.of(TOKENS, BASE, BUTTONS, BUGEMON,
+                    COMBAT, MENUS, REWARD);
+        }
+
         public static final class Fxml {
 
             private Fxml() {
@@ -167,6 +185,6 @@ public abstract class Configuration {
 
         public static final double BIAS_SAME_DIRECTION_PROB = 0.7;
 
-        public static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        public static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
     }
 }
