@@ -5,6 +5,8 @@
 #set heading(numbering: "1.1")
 #show link: underline
 
+#set text(lang: "fr")
+
 #title[Document de fin d'itération 2]
 
 #outline()
@@ -18,16 +20,26 @@ Lors de la reprise, nous avions donc une quantité de travail supérieure à cel
 
 == Fin d'itération difficile <sec:fin_difficile>
 
-Quelques jours avant la deadline initiale, nous avons arrivions progressivement à la fin du projet, mais non sans difficultés.
-En effet, le code ressemblait de plus en plus à un spaghetti géant : le code n'était pas bien pensé pour accuillir les nouvelles fonctionalités de l'itération 4,
+Quelques jours avant la deadline initiale, nous arrivions progressivement à la fin du projet, mais non sans difficultés.
+En effet, le code ressemblait de plus en plus à un "spaghetti géant" : le code n'était pas bien pensé pour accueillir les nouvelles fonctionnalités de l'itération 4,
 mais nous n'avions plus le temps d'entamer un refactoring au moment où nous en avons pris conscience.
 
 C'est pourquoi, lorsque nous avons appris que la deadline était repoussée, nous avons immédiatement entamé un refactoring complet (cf. @sec:qualite_de_code).
 
-Avec le recul, nous réalisons à présent que nous aurions vraissemblablement du demander un refactoring à l'itération 3.
-Faire le refactoring plus tôt aurait probablement permis de le rendre plus court que celui que nous avons du effectuer pendant la période supplémentaire.
+Avec le recul, nous réalisons à présent que nous aurions vraisemblablement dû demander un refactoring à l'itération 3.
+Effectuer le refactoring plus tôt aurait probablement permis de le rendre plus court que celui que nous avons dû réaliser pendant la période supplémentaire.
 
-== Mauvaise compréhension
+== Mauvaise division des tâches
+
+Nous avions divisé l'histoire 17 (Arbre de compétences) en les tâches suivantes :
+- logique pour appliquer les effets
+- controller skill tree
+- model skill tree (touche au service)
+- vue skill tree 
+
+La personne s'occupant de la vue n'a pas lu la partie, ou du moins ne s'est pas souvenu du
+fait quela partie 
+
 
 // TODO: mauvaise compréhensin du skill tree (algo de fou furieux pour rien)
 
