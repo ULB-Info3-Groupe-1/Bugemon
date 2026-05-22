@@ -44,7 +44,7 @@ public class CombatBugemon {
     }
 
     public int getMaxHp() {
-        return this.runBugemon.getMaxHp();
+        return this.runBugemon.getMaxHp() + this.getEffectModifierSum(StatType.HP);
     }
 
     public void takeDamage(int amount) {
@@ -58,7 +58,7 @@ public class CombatBugemon {
     }
 
     public int getEffectiveAttack() {
-        return this.runBugemon.getAttack() + this.getEffectModifierSum(StatType.DEFENSE);
+        return this.runBugemon.getAttack() + this.getEffectModifierSum(StatType.ATTACK);
     }
 
     public int getEffectiveDefense() {
@@ -83,6 +83,9 @@ public class CombatBugemon {
 
     public void addEffect(StatusEffect effect) {
         this.activeEffects.add(effect);
+        if (effect.getStat() == StatType.HP) {
+            this.currentHp += effect.getModifier();
+        }
     }
 
     public void tickEffects() {

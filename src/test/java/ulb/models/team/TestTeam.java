@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,8 @@ public class TestTeam {
         this.team = new Team();
         this.mockBugemon1 = mock(PlayerBugemon.class);
         this.mockBugemon2 = mock(PlayerBugemon.class);
+        when(this.mockBugemon1.getName()).thenReturn("bugemon1");
+        when(this.mockBugemon2.getName()).thenReturn("bugemon2");
     }
 
     @Test
@@ -83,9 +86,13 @@ public class TestTeam {
 
     @Test(expected = TeamAlreadyFullException.class)
     public void shouldThrowTeamAlreadyFullException_whenAddingToFullTeam() {
+        int count = 0;
         // Fill the team dynamically until it's full
         while (!this.team.isFull()) {
-            this.team.add(mock(PlayerBugemon.class));
+            PlayerBugemon mockB = mock(PlayerBugemon.class);
+            when(mockB.getName()).thenReturn("b_" + count);
+            this.team.add(mockB);
+            count++;
         }
 
         // This addition should trigger the TeamAlreadyFullException

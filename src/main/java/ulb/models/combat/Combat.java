@@ -82,7 +82,7 @@ public class Combat {
     }
 
     private void applyStatSkills(SkillContext context) {
-        for (CombatBugemon bugemon : this.playerTeam.getAvailable()) {
+        for (CombatBugemon bugemon : this.playerTeam.getAlive()) {
             for (StatusEffect effect : context.getStatEffects()) {
                 bugemon.addEffect(effect);
             }

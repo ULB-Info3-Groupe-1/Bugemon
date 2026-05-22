@@ -39,9 +39,8 @@ public class FloorView extends View {
 
     @FXML
     public void initialize() {
-        Image img = new Image(
-                FloorView.class.getResourceAsStream(PLAYER_ICON_PATH),
-                0, PLAYER_ICON_HEIGHT, true, false);
+        Image img = new Image(FloorView.class.getResourceAsStream(PLAYER_ICON_PATH), 0, PLAYER_ICON_HEIGHT, true,
+                false);
         this.playerIcon = new ImageView(img);
         this.playerIcon.setPreserveRatio(true);
         this.playerIconWidth = img.getWidth();

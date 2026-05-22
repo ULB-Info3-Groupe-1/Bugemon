@@ -82,6 +82,7 @@ public class TestCombat {
         skillTreeState.earnSkillPoint();
         skillTreeState.earnSkillPoint();
         skillTreeState.earnSkillPoint();
+        skillTreeState.earnSkillPoint();
 
         try {
             skillTreeState.addPoint("hp_1", skillTree);
