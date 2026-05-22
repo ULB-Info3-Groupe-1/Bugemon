@@ -24,7 +24,6 @@ public class FloorView extends View {
     private static final int CELL_SIZE = 110;
     private static final int ROOM_SIZE = 75;
     private static final double PLAYER_ICON_HEIGHT = 50.0;
-    private static final String PLAYER_ICON_PATH = "/png/Trainer.png";
 
     @FXML
     private Label floorNumberLabel;
@@ -39,11 +38,14 @@ public class FloorView extends View {
 
     @FXML
     public void initialize() {
-        Image img = new Image(FloorView.class.getResourceAsStream(PLAYER_ICON_PATH), 0, PLAYER_ICON_HEIGHT, true,
-                false);
-        this.playerIcon = new ImageView(img);
-        this.playerIcon.setPreserveRatio(true);
-        this.playerIconWidth = img.getWidth();
+        var url = FloorView.class.getResource(Configuration.Paths.PLAYER_ICON);
+        if (url != null) {
+            Image img = new Image(url.toExternalForm(), 0, PLAYER_ICON_HEIGHT, true, false);
+
+            this.playerIcon = new ImageView(img);
+            this.playerIcon.setPreserveRatio(true);
+            this.playerIconWidth = img.getWidth();
+        }
     }
 
     public void setListener(Listener listener) {
