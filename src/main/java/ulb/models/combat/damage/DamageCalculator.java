@@ -20,7 +20,7 @@ public class DamageCalculator {
             SkillContext attackerSkillContext) {
         double power = attack.power();
 
-        int attackStat = attacker.getEffectiveAttack() + attackerSkillContext.getAttackBonus();
+        int attackStat = attacker.getEffectiveAttack();
         double attackFactor = this.attackFactorFormula.evaluate(attackStat);
         double reductionFactor = this.reductionFactorFormula.evaluate(defender.getEffectiveDefense());
 

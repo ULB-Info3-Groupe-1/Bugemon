@@ -67,19 +67,19 @@ public final class BugemonFixtures {
     // --- Bugémons génériques (type NORMAL, type non pertinent) ---
 
     public static Bugemon bugemon(int hp, int attack, int defense, int initiative, List<Attack> attacks) {
-        return new Bugemon("Bugémon", hp, attack, defense, initiative, ElementType.NORMAL, attacks, "", false);
+        return new Bugemon("Bugémon", hp, attack, defense, initiative, ElementType.NORMAL, attacks, "", false, false);
     }
 
     // --- Bugémons typés (type pertinent pour tester l'efficacité) ---
 
     public static Bugemon fastFlora() {
         return new Bugemon("FloraFast", 100, 50, 40, 70, ElementType.FLORA,
-                List.of(floraAttack(), floraAttack(), floraAttack()), "", false);
+                List.of(floraAttack(), floraAttack(), floraAttack()), "", false, false);
     }
 
     public static Bugemon slowAqua() {
         return new Bugemon("AquaSlow", 100, 50, 40, 30, ElementType.AQUA,
-                List.of(aquaAttack(), aquaAttack(), aquaAttack()), "", false);
+                List.of(aquaAttack(), aquaAttack(), aquaAttack()), "", false, false);
     }
 
     // --- Helpers ---

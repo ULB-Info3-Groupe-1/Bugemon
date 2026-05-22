@@ -1,14 +1,16 @@
 package ulb.models.skills;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ulb.Configuration;
 import ulb.common.StatType;
 import ulb.models.bugemon.ElementType;
 import ulb.models.item.ItemType;
-import ulb.models.player.BonusStats;
+import ulb.models.combat.effect.StatusEffect;
 import ulb.models.skills.SkillEffect.CritBonusEffect;
 import ulb.models.skills.SkillEffect.RegenPostCombatEffect;
 import ulb.models.skills.SkillEffect.RewardChoiceEffect;
@@ -136,27 +138,21 @@ public class SkillTreeState {
         return false;
     }
 
-    public BonusStats getTotalStatBonus(SkillTree tree) {
-        int hp = 0;
-        int atk = 0;
-        int def = 0;
-        int init = 0;
+    public List<StatusEffect> getTotalStatBonus(SkillTree tree) {
+
+        List<StatusEffect> effects = new ArrayList<>();
+
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
             int level = entry.getValue();
             // visitor pattern would be cleaner
             if (node.effect() instanceof StatBonusEffect(StatType stat, int bonus)) {
                 int b = bonus;
-                switch (stat) {
-                case HP -> hp += b * level;
-                case ATTACK -> atk += b * level;
-                case DEFENSE -> def += b * level;
-                case INITIATIVE -> init += b * level;
-                default -> throw new IllegalStateException("Unexpected stat type: " + stat);
-                }
+                effects.add(new StatusEffect(stat, b * level, null));
+
             }
         }
-        return new BonusStats(hp, atk, def, init);
+        return effects;
     }
 
     public double getXpMultiplier(SkillTree tree) {

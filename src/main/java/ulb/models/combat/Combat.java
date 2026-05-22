@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import ulb.common.DamageResult;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.damage.DamageCalculator;
+import ulb.models.combat.effect.StatusEffect;
 import ulb.models.combat.strategy.CombatStrategy;
 import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
@@ -164,8 +165,19 @@ public class Combat {
         this.effectProcessor = builder.effectProcessor;
         this.playerSkillContext = builder.playerSkillContext;
 
+        this.applyStatSkills(this.playerSkillContext);
+
         this.result = null;
         this.finished = false;
+    }
+
+    private void applyStatSkills(SkillContext context) {
+        for (CombatBugemon bugemon : this.playerTeam.getAvailable()) {
+            for (StatusEffect effect : context.getStatEffects()) {
+                bugemon.addEffect(effect);
+            }
+        }
+        return;
     }
 
     private CombatContext makePlayerContext() {

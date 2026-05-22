@@ -31,6 +31,10 @@ import ulb.models.combat.utils.EffectProcessor;
 import ulb.models.item.Inventory;
 import ulb.models.item.Item;
 import ulb.models.skills.SkillContext;
+import ulb.models.skills.SkillEffect;
+import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillTree;
+import ulb.models.skills.SkillTreeState;
 
 public class TestCombat {
 
@@ -49,12 +53,46 @@ public class TestCombat {
 
         this.playerTeam = BugemonFixtures.teamOf(BugemonFixtures.fastFlora());
         this.opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
-
+        SkillContext skillContext = this.skillContextCreationHelper();
         this.combat = new Combat.Builder().playerTeam(this.playerTeam).opponentTeam(this.opponentTeam).floor(2)
                 .bossMode(false).playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
-                .effectProcessor(new EffectProcessor()).playerSkillContext(SkillContext.NONE).build();
+                .effectProcessor(new EffectProcessor()).playerSkillContext(skillContext).build();
+    }
+
+    public SkillContext skillContextCreationHelper() {
+        // Create 3 hardcoded skills from skill_tree.json
+        SkillNode hp1 = new SkillNode("hp_1", "+10 HP", "Tous vos Bugémons commencent avec +10 HP maximum", -1, 1, 3, 1,
+                new SkillEffect.StatBonusEffect(StatType.HP, 10), List.of());
+
+        SkillNode attaque1 = new SkillNode("attaque_1", "+3 Attaque", "Tous vos Bugémons commencent avec +3 Attaque", 1,
+                1, 3, 1, new SkillEffect.StatBonusEffect(StatType.ATTACK, 3), List.of("hp_1"));
+
+        SkillNode critiqueChance = new SkillNode("critique_chance", "Œil critique", "+5% de chance de coup critique", 2,
+                2, 1, 3, new SkillEffect.CritBonusEffect(5), List.of("attaque_1"));
+
+        // Build skill tree
+        SkillTree skillTree = new SkillTree(List.of(hp1, attaque1, critiqueChance));
+        SkillTreeState skillTreeState = new SkillTreeState();
+
+        // Earn skill points and add skills to the tree state
+        skillTreeState.earnSkillPoint();
+        skillTreeState.earnSkillPoint();
+        skillTreeState.earnSkillPoint();
+        skillTreeState.earnSkillPoint();
+        skillTreeState.earnSkillPoint();
+
+        try {
+            skillTreeState.addPoint("hp_1", skillTree);
+            skillTreeState.addPoint("attaque_1", skillTree);
+            skillTreeState.addPoint("critique_chance", skillTree);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Create SkillContext with the state and tree
+        return new SkillContext(skillTreeState, skillTree);
     }
 
     @Test
@@ -319,5 +357,11 @@ public class TestCombat {
             c.resolveTurn(action1, action2, steps -> {
             });
         });
+    }
+
+    @Test
+    public void testSkillsStatBonusInCombat() {
+        assertEquals(this.combat.getPlayerTeam().getActive().getCurrentHp(), 110); // Base 100 + 10 from skill
+        assertEquals(this.combat.getPlayerTeam().getActive().getEffectiveAttack(), 53); // Base 50 + 3 from skill
     }
 }

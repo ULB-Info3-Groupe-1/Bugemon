@@ -25,8 +25,8 @@ public class ServiceRegistry {
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     public ServiceRegistry(BugemonService bugemon, TeamService team, InventoryService inventory, SkillService skill,
-            TowerService tower, CombatService combat, SaveService save, LevelUpService levelUp,
-            MusicService music, RewardService reward) {
+            TowerService tower, CombatService combat, SaveService save, LevelUpService levelUp, MusicService music,
+            RewardService reward) {
         this.bugemon = bugemon;
         this.team = team;
         this.inventory = inventory;

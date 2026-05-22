@@ -192,9 +192,9 @@ public class SkillTreeView extends View {
     private void applyStatusStyle(StackPane widget, SkillStatus status) {
         widget.getStyleClass().removeIf(c -> c.startsWith("skill-node-"));
         widget.getStyleClass().add(switch (status) {
-        case ACTIVE -> "skill-node-active";
-        case AVAILABLE -> "skill-node-available";
-        case LOCKED -> "skill-node-locked";
+            case ACTIVE -> "skill-node-active";
+            case AVAILABLE -> "skill-node-available";
+            case LOCKED -> "skill-node-locked";
         });
     }
 

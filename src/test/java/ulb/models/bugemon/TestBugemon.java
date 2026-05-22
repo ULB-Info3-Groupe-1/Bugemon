@@ -27,7 +27,7 @@ public class TestBugemon {
         List<Attack> validAttacks = this.createValidAttacksList();
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            new Bugemon("", 100, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true);
+            new Bugemon("", 100, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true, false);
         });
 
         assertEquals("Bugemon's name cannot be empty", exception.getMessage());
@@ -38,7 +38,7 @@ public class TestBugemon {
         List<Attack> validAttacks = this.createValidAttacksList();
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            new Bugemon("Pikabug", -10, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true);
+            new Bugemon("Pikabug", -10, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true, false);
         });
 
         assertEquals("Bugemon's current hp must be non-negative", exception.getMessage());
@@ -49,7 +49,7 @@ public class TestBugemon {
         List<Attack> validAttacks = this.createValidAttacksList();
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            new Bugemon("Pikabug", 100, 0, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true);
+            new Bugemon("Pikabug", 100, 0, 10, 10, ElementType.FLORA, validAttacks, "sprite.png", true, false);
         });
 
         assertEquals("Stats must be strictly positive", exception.getMessage());
@@ -60,7 +60,7 @@ public class TestBugemon {
         List<Attack> invalidAttacks = new ArrayList<>();
 
         assertThrows(InvalidAttackCountException.class, () -> {
-            new Bugemon("Pikabug", 100, 10, 10, 10, ElementType.FLORA, invalidAttacks, "sprite.png", true);
+            new Bugemon("Pikabug", 100, 10, 10, 10, ElementType.FLORA, invalidAttacks, "sprite.png", true, false);
         });
     }
 
@@ -69,11 +69,11 @@ public class TestBugemon {
         List<Attack> validAttacks = this.createValidAttacksList();
 
         Bugemon bugemon1 = new Bugemon("UniqueName", 100, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite1.png",
-                true);
+                true, false);
         Bugemon bugemon2 = new Bugemon("UniqueName", 150, 20, 20, 20, ElementType.AQUA, validAttacks, "sprite2.png",
-                false);
+                false, false);
         Bugemon bugemon3 = new Bugemon("OtherName", 100, 10, 10, 10, ElementType.FLORA, validAttacks, "sprite1.png",
-                true);
+                true, false);
 
         assertEquals(bugemon1, bugemon2);
         assertNotEquals(bugemon1, bugemon3);

@@ -1,6 +1,9 @@
 package ulb.models.skills;
 
+import java.util.List;
+
 import ulb.models.bugemon.ElementType;
+import ulb.models.combat.effect.StatusEffect;
 import ulb.models.item.ItemType;
 
 public class SkillContext {
@@ -15,18 +18,11 @@ public class SkillContext {
         this.tree = tree;
     }
 
-    public int getAttackBonus() {
+    public List<StatusEffect> getStatEffects() {
         if (this.state == null) {
-            return 0;
+            return List.of();
         }
-        return this.state.getTotalStatBonus(this.tree).getBonusAttack();
-    }
-
-    public int getDefenseBonus() {
-        if (this.state == null) {
-            return 0;
-        }
-        return this.state.getTotalStatBonus(this.tree).getBonusDefense();
+        return this.state.getTotalStatBonus(this.tree);
     }
 
     public double getTypeMultiplier(ElementType attackType) {
