@@ -77,12 +77,12 @@ public class TestCombat {
         SkillTreeState skillTreeState = new SkillTreeState();
 
         // Earn skill points and add skills to the tree state
-        skillTreeState.earnSkillPoint();
-        skillTreeState.earnSkillPoint();
-        skillTreeState.earnSkillPoint();
-        skillTreeState.earnSkillPoint();
-        skillTreeState.earnSkillPoint();
-        skillTreeState.earnSkillPoint();
+        skillTreeState.addPoint();
+        skillTreeState.addPoint();
+        skillTreeState.addPoint();
+        skillTreeState.addPoint();
+        skillTreeState.addPoint();
+        skillTreeState.addPoint();
 
         try {
             skillTreeState.addPoint("hp_1", skillTree);

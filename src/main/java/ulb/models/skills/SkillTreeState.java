@@ -45,10 +45,6 @@ public class SkillTreeState {
         return this.skillLevels.getOrDefault(skillId, 0);
     }
 
-    public void earnSkillPoint() {
-        this.skillPoints++;
-    }
-
     public int getSkillPoints() {
         return this.skillPoints;
     }
@@ -78,6 +74,10 @@ public class SkillTreeState {
 
     public boolean canRemovePoint(String nodeId, SkillTree tree) {
         return this.getNodeLevel(nodeId) > 0 && !this.wouldBreakDependents(nodeId, tree);
+    }
+
+    public void addPoint() {
+        this.skillPoints++;
     }
 
     public void addPoint(String nodeId, SkillTree tree) throws IllegalNodeStateException {

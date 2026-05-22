@@ -25,6 +25,12 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
         this.initialize();
     }
 
+    @Override
+    protected void show() {
+        this.view.refreshSkillState(this.playerState.getSkillTreeState());
+        super.show();
+    }
+
     public void initialize() {
         this.view.setListener(this);
         this.view.setTree(this.skillService.getSkillTree());

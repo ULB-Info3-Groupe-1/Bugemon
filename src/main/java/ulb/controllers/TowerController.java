@@ -16,6 +16,7 @@ import ulb.models.tower.exceptions.IllegalMoveException;
 import ulb.models.tower.room.Room;
 import ulb.models.utils.Position;
 import ulb.services.InventoryService;
+import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
@@ -29,12 +30,14 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private final TeamService teamService;
     private final SkillService skillService;
     private final InventoryService inventoryService;
+    private final SaveService saveService;
 
     private PlayerState playerState;
     private TowerState towerState;
 
     public TowerController(MetaController metaController, PlayerState playerState, TowerService towerService,
-            TeamService teamService, SkillService skillService, InventoryService inventoryService) {
+            TeamService teamService, SkillService skillService, InventoryService inventoryService,
+            SaveService saveService) {
         super(metaController, ViewLoader.load(FloorView::new));
         this.view.setListener(this);
         this.playerState = playerState;
@@ -42,6 +45,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.teamService = teamService;
         this.skillService = skillService;
         this.inventoryService = inventoryService;
+        this.saveService = saveService;
     }
 
     public void startRun() {
@@ -115,7 +119,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     void onBonusRoomExited() {
-        this.towerService.save();
+        this.saveService.save(this.playerState);
         this.udpateDisplayedFloor();
     }
 
@@ -136,6 +140,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
 
     private void advanceFloorState() {
         int nextFloor = this.towerState.getCurrentFloor() + 1;
+        this.playerState.addSkillPoint();
         if (nextFloor > Configuration.Game.FLOOR_MAX) {
             this.towerService.delete();
             this.towerState = null;
@@ -145,7 +150,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.towerState = new TowerState(this.towerState.getSeed(), this.towerState.getRunTeam(), nextFloor,
                 nextFloorMap);
         this.towerService.setActiveTower(this.towerState);
-        this.towerService.save();
+        this.saveService.save(this.playerState);
     }
 
     private void udpateDisplayedFloor() {

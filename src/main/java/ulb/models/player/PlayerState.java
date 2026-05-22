@@ -45,6 +45,10 @@ public class PlayerState {
         return this.skillTreeState;
     }
 
+    public void addSkillPoint() {
+        this.skillTreeState.addPoint();
+    }
+
     public void clear() {
         this.activeTeam = null;
         this.inventory.clear();
