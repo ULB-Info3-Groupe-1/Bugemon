@@ -1,9 +1,16 @@
+/* --- Local color tokens --- */
 .floor-container {
+  color-room-start: #3498db;
+  color-room-reward: #f39c12;
+  color-current-highlight: #f1c40f;
+  color-available-stroke: #009900;
+  color-visited-fill: #555555;
+  color-connection: #34495e;
+  color-hover-glow: #ecf0f1;
+  color-instructions: #bdc3c7;
 }
 
-.floor-map-header {
-}
-
+/* --- Layout --- */
 .floor-number-label {
   -fx-font-size: 28px;
   -fx-font-weight: bold;
@@ -11,23 +18,20 @@
 
 .floor-instructions {
   -fx-font-size: 16px;
-  -fx-text-fill: #bdc3c7;
+  -fx-text-fill: color-instructions;
 }
 
 .map-container {
   -fx-background-color: transparent;
 }
 
-/* ========================================
-   ROOM NODE - BASE STYLES
-   ======================================== */
+/* --- ROOM NODE — base --- */
 .room-node {
   -fx-cursor: default;
-  fx-background-color: #edebe0;
 }
 
 .room-background {
-  -fx-fill: #edebe0;
+  -fx-fill: color-surface-dialog;
   -fx-stroke-width: 2;
 }
 
@@ -37,59 +41,54 @@
 }
 
 .room-type-icon {
-  -fx-translate-y: 0;
   -fx-opacity: 0.95;
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 6, 0.2, 0, 1);
 }
 
-/* ========================================
-   ROOM TYPES - COLORS & ICONS
-   ======================================== */
+/* --- ROOM TYPES — border color & icon glow --- */
 .room-node.room-start .room-background {
-  -fx-stroke: #3498db;
+  -fx-stroke: color-room-start;
 }
 
 .room-node.room-start .room-type-icon {
-  -fx-effect: dropshadow(gaussian, #3498db, 10, 0.45, 0, 0);
+  -fx-effect: dropshadow(gaussian, color-room-start, 10, 0.45, 0, 0);
 }
 
 .room-node.room-combat .room-background {
-  -fx-stroke: #e74c3c;
+  -fx-stroke: color-pyro;
 }
 
 .room-node.room-combat .room-type-icon {
-  -fx-effect: dropshadow(gaussian, #e74c3c, 10, 0.45, 0, 0);
+  -fx-effect: dropshadow(gaussian, color-pyro, 10, 0.45, 0, 0);
 }
 
 .room-node.room-boss .room-background {
-  -fx-stroke: #8e44ad;
+  -fx-stroke: color-xp;
   -fx-stroke-width: 4;
 }
 
 .room-node.room-boss .room-type-icon {
-  -fx-effect: dropshadow(gaussian, #8e44ad, 14, 0.6, 0, 0);
+  -fx-effect: dropshadow(gaussian, color-xp, 14, 0.6, 0, 0);
 }
 
 .room-node.room-reward .room-background {
-  -fx-stroke: #f39c12;
+  -fx-stroke: color-room-reward;
 }
 
 .room-node.room-reward .room-type-icon {
-  -fx-effect: dropshadow(gaussian, #f39c12, 10, 0.5, 0, 0);
+  -fx-effect: dropshadow(gaussian, color-room-reward, 10, 0.5, 0, 0);
 }
 
 .room-node.room-empty .room-background {
-  -fx-stroke: #95a5a6;
+  -fx-stroke: color-litho;
 }
 
-/* ========================================
-   ROOM STATES - VISUAL FEEDBACK
-   ======================================== */
+/* --- ROOM STATES — visual feedback --- */
 
-/* Current room: highlighted with glow */
+/* Current room: highlighted */
 .room-node.current .room-background {
-  -fx-fill: #555555;
-  -fx-stroke: #f1c40f;
+  -fx-fill: color-visited-fill;
+  -fx-stroke: color-current-highlight;
   -fx-stroke-width: 5;
 }
 
@@ -99,38 +98,36 @@
 }
 
 /* Available room: interactive */
-.room-node.available .room-background {
-  -fx-stroke: #009900;
-  -fx-stroke-width: 5;
+.room-node.available {
   -fx-cursor: hand;
 }
 
-.room-node.available:hover {
-  -fx-scale-x: 1.1;
-  -fx-scale-y: 1.1;
-  -fx-effect: dropshadow(gaussian, #ecf0f1, 15, 0.6, 0, 0);
+.room-node.available .room-background {
+  -fx-stroke: color-available-stroke;
+  -fx-stroke-width: 5;
 }
 
 /* Visited room: grayed out */
 .room-node.visited .room-background {
-  -fx-fill: #555555;
-  -fx-background-color: #555555;
+  -fx-fill: color-visited-fill;
 }
 
 /* Visited + available: was here, can return */
-.room-node.visited_available .room-background {
-  -fx-stroke: #009900;
-  -fx-fill: #555555;
+.room-node.visited_available {
   -fx-cursor: hand;
+}
+
+.room-node.visited_available .room-background {
+  -fx-stroke: color-available-stroke;
+  -fx-stroke-width: 5;
+  -fx-fill: color-visited-fill;
 }
 
 .room-node.locked {
   -fx-cursor: not-allowed;
 }
 
-/* ========================================
-   STATE OVERLAY & LABELS
-   ======================================== */
+/* --- STATE OVERLAY & LABELS --- */
 .room-overlay {
   -fx-background-color: transparent;
 }
@@ -138,14 +135,12 @@
 .state-label {
   -fx-font-size: 32px;
   -fx-font-weight: bold;
-  -fx-text-fill: #2ecc71;
+  -fx-text-fill: color-hp-bar;
   -fx-effect: dropshadow(gaussian, black, 5, 0.8, 0, 0);
 }
 
-/* ========================================
-   CONNECTIONS (LINES BETWEEN ROOMS)
-   ======================================== */
+/* --- CONNECTIONS (lines between rooms) ---- */
 .room-connection {
-  -fx-stroke: #34495e;
+  -fx-stroke: color-connection;
   -fx-stroke-width: 3;
 }
