@@ -20,7 +20,7 @@
   - [Liste du nombre de commits de chaque membre](#liste-du-nombre-de-commits-de-chaque-membre)
   - [Lancer le projet](#lancer-le-projet)
   - [Lancer les tests](#lancer-les-tests)
-  - [Générer la documentation](#générer-et-lire-la-documentation)
+  - [Générer et lire la documentation](#générer-et-lire-la-documentation)
   - [Générer le jar](#générer-le-jar)
 
 ## Description générale
@@ -90,4 +90,3 @@ mvn javadoc:javadoc
 ```bash
 mvn package
 ```
-
