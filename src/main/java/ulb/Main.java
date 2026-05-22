@@ -27,7 +27,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         InputStream fontStream = Main.class.getResourceAsStream("/fonts/boldpixels.ttf");
         if (fontStream != null) {
-            Font.loadFont(fontStream, 16);
+            Font.loadFont(fontStream, Configuration.Ui.FONT_SIZE);
         }
 
         stage.setTitle(Configuration.Ui.STAGE_TITLE);

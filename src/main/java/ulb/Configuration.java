@@ -65,6 +65,7 @@ public abstract class Configuration {
 
         public static final String FLOOR_PREFIX = "NO";
         public static final int FLOOR_MOVE_ANIMATION_MS = 500;
+        public static final int FONT_SIZE = 16;
     }
 
     public static final class Music {
@@ -114,6 +115,8 @@ public abstract class Configuration {
                 effectiveAttack -> (100.0 + effectiveAttack) / 100.0;
         public static final ReductionFactorFormula REDUCTION_FACTOR_FORMULA = //
                 effectiveDefense -> 100.0 / (100 + effectiveDefense);
+
+        public static final int MIN_MAX_MAXIMAL_DEPTH = 4;
     }
 
     public static final class Skill {

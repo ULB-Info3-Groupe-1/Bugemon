@@ -2,6 +2,7 @@ package ulb.models.combat.strategy;
 
 import java.util.List;
 
+import ulb.Configuration;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatTeam;
 import ulb.models.combat.snapshot.CombatSnapshot;
@@ -23,7 +24,7 @@ public class MiniMaxStrategy implements CombatStrategy {
         Inventory oppInv = ctx.opponentInventory();
 
         CombatSnapshot snapshot = CombatSnapshot.fromAiPerspective(ally, opp, oppInv.getMap(), allyInv.getMap());
-        MiniMax mini = new MiniMax(4);
+        MiniMax mini = new MiniMax(Configuration.Game.MIN_MAX_MAXIMAL_DEPTH);
         // choose for the AI-controlled team explicitly
         SimAction action = mini.chooseBestAction(snapshot, true);
 
@@ -61,7 +62,7 @@ public class MiniMaxStrategy implements CombatStrategy {
         }
 
         CombatSnapshot snapshot = CombatSnapshot.fromAiPerspective(ally, opp, oppInv.getMap(), allyInv.getMap());
-        MiniMax mini = new MiniMax(4);
+        MiniMax mini = new MiniMax(Configuration.Game.MIN_MAX_MAXIMAL_DEPTH);
         SimAction action = mini.chooseBestAction(snapshot, true);
 
         if (action.kind() == SimActionKind.SWITCH) {
