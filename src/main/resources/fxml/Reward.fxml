@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.RewardView" styleClass="reward-container"
+    prefWidth="760" prefHeight="560">
+
+    <Label text="Récompense d'étage" styleClass="reward-title" />
+
+    <VBox fx:id="rewardPanel" alignment="CENTER" spacing="16">
+        <Label text="Choisissez une récompense"
+            styleClass="reward-subtitle" />
+        <HBox fx:id="rewardCardsBox" spacing="20" alignment="CENTER" />
+        <Label fx:id="feedbackLabel" text=""
+            styleClass="reward-feedback" />
+    </VBox>
+
+    <VBox fx:id="selectionPanel" alignment="CENTER" spacing="20"
+        visible="false" managed="false">
+        <Label fx:id="promptLabel" text="" styleClass="reward-prompt"
+            wrapText="true" />
+        <VBox fx:id="bugemonListBox" spacing="10" alignment="CENTER" />
+        <VBox fx:id="attackReplacementBox" spacing="16"
+            alignment="CENTER" visible="false" managed="false">
+            <Label fx:id="attackReplacementTitle" text=""
+                styleClass="reward-attack-hint" wrapText="true" />
+            <HBox fx:id="attackButtonsBox" spacing="12" alignment="CENTER" />
+        </VBox>
+    </VBox>
+
+</VBox>

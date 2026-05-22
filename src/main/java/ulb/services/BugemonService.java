@@ -1,124 +1,171 @@
 package ulb.services;
 
-import java.util.ArrayDeque;
+import java.net.URL;
 import java.util.List;
-import java.util.Queue;
 
-import ulb.factories.BugemonFactory;
+import ulb.common.dto.persistence.CreateBugemonDTO;
+import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon_team.exceptions.BugemonAlreadyExistsException;
-import ulb.models.level_up.LevelUp;
-import ulb.repositories.PlayerRepository;
-import ulb.repositories.StaticDataRepository;
-import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.models.bugemon.ElementType;
+import ulb.models.player.PlayerBugemon;
+import ulb.models.team.Team;
+import ulb.repositories.BugemonRepository;
+import ulb.repositories.StaticRepository;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
+import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 
+/**
+ * Service that manages Bugemon data for a specific player.
+ *
+ * <p>
+ * Combines static species data (from {@link ulb.repositories.StaticRepository}) with per-player progression data (from
+ * {@link ulb.repositories.BugemonRepository}) to produce {@link ulb.models.player.PlayerBugemon} instances. Also
+ * handles the creation of new custom Bugemons and persisting team state.
+ */
 public class BugemonService {
 
-    private final StaticDataRepository staticDataRepository;
-    private final PlayerRepository playerRepository;
-    private final PlayerService playerService;
+    private final String playerName;
+    private final StaticRepository staticDataRepository;
+    private final BugemonRepository bugemonRepository;
 
-    private Queue<LevelUp> levelUps = new ArrayDeque<>();
-
-    // Cache for all default Bugemons to avoid multiple database calls
-    private List<Bugemon> allDefaultBugemonsCache;
-
-    public BugemonService(StaticDataRepository staticDataRepository, PlayerRepository playerRepository,
-            PlayerService playerService) {
+    /**
+     * Constructs a {@code BugemonService} bound to the given player.
+     *
+     * @param staticDataRepository
+     *            repository providing static species and attack definitions
+     * @param bugemonRepository
+     *            repository for per-player Bugemon progression
+     * @param playerName
+     *            the name of the player whose data this service manages
+     */
+    public BugemonService(StaticRepository staticDataRepository, BugemonRepository bugemonRepository,
+            String playerName) {
+        this.playerName = playerName;
         this.staticDataRepository = staticDataRepository;
-        this.playerRepository = playerRepository;
-        this.playerService = playerService;
+        this.bugemonRepository = bugemonRepository;
+    }
+
+    /** Returns all static Bugemon species definitions, including boss species. */
+    public List<Bugemon> getDefaultBugemons() {
+        return this.staticDataRepository.bugemons();
+    }
+
+    /** Returns all available attacks across all element types. */
+    public List<Attack> getAttacks() {
+        return this.staticDataRepository.attacks();
     }
 
     /**
-     * Get all default Bugemons from the database. Cached after the first call.
+     * Returns all attacks whose element type matches {@code bugemonType}.
      *
-     * @return (List<Bugemon>) List of default Bugemons
+     * @param bugemonType
+     *            the element type to filter by
      */
-    public List<Bugemon> getAllDefaultBugemons() {
-        if (this.allDefaultBugemonsCache == null) {
-            this.allDefaultBugemonsCache = this.staticDataRepository.getAllDefaultBugemons();
-        }
-        return this.allDefaultBugemonsCache;
+    public List<Attack> getAttacks(ElementType bugemonType) {
+        return this.staticDataRepository.attacks().stream().filter(attack -> attack.type() == bugemonType).toList();
     }
 
     /**
-     * Save a new bugemon in the database.
+     * Returns the player's {@link ulb.models.player.PlayerBugemon} for the given species name. If the player has no
+     * saved progression for that species, returns a fresh instance at base stats.
      *
-     * @param bugemon
-     *            (CreateBugemonDTO) the bugemon to be saved
-     * @throws BugemonNameIsEmptyException
-     *             if the name of the bugemon is empty
+     * @param bugemonName
+     *            the species name to look up
+     * @return the player's {@code PlayerBugemon}, never {@code null}
+     * @throws java.util.NoSuchElementException
+     *             if the species name does not exist in the static data
      */
-    public void saveBugemon(CreateBugemonDTO bugemon)
-            throws BugemonNameIsEmptyException, BugemonAlreadyExistsException {
-        this.staticDataRepository.saveBugemon(bugemon);
-        this.getAllDefaultBugemons().add(BugemonFactory.createBugemon(bugemon));
-    }
-
-    public Bugemon getBugemonByName(String name) {
-        return this.getAllDefaultBugemons().stream().filter(b -> b.getName().equals(name)).findFirst().orElse(null);
+    public PlayerBugemon getPlayerBugemon(String bugemonName) {
+        Bugemon base = this.staticDataRepository.bugemons().stream().filter(b -> b.name().equals(bugemonName))
+                .findFirst().orElseThrow();
+        return this.bugemonRepository.findByName(this.playerName, bugemonName).map(dto -> PlayerBugemon.from(base, dto))
+                .orElse(new PlayerBugemon(base));
     }
 
     /**
-     * Get all attacks matching a specific Bugemon type.
+     * Returns all non-boss species as {@link ulb.models.player.PlayerBugemon} instances for this player. Species
+     * without saved progression are returned at base stats.
+     */
+    public List<PlayerBugemon> getPlayerBugemons() {
+        List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playerName);
+
+        // players cannot own boss bugemons
+        return this.staticDataRepository.bugemons().stream().filter(bugemon -> !bugemon.isBoss())
+                // search for the PlayerBugemon corresponding to this Bugemon
+                .map(bugemon -> playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name()))
+                        // if one was found then take that PlayerBugemon
+                        .findFirst().map(dto -> PlayerBugemon.from(bugemon, dto))
+                        // otherwise create a new PlayerBugemon based on the bugemon
+                        .orElseGet(() -> new PlayerBugemon(bugemon)))
+                .toList();
+    }
+
+    /**
+     * Persists the progression of every member of {@code team}.
      *
+     * @param team
+     *            the team whose members are saved
+     */
+    public void save(Team team) {
+        team.getMembers().forEach(this::savePlayerBugemon);
+    }
+
+    public void savePlayerBugemon(PlayerBugemon bugemon) {
+        this.bugemonRepository.save(bugemon.toDTO(this.playerName));
+    }
+
+    /**
+     * Assembles a {@link ulb.common.dto.persistence.CreateBugemonDTO} from the provided parameters without persisting
+     * it. Callers should pass the result to {@link #saveNewBugemon(CreateBugemonDTO)}.
+     *
+     * @param name
+     *            the species name
      * @param type
-     *            type used to filter attacks
-     * @return attacks for the provided type
+     *            the element type
+     * @param spriteUrl
+     *            URL pointing to the sprite image file
+     * @param defense
+     *            base defense stat
+     * @param attack
+     *            base attack stat
+     * @param initiative
+     *            base initiative stat
+     * @param maxHp
+     *            base maximum HP
+     * @param attacks
+     *            list of attacks to assign to this species
+     * @return the assembled DTO, not yet persisted
      */
-    public List<Attack> getAttacksByType(BugemonType type) {
-        return this.staticDataRepository.getAllAttacks().values().stream().filter(a -> a.type() == type).toList();
+    public CreateBugemonDTO createBugemon(String name, ElementType type, URL spriteUrl, int defense, int attack,
+            int initiative, int maxHp, List<Attack> attacks) {
+        return new CreateBugemonDTO(name, type, spriteUrl, defense, attack, initiative, maxHp, false, attacks);
     }
 
     /**
-     * Saves the state of a single bugemon to the database.
+     * Validates and persists a new custom Bugemon species.
      *
      * @param bugemon
-     *            the bugemon to save
+     *            the DTO describing the new species
+     * @throws ulb.repositories.exceptions.BugemonNameIsEmptyException
+     *             if the species name is blank
+     * @throws BugemonNameAlreadyExistsException
+     *             if a species with the same name already exists
      */
-    public void saveBugemonState(Bugemon bugemon) {
-        this.playerRepository.updatePlayerBugemon(new PlayerBugemonDTO(this.playerService.getPlayerId(),
-                bugemon.getName(), bugemon.getDefense(), bugemon.getAttack(), bugemon.getInitiative(),
-                bugemon.getMaxHp(), bugemon.getXp(), bugemon.getLevel()));
-
-        this.playerService.updateLocalTeams();
-    }
-
-    public int numPendingLevelUps() {
-        return this.levelUps.size();
-    }
-
-    public boolean hasPendingLevelUps() {
-        return this.numPendingLevelUps() > 0;
-    }
-
-    public LevelUp peekNextLevelUp() {
-        return this.levelUps.peek();
-    }
-
-    public void applyNextLevelUp(int upgradeIdx) {
-        LevelUp levelUp = this.levelUps.remove();
-        levelUp.apply(upgradeIdx);
-
-        this.saveBugemonState(levelUp.getBugemon());
-    }
-
-    public void distributeXp(Bugemon bugemon, int amount) {
-        int numLevelUps = bugemon.gainXp(amount);
-
-        if (numLevelUps > 0) {
-            bugemon.restoreHp();
+    public void saveNewBugemon(CreateBugemonDTO bugemon)
+            throws BugemonNameIsEmptyException, BugemonNameAlreadyExistsException {
+        if (bugemon.name().isEmpty()) {
+            throw new BugemonNameIsEmptyException("Bugemon name cannot be empty!");
         }
 
-        for (int i = 0; i < numLevelUps; i++) {
-            this.levelUps.add(new LevelUp(bugemon));
+        if (this.staticDataRepository.bugemons().stream().anyMatch(b -> b.name().equals(bugemon.name()))) {
+            throw new BugemonNameAlreadyExistsException("Bugemon name already exists!");
         }
 
-        this.saveBugemonState(bugemon);
+        this.staticDataRepository.saveBugemon(bugemon);
+    }
+
+    public void removePlayerBugemons() {
+        this.bugemonRepository.removeAll(this.playerName);
     }
 }

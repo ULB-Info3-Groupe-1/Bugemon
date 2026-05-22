@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
-import ulb.models.trainer.Trainer;
 import ulb.views.components.ComponentView;
 
 /**
@@ -39,10 +38,8 @@ public class AttackMenuView extends ComponentView {
      *
      * @param attackList
      *            attacks available to the active Bugemon (up to 3)
-     * @param opponent
-     *            the opposing trainer, used to derive type-matchup labels
      */
-    public void show(List<Attack> attackList, Trainer opponent) {
+    public void show(List<Attack> attackList) {
         Button[] buttons = {this.topLeftButton, this.topRightButton, this.bottomLeftButton};
         for (int i = 0; i < buttons.length; i++) {
             if (i < attackList.size()) {
@@ -52,12 +49,8 @@ public class AttackMenuView extends ComponentView {
                 buttons[i].getStyleClass().setAll("btn", "attack-" + attack.type().toString());
                 buttons[i].setVisible(true);
                 buttons[i].setManaged(true);
-                buttons[i].setOnMouseEntered(e -> {
-                    this.listener.onAttackHovered(attack);
-                });
-                buttons[i].setOnMouseExited(e -> {
-                    this.listener.onAttackLeft();
-                });
+                buttons[i].setOnMouseEntered(e -> this.listener.onAttackHovered(attack));
+                buttons[i].setOnMouseExited(e -> this.listener.onAttackUnhovered());
             } else {
                 this.attacks[i] = null;
                 buttons[i].setVisible(false);
@@ -69,7 +62,7 @@ public class AttackMenuView extends ComponentView {
     @FXML
     private void onAttack1Clicked() {
         if (this.attacks[0] != null) {
-            this.listener.onAttack(this.attacks[0]);
+            this.listener.onAttackChosen(this.attacks[0]);
         }
 
     }
@@ -77,14 +70,14 @@ public class AttackMenuView extends ComponentView {
     @FXML
     private void onAttack2Clicked() {
         if (this.attacks[1] != null) {
-            this.listener.onAttack(this.attacks[1]);
+            this.listener.onAttackChosen(this.attacks[1]);
         }
     }
 
     @FXML
     private void onAttack3Clicked() {
         if (this.attacks[2] != null) {
-            this.listener.onAttack(this.attacks[2]);
+            this.listener.onAttackChosen(this.attacks[2]);
         }
     }
 
@@ -93,14 +86,29 @@ public class AttackMenuView extends ComponentView {
         this.listener.onBack();
     }
 
+    /** Callback interface for attack menu interactions. */
     public interface Listener {
 
-        void onAttack(Attack attack);
+        /**
+         * Called when the player clicks an attack button.
+         *
+         * @param attack
+         *            the chosen attack
+         */
+        void onAttackChosen(Attack attack);
 
+        /**
+         * Called when the mouse enters an attack button, typically to show a tooltip.
+         *
+         * @param attack
+         *            the hovered attack
+         */
         void onAttackHovered(Attack attack);
 
-        void onAttackLeft();
+        /** Called when the mouse leaves an attack button. */
+        void onAttackUnhovered();
 
+        /** Called when the player clicks the back button. */
         void onBack();
     }
 }

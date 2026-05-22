@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,19 +28,22 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import ulb.Configuration;
+import ulb.common.EffectDuration;
+import ulb.common.EffectTarget;
+import ulb.common.StatType;
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon.BugemonType;
-import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon.Item;
-import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon.effect.EffectDuration;
-import ulb.models.bugemon.effect.EffectHeal;
-import ulb.models.bugemon.effect.EffectResetMalus;
-import ulb.models.bugemon.effect.EffectStat;
-import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.bugemon.effect.EffectTarget;
-import ulb.repositories.dto.CreateBugemonDTO;
+import ulb.models.bugemon.ElementType;
+import ulb.models.effect.Effect;
+import ulb.models.effect.HealEffect;
+import ulb.models.effect.ResetMalusEffect;
+import ulb.models.effect.StatModifierEffect;
+import ulb.models.item.Item;
+import ulb.models.item.ItemType;
+import ulb.models.skills.SkillEffect;
+import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillTree;
 
 /**
  * Parses the three bundled JSON resource files (attacks, Bugemons, items/inventory). The main entry point is
@@ -51,6 +56,8 @@ import ulb.repositories.dto.CreateBugemonDTO;
 public class Parser {
     private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
+    private static final String STR_VALEUR = "valeur";
+
     // Constants for the paths to the JSON data files within the resources
     // directory
     private static final String JSON_ATTACK_PATH = Configuration.Json.ATTACK_PATH;
@@ -59,9 +66,10 @@ public class Parser {
 
     // Static fields to hold the parsed data, accessible via getter methods
     private static Map<String, Attack> attacks;
-    private static List<CreateBugemonDTO> bugemons;
+    private static List<Bugemon> bugemons;
     private static List<Item> items;
-    private static Inventory inventory;
+    private static DefaultInventoryDTO inventory;
+    private static SkillTree skillTree; // represent the tree data structure
 
     /**
      * Parses all JSON resource files and populates the static data fields. Must be called once before any
@@ -73,11 +81,13 @@ public class Parser {
         InputStream attacksStream;
         InputStream bugemonsStream;
         InputStream itemsStream;
+        InputStream skillTreeStream;
         try {
             attacksStream = Parser.class.getResourceAsStream(JSON_ATTACK_PATH);
             bugemonsStream = Parser.class.getResourceAsStream(JSON_BUGEMON_PATH);
             itemsStream = Parser.class.getResourceAsStream(JSON_ITEMS_PATH);
-            if (attacksStream == null || bugemonsStream == null || itemsStream == null) {
+            skillTreeStream = Parser.class.getResourceAsStream(Configuration.Json.SKILL_TREE_PATH);
+            if (attacksStream == null || bugemonsStream == null || itemsStream == null || skillTreeStream == null) {
                 throw new IOException("JSON files not found in resources: ");
             }
         } catch (IOException e) {
@@ -88,47 +98,70 @@ public class Parser {
         Reader attacksReader = new InputStreamReader(attacksStream, StandardCharsets.UTF_8);
         Reader bugemonsReader = new InputStreamReader(bugemonsStream, StandardCharsets.UTF_8);
         Reader itemsReader = new InputStreamReader(itemsStream, StandardCharsets.UTF_8);
+        Reader skillTreeReader = new InputStreamReader(skillTreeStream, StandardCharsets.UTF_8);
         parseAttacks(attacksReader);
         parseBugemons(bugemonsReader);
         parseItemsAndInventory(itemsReader);
-
+        parseSkills(skillTreeReader);
         LOG.info("Finished parsing data");
     }
 
-    public final List<CreateBugemonDTO> getBugemons() {
+    /** Returns the list of parsed {@link Bugemon} species definitions. */
+    public final List<Bugemon> getBugemons() {
         return bugemons;
     }
 
+    /** Returns the list of parsed {@link ulb.models.item.Item} definitions. */
     public final List<Item> getItems() {
         return items;
     }
 
-    public final Inventory getInventory() {
+    /** Returns the starter inventory granted to new players. */
+    public final DefaultInventoryDTO getInventory() {
         return inventory;
     }
 
+    /** Returns a map from attack ID to the corresponding parsed {@link Attack}. */
     public final Map<String, Attack> getAttacks() {
         return attacks;
     }
 
+    /** Returns the parsed {@link SkillTree} structure. */
+    public final SkillTree getSkillTree() {
+        return skillTree;
+    }
+
     /**
-     * Custom Gson type adapter that deserialises a JSON string into a {@link BugemonType} enum constant. Converts the
-     * raw value to upper-case before calling {@link BugemonType#valueOf(String)}, so {@code "flora"} and
-     * {@code "FLORA"} both resolve to {@link BugemonType#FLORA}.
+     * Gson deserialiser that converts a JSON string into an {@link ElementType} constant. Converts the raw value to
+     * upper-case before calling {@link ElementType#valueOf(String)}, so {@code "flora"} and {@code "FLORA"} both
+     * resolve to the same constant.
      */
-    private static class TypeDeserializer implements JsonDeserializer<BugemonType> {
+    private static class TypeDeserializer implements JsonDeserializer<ElementType> {
         @Override
-        public BugemonType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
-                JsonDeserializationContext context) {
+        public ElementType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
             String value = json.getAsString();
-            return BugemonType.valueOf(value.toUpperCase());
+            return ElementType.valueOf(value.toUpperCase());
         }
     }
 
+    /**
+     * Gson deserialiser that converts a JSON category string ({@code "soin"}, {@code "boost"}) into an {@link ItemType}
+     * constant.
+     */
+    private static class ItemTypeDeserializer implements JsonDeserializer<ItemType> {
+        @Override
+        public ItemType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            return parseItemType(json.getAsString());
+        }
+    }
+
+    /**
+     * Gson deserialiser that maps the persistence label ({@code "permanent"} or anything else) to an
+     * {@link EffectDuration} constant.
+     */
     private static class DurationDeserializer implements JsonDeserializer<EffectDuration> {
         @Override
-        public EffectDuration deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
-                JsonDeserializationContext context) {
+        public EffectDuration deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
             String value = json.getAsString().toLowerCase().trim();
             if ("permanent".equals(value)) {
                 return EffectDuration.PERMANENT;
@@ -137,6 +170,10 @@ public class Parser {
         }
     }
 
+    /**
+     * Gson deserialiser that constructs the correct {@link Effect} subtype from the {@code "type"} discriminator field
+     * in the JSON. Recognised types: {@code stat_modifier}, {@code soin}, {@code reset_malus}.
+     */
     public static class EffectDeserializer implements JsonDeserializer<Effect> {
         @Override
         public Effect deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
@@ -147,11 +184,11 @@ public class Parser {
 
             return switch (effectType) {
                 case "stat_modifier" ->
-                    new EffectStatModifier(target, context.deserialize(effectObject.get("stat"), EffectStat.class),
+                    new StatModifierEffect(target, context.deserialize(effectObject.get("stat"), StatType.class),
                             effectObject.get("modificateur").getAsInt(),
                             context.deserialize(effectObject.get("duree"), EffectDuration.class));
-                case "soin" -> new EffectHeal(target, effectObject.get("valeur").getAsInt());
-                case "reset_malus" -> new EffectResetMalus(target);
+                case "soin" -> new HealEffect(target, effectObject.get(STR_VALEUR).getAsInt());
+                case "reset_malus" -> new ResetMalusEffect(target);
                 default -> throw new JsonParseException("Unknown effect type: " + effectType);
             };
         }
@@ -159,7 +196,7 @@ public class Parser {
 
     private static void parseAttacks(Reader reader) {
         LOG.debug("Parsing Attacks");
-        Gson gson = new GsonBuilder().registerTypeAdapter(BugemonType.class, new TypeDeserializer())
+        Gson gson = new GsonBuilder().registerTypeAdapter(ElementType.class, new TypeDeserializer())
                 .registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
                 .registerTypeAdapter(Effect.class, new EffectDeserializer()).create();
 
@@ -183,7 +220,7 @@ public class Parser {
     private static void parseBugemons(Reader reader) {
         LOG.debug("Parsing Bugemon");
         Gson gson = new GsonBuilder().registerTypeAdapter(Bugemon.class, new BugemonDeserializer(attacks))
-                .registerTypeAdapter(BugemonType.class, new TypeDeserializer()).create();
+                .registerTypeAdapter(ElementType.class, new TypeDeserializer()).create();
 
         JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
         try {
@@ -200,10 +237,11 @@ public class Parser {
         bugemons = gson.fromJson(bugemonsArray, destType);
     }
 
-    static void parseItemsAndInventory(Reader reader) {
+    private static void parseItemsAndInventory(Reader reader) {
         LOG.debug("Parsing Items and inventory");
         Gson gson = new GsonBuilder().registerTypeAdapter(EffectDuration.class, new DurationDeserializer())
-                .registerTypeAdapter(Effect.class, new EffectDeserializer()).create();
+                .registerTypeAdapter(Effect.class, new EffectDeserializer())
+                .registerTypeAdapter(ItemType.class, new ItemTypeDeserializer()).create();
 
         try {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
@@ -218,20 +256,101 @@ public class Parser {
             JsonObject startInventory = root.getAsJsonObject("inventaire_depart");
             Type invType = new TypeToken<Map<String, Integer>>() {
             }.getType();
-            Map<String, Integer> inventoryMap = gson.fromJson(startInventory, invType);
-
-            inventory = new Inventory();
-            for (Map.Entry<String, Integer> entry : inventoryMap.entrySet()) {
-                String itemId = entry.getKey();
-                int quantity = entry.getValue();
-
-                Item obj = items.stream().filter(o -> o.id().equals(itemId)).findFirst()
-                        .orElseThrow(() -> new RuntimeException("Item with ID " + itemId + " not found"));
-                inventory.addItem(obj, quantity);
-            }
+            Map<String, Integer> inventoryRaw = gson.fromJson(startInventory, invType);
+            mapInventory(inventoryRaw, items);
             reader.close();
         } catch (Exception e) {
             LOG.error("Error when parsing Items and inventory: {}", e.getMessage());
         }
+    }
+
+    private static void mapInventory(Map<String, Integer> inventoryRaw, List<Item> itemsParsed) {
+        Map<Item, Integer> inventoryMap = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : inventoryRaw.entrySet()) {
+            String itemId = entry.getKey();
+            int quantity = entry.getValue();
+
+            Item obj = itemsParsed.stream().filter(o -> o.id().equals(itemId)).findFirst()
+                    .orElseThrow(() -> new RuntimeException("Item with ID " + itemId + " not found"));
+            inventoryMap.put(obj, quantity);
+        }
+        inventory = new DefaultInventoryDTO(inventoryMap);
+    }
+
+    private static void parseSkills(Reader reader) {
+        LOG.debug("Parsing Skill Tree");
+        List<SkillNode> nodes = new ArrayList<>();
+        try {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonArray nodesArray = root.getAsJsonObject("skill_tree").getAsJsonArray("nodes");
+
+            for (JsonElement nodeElement : nodesArray) {
+                JsonObject obj = nodeElement.getAsJsonObject();
+
+                String id = obj.get("id").getAsString();
+                String name = obj.get("nom").getAsString();
+                String description = obj.get("description").getAsString();
+                int cost = obj.get("cout").getAsInt();
+                int maxLevel = obj.get("max_niveau").getAsInt();
+
+                JsonObject posObj = obj.getAsJsonObject("position");
+                int x = posObj.get("x").getAsInt();
+                int y = posObj.get("y").getAsInt();
+
+                List<String> prerequisites = new ArrayList<>();
+                for (JsonElement prereq : obj.getAsJsonArray("prerequis")) {
+                    prerequisites.add(prereq.getAsString());
+                }
+
+                SkillEffect effect = null;
+                JsonElement effElem = obj.get("effet");
+                if (effElem != null && !effElem.isJsonNull()) {
+                    effect = parseSkillEffect(effElem.getAsJsonObject());
+                }
+
+                nodes.add(new SkillNode(id, name, description, x, y, maxLevel, cost, effect, prerequisites));
+            }
+
+            skillTree = new SkillTree(nodes);
+            reader.close();
+        } catch (Exception e) {
+            LOG.error("Error when parsing skill tree: {}", e.getMessage());
+        }
+    }
+
+    private static SkillEffect parseSkillEffect(JsonObject obj) {
+        String type = obj.get("type").getAsString();
+        return switch (type) {
+            case "stat_bonus" -> new SkillEffect.StatBonusEffect(parseStatType(obj.get("stat").getAsString()),
+                    obj.get(STR_VALEUR).getAsInt());
+            case "type_multiplicateur" -> new SkillEffect.TypeMultiplierEffect(
+                    ElementType.valueOf(obj.get("type_cible").getAsString().toUpperCase()),
+                    obj.get(STR_VALEUR).getAsDouble());
+            case "critique_bonus" -> new SkillEffect.CritBonusEffect(obj.get(STR_VALEUR).getAsDouble());
+            case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(obj.get("valeur_pourcent").getAsDouble());
+            case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(obj.get(STR_VALEUR).getAsDouble());
+            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(obj.get("quantite").getAsInt(),
+                    parseItemType(obj.get("categorie").getAsString()));
+            case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(obj.get(STR_VALEUR).getAsInt());
+            default -> throw new IllegalArgumentException("Unknown skill effect type: " + type);
+        };
+    }
+
+    private static StatType parseStatType(String statStr) {
+        return switch (statStr) {
+            case "hp" -> StatType.HP;
+            case "attaque" -> StatType.ATTACK;
+            case "defense" -> StatType.DEFENSE;
+            case "initiative" -> StatType.INITIATIVE;
+            default -> throw new IllegalArgumentException("Unknown stat type: " + statStr);
+        };
+    }
+
+    private static ItemType parseItemType(String category) {
+        return switch (category) {
+            case "soin" -> ItemType.HEALING;
+            case "boost" -> ItemType.BOOST;
+            default -> throw new IllegalArgumentException("Unknown item category: " + category);
+        };
     }
 }

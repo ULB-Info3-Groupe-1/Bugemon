@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -20,7 +21,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import ulb.Configuration;
+
+/**
+ * Scans {@code resources/sql/*.sql} at startup and indexes every named query into an in-memory map.
+ *
+ * <p>
+ * SQL files must follow the project convention (see {@code team/rules.md}): each query is preceded by a
+ * {@code -- Query} section marker and a {@code -- <name>} name line; the SQL body follows immediately after.
+ *
+ * <p>
+ * Works on both a regular filesystem and inside a JAR by delegating to {@link java.nio.file.FileSystems}.
+ */
 public class QueryLoader {
+
+    private static final String QUERY_NAME_PREFIX = "-- ";
+    private static final String QUERY_START_PREFIX = "-- Query";
+    private static final int MAX_FILE_WALK_DEPTH = 1;
 
     // Queries Map (Request Name -> SQL Code)
     private final Map<String, String> queries = new HashMap<>();
@@ -55,14 +72,14 @@ public class QueryLoader {
 
             // see rules.md for the format of the SQL files
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("-- Query")) {
+                if (line.startsWith(QUERY_START_PREFIX)) {
                     if (currentQueryName != null && !currentSql.isEmpty()) {
                         this.queries.put(currentQueryName, currentSql.toString().trim());
                         currentSql.setLength(0); // We reset the StringBuilder for the next query
                     }
                     currentQueryName = null;
-                } else if (currentQueryName == null && line.startsWith("-- ")) {
-                    currentQueryName = line.substring(3).trim();
+                } else if (currentQueryName == null && line.startsWith(QUERY_NAME_PREFIX)) {
+                    currentQueryName = line.substring(QUERY_NAME_PREFIX.length()).trim();
                 } else if (currentQueryName != null) {
                     currentSql.append(line).append("\n");
                 }
@@ -79,7 +96,7 @@ public class QueryLoader {
     private List<String> getSqlFiles() {
         List<String> result = new ArrayList<>();
         try {
-            URL url = QueryLoader.class.getResource("/sql/");
+            URL url = QueryLoader.class.getResource(Configuration.Paths.SQL_BASE_PATH);
             if (url == null) {
                 throw new IllegalStateException("SQL directory not found");
             }
@@ -92,7 +109,7 @@ public class QueryLoader {
                 this.walkAndAddFiles(Paths.get(uri), result);
             }
 
-        } catch (Exception e) {
+        } catch (URISyntaxException | IOException e) {
             throw new IllegalStateException("Error loading SQL files", e);
         }
         return result;
@@ -110,9 +127,9 @@ public class QueryLoader {
     }
 
     private void walkAndAddFiles(Path path, List<String> result) throws IOException {
-        try (Stream<Path> walk = Files.walk(path, 1)) {
+        try (Stream<Path> walk = Files.walk(path, MAX_FILE_WALK_DEPTH)) {
             walk.filter(p -> p.toString().endsWith(".sql"))
-                    .forEach(p -> result.add("/sql/" + p.getFileName().toString()));
+                    .forEach(p -> result.add(Configuration.Paths.SQL_BASE_PATH + p.getFileName().toString()));
         }
     }
 
@@ -130,6 +147,11 @@ public class QueryLoader {
         return sql;
     }
 
+    /**
+     * Returns the full query map (query name to SQL string).
+     *
+     * @return unmodifiable view of all loaded queries
+     */
     public Map<String, String> getQueries() {
         return this.queries;
     }

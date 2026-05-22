@@ -1,11 +1,11 @@
 package ulb.views;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -24,9 +24,15 @@ import javafx.stage.Stage;
 
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
-import ulb.models.bugemon.BugemonType;
+import ulb.models.bugemon.Bugemon;
+import ulb.models.bugemon.ElementType;
 import ulb.views.components.BugemonCardView;
 
+/**
+ * View for the Bugemon creation form. Lets the player pick a name, element type, stat sliders, a sprite file, and up to
+ * {@link ulb.models.bugemon.Bugemon#ATTACKS_COUNT} attacks from a selectable list. Validation feedback is shown through
+ * alert dialogs; all save and navigation actions are dispatched through {@link Listener}.
+ */
 public class CreateBugemonView extends View {
 
     private static final String ATTACK_COUNT_INCOMPLETE = "attack-count-incomplete";
@@ -74,15 +80,12 @@ public class CreateBugemonView extends View {
     @FXML
     private ToggleGroup typeToggleGroup;
 
-    private BugemonType selectedType;
-    private URL selectedSpriteUrl;
     private final Map<String, Attack> attacksByName = new HashMap<>();
 
     @FXML
     private void initialize() {
         this.attackListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        // Permet le toggle au clic simple (sans Cmd/Ctrl) et bloque au-delà de 3 sélections.
         this.attackListView.setCellFactory(listView -> {
             ListCell<String> cell = new ListCell<>() {
                 @Override
@@ -102,7 +105,7 @@ public class CreateBugemonView extends View {
 
                 if (selectionModel.isSelected(index)) {
                     selectionModel.clearSelection(index);
-                } else if (selectionModel.getSelectedItems().size() < 3) {
+                } else if (selectionModel.getSelectedItems().size() < Bugemon.ATTACKS_COUNT) {
                     selectionModel.select(index);
                 }
 
@@ -113,28 +116,38 @@ public class CreateBugemonView extends View {
             return cell;
         });
 
+        Function<Number, String> formatHealth = healthValue -> String.format("Vie (%.0f)", healthValue);
+        Function<Number, String> formatAttack = attackValue -> String.format("Attaque (%.0f)", attackValue);
+        Function<Number, String> formatDefense = defenseValue -> String.format("Defense (%.0f)", defenseValue);
+        Function<Number, String> formatInitiative = initiativeValue -> String.format("Initiative (%.0f)",
+                initiativeValue);
+
         this.attackListView.getSelectionModel().getSelectedItems()
                 .addListener((ListChangeListener<String>) change -> this.updateAttackCountLabel());
 
         this.healthSlider.valueProperty()
-                .addListener((obs, oldVal, newVal) -> this.healthLabel.setText(String.format("Vie (%.0f)", newVal)));
+                .addListener((obs, oldVal, newVal) -> this.healthLabel.setText(formatHealth.apply(newVal)));
 
         this.attackSlider.valueProperty().addListener(
-                (obs, oldVal, newVal) -> this.attackLabel.setText(String.format("Attaque (%.0f)", newVal)));
+                (obs, oldVal, newVal) -> this.attackLabel.setText(String.format(formatAttack.apply(newVal))));
 
         this.defenseSlider.valueProperty().addListener(
-                (obs, oldVal, newVal) -> this.defenseLabel.setText(String.format("Défense (%.0f)", newVal)));
+                (obs, oldVal, newVal) -> this.defenseLabel.setText(String.format(formatDefense.apply(newVal))));
 
-        this.initiativeSlider.valueProperty().addListener(
-                (obs, oldVal, newVal) -> this.initiativeLabel.setText(String.format("Initiative (%.0f)", newVal)));
+        this.initiativeSlider.valueProperty()
+                .addListener((obs, oldVal, newVal) -> this.initiativeLabel.setText(formatInitiative.apply(newVal)));
 
+        this.attackLabel.setText(formatAttack.apply(this.attackSlider.getValue()));
+        this.healthLabel.setText(formatHealth.apply(this.healthSlider.getValue()));
+        this.defenseLabel.setText(formatDefense.apply(this.defenseSlider.getValue()));
+        this.initiativeLabel.setText(formatInitiative.apply(this.initiativeSlider.getValue()));
     }
 
     private void updateAttackCountLabel() {
         int selectedCount = this.attackListView.getSelectionModel().getSelectedItems().size();
-        this.attackCountLabel.setText("Attaques sélectionnées : " + selectedCount + "/3");
+        this.attackCountLabel.setText("Attaques sélectionnées : " + selectedCount + "/" + Bugemon.ATTACKS_COUNT);
 
-        if (selectedCount == 3) {
+        if (selectedCount == Bugemon.ATTACKS_COUNT) {
             this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE);
             this.attackCountLabel.getStyleClass().add(ATTACK_COUNT_COMPLETE);
         } else {
@@ -152,19 +165,14 @@ public class CreateBugemonView extends View {
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-            this.bugemonCardView.setSprite(file);
-            try {
-                this.selectedSpriteUrl = file.toURI().toURL();
-            } catch (MalformedURLException e) {
-                this.selectedSpriteUrl = null;
-            }
+            this.listener.onSpriteSelected(file);
+
         }
     }
 
     @FXML
     private void onRemoveButtonClicked() {
         this.bugemonCardView.removeSprite();
-        this.selectedSpriteUrl = null;
     }
 
     @FXML
@@ -177,10 +185,8 @@ public class CreateBugemonView extends View {
     private void onTypeClicked(ActionEvent event) throws IllegalArgumentException {
         ToggleButton selectedButton = (ToggleButton) this.typeToggleGroup.getSelectedToggle();
         if (selectedButton != null) {
-            this.selectedType = (BugemonType) selectedButton.getUserData();
-            if (this.listener != null) {
-                this.listener.onTypeSelected(this.selectedType);
-            }
+            ElementType selectedType = (ElementType) selectedButton.getUserData();
+            this.listener.onTypeSelected(selectedType);
         }
 
     }
@@ -193,7 +199,16 @@ public class CreateBugemonView extends View {
         double defenseValue = this.defenseSlider.getValue();
         double initiativeValue = this.initiativeSlider.getValue();
 
-        this.listener.onAdd(bugemonName, healthValue, attackValue, defenseValue, initiativeValue);
+        // getSelectedAttack can return null
+        List<Attack> attacks = new ArrayList<>(Bugemon.ATTACKS_COUNT);
+        for (int i = 0; i < Bugemon.ATTACKS_COUNT; i++) {
+            Attack attack = this.getSelectedAttack(i);
+            if (attack != null) {
+                attacks.add(attack);
+            }
+        }
+
+        this.listener.onAdd(bugemonName, healthValue, attackValue, defenseValue, initiativeValue, attacks);
     }
 
     @FXML
@@ -209,11 +224,9 @@ public class CreateBugemonView extends View {
         this.defenseSlider.setValue(0);
         this.initiativeSlider.setValue(0);
         this.bugemonCardView.removeSprite();
-        this.selectedSpriteUrl = null;
         this.attackListView.getItems().clear();
         this.typeToggleGroup.getToggles().forEach(toggle -> toggle.setSelected(false));
-        this.selectedType = null;
-        this.attackCountLabel.setText("Attaques sélectionnées : 0/3");
+        this.attackCountLabel.setText("Attaques sélectionnées : 0/" + Bugemon.ATTACKS_COUNT);
         this.attackCountLabel.getStyleClass().removeAll(ATTACK_COUNT_INCOMPLETE, ATTACK_COUNT_COMPLETE);
     }
 
@@ -234,14 +247,12 @@ public class CreateBugemonView extends View {
         //
     }
 
-    public BugemonType getSelectedType() {
-        return this.selectedType;
-    }
-
-    public URL getSelectedSpriteUrl() {
-        return this.selectedSpriteUrl;
-    }
-
+    /**
+     * Populates the attack list with the given attacks and clears any prior selection.
+     *
+     * @param attacks
+     *            the full set of attacks the player may choose from
+     */
     public void setAvailableAttacks(List<Attack> attacks) {
         this.attacksByName.clear();
 
@@ -254,28 +265,25 @@ public class CreateBugemonView extends View {
         this.updateAttackCountLabel();
     }
 
-    public Attack getSelectedAttack1() {
-        List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
-        if (selectedNames.isEmpty()) {
-            return null;
-        }
-        return this.attacksByName.get(selectedNames.get(0));
+    public void setSprite(File file) {
+        this.bugemonCardView.setSprite(file);
     }
 
-    public Attack getSelectedAttack2() {
+    /**
+     * Returns the attack at the given position in the current selection, or {@code null} if the index is out of bounds.
+     *
+     * @param index
+     *            zero-based position within the current selection
+     * @return the selected {@link Attack}, or {@code null}
+     */
+    public Attack getSelectedAttack(int index) {
         List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
-        if (selectedNames.size() < 2) {
-            return null;
-        }
-        return this.attacksByName.get(selectedNames.get(1));
-    }
 
-    public Attack getSelectedAttack3() {
-        List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
-        if (selectedNames.size() < 3) {
+        if (index < 0 || index >= selectedNames.size()) {
             return null;
         }
-        return this.attacksByName.get(selectedNames.get(2));
+
+        return this.attacksByName.get(selectedNames.get(index));
     }
 
     public void showInvalidFormChooseBugemonType() {
@@ -287,25 +295,51 @@ public class CreateBugemonView extends View {
     }
 
     public void showInvalidFormChooseAttacks() {
-        this.showWarningAlert(INVALID_FORM, "Vous devez choisir trois attaques pour votre Bugemon.");
+        this.showWarningAlert(INVALID_FORM,
+                "Vous devez choisir " + Configuration.Game.NUM_ATTACKS_PER_BUGEMON + " attaques pour votre Bugemon.");
     }
 
     public void showSaveSuccessAlert(String name) {
         this.showInfoAlert("Bugemon sauvegardé", "Le Bugemon " + name + " a bien été sauvegardé.");
     }
 
-    public void showSaveErrorAlert(String message) {
-        this.showWarningAlert("Erreur de sauvegarde ", message);
+    public void showBugemonNameEmptyAlert() {
+        this.showWarningAlert(INVALID_FORM, "Le nom du Bugemon ne peut pas être vide.");
     }
 
-    // public void setModel()
+    public void showBugemonNameAlreadyUsedAlert() {
+        this.showWarningAlert("Nom de Bugemon deja utilisé",
+                "Le nom du Bugemon que vous avez choisi est deja utilisé.");
+    }
 
+    /** Callback interface for all user interactions on the Bugemon creation form. */
     public interface Listener {
-        void onTypeSelected(BugemonType selectedType);
+        /** Called when the player selects an element type toggle. */
+        void onTypeSelected(ElementType selectedType);
 
+        /** Called when the player picks a sprite file from the file chooser. */
+        void onSpriteSelected(File selectedSprite);
+
+        /**
+         * Called when the player submits the creation form.
+         *
+         * @param bugemonName
+         *            the desired name
+         * @param healthValue
+         *            HP stat from the slider
+         * @param attackValue
+         *            attack stat from the slider
+         * @param defenseValue
+         *            defense stat from the slider
+         * @param initiativeValue
+         *            initiative stat from the slider
+         * @param attacks
+         *            the selected attacks (may contain fewer than {@link ulb.models.bugemon.Bugemon#ATTACKS_COUNT})
+         */
         void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
-                double initiativeValue);
+                double initiativeValue, List<Attack> attacks);
 
+        /** Called when the player navigates back to the main menu. */
         void onReturnToMainMenu();
     }
 

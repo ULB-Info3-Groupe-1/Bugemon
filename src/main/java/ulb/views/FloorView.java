@@ -1,8 +1,5 @@
 package ulb.views;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -11,271 +8,181 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
-import ulb.models.tower.FloorNode;
-import ulb.models.tower.FloorNode.RoomPosition;
-import ulb.views.components.RoomView;
+import ulb.Configuration;
+import ulb.common.RoomState;
+import ulb.common.dto.display.ConnectionDisplayDTO;
+import ulb.common.dto.display.FloorDisplayDTO;
+import ulb.common.dto.display.RoomDisplayDTO;
+import ulb.views.components.RoomNodeView;
 
 /**
- * View for the map of a NO Tower floor. Displays the layout of rooms and connections, and allows the player to click on
- * rooms.
+ * View for the tower floor map. Renders room nodes and connecting lines on an absolute-positioned {@link Pane} scaled
+ * by a fixed cell grid, animates the player icon between rooms, and forwards click and navigation events through
+ * {@link Listener}.
  */
 public class FloorView extends View {
-    private static final String FXML_PATH = "/fxml/Floor.fxml";
-    private static final String PLAYER_ICON_PATH = "/png/Trainer.png";
 
-    // Constants for automatic positioning
-    private static final double ROOM_WIDTH = 80.0;
-    private static final double ROOM_HEIGHT = 80.0;
-    private static final double HORIZONTAL_SPACING = 70.0;
-    private static final double VERTICAL_SPACING = 70.0;
-    private static final double MAP_OFFSET_X = 0.0;
-    private static final double MAP_OFFSET_Y = 0.0;
-    private static final double PLAYER_OFFSET_X = 12;
-    private static final double PLAYER_OFFSET_Y = -7.0;
+    private static final int CELL_SIZE = 110;
+    private static final int ROOM_SIZE = 75;
+    private static final double PLAYER_ICON_HEIGHT = 50.0;
 
     @FXML
     private Label floorNumberLabel;
-
-    @FXML
-    private Label instructionsLabel;
-
-    @FXML
-    private StackPane mapContainer;
-
     @FXML
     private Pane innerMapPane;
 
-    @FXML
     private ImageView playerIcon;
-
+    private double playerIconWidth;
     private Listener listener;
-
-    private Map<FloorNode, RoomView> roomNodesByFloorNode;
+    private int currentFloor;
+    private FloorDisplayDTO floorDTO;
 
     @FXML
     public void initialize() {
-        this.initPlayerIcon(PLAYER_ICON_PATH);
+        var url = FloorView.class.getResource(Configuration.Paths.PLAYER_ICON);
+        if (url != null) {
+            Image img = new Image(url.toExternalForm(), 0, PLAYER_ICON_HEIGHT, true, false);
+
+            this.playerIcon = new ImageView(img);
+            this.playerIcon.setPreserveRatio(true);
+            this.playerIconWidth = img.getWidth();
+        }
     }
 
-    @Override
-    public String getPath() {
-        return FXML_PATH;
-    }
-
-    @Override
-    public void refresh() {
-        // The map is entirely dynamic and controlled by the controller, so no
-        // static data to refresh here. All updates happen through explicit methods
-        // (setFloorNumber, addRoomNode, etc.)
-    }
-
-    /**
-     * Registers a listener to receive callbacks for floor map interactions.
-     *
-     * @param listener
-     *            The listener to be notified of map events
-     */
     public void setListener(Listener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Stores the floor number and layout data that will be rendered on the next {@link #refresh()} call.
+     *
+     * @param floor
+     *            the current floor index, displayed in the header label
+     * @param dto
+     *            the room and connection layout for the floor
+     */
+    public void setFloorState(int floor, FloorDisplayDTO dto) {
+        this.currentFloor = floor;
+        this.floorDTO = dto;
+    }
+
     @FXML
     private void onReturnToMainMenuClicked() {
-        if (this.listener != null) {
-            this.listener.onReturnToMainMenu();
+        this.listener.onReturnToMainMenu();
+    }
+
+    @Override
+    public String getPath() {
+        return Configuration.Paths.Fxml.FLOOR_VIEW;
+    }
+
+    @Override
+    public void refresh() {
+        this.floorNumberLabel.setText("Étage " + this.currentFloor);
+        this.innerMapPane.getChildren().clear();
+
+        if (this.floorDTO == null) {
+            return;
         }
-    }
 
-    public void setFloorNumber(int floorNumber) {
-        this.floorNumberLabel.setText("Étage " + floorNumber);
-    }
-
-    public void setInstruction() {
-        this.instructionsLabel.setText("Cliquez sur une salle disponible pour continuer votre ascension");
-    }
-
-    private void initPlayerIcon(String imagePath) {
-        Image img = new Image(FloorView.class.getResourceAsStream(imagePath));
-        this.playerIcon = new ImageView(img);
-
-        this.playerIcon.setFitWidth(70);
-        this.playerIcon.setFitHeight(70);
-        this.playerIcon.setPreserveRatio(true);
+        this.resizePane();
+        this.drawConnections();
+        this.drawRooms();
 
         this.innerMapPane.getChildren().add(this.playerIcon);
+        this.playerIcon.toFront();
+        this.floorDTO.rooms().stream().filter(r -> r.state() == RoomState.CURRENT).findFirst().ifPresent(r -> {
+            this.playerIcon.setLayoutX(this.playerX(r.x()));
+            this.playerIcon.setLayoutY(playerY(r.y()));
+        });
     }
 
-    public void setPlayerPosition(FloorNode node) {
-        RoomView roomView = this.roomNodesByFloorNode.get(node);
-        if (roomView == null) {
-            return;
-        }
-        double playerX = roomView.getLayoutX() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2)
-                + PLAYER_OFFSET_X;
-        double playerY = roomView.getLayoutY() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2)
-                + PLAYER_OFFSET_Y;
-
-        this.playerIcon.setLayoutX(playerX);
-        this.playerIcon.setLayoutY(playerY);
-
-        this.playerIcon.toFront();
-    }
-
-    public void animatePlayerTo(FloorNode node) {
-        RoomView roomView = this.roomNodesByFloorNode.get(node);
-        if (roomView == null) {
-            return;
-        }
-        double targetX = roomView.getLayoutX() + (ROOM_WIDTH / 2) - (this.playerIcon.getFitWidth() / 2)
-                + PLAYER_OFFSET_X;
-        double targetY = roomView.getLayoutY() + (ROOM_HEIGHT / 2) - (this.playerIcon.getFitHeight() / 2)
-                + PLAYER_OFFSET_Y;
-
-        this.playerIcon.toFront();
-
-        Timeline timeline = new Timeline();
-        KeyValue keyValueX = new KeyValue(this.playerIcon.layoutXProperty(), targetX);
-        KeyValue keyValueY = new KeyValue(this.playerIcon.layoutYProperty(), targetY);
-
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(400), keyValueX, keyValueY);
-        timeline.getKeyFrames().add(keyFrame);
-
+    /**
+     * Smoothly moves the player icon to the specified grid cell over the configured animation duration, then invokes
+     * the callback.
+     *
+     * @param x
+     *            target column in the room grid
+     * @param y
+     *            target row in the room grid
+     * @param onFinished
+     *            called on the JavaFX thread after the animation completes
+     */
+    public void animatePlayerTo(int x, int y, Runnable onFinished) {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(Configuration.Ui.FLOOR_MOVE_ANIMATION_MS),
+                new KeyValue(this.playerIcon.layoutXProperty(), this.playerX(x)),
+                new KeyValue(this.playerIcon.layoutYProperty(), playerY(y))));
+        timeline.setOnFinished(e -> onFinished.run());
         timeline.play();
     }
 
-    public void setFloorNodes(List<FloorNode> floorNodes) {
-        this.clearMap();
-
-        this.roomNodesByFloorNode = new HashMap<>();
-        for (FloorNode node : floorNodes) {
-            this.addFloorNode(node);
-        }
-
-        this.centerMap();
-
-        // Setup connections after centerMap to use final pixel positions
-        for (Map.Entry<FloorNode, RoomView> entry : this.roomNodesByFloorNode.entrySet()) {
-            RoomView roomView = entry.getValue();
-            for (FloorNode connectedNode : entry.getKey().getChildren()) {
-                RoomView connectedRoomView = this.roomNodesByFloorNode.get(connectedNode);
-                if (connectedRoomView != null) {
-                    this.addConnectionBetweenRooms(roomView, connectedRoomView);
-                }
-            }
-        }
+    private double playerX(int col) {
+        return centerX(col) - this.playerIconWidth / 2;
     }
 
-    public void addFloorNode(FloorNode floorNode) {
-        // Calculate x,y position from row/col
-        double x = this.calculateXPosition(floorNode.getX());
-        double y = this.calculateYPosition(floorNode.getY());
-
-        RoomView roomView = new RoomView(floorNode);
-
-        roomView.setLayoutX(x);
-        roomView.setLayoutY(y);
-
-        // Register listener to propagate events to FloorMapView's listener
-        roomView.setListener(new RoomView.Listener() {
-            @Override
-            public void onRoomClicked(RoomPosition position) {
-                FloorView.this.listener.onRoomClicked(floorNode);
-            }
-        });
-
-        this.roomNodesByFloorNode.put(floorNode, roomView);
-        this.innerMapPane.getChildren().add(roomView);
+    private static double playerY(int row) {
+        return centerY(row) - PLAYER_ICON_HEIGHT / 2;
     }
 
-    /**
-     * Calculates the X position in pixels from a column number.
-     *
-     * @param col
-     *            Column number (0-indexed)
-     * @return X position in pixels
-     */
-    private double calculateXPosition(int col) {
-        return MAP_OFFSET_X + (col * (ROOM_WIDTH + HORIZONTAL_SPACING));
+    private void resizePane() {
+        int maxX = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::x).max().orElse(0);
+        int maxY = this.floorDTO.rooms().stream().mapToInt(RoomDisplayDTO::y).max().orElse(0);
+        this.innerMapPane.setPrefSize((maxX + 1) * (double) CELL_SIZE, (maxY + 1) * (double) CELL_SIZE);
+        this.innerMapPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     }
 
-    /**
-     * Calculates the Y position in pixels from a row number.
-     *
-     * @param row
-     *            Row number (0-indexed)
-     * @return Y position in pixels
-     */
-    private double calculateYPosition(int row) {
-        return MAP_OFFSET_Y + (row * (ROOM_HEIGHT + VERTICAL_SPACING));
-    }
-
-    public void addConnectionBetweenRooms(RoomView source, RoomView target) {
-        // Calculate the center of each room
-        double sourceX = source.getLayoutX() + ROOM_WIDTH / 2;
-        double sourceY = source.getLayoutY() + ROOM_HEIGHT / 2;
-        double targetX = target.getLayoutX() + ROOM_WIDTH / 2;
-        double targetY = target.getLayoutY() + ROOM_HEIGHT / 2;
-
-        Line connection = new Line(sourceX, sourceY, targetX, targetY);
-        connection.getStyleClass().add("room-connection");
-        connection.setStrokeWidth(3);
-
-        // Add the line first so it's under the RoomNodes
-        this.innerMapPane.getChildren().add(0, connection);
-    }
-
-    public void refreshRoomStates() {
-        for (RoomView roomView : this.roomNodesByFloorNode.values()) {
-            roomView.setRoomState();
+    private void drawConnections() {
+        for (ConnectionDisplayDTO conn : this.floorDTO.connections()) {
+            Line line = new Line(centerX(conn.fromX()), centerY(conn.fromY()), centerX(conn.toX()),
+                    centerY(conn.toY()));
+            line.getStyleClass().add("room-connection");
+            this.innerMapPane.getChildren().add(line);
         }
     }
 
-    public void clearMap() {
-        this.innerMapPane.getChildren().removeIf(node -> node != this.playerIcon);
+    private void drawRooms() {
+        for (RoomDisplayDTO dto : this.floorDTO.rooms()) {
+            RoomNodeView node = new RoomNodeView(dto);
+            node.setLayoutX(topLeftX(dto.x()));
+            node.setLayoutY(topLeftY(dto.y()));
+            node.setListener((row, col) -> this.listener.onRoomClicked(row, col));
+            this.innerMapPane.getChildren().add(node);
+        }
     }
 
-    private void centerMap() {
-        if (this.roomNodesByFloorNode.isEmpty()) {
-            return;
-        }
-
-        // Find bounds of all rooms
-        int minCol = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getX).min().orElse(0);
-        int maxCol = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getX).max().orElse(0);
-        int minRow = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getY).min().orElse(0);
-        int maxRow = this.roomNodesByFloorNode.keySet().stream().mapToInt(FloorNode::getY).max().orElse(0);
-
-        // Reposition all rooms relative to the minimum row/col
-        for (Map.Entry<FloorNode, RoomView> entry : this.roomNodesByFloorNode.entrySet()) {
-            FloorNode node = entry.getKey();
-            RoomView roomView = entry.getValue();
-            double x = (node.getX() - minCol) * (ROOM_WIDTH + HORIZONTAL_SPACING);
-            double y = (node.getY() - minRow) * (ROOM_HEIGHT + VERTICAL_SPACING);
-            roomView.setLayoutX(x);
-            roomView.setLayoutY(y);
-        }
-
-        // Calculate and set the inner pane size to fit all rooms
-        // Formula: spacing between rooms + last room width (no spacing after last
-        // room)
-        double paneWidth = (maxCol - minCol) * (ROOM_WIDTH + HORIZONTAL_SPACING) + ROOM_WIDTH;
-        double paneHeight = (maxRow - minRow) * (ROOM_HEIGHT + VERTICAL_SPACING) + ROOM_HEIGHT;
-        this.innerMapPane.setPrefSize(paneWidth, paneHeight);
-        this.innerMapPane.setMinSize(paneWidth, paneHeight);
-        this.innerMapPane.setMaxSize(paneWidth, paneHeight);
+    private static double centerX(int col) {
+        return col * CELL_SIZE + CELL_SIZE / 2.0;
     }
 
-    /**
-     * Callback interface for floor map interactions. Dispatches map events to the controller exclusively through this
-     * interface.
-     */
+    private static double centerY(int row) {
+        return row * CELL_SIZE + CELL_SIZE / 2.0;
+    }
+
+    private static double topLeftX(int col) {
+        return col * CELL_SIZE + (CELL_SIZE - ROOM_SIZE) / 2.0;
+    }
+
+    private static double topLeftY(int row) {
+        return row * CELL_SIZE + (CELL_SIZE - ROOM_SIZE) / 2.0;
+    }
+
+    /** Callback interface for floor map user interactions. */
     public interface Listener {
-        void onRoomClicked(FloorNode node);
+        /**
+         * Called when the player clicks a room node.
+         *
+         * @param row
+         *            row (y) coordinate of the clicked room
+         * @param col
+         *            column (x) coordinate of the clicked room
+         */
+        void onRoomClicked(int row, int col);
 
+        /** Called when the player chooses to return to the main menu. */
         void onReturnToMainMenu();
     }
 }

@@ -1,81 +1,96 @@
 package ulb.models.bugemon;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import com.google.gson.annotations.SerializedName;
-
-import ulb.common.dto.BugemonDTO;
-import ulb.models.bugemon.components.AttackComponent;
-import ulb.models.bugemon.components.DefenseComponent;
-import ulb.models.bugemon.components.HealthComponent;
-import ulb.models.bugemon.components.InitiativeComponent;
-import ulb.models.bugemon.components.LevelComponent;
-import ulb.models.bugemon.components.modifier.Modifier;
-import ulb.models.bugemon.effect.Effect;
-import ulb.models.bugemon.effect.EffectDuration;
-import ulb.models.bugemon.effect.EffectHeal;
-import ulb.models.bugemon.effect.EffectResetMalus;
-import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.level_up.Upgrade;
+import ulb.Configuration;
+import ulb.models.bugemon.exceptions.InvalidAttackCountException;
 
 /**
- * Central game entity. Stats are backed by components (see {@code ulb.models.bugemon.components}). Create instances via
- * {@link BugemonBuilder}; equality is based on {@link #id}.
+ * Immutable record representing the base definition of a Bugemon species.
+ *
+ * <p>
+ * A {@code Bugemon} describes the template of a species: its name, base stats, elemental type, fixed move-set and
+ * sprite. It is <b>not</b> a live battle participant; runtime state such as current HP is managed by
+ * {@link ulb.models.run.RunBugemon} and ownership/progression by {@link ulb.models.player.PlayerBugemon}.
+ *
+ * <p>
+ * The compact constructor enforces all invariants: name must be non-blank, {@code hp} must be non-negative, every other
+ * stat must be strictly positive, and the attack list must contain exactly {@link #ATTACKS_COUNT} entries. Attacks are
+ * defensively copied to ensure immutability.
+ *
+ * <p>
+ * Equality is based solely on {@code name}, which is treated as a unique species identifier.
+ *
+ * @param name
+ *            unique species name
+ * @param hp
+ *            base hit-points (must be &ge; 0)
+ * @param attack
+ *            base attack power (must be &gt; 0)
+ * @param defense
+ *            base defense value (must be &gt; 0)
+ * @param initiative
+ *            base initiative (turn-order priority, must be &gt; 0)
+ * @param type
+ *            elemental type of the species
+ * @param attacks
+ *            fixed list of {@link Attack}s (exactly {@link #ATTACKS_COUNT} required)
+ * @param spritePath
+ *            classpath-relative path to the sprite image
+ * @param isStarter
+ *            {@code true} if this species can be chosen as a starter
+ * @param isBoss
+ *            {@code true} if this species is a boss-tier opponent
  */
-public class Bugemon implements BugemonDTO {
-    @SerializedName("id")
-    String id;
+public record Bugemon(String name, int hp, int attack, int defense, int initiative, ElementType type,
+        List<Attack> attacks, String spritePath, boolean isStarter, boolean isBoss) {
 
-    /** Display name of this bugemon. Serialised as {@code "nom"}. */
-    @SerializedName("nom")
-    String name;
+    public static final int ATTACKS_COUNT = Configuration.Game.ATTACKS_COUNT;
 
-    BugemonType type;
+    public Bugemon {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(attacks);
 
-    String sprite;
+        if (name.isBlank() || name.isEmpty()) {
+            throw new IllegalArgumentException("Bugemon's name cannot be empty");
+        }
+        checkHp(hp);
+        if (attack <= 0 || defense <= 0 || initiative <= 0) {
+            throw new IllegalArgumentException("Stats must be strictly positive");
+        }
 
-    HealthComponent healthComponent;
-
-    AttackComponent attackComponent;
-
-    DefenseComponent defenseComponent;
-
-    InitiativeComponent initiativeComponent;
-
-    LevelComponent levelComponent;
-
-    @SerializedName("starter")
-    boolean isStarter;
-
-    @SerializedName("attaques")
-    List<Attack> attackList;
-
-    /** Use {@link BugemonBuilder} to construct instances. */
-    Bugemon() {
+        checkAttacks(attacks);
+        attacks = List.copyOf(attacks);
     }
 
-    public Bugemon(Bugemon copy) {
-        this.id = copy.getId();
-        this.name = copy.getName();
-        this.type = copy.getType();
-        this.sprite = copy.getSpriteURL();
-        this.healthComponent = new HealthComponent(copy.getHp(), copy.getMaxHp());
-        this.attackComponent = new AttackComponent(copy.getAttack());
-        this.defenseComponent = new DefenseComponent(copy.getDefense());
-        this.initiativeComponent = new InitiativeComponent(copy.getInitiative());
-        this.levelComponent = new LevelComponent(copy.getXp(), copy.getLevel());
-        // Safe because Attack is immutable (record)
-        this.attackList = List.copyOf(copy.getAttackList());
-        this.isStarter = copy.isStarter();
+    /**
+     * Validates that the given list contains exactly {@link #ATTACKS_COUNT} attacks.
+     *
+     * @param attacks
+     *            the list to validate
+     * @throws InvalidAttackCountException
+     *             if the list size does not equal {@link #ATTACKS_COUNT}
+     */
+    public static void checkAttacks(List<Attack> attacks) {
+        if (attacks.size() != ATTACKS_COUNT) {
+            throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());
+        }
     }
 
-    public void takeDamage(int damage) {
-        this.healthComponent.decreaseHp(damage);
-    }
-
-    public boolean isAlive() {
-        return this.healthComponent.getHp() > 0;
+    /**
+     * Validates that the given HP value is non-negative.
+     *
+     * @param hp
+     *            the HP value to check
+     * @throws IllegalArgumentException
+     *             if {@code hp} is negative
+     */
+    public static void checkHp(int hp) {
+        if (hp < 0) {
+            throw new IllegalArgumentException("Bugemon's current hp must be non-negative");
+        }
     }
 
     @Override
@@ -88,6 +103,8 @@ public class Bugemon implements BugemonDTO {
         }
         Bugemon other = (Bugemon) obj;
         return this.name.equals(other.name);
+        // NOTE: no need to check equality for other member as id is supposed to be
+        // unique
     }
 
     @Override
@@ -95,131 +112,9 @@ public class Bugemon implements BugemonDTO {
         return this.name.hashCode();
     }
 
-    // Getters and Setters
-
-    /**
-     * Get the name of the bugemon.
-     *
-     * @return (String) the name of the bugemon.
-     */
     @Override
-    public String getId() {
-        return this.id;
+    public String toString() {
+        return String.format("%s [%s] HP:%d ATK:%d DEF:%d INIT:%d", this.name, this.type, this.hp, this.attack,
+                this.defense, this.initiative);
     }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    public BugemonType getType() {
-        return this.type;
-    }
-
-    public String getSpriteURL() {
-        return this.sprite;
-    }
-
-    public List<Attack> getAttackList() {
-        return Collections.unmodifiableList(this.attackList);
-    }
-
-    public int getHp() {
-        return this.healthComponent.getHp();
-    }
-
-    public int getMaxHp() {
-        return this.healthComponent.getMaxHp();
-    }
-
-    public int getAttack() {
-        return this.attackComponent.getAttack();
-    }
-
-    public int getDefense() {
-        return this.defenseComponent.getDefense();
-    }
-
-    public int getInitiative() {
-        return this.initiativeComponent.getInitiative();
-    }
-
-    public boolean isStarter() {
-        return this.isStarter;
-    }
-
-    /** Clears all active modifiers on every stat component. */
-    public void resetMalus() {
-        this.healthComponent.resetMalus();
-        this.attackComponent.resetMalus();
-        this.defenseComponent.resetMalus();
-        this.initiativeComponent.resetMalus();
-    }
-
-    @Override
-    public int getLevel() {
-        return this.levelComponent.getLevel();
-    }
-
-    public void restoreHp() {
-        this.healthComponent.restoreHp();
-    }
-
-    public int getXp() {
-        return this.levelComponent.getXp();
-    }
-
-    @Override
-    public double getXpProgress() {
-        return this.levelComponent.getXpProgress();
-    }
-
-    /**
-     * Adds XP and returns the number of levels crossed.
-     *
-     * @return number of level-ups that just occurred
-     */
-    public int gainXp(int xp) {
-        return this.levelComponent.addXp(xp);
-    }
-
-    public void applyUpgrade(Upgrade upgrade) {
-        this.healthComponent.increaseMaxHp(upgrade.hp());
-        this.attackComponent.increaseAttack(upgrade.attack());
-        this.defenseComponent.increaseDefense(upgrade.defense());
-        this.initiativeComponent.increaseInitiative(upgrade.initiative());
-    }
-
-    public void apply(Effect effect) {
-        effect.applyTo(this);
-    }
-
-    public void apply(EffectStatModifier e) {
-        Modifier m = (e.duration() == EffectDuration.ONE_TURN) ? new Modifier(e.modifier(), 1)
-                : new Modifier(e.modifier());
-        switch (e.stat()) {
-            case HP -> this.healthComponent.addModifier(m);
-            case ATTACK -> this.attackComponent.addModifier(m);
-            case DEFENSE -> this.defenseComponent.addModifier(m);
-            case INITIATIVE -> this.initiativeComponent.addModifier(m);
-            default -> throw new IllegalArgumentException("unknown stat: " + e.stat());
-        }
-    }
-
-    public void apply(EffectHeal e) {
-        this.healthComponent.increaseHp(e.amount());
-    }
-
-    public void apply(EffectResetMalus e) {
-        this.resetMalus();
-    }
-
-    public void kill() {
-        this.takeDamage(this.getHp());
-    }
-
-    public List<String> getListAttacksId() {
-        return this.attackList.stream().map(Attack::id).toList();
-    }
-
 }

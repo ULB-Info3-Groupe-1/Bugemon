@@ -1,12 +1,21 @@
 /**
- * Business logic layer, sitting between controllers and the repository.
+ * Business logic layer, sitting between controllers and repositories.
  *
- * {@link ulb.services.PlayerService} is the main entry point. It owns the player's runtime state: active team, team
- * list, inventory, and a cache of all default Bugemons (loaded once on first access). All persistence calls go through
- * {@link ulb.repository.DatabaseRepository}.
+ * <p>
+ * Each service is scoped to a single concern:
+ * <ul>
+ * <li>{@link ulb.services.BugemonService} — species data and per-player Bugemon progression</li>
+ * <li>{@link ulb.services.TeamService} — team persistence and active-team selection</li>
+ * <li>{@link ulb.services.InventoryService} — player inventory loading, saving, and starter bonuses</li>
+ * <li>{@link ulb.services.LevelUpService} — level-up option generation and stat application</li>
+ * <li>{@link ulb.services.SkillService} — skill-tree state persistence and context building</li>
+ * <li>{@link ulb.services.TowerService} — tower run lifecycle (create, load, save, delete) and floor display</li>
+ * <li>{@link ulb.services.MusicService} — background music and sound-effect playback</li>
+ * <li>{@link ulb.services.SaveService} — facade for full save and new-game reset</li>
+ * <li>{@link ulb.services.CombatService} — stateless damage formulas and type-effectiveness</li>
+ * </ul>
  *
- * {@link ulb.services.CombatService} is stateless and handles damage formulas, type effectiveness, and initiative
- * priority. {@link ulb.services.LevelUpService} handles XP distribution and level-up logic.
- * {@link ulb.services.InventoryService} handles item management.
+ * <p>
+ * All persistence calls go through repositories in {@code ulb.repositories}.
  */
 package ulb.services;

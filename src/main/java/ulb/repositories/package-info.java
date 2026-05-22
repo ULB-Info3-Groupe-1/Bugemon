@@ -1,14 +1,22 @@
 /**
- * Data access layer. All database interactions go through {@link ulb.repositories.DatabaseRepository}.
+ * Data-access layer: repository interfaces that abstract all persistence operations for the game.
  *
- * On construction, {@code DatabaseRepository} loads all SQL queries from {@code resources/sql/*.sql}, creates the
- * schema if absent, and bootstraps static game data. See {@code team/rules.md} for the required SQL file format.
+ * <p>
+ * On startup, {@link ulb.repositories.QueryLoader} scans {@code resources/sql/*.sql} and builds an in-memory map of
+ * named SQL strings. Concrete repository implementations (found in {@code ulb.repositories.postgres}) call
+ * {@link ulb.repositories.DatabaseConnection#prepareStatement} with those strings to execute queries.
  *
- * {@link ulb.repositories.DatabaseConnection} holds the single PostgreSQL connection (credentials via {@code .env}).
- * {@link ulb.repositories.PlayerRepository} and {@link ulb.repositories.StaticDataRepository} are internal delegates —
- * callers should only use {@code DatabaseRepository}.
- *
- * DTOs ({@link ulb.repositories.dto.PlayerBugemonDTO}, {@link ulb.repositories.dto.TeamDTO},
- * {@link ulb.repositories.dto.TeamMemberDTO}) are plain records used to carry data between layers.
+ * <p>
+ * Key interfaces:
+ * <ul>
+ * <li>{@link ulb.repositories.PlayerRepository} — player creation and tower-floor tracking</li>
+ * <li>{@link ulb.repositories.BugemonRepository} — per-player Bugemon ownership</li>
+ * <li>{@link ulb.repositories.TeamRepository} — named teams and active-team selection</li>
+ * <li>{@link ulb.repositories.InventoryRepository} — item inventories</li>
+ * <li>{@link ulb.repositories.SkillRepository} — skill-tree progress and skill points</li>
+ * <li>{@link ulb.repositories.TowerRepository} — in-progress tower run snapshots</li>
+ * <li>{@link ulb.repositories.StaticRepository} — immutable game data (archetypes, attacks, items)</li>
+ * <li>{@link ulb.repositories.MusicRepository} — audio track lookup by scene context</li>
+ * </ul>
  */
 package ulb.repositories;

@@ -1,42 +1,101 @@
 package ulb.services;
 
-import ulb.models.bugemon.Inventory;
-import ulb.models.bugemon.Item;
-import ulb.models.bugemon.effect.EffectDuration;
-import ulb.models.bugemon.effect.EffectHeal;
-import ulb.models.bugemon.effect.EffectStat;
-import ulb.models.bugemon.effect.EffectStatModifier;
-import ulb.models.bugemon.effect.EffectTarget;
+import java.util.List;
+import java.util.Random;
 
+import ulb.common.dto.persistence.DefaultInventoryDTO;
+import ulb.common.dto.persistence.InventoryDTO;
+import ulb.models.item.Inventory;
+import ulb.models.item.Item;
+import ulb.models.item.ItemType;
+import ulb.models.skills.SkillContext;
+import ulb.repositories.InventoryRepository;
+import ulb.repositories.StaticRepository;
+
+/**
+ * Service that manages a player's {@link ulb.models.item.Inventory}.
+ *
+ * <p>
+ * Provides inventory loading, persistence, reset, and the application of skill-based starter item bonuses.
+ */
 public class InventoryService {
-    private InventoryService() {
-        // Private constructor to prevent instantiation
-    }
 
-    private static Item baieRevigorante = new Item("baie_revigorante", "Baie Revigorante",
-            "Restaure 20 PV au Bugémon actif.", Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 20));
-    private static Item baieTonique = new Item("baie_tonique", "Baie Tonique", "Restaure 10 PV au Bugémon actif.",
-            Item.ItemType.HEALING, new EffectHeal(EffectTarget.THROWER, 10));
-    private static Item gelDefensif = new Item("gel_defensif", "Gel Defensif",
-            "Renforce temporairement la defense du Bugémon actif.", Item.ItemType.BOOST,
-            new EffectStatModifier(EffectTarget.THROWER, EffectStat.DEFENSE, 10, EffectDuration.PERMANENT));
-    private static Item serumOffensif = new Item("serum_offensif", "Serum Offensif",
-            "Renforce temporairement l'attaque du Bugémon actif.", Item.ItemType.BOOST,
-            new EffectStatModifier(EffectTarget.THROWER, EffectStat.ATTACK, 10, EffectDuration.PERMANENT));
+    private final String playerName;
+
+    private final InventoryRepository inventoryRepository;
+    private final StaticRepository staticRepository;
+
+    private final Random random;
 
     /**
-     * Adds starter items to the inventory.
+     * Constructs an {@code InventoryService} bound to the given player.
+     *
+     * @param inventoryRepository
+     *            repository for reading and writing player inventory data
+     * @param staticRepository
+     *            repository providing static item definitions and default inventory
+     * @param random
+     *            random-number source used when selecting starter items
+     * @param playerName
+     *            the name of the player whose inventory this service manages
+     */
+    public InventoryService(InventoryRepository inventoryRepository, StaticRepository staticRepository, Random random,
+            String playerName) {
+        this.inventoryRepository = inventoryRepository;
+        this.staticRepository = staticRepository;
+        this.random = random;
+        this.playerName = playerName;
+    }
+
+    public Inventory getInventory() {
+        InventoryDTO inventoryDTO = this.inventoryRepository.findInventory(this.playerName);
+        return new Inventory(inventoryDTO.items());
+    }
+
+    public void resetInventory() {
+        this.inventoryRepository.delete(this.playerName);
+    }
+
+    public DefaultInventoryDTO getDefaultInventory() {
+        return this.staticRepository.defaultInventory();
+    }
+
+    public List<Item> getItems() {
+        return this.staticRepository.items();
+    }
+
+    /**
+     * Adds skill-unlocked starter items to {@code inventory} based on the active
+     * {@link ulb.models.skills.SkillContext}. For each {@link ulb.models.item.ItemType} that the skill grants bonus
+     * quantities of, a random eligible item of that type is chosen and added for each bonus unit.
      *
      * @param inventory
-     * @return
+     *            the inventory to receive the bonus items
+     * @param skillContext
+     *            the context derived from the player's current skill-tree state
      */
-    public static Inventory addStarterItems(Inventory inventory) {
-        // NOTE: the items are currently hardcoded as we don't store them in the db
+    public void applyStarterItemsBonus(Inventory inventory, SkillContext skillContext) {
+        for (ItemType type : ItemType.values()) {
+            int quantity = skillContext.getStarterItemQuantity(type);
+            if (quantity > 0) {
+                List<Item> eligible = this.staticRepository.items().stream().filter(item -> item.type() == type)
+                        .toList();
 
-        inventory.addItem(baieRevigorante, 3);
-        inventory.addItem(baieTonique, 2);
-        inventory.addItem(gelDefensif, 1);
-        inventory.addItem(serumOffensif, 1);
-        return inventory;
+                if (!eligible.isEmpty()) {
+                    for (int i = 0; i < quantity; i++) {
+                        inventory.addItem(eligible.get(this.random.nextInt(eligible.size())), 1);
+                    }
+                }
+            }
+        }
     }
+
+    public void save(Inventory inventory) {
+        this.inventoryRepository.save(this.toDTO(inventory));
+    }
+
+    private InventoryDTO toDTO(Inventory inventory) {
+        return new InventoryDTO(this.playerName, inventory.getMap());
+    }
+
 }

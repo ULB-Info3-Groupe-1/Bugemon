@@ -32,23 +32,33 @@ public class MainMenuView extends View {
     }
 
     @FXML
-    private void onNoTowerClicked() {
-        this.listener.onNoTower();
-    }
-
-    @FXML
-    private void onQuitClicked() {
-        this.listener.onQuit();
-    }
-
-    @FXML
     private void onStartManualCombatClicked() {
         this.listener.onStartManualCombat();
     }
 
     @FXML
+    private void onSkillTreeClicked() {
+        this.listener.onSkillTree();
+    }
+
+    @FXML
     private void onStartAutomaticCombatClicked() {
         this.listener.onStartAutomaticCombat();
+    }
+
+    @FXML
+    private void onTowerClicked() {
+        this.listener.onTower();
+    }
+
+    @FXML
+    private void onSaveMenuReturnButtonClicked() {
+        this.listener.onSaveMenuReturnButton();
+    }
+
+    @FXML
+    private void onQuitClicked() {
+        this.listener.onQuit();
     }
 
     @Override
@@ -61,19 +71,24 @@ public class MainMenuView extends View {
         // No dynamic content to refresh in the main menu, so this method is empty.
     }
 
+    /** Callback interface for all main menu navigation actions. */
     public interface Listener {
         void onCreateTeam();
 
         void onCreateBugemon();
 
-        void onNoTower();
+        void onEditTeam();
 
-        void onQuit();
+        void onTower();
 
         void onStartManualCombat();
 
         void onStartAutomaticCombat();
 
-        void onEditTeam();
+        void onSaveMenuReturnButton();
+
+        void onSkillTree();
+
+        void onQuit();
     }
 }

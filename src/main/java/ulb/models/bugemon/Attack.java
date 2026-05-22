@@ -1,65 +1,67 @@
 package ulb.models.bugemon;
 
 import java.util.List;
-import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
 
-import ulb.models.bugemon.effect.Effect;
+import ulb.models.effect.Effect;
 
-/** Immutable record representing an attack a {@link Bugemon} can use in battle. Equality is based on {@link #id}. */
+/**
+ * Immutable record representing an attack a {@link Bugemon} can use in battle.
+ *
+ * <p>
+ * Attacks are loaded from JSON via Gson ({@code nom}, {@code puissance}, {@code effets} are French-named fields in the
+ * data file). Equality is based solely on {@code id}.
+ *
+ * @param id
+ *            unique identifier of the attack
+ * @param name
+ *            display name (mapped from JSON field {@code nom})
+ * @param description
+ *            human-readable description
+ * @param power
+ *            base damage power (mapped from JSON field {@code puissance})
+ * @param type
+ *            elemental type of the attack
+ * @param effects
+ *            list of additional {@link Effect}s applied on use (mapped from JSON field {@code effets})
+ */
 public record Attack(
 
         String id,
 
         @SerializedName("nom") String name,
 
-        BugemonType type,
-
         String description,
 
         @SerializedName("puissance") int power,
 
+        ElementType type,
+
         @SerializedName("effets") List<Effect> effects
 
 ) {
-    public Attack {
-        // Defensive copy of the effects list to ensure immutability of the record
-        effects = (effects == null) ? List.of() : List.copyOf(effects);
-    }
-
-    public boolean containsEffect(Effect effect) {
-        return this.effects.contains(effect);
-    }
-
-    /** Compact representation for logging: {@code Explosion Ardente (PYRO, 70pw)}. */
-    @Override
-    public String toString() {
-        return this.name + " (" + this.type + ", " + this.power + "pw)";
+    /**
+     * Returns {@code true} if this attack applies at least one {@link Effect} on use.
+     */
+    public boolean hasEffects() {
+        return !this.effects.isEmpty();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof Attack)) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        Attack attack = (Attack) o;
-        return Objects.equals(this.id, attack.id);
+        Attack other = (Attack) obj;
+        return this.id.equals(other.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
-    }
-
-    public Efficiency getEfficiencyAgainst(BugemonType opponentType) {
-        return this.type.getEfficiencyAgainst(opponentType);
-    }
-
-    public Efficiency getEfficiencyAgainst(Bugemon opponent) {
-        return this.getEfficiencyAgainst(opponent.getType());
+        return this.id.hashCode();
     }
 }

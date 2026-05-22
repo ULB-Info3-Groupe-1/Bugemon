@@ -6,9 +6,12 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Bugemon;
+import ulb.common.dto.display.BugemonDisplayDTO;
 
-/** Reusable custom component displaying all the bugemons inside of a grid. */
+/**
+ * Reusable custom component displaying all available Bugemons in a scrollable flow grid. Selected Bugemons are visually
+ * highlighted; clicks are forwarded through {@link Listener}.
+ */
 public class AllBugemonsView extends ComponentView {
 
     @FXML
@@ -24,11 +27,18 @@ public class AllBugemonsView extends ComponentView {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the grid with the given list of Bugemons. */
-    public void showAll(List<Bugemon> bugemonList, Set<Bugemon> selectedBugemons) {
+    /**
+     * Clears and repopulates the grid, marking each card as selected or unselected.
+     *
+     * @param bugemonList
+     *            the complete list of Bugemons to display
+     * @param selectedBugemons
+     *            the subset that should appear selected
+     */
+    public void showAll(List<BugemonDisplayDTO> bugemonList, Set<BugemonDisplayDTO> selectedBugemons) {
         this.flowPane.getChildren().clear();
 
-        for (Bugemon bugemon : bugemonList) {
+        for (BugemonDisplayDTO bugemon : bugemonList) {
             BugemonCardView bugemonCard = this.createBugemonCard(bugemon);
 
             if (selectedBugemons.contains(bugemon)) {
@@ -41,18 +51,16 @@ public class AllBugemonsView extends ComponentView {
         }
     }
 
-    private BugemonCardView createBugemonCard(Bugemon bugemon) {
+    private BugemonCardView createBugemonCard(BugemonDisplayDTO bugemon) {
         BugemonCardView card = new BugemonCardView(bugemon);
         card.hideLevelLabel();
-
-        card.setListener(this.listener::onBugemonClicked);
-
+        card.setListener(this.listener::onBugemonSelected);
         return card;
     }
 
+    /** Callback interface for Bugemon grid interactions. */
     public interface Listener {
-
-        void onBugemonClicked(Bugemon bugemon);
-
+        /** Called when the player clicks a Bugemon card. */
+        void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

@@ -13,8 +13,8 @@
 <?import javafx.scene.control.ToggleGroup?>
 
 <?import ulb.views.components.BugemonCardView?>
-<?import ulb.models.bugemon.effect.EffectStat?>
-<?import ulb.models.bugemon.BugemonType?>
+<?import ulb.common.StatType?>
+<?import ulb.models.bugemon.ElementType?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="ulb.views.CreateBugemonView" alignment="CENTER"
@@ -55,62 +55,62 @@
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-FLORA">
                     <userData>
-                        <BugemonType fx:constant="FLORA" />
+                        <ElementType fx:constant="FLORA" />
                     </userData>
                 </ToggleButton>
                 <ToggleButton text="AQUA"
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-AQUA">
                     <userData>
-                        <BugemonType fx:constant="AQUA" />
+                        <ElementType fx:constant="AQUA" />
                     </userData>
                 </ToggleButton>
                 <ToggleButton text="PYRO"
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-PYRO">
                     <userData>
-                        <BugemonType fx:constant="PYRO" />
+                        <ElementType fx:constant="PYRO" />
                     </userData>
                 </ToggleButton>
                 <ToggleButton text="LITHO"
                     toggleGroup="$typeToggleGroup" onAction="#onTypeClicked"
                     styleClass="btn, attack-LITHO">
                     <userData>
-                        <BugemonType fx:constant="LITHO" />
+                        <ElementType fx:constant="LITHO" />
                     </userData>
                 </ToggleButton>
             </HBox>
 
             <Label text="Sélectionner les statistiques" />
-            <Label text="Vie (0)" fx:id="healthLabel" />
-            <Slider fx:id="healthSlider" max="100" showTickLabels="true"
-                showTickMarks="true" blockIncrement="1">
-                <userData>
-                    <EffectStat fx:constant="HP" />
-                </userData>
-            </Slider>
-
-            <Label text="Attaque (0)" fx:id="attackLabel" />
-            <Slider fx:id="attackSlider" max="100" showTickLabels="true"
-                showTickMarks="true" blockIncrement="1">
-                <userData>
-                    <EffectStat fx:constant="ATTACK" />
-                </userData>
-            </Slider>
-
-            <Label text="Défense (0)" fx:id="defenseLabel" />
-            <Slider fx:id="defenseSlider" max="100" showTickLabels="true"
-                showTickMarks="true" blockIncrement="1">
-                <userData>
-                    <EffectStat fx:constant="DEFENSE" />
-                </userData>
-            </Slider>
-
-            <Label text="Initiative (0)" fx:id="initiativeLabel" />
-            <Slider fx:id="initiativeSlider" max="100"
+            <Label fx:id="healthLabel" />
+            <Slider fx:id="healthSlider" min="1" max="100"
                 showTickLabels="true" showTickMarks="true" blockIncrement="1">
                 <userData>
-                    <EffectStat fx:constant="INITIATIVE" />
+                    <StatType fx:constant="HP" />
+                </userData>
+            </Slider>
+
+            <Label fx:id="attackLabel" />
+            <Slider fx:id="attackSlider" min="1" max="100"
+                showTickLabels="true" showTickMarks="true" blockIncrement="1">
+                <userData>
+                    <StatType fx:constant="ATTACK" />
+                </userData>
+            </Slider>
+
+            <Label fx:id="defenseLabel" />
+            <Slider fx:id="defenseSlider" min="1" max="100"
+                showTickLabels="true" showTickMarks="true" blockIncrement="1">
+                <userData>
+                    <StatType fx:constant="DEFENSE" />
+                </userData>
+            </Slider>
+
+            <Label fx:id="initiativeLabel" />
+            <Slider fx:id="initiativeSlider" min="1" max="100"
+                showTickLabels="true" showTickMarks="true" blockIncrement="1">
+                <userData>
+                    <StatType fx:constant="INITIATIVE" />
                 </userData>
             </Slider>
 

@@ -33,7 +33,7 @@
                 <Label text="Nom de l'équipe à sauvegarder :"
                     styleClass="team-input-label" />
                 <TextField fx:id="saveTeamNameInput"
-                    styleClass="text-field,btn-team" promptText="Nouveau nom..."
+                    styleClass="text-field btn-team" promptText="Nouveau nom..."
                     onAction="#onSaveClicked" />
             </VBox>
         </HBox>
@@ -48,7 +48,7 @@
 
             <VBox spacing="12">
                 <HBox spacing="10">
-                    <Label text="Ton équipe actuellement chargée : " />
+                    <Label text="Équipe en cours d'édition : " />
                     <Text fx:id="selectedTeamName" />
                 </HBox>
                 <BugemonTeamView fx:id="bugemonsTeamView" />

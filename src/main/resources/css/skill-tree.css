@@ -1,0 +1,88 @@
+.skill-tree-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.skill-node {
+    -fx-cursor: hand;
+}
+
+.skill-node .action-menu {
+    -fx-background-color: color-surface-dialog;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-pref-width: -1;
+    -fx-max-width: Infinity;
+    -fx-padding: 12 16;
+}
+
+.skill-node:hover .action-menu {
+    -fx-background-color: #d9d6ca;
+}
+
+.skill-node .section-label {
+    -fx-text-fill: color-text-dark;
+    -fx-font-size: 16px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+.skill-node-active .action-menu {
+    -fx-background-color: rgba(61, 170, 110, 0.9);
+    -fx-border-color: color-success-hover;
+}
+
+.skill-node-active:hover .action-menu {
+    -fx-background-color: color-success-hover;
+}
+
+.skill-node-active .section-label {
+    -fx-text-fill: white;
+}
+
+.skill-node-available .action-menu {
+    -fx-background-color: rgba(70, 130, 180, 0.5);
+    -fx-border-color: color-primary;
+    -fx-effect: none;
+}
+
+.skill-node-available:hover .action-menu {
+    -fx-background-color: rgba(51, 102, 153, 0.7);
+}
+
+.skill-node-available .section-label {
+    -fx-text-fill: white;
+}
+
+.skill-node-locked .action-menu {
+    -fx-background-color: rgba(90, 98, 104, 0.25);
+    -fx-border-color: color-secondary;
+    -fx-effect: none;
+}
+
+.skill-node-locked:hover .action-menu {
+    -fx-background-color: rgba(90, 98, 104, 0.4);
+}
+
+.skill-node-locked .section-label {
+    -fx-text-fill: color-text-light;
+}
+
+.skill-connection {
+    -fx-stroke: color-surface-border;
+    -fx-stroke-width: 2;
+}
+
+.skill-connection-active {
+    -fx-stroke: color-success;
+    -fx-stroke-width: 2.5;
+}
+
+.skill-connection-available {
+    -fx-stroke: color-primary;
+    -fx-stroke-width: 2;
+}

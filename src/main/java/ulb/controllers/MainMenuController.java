@@ -1,35 +1,73 @@
 package ulb.controllers;
 
-import ulb.controllers.MetaController.Window;
-import ulb.services.PlayerService;
+import ulb.models.player.PlayerState;
 import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
 
-/** Controller for the main menu screen. */
+/**
+ * Controller for the main menu screen.
+ *
+ * <p>
+ * Delegates all navigation actions to {@link MetaController}. Guards combat and tower entry points by checking that an
+ * active team has been selected before forwarding the request.
+ */
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
-    private final PlayerService playerService;
 
-    public MainMenuController(MetaController metaController, PlayerService playerService) {
+    private final PlayerState playerState;
+
+    public MainMenuController(MetaController metaController, PlayerState playerState) {
         super(metaController, ViewLoader.load(MainMenuView::new));
-        this.playerService = playerService;
+        this.playerState = playerState;
+
         this.view.setListener(this);
     }
 
     @Override
     public void onCreateTeam() {
-        this.metaController.switchTo(Window.CREATE_TEAM);
+        this.metaController.onCreateTeam();
+    }
+
+    @Override
+    public void onEditTeam() {
+        this.metaController.onEditTeam();
     }
 
     @Override
     public void onCreateBugemon() {
-        this.metaController.switchTo(Window.CREATE_BUGEMON);
+        this.metaController.onCreateBugemon();
+    }
+
+    /** Starts an automatic combat session. */
+    @Override
+    public void onStartAutomaticCombat() {
+        if (this.isActiveTeamPresent()) {
+            this.metaController.onStartAutomaticCombat();
+        }
+    }
+
+    /** Starts a manual combat session. */
+    @Override
+    public void onStartManualCombat() {
+        if (this.isActiveTeamPresent()) {
+            this.metaController.onStartManualCombat();
+        }
     }
 
     @Override
-    public void onNoTower() {
-        if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.NOTOWER);
+    public void onTower() {
+        if (this.isActiveTeamPresent()) {
+            this.metaController.onTower();
         }
+    }
+
+    @Override
+    public void onSaveMenuReturnButton() {
+        this.metaController.onSaveMenu();
+    }
+
+    @Override
+    public void onSkillTree() {
+        this.metaController.onSkillTree();
     }
 
     @Override
@@ -37,32 +75,10 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
         javafx.application.Platform.exit();
     }
 
-    /** Starts an automatic combat session. */
-    @Override
-    public void onStartAutomaticCombat() {
-        if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.AUTOMATIC_COMBAT);
-        }
-    }
-
-    /** Starts a manual combat session. */
-    @Override
-    public void onStartManualCombat() {
-        if (!this.isActiveTeamEmpty()) {
-            this.metaController.switchTo(Window.MANUAL_COMBAT);
-        }
-    }
-
-    @Override
-    public void onEditTeam() {
-        this.metaController.switchTo(Window.EDIT_TEAM);
-    }
-
-    private boolean isActiveTeamEmpty() {
-        if (this.playerService.isActiveTeamEmpty()) {
+    private boolean isActiveTeamPresent() {
+        return this.playerState.getActiveTeam().map(team -> true).orElseGet(() -> {
             this.view.showAlertChooseTeamToLaunchCombat();
-            return true;
-        }
-        return false;
+            return false;
+        });
     }
 }

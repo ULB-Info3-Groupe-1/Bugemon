@@ -5,10 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Bugemon;
-import ulb.models.bugemon_team.BugemonTeam;
+import ulb.common.dto.display.BugemonDisplayDTO;
 
-/** Reusable custom component displaying a Bugemon team in a grid. */
+/**
+ * Reusable custom component displaying a Bugemon team in a fixed {@value #GRID_COLUMNS}-column grid. Click events on
+ * individual cards are forwarded through {@link Listener}.
+ */
 public class BugemonTeamView extends ComponentView {
     private static final int GRID_COLUMNS = 3;
 
@@ -25,28 +27,29 @@ public class BugemonTeamView extends ComponentView {
         this.listener = listener;
     }
 
-    /** Clears and repopulates the grid with the alive members of the given team. */
-    public void showTeam(BugemonTeam bugemonTeam) {
+    /**
+     * Clears the grid and fills it with a card for each team member.
+     *
+     * @param members
+     *            the team members to display, in slot order
+     */
+    public void showTeam(List<BugemonDisplayDTO> members) {
         this.clearBugemons();
 
-        List<Bugemon> aliveBugemons = bugemonTeam.aliveStream().toList();
-        for (int i = 0; i < aliveBugemons.size(); i++) {
-            BugemonCardView card = new BugemonCardView(aliveBugemons.get(i));
-            card.setListener(this.listener::onBugemonClicked);
+        for (int i = 0; i < members.size(); i++) {
+            BugemonCardView card = new BugemonCardView(members.get(i));
+            card.setListener(this.listener::onBugemonSelected);
             this.gridPane.add(card, i % GRID_COLUMNS, i / GRID_COLUMNS);
         }
     }
 
-    /**
-     * Clears the grid of the current Bugemons selected.
-     */
     public void clearBugemons() {
         this.gridPane.getChildren().clear();
     }
 
+    /** Callback interface for team grid click interactions. */
     public interface Listener {
-
-        void onBugemonClicked(Bugemon bugemon);
-
+        /** Called when the player clicks a Bugemon card in the team grid. */
+        void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

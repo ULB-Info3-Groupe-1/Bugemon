@@ -1,0 +1,165 @@
+.attack-list-view {
+    -fx-background-color: color-white;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 4;
+    -fx-padding: 4;
+    -fx-pref-height: 200;
+    -fx-min-height: 150;
+}
+
+.attack-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: color-text-dark;
+    -fx-padding: 8 12;
+    -fx-font-size: 14px;
+}
+
+.attack-list-view .list-cell:selected {
+    -fx-background-color: color-flora;
+    -fx-text-fill: white;
+}
+
+.attack-list-view .list-cell:hover {
+    -fx-background-color: rgba(200, 200, 200, 0.2);
+}
+
+.attack-count-incomplete {
+    -fx-text-fill: color-danger;
+    -fx-font-weight: bold;
+}
+
+.attack-count-complete {
+    -fx-text-fill: color-success;
+    -fx-font-weight: bold;
+}
+
+.hover-info-panel {
+    -fx-background-color: color-surface;
+    -fx-padding: 16;
+    -fx-border-color: color-surface-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-pref-width: 220;
+    -fx-max-width: 220;
+    -fx-spacing: 8;
+}
+
+.hover-info-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+    -fx-wrap-text: true;
+}
+
+.hover-info-meta {
+    -fx-font-size: 14px;
+    -fx-text-fill: color-text-muted;
+    -fx-wrap-text: true;
+}
+
+.hover-info-panel.hover-type-FLORA {
+    -fx-background-color: color-hover-flora;
+    -fx-border-color: color-flora-hover;
+}
+
+.hover-info-panel.hover-type-PYRO {
+    -fx-background-color: color-hover-pyro;
+    -fx-border-color: color-pyro-hover;
+}
+
+.hover-info-panel.hover-type-AQUA {
+    -fx-background-color: color-hover-aqua;
+    -fx-border-color: color-aqua-hover;
+}
+
+.hover-info-panel.hover-type-LITHO {
+    -fx-background-color: color-hover-litho;
+    -fx-border-color: color-litho-hover;
+}
+
+.hover-info-panel.hover-typed .hover-info-title,
+.hover-info-panel.hover-typed .hover-info-meta {
+    -fx-text-fill: white;
+}
+
+.hover-info-efficiency-high {
+    -fx-background-color: color-efficiency-high;
+    -fx-text-fill: color-efficiency-high-text;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 4;
+    -fx-padding: 4 10;
+}
+
+.hover-info-efficiency-low {
+    -fx-background-color: color-efficiency-low;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 4;
+    -fx-padding: 4 10;
+}
+
+.action-menu {
+    -fx-pref-width: size-action-menu;
+    -fx-background-color: color-surface;
+    -fx-padding: 20;
+    -fx-border-color: color-surface-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+}
+
+.action-menu .button {
+    -fx-font-size: 16px;
+}
+
+.main-action-menu .button {
+    -fx-font-size: 20px;
+}
+
+.dialog-zone {
+    -fx-background-color: color-surface-dialog;
+    -fx-padding: 28;
+    -fx-spacing: 28;
+    -fx-border-color: color-surface-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 2;
+    -fx-alignment: center;
+    -fx-pref-width: 560;
+    -fx-max-width: 560;
+}
+
+.dialog-text {
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.additional-info {
+    -fx-font-size: 18px;
+    -fx-text-fill: color-text-muted;
+}
+
+.victory-title {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-gold;
+}
+
+.defeat-title {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-danger;
+}
+
+.switch-row {
+    -fx-spacing: size-switch-row-spacing;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.menu-btn-min {
+    -fx-min-width: size-menu-btn-min;
+}
