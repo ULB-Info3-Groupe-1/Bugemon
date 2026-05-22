@@ -35,17 +35,16 @@ Nous avions divisé l'histoire 17 (Arbre de compétences) en les tâches suivant
 - logique pour appliquer les effets
 - controller skill tree
 - model skill tree (touche au service)
-- vue skill tree 
+- vue skill tree
 
-La personne s'occupant de la vue n'a pas lu la partie, ou du moins ne s'est pas souvenu du
-fait quela partie 
-
-
-// TODO: mauvaise compréhensin du skill tree (algo de fou furieux pour rien)
+La personne s'occupant de la vue n'a pas lu la partie de l'histoire disant que les possitions des noeuds étaient déjà présentes dans le fichier `skill_tree.json`, ou du moins ne s'est pas souvenu
+de cette information, et a par conséquent réimplémenté un algorithme permettant d'organiser les positions des noeuds pour rien.
+(Nous sommes revenus en arrière pour utiliser les coordonnées dans le fichier, afin de respecter la demande du client.)
 
 = Qualité de code <sec:qualite_de_code>
 
 Afin de rendre le refactoring le plus efficace possible, nous nous sommes fortement aidés de LLMs (claude).
+(Majoritairement pour comprendre nos mauvais choix de conceptions, et les erreurs de compréhensions de certains concepts tels que les services).
 
 == Mauvais choix initiaux
 
