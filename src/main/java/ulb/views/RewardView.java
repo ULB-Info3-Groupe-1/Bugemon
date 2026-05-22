@@ -217,7 +217,7 @@ public class RewardView extends View {
 
     @Override
     public void refresh() {
-        // L'état est géré via displayRewardOptions / displayTeamForSelection / showAttackReplacement
+        // state is managed via displayRewardOptions / displayTeamForSelection / showAttackReplacement
     }
 
     private enum Panel {

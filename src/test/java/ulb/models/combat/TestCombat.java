@@ -283,7 +283,7 @@ public class TestCombat {
         CombatTeam resetPlayerTeam = BugemonFixtures
                 .teamOf(BugemonFixtures.bugemon(500, 50, 40, 90, List.of(resetAtk, resetAtk, resetAtk)));
 
-        // Pré-applique un malus de défense sur le joueur
+        // Pre apply a negative effect to the player's active Bugemon defense
         resetPlayerTeam.getActive().addEffect(new StatusEffect(StatType.DEFENSE, -20, EffectDuration.PERMANENT));
         int defenseWithMalus = resetPlayerTeam.getActive().getEffectiveDefense();
 

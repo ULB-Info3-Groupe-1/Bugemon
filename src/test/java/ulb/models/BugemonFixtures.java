@@ -21,7 +21,7 @@ public final class BugemonFixtures {
     private BugemonFixtures() {
     }
 
-    // --- Attaques génériques (type NORMAL, type non pertinent) ---
+    // --- Generic attacks ---
 
     public static Attack attack(String id, int power) {
         return new Attack(id, "Attaque", "", power, ElementType.NORMAL, List.of());
@@ -54,7 +54,7 @@ public final class BugemonFixtures {
                 List.of(new ResetMalusEffect(EffectTarget.THROWER)));
     }
 
-    // --- Attaques typées (type pertinent pour tester l'efficacité) ---
+    // --- Typed attacks (type pertinent for testing effectiveness) ---
 
     public static Attack floraAttack() {
         return new Attack("atk-flora", "Fouet-Liane", "", 40, ElementType.FLORA, List.of());
@@ -64,13 +64,13 @@ public final class BugemonFixtures {
         return new Attack("atk-aqua", "Jet d'Eau", "", 35, ElementType.AQUA, List.of());
     }
 
-    // --- Bugémons génériques (type NORMAL, type non pertinent) ---
+    // --- Generic Bugémons ---
 
     public static Bugemon bugemon(int hp, int attack, int defense, int initiative, List<Attack> attacks) {
         return new Bugemon("Bugémon", hp, attack, defense, initiative, ElementType.NORMAL, attacks, "", false, false);
     }
 
-    // --- Bugémons typés (type pertinent pour tester l'efficacité) ---
+    // --- Typed Bugémons (type pertinent for testing effectiveness) ---
 
     public static Bugemon fastFlora() {
         return new Bugemon("FloraFast", 100, 50, 40, 70, ElementType.FLORA,

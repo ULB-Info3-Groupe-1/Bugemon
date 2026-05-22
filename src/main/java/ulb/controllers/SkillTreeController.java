@@ -46,7 +46,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
             this.view.refreshSkillState(state);
             LOG.info("Added point to skill node: {}", skillNode.id());
         } catch (IllegalNodeStateException e) {
-            // Show alert or I fucking don't know <3
+            // Show alert 
             LOG.debug("Failed to add point to skill node: {}", skillNode.id());
         }
     }
@@ -60,7 +60,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
             this.view.refreshSkillState(state);
             LOG.info("Removed point from skill node: {}", skillNode.id());
         } catch (IllegalNodeStateException e) {
-            // Show alert or I fucking don't know <3
+            // Show alert
             LOG.debug("Failed to remove point from skill node: {}", skillNode.id());
         }
     }
