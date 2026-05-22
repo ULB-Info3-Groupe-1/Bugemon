@@ -20,8 +20,8 @@ public class BossTeamFactory extends TeamFactory {
     @Override
     public Team create(int size, List<Bugemon> bugemons) {
         this.checkSize(size);
-        Bugemon boss = bugemons.stream().filter(Bugemon::isBoss).findAny().orElseThrow(
-                () -> new IllegalStateException("No boss Bugemon found"));
+        Bugemon boss = bugemons.stream().filter(Bugemon::isBoss).findAny()
+                .orElseThrow(() -> new IllegalStateException("No boss Bugemon found"));
         Team team = new Team();
         team.add(new PlayerBugemon(boss));
         List<Bugemon> available = new ArrayList<>(bugemons);

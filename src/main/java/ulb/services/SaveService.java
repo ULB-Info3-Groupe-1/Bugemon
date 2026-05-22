@@ -21,8 +21,9 @@ public class SaveService {
     public void clear(PlayerState playerState) {
         this.bugemonService.removePlayerBugemons();
         this.teamService.deleteTeams();
+        this.teamService.unSetActiveTeam();
         playerState.clear();
-        this.inventoryService.getDefaultInventory().getMap()
+        this.inventoryService.getDefaultInventory().items()
                 .forEach((item, qty) -> playerState.getInventory().addItem(item, qty));
         this.inventoryService.save(playerState.getInventory());
         this.towerService.delete();

@@ -11,6 +11,12 @@ public interface TeamRepository {
 
     Optional<TeamDTO> findByName(String playerName, String teamName);
 
+    Optional<TeamDTO> getActiveTeam(String playerName);
+
+    void setActiveTeam(String playerName, String teamName);
+
+    void unSetActiveTeam(String playerName);
+
     void save(String playerName, TeamDTO team);
 
     void delete(String playerName, String teamName);

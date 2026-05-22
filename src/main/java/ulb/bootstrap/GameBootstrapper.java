@@ -44,7 +44,6 @@ public class GameBootstrapper {
     private final Random random;
 
     private PlayerRepository playerRepository;
-    private StaticRepository staticDataRepository;
 
     public GameBootstrapper() {
         this.dbConnection = new PostgresDatabaseConnection();
@@ -62,25 +61,24 @@ public class GameBootstrapper {
     }
 
     public ServiceRegistry createServices(String playerName) {
-        this.staticDataRepository = new PostgresStaticRepository(this.dbConnection, this.loader.getQueries(),
-                this.parser.getInventory());
+        StaticRepository staticDataRepository = new PostgresStaticRepository(this.dbConnection,
+                this.loader.getQueries(), this.parser.getInventory());
         InventoryRepository inventoryRepository = new PostgresInventoryRepository(this.dbConnection,
                 this.loader.getQueries());
         this.playerRepository = new PostgresPlayerRepository(this.dbConnection, this.loader.getQueries(),
                 inventoryRepository);
         SkillRepository skillRepository = new PostgresSkillRepository(this.dbConnection, this.loader.getQueries());
         BugemonRepository bugemonRepository = new PostgresBugemonRepository(this.dbConnection, this.loader.getQueries(),
-                this.staticDataRepository);
+                staticDataRepository);
         TeamRepository teamRepository = new PostgresTeamRepository(this.dbConnection, this.loader.getQueries(),
                 bugemonRepository);
         TowerRepository towerRepository = new PostgresTowerRepository(this.dbConnection, this.loader.getQueries());
         MusicRepository musicRepository = new ResourceMusicRepository();
 
-        BugemonService bugemonService = new BugemonService(this.staticDataRepository, bugemonRepository, playerName);
+        BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName);
         TeamService teamService = new TeamService(teamRepository, bugemonRepository, playerName);
-        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository,
-                this.staticDataRepository);
-        SkillService skillService = new SkillService(skillRepository, this.staticDataRepository, playerName);
+        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, staticDataRepository);
+        SkillService skillService = new SkillService(skillRepository, staticDataRepository, playerName);
         TowerService towerService = new TowerService(towerRepository, playerName);
         SaveService saveService = new SaveService(skillService, bugemonService, inventoryService, teamService,
                 towerService);
@@ -93,15 +91,16 @@ public class GameBootstrapper {
                 combatService, saveService, levelUpService, musicService, rewardService);
     }
 
-    public PlayerState createPlayerState(String playerName, InventoryService inventoryService,
+    public PlayerState createPlayerState(String playerName, TeamService teamService, InventoryService inventoryService,
             SkillService skillService) {
-        this.createUserIfNotExists(playerName);
-        return new PlayerState(playerName, null, inventoryService.getInventory(), skillService.getSkillTreeState());
+        this.createUserIfNotExists(playerName, inventoryService);
+        return new PlayerState(playerName, teamService.getActiveTeam().orElse(null), inventoryService.getInventory(),
+                skillService.getSkillTreeState());
     }
 
-    private void createUserIfNotExists(String playerName) {
+    private void createUserIfNotExists(String playerName, InventoryService inventoryService) {
         try {
-            this.playerRepository.createPlayer(playerName, this.staticDataRepository.defaultInventory());
+            this.playerRepository.createPlayer(playerName, inventoryService.getDefaultInventory());
         } catch (PlayernameAlreadyExistsException e) {
             // Without client/server architecture the database is local and the playername
             // is always 'default_player', so a duplicate on startup is expected and safe.

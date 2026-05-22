@@ -51,8 +51,8 @@ public class TowerService {
         this.activeTower = towerState;
     }
 
-    public java.util.Optional<TowerState> getActiveTower() {
-        return java.util.Optional.ofNullable(this.activeTower);
+    public Optional<TowerState> getActiveTower() {
+        return Optional.ofNullable(this.activeTower);
     }
 
     public FloorMap generateFloor(int seed, int floor) {
@@ -102,12 +102,15 @@ public class TowerService {
     }
 
     private RoomState roomState(Room room, Room current, Set<Room> reachable) {
-        if (room == current)
+        if (room == current) {
             return RoomState.CURRENT;
-        if (reachable.contains(room))
+        }
+        if (reachable.contains(room)) {
             return RoomState.AVAILABLE;
-        if (room.isVisited())
+        }
+        if (room.isVisited()) {
             return RoomState.VISITED;
+        }
         return RoomState.LOCKED;
     }
 

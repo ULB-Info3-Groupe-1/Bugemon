@@ -2,6 +2,7 @@ package ulb.services;
 
 import java.util.List;
 
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.common.dto.persistence.InventoryDTO;
 import ulb.models.item.Inventory;
 import ulb.models.item.Item;
@@ -33,8 +34,8 @@ public class InventoryService {
         this.inventoryRepository.delete(this.playername);
     }
 
-    public Inventory getDefaultInventory() {
-        return new Inventory(this.staticRepository.defaultInventory().items());
+    public DefaultInventoryDTO getDefaultInventory() {
+        return this.staticRepository.defaultInventory();
     }
 
     public List<Item> getItems() {

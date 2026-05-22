@@ -64,14 +64,28 @@ public class TeamService {
         return team;
     }
 
+    public Optional<Team> getActiveTeam() {
+        return this.teamRepository.getActiveTeam(this.playerName).map(this::createTeam);
+    }
+
+    public void setActiveTeam(String teamName) {
+        this.teamRepository.setActiveTeam(this.playerName, teamName);
+    }
+
+    public void unSetActiveTeam() {
+        this.teamRepository.unSetActiveTeam(this.playerName);
+    }
+
     public void deleteTeam(String teamName) throws TeamNotFoundException {
         if (teamName == null || teamName.isEmpty() || this.getTeam(teamName).isEmpty()) {
             throw new TeamNotFoundException("Team not found");
         }
+        this.unSetActiveTeam();
         this.teamRepository.delete(this.playerName, teamName);
     }
 
     public void deleteTeams() {
+        this.unSetActiveTeam();
         this.teamRepository.deleteAll(this.playerName);
     }
 

@@ -139,7 +139,6 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     public void onDelete(String teamName) {
         try {
             this.teamService.deleteTeam(teamName);
-            this.playerState.setActiveTeam(null);
             this.clearTmpTeam();
             this.updateAllUI();
         } catch (TeamNotFoundException e) {
@@ -191,6 +190,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         try {
             this.playerState.setActiveTeam(this.teamService.getTeam(teamName)
                     .orElseThrow(() -> new TeamNotFoundException("Active team not found")));
+            this.teamService.setActiveTeam(teamName);
             this.tmpTeam = this.teamService.getTeam(teamName)
                     .orElseThrow(() -> new TeamNotFoundException("Active team not found"));
         } catch (TeamNotFoundException e) {

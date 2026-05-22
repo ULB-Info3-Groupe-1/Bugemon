@@ -73,6 +73,30 @@ public class PostgresTeamRepository extends AbstractRepository implements TeamRe
         executeUpdate("ClearTeams", playerName);
     }
 
+    @Override
+    public Optional<TeamDTO> getActiveTeam(String playerName) {
+        LOG.debug("Finding active team for playername: {}", playerName);
+        String teamName = executeQuery("GetPlayerCurrentTeamName", rs -> rs.getString(DatabaseColumns.COL_CURRENT_TEAM),
+                playerName).get(0);
+        if (teamName == null) {
+            return Optional.empty();
+        }
+        LOG.debug("Active team {} for playername {} found", teamName, playerName);
+        return this.findByName(playerName, teamName);
+    }
+
+    @Override
+    public void setActiveTeam(String playerName, String teamName) {
+        LOG.debug("Setting active team '{}' for playername: {}", teamName, playerName);
+        executeUpdate("SetPlayerCurrentTeam", teamName, playerName);
+    }
+
+    @Override
+    public void unSetActiveTeam(String playerName) {
+        LOG.debug("Removing active team for playername: {}", playerName);
+        executeUpdate("UnsetPlayerCurrentTeam", playerName);
+    }
+
     private void addTeamMember(String playerName, String teamName, TeamMemberDTO dto) {
         executeUpdate("AddTeamMember", playerName, teamName, dto.bugemonName(), dto.slotPosition());
     }

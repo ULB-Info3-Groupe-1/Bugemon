@@ -36,6 +36,7 @@ import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
 import ulb.models.skills.SkillContext;
 import ulb.services.CombatService;
+import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
@@ -51,6 +52,7 @@ public class CombatController extends Controller<CombatView>
 
     private final CombatService combatService;
     private final SkillService skillService;
+    private final SaveService saveService;
 
     private ActionCallback pendingActionCallback;
     private ActionCallback pendingSwitchCallback;
@@ -61,13 +63,14 @@ public class CombatController extends Controller<CombatView>
     private PlayerState playerState;
 
     public CombatController(MetaController metaController, CombatService combatService, SkillService skillService,
-            PlayerState playerState) {
+            SaveService saveService, PlayerState playerState) {
         super(metaController, ViewLoader.load(CombatView::new));
         this.view.setListener(this);
         this.view.setNextListener(this);
 
         this.combatService = combatService;
         this.skillService = skillService;
+        this.saveService = saveService;
         this.playerState = playerState;
     }
 
@@ -224,6 +227,7 @@ public class CombatController extends Controller<CombatView>
         LOG.info("Combat ended. Victory: {}", won);
 
         CombatSummary summary = this.combatService.finalizeCombat(this.combat, this.combat.getPlayerSkillContext());
+        this.saveService.save(this.playerState);
         this.metaController.onCombatFinished(won, summary);
     }
 

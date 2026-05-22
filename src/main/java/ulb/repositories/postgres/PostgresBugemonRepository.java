@@ -52,9 +52,8 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
                 dto.bonusAttackPower(), dto.bonusInitiative(), dto.bonusMaxHp(), dto.xp(), dto.level(),
                 dto.attacks().get(0).id(), dto.attacks().get(1).id(), dto.attacks().get(2).id());
         executeUpdate("UpdatePlayerBugemon", dto.bonusDefense(), dto.bonusAttackPower(), dto.bonusInitiative(),
-                dto.bonusMaxHp(), dto.xp(), dto.level(),
-                dto.attacks().get(0).id(), dto.attacks().get(1).id(), dto.attacks().get(2).id(),
-                dto.playername(), dto.bugemonName());
+                dto.bonusMaxHp(), dto.xp(), dto.level(), dto.attacks().get(0).id(), dto.attacks().get(1).id(),
+                dto.attacks().get(2).id(), dto.playername(), dto.bugemonName());
     }
 
     @Override
@@ -71,8 +70,9 @@ public class PostgresBugemonRepository extends AbstractRepository implements Bug
 
     private PlayerBugemonDTO mapPlayerBugemon(ResultSet rs) throws SQLException {
         List<Attack> allAttacks = this.staticDataRepository.attacks();
-        List<Attack> attacks = List.of(rs.getString(DatabaseColumns.COL_ATTACK_ID_1),
-                rs.getString(DatabaseColumns.COL_ATTACK_ID_2), rs.getString(DatabaseColumns.COL_ATTACK_ID_3))
+        List<Attack> attacks = List
+                .of(rs.getString(DatabaseColumns.COL_ATTACK_ID_1), rs.getString(DatabaseColumns.COL_ATTACK_ID_2),
+                        rs.getString(DatabaseColumns.COL_ATTACK_ID_3))
                 .stream().map(id -> allAttacks.stream().filter(a -> a.id().equals(id)).findFirst().orElseThrow())
                 .toList();
         return new PlayerBugemonDTO(rs.getString(DatabaseColumns.COL_PLAYERNAME),

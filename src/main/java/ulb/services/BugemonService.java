@@ -1,7 +1,6 @@
 package ulb.services;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import ulb.common.dto.persistence.CreateBugemonDTO;
@@ -42,23 +41,27 @@ public class BugemonService {
     }
 
     public PlayerBugemon getPlayerBugemon(String bugemonName) {
-        Bugemon base = this.staticDataRepository.bugemons().stream()
-                .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow();
-        return this.bugemonRepository.findByName(this.playername, bugemonName)
-                .map(dto -> PlayerBugemon.from(base, dto))
+        Bugemon base = this.staticDataRepository.bugemons().stream().filter(b -> b.name().equals(bugemonName))
+                .findFirst().orElseThrow();
+        return this.bugemonRepository.findByName(this.playername, bugemonName).map(dto -> PlayerBugemon.from(base, dto))
                 .orElse(new PlayerBugemon(base));
     }
 
     public List<PlayerBugemon> getPlayerBugemons() {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
 
-        return this.staticDataRepository.bugemons().stream()
-                .filter(bugemon -> !bugemon.isBoss()) // players cannot own boss bugemons
-                .map(bugemon -> playerBugemons.stream()
-                        .filter(pb -> pb.bugemonName().equals(bugemon.name())) // search for the PlayerBugemon corresponding to this Bugemon
-                        .findFirst()
-                        .map(dto -> PlayerBugemon.from(bugemon, dto)) // if one was found then take that PlayerBugemon
-                        .orElseGet(() -> new PlayerBugemon(bugemon))) // otherwise create a new PlayerBugemon based on the bugemon
+        return this.staticDataRepository.bugemons().stream().filter(bugemon -> !bugemon.isBoss()) // players cannot own
+                                                                                                  // boss bugemons
+                .map(bugemon -> playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())) // search
+                                                                                                              // for the
+                                                                                                              // PlayerBugemon
+                                                                                                              // corresponding
+                                                                                                              // to this
+                                                                                                              // Bugemon
+                        .findFirst().map(dto -> PlayerBugemon.from(bugemon, dto)) // if one was found then take that
+                                                                                  // PlayerBugemon
+                        .orElseGet(() -> new PlayerBugemon(bugemon))) // otherwise create a new PlayerBugemon based on
+                                                                      // the bugemon
                 .toList();
     }
 

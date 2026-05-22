@@ -58,6 +58,7 @@ public class BugemonDeserializer implements JsonDeserializer<Bugemon> {
         }
 
         return new Bugemon(name, statsMap.get("pv"), statsMap.get("attaque"), statsMap.get("defense"),
-                statsMap.get("initiative"), type, attackList, sprite, starter, name.equals(ulb.Configuration.Game.BOSS_NAME));
+                statsMap.get("initiative"), type, attackList, sprite, starter,
+                name.equals(ulb.Configuration.Game.BOSS_NAME));
     }
 }

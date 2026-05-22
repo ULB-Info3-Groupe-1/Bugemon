@@ -74,9 +74,9 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type(), fileName, bugemon.defense(), bugemon.attack(),
-                bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(), bugemon.attacks().get(0).id(),
-                bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
+        this.executeUpdate("SaveBugemon", bugemon.name(), bugemon.type().name(), fileName, bugemon.defense(),
+                bugemon.attack(), bugemon.initiative(), bugemon.maxHp(), bugemon.isStarter(),
+                bugemon.attacks().get(0).id(), bugemon.attacks().get(1).id(), bugemon.attacks().get(2).id());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
     }
 
@@ -139,13 +139,13 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         String attackId2 = rs.getString(DatabaseColumns.COL_ATTACK_ID_2);
         String attackId3 = rs.getString(DatabaseColumns.COL_ATTACK_ID_3);
 
-        // NOTE: there is no isBoss flag in db (because the same goes for the given json). Therefore the value of the isBoss flag is recomputed from the configured boss name.
+        // NOTE: there is no isBoss flag in db (because the same goes for the given json). Therefore the value of the
+        // isBoss flag is recomputed from the configured boss name.
         String name = rs.getString(DatabaseColumns.COL_NAME);
         boolean isBoss = Configuration.Game.BOSS_NAME.equals(name);
 
-        return new Bugemon(name, rs.getInt(DatabaseColumns.COL_BASE_MAX_HP),
-                rs.getInt(DatabaseColumns.COL_BASE_ATTACK), rs.getInt(DatabaseColumns.COL_BASE_DEFENSE),
-                rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE), type,
+        return new Bugemon(name, rs.getInt(DatabaseColumns.COL_BASE_MAX_HP), rs.getInt(DatabaseColumns.COL_BASE_ATTACK),
+                rs.getInt(DatabaseColumns.COL_BASE_DEFENSE), rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE), type,
                 List.of(this.attackCache.get(attackId1), this.attackCache.get(attackId2),
                         this.attackCache.get(attackId3)),
                 rs.getString(DatabaseColumns.COL_SPRITE), rs.getBoolean(DatabaseColumns.COL_IS_STARTER), isBoss);
