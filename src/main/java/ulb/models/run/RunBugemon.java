@@ -22,7 +22,10 @@ public class RunBugemon {
     private int currentHp;
 
     /**
-     * Creates a fresh RunBugemon from a PlayerBugemon (hp full).
+     * Creates a {@link RunBugemon} with current HP initialised to the Bugemon's maximum.
+     *
+     * @param playerBugemon
+     *            the underlying persistent Bugemon; must not be {@code null}
      */
     public RunBugemon(PlayerBugemon playerBugemon) {
         this(playerBugemon, playerBugemon.getMaxHp());

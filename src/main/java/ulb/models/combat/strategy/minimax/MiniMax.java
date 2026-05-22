@@ -84,6 +84,26 @@ public class MiniMax {
         return bestAction;
     }
 
+    /**
+     * Recursive alpha-beta search returning a heuristic score for {@code playerState} from the AI's perspective.
+     *
+     * <p>
+     * Terminal conditions are checked first: an AI defeat returns a large negative score, an opponent defeat returns a
+     * large positive score, and a depth of zero falls back to {@link #evaluateState}. The maximising node expands the
+     * AI's actions; the minimising node expands the opponent's actions.
+     *
+     * @param playerState
+     *            the current combat snapshot
+     * @param depth
+     *            remaining search depth in plies
+     * @param alpha
+     *            current lower bound on the maximiser's guaranteed score
+     * @param beta
+     *            current upper bound on the minimiser's guaranteed score
+     * @param maximizing
+     *            {@code true} when it is the AI's turn to move (maximising player)
+     * @return the minimax score for this node
+     */
     private double solve(CombatSnapshot playerState, int depth, double alpha, double beta, boolean maximizing) {
         if (playerState.isAiDefeated()) {
             return (double) -WIN_SCORE - depth;
@@ -126,6 +146,19 @@ public class MiniMax {
         }
     }
 
+    /**
+     * Builds the list of legal actions available to one side in {@code state}.
+     *
+     * <p>
+     * If the active Bugemon is {@code null} or fainted, only forced-switch actions are generated. Otherwise attacks,
+     * voluntary switches, and available item uses are all included.
+     *
+     * @param state
+     *            the snapshot to generate actions for
+     * @param forAi
+     *            {@code true} to generate actions for the AI team, {@code false} for the opponent
+     * @return a mutable list of legal {@link SimAction}s; never {@code null}
+     */
     private List<SimAction> generateActions(CombatSnapshot state, boolean forAi) {
         TeamSnapshot team = forAi ? state.aiTeam() : state.playerTeam();
         CombatBugemonSnapshot active = team.active();
@@ -149,6 +182,14 @@ public class MiniMax {
         return res;
     }
 
+    /**
+     * Generates one {@link SimActionKind#ITEM} action per item that still has remaining quantity in {@code inventory}.
+     * Items are sorted by ID for deterministic ordering.
+     *
+     * @param inventory
+     *            the current inventory map; may be {@code null} or empty
+     * @return a list of item actions; empty if no usable items remain
+     */
     private List<SimAction> generateItemActions(Map<Item, Integer> inventory) {
         if (inventory == null || inventory.isEmpty()) {
             return List.of();
@@ -163,6 +204,15 @@ public class MiniMax {
         return res;
     }
 
+    /**
+     * Generates switch actions for every alive bench Bugemon when the active Bugemon is KO'd.
+     *
+     * @param state
+     *            the current snapshot
+     * @param forAi
+     *            {@code true} to generate for the AI team
+     * @return list of forced-switch {@link SimAction}s by roster index
+     */
     private List<SimAction> generateForcedSwitchActions(CombatSnapshot state, boolean forAi) {
         TeamSnapshot team = forAi ? state.aiTeam() : state.playerTeam();
         List<CombatBugemonSnapshot> list = team.bugemons();
@@ -180,10 +230,39 @@ public class MiniMax {
         return switches;
     }
 
+    /**
+     * Delegates to {@link #generateForcedSwitchActions} since voluntary and forced switch candidate sets are identical
+     * in the current simulation model.
+     *
+     * @param state
+     *            the current snapshot
+     * @param forAi
+     *            {@code true} to generate for the AI team
+     * @return list of voluntary-switch {@link SimAction}s
+     */
     private List<SimAction> generateVoluntarySwitchActions(CombatSnapshot state, boolean forAi) {
         return this.generateForcedSwitchActions(state, forAi);
     }
 
+    /**
+     * Simulates a full half-turn by applying items, switches, and attack resolution in sequence and returning the
+     * resulting snapshot.
+     *
+     * <p>
+     * When {@code primaryIsAi} is {@code true}, the primary action belongs to the AI and the secondary to the opponent;
+     * items and switches are applied for the AI first. Attack ordering is determined by a maximum-power heuristic (see
+     * {@link #resolveAttacks}).
+     *
+     * @param state
+     *            the snapshot before the turn
+     * @param primaryAction
+     *            the action taken by the primary combatant
+     * @param secondaryAction
+     *            the action taken by the secondary combatant (may be {@link SimAction#none()})
+     * @param primaryIsAi
+     *            {@code true} if the primary action belongs to the AI
+     * @return the updated snapshot after the turn
+     */
     private CombatSnapshot simulateTurn(CombatSnapshot state, SimAction primaryAction, SimAction secondaryAction,
             boolean primaryIsAi) {
         // Apply items first
@@ -218,6 +297,18 @@ public class MiniMax {
         return state;
     }
 
+    /**
+     * Applies a single attack from one side against the other, reducing the defender's HP accordingly. Returns the
+     * state unchanged if either combatant is absent or fainted, or if the action index is out of bounds.
+     *
+     * @param state
+     *            the snapshot before the attack
+     * @param fromAi
+     *            {@code true} if the AI is the attacker
+     * @param action
+     *            the attack action containing the move index
+     * @return the updated snapshot with the defender's HP reduced
+     */
     private CombatSnapshot applyAttack(CombatSnapshot state, boolean fromAi, SimAction action) {
         TeamSnapshot attackerTeam = fromAi ? state.aiTeam() : state.playerTeam();
         TeamSnapshot defenderTeam = fromAi ? state.playerTeam() : state.aiTeam();
@@ -257,6 +348,18 @@ public class MiniMax {
         }
     }
 
+    /**
+     * Applies a heal item action for one side if the action is a valid item use, the item is a {@link HealEffect}, and
+     * there is remaining quantity. Returns the state unchanged for any other action kind or item type.
+     *
+     * @param state
+     *            the snapshot before item use
+     * @param forAi
+     *            {@code true} to apply the item on the AI's active Bugemon
+     * @param action
+     *            the action to evaluate; ignored if not {@link SimActionKind#ITEM}
+     * @return the updated snapshot with healed HP and decremented inventory, or the original state
+     */
     private CombatSnapshot applyItemAction(CombatSnapshot state, boolean forAi, SimAction action) {
         if (action.kind() != SimActionKind.ITEM || action.item() == null) {
             return state;
@@ -306,6 +409,18 @@ public class MiniMax {
         return state;
     }
 
+    /**
+     * Applies a switch action for one side, updating the team's active Bugemon to the roster index in the action.
+     * Returns the state unchanged if the action is not a switch, the index is out of bounds, or the target is fainted.
+     *
+     * @param state
+     *            the snapshot before the switch
+     * @param forAi
+     *            {@code true} to switch for the AI team
+     * @param action
+     *            the action to evaluate; ignored if not {@link SimActionKind#SWITCH}
+     * @return the updated snapshot with a new active Bugemon, or the original state
+     */
     private CombatSnapshot applySwitchAction(CombatSnapshot state, boolean forAi, SimAction action) {
         if (action.kind() != SimActionKind.SWITCH) {
             return state;
@@ -328,6 +443,19 @@ public class MiniMax {
         return new CombatSnapshot(newTeam, state.aiTeam(), state.aiInventory(), state.opponentInventory());
     }
 
+    /**
+     * Resolves the attack phase of a turn, ordering strikes by the active Bugemon's maximum attack power as an
+     * initiative heuristic. If only one side is attacking, only that attack is applied. If neither side is attacking,
+     * the state is returned unchanged.
+     *
+     * @param state
+     *            the snapshot after items and switches have been resolved
+     * @param aiAction
+     *            the AI's action for this turn
+     * @param oppAction
+     *            the opponent's action for this turn
+     * @return the updated snapshot after attacks
+     */
     private CombatSnapshot resolveAttacks(CombatSnapshot state, SimAction aiAction, SimAction oppAction) {
         boolean aiAttacks = aiAction.kind() == SimActionKind.ATTACK;
         boolean oppAttacks = oppAction.kind() == SimActionKind.ATTACK;
@@ -368,6 +496,16 @@ public class MiniMax {
         return this.applyAttack(state, false, oppAction);
     }
 
+    /**
+     * Automatically switches in the first alive bench Bugemon if the given side's active Bugemon is fainted. Returns
+     * the state unchanged if the active Bugemon is still alive or no bench replacement exists.
+     *
+     * @param state
+     *            the snapshot to inspect
+     * @param forAi
+     *            {@code true} to auto-switch for the AI team
+     * @return the updated snapshot with a new active Bugemon, or the original state
+     */
     private CombatSnapshot autoSwitchIfKo(CombatSnapshot state, boolean forAi) {
         TeamSnapshot team = forAi ? state.aiTeam() : state.playerTeam();
         if (team.active() != null && team.active().isAlive()) {
@@ -388,6 +526,14 @@ public class MiniMax {
         return state;
     }
 
+    /**
+     * Heuristic evaluation of a non-terminal state. Returns ±{@value #WIN_SCORE} for terminal states; otherwise returns
+     * the difference between the AI's total remaining HP and the opponent's total remaining HP.
+     *
+     * @param state
+     *            the snapshot to score
+     * @return a positive value when the AI is winning, negative when losing
+     */
     private double evaluateState(CombatSnapshot state) {
         if (state.isAiDefeated()) {
             return -WIN_SCORE;
@@ -401,6 +547,13 @@ public class MiniMax {
         return (aiHp - oppHp);
     }
 
+    /**
+     * Sums the current HP of every Bugemon in {@code team}, clamped to zero for fainted members.
+     *
+     * @param team
+     *            the team snapshot to sum
+     * @return total remaining HP across the entire team
+     */
     private int totalHp(TeamSnapshot team) {
         return team.bugemons().stream().mapToInt(b -> Math.max(0, b.currentHp())).sum();
     }

@@ -28,6 +28,14 @@ public class HoverInfoView extends ComponentView {
         super(Configuration.Paths.Fxml.COMPONENT_HOVER_INFO);
     }
 
+    /**
+     * Populates the panel with attack details and a type-matchup efficiency badge, then makes it visible.
+     *
+     * @param attack
+     *            the attack to preview
+     * @param efficiency
+     *            the type-matchup result against the current opponent; {@link Efficiency#NORMAL} hides the badge
+     */
     public void show(Attack attack, Efficiency efficiency) {
         this.setType(attack.type());
         this.setEfficiency(efficiency);
@@ -44,6 +52,13 @@ public class HoverInfoView extends ComponentView {
         this.setManaged(true);
     }
 
+    /**
+     * Populates the panel with item details (name and description), then makes it visible. No type colouring or
+     * efficiency badge is applied.
+     *
+     * @param item
+     *            the item to preview
+     */
     public void show(Item item) {
         this.setType(null);
         this.setEfficiency(null);
@@ -57,6 +72,7 @@ public class HoverInfoView extends ComponentView {
         this.setManaged(true);
     }
 
+    /** Hides the panel and removes it from the layout flow. */
     public void hide() {
         this.setVisible(false);
         this.setManaged(false);

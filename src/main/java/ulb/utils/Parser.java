@@ -106,30 +106,35 @@ public class Parser {
         LOG.info("Finished parsing data");
     }
 
+    /** Returns the list of parsed {@link Bugemon} species definitions. */
     public final List<Bugemon> getBugemons() {
         return bugemons;
     }
 
+    /** Returns the list of parsed {@link ulb.models.item.Item} definitions. */
     public final List<Item> getItems() {
         return items;
     }
 
+    /** Returns the starter inventory granted to new players. */
     public final DefaultInventoryDTO getInventory() {
         return inventory;
     }
 
+    /** Returns a map from attack ID to the corresponding parsed {@link Attack}. */
     public final Map<String, Attack> getAttacks() {
         return attacks;
     }
 
+    /** Returns the parsed {@link SkillTree} structure. */
     public final SkillTree getSkillTree() {
         return skillTree;
     }
 
     /**
-     * Custom Gson type adapter that deserialises a JSON string into a {@link BugemonType} enum constant. Converts the
-     * raw value to upper-case before calling {@link BugemonType#valueOf(String)}, so {@code "flora"} and
-     * {@code "FLORA"} both resolve to {@link BugemonType#FLORA}.
+     * Gson deserialiser that converts a JSON string into an {@link ElementType} constant. Converts the raw value to
+     * upper-case before calling {@link ElementType#valueOf(String)}, so {@code "flora"} and {@code "FLORA"} both
+     * resolve to the same constant.
      */
     private static class TypeDeserializer implements JsonDeserializer<ElementType> {
         @Override
@@ -139,6 +144,10 @@ public class Parser {
         }
     }
 
+    /**
+     * Gson deserialiser that converts a JSON category string ({@code "soin"}, {@code "boost"}) into an {@link ItemType}
+     * constant.
+     */
     private static class ItemTypeDeserializer implements JsonDeserializer<ItemType> {
         @Override
         public ItemType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
@@ -146,6 +155,10 @@ public class Parser {
         }
     }
 
+    /**
+     * Gson deserialiser that maps the persistence label ({@code "permanent"} or anything else) to an
+     * {@link EffectDuration} constant.
+     */
     private static class DurationDeserializer implements JsonDeserializer<EffectDuration> {
         @Override
         public EffectDuration deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
@@ -157,6 +170,10 @@ public class Parser {
         }
     }
 
+    /**
+     * Gson deserialiser that constructs the correct {@link Effect} subtype from the {@code "type"} discriminator field
+     * in the JSON. Recognised types: {@code stat_modifier}, {@code soin}, {@code reset_malus}.
+     */
     public static class EffectDeserializer implements JsonDeserializer<Effect> {
         @Override
         public Effect deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {

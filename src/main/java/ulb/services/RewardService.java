@@ -16,6 +16,20 @@ import ulb.models.tower.reward.ItemReward;
 import ulb.models.tower.reward.Reward;
 import ulb.models.tower.reward.RewardGenerator;
 
+/**
+ * Service that manages the tower-room reward flow.
+ *
+ * <p>
+ * Delegates reward generation to {@link ulb.models.tower.reward.RewardGenerator} and coordinates the three reward types
+ * with the appropriate model mutations:
+ * <ul>
+ * <li>{@link ulb.models.tower.reward.ItemReward} — adds items to the player's inventory</li>
+ * <li>{@link ulb.models.tower.reward.BonusStatsReward} — applies a stat bonus to a
+ * {@link ulb.models.run.RunBugemon}</li>
+ * <li>{@link ulb.models.tower.reward.AttackReward} — replaces an attack on a selected Bugemon</li>
+ * </ul>
+ * All changes are persisted immediately via {@link BugemonService} and {@link InventoryService}.
+ */
 public class RewardService {
     private final RewardGenerator rewardGenerator;
     private final BugemonService bugemonService;

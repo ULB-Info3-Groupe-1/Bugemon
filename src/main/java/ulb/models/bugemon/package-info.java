@@ -1,7 +1,14 @@
 /**
- * Core game entities: {@link ulb.models.bugemon.Bugemon}, its attacks, effects, and elemental type.
+ * Core game entities: {@link ulb.models.bugemon.Bugemon} species definitions, their {@link ulb.models.bugemon.Attack}s,
+ * and the {@link ulb.models.bugemon.ElementType} matchup system.
  *
- * {@code Bugemon} implements {@link ulb.common.dto.BugemonDTO} so upper layers never depend on the full model class.
- * Instances are created via {@link ulb.models.bugemon.BugemonBuilder} and are cloneable for team assembly.
+ * <p>
+ * A {@link ulb.models.bugemon.Bugemon} is an immutable record describing a species template (base stats, move-set,
+ * sprite). Runtime battle state is held by {@code ulb.models.run.RunBugemon}; ownership and progression are held by
+ * {@code ulb.models.player.PlayerBugemon}.
+ *
+ * <p>
+ * The {@code exceptions} sub-package contains unchecked exceptions thrown when Bugemon construction invariants are
+ * violated.
  */
 package ulb.models.bugemon;
