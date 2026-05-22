@@ -112,6 +112,7 @@ public class SkillTreeState {
             if (dependentLevel > 0 && !this.isAvailable(dependent)) {
                 this.skillPoints += dependent.cost() * dependentLevel;
                 this.skillLevels.remove(dependent.id());
+                this.cascadeDeactivate(dependent.id(), tree);
             }
         }
     }
@@ -145,11 +146,11 @@ public class SkillTreeState {
             if (node.effect() instanceof StatBonusEffect(StatType stat, int bonus)) {
                 int b = bonus;
                 switch (stat) {
-                    case HP -> hp += b * level;
-                    case ATTACK -> atk += b * level;
-                    case DEFENSE -> def += b * level;
-                    case INITIATIVE -> init += b * level;
-                    default -> throw new IllegalStateException("Unexpected stat type: " + stat);
+                case HP -> hp += b * level;
+                case ATTACK -> atk += b * level;
+                case DEFENSE -> def += b * level;
+                case INITIATIVE -> init += b * level;
+                default -> throw new IllegalStateException("Unexpected stat type: " + stat);
                 }
             }
         }

@@ -1,13 +1,19 @@
 package ulb.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ulb.models.player.PlayerState;
 import ulb.models.skills.SkillNode;
+import ulb.models.skills.SkillTreeState;
 import ulb.models.skills.exceptions.IllegalNodeStateException;
 import ulb.services.SkillService;
 import ulb.views.SkillTreeView;
 import ulb.views.ViewLoader;
 
 public class SkillTreeController extends Controller<SkillTreeView> implements SkillTreeView.Listener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SkillTreeController.class);
 
     private SkillService skillService;
     private final PlayerState playerState;
@@ -22,28 +28,34 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     public void initialize() {
         this.view.setListener(this);
         this.view.setTree(this.skillService.getSkillTree());
-        this.view.refreshSkillState(this.skillService.getSkillTreeState());
+        this.view.refreshSkillState(this.playerState.getSkillTreeState());
     }
 
     @Override
     public void onSkillLeftClicked(SkillNode skillNode) {
         try {
-            this.skillService.addPoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
-                    skillNode.id());
-            this.view.refreshSkillState(this.skillService.getSkillTreeState());
+            SkillTreeState state = this.playerState.getSkillTreeState();
+            this.skillService.addPoint(state, this.skillService.getSkillTree(), skillNode.id());
+            this.skillService.save(state);
+            this.view.refreshSkillState(state);
+            LOG.info("Added point to skill node: {}", skillNode.id());
         } catch (IllegalNodeStateException e) {
             // Show alert or I fucking don't know <3
+            LOG.debug("Failed to add point to skill node: {}", skillNode.id());
         }
     }
 
     @Override
     public void onSkillRightClicked(SkillNode skillNode) {
         try {
-            this.skillService.removePoint(this.playerState.getSkillTreeState(), this.skillService.getSkillTree(),
-                    skillNode.id());
-            this.view.refreshSkillState(this.skillService.getSkillTreeState());
+            SkillTreeState state = this.playerState.getSkillTreeState();
+            this.skillService.removePoint(state, this.skillService.getSkillTree(), skillNode.id());
+            this.skillService.save(state);
+            this.view.refreshSkillState(state);
+            LOG.info("Removed point from skill node: {}", skillNode.id());
         } catch (IllegalNodeStateException e) {
             // Show alert or I fucking don't know <3
+            LOG.debug("Failed to remove point from skill node: {}", skillNode.id());
         }
     }
 

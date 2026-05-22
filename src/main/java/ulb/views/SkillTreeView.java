@@ -1,7 +1,9 @@
 package ulb.views;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -10,6 +12,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
@@ -22,11 +25,11 @@ import ulb.models.skills.SkillTreeState;
 
 public class SkillTreeView extends View {
 
-    private static final int NODE_WIDTH = 120;
-    private static final int NODE_HEIGHT = 60;
-    private static final int CELL_W = 170;
-    private static final int CELL_H = 130;
-    private static final int PADDING = 40;
+    private static final int NODE_WIDTH = 160;
+    private static final int NODE_HEIGHT = 80;
+    private static final int CELL_W = 240;
+    private static final int CELL_H = 170;
+    private static final int PADDING = 60;
 
     private SkillTree skillTree;
 
@@ -83,18 +86,26 @@ public class SkillTreeView extends View {
         int rangeX = maxX - minX;
         int rangeY = maxY - minY;
 
-        this.innerMapPane.setPrefWidth((rangeX + 1) * CELL_W + PADDING * 2);
-        this.innerMapPane.setPrefHeight((rangeY + 1) * CELL_H + PADDING * 2);
+        double paneW = (rangeX + 1) * CELL_W + PADDING * 2;
+        double paneH = (rangeY + 1) * CELL_H + PADDING * 2;
+        this.innerMapPane.setPrefSize(paneW, paneH);
+        this.innerMapPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+        Map<String, StackPane> nodePanes = new HashMap<>();
 
         for (SkillNode node : nodes) {
             SkillStatus status = skillTreeState.getStatus(node.id(), this.skillTree);
             int level = skillTreeState.getNodeLevel(node.id());
 
-            StackPane widget = this.buildSkillNode(node, status, level, minX, minY);
-            this.innerMapPane.getChildren().add(widget);
+            StackPane nodePane = this.buildSkillNode(node, status, level, minX, minY);
+            nodePanes.put(node.id(), nodePane);
         }
 
-        this.addConnections(nodes, skillTreeState, minX, minY);
+        this.addConnections(nodePanes, nodes, skillTreeState, minX, minY);
+
+        for (StackPane nodePane : nodePanes.values()) {
+            this.innerMapPane.getChildren().add(nodePane);
+        }
     }
 
     private StackPane buildSkillNode(SkillNode node, SkillStatus status, int level, int minX, int minY) {
@@ -107,7 +118,10 @@ public class SkillTreeView extends View {
         Label levelLabel = new Label(level + " / " + node.maxLevel());
         levelLabel.getStyleClass().add("section-label");
 
-        VBox content = new VBox(4, nameLabel, levelLabel);
+        Label costLabel = new Label(node.cost() + " pt(s)");
+        costLabel.getStyleClass().add("section-label");
+
+        VBox content = new VBox(4, nameLabel, new HBox(NODE_WIDTH / 4.0, levelLabel, costLabel));
         content.setAlignment(Pos.CENTER);
         content.setMouseTransparent(true);
 
@@ -119,6 +133,9 @@ public class SkillTreeView extends View {
 
         StackPane skillNode = new StackPane(actionMenu);
         skillNode.getStyleClass().add("skill-node");
+        skillNode.setPrefSize(NODE_WIDTH, NODE_HEIGHT);
+        skillNode.setMinSize(NODE_WIDTH, NODE_HEIGHT);
+        skillNode.setMaxSize(NODE_WIDTH, NODE_HEIGHT);
         this.applyStatusStyle(skillNode, status);
         skillNode.setLayoutX(this.nodeX(node, minX));
         skillNode.setLayoutY(this.nodeY(node, minY));
@@ -137,7 +154,8 @@ public class SkillTreeView extends View {
         return skillNode;
     }
 
-    private void addConnections(List<SkillNode> nodes, SkillTreeState state, int minX, int minY) {
+    private void addConnections(Map<String, StackPane> nodePanes, List<SkillNode> nodes, SkillTreeState state, int minX,
+            int minY) {
         Set<String> connectedNodes = new HashSet<>();
 
         for (SkillNode node : nodes) {
@@ -145,24 +163,26 @@ public class SkillTreeView extends View {
                 String connectionId = node.id() + "-" + prerequisite.id();
 
                 if (!connectedNodes.contains(connectionId)) {
-                    this.addLine(node, prerequisite, minX, minY, state.getStatus(node.id(), this.skillTree));
+                    this.addLine(nodePanes.get(prerequisite.id()), nodePanes.get(node.id()), minX, minY,
+                            state.getStatus(node.id(), this.skillTree));
                     connectedNodes.add(connectionId);
                 }
             }
         }
     }
 
-    private void addLine(SkillNode from, SkillNode to, int minX, int minY, SkillStatus fromStatus) {
-        double x1 = this.nodeX(from, minX) + NODE_WIDTH / 2.0;
-        double y1 = this.nodeY(from, minY) + NODE_HEIGHT / 2.0;
-        double x2 = this.nodeX(to, minX) + NODE_WIDTH / 2.0;
-        double y2 = this.nodeY(to, minY) + NODE_HEIGHT / 2.0;
+    private void addLine(StackPane child, StackPane parent, int minX, int minY, SkillStatus childStatus) {
+        double x1 = parent.getLayoutX() + NODE_WIDTH / 2.0;
+        double y1 = parent.getLayoutY() + NODE_HEIGHT;
+
+        double x2 = child.getLayoutX() + NODE_WIDTH / 2.0;
+        double y2 = child.getLayoutY();
 
         Line line = new Line(x1, y1, x2, y2);
         line.getStyleClass().add("skill-connection");
-        if (fromStatus == SkillStatus.ACTIVE) {
+        if (childStatus == SkillStatus.ACTIVE) {
             line.getStyleClass().add("skill-connection-active");
-        } else if (fromStatus == SkillStatus.AVAILABLE) {
+        } else if (childStatus == SkillStatus.AVAILABLE) {
             line.getStyleClass().add("skill-connection-available");
         }
 
@@ -172,9 +192,9 @@ public class SkillTreeView extends View {
     private void applyStatusStyle(StackPane widget, SkillStatus status) {
         widget.getStyleClass().removeIf(c -> c.startsWith("skill-node-"));
         widget.getStyleClass().add(switch (status) {
-            case ACTIVE -> "skill-node-active";
-            case AVAILABLE -> "skill-node-available";
-            case LOCKED -> "skill-node-locked";
+        case ACTIVE -> "skill-node-active";
+        case AVAILABLE -> "skill-node-available";
+        case LOCKED -> "skill-node-locked";
         });
     }
 
