@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import ulb.Configuration;
 import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
@@ -137,12 +138,17 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         String attackId1 = rs.getString(DatabaseColumns.COL_ATTACK_ID_1);
         String attackId2 = rs.getString(DatabaseColumns.COL_ATTACK_ID_2);
         String attackId3 = rs.getString(DatabaseColumns.COL_ATTACK_ID_3);
-        return new Bugemon(rs.getString(DatabaseColumns.COL_NAME), rs.getInt(DatabaseColumns.COL_BASE_MAX_HP),
+
+        // NOTE: there is no isBoss flag in db (because the same goes for the given json). Therefore the value of the isBoss flag is recomputed from the configured boss name.
+        String name = rs.getString(DatabaseColumns.COL_NAME);
+        boolean isBoss = Configuration.Game.BOSS_NAME.equals(name);
+
+        return new Bugemon(name, rs.getInt(DatabaseColumns.COL_BASE_MAX_HP),
                 rs.getInt(DatabaseColumns.COL_BASE_ATTACK), rs.getInt(DatabaseColumns.COL_BASE_DEFENSE),
                 rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE), type,
                 List.of(this.attackCache.get(attackId1), this.attackCache.get(attackId2),
                         this.attackCache.get(attackId3)),
-                rs.getString(DatabaseColumns.COL_SPRITE), rs.getBoolean(DatabaseColumns.COL_IS_STARTER));
+                rs.getString(DatabaseColumns.COL_SPRITE), rs.getBoolean(DatabaseColumns.COL_IS_STARTER), isBoss);
     }
 
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
