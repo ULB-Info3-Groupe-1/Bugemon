@@ -21,8 +21,8 @@ public class InventoryService {
 
     private final Random random;
 
-    public InventoryService(String playerName, InventoryRepository inventoryRepository,
-            StaticRepository staticRepository, Random random) {
+    public InventoryService(InventoryRepository inventoryRepository, StaticRepository staticRepository, Random random,
+            String playerName) {
         this.inventoryRepository = inventoryRepository;
         this.staticRepository = staticRepository;
         this.random = random;

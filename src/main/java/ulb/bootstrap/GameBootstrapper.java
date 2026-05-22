@@ -77,14 +77,14 @@ public class GameBootstrapper {
 
         BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName);
         TeamService teamService = new TeamService(teamRepository, bugemonRepository, playerName);
-        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, staticDataRepository,
-                this.random);
+        InventoryService inventoryService = new InventoryService(inventoryRepository, staticDataRepository, this.random,
+                playerName);
         SkillService skillService = new SkillService(skillRepository, staticDataRepository, playerName);
         TowerService towerService = new TowerService(towerRepository, playerName);
         SaveService saveService = new SaveService(skillService, bugemonService, inventoryService, teamService,
                 towerService);
         CombatService combatService = new CombatService(this.random);
-        LevelUpService levelUpService = new LevelUpService(playerName, bugemonRepository, this.random);
+        LevelUpService levelUpService = new LevelUpService(bugemonRepository, this.random, playerName);
         MusicService musicService = new MusicService(musicRepository);
         RewardService rewardService = new RewardService(bugemonService, inventoryService, this.random);
 

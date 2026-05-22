@@ -15,7 +15,7 @@ public class LevelUpService {
     BugemonRepository bugemonRepository;
     BonusStatsGenerator bonusStatsGenerator;
 
-    public LevelUpService(String playerName, BugemonRepository bugemonRepository, Random random) {
+    public LevelUpService(BugemonRepository bugemonRepository, Random random, String playerName) {
         this.playerName = playerName;
         this.bugemonRepository = bugemonRepository;
         this.bonusStatsGenerator = new BonusStatsGenerator(random);
