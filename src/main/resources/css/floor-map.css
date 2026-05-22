@@ -1,15 +1,12 @@
 .floor-container {
-  -fx-background-color: #1a1a1a;
 }
 
 .floor-map-header {
-  -fx-background-color: #2c3e50;
 }
 
 .floor-number-label {
   -fx-font-size: 28px;
   -fx-font-weight: bold;
-  -fx-text-fill: #ecf0f1;
 }
 
 .floor-instructions {
@@ -26,6 +23,7 @@
    ======================================== */
 .room-node {
   -fx-cursor: default;
+  fx-background-color: #ffffff;
 }
 
 .room-background {
@@ -83,11 +81,9 @@
 
 .room-node.room-empty .room-background {
   -fx-stroke: #95a5a6;
-  -fx-opacity: 0.7;
 }
 
 .room-node.room-empty .room-type-icon {
-  -fx-opacity: 0.5;
 }
 
 /* ========================================
@@ -98,7 +94,6 @@
 .room-node.current .room-background {
   -fx-stroke: #f1c40f;
   -fx-stroke-width: 5;
-  -fx-effect: dropshadow(gaussian, #f1c40f, 25, 0.9, 0, 0);
 }
 
 .room-node.current .room-token {
@@ -108,8 +103,9 @@
 
 /* Available room: interactive */
 .room-node.available {
+  -fx-stroke: #009900;
+  -fx-stroke-width: 5;
   -fx-cursor: hand;
-  -fx-opacity: 1;
 }
 
 .room-node.available:hover {
@@ -120,7 +116,6 @@
 
 /* Visited room: grayed out */
 .room-node.visited {
-  -fx-opacity: 0.5;
   -fx-background-color: #555555
 }
 
@@ -129,13 +124,11 @@
 }
 
 .room-node.visited .room-type-icon {
-  -fx-opacity: 0.6;
 }
 
 /* Visited + available: was here, can return */
 .room-node.visited_available {
   -fx-cursor: hand;
-  -fx-opacity: 0.75;
 }
 
 .room-node.visited_available:hover {
@@ -146,7 +139,6 @@
 
 /* Locked room: disabled */
 .room-node.locked {
-  -fx-opacity: 0.7;
   -fx-cursor: not-allowed;
 }
 
@@ -170,7 +162,6 @@
 .room-connection {
   -fx-stroke: #34495e;
   -fx-stroke-width: 3;
-  -fx-opacity: 0.6;
 }
 
 /* ========================================
