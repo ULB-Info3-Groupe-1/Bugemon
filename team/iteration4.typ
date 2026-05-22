@@ -115,49 +115,61 @@ Ce design est inspiré du schéma dans la base de donnée.
 Ceci nous évite de devoir restaurer la vie des bugemons à la fin des combat standalone,
 puisqu'il nous suffit de recréer des RunBugemons (la run étant finie après un combat standalone).
 
-#figure(caption: [Bugemon "atomique"], table(
-  [*Bugemon*],
-  [ id ],
-  [ name ],
-  [ hp (default hp) ],
-  [ attack (default attack) ],
-  [ defense (default defense) ],
-  [ initiative (default initiative) ],
-  [ type ],
-  [ attacks (default attacks) ],
-  [ spritePath ],
-  [ isStarter ],
-  [ isBoss ],
-))
+#grid(
+  columns: 2,
+  gutter: 1.5em,
 
-#figure(caption: [Bugemon d'un joueur, sauve notamment les attaques apprises], table(
-  [*PlayerBugemon*],
-  [ Bugemon ],
-  [ level ],
-  [ xp ],
-  [ bonusHp ],
-  [ bonusAttack ],
-  [ bonusDefense ],
-  [ bonusInitiative ],
-  [ attacks ],
-))
-
-#figure(
-  caption: [Bugemon d'une run (run désignant ici soit une run dans la tour, soit une run créé pour un combat standalone)],
-  table(
-    [*RunBugemon*],
-    [currentHp],
+  figure(
+    caption: [Bugemon "atomique"],
+    table(
+      [*Bugemon*],
+      [ id ],
+      [ name ],
+      [ hp (default hp) ],
+      [ attack (default attack) ],
+      [ defense (default defense) ],
+      [ initiative (default initiative) ],
+      [ type ],
+      [ attacks (default attacks) ],
+      [ spritePath ],
+      [ isStarter ],
+      [ isBoss ],
+    ),
   ),
-)
 
-#figure(
-  caption: [Bugemon durant un combat],
-  table(
-    [*CombatBugemon*],
-    [ RunBugemon ],
-    [ participated ],
-    [ currentHp ],
-    [ effets ],
+  figure(
+    caption: [Bugemon d'un joueur],
+    table(
+      [*PlayerBugemon*],
+      [ Bugemon ],
+      [ level ],
+      [ xp ],
+      [ bonusHp ],
+      [ bonusAttack ],
+      [ bonusDefense ],
+      [ bonusInitiative ],
+      [ attacks ],
+    ),
+  ),
+
+  figure(
+    caption: [Bugemon d'une run],
+    table(
+      [*RunBugemon*],
+      [ BaseBugemon ],
+      [currentHp],
+    ),
+  ),
+
+  figure(
+    caption: [Bugemon durant un combat],
+    table(
+      [*CombatBugemon*],
+      [ RunBugemon ],
+      [ participated ],
+      [ currentHp ],
+      [ effets ],
+    ),
   ),
 )
 
