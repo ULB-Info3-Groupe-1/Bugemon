@@ -22,10 +22,6 @@ import ulb.views.ViewLoader;
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
 
-    private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
-    private static final String TEAM_NOT_SAVED_MESSAGE = "Nouvelle équipe ou équipe existante modifiée non "
-            + "sauvegardée.";
-
     private final TeamService teamService;
     private final PlayerState playerState;
     private final BugemonService bugemonService;
@@ -77,11 +73,11 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
                 .toList();
         this.view.refreshWorkingTeam(memberDTOs);
         if (this.tmpTeam.isEmpty()) {
-            this.view.refreshWorkingTeamNameToShow(NO_TEAM_SELECTED);
+            this.view.refreshWorkingTeamNameNoTeamSelected();
         } else if (this.teamService.isTeamSaved(this.tmpTeam)) {
             this.view.refreshWorkingTeamNameToShow(this.tmpTeam.getName());
         } else {
-            this.view.refreshWorkingTeamNameToShow(TEAM_NOT_SAVED_MESSAGE);
+            this.view.refreshWorkingTeamNameTeamNotSaved();
         }
     }
 

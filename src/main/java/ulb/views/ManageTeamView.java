@@ -24,11 +24,14 @@ import ulb.views.components.BugemonTeamView;
 public class ManageTeamView extends View {
 
     private static final String NO_ACTIVE_TEAM = "Aucune équipe active";
+    private static final String NO_TEAM_SELECTED = "Pas d'équipe sélectionnée";
     private static final String INVALID_NAME = "Nom d'équipe invalide";
     private static final String TEAM_NAME_ALREADY_USED = "Nom d'équipe déjà utilisé";
     private static final String TEAM_NAME_NOT_FOUND = "Nom d'équipe introuvable";
     private static final String TEAM_EMPTY = "Équipe vide";
-    private static final String TEAM_NOT_SAVED_MESSAGE = "Nouvelle équipe ou équipe existante modifiée non sauvegardée."
+    private static final String TEAM_NOT_SAVED_MESSAGE = "Nouvelle équipe ou équipe existante modifiée non "
+            + "sauvegardée.";
+    private static final String TEAM_NOT_SAVED_ALERT_MESSAGE = TEAM_NOT_SAVED_MESSAGE
             + " Donnez lui un nom et sauvegardez la pour l'enregistrer.";
     private static final String GO_MAIN_MENU_WITHOUT_SAVING = "Aller au menu principal sans sauvegarder";
     private static final String BACK = "Retour";
@@ -139,6 +142,14 @@ public class ManageTeamView extends View {
 
     public void refreshWorkingTeamNameToShow(String teamName) {
         this.selectedTeamName.setText(teamName);
+    }
+
+    public void refreshWorkingTeamNameNoTeamSelected() {
+        this.refreshWorkingTeamNameToShow(NO_TEAM_SELECTED);
+    }
+
+    public void refreshWorkingTeamNameTeamNotSaved() {
+        this.refreshWorkingTeamNameToShow(TEAM_NOT_SAVED_MESSAGE);
     }
 
     public void refreshAvailableBugemons(List<BugemonDisplayDTO> availableBugemons,
@@ -252,7 +263,9 @@ public class ManageTeamView extends View {
      * @return (boolean) true if the user wants to continue, false if he wants to go back
      */
     public boolean showAlertTeamChangesNotSave() {
-        return this.showAlertWithTwoButtons(TEAM_NOT_SAVED, TEAM_NOT_SAVED_MESSAGE, GO_MAIN_MENU_WITHOUT_SAVING, BACK)
+        return this
+                .showAlertWithTwoButtons(TEAM_NOT_SAVED, TEAM_NOT_SAVED_ALERT_MESSAGE, GO_MAIN_MENU_WITHOUT_SAVING,
+                        BACK)
                 .equals(GO_MAIN_MENU_WITHOUT_SAVING);
     }
 }
