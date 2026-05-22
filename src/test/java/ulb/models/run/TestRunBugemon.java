@@ -92,4 +92,24 @@ public class TestRunBugemon {
         this.runBugemon.setCurrentHp(0);
         assertTrue(this.runBugemon.isKo());
     }
+
+    @Test
+    public void canLearnShouldReturnFalseWhenAttackIsSuperEffective() {
+        // AQUA bugemon cannot learn a FLORA attack (FLORA is super-effective against AQUA)
+        RunBugemon aquaBugemon = new RunBugemon(new PlayerBugemon(BugemonFixtures.slowAqua()));
+        assertFalse(aquaBugemon.canLearn(BugemonFixtures.floraAttack()));
+    }
+
+    @Test
+    public void canLearnShouldReturnTrueWhenAttackIsNotSuperEffective() {
+        // AQUA bugemon can learn an AQUA attack (neutral)
+        RunBugemon aquaBugemon = new RunBugemon(new PlayerBugemon(BugemonFixtures.slowAqua()));
+        assertTrue(aquaBugemon.canLearn(BugemonFixtures.aquaAttack()));
+    }
+
+    @Test
+    public void canLearnShouldReturnTrueForNormalTypeAttack() {
+        // NORMAL type is never super-effective
+        assertTrue(this.runBugemon.canLearn(BugemonFixtures.attack("normal-atk", 30)));
+    }
 }

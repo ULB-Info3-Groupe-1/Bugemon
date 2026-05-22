@@ -6,6 +6,7 @@ import java.util.List;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
+import ulb.models.combat.damage.Efficiency;
 import ulb.models.player.BonusStats;
 import ulb.models.player.PlayerBugemon;
 
@@ -120,6 +121,20 @@ public class RunBugemon {
 
     public int addXp(int xp) {
         return this.playerBugemon.addXp(xp);
+    }
+
+    /**
+     * Returns {@code true} if this Bugemon can learn the given attack.
+     *
+     * <p>
+     * A Bugemon cannot learn an attack whose type is super-effective against its own type.
+     *
+     * @param attack
+     *            the attack to check
+     * @return {@code true} if the attack is learnable, {@code false} otherwise
+     */
+    public boolean canLearn(Attack attack) {
+        return Efficiency.preview(attack.type(), this.getType()) != Efficiency.SUPER_EFFICIENT;
     }
 
     @Override

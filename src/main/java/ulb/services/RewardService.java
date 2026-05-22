@@ -63,8 +63,7 @@ public class RewardService {
     public void applyAttackReward(AttackReward reward, PlayerBugemon bugemon, Attack toReplace) {
         try {
             if (Efficiency.preview(reward.getAttack().type(), bugemon.getType()) == Efficiency.SUPER_EFFICIENT) {
-                throw new IllegalArgumentException(
-                        "Bugemon " + bugemon.getName() + " is weak against type " + reward.getAttack().type());
+                return;
             }
             bugemon.replaceAttack(toReplace, reward.getAttack());
             this.bugemonService.savePlayerBugemon(bugemon);

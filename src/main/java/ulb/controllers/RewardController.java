@@ -68,10 +68,11 @@ public class RewardController extends Controller<RewardView> implements RewardVi
             this.view.showItemRewardApplied(itemReward);
             this.metaController.onRewardFlowFinished();
         } else {
-            List<RunBugemonDisplayDTO> dtos = this.runTeam.getMembers().stream()
-                    .map(b -> new RunBugemonDisplayDTO(b.getName(), b.getLevel(), b.getCurrentHp(), b.getMaxHp(),
-                            b.getType()))
-                    .toList();
+            List<RunBugemon> eligible = (reward instanceof AttackReward ar)
+                    ? this.runTeam.getEligibleFor(ar.getAttack())
+                    : this.runTeam.getMembers();
+            List<RunBugemonDisplayDTO> dtos = eligible.stream().map(b -> new RunBugemonDisplayDTO(b.getName(),
+                    b.getLevel(), b.getCurrentHp(), b.getMaxHp(), b.getType())).toList();
             this.view.displayTeamForSelection(dtos, reward);
         }
     }
