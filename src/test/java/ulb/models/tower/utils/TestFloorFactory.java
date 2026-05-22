@@ -116,15 +116,15 @@ public class TestFloorFactory {
     @Test
     public void testRewardRoomCountInRange() {
         long rewardCount = this.allRooms.stream().filter(r -> r.getType() == RoomType.REWARD).count();
-        assertThat(rewardCount).isGreaterThanOrEqualTo(FloorMapFactory.MIN_REWARD);
-        assertThat(rewardCount).isLessThanOrEqualTo(FloorMapFactory.MAX_REWARD);
+        assertThat(rewardCount).isGreaterThanOrEqualTo(FloorMapFactory.MIN_REWARD)
+                .isLessThanOrEqualTo(FloorMapFactory.MAX_REWARD);
     }
 
     @Test
     public void testStartRoomBranchCountInRange() {
         int branches = this.floorMap.getNeighbors(this.startRoom).size();
-        assertThat(branches).isGreaterThanOrEqualTo(FloorMapFactory.MIN_BRANCHES);
-        assertThat(branches).isLessThanOrEqualTo(FloorMapFactory.MAX_BRANCHES);
+        assertThat(branches).isGreaterThanOrEqualTo(FloorMapFactory.MIN_BRANCHES)
+                .isLessThanOrEqualTo(FloorMapFactory.MAX_BRANCHES);
     }
 
     @Test

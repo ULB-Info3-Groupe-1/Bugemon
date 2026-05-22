@@ -168,7 +168,7 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     }
 
     private List<Item> loadItems() {
-        List<Item> items = this.executeQuery("GetAllItems", rs -> {
+        return this.executeQuery("GetAllItems", rs -> {
             try {
                 String effectType = rs.getString(DatabaseColumns.COL_EFFECT_TYPE);
                 Effect effect = null;
@@ -182,7 +182,6 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
                 throw new IllegalStateException("Error loading item", e);
             }
         });
-        return items;
     }
 
     private Effect buildItemEffect(ResultSet rs, String effectType) throws SQLException {
