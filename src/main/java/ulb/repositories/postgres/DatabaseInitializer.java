@@ -201,8 +201,8 @@ public class DatabaseInitializer extends AbstractRepository {
                     "regen_post_combat", null, null, percent, null, null);
             case XpMultiplierEffect(double multiplier) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
                     "xp_multiplicateur", null, null, multiplier, null, null);
-            case StarterItemsEffect(int quantity, ItemType type) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY,
-                    skillId, "objets_bonus", null, null, null, quantity, type.name());
+            case StarterItemsEffect(int quantity, ItemType type) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
+                    "objets_bonus", null, null, null, quantity, type.name());
             case RewardChoiceEffect(int totalChoices) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
                     "recompense_choix", null, null, null, totalChoices, null);
             default ->

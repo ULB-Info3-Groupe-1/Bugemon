@@ -312,9 +312,8 @@ public class Parser {
             case "critique_bonus" -> new SkillEffect.CritBonusEffect(obj.get(STR_VALEUR).getAsDouble());
             case "regen_post_combat" -> new SkillEffect.RegenPostCombatEffect(obj.get("valeur_pourcent").getAsDouble());
             case "xp_multiplicateur" -> new SkillEffect.XpMultiplierEffect(obj.get(STR_VALEUR).getAsDouble());
-            case "objets_bonus" ->
-                new SkillEffect.StarterItemsEffect(obj.get("quantite").getAsInt(),
-                        parseItemType(obj.get("categorie").getAsString()));
+            case "objets_bonus" -> new SkillEffect.StarterItemsEffect(obj.get("quantite").getAsInt(),
+                    parseItemType(obj.get("categorie").getAsString()));
             case "recompense_choix" -> new SkillEffect.RewardChoiceEffect(obj.get(STR_VALEUR).getAsInt());
             default -> throw new IllegalArgumentException("Unknown skill effect type: " + type);
         };

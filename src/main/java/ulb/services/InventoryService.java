@@ -52,9 +52,7 @@ public class InventoryService {
             if (quantity <= 0) {
                 continue;
             }
-            List<Item> eligible = this.staticRepository.items().stream()
-                    .filter(item -> item.type() == type)
-                    .toList();
+            List<Item> eligible = this.staticRepository.items().stream().filter(item -> item.type() == type).toList();
             if (eligible.isEmpty()) {
                 continue;
             }
