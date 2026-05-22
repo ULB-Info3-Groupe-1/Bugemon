@@ -101,7 +101,7 @@ public class SkillTreeView extends View {
             nodePanes.put(node.id(), nodePane);
         }
 
-        this.addConnections(nodePanes, nodes, skillTreeState, minX, minY);
+        this.addConnections(nodePanes, nodes, skillTreeState);
 
         for (StackPane nodePane : nodePanes.values()) {
             this.innerMapPane.getChildren().add(nodePane);
@@ -154,8 +154,7 @@ public class SkillTreeView extends View {
         return skillNode;
     }
 
-    private void addConnections(Map<String, StackPane> nodePanes, List<SkillNode> nodes, SkillTreeState state, int minX,
-            int minY) {
+    private void addConnections(Map<String, StackPane> nodePanes, List<SkillNode> nodes, SkillTreeState state) {
         Set<String> connectedNodes = new HashSet<>();
 
         for (SkillNode node : nodes) {
@@ -163,15 +162,14 @@ public class SkillTreeView extends View {
                 String connectionId = node.id() + "-" + prerequisite.id();
 
                 if (!connectedNodes.contains(connectionId)) {
-                    this.addLine(nodePanes.get(prerequisite.id()), nodePanes.get(node.id()), minX, minY,
-                            state.getStatus(node.id(), this.skillTree));
+                    this.addLine(nodePanes.get(prerequisite.id()), nodePanes.get(node.id()), state.getStatus(node.id(), this.skillTree));
                     connectedNodes.add(connectionId);
                 }
             }
         }
     }
 
-    private void addLine(StackPane child, StackPane parent, int minX, int minY, SkillStatus childStatus) {
+    private void addLine(StackPane child, StackPane parent, SkillStatus childStatus) {
         double x1 = parent.getLayoutX() + NODE_WIDTH / 2.0;
         double y1 = parent.getLayoutY() + NODE_HEIGHT;
 
