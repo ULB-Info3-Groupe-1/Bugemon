@@ -263,9 +263,7 @@ public class ManageTeamView extends View {
      * @return (boolean) true if the user wants to continue, false if he wants to go back
      */
     public boolean showAlertTeamChangesNotSave() {
-        return this
-                .showAlertWithTwoButtons(TEAM_NOT_SAVED, TEAM_NOT_SAVED_ALERT_MESSAGE, GO_MAIN_MENU_WITHOUT_SAVING,
-                        BACK)
-                .equals(GO_MAIN_MENU_WITHOUT_SAVING);
+        return this.showAlertWithTwoButtons(TEAM_NOT_SAVED, TEAM_NOT_SAVED_ALERT_MESSAGE, GO_MAIN_MENU_WITHOUT_SAVING,
+                BACK).equals(GO_MAIN_MENU_WITHOUT_SAVING);
     }
 }
