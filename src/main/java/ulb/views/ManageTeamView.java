@@ -11,7 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 import ulb.Configuration;
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
 import ulb.controllers.ManageTeamController.TeamFormMode;
 import ulb.views.components.AllBugemonsView;
 import ulb.views.components.BugemonTeamView;

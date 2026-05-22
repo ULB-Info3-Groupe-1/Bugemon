@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 
 import ulb.Configuration;
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
 
 /** Reusable custom component displaying a Bugemon team in a grid. */
 public class BugemonTeamView extends ComponentView {

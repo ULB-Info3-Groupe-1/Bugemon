@@ -1,4 +1,4 @@
-package ulb.common.dto;
+package ulb.common.dto.display;
 
 import java.util.List;
 

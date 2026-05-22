@@ -15,7 +15,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import ulb.Configuration;
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
 import ulb.models.bugemon.Attack;
 
 /**
@@ -63,7 +63,9 @@ public class BugemonDetailPopupView extends ComponentView {
         }
     }
 
-    /** Shows the popup centred over the owner window, closing it when it loses focus. */
+    /**
+     * Shows the popup centred over the owner window, closing it when it loses focus.
+     */
     public void show(ContextMenuEvent event) {
         Node source = (Node) event.getSource();
         Window owner = source.getScene().getWindow();

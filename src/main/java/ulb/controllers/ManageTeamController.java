@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerState;
 import ulb.models.team.Team;

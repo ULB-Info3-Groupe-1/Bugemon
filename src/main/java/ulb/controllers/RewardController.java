@@ -2,6 +2,7 @@ package ulb.controllers;
 
 import java.util.List;
 
+import ulb.common.dto.display.RunBugemonDisplayDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.item.Inventory;
 import ulb.models.run.RunBugemon;
@@ -42,22 +43,17 @@ public class RewardController extends Controller<RewardView> implements RewardVi
 
     @Override
     public void onRewardChosen(Reward reward) {
-        // TODO: Remove string formatting from controller and move it to the view layer
         this.selectedReward = reward;
         if (reward instanceof ItemReward itemReward) {
             this.rewardService.applyItemReward(itemReward, this.inventory);
-            this.view.showFeedback("Récompense choisie : " + itemReward.getItem().name());
+            this.view.showItemRewardApplied(itemReward);
             this.metaController.onRewardFlowFinished();
         } else {
-            String prompt = reward instanceof AttackReward
-                    ? "Quel Bugémon apprend cette attaque ?"
-                    : "Quel Bugémon reçoit ce bonus de statistiques ?";
-            List<String> labels = this.runTeam.getMembers().stream()
-                    .map(b -> b.getName() + "  Nv." + b.getLevel()
-                            + "  HP:" + b.getCurrentHp() + "/" + b.getMaxHp()
-                            + "  [" + b.getType() + "]")
+            List<RunBugemonDisplayDTO> dtos = this.runTeam.getMembers().stream()
+                    .map(b -> new RunBugemonDisplayDTO(b.getName(), b.getLevel(), b.getCurrentHp(), b.getMaxHp(),
+                            b.getType()))
                     .toList();
-            this.view.displayTeamForSelection(labels, prompt);
+            this.view.displayTeamForSelection(dtos, reward);
         }
     }
 
@@ -68,9 +64,10 @@ public class RewardController extends Controller<RewardView> implements RewardVi
             this.rewardService.applyStatBonusReward(statReward, this.selectedBugemon);
             this.metaController.onRewardFlowFinished();
         } else if (this.selectedReward instanceof AttackReward attackReward) {
-            String title = "Quelle attaque de " + this.selectedBugemon.getName()
-                    + " remplacer par " + attackReward.getAttack().name() + " ?";
-            this.view.showAttackReplacement(title, this.selectedBugemon.getAttacks());
+            RunBugemonDisplayDTO dto = new RunBugemonDisplayDTO(this.selectedBugemon.getName(),
+                    this.selectedBugemon.getLevel(), this.selectedBugemon.getCurrentHp(),
+                    this.selectedBugemon.getMaxHp(), this.selectedBugemon.getType());
+            this.view.showAttackReplacement(dto, attackReward, this.selectedBugemon.getAttacks());
         }
     }
 

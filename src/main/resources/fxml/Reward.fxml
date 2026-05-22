@@ -5,35 +5,34 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ulb.views.RewardView"
-      alignment="CENTER" spacing="28"
-      style="-fx-background-color: #1a1a2e; -fx-padding: 48;"
-      prefWidth="760" prefHeight="560">
+    fx:controller="ulb.views.RewardView" alignment="CENTER" spacing="28"
+    style="-fx-background-color: #1a1a2e; -fx-padding: 48;" prefWidth="760"
+    prefHeight="560">
 
     <Label text="Récompense d'étage"
-           style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #ffd700;"/>
+        style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #ffd700;" />
 
     <!-- Panel 1 : sélection de la récompense -->
     <VBox fx:id="rewardPanel" alignment="CENTER" spacing="16">
         <Label text="Choisissez une récompense"
-               style="-fx-font-size: 15; -fx-text-fill: white;"/>
-        <HBox fx:id="rewardCardsBox" spacing="20" alignment="CENTER"/>
+            style="-fx-font-size: 15; -fx-text-fill: white;" />
+        <HBox fx:id="rewardCardsBox" spacing="20" alignment="CENTER" />
         <Label fx:id="feedbackLabel" text=""
-               style="-fx-text-fill: #27ae60; -fx-font-size: 13;"/>
+            style="-fx-text-fill: #27ae60; -fx-font-size: 13;" />
     </VBox>
 
     <!-- Panel 2 : sélection du Bugémon et/ou remplacement d'attaque -->
     <VBox fx:id="selectionPanel" alignment="CENTER" spacing="20"
-          visible="false" managed="false">
+        visible="false" managed="false">
         <Label fx:id="promptLabel" text=""
-               style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #ffd700;"
-               wrapText="true"/>
-        <VBox fx:id="bugemonListBox" spacing="10" alignment="CENTER"/>
-        <VBox fx:id="attackReplacementBox" spacing="16" alignment="CENTER"
-              visible="false" managed="false">
+            style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #ffd700;"
+            wrapText="true" />
+        <VBox fx:id="bugemonListBox" spacing="10" alignment="CENTER" />
+        <VBox fx:id="attackReplacementBox" spacing="16"
+            alignment="CENTER" visible="false" managed="false">
             <Label fx:id="attackReplacementTitle" text=""
-                   style="-fx-font-size: 16; -fx-text-fill: white;" wrapText="true"/>
-            <HBox fx:id="attackButtonsBox" spacing="12" alignment="CENTER"/>
+                style="-fx-font-size: 16; -fx-text-fill: white;" wrapText="true" />
+            <HBox fx:id="attackButtonsBox" spacing="12" alignment="CENTER" />
         </VBox>
     </VBox>
 

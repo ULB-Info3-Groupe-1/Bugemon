@@ -1,7 +1,6 @@
 package ulb.views;
 
 import java.util.List;
-
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import ulb.Configuration;
+import ulb.common.dto.display.RunBugemonDisplayDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.tower.reward.AttackReward;
 import ulb.models.tower.reward.BonusStatsReward;
@@ -55,16 +55,16 @@ public class RewardView extends View {
         this.setPanel(Panel.REWARD);
     }
 
-    public void displayTeamForSelection(List<String> labels, String prompt) {
-        this.promptLabel.setText(prompt);
+    public void displayTeamForSelection(List<RunBugemonDisplayDTO> members, Reward reward) {
+        this.promptLabel.setText(this.formatTeamSelectionPrompt(reward));
         this.bugemonListBox.getChildren().clear();
         this.bugemonListBox.setVisible(true);
         this.bugemonListBox.setManaged(true);
         this.attackReplacementBox.setVisible(false);
         this.attackReplacementBox.setManaged(false);
-        for (int i = 0; i < labels.size(); i++) {
+        for (int i = 0; i < members.size(); i++) {
             final int index = i;
-            Button btn = new Button(labels.get(i));
+            Button btn = new Button(this.formatBugemonLabel(members.get(i)));
             btn.setPrefWidth(400);
             btn.setAlignment(Pos.CENTER_LEFT);
             btn.setStyle("-fx-background-color: #2a3a5a; -fx-text-fill: white; "
@@ -79,12 +79,13 @@ public class RewardView extends View {
         this.setPanel(Panel.SELECTION);
     }
 
-    public void showAttackReplacement(String title, List<Attack> attacks) {
-        this.attackReplacementTitle.setText(title);
+    public void showAttackReplacement(RunBugemonDisplayDTO bugemon, AttackReward attackReward,
+            List<Attack> currentAttacks) {
+        this.attackReplacementTitle.setText(
+                "Quelle attaque de " + bugemon.name() + " remplacer par " + attackReward.getAttack().name() + " ?");
         this.attackButtonsBox.getChildren().clear();
-        for (Attack attack : attacks) {
-            Button btn = new Button(
-                    attack.name() + "\n(" + attack.type() + ", Puissance : " + attack.power() + ")");
+        for (Attack attack : currentAttacks) {
+            Button btn = new Button(attack.name() + "\n(" + attack.type() + ", Puissance : " + attack.power() + ")");
             btn.setPrefSize(150, 70);
             btn.setWrapText(true);
             btn.setStyle("-fx-background-color: #5a3a7a; -fx-text-fill: white; "
@@ -102,8 +103,20 @@ public class RewardView extends View {
         this.attackReplacementBox.setManaged(true);
     }
 
-    public void showFeedback(String message) {
-        this.feedbackLabel.setText(message);
+    public void showItemRewardApplied(ItemReward itemReward) {
+        this.feedbackLabel.setText("Récompense choisie : " + itemReward.getItem().name());
+    }
+
+    private String formatTeamSelectionPrompt(Reward reward) {
+        if (reward instanceof AttackReward) {
+            return "Quel Bugémon apprend cette attaque ?";
+        }
+        return "Quel Bugémon reçoit ce bonus de statistiques ?";
+    }
+
+    private String formatBugemonLabel(RunBugemonDisplayDTO bugemon) {
+        return bugemon.name() + "  Nv." + bugemon.level() + "  HP:" + bugemon.currentHp() + "/" + bugemon.maxHp()
+                + "  [" + bugemon.type() + "]";
     }
 
     private void setPanel(Panel panel) {
@@ -208,7 +221,8 @@ public class RewardView extends View {
     }
 
     private enum Panel {
-        REWARD, SELECTION
+        REWARD,
+        SELECTION
     }
 
     public interface Listener {
