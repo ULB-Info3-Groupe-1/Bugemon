@@ -2,8 +2,10 @@
 -- SavePlayerBugemon
 INSERT INTO player_bugemons
   (playername, bugemon_name, current_defense, current_attack,
-   current_initiative, current_max_hp, current_xp, current_level)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+   current_initiative, current_max_hp, current_xp, current_level,
+   attack_1_id, attack_2_id, attack_3_id
+  )
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT (playername, bugemon_name) DO NOTHING;
 
 -- Query
@@ -11,7 +13,9 @@ ON CONFLICT (playername, bugemon_name) DO NOTHING;
 UPDATE player_bugemons
 SET current_defense = ?, current_attack = ?,
     current_initiative = ?, current_max_hp = ?,
-    current_xp = ?, current_level = ?
+    current_xp = ?, current_level = ?,
+    attack_1_id = ?, attack_2_id = ?,
+    attack_3_id = ?
 WHERE playername = ? AND bugemon_name = ?;
 
 -- Query
