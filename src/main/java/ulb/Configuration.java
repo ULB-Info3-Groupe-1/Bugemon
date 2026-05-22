@@ -185,6 +185,6 @@ public abstract class Configuration {
 
         public static final double BIAS_SAME_DIRECTION_PROB = 0.7;
 
-        public static final int[][] DIRECTIONS = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+        public static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     }
 }
