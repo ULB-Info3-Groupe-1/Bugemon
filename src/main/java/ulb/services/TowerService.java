@@ -106,7 +106,7 @@ public class TowerService {
             return RoomState.CURRENT;
         }
         if (reachable.contains(room)) {
-            return RoomState.AVAILABLE;
+            return room.isVisited() ? RoomState.VISITED_AVAILABLE : RoomState.AVAILABLE;
         }
         if (room.isVisited()) {
             return RoomState.VISITED;

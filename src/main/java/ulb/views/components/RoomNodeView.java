@@ -61,7 +61,7 @@ public class RoomNodeView extends StackPane {
 
     @FXML
     private void onClick() {
-        if (this.dto.state() != RoomState.AVAILABLE) {
+        if (this.dto.state() != RoomState.AVAILABLE && this.dto.state() != RoomState.VISITED_AVAILABLE) {
             return;
         }
         if (this.listener != null) {
