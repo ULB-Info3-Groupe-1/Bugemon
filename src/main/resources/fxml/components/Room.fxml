@@ -13,10 +13,10 @@
         width="75" height="75" styleClass="room-background" />
 
     <ImageView fx:id="roomToken" fitWidth="58" fitHeight="58"
-        preserveRatio="true" mouseTransparent="true" styleClass="room-token" />
+        preserveRatio="true" smooth="false" mouseTransparent="true" styleClass="room-token" />
 
     <ImageView fx:id="roomTypeIcon" fitWidth="28" fitHeight="28"
-        preserveRatio="true" mouseTransparent="true"
+        preserveRatio="true" smooth="false" mouseTransparent="true"
         styleClass="room-type-icon" />
 
     <StackPane fx:id="stateOverlay" styleClass="room-overlay"
