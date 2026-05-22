@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import ulb.models.bugemon.Attack;
+import ulb.models.combat.damage.Efficiency;
 import ulb.models.item.Inventory;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.exceptions.IllegalAttackReplacementException;
@@ -47,8 +48,10 @@ public class RewardService {
 
     public void applyAttackReward(AttackReward reward, PlayerBugemon bugemon, Attack toReplace) {
         try {
-            // TODO: Should throw if the bugemon is weak against the new attack's type (not
-            // doing it now)
+            if (Efficiency.preview(reward.getAttack().type(), bugemon.getType()) == Efficiency.SUPER_EFFICIENT) {
+                throw new IllegalArgumentException(
+                        "Bugemon " + bugemon.getName() + " is weak against type " + reward.getAttack().type());
+            }
             bugemon.replaceAttack(toReplace, reward.getAttack());
             this.bugemonService.savePlayerBugemon(bugemon);
         } catch (IllegalAttackReplacementException e) {
