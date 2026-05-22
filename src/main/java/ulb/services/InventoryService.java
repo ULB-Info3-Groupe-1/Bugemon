@@ -19,12 +19,13 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final StaticRepository staticRepository;
 
-    // TODO: UI should permit the player to select the +x items granted by the skill
+    private final Random random;
 
     public InventoryService(String playername, InventoryRepository inventoryRepository,
-            StaticRepository staticRepository) {
+            StaticRepository staticRepository, Random random) {
         this.inventoryRepository = inventoryRepository;
         this.staticRepository = staticRepository;
+        this.random = random;
         this.playername = playername;
     }
 
@@ -46,18 +47,17 @@ public class InventoryService {
     }
 
     public void applyStarterItemsBonus(Inventory inventory, SkillContext skillContext) {
-        Random random = new Random();
         for (ItemType type : ItemType.values()) {
             int quantity = skillContext.getStarterItemQuantity(type);
-            if (quantity <= 0) {
-                continue;
-            }
-            List<Item> eligible = this.staticRepository.items().stream().filter(item -> item.type() == type).toList();
-            if (eligible.isEmpty()) {
-                continue;
-            }
-            for (int i = 0; i < quantity; i++) {
-                inventory.addItem(eligible.get(random.nextInt(eligible.size())), 1);
+            if (quantity > 0) {
+                List<Item> eligible = this.staticRepository.items().stream().filter(item -> item.type() == type)
+                        .toList();
+
+                if (!eligible.isEmpty()) {
+                    for (int i = 0; i < quantity; i++) {
+                        inventory.addItem(eligible.get(this.random.nextInt(eligible.size())), 1);
+                    }
+                }
             }
         }
     }

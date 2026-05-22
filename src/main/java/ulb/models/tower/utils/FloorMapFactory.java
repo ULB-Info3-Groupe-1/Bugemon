@@ -56,7 +56,7 @@ public class FloorMapFactory {
 
     private Optional<FloorMap> tryCreate(int floor, int attempt) {
         // seed to generate n-th floor = game_seed + floor + attempt (varies per retry)
-        Random random = new Random(this.seed + floor + attempt);
+        Random random = new Random((long) this.seed + floor + attempt);
 
         Map<String, int[]> nodeCoords = new HashMap<>();
         Map<String, Integer> nodeDepths = new HashMap<>();
@@ -105,7 +105,7 @@ public class FloorMapFactory {
         }
 
         String bossKey = deepestNode(nodeDepths);
-        Map<String, RoomType> types = assignTypes(nodeCoords, childrenOf, parentOf, startKey, bossKey, random);
+        Map<String, RoomType> types = assignTypes(nodeCoords, parentOf, startKey, bossKey, random);
         return Optional.of(buildMap(nodeCoords, childrenOf, types, startKey));
     }
 
@@ -149,11 +149,11 @@ public class FloorMapFactory {
 
         Map<String, Room> byKey = new HashMap<>();
         Map<Room, Position> positions = new HashMap<>();
-        for (String key : nodeCoords.keySet()) {
-            RoomType type = types.getOrDefault(key, RoomType.EMPTY);
+        for (Map.Entry<String, int[]> entry : nodeCoords.entrySet()) {
+            RoomType type = types.getOrDefault(entry.getKey(), RoomType.EMPTY);
             Room room = new Room(type);
-            byKey.put(key, room);
-            int[] coords = nodeCoords.get(key);
+            byKey.put(entry.getKey(), room);
+            int[] coords = entry.getValue();
             positions.put(room, new Position(coords[0], coords[1]));
         }
 
@@ -205,9 +205,8 @@ public class FloorMapFactory {
     }
 
     /** Assign a RoomType to each room */
-    private static Map<String, RoomType> assignTypes(Map<String, int[]> nodeCoords,
-            Map<String, List<String>> childrenOf, Map<String, String> parentOf, String startKey, String bossKey,
-            Random random) {
+    private static Map<String, RoomType> assignTypes(Map<String, int[]> nodeCoords, Map<String, String> parentOf,
+            String startKey, String bossKey, Random random) {
 
         Map<String, RoomType> types = new HashMap<>();
         types.put(startKey, RoomType.START);

@@ -125,7 +125,6 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             return;
         }
         switch (room.getType()) {
-            // TODO: Found multiple times a Boss in normal combat rooms.
             case COMBAT -> this.metaController.onStartTowerCombat(this.towerState.getRunTeam(),
                     this.towerState.getCurrentFloor(), false);
             case BOSS -> this.metaController.onStartTowerCombat(this.towerState.getRunTeam(),

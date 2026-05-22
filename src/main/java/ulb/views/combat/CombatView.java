@@ -35,8 +35,6 @@ import ulb.views.combat.components.SwitchMenuView;
 import ulb.views.components.DialogZoneView;
 import ulb.views.components.HoverInfoView;
 
-// TODO: remove magic numbers
-
 public class CombatView extends View {
 
     @FXML

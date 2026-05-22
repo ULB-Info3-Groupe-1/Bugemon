@@ -276,8 +276,8 @@ public class CreateBugemonView extends View {
     }
 
     public void showInvalidFormChooseAttacks() {
-        // TODO: replace "trois" with a number constant directly from the bugemon class
-        this.showWarningAlert(INVALID_FORM, "Vous devez choisir trois attaques pour votre Bugemon.");
+        this.showWarningAlert(INVALID_FORM,
+                "Vous devez choisir " + Configuration.Game.NUM_ATTACKS_PER_BUGEMON + " attaques pour votre Bugemon.");
     }
 
     public void showSaveSuccessAlert(String name) {
