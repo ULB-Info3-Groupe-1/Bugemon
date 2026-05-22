@@ -66,6 +66,7 @@ public class MetaController {
     private final CombatVictoryController combatVictoryController;
     private final CombatDefeatController combatDefeatController;
     private final LevelUpController levelUpController;
+    private final SkillTreeController skillTreeController;
 
     private final CombatService combatService;
     private final MusicService musicService;
@@ -78,10 +79,8 @@ public class MetaController {
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
-     * @param primaryStage
-     *            main JavaFX stage of the application
-     * @throws IOException
-     *             if the music fails to be initialized
+     * @param primaryStage main JavaFX stage of the application
+     * @throws IOException if the music fails to be initialized
      */
     public MetaController(Stage primaryStage, ServiceRegistry services, PlayerState playerState) throws IOException {
         this.stage = primaryStage;
@@ -101,6 +100,7 @@ public class MetaController {
         this.levelUpController = new LevelUpController(this, services.levelUp);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
+        this.skillTreeController = new SkillTreeController(this, services.skill, playerState);
 
         this.initTransitions();
     }
@@ -242,15 +242,17 @@ public class MetaController {
             this.musicService.playSoundEffect(SoundEffect.DEFEAT);
         });
         this.transitions.put(Window.LEVEL_UP, this.levelUpController::show);
+        this.transitions.put(Window.SKILL_TREE, () -> {
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
+            this.skillTreeController.show();
+        });
     }
 
     /**
      * Switches the current screen to the specified window.
      *
-     * @param window
-     *            target screen to display
-     * @throws IllegalArgumentException
-     *             if the window is invalid
+     * @param window target screen to display
+     * @throws IllegalArgumentException if the window is invalid
      */
     private void switchTo(Window window) {
         Runnable transition = this.transitions.get(window);

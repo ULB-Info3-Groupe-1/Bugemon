@@ -39,7 +39,7 @@ public class SkillTreeView extends View {
     private StackPane mapContainer;
 
     @FXML
-    private Pane innerMap;
+    private Pane innerMapPane;
 
     @Override
     public String getPath() {
@@ -69,6 +69,7 @@ public class SkillTreeView extends View {
     }
 
     private void buildTree(SkillTreeState skillTreeState) {
+        this.innerMapPane.getChildren().clear();
         var nodes = this.skillTree.getNodes();
         var xStats = nodes.stream().mapToInt(SkillNode::x).summaryStatistics();
         var yStats = nodes.stream().mapToInt(SkillNode::y).summaryStatistics();
@@ -81,15 +82,15 @@ public class SkillTreeView extends View {
         int rangeX = maxX - minX;
         int rangeY = maxY - minY;
 
-        this.innerMap.setPrefWidth((rangeX + 1) * CELL_W + PADDING * 2);
-        this.innerMap.setPrefHeight((rangeY + 1) * CELL_H + PADDING * 2);
+        this.innerMapPane.setPrefWidth((rangeX + 1) * CELL_W + PADDING * 2);
+        this.innerMapPane.setPrefHeight((rangeY + 1) * CELL_H + PADDING * 2);
 
         for (SkillNode node : nodes) {
             SkillStatus status = skillTreeState.getStatus(node.id(), this.skillTree);
             int level = skillTreeState.getNodeLevel(node.id());
 
             StackPane widget = this.buildSkillNode(node, status, level, minX, minY);
-            this.innerMap.getChildren().add(widget);
+            this.innerMapPane.getChildren().add(widget);
         }
 
         this.addConnections(nodes, skillTreeState, minX, minY);
@@ -163,7 +164,7 @@ public class SkillTreeView extends View {
             line.getStyleClass().add("skill-connection-available");
         }
 
-        this.innerMap.getChildren().add(line);
+        this.innerMapPane.getChildren().add(line);
     }
 
     private void applyStatusStyle(StackPane widget, SkillStatus status) {
