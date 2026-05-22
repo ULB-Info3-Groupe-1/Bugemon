@@ -64,6 +64,7 @@ public abstract class Configuration {
         public static final String STAGE_TITLE = "Bugemon";
 
         public static final String FLOOR_PREFIX = "NO";
+        public static final int FLOOR_MOVE_ANIMATION_MS = 500;
     }
 
     public static final class Music {

@@ -73,7 +73,7 @@ public class TowerController extends Controller<FloorView> implements FloorView.
             return;
         }
         this.towerService.save();
-        this.dispatchRoomAction(room);
+        this.view.animatePlayerTo(x, y, () -> this.dispatchRoomAction(room));
     }
 
     @Override
