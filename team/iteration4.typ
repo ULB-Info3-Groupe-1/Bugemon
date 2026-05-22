@@ -85,7 +85,7 @@ Le `Combat` demandait ensuite au `Trainer` les actions qu'ils stockaient.
 
 Ce système est fragile, l'ownership n'est pas claire car le Combat et le Controller partage clairement le Trainer du joueur.
 
-=== Création précoce de certains objets
+=== Création précoce de certains objets <sec:creation_precoce>
 
 Plusieurs fois où on créait des objets plus tôt que nécessaire, rendant la gestion de ceux-ci inutilement complexe.
 
@@ -112,11 +112,11 @@ en limitant le nombre de méthodes à implémenter.
 
 Nous utilisons différents types de Bugemons, en tirant parti de la composition.
 Ce design est inspiré du schéma dans la base de donnée.
+Ceci nous évite de devoir restaurer la vie des bugemons à la fin des combat standalone,
+puisqu'il nous suffit de recréer des RunBugemons (la run étant finie après un combat standalone).
 
-// TODO: this should be part of "Différents types de bugemons (composition)"
-
-#table(
-  [*Bugemon (partagé par tout)*],
+#figure(caption: [Bugemon "atomique"], table(
+  [*Bugemon*],
   [ id ],
   [ name ],
   [ hp (default hp) ],
@@ -128,11 +128,11 @@ Ce design est inspiré du schéma dans la base de donnée.
   [ spritePath ],
   [ isStarter ],
   [ isBoss ],
-)
+))
 
-#table(
-  [*PlayerBugemon (Le bugemon d'un joueur)*],
-  [ Bugemon (base) ],
+#figure(caption: [Bugemon d'un joueur, sauve notamment les attaques apprises], table(
+  [*PlayerBugemon*],
+  [ Bugemon ],
   [ level ],
   [ xp ],
   [ bonusHp ],
@@ -140,21 +140,51 @@ Ce design est inspiré du schéma dans la base de donnée.
   [ bonusDefense ],
   [ bonusInitiative ],
   [ attacks ],
+))
+
+#figure(
+  caption: [Bugemon d'une run (run désignant ici soit une run dans la tour, soit une run créé pour un combat standalone)],
+  table(
+    [*RunBugemon*],
+    [currentHp],
+  ),
 )
 
-#table(
-  [*PlayerBugemon*],
-  [currentHp],
+#figure(
+  caption: [Bugemon durant un combat],
+  table(
+    [*CombatBugemon*],
+    [ RunBugemon ],
+    [ participated ],
+    [ currentHp ],
+    [ effets ],
+  ),
 )
 
-#table(
-  [*CombatBugemon*],
-  [ RunBugemon (base)],
-  [ participated],
-  [ currentHp ],
-  [ effets ],
-)
+=== Systèmes d'actions en combat
 
-// TODO: composition de Bugemons
-// TODO: interface des repos -> permette de se concentrer sur les méthodes importantes de ces derniers
+Pour les combats, nous utilisons le strategy pattern, avec le type `CombatStrategy`.
+
+```
+public interface CombatStrategy {
+    void chooseAction(CombatContext ctx, ActionCallback callback);
+
+    void chooseSwitch(CombatContext ctx, ActionCallback callback);
+}
+```
+
+Grâce à ce pattern, nous n'avons plus besoin de l'objet `Trainer`. Du point de vue du combat, il y a simplement deux stratégies
+auquel il peut demander de chiosir une action, ou bien forcer de switch (ce qu'il se passe lorsque le bugemon courant est ko).
+
+Lorsqu'il demande une action (ou un switch), il passe deux arguments :
+- `CombatContext`: un contexte, contenant les informations du joueur et de son adversaire
+- `ActionCallback`: le callback que la stratégie doit appeler pour notifier le combat de l'action prise par celle-ci
+
+=== Reporter la création des objets
+
+Notre refactoring tente de repousser la création des objets le plus tard possible (pour contrer les problèmes décrits dans @sec:creation_precoce).
+
+La `Room` contient simplement un `RoomType`, au lieu de stocker les combats dans les CombatRooms.
+Le combat est créé lorsque le joueur visite la room si le RoomType indique qu'il s'agit d'une combat room.
+
 // TODO: refactoring process: refac model -> ajuster controller/vue pour nouveau model -> refac repository -> refac service -> refac controller -> refac views
