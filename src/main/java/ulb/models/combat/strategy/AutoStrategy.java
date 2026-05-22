@@ -9,13 +9,27 @@ import ulb.models.combat.turn.ActionCallback;
 import ulb.models.combat.turn.TurnAction;
 import ulb.models.combat.utils.CombatContext;
 
+/**
+ * {@link CombatStrategy} that selects actions uniformly at random, used for automated simulations.
+ *
+ * <p>
+ * On each turn it picks a random {@link ulb.models.bugemon.Attack} from the active Bugemon's move list, and on a forced
+ * switch it picks a random available Bugemon.
+ */
 public class AutoStrategy implements CombatStrategy {
     private final Random random;
 
+    /**
+     * Creates an {@code AutoStrategy} backed by the given random source.
+     *
+     * @param random
+     *            source of randomness for action selection
+     */
     public AutoStrategy(Random random) {
         this.random = random;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void chooseAction(CombatContext ctx, ActionCallback callback) {
         CombatBugemon active = ctx.allyTeam().getActive();
@@ -25,6 +39,7 @@ public class AutoStrategy implements CombatStrategy {
         callback.onActionChosen(new TurnAction.AttackAction(attack));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void chooseSwitch(CombatContext ctx, ActionCallback callback) {
         List<CombatBugemon> available = ctx.allyTeam().getAvailable();

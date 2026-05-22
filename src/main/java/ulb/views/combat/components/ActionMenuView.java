@@ -26,6 +26,12 @@ public class ActionMenuView extends ComponentView {
         this.listener = listener;
     }
 
+    /**
+     * Enables or disables the Switch button depending on whether a voluntary switch is currently allowed.
+     *
+     * @param canSwitch
+     *            {@code true} if the player may switch Bugemons this turn
+     */
     public void refresh(boolean canSwitch) {
         this.topRightButton.setDisable(!canSwitch);
     }
@@ -50,14 +56,19 @@ public class ActionMenuView extends ComponentView {
         this.listener.onForfeit();
     }
 
+    /** Callback interface for the main combat action menu. */
     public interface Listener {
 
+        /** Called when the player chooses to attack. */
         void onAttack();
 
+        /** Called when the player chooses to switch the active Bugemon. */
         void onSwitch();
 
+        /** Called when the player opens the inventory. */
         void onInventory();
 
+        /** Called when the player forfeits the combat. */
         void onForfeit();
 
     }

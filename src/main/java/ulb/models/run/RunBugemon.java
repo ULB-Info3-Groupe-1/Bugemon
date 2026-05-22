@@ -9,6 +9,14 @@ import ulb.models.bugemon.ElementType;
 import ulb.models.player.BonusStats;
 import ulb.models.player.PlayerBugemon;
 
+/**
+ * A run-scoped view of a {@link ulb.models.player.PlayerBugemon} that tracks mutable current HP during combat.
+ *
+ * <p>
+ * Stat queries (attack, defense, etc.) and XP mutations are delegated to the underlying
+ * {@link ulb.models.player.PlayerBugemon}. HP changes are local to this wrapper and do not affect the persisted Bugemon
+ * until explicitly propagated by the caller.
+ */
 public class RunBugemon {
     private final PlayerBugemon playerBugemon;
     private int currentHp;
@@ -20,6 +28,14 @@ public class RunBugemon {
         this(playerBugemon, playerBugemon.getMaxHp());
     }
 
+    /**
+     * Creates a {@link RunBugemon} with an explicit starting HP value.
+     *
+     * @param playerBugemon
+     *            the underlying persistent Bugemon
+     * @param currentHp
+     *            the HP to start with; must satisfy {@link ulb.models.bugemon.Bugemon#checkHp}
+     */
     public RunBugemon(PlayerBugemon playerBugemon, int currentHp) {
         this.playerBugemon = playerBugemon;
 
@@ -75,6 +91,13 @@ public class RunBugemon {
         return this.playerBugemon.getXpProgress();
     }
 
+    /**
+     * Applies the given stat bonus to the underlying {@link ulb.models.player.PlayerBugemon} and resets current HP to
+     * the new maximum.
+     *
+     * @param bonus
+     *            the bonus stats to apply
+     */
     public void applyBonus(BonusStats bonus) {
         this.playerBugemon.applyBonus(bonus);
         this.currentHp = this.getMaxHp();

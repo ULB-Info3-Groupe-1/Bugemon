@@ -14,6 +14,14 @@ import ulb.models.music.Music;
 import ulb.models.music.SoundEffect;
 import ulb.repositories.MusicRepository;
 
+/**
+ * Service that manages background music and sound-effect playback using JavaFX {@link javafx.scene.media.MediaPlayer}.
+ *
+ * <p>
+ * Background music loops indefinitely and is automatically paused while a sound effect is playing, then resumed once
+ * all active sound effects have finished. Changing the ambiance stops the current track and starts a randomly chosen
+ * replacement.
+ */
 public class MusicService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MusicService.class);
@@ -31,6 +39,13 @@ public class MusicService {
         this.activeSoundEffects = new ArrayList<>();
     }
 
+    /**
+     * Starts looping background music appropriate for {@code ambiance}. If the requested ambiance is already playing,
+     * this call is a no-op. Selects a random track from all tracks matching the ambiance.
+     *
+     * @param ambiance
+     *            the desired background ambiance
+     */
     public void playBackground(BackgroundAmbiance ambiance) {
         if (this.currentAmbiance == ambiance && this.mediaPlayer != null) {
             LOG.debug("Music already playing for ambiance {}, keeping current track", ambiance);
@@ -64,6 +79,13 @@ public class MusicService {
         }
     }
 
+    /**
+     * Plays a one-shot sound effect for {@code effect}. Background music is paused when the first sound effect starts
+     * and resumed when the last one ends. Multiple sound effects can play concurrently.
+     *
+     * @param effect
+     *            the sound effect to play
+     */
     public void playSoundEffect(SoundEffect effect) {
         List<Music> tracks = this.musicRepository.findByEffect(effect);
         if (tracks.isEmpty()) {
@@ -105,6 +127,7 @@ public class MusicService {
         }
     }
 
+    /** Stops and disposes the currently playing background track. Does nothing if no track is active. */
     public void stopMusic() {
         if (this.mediaPlayer != null) {
             this.mediaPlayer.stop();

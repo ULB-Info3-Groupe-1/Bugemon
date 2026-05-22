@@ -86,14 +86,29 @@ public class AttackMenuView extends ComponentView {
         this.listener.onBack();
     }
 
+    /** Callback interface for attack menu interactions. */
     public interface Listener {
 
+        /**
+         * Called when the player clicks an attack button.
+         *
+         * @param attack
+         *            the chosen attack
+         */
         void onAttackChosen(Attack attack);
 
+        /**
+         * Called when the mouse enters an attack button, typically to show a tooltip.
+         *
+         * @param attack
+         *            the hovered attack
+         */
         void onAttackHovered(Attack attack);
 
+        /** Called when the mouse leaves an attack button. */
         void onAttackUnhovered();
 
+        /** Called when the player clicks the back button. */
         void onBack();
     }
 }

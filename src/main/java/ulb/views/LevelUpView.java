@@ -11,6 +11,10 @@ import javafx.scene.image.ImageView;
 import ulb.Configuration;
 import ulb.models.player.BonusStats;
 
+/**
+ * View shown after a Bugemon levels up. Displays the Bugemon's sprite and name alongside three bonus-stat buttons; the
+ * player picks one to permanently apply. All choices are forwarded through {@link Listener}.
+ */
 public class LevelUpView extends View {
 
     @FXML
@@ -31,6 +35,18 @@ public class LevelUpView extends View {
         this.listener = listener;
     }
 
+    /**
+     * Populates the view with the Bugemon's new level information and the three bonus options to choose from.
+     *
+     * @param bugemonName
+     *            name of the levelled-up Bugemon
+     * @param newLevel
+     *            the new level reached
+     * @param spritePath
+     *            relative sprite path appended to the configured sprites directory, or {@code null} to skip loading
+     * @param options
+     *            exactly three {@link BonusStats} choices presented as buttons
+     */
     public void displayLevelUpOptions(String bugemonName, int newLevel, String spritePath, List<BonusStats> options) {
         this.currentOptions = options;
         this.levelUpText.setText(bugemonName + " vient juste de passer au niveau " + newLevel + " !");
@@ -81,7 +97,14 @@ public class LevelUpView extends View {
         // Nothing to refresh
     }
 
+    /** Callback interface for the level-up bonus selection. */
     public interface Listener {
+        /**
+         * Called when the player selects a stat bonus.
+         *
+         * @param bonus
+         *            the chosen bonus to apply permanently
+         */
         void onBonusChosen(BonusStats bonus);
     }
 }

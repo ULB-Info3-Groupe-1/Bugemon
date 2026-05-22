@@ -5,6 +5,12 @@ import ch.qos.logback.classic.pattern.color.HighlightingCompositeConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.color.ANSIConstants;
 
+/**
+ * Logback pattern converter that maps log levels to ANSI foreground colour codes for console output.
+ *
+ * <p>
+ * Registered as {@code color} in {@code logback.xml} and used in console appender patterns.
+ */
 public class LevelColorConverter extends HighlightingCompositeConverter {
 
     @Override

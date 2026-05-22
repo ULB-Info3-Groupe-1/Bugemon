@@ -16,6 +16,13 @@ import ulb.repositories.BugemonRepository;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
 
+/**
+ * PostgreSQL implementation of {@link BugemonRepository}.
+ *
+ * <p>
+ * Player-owned Bugemon are stored with their per-player stat bonuses and current XP/level. Base archetype lookups are
+ * delegated to the injected {@link StaticRepository}.
+ */
 public class PostgresBugemonRepository extends AbstractRepository implements BugemonRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresBugemonRepository.class);
     private final StaticRepository staticDataRepository;

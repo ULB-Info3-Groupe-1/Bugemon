@@ -32,6 +32,20 @@ import ulb.models.item.Inventory;
 import ulb.models.item.Item;
 import ulb.models.skills.SkillContext;
 
+/**
+ * Drives a single turn-based combat session between a player team and an opponent team.
+ *
+ * <p>
+ * A combat proceeds through repeated cycles of action request and turn resolution. Each turn, both sides choose a
+ * {@link ulb.models.combat.turn.TurnAction} via their respective {@link ulb.models.combat.strategy.CombatStrategy};
+ * {@link #resolveTurn} then executes those actions in initiative order and produces a sequence of
+ * {@link ulb.models.combat.turn.TurnStep} events for the controller to animate.
+ *
+ * <p>
+ * The combat ends when one team is fully KO'd or the player forfeits, at which point {@link #getResult()} returns
+ * {@link CombatResult#VICTORY} or {@link CombatResult#DEFEAT}. Calling {@link #getResult()} before the combat is
+ * finished throws {@link IllegalStateException}.
+ */
 public class Combat {
     private static final Logger LOG = LoggerFactory.getLogger(Combat.class);
     private static final String STR_PLAYER = "player";
@@ -56,6 +70,15 @@ public class Combat {
     private CombatResult result;
     private boolean finished;
 
+    /**
+     * Constructs a {@code Combat} from a fully configured {@link CombatBuilder}.
+     *
+     * <p>
+     * Skill-derived stat effects are applied to every living player Bugemon immediately upon construction.
+     *
+     * @param builder
+     *            the builder supplying all mandatory combat parameters
+     */
     public Combat(CombatBuilder builder) {
         this.playerTeam = builder.getPlayerTeam();
         this.opponentTeam = builder.getOpponentTeam();
@@ -95,6 +118,17 @@ public class Combat {
         return new CombatContext(this.opponentTeam, this.playerTeam, this.opponentInventory, this.playerInventory);
     }
 
+    /**
+     * Asks both strategies to choose their action for the upcoming turn, then notifies {@code callback} once both
+     * choices are available.
+     *
+     * <p>
+     * The two strategies may respond synchronously or asynchronously; the callback is guaranteed to be invoked exactly
+     * once, after both actions are ready.
+     *
+     * @param callback
+     *            receives both actions when the turn is ready to be resolved
+     */
     public void requestActions(TurnActionsReadyCallback callback) {
         // magic stuff to call onBothActionsReady only once both actions are ready
 
@@ -121,6 +155,22 @@ public class Combat {
         this.opponentStrategy.chooseAction(this.makeOpponentContext(), opponentCb);
     }
 
+    /**
+     * Resolves both actions for the current turn in initiative order, producing the resulting sequence of
+     * {@link TurnStep} events.
+     *
+     * <p>
+     * The method handles early exits: if the combat ends after the first action, or if the second actor is KO'd before
+     * it can act, the callback is invoked immediately with the partial step list. End-of-turn effect ticks are applied
+     * before every callback invocation.
+     *
+     * @param playerAction
+     *            the action chosen by the player
+     * @param opponentAction
+     *            the action chosen by the opponent
+     * @param callback
+     *            receives the complete (or partial) list of turn steps
+     */
     public void resolveTurn(TurnAction playerAction, TurnAction opponentAction, TurnResolvedCallback callback) {
         List<TurnStep> steps = new ArrayList<>();
 
@@ -192,6 +242,15 @@ public class Combat {
         return isPlayer ? this.playerTeam : this.opponentTeam;
     }
 
+    /**
+     * Asks the relevant strategy to choose a replacement Bugemon after the active one is KO'd mid-turn, then resolves
+     * and returns the resulting switch steps.
+     *
+     * @param isPlayer
+     *            {@code true} to force a switch for the player, {@code false} for the opponent
+     * @param onDone
+     *            receives the switch step(s) once the choice is made
+     */
     public void requestForcedSwitch(boolean isPlayer, TurnResolvedCallback onDone) {
         CombatStrategy strategy = isPlayer ? this.playerStrategy : this.opponentStrategy;
         CombatContext ctx = isPlayer ? this.makePlayerContext() : this.makeOpponentContext();
@@ -290,6 +349,13 @@ public class Combat {
         return false;
     }
 
+    /**
+     * Advances all active status effects on {@code bugemon} by one tick if it is not KO. Expired effects are removed by
+     * {@link CombatBugemon#tickEffects()}.
+     *
+     * @param bugemon
+     *            the Bugemon whose effects should be ticked
+     */
     void tickEndOfTurn(CombatBugemon bugemon) {
         if (!bugemon.isKo()) {
             bugemon.tickEffects();
@@ -309,6 +375,14 @@ public class Combat {
         return this.finished;
     }
 
+    /**
+     * Returns the outcome of the combat.
+     *
+     * @return {@link CombatResult#VICTORY} if the opponent team was defeated, {@link CombatResult#DEFEAT} if the player
+     *         team was defeated or the player forfeited
+     * @throws IllegalStateException
+     *             if the combat has not yet finished
+     */
     public CombatResult getResult() {
         if (!this.finished) {
             throw new IllegalStateException("Combat not finished yet");

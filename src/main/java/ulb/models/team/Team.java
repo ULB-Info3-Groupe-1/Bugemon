@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import ulb.Configuration;
-import ulb.models.bugemon.Bugemon;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.exceptions.BugemonAlreadyPresentInTeamException;
 import ulb.models.team.exceptions.BugemonNotInTeamException;
@@ -14,8 +13,12 @@ import ulb.models.team.exceptions.TeamAlreadyEmptyException;
 import ulb.models.team.exceptions.TeamAlreadyFullException;
 
 /**
- * A team of up to {@value Configuration.Game#MAX_TEAM_SIZE} {@link Bugemon}s. Enforces capacity and uniqueness (by ID).
- * Implements {@link Iterable} for use in enhanced for-loops.
+ * An ordered collection of up to {@value Configuration.Game#MAX_TEAM_SIZE} {@link PlayerBugemon}s that represents a
+ * player's active combat team.
+ *
+ * <p>
+ * Membership is enforced by Bugemon name: no two members may share the same name, and the total count may never exceed
+ * the configured maximum. Violations throw unchecked exceptions from {@code ulb.models.team.exceptions}.
  */
 public class Team {
     private final List<PlayerBugemon> members;
@@ -23,15 +26,30 @@ public class Team {
 
     private static final int MAX_SIZE = Configuration.Game.MAX_TEAM_SIZE;
 
+    /** Creates an empty team with no name. */
     public Team() {
         this.members = new ArrayList<>();
     }
 
+    /**
+     * Copy constructor — creates a shallow copy of {@code other}, sharing the same {@link PlayerBugemon} instances.
+     *
+     * @param other
+     *            the team to copy; must not be {@code null}
+     */
     public Team(Team other) {
         this.members = new ArrayList<>(other.members);
         this.name = other.name;
     }
 
+    /**
+     * Creates a team pre-populated with the given members.
+     *
+     * @param members
+     *            the initial members; must contain at most {@value Configuration.Game#MAX_TEAM_SIZE} distinct entries
+     * @throws IllegalArgumentException
+     *             if {@code members} exceeds the maximum size or contains duplicates
+     */
     public Team(List<PlayerBugemon> members) {
         if (members.size() > MAX_SIZE) {
             throw new IllegalArgumentException("Team cannot have more than " + MAX_SIZE + " members.");
@@ -54,6 +72,16 @@ public class Team {
         return this.members.isEmpty();
     }
 
+    /**
+     * Adds {@code bugemon} to this team.
+     *
+     * @param bugemon
+     *            the Bugemon to add; must not be {@code null}
+     * @throws TeamAlreadyFullException
+     *             if the team already has {@value Configuration.Game#MAX_TEAM_SIZE} members
+     * @throws BugemonAlreadyPresentInTeamException
+     *             if a member with the same name is already present
+     */
     public void add(PlayerBugemon bugemon) throws TeamAlreadyFullException, BugemonAlreadyPresentInTeamException {
         if (this.isFull()) {
             throw new TeamAlreadyFullException("Team already full!");
@@ -64,6 +92,16 @@ public class Team {
         this.members.add(bugemon);
     }
 
+    /**
+     * Removes the member whose name matches {@code bugemon} from this team.
+     *
+     * @param bugemon
+     *            the Bugemon to remove; matched by name
+     * @throws TeamAlreadyEmptyException
+     *             if the team is already empty
+     * @throws BugemonNotInTeamException
+     *             if no member with the same name exists in the team
+     */
     public void remove(PlayerBugemon bugemon) throws TeamAlreadyEmptyException, BugemonNotInTeamException {
         if (this.size() == 0) {
             throw new TeamAlreadyEmptyException("Team already empty!");
@@ -73,18 +111,38 @@ public class Team {
         this.members.remove(toRemove);
     }
 
+    /**
+     * Returns an unmodifiable view of the team members in insertion order.
+     *
+     * @return an unmodifiable list of current members
+     */
     public List<PlayerBugemon> getMembers() {
         return Collections.unmodifiableList(this.members);
     }
 
+    /**
+     * Returns {@code true} if a member with the same name as {@code bugemon} is already in this team.
+     *
+     * @param bugemon
+     *            the Bugemon to look up; matched by name
+     * @return {@code true} if the team contains a member with that name
+     */
     public boolean contains(PlayerBugemon bugemon) {
         return this.members.stream().anyMatch(m -> m.getName().equals(bugemon.getName()));
     }
 
+    /**
+     * Returns the team member whose name equals {@code bugemonName}, if present.
+     *
+     * @param bugemonName
+     *            the name to search for
+     * @return an {@link Optional} containing the matching member, or empty if none found
+     */
     public Optional<PlayerBugemon> findByName(String bugemonName) {
         return this.members.stream().filter(m -> m.getName().equals(bugemonName)).findFirst();
     }
 
+    /** Removes all members from this team and clears its name. */
     public void clear() {
         this.members.clear();
         this.name = null;
@@ -98,6 +156,16 @@ public class Team {
         this.name = name;
     }
 
+    /**
+     * Adds all Bugémons in {@code bugemons} to this team in iteration order.
+     *
+     * @param bugemons
+     *            the list of Bugémons to add
+     * @throws TeamAlreadyFullException
+     *             if adding any entry would exceed the maximum size
+     * @throws BugemonAlreadyPresentInTeamException
+     *             if any entry is already a member
+     */
     public void addAll(List<PlayerBugemon> bugemons) {
         for (PlayerBugemon bugemon : bugemons) {
             this.add(bugemon);

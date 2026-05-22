@@ -27,17 +27,41 @@ import ulb.models.tower.utils.FloorMapFactory;
 import ulb.models.utils.Position;
 import ulb.repositories.TowerRepository;
 
+/**
+ * Service that manages the lifecycle of a tower run.
+ *
+ * <p>
+ * Responsibilities include creating and loading {@link ulb.models.tower.TowerState} instances, generating floor maps
+ * via {@link ulb.models.tower.utils.FloorMapFactory}, persisting and deleting run state, and building the
+ * {@link ulb.common.dto.display.FloorDisplayDTO} consumed by the floor view.
+ */
 public class TowerService {
 
     private final String playerName;
     private final TowerRepository towerRepository;
     private TowerState activeTower = null;
 
+    /**
+     * Constructs a {@code TowerService} bound to the given player.
+     *
+     * @param towerRepository
+     *            repository for persisting tower run state
+     * @param playerName
+     *            the name of the player whose tower data this service manages
+     */
     public TowerService(TowerRepository towerRepository, String playerName) {
         this.playerName = playerName;
         this.towerRepository = towerRepository;
     }
 
+    /**
+     * Creates a fresh tower run starting at floor {@link ulb.Configuration.Game#FLOOR_MIN} using a time-based seed,
+     * wraps {@code activeTeam} in a {@link ulb.models.run.RunTeam}, and stores the result as the active tower.
+     *
+     * @param activeTeam
+     *            the player's selected team for this run
+     * @return the newly created {@link ulb.models.tower.TowerState}
+     */
     public TowerState createTower(Team activeTeam) {
         RunTeam team = RunTeam.fromTeam(activeTeam);
         int seed = this.genTowerSeed();
@@ -55,6 +79,16 @@ public class TowerService {
         return Optional.ofNullable(this.activeTower);
     }
 
+    /**
+     * Generates a {@link ulb.models.tower.FloorMap} for the given floor using the provided seed. The same seed and
+     * floor always produce the same map layout.
+     *
+     * @param seed
+     *            the deterministic seed for map generation
+     * @param floor
+     *            the floor number to generate
+     * @return the generated {@code FloorMap}
+     */
     public FloorMap generateFloor(int seed, int floor) {
         FloorMapFactory floorFactory = new FloorMapFactory(seed);
         return floorFactory.create(floor);
@@ -71,6 +105,14 @@ public class TowerService {
         this.activeTower = null;
     }
 
+    /**
+     * Builds a {@link ulb.common.dto.display.FloorDisplayDTO} from the active tower's current floor map. The DTO
+     * carries room positions, states, and connection segments needed by the floor view.
+     *
+     * @return a display DTO for the current floor
+     * @throws IllegalStateException
+     *             if no tower run is active
+     */
     public FloorDisplayDTO buildFloorDisplayDTO() {
         if (this.activeTower == null) {
             throw new IllegalStateException("No active tower run");
@@ -122,6 +164,17 @@ public class TowerService {
         return this.towerRepository.find(this.playerName).map(dto -> dto.team().teamName());
     }
 
+    /**
+     * Loads a previously saved tower run for the player and reconstructs it using {@code team}.
+     *
+     * <p>
+     * Regenerates the floor map from the saved seed and floor number, restores visited-room state and the current room,
+     * and rebuilds each {@link ulb.models.run.RunBugemon} with its saved HP.
+     *
+     * @param team
+     *            the team to use for the restored run (should match the saved team name)
+     * @return the restored {@link ulb.models.tower.TowerState}, or an empty optional if no save exists
+     */
     public Optional<TowerState> loadSaved(Team team) {
         return this.towerRepository.find(this.playerName).map(dto -> {
             FloorMap floorMap = this.generateFloor(dto.seed(), dto.floorMap().floor());

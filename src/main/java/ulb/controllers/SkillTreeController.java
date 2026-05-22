@@ -11,6 +11,13 @@ import ulb.services.SkillService;
 import ulb.views.SkillTreeView;
 import ulb.views.ViewLoader;
 
+/**
+ * Controller for the skill-tree screen.
+ *
+ * <p>
+ * Left-clicking a {@link ulb.models.skills.SkillNode} spends a skill point to increase its level; right-clicking
+ * refunds the point. Changes are persisted immediately after each interaction.
+ */
 public class SkillTreeController extends Controller<SkillTreeView> implements SkillTreeView.Listener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SkillTreeController.class);

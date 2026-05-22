@@ -11,6 +11,13 @@ import ulb.services.SkillService;
 import ulb.services.TeamService;
 import ulb.services.TowerService;
 
+/**
+ * Immutable value object that groups every application service into a single, conveniently accessible container.
+ *
+ * <p>
+ * Controllers receive a {@code ServiceRegistry} instance from {@link GameBootstrapper} and access the individual
+ * services through its public final fields. All fields are set once in the constructor and never reassigned.
+ */
 public class ServiceRegistry {
     public final BugemonService bugemon;
     public final TeamService team;

@@ -9,22 +9,54 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 
 /**
- * Abstract creator. Declares the factory method {@link #create(int, List)} that each concrete subclass overrides to
- * instantiate a specific {@link Team} variant.
+ * Abstract base class for team factories using the Factory Method pattern.
  *
- * The list of available bugemons is passed at call time so the factory always uses the current pool.
+ * <p>
+ * Declares the factory method {@link #create(int, List)} that each concrete subclass overrides to assemble a specific
+ * {@link Team} variant. The pool of available Bugémons is passed at call time so that the factory always operates on
+ * the current, floor-specific pool.
+ *
+ * <p>
+ * A {@link Random} instance seeded from the run seed is injected at construction time to guarantee reproducible team
+ * composition across identical seeds.
  */
 public abstract class TeamFactory {
 
     protected final Random random;
 
+    /**
+     * @param random
+     *            the seeded random number generator used for member selection
+     */
     protected TeamFactory(Random random) {
         this.random = random;
     }
 
-    /** Factory method: builds and returns a {@link Team} of the requested size from the given bugemon pool. */
+    /**
+     * Factory method: builds and returns a {@link Team} of the requested {@code size} drawn from the given
+     * {@code bugemons} pool.
+     *
+     * @param size
+     *            the desired number of members; must be within configured min/max bounds
+     * @param bugemons
+     *            the pool of candidate Bugémons to draw from
+     * @return a new {@link Team} populated according to the concrete strategy
+     * @throws IllegalArgumentException
+     *             if {@code size} is outside the configured bounds
+     */
     public abstract Team create(int size, List<Bugemon> bugemons);
 
+    /**
+     * Fills {@code team} with randomly selected members from {@code available} until {@code team} reaches {@code size}
+     * members or {@code available} is exhausted.
+     *
+     * @param size
+     *            the target team size
+     * @param team
+     *            the team to fill (may already contain some members)
+     * @param available
+     *            the mutable list of candidates; chosen entries are removed in-place
+     */
     protected void fillTeam(int size, Team team, List<Bugemon> available) {
         while (team.size() < size && !available.isEmpty()) {
             int idx = this.random.nextInt(available.size());
@@ -32,6 +64,14 @@ public abstract class TeamFactory {
         }
     }
 
+    /**
+     * Validates that {@code size} falls within the configured team size bounds.
+     *
+     * @param size
+     *            the size to validate
+     * @throws IllegalArgumentException
+     *             if {@code size} is below the minimum or above the maximum
+     */
     protected void checkSize(int size) {
         if (size < Configuration.Game.MIN_TEAM_SIZE) {
             throw new IllegalArgumentException(

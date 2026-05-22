@@ -64,6 +64,16 @@ public class ResourceMusicRepository implements MusicRepository {
         LOG.debug("All musics have been loaded successfully into the repository");
     }
 
+    /**
+     * Loads all {@link Music} entries from the given classpath directory, handling both regular-filesystem and
+     * JAR-filesystem cases.
+     *
+     * @param resourceDir
+     *            the classpath-relative directory path (e.g. {@code /music/combat/})
+     * @return list of loaded {@link Music} instances; empty if the directory contains no files
+     * @throws IOException
+     *             if the directory cannot be walked
+     */
     private List<Music> loadFromDirectory(String resourceDir) throws IOException {
         URI uri = this.getResourceURI(resourceDir);
 

@@ -30,6 +30,7 @@ public class BugemonCardView extends ComponentView {
     private final BugemonDisplayDTO bugemon;
     private final BugemonDetailPopupView detailPopup;
 
+    /** Constructs an empty placeholder card with a default sprite and a {@code "?"} name. */
     public BugemonCardView() {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
         this.bugemon = null;
@@ -39,6 +40,13 @@ public class BugemonCardView extends ComponentView {
         this.imageView.setImage(EMPTY_IMAGE);
     }
 
+    /**
+     * Constructs a card populated with the given Bugemon's sprite, name, and level; also registers a right-click
+     * context menu that opens a {@link BugemonDetailPopupView}.
+     *
+     * @param bugemon
+     *            the Bugemon data to display
+     */
     public BugemonCardView(BugemonDisplayDTO bugemon) {
         super(Configuration.Paths.Fxml.COMPONENT_BUGEMON_CARD);
         this.bugemon = bugemon;
@@ -95,7 +103,9 @@ public class BugemonCardView extends ComponentView {
         this.imageView.setImage(EMPTY_IMAGE);
     }
 
+    /** Callback interface for Bugemon card click interactions. */
     public interface Listener {
+        /** Called when the player left-clicks this card. */
         void onBugemonSelected(BugemonDisplayDTO bugemon);
     }
 }

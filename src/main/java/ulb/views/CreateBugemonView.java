@@ -28,6 +28,11 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
 import ulb.views.components.BugemonCardView;
 
+/**
+ * View for the Bugemon creation form. Lets the player pick a name, element type, stat sliders, a sprite file, and up to
+ * {@link ulb.models.bugemon.Bugemon#ATTACKS_COUNT} attacks from a selectable list. Validation feedback is shown through
+ * alert dialogs; all save and navigation actions are dispatched through {@link Listener}.
+ */
 public class CreateBugemonView extends View {
 
     private static final String ATTACK_COUNT_INCOMPLETE = "attack-count-incomplete";
@@ -242,6 +247,12 @@ public class CreateBugemonView extends View {
         //
     }
 
+    /**
+     * Populates the attack list with the given attacks and clears any prior selection.
+     *
+     * @param attacks
+     *            the full set of attacks the player may choose from
+     */
     public void setAvailableAttacks(List<Attack> attacks) {
         this.attacksByName.clear();
 
@@ -258,6 +269,13 @@ public class CreateBugemonView extends View {
         this.bugemonCardView.setSprite(file);
     }
 
+    /**
+     * Returns the attack at the given position in the current selection, or {@code null} if the index is out of bounds.
+     *
+     * @param index
+     *            zero-based position within the current selection
+     * @return the selected {@link Attack}, or {@code null}
+     */
     public Attack getSelectedAttack(int index) {
         List<String> selectedNames = this.attackListView.getSelectionModel().getSelectedItems();
 
@@ -294,14 +312,34 @@ public class CreateBugemonView extends View {
                 "Le nom du Bugemon que vous avez choisi est deja utilisé.");
     }
 
+    /** Callback interface for all user interactions on the Bugemon creation form. */
     public interface Listener {
+        /** Called when the player selects an element type toggle. */
         void onTypeSelected(ElementType selectedType);
 
+        /** Called when the player picks a sprite file from the file chooser. */
         void onSpriteSelected(File selectedSprite);
 
+        /**
+         * Called when the player submits the creation form.
+         *
+         * @param bugemonName
+         *            the desired name
+         * @param healthValue
+         *            HP stat from the slider
+         * @param attackValue
+         *            attack stat from the slider
+         * @param defenseValue
+         *            defense stat from the slider
+         * @param initiativeValue
+         *            initiative stat from the slider
+         * @param attacks
+         *            the selected attacks (may contain fewer than {@link ulb.models.bugemon.Bugemon#ATTACKS_COUNT})
+         */
         void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
                 double initiativeValue, List<Attack> attacks);
 
+        /** Called when the player navigates back to the main menu. */
         void onReturnToMainMenu();
     }
 

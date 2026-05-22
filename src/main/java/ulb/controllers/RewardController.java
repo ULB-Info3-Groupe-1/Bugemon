@@ -15,6 +15,17 @@ import ulb.services.RewardService;
 import ulb.views.RewardView;
 import ulb.views.ViewLoader;
 
+/**
+ * Controller for the post-room reward screen.
+ *
+ * <p>
+ * Presents the player with a choice of rewards after clearing a tower room. Handles three reward types:
+ * <ul>
+ * <li>{@link ulb.models.tower.reward.ItemReward} — applied immediately to the inventory</li>
+ * <li>{@link ulb.models.tower.reward.BonusStatsReward} — applied to a player-selected Bugemon</li>
+ * <li>{@link ulb.models.tower.reward.AttackReward} — replaces a selected attack on a player-selected Bugemon</li>
+ * </ul>
+ */
 public class RewardController extends Controller<RewardView> implements RewardView.Listener {
 
     private final RewardService rewardService;
@@ -31,6 +42,16 @@ public class RewardController extends Controller<RewardView> implements RewardVi
         this.view.setListener(this);
     }
 
+    /**
+     * Prepares the reward screen for a new reward selection.
+     *
+     * @param newRewards
+     *            the rewards available for this room
+     * @param newRunTeam
+     *            the player's current run team, used for Bugemon selection steps
+     * @param newInventory
+     *            the player's inventory, used when applying item rewards
+     */
     public void initialize(List<Reward> newRewards, RunTeam newRunTeam, Inventory newInventory) {
         this.runTeam = newRunTeam;
         this.inventory = newInventory;

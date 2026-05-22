@@ -5,7 +5,11 @@ import ulb.views.MainMenuView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller for the combat menu screen.
+ * Controller for the main menu screen.
+ *
+ * <p>
+ * Delegates all navigation actions to {@link MetaController}. Guards combat and tower entry points by checking that an
+ * active team has been selected before forwarding the request.
  */
 public class MainMenuController extends Controller<MainMenuView> implements MainMenuView.Listener {
 

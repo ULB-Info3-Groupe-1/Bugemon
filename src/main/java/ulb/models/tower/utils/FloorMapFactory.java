@@ -15,6 +15,19 @@ import ulb.models.tower.FloorMap;
 import ulb.models.tower.room.Room;
 import ulb.models.utils.Position;
 
+/**
+ * Procedurally generates a {@link ulb.models.tower.FloorMap} for a given floor number.
+ *
+ * <p>
+ * Generation uses a seeded random walk to grow branches from a central start node on a bounded grid. Room types are
+ * then assigned according to configuration constants in {@link ulb.Configuration.FloorMap}. If a valid map cannot be
+ * generated within {@link ulb.Configuration.FloorMap#MAX_GENERATION_ATTEMPTS} retries, an {@link IllegalStateException}
+ * is thrown.
+ *
+ * <p>
+ * The effective seed for each attempt is {@code seed + floor + attemptIndex}, ensuring deterministic generation per
+ * floor while allowing retries to explore different layouts.
+ */
 public class FloorMapFactory {
 
     private final int seed;
@@ -23,6 +36,15 @@ public class FloorMapFactory {
         this.seed = seed;
     }
 
+    /**
+     * Generates and returns a {@link ulb.models.tower.FloorMap} for the given floor.
+     *
+     * @param floor
+     *            zero-based floor index used to vary the random seed
+     * @return the generated floor map
+     * @throws IllegalStateException
+     *             if a valid map could not be produced within the configured attempt limit
+     */
     public FloorMap create(int floor) {
         for (int i = 0; i < Configuration.FloorMap.MAX_GENERATION_ATTEMPTS; i++) {
             Optional<FloorMap> floormap = this.tryCreate(floor, i);

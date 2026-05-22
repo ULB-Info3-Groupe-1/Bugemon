@@ -6,6 +6,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Immutable directed graph of {@link SkillNode}s representing the full skill tree definition.
+ *
+ * <p>
+ * Nodes are indexed by ID for O(1) lookup. The graph is a DAG: a node's {@code prerequisites} list references parent
+ * node IDs, and {@link #getDependents(String)} provides the reverse direction.
+ */
 public class SkillTree {
 
     private final List<SkillNode> nodes;
@@ -24,10 +31,26 @@ public class SkillTree {
         return Optional.ofNullable(this.index.get(id));
     }
 
+    /**
+     * Returns the node with the given identifier, throwing if not found.
+     *
+     * @param id
+     *            the node identifier to look up
+     * @return the matching {@link SkillNode}
+     * @throws IllegalArgumentException
+     *             if no node with that id exists in this tree
+     */
     public SkillNode getById(String id) {
         return this.findById(id).orElseThrow(() -> new IllegalArgumentException("Unknown node: " + id));
     }
 
+    /**
+     * Returns all nodes that list {@code nodeId} as a direct prerequisite.
+     *
+     * @param nodeId
+     *            the prerequisite node identifier
+     * @return an unmodifiable list of dependent nodes; empty if none
+     */
     public List<SkillNode> getDependents(String nodeId) {
         return this.nodes.stream().filter(n -> n.prerequisites().contains(nodeId)).toList();
     }

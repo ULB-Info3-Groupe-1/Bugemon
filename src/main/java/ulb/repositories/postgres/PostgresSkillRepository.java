@@ -10,6 +10,13 @@ import ulb.common.dto.persistence.SkillDTO;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.SkillRepository;
 
+/**
+ * PostgreSQL implementation of {@link SkillRepository}.
+ *
+ * <p>
+ * Saving atomically replaces all skill rows (delete-then-insert) and updates the player's skill-point balance in a
+ * single logical operation.
+ */
 public class PostgresSkillRepository extends AbstractRepository implements SkillRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresSkillRepository.class);
 

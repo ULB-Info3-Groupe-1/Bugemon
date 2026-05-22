@@ -14,7 +14,11 @@ import ulb.services.exceptions.TeamNameEmptyException;
 import ulb.services.exceptions.TeamNotFoundException;
 
 /**
- * Service responsible for team persistence.
+ * Service responsible for team persistence and lifecycle management.
+ *
+ * <p>
+ * Loads and saves {@link ulb.models.team.Team} instances for the current player, tracks the active team selection, and
+ * exposes operations for creating, renaming, modifying, and deleting teams.
  */
 public class TeamService {
 
@@ -22,6 +26,16 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final BugemonRepository bugemonRepository;
 
+    /**
+     * Constructs a {@code TeamService} bound to the given player.
+     *
+     * @param teamRepository
+     *            repository for team data
+     * @param bugemonRepository
+     *            repository used to resolve {@link ulb.models.player.PlayerBugemon} members when loading a team
+     * @param playerName
+     *            the name of the player whose teams this service manages
+     */
     public TeamService(TeamRepository teamRepository, BugemonRepository bugemonRepository, String playerName) {
         this.playerName = playerName;
         this.teamRepository = teamRepository;
@@ -36,6 +50,13 @@ public class TeamService {
         return this.teamRepository.findAll(this.playerName).stream().map(TeamDTO::teamName).toList();
     }
 
+    /**
+     * Returns {@code true} if the repository contains a team whose name and members are identical to {@code team}.
+     *
+     * @param team
+     *            the team to check
+     * @return {@code true} if {@code team} is up-to-date in the repository
+     */
     public boolean isTeamSaved(Team team) {
         if (team.getName() == null) {
             return false;
@@ -49,6 +70,17 @@ public class TeamService {
         return this.teamRepository.findByName(this.playerName, name).isPresent();
     }
 
+    /**
+     * Reconstructs a {@link ulb.models.team.Team} from a persisted {@link ulb.common.dto.persistence.TeamDTO}. Members
+     * are sorted by their slot position and their {@link ulb.models.player.PlayerBugemon} data is fetched from the
+     * repository.
+     *
+     * @param teamDTO
+     *            the DTO to reconstruct from
+     * @return the fully populated {@code Team}
+     * @throws java.util.NoSuchElementException
+     *             if a member's Bugemon data cannot be found
+     */
     public Team createTeam(TeamDTO teamDTO) {
         List<PlayerBugemon> members = teamDTO.members().stream()
                 .sorted(Comparator.comparingInt(TeamMemberDTO::slotPosition))
@@ -74,6 +106,14 @@ public class TeamService {
         this.teamRepository.unSetActiveTeam(this.playerName);
     }
 
+    /**
+     * Deletes the named team and unsets the active team selection.
+     *
+     * @param teamName
+     *            the name of the team to delete
+     * @throws TeamNotFoundException
+     *             if {@code teamName} is {@code null}, empty, or does not exist
+     */
     public void deleteTeam(String teamName) throws TeamNotFoundException {
         if (teamName == null || teamName.isEmpty() || this.getTeam(teamName).isEmpty()) {
             throw new TeamNotFoundException("Team not found");
@@ -87,6 +127,18 @@ public class TeamService {
         this.teamRepository.deleteAll(this.playerName);
     }
 
+    /**
+     * Renames {@code team} to {@code newName} by deleting the old record and saving under the new name.
+     *
+     * @param team
+     *            the team to rename
+     * @param newName
+     *            the desired new name
+     * @throws TeamNameEmptyException
+     *             if {@code newName} is {@code null} or blank
+     * @throws TeamNotFoundException
+     *             if the team does not currently exist in the repository
+     */
     public void renameTeam(Team team, String newName) throws TeamNameEmptyException, TeamNotFoundException {
         if (newName == null || newName.isEmpty()) {
             throw new TeamNameEmptyException("New name is empty");
@@ -97,6 +149,14 @@ public class TeamService {
         this.save(team);
     }
 
+    /**
+     * Replaces the persisted team with the current in-memory state of {@code team}.
+     *
+     * @param team
+     *            the team whose changes are to be persisted
+     * @throws TeamNotFoundException
+     *             if the team does not exist in the repository
+     */
     public void modify(Team team) throws TeamNotFoundException {
         this.deleteTeam(team.getName());
         this.save(team);

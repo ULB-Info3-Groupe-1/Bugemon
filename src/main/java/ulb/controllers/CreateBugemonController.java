@@ -16,6 +16,14 @@ import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 import ulb.views.CreateBugemonView;
 import ulb.views.ViewLoader;
 
+/**
+ * Controller for the custom Bugemon creation screen.
+ *
+ * <p>
+ * Manages element-type and sprite selection state, validates form input, assembles a
+ * {@link ulb.common.dto.persistence.CreateBugemonDTO}, and delegates persistence to
+ * {@link ulb.services.BugemonService}.
+ */
 public class CreateBugemonController extends Controller<CreateBugemonView> implements CreateBugemonView.Listener {
 
     private final BugemonService bugemonService;
@@ -45,6 +53,10 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
         }
     }
 
+    /**
+     * Refreshes the view's attack selection list to show only attacks matching the currently selected element type.
+     * Does nothing if no type has been selected yet.
+     */
     public void updateAvailableAttacks() {
         this.selectedBugemonType.ifPresent(bugemonType -> {
             List<Attack> attacks = this.bugemonService.getAttacks(bugemonType);

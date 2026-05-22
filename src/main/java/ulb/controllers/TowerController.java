@@ -23,6 +23,14 @@ import ulb.services.TowerService;
 import ulb.views.FloorView;
 import ulb.views.ViewLoader;
 
+/**
+ * Controller for the tower-run floor-navigation screen.
+ *
+ * <p>
+ * Manages the overall tower run: starting a new run or resuming a saved one, handling room-click navigation,
+ * dispatching room-type actions (combat, boss, reward), advancing the floor after a boss victory, and cleaning up after
+ * a defeat or run completion.
+ */
 public class TowerController extends Controller<FloorView> implements FloorView.Listener {
     private static final Logger LOG = LoggerFactory.getLogger(TowerController.class);
 
@@ -48,6 +56,16 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.saveService = saveService;
     }
 
+    /**
+     * Starts or resumes a tower run for the current active team.
+     *
+     * <p>
+     * If a saved run exists for the active team it is restored; otherwise a fresh run is created and skill-based
+     * starter item bonuses are applied to the player's inventory.
+     *
+     * @throws IllegalStateException
+     *             if no active team is set on the player state
+     */
     public void startRun() {
         Team activeTeam = this.playerState.getActiveTeam()
                 .orElseThrow(() -> new IllegalStateException("Cannot start tower without an active team"));
@@ -100,10 +118,25 @@ public class TowerController extends Controller<FloorView> implements FloorView.
         this.metaController.onMainMenu();
     }
 
+    /**
+     * Returns {@code true} if a tower run is currently in progress.
+     *
+     * @return {@code true} when a {@link ulb.models.tower.TowerState} is loaded
+     */
     public boolean isRunActive() {
         return this.towerState != null;
     }
 
+    /**
+     * Called by the {@link MetaController} when a tower combat ends.
+     *
+     * <p>
+     * On defeat, the active tower run is deleted. On victory in a boss room, the floor is advanced (or the run
+     * completed if the maximum floor was reached).
+     *
+     * @param playerWon
+     *            {@code true} if the player's team won the combat
+     */
     public void onTowerCombatFinished(boolean playerWon) {
         LOG.info("Tower combat finished, playerWon={}", playerWon);
         if (!playerWon) {

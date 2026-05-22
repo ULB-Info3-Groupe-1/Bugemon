@@ -1,13 +1,14 @@
 /**
- * Data access layer.
+ * PostgreSQL-backed implementations of the repository interfaces defined in {@link ulb.repositories}.
  *
- * On startup, {@link ulb.repositories.postgres.QueryLoader} loads all SQL queries from {@code resources/sql/*.sql}.
- * Repositories execute these queries using {@link ulb.repositories.postgres.DatabaseConnection}.
+ * <p>
+ * All concrete classes extend {@link ulb.repositories.postgres.AbstractRepository}, which provides named-query
+ * execution helpers. SQL strings are injected at construction time from the map produced by
+ * {@link ulb.repositories.QueryLoader}.
  *
- * {@link ulb.repositories.postgres.PlayerRepository} and {@link ulb.repositories.BugemonRepository} implement
- * persistence for player state and static game data.
- *
- * DTOs ({@link ulb.common.dto.PlayerBugemonDTO}, {@link ulb.repositories.dto.TeamDTO},
- * {@link ulb.repositories.dto.TeamMemberDTO}) are plain records used to carry data between layers.
+ * <p>
+ * {@link ulb.repositories.postgres.DatabaseInitializer} runs the DDL schema and seeds static game data on first launch.
+ * {@link ulb.repositories.postgres.PostgresDatabaseConnection} manages the underlying JDBC connection using credentials
+ * from a {@code .env} file.
  */
 package ulb.repositories.postgres;

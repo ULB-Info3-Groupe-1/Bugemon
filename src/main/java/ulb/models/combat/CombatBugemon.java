@@ -10,6 +10,15 @@ import ulb.models.bugemon.ElementType;
 import ulb.models.combat.effect.StatusEffect;
 import ulb.models.run.RunBugemon;
 
+/**
+ * A combat-scoped wrapper around a {@link ulb.models.run.RunBugemon} that tracks transient battle state — current HP,
+ * active {@link StatusEffect}s, and participation — without permanently modifying the underlying run data until
+ * {@link #syncToRunBugemon()} is called.
+ *
+ * <p>
+ * Effective stat accessors (e.g. {@link #getEffectiveAttack()}) sum the base stat from the underlying
+ * {@code RunBugemon} with all matching effect modifiers currently active on this instance.
+ */
 public class CombatBugemon {
     private final RunBugemon runBugemon;
     private boolean participated;
@@ -47,10 +56,23 @@ public class CombatBugemon {
         return this.runBugemon.getMaxHp() + this.getEffectModifierSum(StatType.HP);
     }
 
+    /**
+     * Reduces current HP by {@code amount}, clamped to a minimum of zero.
+     *
+     * @param amount
+     *            the damage to apply; must be non-negative
+     */
     public void takeDamage(int amount) {
         this.currentHp = Math.max(0, this.currentHp - amount);
     }
 
+    /**
+     * Increases current HP by {@code amount}, clamped to {@link #getMaxHp()}. Has no effect if the Bugemon is already
+     * KO.
+     *
+     * @param amount
+     *            the HP to restore; must be non-negative
+     */
     public void heal(int amount) {
         if (!this.isKo()) {
             this.currentHp = Math.min(this.getMaxHp(), this.currentHp + amount);
@@ -81,6 +103,16 @@ public class CombatBugemon {
         return this.activeEffects.stream().filter(e -> e.getStat() == stat).mapToInt(StatusEffect::getModifier).sum();
     }
 
+    /**
+     * Attaches a {@link StatusEffect} to this Bugemon.
+     *
+     * <p>
+     * If the effect targets {@link ulb.common.StatType#HP}, the current HP is immediately adjusted by the modifier so
+     * the Bugemon does not appear at a different HP ratio than the new maximum.
+     *
+     * @param effect
+     *            the status effect to add
+     */
     public void addEffect(StatusEffect effect) {
         this.activeEffects.add(effect);
         if (effect.getStat() == StatType.HP) {
@@ -88,6 +120,10 @@ public class CombatBugemon {
         }
     }
 
+    /**
+     * Advances each active effect by one tick and removes any that have expired. Should be called once per turn, at
+     * end-of-turn.
+     */
     public void tickEffects() {
         List<StatusEffect> expired = new ArrayList<>();
         this.activeEffects.forEach(effect -> {
@@ -104,10 +140,17 @@ public class CombatBugemon {
         this.activeEffects.clear();
     }
 
+    /**
+     * Removes all negative (malus) effects from this Bugemon, leaving beneficial effects intact.
+     */
     public void clearMalusEffects() {
         this.activeEffects.removeIf(StatusEffect::isNegative);
     }
 
+    /**
+     * Persists the current HP back to the underlying {@link ulb.models.run.RunBugemon}, making the combat outcome
+     * durable beyond this combat session.
+     */
     public void syncToRunBugemon() {
         this.runBugemon.setCurrentHp(this.currentHp);
     }

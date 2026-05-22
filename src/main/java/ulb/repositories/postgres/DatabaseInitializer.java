@@ -32,6 +32,14 @@ import ulb.models.skills.SkillNode;
 import ulb.repositories.DatabaseConnection;
 import ulb.utils.SpriteUtils;
 
+/**
+ * Bootstraps the database schema and seeds static game data on first launch.
+ *
+ * <p>
+ * On each application start, {@link #initialize()} checks whether the expected tables and rows exist. If the schema is
+ * absent it runs the full DDL script, then seeds attacks, Bugemon archetypes, items, and skill nodes. If the schema is
+ * present but individual data sets (items, skills) are empty, only the missing data is inserted.
+ */
 public class DatabaseInitializer extends AbstractRepository {
 
     private static final int CRITICAL_TABLES_COUNT = 16;
@@ -52,6 +60,12 @@ public class DatabaseInitializer extends AbstractRepository {
         this.skillNodes = skillNodeData;
     }
 
+    /**
+     * Runs the schema-creation and data-seeding checks.
+     *
+     * <p>
+     * Idempotent: safe to call on every application start; no-ops when data is already present.
+     */
     public void initialize() {
         Integer tableCount = this.executeQuery("AreTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
                 .findFirst().orElse(0);

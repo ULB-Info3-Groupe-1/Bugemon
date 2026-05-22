@@ -1,6 +1,9 @@
 package ulb.models.team.exceptions;
 
-/** Thrown when trying to add a Bugemon to a team already at maximum capacity. */
+/**
+ * Thrown when attempting to add a member to a {@link ulb.models.team.Team} that has already reached its maximum
+ * capacity of {@value ulb.Configuration.Game#MAX_TEAM_SIZE} members.
+ */
 public class TeamAlreadyFullException extends RuntimeException {
     public TeamAlreadyFullException(String message) {
         super(message);

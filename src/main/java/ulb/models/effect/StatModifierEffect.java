@@ -4,6 +4,13 @@ import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
 
+/**
+ * An {@link Effect} that applies a numerical modifier to a specific {@link ulb.common.StatType} of the target.
+ *
+ * <p>
+ * The modifier may be permanent or limited to one turn, depending on the {@link ulb.common.EffectDuration}. Negative
+ * values act as debuffs; positive values act as buffs.
+ */
 public class StatModifierEffect extends Effect {
     private final StatType stat;
     private final int modifier;

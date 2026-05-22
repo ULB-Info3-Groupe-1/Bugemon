@@ -12,6 +12,13 @@ import ulb.repositories.DatabaseConnection;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+/**
+ * PostgreSQL implementation of {@link DatabaseConnection}.
+ *
+ * <p>
+ * Reads connection credentials ({@code DB_URL}, {@code DB_USER}, {@code DB_PASSWORD}) from a {@code .env} file located
+ * in the working directory or next to the JAR, falling back to environment variables when no file is found.
+ */
 public class PostgresDatabaseConnection implements DatabaseConnection {
     private static final Dotenv DOTENV = loadDotenv();
 

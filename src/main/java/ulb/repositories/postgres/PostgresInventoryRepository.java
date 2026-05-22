@@ -21,6 +21,14 @@ import ulb.models.item.ItemType;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
 
+/**
+ * PostgreSQL implementation of {@link InventoryRepository}.
+ *
+ * <p>
+ * Reconstructs {@link ulb.models.item.Item} objects — including their polymorphic {@link ulb.models.effect.Effect} —
+ * from the {@code inventory} and {@code item_effects} tables. Saving replaces the entire inventory in a single
+ * delete-then-insert cycle.
+ */
 public class PostgresInventoryRepository extends AbstractRepository implements InventoryRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresInventoryRepository.class);
 

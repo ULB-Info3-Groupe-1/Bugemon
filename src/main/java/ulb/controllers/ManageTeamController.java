@@ -16,9 +16,12 @@ import ulb.views.ManageTeamView;
 import ulb.views.ViewLoader;
 
 /**
- * Controller responsible for the team creation screen. Mutates the {@link BugemonTeam} model in response to player
- * actions, then calls {@code view.refresh()} so the view can pull the updated state from the model directly. The
- * controller never pushes data into the view.
+ * Controller responsible for the team creation and editing screen.
+ *
+ * <p>
+ * Mutates a temporary {@link ulb.models.team.Team} in response to player actions, then triggers a view refresh so the
+ * view can pull the updated state. The controller never pushes data directly into the view. Operates in either
+ * {@link TeamFormMode#CREATE} or {@link TeamFormMode#EDIT} mode.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
 
@@ -34,9 +37,18 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     }
 
     /**
-     * Constructs a {@code CreateTeamController}, wires the view callbacks, and performs an initial
-     * {@link ulb.views.ManageTeamView#refresh()} to populate the Bugemon grid.
+     * Constructs a {@code ManageTeamController}, wires the view callbacks, and configures the view for the given mode.
      *
+     * @param mode
+     *            whether the screen is used for creating or editing a team
+     * @param metaController
+     *            the application-wide navigation controller
+     * @param teamService
+     *            service for team persistence
+     * @param bugemonService
+     *            service for loading player Bugemon data
+     * @param playerState
+     *            the current player state, used to read and set the active team
      */
     public ManageTeamController(TeamFormMode mode, MetaController metaController, TeamService teamService,
             BugemonService bugemonService, PlayerState playerState) {

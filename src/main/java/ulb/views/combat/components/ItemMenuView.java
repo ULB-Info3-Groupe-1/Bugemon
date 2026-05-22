@@ -49,14 +49,29 @@ public class ItemMenuView extends ComponentView {
         return btn;
     }
 
+    /** Callback interface for item menu interactions. */
     public interface Listener {
 
+        /**
+         * Called when the player clicks an item button.
+         *
+         * @param item
+         *            the chosen item
+         */
         void onItemChosen(Item item);
 
+        /**
+         * Called when the mouse enters an item button, typically to show a tooltip.
+         *
+         * @param item
+         *            the hovered item
+         */
         void onItemHovered(Item item);
 
+        /** Called when the mouse leaves an item button. */
         void onItemUnhovered();
 
+        /** Called when the player clicks the back button. */
         void onBack();
 
     }
