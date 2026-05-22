@@ -12,6 +12,7 @@ import ulb.repositories.QueryLoader;
 import ulb.repositories.SkillRepository;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.TeamRepository;
+import ulb.repositories.TowerRepository;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 import ulb.repositories.postgres.DatabaseInitializer;
 import ulb.repositories.postgres.PostgresBugemonRepository;
@@ -21,12 +22,14 @@ import ulb.repositories.postgres.PostgresPlayerRepository;
 import ulb.repositories.postgres.PostgresSkillRepository;
 import ulb.repositories.postgres.PostgresStaticRepository;
 import ulb.repositories.postgres.PostgresTeamRepository;
+import ulb.repositories.postgres.PostgresTowerRepository;
 import ulb.repositories.resource.ResourceMusicRepository;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.LevelUpService;
 import ulb.services.MusicService;
+import ulb.services.RewardService;
 import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.services.TeamService;
@@ -41,7 +44,6 @@ public class GameBootstrapper {
     private final Random random;
 
     private PlayerRepository playerRepository;
-    private StaticRepository staticDataRepository;
 
     public GameBootstrapper() {
         this.dbConnection = new PostgresDatabaseConnection();
@@ -59,43 +61,46 @@ public class GameBootstrapper {
     }
 
     public ServiceRegistry createServices(String playerName) {
-        this.staticDataRepository = new PostgresStaticRepository(this.dbConnection, this.loader.getQueries(),
-                this.parser.getInventory());
+        StaticRepository staticDataRepository = new PostgresStaticRepository(this.dbConnection,
+                this.loader.getQueries(), this.parser.getInventory());
         InventoryRepository inventoryRepository = new PostgresInventoryRepository(this.dbConnection,
                 this.loader.getQueries());
         this.playerRepository = new PostgresPlayerRepository(this.dbConnection, this.loader.getQueries(),
                 inventoryRepository);
         SkillRepository skillRepository = new PostgresSkillRepository(this.dbConnection, this.loader.getQueries());
         BugemonRepository bugemonRepository = new PostgresBugemonRepository(this.dbConnection, this.loader.getQueries(),
-                this.staticDataRepository);
+                staticDataRepository);
         TeamRepository teamRepository = new PostgresTeamRepository(this.dbConnection, this.loader.getQueries(),
                 bugemonRepository);
+        TowerRepository towerRepository = new PostgresTowerRepository(this.dbConnection, this.loader.getQueries());
         MusicRepository musicRepository = new ResourceMusicRepository();
 
-        BugemonService bugemonService = new BugemonService(this.staticDataRepository, bugemonRepository, playerName);
+        BugemonService bugemonService = new BugemonService(staticDataRepository, bugemonRepository, playerName);
         TeamService teamService = new TeamService(teamRepository, bugemonRepository, playerName);
-        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository,
-                this.staticDataRepository);
-        SkillService skillService = new SkillService(skillRepository, this.staticDataRepository, playerName);
-        TowerService towerService = new TowerService(this.playerRepository, playerName);
-        SaveService saveService = new SaveService(skillService, bugemonService, inventoryService, teamService);
-        CombatService combatService = new CombatService(this.random);
+        InventoryService inventoryService = new InventoryService(playerName, inventoryRepository, staticDataRepository);
+        SkillService skillService = new SkillService(skillRepository, staticDataRepository, playerName);
+        TowerService towerService = new TowerService(towerRepository, playerName);
+        SaveService saveService = new SaveService(skillService, bugemonService, inventoryService, teamService,
+                towerService);
+        CombatService combatService = new CombatService(this.random, bugemonService);
         LevelUpService levelUpService = new LevelUpService(playerName, bugemonRepository, this.random);
         MusicService musicService = new MusicService(musicRepository);
+        RewardService rewardService = new RewardService(bugemonService, inventoryService, this.random);
 
         return new ServiceRegistry(bugemonService, teamService, inventoryService, skillService, towerService,
-                combatService, saveService, levelUpService, musicService);
+                combatService, saveService, levelUpService, musicService, rewardService);
     }
 
-    public PlayerState createPlayerState(String playerName, InventoryService inventoryService,
+    public PlayerState createPlayerState(String playerName, TeamService teamService, InventoryService inventoryService,
             SkillService skillService) {
-        this.createUserIfNotExists(playerName);
-        return new PlayerState(playerName, null, inventoryService.getInventory(), skillService.getSkillTreeState());
+        this.createUserIfNotExists(playerName, inventoryService);
+        return new PlayerState(playerName, teamService.getActiveTeam().orElse(null), inventoryService.getInventory(),
+                skillService.getSkillTreeState());
     }
 
-    private void createUserIfNotExists(String playerName) {
+    private void createUserIfNotExists(String playerName, InventoryService inventoryService) {
         try {
-            this.playerRepository.createPlayer(playerName, this.staticDataRepository.defaultInventory());
+            this.playerRepository.createPlayer(playerName, inventoryService.getDefaultInventory());
         } catch (PlayernameAlreadyExistsException e) {
             // Without client/server architecture the database is local and the playername
             // is always 'default_player', so a duplicate on startup is expected and safe.

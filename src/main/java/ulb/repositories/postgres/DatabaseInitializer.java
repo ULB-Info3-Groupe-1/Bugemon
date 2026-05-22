@@ -33,7 +33,7 @@ import ulb.utils.SpriteUtils;
 
 public class DatabaseInitializer extends AbstractRepository {
 
-    private static final int CRITICAL_TABLES_COUNT = 13;
+    private static final int CRITICAL_TABLES_COUNT = 16;
     private static final String SAVE_ITEM_EFFECT_QUERY = "SaveItemEffect";
     private static final String SAVE_SKILL_EFFECT_QUERY = "SaveSkillEffect";
 
@@ -52,7 +52,7 @@ public class DatabaseInitializer extends AbstractRepository {
     }
 
     public void initialize() {
-        Integer tableCount = this.executeQuery("areTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
+        Integer tableCount = this.executeQuery("AreTablesPresent", rs -> rs.getInt("existing_critical_tables")).stream()
                 .findFirst().orElse(0);
 
         if (tableCount < CRITICAL_TABLES_COUNT) {

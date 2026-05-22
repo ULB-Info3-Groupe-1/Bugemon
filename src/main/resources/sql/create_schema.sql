@@ -50,6 +50,9 @@ CREATE TABLE IF NOT EXISTS "player_bugemons" (
   "current_max_hp" integer,
   "current_xp" integer DEFAULT 0,
   "current_level" integer DEFAULT 1,
+  "attack_1_id" varchar,
+  "attack_2_id" varchar,
+  "attack_3_id" varchar,
   PRIMARY KEY ("playername", "bugemon_name")
 );
 
@@ -128,6 +131,31 @@ CREATE TABLE IF NOT EXISTS "skill_prerequisites" (
   PRIMARY KEY ("skill_id", "prerequisite_id")
 );
 
+CREATE TABLE IF NOT EXISTS "tower_runs" (
+  "playername"    varchar PRIMARY KEY
+                  REFERENCES "players"("playername") ON DELETE CASCADE,
+  "seed"          integer NOT NULL,
+  "team_name"     varchar NOT NULL,
+  "current_floor" integer NOT NULL,
+  "current_row"   integer NOT NULL DEFAULT 2,
+  "current_col"   integer NOT NULL DEFAULT 2
+);
+
+CREATE TABLE IF NOT EXISTS "tower_visited_rooms" (
+  "playername" varchar REFERENCES "tower_runs"("playername") ON DELETE CASCADE,
+  "row"        integer NOT NULL,
+  "col"        integer NOT NULL,
+  PRIMARY KEY ("playername", "row", "col")
+);
+
+CREATE TABLE IF NOT EXISTS "tower_run_team_hp" (
+  "playername"    varchar REFERENCES "tower_runs"("playername") ON DELETE CASCADE,
+  "bugemon_name"  varchar NOT NULL,
+  "slot_position" integer NOT NULL,
+  "current_hp"    integer NOT NULL,
+  PRIMARY KEY ("playername", "slot_position")
+);
+
 CREATE UNIQUE INDEX ON "team_members" ("playername", "team_name", "bugemon_name");
 
 ALTER TABLE "bugemons" ADD FOREIGN KEY ("attack_1_id") REFERENCES "attacks" ("id") DEFERRABLE INITIALLY IMMEDIATE;
@@ -151,3 +179,10 @@ ALTER TABLE "item_player" ADD FOREIGN KEY ("item_id") REFERENCES "items"("item_i
 ALTER TABLE "teams" ADD FOREIGN KEY ("playername") REFERENCES "players" ("playername") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "players" ADD FOREIGN KEY ("playername", "current_team") REFERENCES "teams" ("playername", "name") DEFERRABLE INITIALLY IMMEDIATE;
+
+ALTER TABLE "tower_runs" ADD COLUMN IF NOT EXISTS "current_row" integer NOT NULL DEFAULT 2;
+ALTER TABLE "tower_runs" ADD COLUMN IF NOT EXISTS "current_col" integer NOT NULL DEFAULT 2;
+
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_1_id" varchar;
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_2_id" varchar;
+ALTER TABLE "player_bugemons" ADD COLUMN IF NOT EXISTS "attack_3_id" varchar;

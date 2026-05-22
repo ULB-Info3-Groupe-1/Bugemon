@@ -2,21 +2,23 @@ package ulb.services;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
-import ulb.models.level_up.LevelUpGenerator;
+import ulb.Configuration;
 import ulb.models.player.BonusStats;
+import ulb.models.player.BonusStatsGenerator;
 import ulb.models.run.RunBugemon;
 import ulb.repositories.BugemonRepository;
 
 public class LevelUpService {
     String playername;
     BugemonRepository bugemonRepository;
-    LevelUpGenerator levelUpGenerator;
+    BonusStatsGenerator bonusStatsGenerator;
 
     public LevelUpService(String playername, BugemonRepository bugemonRepository, Random random) {
         this.playername = playername;
         this.bugemonRepository = bugemonRepository;
-        this.levelUpGenerator = new LevelUpGenerator(random);
+        this.bonusStatsGenerator = new BonusStatsGenerator(random);
     }
 
     public void applyLevelUp(RunBugemon bugemon, BonusStats bonus) {
@@ -25,6 +27,7 @@ public class LevelUpService {
     }
 
     public List<BonusStats> generateLevelUpOptions() {
-        return this.levelUpGenerator.generateOptions();
+        return IntStream.range(0, Configuration.Game.NUM_BONUS_PER_LEVEL_UP)
+                .mapToObj(i -> this.bonusStatsGenerator.generateBonusStats()).toList();
     }
 }

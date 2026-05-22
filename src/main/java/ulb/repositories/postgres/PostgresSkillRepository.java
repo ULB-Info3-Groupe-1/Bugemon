@@ -6,9 +6,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.common.dto.persistence.SkillDTO;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.SkillRepository;
-import ulb.repositories.dto.SkillDTO;
 
 public class PostgresSkillRepository extends AbstractRepository implements SkillRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresSkillRepository.class);

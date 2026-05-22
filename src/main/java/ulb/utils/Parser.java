@@ -31,6 +31,7 @@ import ulb.Configuration;
 import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
@@ -42,7 +43,6 @@ import ulb.models.item.Item;
 import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
-import ulb.repositories.dto.DefaultInventoryDTO;
 
 /**
  * Parses the three bundled JSON resource files (attacks, Bugemons, items/inventory). The main entry point is

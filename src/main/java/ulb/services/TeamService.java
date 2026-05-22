@@ -4,13 +4,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.common.dto.persistence.TeamDTO;
+import ulb.common.dto.persistence.TeamMemberDTO;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
-import ulb.repositories.dto.PlayerBugemonDTO;
-import ulb.repositories.dto.TeamDTO;
-import ulb.repositories.dto.TeamMemberDTO;
 import ulb.services.exceptions.TeamNameEmptyException;
 import ulb.services.exceptions.TeamNotFoundException;
 
@@ -57,7 +56,7 @@ public class TeamService {
                 .sorted(Comparator.comparingInt(TeamMemberDTO::slotPosition))
                 .map(member -> this.bugemonRepository.findBase(member.bugemonName())
                         .flatMap(base -> this.bugemonRepository.findByName(this.playerName, member.bugemonName())
-                                .map((PlayerBugemonDTO dto) -> PlayerBugemon.from(base, dto)))
+                                .map(dto -> PlayerBugemon.from(base, dto)))
                         .orElseThrow())
                 .toList();
         Team team = new Team(members);
@@ -65,14 +64,28 @@ public class TeamService {
         return team;
     }
 
+    public Optional<Team> getActiveTeam() {
+        return this.teamRepository.getActiveTeam(this.playerName).map(this::createTeam);
+    }
+
+    public void setActiveTeam(String teamName) {
+        this.teamRepository.setActiveTeam(this.playerName, teamName);
+    }
+
+    public void unSetActiveTeam() {
+        this.teamRepository.unSetActiveTeam(this.playerName);
+    }
+
     public void deleteTeam(String teamName) throws TeamNotFoundException {
         if (teamName == null || teamName.isEmpty() || this.getTeam(teamName).isEmpty()) {
             throw new TeamNotFoundException("Team not found");
         }
+        this.unSetActiveTeam();
         this.teamRepository.delete(this.playerName, teamName);
     }
 
     public void deleteTeams() {
+        this.unSetActiveTeam();
         this.teamRepository.deleteAll(this.playerName);
     }
 

@@ -1,14 +1,17 @@
 package ulb.models.player;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
+import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
-import ulb.repositories.dto.PlayerBugemonDTO;
+import ulb.models.combat.damage.Efficiency;
+import ulb.models.player.exceptions.IllegalAttackReplacementException;
 
 public class PlayerBugemon {
     private final Bugemon base;
@@ -24,7 +27,7 @@ public class PlayerBugemon {
     public static PlayerBugemon from(Bugemon base, PlayerBugemonDTO dto) {
         BonusStats bonusStats = new BonusStats(dto.bonusMaxHp(), dto.bonusAttackPower(), dto.bonusDefense(),
                 dto.bonusInitiative());
-        return new PlayerBugemon(base, dto.level(), dto.xp(), bonusStats, base.attacks());
+        return new PlayerBugemon(base, dto.level(), dto.xp(), bonusStats, dto.attacks());
     }
 
     public PlayerBugemon(Bugemon base, int level, int xp, BonusStats bonusStats, List<Attack> currentAttacks) {
@@ -35,7 +38,7 @@ public class PlayerBugemon {
         this.bonusStats = bonusStats;
 
         Bugemon.checkAttacks(currentAttacks);
-        this.currentAttacks = currentAttacks;
+        this.currentAttacks = new ArrayList<>(currentAttacks);
     }
 
     public String getName() {
@@ -96,7 +99,7 @@ public class PlayerBugemon {
         return numLevelUps;
     }
 
-    public void applyUpgrade(BonusStats bonus) {
+    public void applyBonus(BonusStats bonus) {
         this.bonusStats.add(bonus);
     }
 
@@ -110,6 +113,21 @@ public class PlayerBugemon {
 
     public double getXpProgress() {
         return (double) this.xp / this.getXpToNextLevel();
+    }
+
+    public boolean replaceAttack(Attack oldAttack, Attack newAttack) throws IllegalAttackReplacementException {
+        if (!Efficiency.preview(newAttack.type(), this.getType()).isAtLeastNormal()) {
+            throw new IllegalAttackReplacementException("bugemon is weak against the type of the given attack");
+        }
+
+        int index = this.currentAttacks.indexOf(oldAttack);
+        if (index == -1) {
+            throw new IllegalAttackReplacementException(
+                    "attempted to replace an attack that the bugemon does not have");
+        }
+        this.currentAttacks.set(index, newAttack);
+
+        return true;
     }
 
     @Override
@@ -138,7 +156,7 @@ public class PlayerBugemon {
     public PlayerBugemonDTO toDTO(String playerName) {
         return new PlayerBugemonDTO(playerName, this.base.name(), this.bonusStats.getBonusDefense(),
                 this.bonusStats.getBonusAttack(), this.bonusStats.getBonusInitiative(), this.bonusStats.getBonusHp(),
-                this.xp, this.level);
+                this.xp, this.level, Collections.unmodifiableList(this.currentAttacks));
     }
 
     public BugemonDisplayDTO toDisplayDTO() {

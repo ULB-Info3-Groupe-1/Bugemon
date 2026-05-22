@@ -8,6 +8,7 @@ import ulb.Configuration;
 import ulb.common.CombatSummary;
 import ulb.common.LevelUpResult;
 import ulb.models.bugemon.Attack;
+import ulb.models.bugemon.ElementType;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
@@ -22,6 +23,7 @@ import ulb.models.item.Inventory;
 import ulb.models.player.PlayerInputHandler;
 import ulb.models.run.RunBugemon;
 import ulb.models.skills.SkillContext;
+import ulb.models.team.factory.BossTeamFactory;
 import ulb.models.team.factory.RandomTeamFactory;
 import ulb.models.team.factory.TeamFactory;
 
@@ -33,19 +35,26 @@ public class CombatService {
     private final DamageCalculator damageCalculator;
     private final EffectProcessor effectProcessor;
     private final Random random;
+    private final BugemonService bugemonService;
 
-    public CombatService(Random random) {
-        this(new DamageCalculator(), new EffectProcessor(), random);
+    public CombatService(Random random, BugemonService bugemonService) {
+        this(new DamageCalculator(), new EffectProcessor(), random, bugemonService);
     }
 
-    public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random) {
+    public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
+            BugemonService bugemonService) {
         this.damageCalculator = damageCalculator;
         this.effectProcessor = effectProcessor;
         this.random = random;
+        this.bugemonService = bugemonService;
     }
 
-    public TeamFactory createRandomOpponentFactory() {
-        return new RandomTeamFactory(this.random);
+    public TeamFactory createOpponentFactory(boolean isBoss) {
+        return isBoss ? new BossTeamFactory(this.random) : new RandomTeamFactory(this.random);
+    }
+
+    public TeamFactory createBossOpponentFactory() {
+        return new BossTeamFactory(this.random);
     }
 
     public CombatFactory createManualCombatFactory(Inventory defaultInventory, PlayerInputHandler handler,
@@ -87,7 +96,11 @@ public class CombatService {
     }
 
     public Efficiency previewEfficiency(Attack attack, CombatBugemon defender) {
-        return this.damageCalculator.previewEfficiency(attack.type(), defender.getType());
+        return this.previewEfficiency(attack, defender.getType());
+    }
+
+    public Efficiency previewEfficiency(Attack attack, ElementType typeDefender) {
+        return this.damageCalculator.previewEfficiency(attack.type(), typeDefender);
     }
 
     private int computeCombatXp(int floorNumber, boolean isBoss, int opponentCount) {

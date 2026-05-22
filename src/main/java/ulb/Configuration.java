@@ -49,7 +49,9 @@ public abstract class Configuration {
             public static final String CREATE_BUGEMON_VIEW = "/fxml/CreateBugemon.fxml";
             public static final String SAVE_MENU_VIEW = "/fxml/SaveMenu.fxml";
 
+            public static final String FLOOR_VIEW = "/fxml/Floor.fxml";
             public static final String SKILL_TREE_VIEW = "/fxml/SkillTree.fxml";
+            public static final String REWARD_VIEW = "/fxml/Reward.fxml";
         }
     }
 
@@ -62,6 +64,7 @@ public abstract class Configuration {
         public static final String STAGE_TITLE = "Bugemon";
 
         public static final String FLOOR_PREFIX = "NO";
+        public static final int FLOOR_MOVE_ANIMATION_MS = 500;
     }
 
     public static final class Music {
@@ -105,6 +108,8 @@ public abstract class Configuration {
         public static final int ATTACK_GAIN_PER_POINT = 1;
         public static final int DEFENSE_GAIN_PER_POINT = 1;
         public static final int INITIATIVE_GAIN_PER_POINT = 2; // one point -> +2 initiative
+
+        public static final int ITEM_QUANTITY_FOR_ITEM_REWARD = 1;
 
         public static final AttackFactorFormula ATTACK_FACTOR_FORMULA = //
                 effectiveAttack -> (100.0 + effectiveAttack) / 100.0;

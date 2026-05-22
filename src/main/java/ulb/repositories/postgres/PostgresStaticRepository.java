@@ -12,9 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import ulb.Configuration;
 import ulb.common.EffectDuration;
 import ulb.common.EffectTarget;
 import ulb.common.StatType;
+import ulb.common.dto.persistence.CreateBugemonDTO;
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
@@ -22,13 +25,13 @@ import ulb.models.effect.Effect;
 import ulb.models.effect.HealEffect;
 import ulb.models.effect.ResetMalusEffect;
 import ulb.models.effect.StatModifierEffect;
+import ulb.models.item.Item;
+import ulb.models.item.ItemType;
 import ulb.models.skills.SkillEffect;
 import ulb.models.skills.SkillNode;
 import ulb.models.skills.SkillTree;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.DefaultInventoryDTO;
 import ulb.utils.SpriteUtils;
 
 public class PostgresStaticRepository extends AbstractRepository implements StaticRepository {
@@ -37,12 +40,14 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     private final DefaultInventoryDTO defaultInventoryCache;
     private final SkillTree skillTreeCache;
     private Map<String, Bugemon> bugemonCache;
+    private List<Item> itemsCache;
 
     public PostgresStaticRepository(DatabaseConnection dbConnection, Map<String, String> queries,
             DefaultInventoryDTO defaultInventory) {
         super(dbConnection, queries);
         this.attackCache = Collections.unmodifiableMap(this.loadAllAttacks());
         this.bugemonCache = Collections.unmodifiableMap(this.loadAllBugemons());
+        this.itemsCache = Collections.unmodifiableList(this.loadItems());
         this.skillTreeCache = this.loadSkillTree();
         this.defaultInventoryCache = defaultInventory;
     }
@@ -83,6 +88,11 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
     @Override
     public SkillTree skillTree() {
         return this.skillTreeCache;
+    }
+
+    @Override
+    public List<Item> items() {
+        return this.itemsCache;
     }
 
     // --- Private loading ---
@@ -128,12 +138,17 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         String attackId1 = rs.getString(DatabaseColumns.COL_ATTACK_ID_1);
         String attackId2 = rs.getString(DatabaseColumns.COL_ATTACK_ID_2);
         String attackId3 = rs.getString(DatabaseColumns.COL_ATTACK_ID_3);
-        return new Bugemon(rs.getString(DatabaseColumns.COL_NAME), rs.getInt(DatabaseColumns.COL_BASE_MAX_HP),
-                rs.getInt(DatabaseColumns.COL_BASE_ATTACK), rs.getInt(DatabaseColumns.COL_BASE_DEFENSE),
-                rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE), type,
+
+        // NOTE: there is no isBoss flag in db (because the same goes for the given json). Therefore the value of the
+        // isBoss flag is recomputed from the configured boss name.
+        String name = rs.getString(DatabaseColumns.COL_NAME);
+        boolean isBoss = Configuration.Game.BOSS_NAME.equals(name);
+
+        return new Bugemon(name, rs.getInt(DatabaseColumns.COL_BASE_MAX_HP), rs.getInt(DatabaseColumns.COL_BASE_ATTACK),
+                rs.getInt(DatabaseColumns.COL_BASE_DEFENSE), rs.getInt(DatabaseColumns.COL_BASE_INITIATIVE), type,
                 List.of(this.attackCache.get(attackId1), this.attackCache.get(attackId2),
                         this.attackCache.get(attackId3)),
-                rs.getString(DatabaseColumns.COL_SPRITE), rs.getBoolean(DatabaseColumns.COL_IS_STARTER));
+                rs.getString(DatabaseColumns.COL_SPRITE), rs.getBoolean(DatabaseColumns.COL_IS_STARTER), isBoss);
     }
 
     private Effect buildEffect(ResultSet rs, String effectType) throws SQLException {
@@ -149,6 +164,39 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
             case "HealEffect" -> new HealEffect(target, rs.getInt("effect_amount"));
             case "ResetMalusEffect" -> new ResetMalusEffect(target);
             default -> throw new IllegalStateException("Unknown effect type: " + effectType);
+        };
+    }
+
+    private List<Item> loadItems() {
+        List<Item> items = this.executeQuery("GetAllItems", rs -> {
+            try {
+                String effectType = rs.getString(DatabaseColumns.COL_EFFECT_TYPE);
+                Effect effect = null;
+                if (effectType != null) {
+                    effect = this.buildItemEffect(rs, effectType);
+                }
+                return new Item(rs.getString(DatabaseColumns.COL_ITEM_ID), rs.getString(DatabaseColumns.COL_NAME),
+                        rs.getString(DatabaseColumns.COL_DESCRIPTION),
+                        ItemType.valueOf(rs.getString(DatabaseColumns.COL_CATEGORY)), effect);
+            } catch (SQLException e) {
+                throw new IllegalStateException("Error loading item", e);
+            }
+        });
+        return items;
+    }
+
+    private Effect buildItemEffect(ResultSet rs, String effectType) throws SQLException {
+        EffectTarget target = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_TARGET, EffectTarget.class);
+        return switch (effectType) {
+            case "EffectHeal" -> new HealEffect(target, rs.getInt(DatabaseColumns.COL_EFFECT_VALUE));
+            case "EffectStatModifier" -> {
+                StatType stat = DatabaseHelper.getEnumOrNull(rs, DatabaseColumns.COL_EFFECT_STAT, StatType.class);
+                yield new StatModifierEffect(target, stat, rs.getInt(DatabaseColumns.COL_EFFECT_MODIFIER),
+                        rs.getInt(DatabaseColumns.COL_EFFECT_DURATION) == 0 ? EffectDuration.PERMANENT
+                                : EffectDuration.ONE_TURN);
+            }
+            case "EffectResetMalus" -> new ResetMalusEffect(target);
+            default -> throw new IllegalStateException("Unknown item effect type: " + effectType);
         };
     }
 

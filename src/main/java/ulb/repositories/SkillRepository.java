@@ -2,7 +2,7 @@ package ulb.repositories;
 
 import java.util.List;
 
-import ulb.repositories.dto.SkillDTO;
+import ulb.common.dto.persistence.SkillDTO;
 
 public interface SkillRepository {
 

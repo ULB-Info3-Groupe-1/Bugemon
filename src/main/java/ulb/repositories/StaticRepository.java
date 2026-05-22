@@ -3,11 +3,12 @@ package ulb.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.common.dto.persistence.CreateBugemonDTO;
+import ulb.common.dto.persistence.DefaultInventoryDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
+import ulb.models.item.Item;
 import ulb.models.skills.SkillTree;
-import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.DefaultInventoryDTO;
 
 public interface StaticRepository {
 
@@ -22,4 +23,6 @@ public interface StaticRepository {
     DefaultInventoryDTO defaultInventory();
 
     SkillTree skillTree();
+
+    List<Item> items();
 }

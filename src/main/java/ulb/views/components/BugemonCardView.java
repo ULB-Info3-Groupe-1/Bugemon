@@ -9,9 +9,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import ulb.Configuration;
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
 
-/** Reusable custom component representing a single Bugemon cell with an image and name label. */
+/**
+ * Reusable custom component representing a single Bugemon cell with an image and name label.
+ */
 public class BugemonCardView extends ComponentView {
     private static final String EMPTY_NAME = "?";
     private static final Image EMPTY_IMAGE = new Image(Configuration.Paths.DEFAULT_SPRITE);

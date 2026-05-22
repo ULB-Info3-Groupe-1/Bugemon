@@ -1,10 +1,10 @@
 package ulb.controllers;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
 import ulb.models.player.PlayerBugemon;
 import ulb.models.player.PlayerState;
 import ulb.models.team.Team;
@@ -65,8 +65,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     private void updateDisplayedAvailableBugemons() {
         List<BugemonDisplayDTO> allDTOs = this.bugemonService.getPlayerBugemons().stream()
                 .map(PlayerBugemon::toDisplayDTO).toList();
-        Set<BugemonDisplayDTO> selectedDTOs = new HashSet<>(
-                this.tmpTeam.getMembers().stream().map(PlayerBugemon::toDisplayDTO).toList());
+        Set<String> selectedNames = this.tmpTeam.getMembers().stream().map(PlayerBugemon::getName)
+                .collect(Collectors.toSet());
+        Set<BugemonDisplayDTO> selectedDTOs = allDTOs.stream().filter(dto -> selectedNames.contains(dto.getName()))
+                .collect(Collectors.toSet());
         this.view.refreshAvailableBugemons(allDTOs, selectedDTOs);
     }
 
@@ -111,7 +113,16 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onSave(String teamName) {
-        if (this.teamService.teamExists(teamName)) {
+        if (teamName.isBlank()) {
+            this.view.showEmptyTeamNameAlert();
+            return;
+        }
+        if (this.tmpTeam.isEmpty()) {
+            this.view.showEmptyTeamAlert();
+            return;
+        }
+        boolean isUpdate = teamName.equals(this.tmpTeam.getName());
+        if (!isUpdate && this.teamService.teamExists(teamName)) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
             return;
         }
@@ -128,7 +139,6 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
     public void onDelete(String teamName) {
         try {
             this.teamService.deleteTeam(teamName);
-            this.playerState.setActiveTeam(null);
             this.clearTmpTeam();
             this.updateAllUI();
         } catch (TeamNotFoundException e) {
@@ -180,6 +190,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         try {
             this.playerState.setActiveTeam(this.teamService.getTeam(teamName)
                     .orElseThrow(() -> new TeamNotFoundException("Active team not found")));
+            this.teamService.setActiveTeam(teamName);
             this.tmpTeam = this.teamService.getTeam(teamName)
                     .orElseThrow(() -> new TeamNotFoundException("Active team not found"));
         } catch (TeamNotFoundException e) {
@@ -213,16 +224,15 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onReturnToMainMenu() {
-        boolean canLeave = this.teamService.isTeamSaved(this.tmpTeam) || this.tmpTeam.isEmpty();
-
-        if (!canLeave && this.view.showAlertTeamChangesNotSave()) {
-            this.clearTmpTeam();
-            canLeave = true;
+        if (!this.teamService.isTeamSaved(this.tmpTeam) && !this.tmpTeam.isEmpty()) {
+            if (this.view.showAlertTeamChangesNotSave()) {
+                this.clearTmpTeam();
+            } else {
+                return;
+            }
         }
+        this.metaController.onMainMenu();
 
-        if (canLeave) {
-            this.metaController.onMainMenu();
-        }
     }
 
     private void clearTmpTeam() {

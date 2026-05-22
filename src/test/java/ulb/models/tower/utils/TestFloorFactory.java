@@ -1,8 +1,6 @@
 package ulb.models.tower.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -11,140 +9,141 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import ulb.models.tower.Floor;
-import ulb.models.tower.FloorNode;
-import ulb.models.tower.room.Room.RoomType;
+import ulb.common.RoomType;
+import ulb.models.tower.FloorMap;
+import ulb.models.tower.room.Room;
+import ulb.models.utils.Position;
 
 public class TestFloorFactory {
 
-    private Floor floor;
-    private FloorNode root;
+    private static final int SEED = 42;
+    private static final int FLOOR = 2;
 
-    private List<FloorNode> allNodes;
+    private FloorMap floorMap;
+    private Room startRoom;
+    private List<Room> allRooms;
+    private Map<Room, Integer> depthPerRoom;
+    private Map<Room, Room> parentPerRoom;
     private int maxDepth;
-    private List<FloorNode> deepestNodes;
-    private long rewardCount;
-    private long bossCount;
+    private List<Room> deepestRooms;
 
     @Before
     public void setup() {
-        FloorFactory factory = new FloorFactory(new Random(42));
-        this.floor = factory.create();
-        this.root = this.floor.getRoot();
+        FloorMapFactory factory = new FloorMapFactory(SEED);
+        this.floorMap = factory.create(FLOOR);
+        this.startRoom = this.floorMap.getCurrentRoom();
 
-        this.allNodes = new ArrayList<>();
-        this.deepestNodes = new ArrayList<>();
+        this.allRooms = new ArrayList<>();
+        this.depthPerRoom = new HashMap<>();
+        this.parentPerRoom = new HashMap<>();
         this.maxDepth = 0;
+        this.deepestRooms = new ArrayList<>();
 
-        Map<FloorNode, Integer> depthPerNode = new HashMap<>();
-        Set<FloorNode> visited = new HashSet<>();
-
-        Deque<FloorNode> queue = new ArrayDeque<>();
-        queue.add(this.root);
-        depthPerNode.put(this.root, 0);
-        visited.add(this.root);
+        Deque<Room> queue = new ArrayDeque<>();
+        Set<Room> visited = new HashSet<>();
+        queue.add(this.startRoom);
+        visited.add(this.startRoom);
+        this.depthPerRoom.put(this.startRoom, 0);
+        this.parentPerRoom.put(this.startRoom, null);
 
         while (!queue.isEmpty()) {
-            FloorNode node = queue.poll();
-            int depth = depthPerNode.getOrDefault(node, 0);
+            Room room = queue.poll();
+            int depth = this.depthPerRoom.get(room);
+            this.allRooms.add(room);
 
-            this.allNodes.add(node);
             if (depth > this.maxDepth) {
                 this.maxDepth = depth;
-                this.deepestNodes = new ArrayList<>();
-                this.deepestNodes.add(node);
+                this.deepestRooms = new ArrayList<>();
+                this.deepestRooms.add(room);
             } else if (depth == this.maxDepth) {
-                this.deepestNodes.add(node);
+                this.deepestRooms.add(room);
             }
 
-            for (FloorNode child : node.getChildren()) {
-                if (visited.add(child)) {
-                    depthPerNode.put(child, depth + 1);
-                    queue.add(child);
+            for (Room neighbor : this.floorMap.getNeighbors(room)) {
+                if (visited.add(neighbor)) {
+                    this.depthPerRoom.put(neighbor, depth + 1);
+                    this.parentPerRoom.put(neighbor, room);
+                    queue.add(neighbor);
                 }
             }
         }
-
-        this.rewardCount = this.allNodes.stream()
-                .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.REWARD).count();
-        this.bossCount = this.allNodes.stream()
-                .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.BOSS).count();
     }
 
     @Test
-    public void testAllNodesHaveRooms() {
-        for (FloorNode node : this.allNodes) {
-            assertNotNull("Node at (" + node.getX() + "," + node.getY() + ") has no room", node.getRoom());
+    public void testAllRoomsHaveTypes() {
+        for (Room room : this.allRooms) {
+            assertThat(room.getType()).isNotNull();
         }
     }
 
     @Test
-    public void testAllNodesInGrid() {
-        for (FloorNode node : this.allNodes) {
-            assertTrue("Node x=" + node.getX() + " out of grid [0," + FloorFactory.GRID_SIZE + ")",
-                    node.getX() >= 0 && node.getX() < FloorFactory.GRID_SIZE);
-            assertTrue("Node y=" + node.getY() + " out of grid [0," + FloorFactory.GRID_SIZE + ")",
-                    node.getY() >= 0 && node.getY() < FloorFactory.GRID_SIZE);
+    public void testAllRoomsInGrid() {
+        for (Room room : this.allRooms) {
+            Position pos = this.floorMap.getPosition(room);
+            assertThat(pos.x()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
+            assertThat(pos.y()).isBetween(0, FloorMapFactory.GRID_SIZE - 1);
         }
     }
 
     @Test
-    public void testRootIsEmptyRoom() {
-        assertNotNull(this.root.getRoom());
-        assertEquals(RoomType.EMPTY, this.root.getRoom().getType());
+    public void testStartRoomIsStart() {
+        assertThat(this.startRoom.getType()).isEqualTo(RoomType.START);
     }
 
     @Test
     public void testMaxDepth() {
-        assertTrue("Floor depth " + this.maxDepth + " exceeds MAX_DEPTH=" + FloorFactory.MAX_DEPTH,
-                this.maxDepth <= FloorFactory.MAX_DEPTH);
+        assertThat(this.maxDepth).isLessThanOrEqualTo(FloorMapFactory.MAX_DEPTH);
     }
 
     @Test
     public void testBossAtDeepestLevel() {
-        FloorNode bossNode = this.allNodes.stream()
-                .filter(n -> n.getRoom() != null && n.getRoom().getType() == RoomType.BOSS).findFirst().orElse(null);
-        assertNotNull("Boss node must exist", bossNode);
-        assertTrue("Boss node must be among the deepest nodes", this.deepestNodes.contains(bossNode));
+        Room bossRoom = this.allRooms.stream().filter(r -> r.getType() == RoomType.BOSS).findFirst().orElse(null);
+        assertThat(bossRoom).isNotNull();
+        assertThat(this.deepestRooms).contains(bossRoom);
     }
 
     @Test
     public void testOnlyOneBossRoom() {
-        assertEquals(1, this.bossCount);
+        long bossCount = this.allRooms.stream().filter(r -> r.getType() == RoomType.BOSS).count();
+        assertThat(bossCount).isEqualTo(1);
     }
 
     @Test
     public void testRewardRoomCountInRange() {
-        assertTrue("Too few RewardRooms: " + this.rewardCount + " < MIN_REWARD=" + FloorFactory.MIN_REWARD,
-                this.rewardCount >= FloorFactory.MIN_REWARD);
-        assertTrue("Too many RewardRooms: " + this.rewardCount + " > MAX_REWARD=" + FloorFactory.MAX_REWARD,
-                this.rewardCount <= FloorFactory.MAX_REWARD);
+        long rewardCount = this.allRooms.stream().filter(r -> r.getType() == RoomType.REWARD).count();
+        assertThat(rewardCount).isGreaterThanOrEqualTo(FloorMapFactory.MIN_REWARD);
+        assertThat(rewardCount).isLessThanOrEqualTo(FloorMapFactory.MAX_REWARD);
     }
 
     @Test
-    public void testRootBranchCountInRange() {
-        int branches = this.root.getChildren().size();
-        assertTrue("Root has " + branches + " branches, expected >= MIN_BRANCHES=" + FloorFactory.MIN_BRANCHES,
-                branches >= FloorFactory.MIN_BRANCHES);
-        assertTrue("Root has " + branches + " branches, expected <= MAX_BRANCHES=" + FloorFactory.MAX_BRANCHES,
-                branches <= FloorFactory.MAX_BRANCHES);
+    public void testStartRoomBranchCountInRange() {
+        int branches = this.floorMap.getNeighbors(this.startRoom).size();
+        assertThat(branches).isGreaterThanOrEqualTo(FloorMapFactory.MIN_BRANCHES);
+        assertThat(branches).isLessThanOrEqualTo(FloorMapFactory.MAX_BRANCHES);
     }
 
     @Test
-    public void testRewardRoomHasCombatRoomParent() {
-        for (FloorNode node : this.allNodes) {
-            if (node.getRoom() != null && node.getRoom().getType() == RoomType.REWARD) {
-                assertTrue("RewardRoom at (" + node.getX() + "," + node.getY() + ") has no parent",
-                        node.getParent().isPresent());
-                assertEquals("RewardRoom at (" + node.getX() + "," + node.getY() + ") parent is not a CombatRoom",
-                        RoomType.COMBAT, node.getParent().orElseThrow().getRoom().getType());
+    public void testRewardRoomHasCombatAncestor() {
+        for (Room room : this.allRooms) {
+            if (room.getType() != RoomType.REWARD) {
+                continue;
             }
+            boolean hasCombatAncestor = false;
+            Room current = this.parentPerRoom.get(room);
+            while (current != null && current != this.startRoom) {
+                if (current.getType() == RoomType.COMBAT) {
+                    hasCombatAncestor = true;
+                    break;
+                }
+                current = this.parentPerRoom.get(current);
+            }
+            assertThat(hasCombatAncestor).as("RewardRoom at (%d,%d) has no COMBAT ancestor",
+                    this.floorMap.getPosition(room).x(), this.floorMap.getPosition(room).y()).isTrue();
         }
     }
 }

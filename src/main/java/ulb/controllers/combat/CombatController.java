@@ -15,6 +15,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
+import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.combat.strategy.CombatStrategy;
@@ -26,6 +27,7 @@ import ulb.models.combat.turn.TurnAction.ItemAction;
 import ulb.models.combat.turn.TurnAction.SwitchAction;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.HealBugemonStep;
+import ulb.models.combat.turn.TurnStep.HealTeamStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Item;
@@ -34,6 +36,7 @@ import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
 import ulb.models.skills.SkillContext;
 import ulb.services.CombatService;
+import ulb.services.SaveService;
 import ulb.services.SkillService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
@@ -49,6 +52,7 @@ public class CombatController extends Controller<CombatView>
 
     private final CombatService combatService;
     private final SkillService skillService;
+    private final SaveService saveService;
 
     private ActionCallback pendingActionCallback;
     private ActionCallback pendingSwitchCallback;
@@ -59,13 +63,14 @@ public class CombatController extends Controller<CombatView>
     private PlayerState playerState;
 
     public CombatController(MetaController metaController, CombatService combatService, SkillService skillService,
-            PlayerState playerState) {
+            SaveService saveService, PlayerState playerState) {
         super(metaController, ViewLoader.load(CombatView::new));
         this.view.setListener(this);
         this.view.setNextListener(this);
 
         this.combatService = combatService;
         this.skillService = skillService;
+        this.saveService = saveService;
         this.playerState = playerState;
     }
 
@@ -86,6 +91,9 @@ public class CombatController extends Controller<CombatView>
      */
     public void initialize(Combat newCombat) {
         this.combat = newCombat;
+        this.pendingSteps.clear();
+        this.pendingActionCallback = null;
+        this.pendingSwitchCallback = null;
 
         this.view.displayBugemons(this.combat.getActivePlayerBugemon(), this.combat.getActiveOpponentBugemon());
         this.view.refresh();
@@ -136,11 +144,11 @@ public class CombatController extends Controller<CombatView>
 
     @Override
     public void onSwitchChosen(CombatBugemon bugemon) {
-        if (this.pendingSwitchCallback != null) { // forced switch
-            ActionCallback callback = this.pendingSwitchCallback;
+        if (this.pendingSwitchCallback != null) {
+            ActionCallback cb = this.pendingSwitchCallback;
             this.pendingSwitchCallback = null;
-            callback.onActionChosen(new SwitchAction(bugemon));
-        } else { // NOT forced call back
+            cb.onActionChosen(new SwitchAction(bugemon));
+        } else {
             this.resolvePlayerAction(new SwitchAction(bugemon));
         }
     }
@@ -174,15 +182,13 @@ public class CombatController extends Controller<CombatView>
         }
     }
 
-    // ── Step Iteration and Animations ─────────────────────────────────────────
+    // ── Step Iteration ─────────────────────────────────────────
 
     private void advanceStep() {
-        // TODO: add back animation
-
         if (!this.pendingSteps.isEmpty()) {
             TurnStep step = this.pendingSteps.poll();
             LOG.debug("Advancing step: {}", step);
-            this.view.showStepDialog(step);
+            this.view.showStep(step);
             this.refreshHpForStep(step);
         } else {
             this.view.hideDialog();
@@ -195,18 +201,23 @@ public class CombatController extends Controller<CombatView>
             case TurnStep.AttackStep atk -> this.view.updateHp(atk.defender(), atk.defenderHpAfter());
             case KoStep(CombatBugemon koBugemon) -> this.view.updateHp(koBugemon, 0);
             case TurnStep.SwitchStep sw -> this.view.switchBugemon(sw);
-            case HealBugemonStep(CombatBugemon healedBugemon) ->
-                this.view.updateHp(healedBugemon, healedBugemon.getCurrentHp());
+            case HealBugemonStep(CombatBugemon healedBugemon, int hpAfterHeal) ->
+                this.view.updateHp(healedBugemon, hpAfterHeal);
+            case HealTeamStep(CombatTeam healedTeam, int activeHpAfterHeal) ->
+                this.view.updateHp(healedTeam.getActive(), activeHpAfterHeal);
             default -> {
-                /* ItemStep, HealTeamStep : pas de changement de PV individuel */ }
+                /* ItemStep */ }
         }
     }
 
     private void processEndOfTurn() {
         if (this.combat.isFinished()) {
             this.onCombatFinished();
+        } else if (this.combat.getActivePlayerBugemon().isKo()) {
+            this.combat.requestForcedSwitch(true, this::onForcedSwitchResolved);
+        } else if (this.combat.getActiveOpponentBugemon().isKo()) {
+            this.combat.requestForcedSwitch(false, this::onForcedSwitchResolved);
         } else {
-            this.view.hideDialog();
             this.startTurn();
         }
     }
@@ -216,6 +227,7 @@ public class CombatController extends Controller<CombatView>
         LOG.info("Combat ended. Victory: {}", won);
 
         CombatSummary summary = this.combatService.finalizeCombat(this.combat, this.combat.getPlayerSkillContext());
+        this.saveService.save(this.playerState);
         this.metaController.onCombatFinished(won, summary);
     }
 
@@ -228,6 +240,11 @@ public class CombatController extends Controller<CombatView>
     @Override
     public void requestSwitchChoice(CombatContext context, ActionCallback callback) {
         this.pendingSwitchCallback = callback;
-        this.view.showSwitchMenu(context.allyTeam().getAvailable(), context.allyTeam().getActive().isKo());
+        this.view.showSwitchMenu(context.allyTeam().getAvailable(), true);
+    }
+
+    private void onForcedSwitchResolved(List<TurnStep> steps) {
+        this.pendingSteps.addAll(steps);
+        this.advanceStep();
     }
 }

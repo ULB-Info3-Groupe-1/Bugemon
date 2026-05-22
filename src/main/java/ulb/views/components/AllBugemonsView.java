@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 
 import ulb.Configuration;
-import ulb.common.dto.BugemonDisplayDTO;
+import ulb.common.dto.display.BugemonDisplayDTO;
 
 /** Reusable custom component displaying all the bugemons inside of a grid. */
 public class AllBugemonsView extends ComponentView {

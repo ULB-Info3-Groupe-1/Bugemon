@@ -31,12 +31,6 @@ public record Bugemon(String name, int hp, int attack, int defense, int initiati
         attacks = List.copyOf(attacks);
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    public Bugemon(String name, int hp, int attack, int defense, int initiative, ElementType type, List<Attack> attacks,
-            String spritePath, boolean isStarter) {
-        this(name, hp, attack, defense, initiative, type, attacks, spritePath, isStarter, false);
-    }
-
     public static void checkAttacks(List<Attack> attacks) {
         if (attacks.size() != ATTACKS_COUNT) {
             throw new InvalidAttackCountException(ATTACKS_COUNT, attacks.size());

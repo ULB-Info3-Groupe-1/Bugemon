@@ -43,8 +43,8 @@ public class Main extends Application {
 
         String playerName = "default_player";
         ServiceRegistry services = bootstrapper.createServices(playerName);
-        PlayerState playerState = bootstrapper.createPlayerState(playerName, services.inventory, services.skill);
-
+        PlayerState playerState = bootstrapper.createPlayerState(playerName, services.team, services.inventory,
+                services.skill);
         MetaController metaController = new MetaController(stage, services, playerState);
         metaController.start();
 

@@ -15,7 +15,9 @@ public class CombatTeam {
             throw new IllegalArgumentException("A CombatTeam must contain at least one bugemon.");
         }
         this.members = List.copyOf(members);
-        this.setActive(members.getFirst());
+        CombatBugemon firstAlive = members.stream().filter(b -> !b.isKo()).findFirst().orElseThrow(
+                () -> new IllegalArgumentException("A CombatTeam must contain at least one alive bugemon."));
+        this.setActive(firstAlive);
     }
 
     public static CombatTeam fromRunTeam(RunTeam runTeam) {

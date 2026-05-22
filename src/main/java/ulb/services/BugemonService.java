@@ -1,9 +1,10 @@
 package ulb.services;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
+import ulb.common.dto.persistence.CreateBugemonDTO;
+import ulb.common.dto.persistence.PlayerBugemonDTO;
 import ulb.models.bugemon.Attack;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.bugemon.ElementType;
@@ -11,8 +12,6 @@ import ulb.models.player.PlayerBugemon;
 import ulb.models.team.Team;
 import ulb.repositories.BugemonRepository;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.CreateBugemonDTO;
-import ulb.repositories.dto.PlayerBugemonDTO;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
 
@@ -33,27 +32,33 @@ public class BugemonService {
         return this.staticDataRepository.bugemons();
     }
 
+    public List<Attack> getAttacks() {
+        return this.staticDataRepository.attacks();
+    }
+
     public List<Attack> getAttacks(ElementType bugemonType) {
         return this.staticDataRepository.attacks().stream().filter(attack -> attack.type() == bugemonType).toList();
     }
 
     public PlayerBugemon getPlayerBugemon(String bugemonName) {
-        return this.bugemonRepository.findByName(this.playername, bugemonName)
-                .map(dto -> PlayerBugemon.from(this.staticDataRepository.bugemons().stream()
-                        .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow(), dto))
-                .orElse(new PlayerBugemon(this.staticDataRepository.bugemons().stream()
-                        .filter(b -> b.name().equals(bugemonName)).findFirst().orElseThrow()));
+        Bugemon base = this.staticDataRepository.bugemons().stream().filter(b -> b.name().equals(bugemonName))
+                .findFirst().orElseThrow();
+        return this.bugemonRepository.findByName(this.playername, bugemonName).map(dto -> PlayerBugemon.from(base, dto))
+                .orElse(new PlayerBugemon(base));
     }
 
     public List<PlayerBugemon> getPlayerBugemons() {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playername);
-        List<PlayerBugemon> listToReturn = new ArrayList<>();
-        for (Bugemon bugemon : this.staticDataRepository.bugemons()) {
-            playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name())).findFirst().ifPresentOrElse(
-                    dto -> listToReturn.add(PlayerBugemon.from(bugemon, dto)),
-                    () -> listToReturn.add(new PlayerBugemon(bugemon)));
-        }
-        return listToReturn;
+
+        // players cannot own boss bugemons
+        return this.staticDataRepository.bugemons().stream().filter(bugemon -> !bugemon.isBoss())
+                // search for the PlayerBugemon corresponding to this Bugemon
+                .map(bugemon -> playerBugemons.stream().filter(pb -> pb.bugemonName().equals(bugemon.name()))
+                        // if one was found then take that PlayerBugemon
+                        .findFirst().map(dto -> PlayerBugemon.from(bugemon, dto))
+                        // otherwise create a new PlayerBugemon based on the bugemon
+                        .orElseGet(() -> new PlayerBugemon(bugemon)))
+                .toList();
     }
 
     public void save(Team team) {

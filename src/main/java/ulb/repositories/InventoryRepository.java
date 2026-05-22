@@ -1,6 +1,6 @@
 package ulb.repositories;
 
-import ulb.repositories.dto.InventoryDTO;
+import ulb.common.dto.persistence.InventoryDTO;
 
 public interface InventoryRepository {
 

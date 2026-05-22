@@ -37,3 +37,20 @@ VALUES (?, ?, ?);
 -- Query
 -- RemoveItemsOfPlayer
 DELETE FROM item_player WHERE playername = ?;
+
+-- Query
+-- GetAllItems
+SELECT
+  i.item_id,
+  i.name,
+  i.description,
+  i.category,
+  i.sprite,
+  ie.type AS effect_type,
+  ie.target AS effect_target,
+  ie.value AS effect_value,
+  ie.stat AS effect_stat,
+  ie.modifier AS effect_modifier,
+  ie.duration AS effect_duration
+FROM items i
+LEFT JOIN item_effects ie ON i.item_id = ie.item_id;

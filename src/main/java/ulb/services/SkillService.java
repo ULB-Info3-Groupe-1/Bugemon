@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import ulb.common.dto.persistence.SkillDTO;
 import ulb.models.skills.SkillContext;
 import ulb.models.skills.SkillTree;
 import ulb.models.skills.SkillTreeState;
 import ulb.models.skills.exceptions.IllegalNodeStateException;
 import ulb.repositories.SkillRepository;
 import ulb.repositories.StaticRepository;
-import ulb.repositories.dto.SkillDTO;
 
 public class SkillService {
 
