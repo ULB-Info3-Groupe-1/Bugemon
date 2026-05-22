@@ -5,6 +5,7 @@ import java.util.Random;
 
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
+import ulb.models.combat.CombatBuilder;
 import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.DamageCalculator;
 import ulb.models.combat.strategy.CombatStrategy;
@@ -44,7 +45,7 @@ public abstract class CombatFactory {
         CombatTeam playerCombatTeam = CombatTeam.fromRunTeam(playerRunTeam);
         CombatTeam opponentTeam = this.buildOpponentTeam(playerRunTeam.size(), availableBugemons);
 
-        return new Combat.Builder().playerTeam(playerCombatTeam).opponentTeam(opponentTeam).floor(this.floor)
+        return new CombatBuilder().playerTeam(playerCombatTeam).opponentTeam(opponentTeam).floor(this.floor)
                 .bossMode(this.bossMode).playerInventory(playerInventory)
                 .opponentInventory(this.buildOpponentInventory()).playerStrategy(this.buildPlayerStrategy())
                 .opponentStrategy(this.buildOpponentStrategy()).damageCalculator(this.damageCalculator)

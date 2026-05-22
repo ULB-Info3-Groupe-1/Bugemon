@@ -35,18 +35,15 @@ public class CombatService {
     private final DamageCalculator damageCalculator;
     private final EffectProcessor effectProcessor;
     private final Random random;
-    private final BugemonService bugemonService;
 
-    public CombatService(Random random, BugemonService bugemonService) {
-        this(new DamageCalculator(), new EffectProcessor(), random, bugemonService);
+    public CombatService(Random random) {
+        this(new DamageCalculator(), new EffectProcessor(), random);
     }
 
-    public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random,
-            BugemonService bugemonService) {
+    public CombatService(DamageCalculator damageCalculator, EffectProcessor effectProcessor, Random random) {
         this.damageCalculator = damageCalculator;
         this.effectProcessor = effectProcessor;
         this.random = random;
-        this.bugemonService = bugemonService;
     }
 
     public TeamFactory createOpponentFactory(boolean isBoss) {

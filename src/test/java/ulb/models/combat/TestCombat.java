@@ -54,7 +54,7 @@ public class TestCombat {
         this.playerTeam = BugemonFixtures.teamOf(BugemonFixtures.fastFlora());
         this.opponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
         SkillContext skillContext = this.skillContextCreationHelper();
-        this.combat = new Combat.Builder().playerTeam(this.playerTeam).opponentTeam(this.opponentTeam).floor(2)
+        this.combat = new CombatBuilder().playerTeam(this.playerTeam).opponentTeam(this.opponentTeam).floor(2)
                 .bossMode(false).playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -174,7 +174,7 @@ public class TestCombat {
                 .teamOf(BugemonFixtures.bugemon(100, 100, 40, 90, List.of(strongAtk, strongAtk, strongAtk)));
         this.playerTeam.getActive().takeDamage(99);
 
-        Combat c = new Combat.Builder().playerTeam(this.playerTeam).opponentTeam(fastOppTeam).floor(2).bossMode(false)
+        Combat c = new CombatBuilder().playerTeam(this.playerTeam).opponentTeam(fastOppTeam).floor(2).bossMode(false)
                 .playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -216,7 +216,7 @@ public class TestCombat {
         CombatTeam healTestOpponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        Combat c = new Combat.Builder().playerTeam(playerCombatTeam).opponentTeam(healTestOpponentTeam).floor(2)
+        Combat c = new CombatBuilder().playerTeam(playerCombatTeam).opponentTeam(healTestOpponentTeam).floor(2)
                 .bossMode(false).playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -240,7 +240,7 @@ public class TestCombat {
 
         int defenseBefore = debuffOpponentTeam.getActive().getEffectiveDefense();
 
-        Combat c = new Combat.Builder().playerTeam(debuffPlayerTeam).opponentTeam(debuffOpponentTeam).floor(2)
+        Combat c = new CombatBuilder().playerTeam(debuffPlayerTeam).opponentTeam(debuffOpponentTeam).floor(2)
                 .bossMode(false).playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -264,7 +264,7 @@ public class TestCombat {
 
         int initiativeBefore = buffPlayerTeam.getActive().getEffectiveInitiative();
 
-        Combat c = new Combat.Builder().playerTeam(buffPlayerTeam).opponentTeam(buffOpponentTeam).floor(2)
+        Combat c = new CombatBuilder().playerTeam(buffPlayerTeam).opponentTeam(buffOpponentTeam).floor(2)
                 .bossMode(false).playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -290,7 +290,7 @@ public class TestCombat {
         CombatTeam resetOpponentTeam = BugemonFixtures.teamOf(
                 BugemonFixtures.bugemon(500, 50, 40, 30, List.of(zeroPowerAttack, zeroPowerAttack, zeroPowerAttack)));
 
-        Combat c = new Combat.Builder().playerTeam(resetPlayerTeam).opponentTeam(resetOpponentTeam).floor(2)
+        Combat c = new CombatBuilder().playerTeam(resetPlayerTeam).opponentTeam(resetOpponentTeam).floor(2)
                 .bossMode(false).playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -321,7 +321,7 @@ public class TestCombat {
         itemPlayerTeam.getActive().takeDamage(20);
         int hpBefore = itemPlayerTeam.getActive().getCurrentHp();
 
-        Combat c = new Combat.Builder().playerTeam(itemPlayerTeam).opponentTeam(itemOpponentTeam).floor(2)
+        Combat c = new CombatBuilder().playerTeam(itemPlayerTeam).opponentTeam(itemOpponentTeam).floor(2)
                 .bossMode(false).playerInventory(playerInventory).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -344,7 +344,7 @@ public class TestCombat {
                 BugemonFixtures.bugemon(100, 50, 40, 90, List.of(availableAttack, availableAttack, availableAttack)));
         CombatTeam throwOpponentTeam = BugemonFixtures.teamOf(BugemonFixtures.slowAqua());
 
-        Combat c = new Combat.Builder().playerTeam(throwPlayerTeam).opponentTeam(throwOpponentTeam).floor(2)
+        Combat c = new CombatBuilder().playerTeam(throwPlayerTeam).opponentTeam(throwOpponentTeam).floor(2)
                 .bossMode(false).playerInventory(new Inventory()).opponentInventory(new Inventory())
                 .playerStrategy(new AutoStrategy(this.seededRandom))
                 .opponentStrategy(new AutoStrategy(this.seededRandom)).damageCalculator(new DamageCalculator())
@@ -361,7 +361,7 @@ public class TestCombat {
 
     @Test
     public void testSkillsStatBonusInCombat() {
-        assertEquals(this.combat.getPlayerTeam().getActive().getCurrentHp(), 110); // Base 100 + 10 from skill
-        assertEquals(this.combat.getPlayerTeam().getActive().getEffectiveAttack(), 53); // Base 50 + 3 from skill
+        assertEquals(110, this.combat.getPlayerTeam().getActive().getCurrentHp()); // Base 100 + 10 from skill
+        assertEquals(53, this.combat.getPlayerTeam().getActive().getEffectiveAttack()); // Base 50 + 3 from skill
     }
 }

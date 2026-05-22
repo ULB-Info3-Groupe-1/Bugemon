@@ -19,7 +19,6 @@ public class RewardController extends Controller<RewardView> implements RewardVi
 
     private final RewardService rewardService;
 
-    private List<Reward> rewards;
     private RunTeam runTeam;
     private Inventory inventory;
 
@@ -33,12 +32,11 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     }
 
     public void initialize(List<Reward> newRewards, RunTeam newRunTeam, Inventory newInventory) {
-        this.rewards = newRewards;
         this.runTeam = newRunTeam;
         this.inventory = newInventory;
         this.selectedReward = null;
         this.selectedBugemon = null;
-        this.view.displayRewardOptions(this.rewards);
+        this.view.displayRewardOptions(newRewards);
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,111 +58,22 @@ public class Combat {
     private CombatResult result;
     private boolean finished;
 
-    public static class Builder {
-        // TODO/ move to a separate file.
-        private CombatTeam playerTeam;
-        private CombatTeam opponentTeam;
-        private int floor;
-        private boolean bossMode;
-        private Inventory playerInventory;
-        private Inventory opponentInventory;
-        private CombatStrategy playerStrategy;
-        private CombatStrategy opponentStrategy;
-        private DamageCalculator damageCalculator;
-        private EffectProcessor effectProcessor;
-        private SkillContext playerSkillContext;
+    public Combat(CombatBuilder builder) {
+        this.playerTeam = builder.getPlayerTeam();
+        this.opponentTeam = builder.getOpponentTeam();
 
-        public Builder playerTeam(CombatTeam team) {
-            this.playerTeam = team;
-            return this;
-        }
+        this.floor = builder.getFloor();
+        this.bossMode = builder.isBossMode();
 
-        public Builder opponentTeam(CombatTeam team) {
-            this.opponentTeam = team;
-            return this;
-        }
+        this.playerInventory = builder.getPlayerInventory();
+        this.opponentInventory = builder.getOpponentInventory();
 
-        public Builder floor(int currentFloor) {
-            this.floor = currentFloor;
-            return this;
-        }
+        this.playerStrategy = builder.getPlayerStrategy();
+        this.opponentStrategy = builder.getOpponentStrategy();
 
-        public Builder bossMode(boolean mode) {
-            this.bossMode = mode;
-            return this;
-        }
-
-        public Builder playerInventory(Inventory inventory) {
-            this.playerInventory = inventory;
-            return this;
-        }
-
-        public Builder opponentInventory(Inventory inventory) {
-            this.opponentInventory = inventory;
-            return this;
-        }
-
-        public Builder playerStrategy(CombatStrategy strategy) {
-            this.playerStrategy = strategy;
-            return this;
-        }
-
-        public Builder opponentStrategy(CombatStrategy strategy) {
-            this.opponentStrategy = strategy;
-            return this;
-        }
-
-        public Builder damageCalculator(DamageCalculator calculator) {
-            this.damageCalculator = calculator;
-            return this;
-        }
-
-        public Builder effectProcessor(EffectProcessor processor) {
-            this.effectProcessor = processor;
-            return this;
-        }
-
-        public Builder playerSkillContext(SkillContext skillContext) {
-            this.playerSkillContext = skillContext;
-            return this;
-        }
-
-        public Combat build() {
-            Objects.requireNonNull(this.playerTeam, "Player team cannot be null");
-            Objects.requireNonNull(this.opponentTeam, "Opponent team cannot be null");
-            Objects.requireNonNull(this.playerInventory, "Player inventory cannot be null");
-            Objects.requireNonNull(this.opponentInventory, "Opponent inventory cannot be null");
-            Objects.requireNonNull(this.playerStrategy, "Player strategy cannot be null");
-            Objects.requireNonNull(this.opponentStrategy, "Opponent strategy cannot be null");
-            Objects.requireNonNull(this.damageCalculator, "Damage calculator cannot be null");
-            Objects.requireNonNull(this.effectProcessor, "Effect processor cannot be null");
-            Objects.requireNonNull(this.floor, "Floor cannot be null"); // TODO: false if we don't play Tower ?
-            Objects.requireNonNull(this.bossMode, "Boss mode cannot be null");
-
-            if (this.playerSkillContext == null) {
-                this.playerSkillContext = SkillContext.NONE;
-            }
-
-            return new Combat(this);
-        }
-    }
-
-    private Combat(Builder builder) {
-        this.playerTeam = builder.playerTeam;
-        this.opponentTeam = builder.opponentTeam;
-
-        this.floor = builder.floor;
-        this.bossMode = builder.bossMode;
-
-        this.playerInventory = builder.playerInventory;
-        this.opponentInventory = builder.opponentInventory;
-
-        this.playerStrategy = builder.playerStrategy;
-        this.opponentStrategy = builder.opponentStrategy;
-
-        this.damageCalculator = builder.damageCalculator;
-        this.effectProcessor = builder.effectProcessor;
-        this.playerSkillContext = builder.playerSkillContext;
+        this.damageCalculator = builder.getDamageCalculator();
+        this.effectProcessor = builder.getEffectProcessor();
+        this.playerSkillContext = builder.getPlayerSkillContext();
 
         this.applyStatSkills(this.playerSkillContext);
 
