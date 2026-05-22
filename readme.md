@@ -67,6 +67,14 @@ git shortlog -se --all
 
 ## Lancer le projet
 
+Si vous utilisez la base de donnée via **Docker**, vous devez d'abord lancer le container :
+
+```bash
+docker compose up -d
+```
+
+Vous pouvez ensuite lancer le jeu avec la commande suivante :
+
 ```bash
 mvn clean javafx:run
 ```
