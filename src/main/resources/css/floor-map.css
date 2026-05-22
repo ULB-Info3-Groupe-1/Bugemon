@@ -1,4 +1,3 @@
-/* --- Local color tokens --- */
 .floor-container {
   color-room-start: #3498db;
   color-room-reward: #f39c12;
@@ -10,7 +9,6 @@
   color-instructions: #bdc3c7;
 }
 
-/* --- Layout --- */
 .floor-number-label {
   -fx-font-size: 28px;
   -fx-font-weight: bold;
@@ -25,7 +23,6 @@
   -fx-background-color: transparent;
 }
 
-/* --- ROOM NODE - base --- */
 .room-node {
   -fx-cursor: default;
 }
@@ -45,7 +42,6 @@
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 6, 0.2, 0, 1);
 }
 
-/* --- ROOM TYPES - border color & icon glow --- */
 .room-node.room-start .room-background {
   -fx-stroke: color-room-start;
 }
@@ -83,9 +79,6 @@
   -fx-stroke: color-litho;
 }
 
-/* --- ROOM STATES - visual feedback --- */
-
-/* Current room: highlighted */
 .room-node.current .room-background {
   -fx-fill: color-visited-fill;
   -fx-stroke: color-current-highlight;
@@ -97,7 +90,6 @@
   -fx-scale-y: 1.05;
 }
 
-/* Available room: interactive */
 .room-node.available {
   -fx-cursor: hand;
 }
@@ -107,12 +99,10 @@
   -fx-stroke-width: 5;
 }
 
-/* Visited room: grayed out */
 .room-node.visited .room-background {
   -fx-fill: color-visited-fill;
 }
 
-/* Visited + available: was here, can return */
 .room-node.visited_available {
   -fx-cursor: hand;
 }
@@ -127,7 +117,6 @@
   -fx-cursor: not-allowed;
 }
 
-/* --- STATE OVERLAY & LABELS --- */
 .room-overlay {
   -fx-background-color: transparent;
 }
@@ -139,7 +128,6 @@
   -fx-effect: dropshadow(gaussian, black, 5, 0.8, 0, 0);
 }
 
-/* --- CONNECTIONS (lines between rooms) ---- */
 .room-connection {
   -fx-stroke: color-connection;
   -fx-stroke-width: 3;

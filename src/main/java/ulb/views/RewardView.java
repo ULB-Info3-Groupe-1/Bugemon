@@ -47,10 +47,8 @@ public class RewardView extends View {
     public void displayRewardOptions(List<Reward> options) {
         this.rewardCardsBox.getChildren().clear();
         this.feedbackLabel.setText("");
-        String[] colors = {"#7a5c00", "#1a4a7a", "#2d6a4f"};
-        for (int i = 0; i < options.size(); i++) {
-            VBox card = this.createRewardCard(options.get(i), colors[i % colors.length]);
-            this.rewardCardsBox.getChildren().add(card);
+        for (Reward option : options) {
+            this.rewardCardsBox.getChildren().add(this.createRewardCard(option));
         }
         this.setPanel(Panel.REWARD);
     }
@@ -65,10 +63,8 @@ public class RewardView extends View {
         for (int i = 0; i < members.size(); i++) {
             final int index = i;
             Button btn = new Button(this.formatBugemonLabel(members.get(i)));
-            btn.setPrefWidth(400);
             btn.setAlignment(Pos.CENTER_LEFT);
-            btn.setStyle("-fx-background-color: #2a3a5a; -fx-text-fill: white; "
-                    + "-fx-font-size: 13; -fx-background-radius: 8; -fx-padding: 10 16;");
+            btn.getStyleClass().addAll("btn", "btn-action-blue", "reward-bugemon-btn");
             btn.setOnAction(e -> {
                 if (this.listener != null) {
                     this.listener.onBugemonSelected(index);
@@ -86,10 +82,8 @@ public class RewardView extends View {
         this.attackButtonsBox.getChildren().clear();
         for (Attack attack : currentAttacks) {
             Button btn = new Button(attack.name() + "\n(" + attack.type() + ", Puissance : " + attack.power() + ")");
-            btn.setPrefSize(150, 70);
             btn.setWrapText(true);
-            btn.setStyle("-fx-background-color: #5a3a7a; -fx-text-fill: white; "
-                    + "-fx-font-size: 11; -fx-background-radius: 8;");
+            btn.getStyleClass().addAll("btn", "attack-" + attack.type().name(), "reward-attack-btn");
             btn.setOnAction(e -> {
                 if (this.listener != null) {
                     this.listener.onAttackChosen(attack);
@@ -126,27 +120,25 @@ public class RewardView extends View {
         this.selectionPanel.setManaged(panel == Panel.SELECTION);
     }
 
-    private VBox createRewardCard(Reward reward, String bgColor) {
+    private VBox createRewardCard(Reward reward) {
         VBox card = new VBox(10);
         card.setAlignment(Pos.CENTER);
-        card.setPrefSize(200, 220);
-        card.setStyle("-fx-background-color: " + bgColor + "; -fx-background-radius: 10; -fx-padding: 14;");
+        card.getStyleClass().addAll("reward-card", this.rewardCardClass(reward));
 
         Label typeLabel = new Label(this.formatRewardType(reward));
-        typeLabel.setStyle("-fx-text-fill: #ffd700; -fx-font-size: 11; -fx-font-weight: bold;");
+        typeLabel.getStyleClass().add("reward-card-type-label");
         typeLabel.setWrapText(true);
 
         Label nameLabel = new Label(this.formatRewardName(reward));
-        nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;");
+        nameLabel.getStyleClass().add("reward-card-name");
         nameLabel.setWrapText(true);
 
         Label descLabel = new Label(this.formatRewardDescription(reward));
-        descLabel.setStyle("-fx-text-fill: #ccc; -fx-font-size: 11;");
+        descLabel.getStyleClass().add("reward-card-desc");
         descLabel.setWrapText(true);
 
         Button btn = new Button("Choisir");
-        btn.setStyle("-fx-background-color: #ffd700; -fx-text-fill: #1a1a2e; "
-                + "-fx-font-weight: bold; -fx-background-radius: 6;");
+        btn.getStyleClass().add("reward-card-btn");
         btn.setOnAction(e -> {
             if (this.listener != null) {
                 this.listener.onRewardChosen(reward);
@@ -155,6 +147,16 @@ public class RewardView extends View {
 
         card.getChildren().addAll(typeLabel, nameLabel, descLabel, btn);
         return card;
+    }
+
+    private String rewardCardClass(Reward reward) {
+        if (reward instanceof ItemReward) {
+            return "reward-card-item";
+        }
+        if (reward instanceof AttackReward) {
+            return "reward-card-attack";
+        }
+        return "reward-card-bonus";
     }
 
     private String formatRewardType(Reward reward) {
@@ -167,7 +169,7 @@ public class RewardView extends View {
         if (reward instanceof BonusStatsReward) {
             return "BONUS STATS";
         }
-        return "RÉCOMPENSE";
+        return "RECOMPENSE";
     }
 
     private String formatRewardName(Reward reward) {
@@ -187,7 +189,7 @@ public class RewardView extends View {
                 sb.append("+").append(b.getBonusAttack()).append(" Atk ");
             }
             if (b.getBonusDefense() != 0) {
-                sb.append("+").append(b.getBonusDefense()).append(" Déf ");
+                sb.append("+").append(b.getBonusDefense()).append(" Def ");
             }
             if (b.getBonusInitiative() != 0) {
                 sb.append("+").append(b.getBonusInitiative()).append(" Init");
@@ -217,7 +219,6 @@ public class RewardView extends View {
 
     @Override
     public void refresh() {
-        // state is managed via displayRewardOptions / displayTeamForSelection / showAttackReplacement
     }
 
     private enum Panel {

@@ -1,0 +1,160 @@
+.btn {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 14 22;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
+
+.btn-primary {
+    -fx-background-color: color-primary;
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+    -fx-background-color: color-primary-hover;
+}
+
+.btn-success {
+    -fx-background-color: color-success;
+}
+
+.btn-success:hover,
+.btn-success:active {
+    -fx-background-color: color-success-hover;
+}
+
+.btn-success:disabled {
+    -fx-background-color: #a0c8b0;
+    -fx-text-fill: #e0e0e0;
+}
+
+.btn-danger {
+    -fx-background-color: color-danger;
+}
+
+.btn-danger:hover,
+.btn-danger:active {
+    -fx-background-color: color-danger-hover;
+}
+
+.btn-danger:disabled {
+    -fx-background-color: #d9a19c;
+    -fx-text-fill: #f3e6e4;
+}
+
+.btn-warning {
+    -fx-background-color: color-warning;
+}
+
+.btn-warning:hover,
+.btn-warning:active {
+    -fx-background-color: color-warning-hover;
+}
+
+.btn-secondary {
+    -fx-background-color: color-secondary;
+}
+
+.btn-secondary:hover,
+.btn-secondary:active {
+    -fx-background-color: color-secondary-hover;
+}
+
+.btn-action-blue {
+    -fx-background-color: color-action-blue;
+}
+
+.btn-action-blue:hover,
+.btn-action-blue:active {
+    -fx-background-color: color-action-blue-hover;
+}
+
+.btn-nav {
+    -fx-min-width: size-btn-nav;
+    -fx-max-width: size-btn-nav;
+}
+
+.btn-team {
+    -fx-min-width: size-btn-team;
+    -fx-max-width: size-btn-team;
+}
+
+.btn-choice {
+    -fx-min-width: size-btn-choice;
+    -fx-max-width: size-btn-choice;
+}
+
+.btn-create-bugemon {
+    -fx-min-width: size-btn-create-bugemon;
+    -fx-max-width: size-btn-create-bugemon;
+}
+
+.attack-FLORA,
+.attack-AQUA,
+.attack-PYRO,
+.attack-LITHO {
+    -fx-border-width: 0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 14 22;
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+}
+
+.attack-FLORA {
+    -fx-background-color: color-flora;
+}
+
+.attack-FLORA:hover,
+.attack-FLORA:active {
+    -fx-background-color: color-flora-hover;
+}
+
+.attack-PYRO {
+    -fx-background-color: color-pyro;
+}
+
+.attack-PYRO:hover,
+.attack-PYRO:active {
+    -fx-background-color: color-pyro-hover;
+}
+
+.attack-AQUA {
+    -fx-background-color: color-aqua;
+}
+
+.attack-AQUA:hover,
+.attack-AQUA:active {
+    -fx-background-color: color-aqua-hover;
+}
+
+.attack-LITHO {
+    -fx-background-color: color-litho;
+}
+
+.attack-LITHO:hover,
+.attack-LITHO:active {
+    -fx-background-color: color-litho-hover;
+}
+
+.attack-FLORA:selected,
+.attack-AQUA:selected,
+.attack-PYRO:selected,
+.attack-LITHO:selected {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 8, 0, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-border-width: 0;
+}
+
+.type-selected {
+    -fx-border-color: white;
+    -fx-border-width: 3;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.6), 8, 0.1, 0, 0);
+}

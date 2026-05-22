@@ -32,7 +32,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?);
 -- Query
 -- SaveItemForPlayer
 INSERT INTO item_player (playername, item_id, amount)
-VALUES (?, ?, ?);
+VALUES (?, ?, ?)
+ON CONFLICT (playername, item_id) DO UPDATE SET amount = item_player.amount + EXCLUDED.amount;
 
 -- Query
 -- RemoveItemsOfPlayer

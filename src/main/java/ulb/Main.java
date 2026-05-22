@@ -35,7 +35,12 @@ public class Main extends Application {
 
         Scene scene = new Scene(new StackPane());
         scene.getStylesheets().add(Main.class.getResource("/css/tokens.css").toExternalForm());
-        scene.getStylesheets().add(Main.class.getResource("/css/app.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/base.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/buttons.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/bugemon.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/combat.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/menus.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("/css/reward.css").toExternalForm());
         stage.setScene(scene);
 
         GameBootstrapper bootstrapper = new GameBootstrapper();
