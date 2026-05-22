@@ -15,6 +15,7 @@ import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.Combat;
 import ulb.models.combat.CombatBugemon;
 import ulb.models.combat.CombatResult;
+import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.combat.strategy.CombatStrategy;
@@ -26,6 +27,7 @@ import ulb.models.combat.turn.TurnAction.ItemAction;
 import ulb.models.combat.turn.TurnAction.SwitchAction;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.HealBugemonStep;
+import ulb.models.combat.turn.TurnStep.HealTeamStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.utils.CombatContext;
 import ulb.models.item.Item;
@@ -198,8 +200,11 @@ public class CombatController extends Controller<CombatView>
             case TurnStep.SwitchStep sw -> this.view.switchBugemon(sw);
             case HealBugemonStep(CombatBugemon healedBugemon) ->
                 this.view.updateHp(healedBugemon, healedBugemon.getCurrentHp());
-            default -> {
-                /* ItemStep, HealTeamStep : pas de changement de PV individuel */ }
+            case HealTeamStep(CombatTeam healedTeam) -> {
+                CombatBugemon active = healedTeam.getActive();
+                this.view.updateHp(active, active.getCurrentHp());
+            }
+            default -> { /* ItemStep */ }
         }
     }
 
