@@ -41,11 +41,11 @@ public class BugemonInfoView extends ComponentView {
         this.bugemonLevel.setText("Lv." + bugemon.getLevel());
         this.bugemonHPBar.setProgress((double) bugemon.getCurrentHp() / bugemon.getMaxHp());
         this.bugemonXpBar.setProgress(bugemon.getXpProgress());
-        this.bugemonHpLabel.setText(bugemon.getCurrentHp() + " / " + bugemon.getMaxHp() + " HP");
+        this.bugemonHpLabel.setText(bugemon.getCurrentHp() + " / " + bugemon.getMaxHp() + " PV");
     }
 
     public void setHp(int currentHp, int maxHp) {
         this.bugemonHPBar.setProgress((double) currentHp / maxHp);
-        this.bugemonHpLabel.setText(currentHp + " / " + maxHp + " HP");
+        this.bugemonHpLabel.setText(currentHp + " / " + maxHp + " PV");
     }
 }

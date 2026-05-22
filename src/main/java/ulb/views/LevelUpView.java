@@ -46,7 +46,7 @@ public class LevelUpView extends View {
     }
 
     private String formatBonus(BonusStats b) {
-        return String.format("+%d HP, +%d Attack, +%d Defense, +%d Initiative", b.getBonusHp(), b.getBonusAttack(),
+        return String.format("+%d PV, +%d Attack, +%d Defense, +%d Initiative", b.getBonusHp(), b.getBonusAttack(),
                 b.getBonusDefense(), b.getBonusInitiative());
     }
 

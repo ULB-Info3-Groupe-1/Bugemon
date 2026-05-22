@@ -109,7 +109,7 @@ public class RewardView extends View {
     }
 
     private String formatBugemonLabel(RunBugemonDisplayDTO bugemon) {
-        return bugemon.name() + "  Nv." + bugemon.level() + "  HP:" + bugemon.currentHp() + "/" + bugemon.maxHp()
+        return bugemon.name() + "  Nv." + bugemon.level() + "  PV:" + bugemon.currentHp() + "/" + bugemon.maxHp()
                 + "  [" + bugemon.type() + "]";
     }
 
@@ -183,7 +183,7 @@ public class RewardView extends View {
             var b = r.getBonus();
             StringBuilder sb = new StringBuilder();
             if (b.getBonusHp() != 0) {
-                sb.append("+").append(b.getBonusHp()).append(" HP ");
+                sb.append("+").append(b.getBonusHp()).append(" PV ");
             }
             if (b.getBonusAttack() != 0) {
                 sb.append("+").append(b.getBonusAttack()).append(" Atk ");
