@@ -3,6 +3,7 @@ package ulb.models.run;
 import java.util.Collections;
 import java.util.List;
 
+import ulb.models.bugemon.Attack;
 import ulb.models.team.Team;
 
 /**
@@ -47,5 +48,17 @@ public class RunTeam {
      */
     public int getSlotOfMember(RunBugemon runBugemon) {
         return this.members.indexOf(runBugemon);
+    }
+
+    /**
+     * Returns members that can learn the given attack.
+     *
+     * @param attack
+     *            the attack to check eligibility for
+     * @return an unmodifiable list of {@link RunBugemon} members for which {@link RunBugemon#canLearn} returns
+     *         {@code true}
+     */
+    public List<RunBugemon> getEligibleFor(Attack attack) {
+        return this.members.stream().filter(b -> b.canLearn(attack)).toList();
     }
 }
