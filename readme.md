@@ -44,18 +44,18 @@ Avant de lancer le projet, assurez-vous d'avoir installé les outils suivants su
 
 ## Auteurs
 
-| Prénom   | Nom               | Matricule |
-|----------|-------------------|-----------|
-| Yasmina  | Bou Khaled        | 000587781 |
-| Philippe | Brisbois          | 000575939 |
-| Romain   | Dejean            | 000587614 |
-| Martin   | Gouverneur        | 000586541 |
-| Romain   | Liefferinckx      | 000591790 |
-| Matteo   | Morbée            | 000549684 |
-| Manuel   | Rocca             | 000596086 |
-| Rares    | Radu Loghin       | 000590079 |
-| Ethan    | Van Ruyskensvelde | 000589640 |
-| Lucas    | Verbeiren         | 000591223 |
+| Prénom   | Nom               |
+|----------|-------------------|
+| Yasmina  | Bou Khaled        |
+| Philippe | Brisbois          |
+| Romain   | Dejean            |
+| Martin   | Gouverneur        |
+| Romain   | Liefferinckx      |
+| Matteo   | Morbée            |
+| Manuel   | Rocca             |
+| Rares    | Radu Loghin       |
+| Ethan    | Van Ruyskensvelde |
+| Lucas    | Verbeiren         |
 
 ## Liste du nombre de commits de chaque membre
 

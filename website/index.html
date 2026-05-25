@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bugemon</title>
+  <link rel="icon" href="data/png/finalboss.png" type="image/png">
+  <link rel="shortcut icon" href="data/png/finalboss.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">Bugemon</div>
+      <nav>
+        <a href="index.html">Accueil</a>
+        <a href="game.html">Le Jeu</a>
+        <a href="attaques.html">Attaques</a>
+        <a href="items.html">Objets</a>
+        <a href="skilltree.html">Arbre</a>
+        <a href="about.html">À propos</a>
+        <a href="team.html">Équipe</a>
+        <a href="download.html">Téléchargements</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Bugemon — RPG stratégique</h1>
+      <p>Un projet étudiant développé pour le cours INFOF-307. Découvrez les Bugémons, leurs attaques, objets et l'arbre de compétences.</p>
+      <div class="cta">
+        <a class="btn" href="game.html">Découvrir le jeu</a>
+        <a class="btn ghost" href="#directory">Parcourir les Bugémons</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="container features">
+    <h2>Fonctionnalités principales</h2>
+    <ul>
+      <li>Combats au tour par tour</li>
+      <li>Gestion d'équipe et inventaire</li>
+      <li>Arbre de compétences</li>
+      <li>Sauvegarde avec base de données</li>
+    </ul>
+  </section>
+
+  <section id="directory" class="container">
+    <h2>Annuaire des Bugémons</h2>
+    <div class="controls">
+      <input id="search" placeholder="Chercher un Bugémon par nom..." />
+      <select id="filterType"><option value="">Tous types</option></select>
+    </div>
+    <div id="bugemon-grid" class="grid"></div>
+  </section>
+
+  <section id="gallery" class="container">
+    <h2>Galerie de sprites</h2>
+    <div id="sprite-gallery" class="gallery"></div>
+  </section>
+
+  <section id="download" class="container">
+    <h2>Téléchargements & Build</h2>
+    <p>Pour générer le JAR du jeu : <code>mvn package</code>. Le JAR sera placé dans <code>target/</code> s'il est construit.</p>
+    <a class="btn" href="https://github.com/ULB-Info3-Groupe-1/Bugemon/releases/download/v0.4/infof307-1.0-SNAPSHOT.jar" target="_blank">Télécharger le JAR</a>
+  </section>
+
+  <footer class="container footer">
+    <p>&copy; 2026 — Projet INFOF-307 — Voir le <a href="https://github.com/ULB-Info3-Groupe-1/Bugemon/blob/main/readme.md">README</a></p>
+  </footer>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

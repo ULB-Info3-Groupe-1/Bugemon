@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Le Jeu — Bugemon</title>
+  <link rel="icon" href="data/png/finalboss.png" type="image/png">
+  <link rel="shortcut icon" href="data/png/finalboss.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header><div class="container"><div class="logo">Bugemon</div><nav><a href="index.html">Accueil</a><a href="about.html">À propos</a><a href="attaques.html">Attaques</a><a href="items.html">Objets</a><a href="skilltree.html">Arbre</a><a href="team.html">Équipe</a></nav></div></header>
+  <main class="container">
+    <h1>Comment jouer</h1>
+    <p>Le jeu se lance avec JavaFX. Pour démarrer l'application localement :</p>
+    <pre>docker compose up -d   # démarre la base Postgres
+mvn clean javafx:run   # lance le jeu</pre>
+    <h2>Contrôles & Principes</h2>
+    <p>Le jeu est en JavaFX — utilisez l'interface graphique pour naviguer entre les menus, gérer l'équipe, et entrer en combat.</p>
+    <h2>Données du jeu</h2>
+    <p>Les listes d'attaques, objets et Bugémons utilisés par le jeu sont exposées dans <code>src/main/resources/json/</code> et sont intégrées dans ce site pour exploration.</p>
+  </main>
+  <footer class="container footer">&copy; 2026 — Projet INFOF-307</footer>
+</body>
+</html>
