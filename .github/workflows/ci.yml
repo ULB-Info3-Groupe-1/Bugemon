@@ -80,28 +80,3 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/
           retention-days: 7
-
-  package:
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-          
-      - name: Build JAR package
-        run: mvn clean package -DskipTests
-        
-      - name: Upload JAR package
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-jar
-          path: target/*.jar
-          retention-days: 7
