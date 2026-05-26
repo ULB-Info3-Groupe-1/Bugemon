@@ -1,6 +1,6 @@
 -- Query to create a player
 -- CreatePlayer
-INSERT INTO players (playername) VALUES (?);
+INSERT INTO players (playername, password_hash) VALUES (?, ?);
 -- Query
 -- GetPlayerByPlayername
 SELECT id FROM players WHERE playername = ?;
@@ -89,3 +89,7 @@ DELETE FROM skills_players WHERE playername = ? AND skill_id = ?;
 UPDATE players
 SET current_tower_floor = DEFAULT
 WHERE playername = ?;
+
+-- Query
+-- GetPlayerPasswordHash
+SELECT password_hash FROM players WHERE playername = ?;

@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS "bugemons" (
 
 CREATE TABLE IF NOT EXISTS "players" (
   "playername" varchar PRIMARY KEY,
+  "password_hash" varchar,
   "current_team" varchar,
   "current_tower_floor" integer DEFAULT 2,
   "skill_points" integer
