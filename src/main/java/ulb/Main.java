@@ -10,10 +10,7 @@ import javafx.stage.Stage;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import ulb.bootstrap.GameBootstrapper;
-import ulb.bootstrap.ServiceRegistry;
 import ulb.controllers.MetaController;
-import ulb.models.player.PlayerState;
 
 /**
  * JavaFX entry point that bootstraps the Bugemon game.
@@ -88,14 +85,7 @@ public class Main extends Application {
         }
         stage.setScene(scene);
 
-        GameBootstrapper bootstrapper = new GameBootstrapper();
-        bootstrapper.initializeDatabase();
-
-        String playerName = "default_player";
-        ServiceRegistry services = bootstrapper.createServices(playerName);
-        PlayerState playerState = bootstrapper.createPlayerState(playerName, services.team, services.inventory,
-                services.skill);
-        MetaController metaController = new MetaController(stage, services, playerState);
+        MetaController metaController = new MetaController(stage);
         metaController.start();
 
     }

@@ -1,6 +1,7 @@
 package ulb.repositories;
 
 import ulb.common.dto.persistence.DefaultInventoryDTO;
+import ulb.repositories.exceptions.IdentifierNotFoundException;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
 /**
@@ -17,12 +18,15 @@ public interface PlayerRepository {
      *
      * @param playerName
      *            the desired unique player name
+     * @param password
+     *            the player's password
      * @param defaultInventory
      *            the starting item set to grant on creation
      * @throws PlayernameAlreadyExistsException
      *             if a player with that name already exists
      */
-    void createPlayer(String playerName, DefaultInventoryDTO defaultInventory) throws PlayernameAlreadyExistsException;
+    void createPlayer(String playerName, String password, DefaultInventoryDTO defaultInventory)
+            throws PlayernameAlreadyExistsException;
 
     /**
      * Returns {@code true} if a player record with the given name exists.
@@ -31,6 +35,17 @@ public interface PlayerRepository {
      *            the player's unique name
      */
     boolean playerExists(String playerName);
+
+    /**
+     * Verifies that the given password matches the stored credentials for the player with the given name.
+     *
+     * @param playerName
+     *            the player's unique name
+     * @param password
+     *            the plaintext password to verify
+     * @return {@code true} if the password matches, {@code false} otherwise
+     */
+    boolean verifyPlayerPassword(String playerName, String password) throws IdentifierNotFoundException;
 
     /**
      * Returns the index of the tower floor the player is currently on.

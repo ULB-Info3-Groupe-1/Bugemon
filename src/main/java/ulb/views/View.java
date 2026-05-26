@@ -43,6 +43,10 @@ public abstract class View {
         this.createAlert(title, message, AlertType.INFORMATION).showAndWait();
     }
 
+    protected void showErrorAlert(String title, String message) {
+        this.createAlert(title, message, AlertType.ERROR).showAndWait();
+    }
+
     /**
      * Displays a warning dialog with the given title and message. It has two buttons. If the user clicks on the first
      * button, the first button text is returned, otherwise the second button text is returned.
