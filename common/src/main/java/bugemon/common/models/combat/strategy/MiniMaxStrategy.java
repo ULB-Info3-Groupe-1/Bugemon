@@ -19,9 +19,9 @@ import bugemon.common.models.item.Inventory;
  *
  * <p>
  * On each decision point the strategy freezes the current combat state into a
- * {@link bugemon.common.models.combat.snapshot.CombatSnapshot} and delegates to {@link MiniMax#chooseBestAction} with the
- * configured search depth ({@link bugemon.common.Configuration.Game#MIN_MAX_MAXIMAL_DEPTH}). If the minimax result is a switch but
- * the switch is unavailable, the strategy falls back to the first available Bugemon.
+ * {@link bugemon.common.models.combat.snapshot.CombatSnapshot} and delegates to {@link MiniMax#chooseBestAction} with
+ * the configured search depth ({@link bugemon.common.Configuration.Game#MIN_MAX_MAXIMAL_DEPTH}). If the minimax result
+ * is a switch but the switch is unavailable, the strategy falls back to the first available Bugemon.
  */
 public class MiniMaxStrategy implements CombatStrategy {
 

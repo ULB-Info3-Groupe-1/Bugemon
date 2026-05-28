@@ -3,20 +3,20 @@ package bugemon.client.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bugemon.client.views.SkillTreeView;
+import bugemon.client.views.ViewLoader;
 import bugemon.common.models.player.PlayerState;
 import bugemon.common.models.skills.SkillNode;
 import bugemon.common.models.skills.SkillTreeState;
 import bugemon.common.models.skills.exceptions.IllegalNodeStateException;
 import bugemon.server.services.SkillService;
-import bugemon.client.views.SkillTreeView;
-import bugemon.client.views.ViewLoader;
 
 /**
  * Controller for the skill-tree screen.
  *
  * <p>
- * Left-clicking a {@link bugemon.common.models.skills.SkillNode} spends a skill point to increase its level; right-clicking
- * refunds the point. Changes are persisted immediately after each interaction.
+ * Left-clicking a {@link bugemon.common.models.skills.SkillNode} spends a skill point to increase its level;
+ * right-clicking refunds the point. Changes are persisted immediately after each interaction.
  */
 public class SkillTreeController extends Controller<SkillTreeView> implements SkillTreeView.Listener {
 

@@ -9,15 +9,16 @@ import javafx.stage.Stage;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import bugemon.common.Configuration;
 import bugemon.client.controllers.MetaController;
+import bugemon.common.Configuration;
 
 /**
  * JavaFX entry point that bootstraps the Bugemon game.
  *
  * <p>
  * Installs the SLF4J bridge over {@code java.util.logging}, loads CSS stylesheets and the pixel-art font, then wires
- * the database, services, player state and {@link bugemon.client.controllers.MetaController} before handing control to JavaFX.
+ * the database, services, player state and {@link bugemon.client.controllers.MetaController} before handing control to
+ * JavaFX.
  */
 public class Main extends Application {
 

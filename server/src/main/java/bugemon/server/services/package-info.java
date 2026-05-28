@@ -9,7 +9,8 @@
  * <li>{@link bugemon.server.services.InventoryService} — player inventory loading, saving, and starter bonuses</li>
  * <li>{@link bugemon.server.services.LevelUpService} — level-up option generation and stat application</li>
  * <li>{@link bugemon.server.services.SkillService} — skill-tree state persistence and context building</li>
- * <li>{@link bugemon.server.services.TowerService} — tower run lifecycle (create, load, save, delete) and floor display</li>
+ * <li>{@link bugemon.server.services.TowerService} — tower run lifecycle (create, load, save, delete) and floor
+ * display</li>
  * <li>{@link bugemon.client.services.MusicService} — background music and sound-effect playback</li>
  * <li>{@link bugemon.server.services.SaveService} — facade for full save and new-game reset</li>
  * <li>{@link bugemon.server.services.CombatService} — stateless damage formulas and type-effectiveness</li>

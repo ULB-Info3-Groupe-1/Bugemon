@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bugemon.client.views.FloorView;
+import bugemon.client.views.ViewLoader;
 import bugemon.common.Configuration;
 import bugemon.common.RoomType;
 import bugemon.common.models.player.PlayerState;
@@ -20,8 +22,6 @@ import bugemon.server.services.SaveService;
 import bugemon.server.services.SkillService;
 import bugemon.server.services.TeamService;
 import bugemon.server.services.TowerService;
-import bugemon.client.views.FloorView;
-import bugemon.client.views.ViewLoader;
 
 /**
  * Controller for the tower-run floor-navigation screen.

@@ -247,7 +247,9 @@ public final class CombatBuilder {
         return this.effectProcessor;
     }
 
-    /** Returns the configured player skill context, or {@link SkillContext#NONE} if not set. */
+    /**
+     * Returns the configured player skill context, or {@link SkillContext#NONE} if not set.
+     */
     public SkillContext getPlayerSkillContext() {
         return this.playerSkillContext;
     }

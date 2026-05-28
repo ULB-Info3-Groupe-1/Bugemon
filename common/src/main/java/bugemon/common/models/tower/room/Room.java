@@ -6,8 +6,8 @@ import bugemon.common.RoomType;
  * A single room on a tower floor, characterised by its {@link bugemon.common.RoomType} and visited status.
  *
  * <p>
- * Rooms are created by {@link bugemon.common.models.tower.utils.FloorMapFactory} and are not reused across floors. Once marked
- * visited via {@link #markAsVisited()}, the state cannot be reversed.
+ * Rooms are created by {@link bugemon.common.models.tower.utils.FloorMapFactory} and are not reused across floors. Once
+ * marked visited via {@link #markAsVisited()}, the state cannot be reversed.
  */
 public class Room {
     private final RoomType type;

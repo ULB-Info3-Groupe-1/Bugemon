@@ -18,8 +18,8 @@ import bugemon.common.models.effect.ResetMalusEffect;
 import bugemon.common.models.effect.StatModifierEffect;
 
 /**
- * Applies secondary {@link bugemon.common.models.effect.Effect} instances from an attack to the appropriate combat targets and
- * records each outcome as a {@link TurnStep}.
+ * Applies secondary {@link bugemon.common.models.effect.Effect} instances from an attack to the appropriate combat
+ * targets and records each outcome as a {@link TurnStep}.
  *
  * <p>
  * The processor iterates over an attack's effect list and delegates each effect to an internal
@@ -27,8 +27,8 @@ import bugemon.common.models.effect.StatModifierEffect;
  * <ul>
  * <li>{@link bugemon.common.models.effect.HealEffect} — heals the thrower or the entire team.</li>
  * <li>{@link bugemon.common.models.effect.ResetMalusEffect} — clears negative status effects from the thrower.</li>
- * <li>{@link bugemon.common.models.effect.StatModifierEffect} — applies a {@link bugemon.common.models.combat.effect.StatusEffect} to the
- * thrower or the opponent.</li>
+ * <li>{@link bugemon.common.models.effect.StatModifierEffect} — applies a
+ * {@link bugemon.common.models.combat.effect.StatusEffect} to the thrower or the opponent.</li>
  * </ul>
  */
 public class EffectProcessor {
@@ -60,8 +60,8 @@ public class EffectProcessor {
      * Applies a single effect to the correct target and returns any resulting steps.
      *
      * <p>
-     * The target is determined by {@link bugemon.common.models.effect.Effect#getTarget()}. Unsupported target values are silently
-     * ignored within each visitor branch.
+     * The target is determined by {@link bugemon.common.models.effect.Effect#getTarget()}. Unsupported target values
+     * are silently ignored within each visitor branch.
      *
      * @param effect
      *            the effect to apply

@@ -55,7 +55,8 @@ public class SkillContext {
     /**
      * Returns the aggregated passive stat bonuses granted by all currently active skill nodes.
      *
-     * @return an unmodifiable list of {@link bugemon.common.models.combat.effect.StatusEffect}s; empty when no skills are active
+     * @return an unmodifiable list of {@link bugemon.common.models.combat.effect.StatusEffect}s; empty when no skills
+     *         are active
      */
     public List<StatusEffect> getStatEffects() {
         if (this.state == null) {

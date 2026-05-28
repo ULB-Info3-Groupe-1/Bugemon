@@ -151,7 +151,8 @@ public class PostgresStaticRepository extends AbstractRepository implements Stat
         String attackId2 = rs.getString(DatabaseColumns.COL_ATTACK_ID_2);
         String attackId3 = rs.getString(DatabaseColumns.COL_ATTACK_ID_3);
 
-        // NOTE: there is no isBoss flag in db (because the same goes for the given json). Therefore the value of the
+        // NOTE: there is no isBoss flag in db (because the same goes for the given json). Therefore the
+        // value of the
         // isBoss flag is recomputed from the configured boss name.
         String name = rs.getString(DatabaseColumns.COL_NAME);
         boolean isBoss = Configuration.Game.BOSS_NAME.equals(name);

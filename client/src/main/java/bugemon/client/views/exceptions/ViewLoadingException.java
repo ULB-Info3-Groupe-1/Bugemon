@@ -1,8 +1,8 @@
 package bugemon.client.views.exceptions;
 
 /**
- * Unchecked exception thrown by {@link bugemon.client.views.ViewLoader} when a view's FXML resource cannot be loaded or its
- * controller cannot be instantiated.
+ * Unchecked exception thrown by {@link bugemon.client.views.ViewLoader} when a view's FXML resource cannot be loaded or
+ * its controller cannot be instantiated.
  */
 public class ViewLoadingException extends RuntimeException {
     /**

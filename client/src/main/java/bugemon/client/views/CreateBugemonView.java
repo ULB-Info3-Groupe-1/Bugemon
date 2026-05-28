@@ -22,16 +22,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import bugemon.client.views.components.BugemonCardView;
 import bugemon.common.Configuration;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.bugemon.Bugemon;
 import bugemon.common.models.bugemon.ElementType;
-import bugemon.client.views.components.BugemonCardView;
 
 /**
  * View for the Bugemon creation form. Lets the player pick a name, element type, stat sliders, a sprite file, and up to
- * {@link bugemon.common.models.bugemon.Bugemon#ATTACKS_COUNT} attacks from a selectable list. Validation feedback is shown through
- * alert dialogs; all save and navigation actions are dispatched through {@link Listener}.
+ * {@link bugemon.common.models.bugemon.Bugemon#ATTACKS_COUNT} attacks from a selectable list. Validation feedback is
+ * shown through alert dialogs; all save and navigation actions are dispatched through {@link Listener}.
  */
 public class CreateBugemonView extends View {
 
@@ -334,7 +334,8 @@ public class CreateBugemonView extends View {
          * @param initiativeValue
          *            initiative stat from the slider
          * @param attacks
-         *            the selected attacks (may contain fewer than {@link bugemon.common.models.bugemon.Bugemon#ATTACKS_COUNT})
+         *            the selected attacks (may contain fewer than
+         *            {@link bugemon.common.models.bugemon.Bugemon#ATTACKS_COUNT})
          */
         void onAdd(String bugemonName, double healthValue, double attackValue, double defenseValue,
                 double initiativeValue, List<Attack> attacks);

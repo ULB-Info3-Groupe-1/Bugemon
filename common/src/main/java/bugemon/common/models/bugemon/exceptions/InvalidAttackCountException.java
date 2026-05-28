@@ -1,8 +1,8 @@
 package bugemon.common.models.bugemon.exceptions;
 
 /**
- * Thrown when a {@link bugemon.common.models.bugemon.Bugemon} is constructed with an attack list whose size does not equal the
- * required count ({@link bugemon.common.models.bugemon.Bugemon#ATTACKS_COUNT}).
+ * Thrown when a {@link bugemon.common.models.bugemon.Bugemon} is constructed with an attack list whose size does not
+ * equal the required count ({@link bugemon.common.models.bugemon.Bugemon#ATTACKS_COUNT}).
  */
 public class InvalidAttackCountException extends RuntimeException {
     private final int expected;

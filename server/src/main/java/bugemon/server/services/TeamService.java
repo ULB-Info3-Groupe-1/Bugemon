@@ -17,8 +17,8 @@ import bugemon.server.services.exceptions.TeamNotFoundException;
  * Service responsible for team persistence and lifecycle management.
  *
  * <p>
- * Loads and saves {@link bugemon.common.models.team.Team} instances for the current player, tracks the active team selection, and
- * exposes operations for creating, renaming, modifying, and deleting teams.
+ * Loads and saves {@link bugemon.common.models.team.Team} instances for the current player, tracks the active team
+ * selection, and exposes operations for creating, renaming, modifying, and deleting teams.
  */
 public class TeamService {
 
@@ -32,7 +32,8 @@ public class TeamService {
      * @param teamRepository
      *            repository for team data
      * @param bugemonRepository
-     *            repository used to resolve {@link bugemon.common.models.player.PlayerBugemon} members when loading a team
+     *            repository used to resolve {@link bugemon.common.models.player.PlayerBugemon} members when loading a
+     *            team
      * @param playerName
      *            the name of the player whose teams this service manages
      */
@@ -71,9 +72,9 @@ public class TeamService {
     }
 
     /**
-     * Reconstructs a {@link bugemon.common.models.team.Team} from a persisted {@link bugemon.common.dto.persistence.TeamDTO}. Members
-     * are sorted by their slot position and their {@link bugemon.common.models.player.PlayerBugemon} data is fetched from the
-     * repository.
+     * Reconstructs a {@link bugemon.common.models.team.Team} from a persisted
+     * {@link bugemon.common.dto.persistence.TeamDTO}. Members are sorted by their slot position and their
+     * {@link bugemon.common.models.player.PlayerBugemon} data is fetched from the repository.
      *
      * @param teamDTO
      *            the DTO to reconstruct from

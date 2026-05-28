@@ -95,7 +95,8 @@ public class TestRunBugemon {
 
     @Test
     public void canLearnShouldReturnFalseWhenAttackIsSuperEffective() {
-        // AQUA bugemon cannot learn a FLORA attack (FLORA is super-effective against AQUA)
+        // AQUA bugemon cannot learn a FLORA attack (FLORA is super-effective against
+        // AQUA)
         RunBugemon aquaBugemon = new RunBugemon(new PlayerBugemon(BugemonFixtures.slowAqua()));
         assertFalse(aquaBugemon.canLearn(BugemonFixtures.floraAttack()));
     }

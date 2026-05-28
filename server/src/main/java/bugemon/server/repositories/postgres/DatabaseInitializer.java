@@ -10,16 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 import bugemon.common.EffectDuration;
-import bugemon.common.StatType;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.bugemon.Bugemon;
-import bugemon.common.models.bugemon.ElementType;
 import bugemon.common.models.effect.Effect;
 import bugemon.common.models.effect.HealEffect;
 import bugemon.common.models.effect.ResetMalusEffect;
 import bugemon.common.models.effect.StatModifierEffect;
 import bugemon.common.models.item.Item;
-import bugemon.common.models.item.ItemType;
 import bugemon.common.models.skills.SkillEffect;
 import bugemon.common.models.skills.SkillEffect.CritBonusEffect;
 import bugemon.common.models.skills.SkillEffect.RegenPostCombatEffect;
@@ -205,20 +202,20 @@ public class DatabaseInitializer extends AbstractRepository {
 
     private void saveSkillEffect(String skillId, SkillEffect effect) {
         switch (effect) {
-            case StatBonusEffect(StatType stat, int bonus) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
-                    "stat_bonus", stat.name(), null, null, bonus, null);
-            case TypeMultiplierEffect(ElementType type, double mult) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY,
-                    skillId, "type_multiplicateur", null, type.name(), mult, null, null);
-            case CritBonusEffect(double extraChance) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
-                    "critique_bonus", null, null, extraChance, null, null);
-            case RegenPostCombatEffect(double percent) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
-                    "regen_post_combat", null, null, percent, null, null);
-            case XpMultiplierEffect(double multiplier) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
-                    "xp_multiplicateur", null, null, multiplier, null, null);
-            case StarterItemsEffect(int quantity, ItemType type) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
-                    "objets_bonus", null, null, null, quantity, type.name());
-            case RewardChoiceEffect(int totalChoices) -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId,
-                    "recompense_choix", null, null, null, totalChoices, null);
+            case StatBonusEffect eff -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId, "stat_bonus",
+                    eff.stat().name(), null, null, eff.bonus(), null);
+            case TypeMultiplierEffect eff -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId, "type_multiplicateur",
+                    null, eff.type().name(), eff.mult(), null, null);
+            case CritBonusEffect eff -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId, "critique_bonus", null,
+                    null, eff.extraChance(), null, null);
+            case RegenPostCombatEffect eff -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId, "regen_post_combat",
+                    null, null, eff.percent(), null, null);
+            case XpMultiplierEffect eff -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId, "xp_multiplicateur",
+                    null, null, eff.multiplier(), null, null);
+            case StarterItemsEffect eff -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId, "objets_bonus", null,
+                    null, null, eff.quantity(), eff.type().name());
+            case RewardChoiceEffect eff -> this.executeUpdate(SAVE_SKILL_EFFECT_QUERY, skillId, "recompense_choix",
+                    null, null, null, eff.totalChoices(), null);
             default ->
                 throw new IllegalStateException("Unknown skill effect type: " + effect.getClass().getSimpleName());
         }

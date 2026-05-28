@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 
 import bugemon.common.Configuration;
 
-/** View for the combat victory screen, dispatching actions through the {@link Listener} interface. */
+/**
+ * View for the combat victory screen, dispatching actions through the {@link Listener} interface.
+ */
 public class CombatVictoryView extends View {
 
     private Listener listener;

@@ -19,9 +19,10 @@ import bugemon.server.services.exceptions.BugemonNameAlreadyExistsException;
  * Service that manages Bugemon data for a specific player.
  *
  * <p>
- * Combines static species data (from {@link bugemon.server.repositories.StaticRepository}) with per-player progression data (from
- * {@link bugemon.server.repositories.BugemonRepository}) to produce {@link bugemon.common.models.player.PlayerBugemon} instances. Also
- * handles the creation of new custom Bugemons and persisting team state.
+ * Combines static species data (from {@link bugemon.server.repositories.StaticRepository}) with per-player progression
+ * data (from {@link bugemon.server.repositories.BugemonRepository}) to produce
+ * {@link bugemon.common.models.player.PlayerBugemon} instances. Also handles the creation of new custom Bugemons and
+ * persisting team state.
  */
 public class BugemonService {
 
@@ -67,8 +68,8 @@ public class BugemonService {
     }
 
     /**
-     * Returns the player's {@link bugemon.common.models.player.PlayerBugemon} for the given species name. If the player has no
-     * saved progression for that species, returns a fresh instance at base stats.
+     * Returns the player's {@link bugemon.common.models.player.PlayerBugemon} for the given species name. If the player
+     * has no saved progression for that species, returns a fresh instance at base stats.
      *
      * @param bugemonName
      *            the species name to look up
@@ -84,8 +85,8 @@ public class BugemonService {
     }
 
     /**
-     * Returns all non-boss species as {@link bugemon.common.models.player.PlayerBugemon} instances for this player. Species
-     * without saved progression are returned at base stats.
+     * Returns all non-boss species as {@link bugemon.common.models.player.PlayerBugemon} instances for this player.
+     * Species without saved progression are returned at base stats.
      */
     public List<PlayerBugemon> getPlayerBugemons() {
         List<PlayerBugemonDTO> playerBugemons = this.bugemonRepository.findAll(this.playerName);
@@ -116,8 +117,8 @@ public class BugemonService {
     }
 
     /**
-     * Assembles a {@link bugemon.common.dto.persistence.CreateBugemonDTO} from the provided parameters without persisting
-     * it. Callers should pass the result to {@link #saveNewBugemon(CreateBugemonDTO)}.
+     * Assembles a {@link bugemon.common.dto.persistence.CreateBugemonDTO} from the provided parameters without
+     * persisting it. Callers should pass the result to {@link #saveNewBugemon(CreateBugemonDTO)}.
      *
      * @param name
      *            the species name

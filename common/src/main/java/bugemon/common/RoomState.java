@@ -14,7 +14,9 @@ public enum RoomState {
     AVAILABLE,
     /** The room has already been entered by the player. */
     VISITED,
-    /** The room has been visited and is also adjacent to the current position (revisitable). */
+    /**
+     * The room has been visited and is also adjacent to the current position (revisitable).
+     */
     VISITED_AVAILABLE,
     /** The room cannot be reached yet. */
     LOCKED;

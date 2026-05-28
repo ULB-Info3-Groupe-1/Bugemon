@@ -19,11 +19,11 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bugemon.client.repositories.MusicRepository;
 import bugemon.common.Configuration;
 import bugemon.common.models.music.BackgroundAmbiance;
 import bugemon.common.models.music.Music;
 import bugemon.common.models.music.SoundEffect;
-import bugemon.client.repositories.MusicRepository;
 
 /**
  * Loads {@link Music} files from classpath resources (works both on the filesystem and inside a JAR).

@@ -9,10 +9,10 @@ import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bugemon.client.repositories.MusicRepository;
 import bugemon.common.models.music.BackgroundAmbiance;
 import bugemon.common.models.music.Music;
 import bugemon.common.models.music.SoundEffect;
-import bugemon.client.repositories.MusicRepository;
 
 /**
  * Service that manages background music and sound-effect playback using JavaFX {@link javafx.scene.media.MediaPlayer}.
@@ -127,7 +127,9 @@ public class MusicService {
         }
     }
 
-    /** Stops and disposes the currently playing background track. Does nothing if no track is active. */
+    /**
+     * Stops and disposes the currently playing background track. Does nothing if no track is active.
+     */
     public void stopMusic() {
         if (this.mediaPlayer != null) {
             this.mediaPlayer.stop();

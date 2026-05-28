@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import bugemon.common.Configuration;
-import bugemon.common.StatType;
 import bugemon.common.models.bugemon.ElementType;
 import bugemon.common.models.combat.effect.StatusEffect;
 import bugemon.common.models.item.ItemType;
@@ -260,7 +259,8 @@ public class SkillTreeState {
      *
      * @param tree
      *            the skill tree definition
-     * @return a list of {@link bugemon.common.models.combat.effect.StatusEffect}s representing the combined stat bonuses
+     * @return a list of {@link bugemon.common.models.combat.effect.StatusEffect}s representing the combined stat
+     *         bonuses
      */
     public List<StatusEffect> getTotalStatBonus(SkillTree tree) {
 
@@ -270,10 +270,8 @@ public class SkillTreeState {
             SkillNode node = tree.getById(entry.getKey());
             int level = entry.getValue();
             // visitor pattern would be cleaner
-            if (node.effect() instanceof StatBonusEffect(StatType stat, int bonus)) {
-                int b = bonus;
-                effects.add(new StatusEffect(stat, b * level, null));
-
+            if (node.effect() instanceof StatBonusEffect eff) {
+                effects.add(new StatusEffect(eff.stat(), eff.bonus() * level, null));
             }
         }
         return effects;
@@ -294,8 +292,8 @@ public class SkillTreeState {
         double bonus = 0.0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof XpMultiplierEffect(double multiplier)) {
-                bonus += (multiplier - 1.0) * entry.getValue();
+            if (node.effect() instanceof XpMultiplierEffect eff) {
+                bonus += (eff.multiplier() - 1.0) * entry.getValue();
             }
         }
         return 1.0 + bonus;
@@ -313,8 +311,8 @@ public class SkillTreeState {
         int total = 0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof CritBonusEffect(double extraChance)) {
-                total += extraChance * entry.getValue();
+            if (node.effect() instanceof CritBonusEffect eff) {
+                total += eff.extraChance() * entry.getValue();
             }
         }
         return total;
@@ -337,8 +335,8 @@ public class SkillTreeState {
         double bonus = 0.0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof TypeMultiplierEffect(ElementType type, double mult) && elementType == type) {
-                bonus += (mult - 1.0) * entry.getValue();
+            if (node.effect() instanceof TypeMultiplierEffect eff && elementType == eff.type()) {
+                bonus += (eff.mult() - 1.0) * entry.getValue();
             }
         }
         return 1.0 + bonus;
@@ -348,8 +346,8 @@ public class SkillTreeState {
         int total = 0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof RegenPostCombatEffect(double percent)) {
-                total += percent * entry.getValue();
+            if (node.effect() instanceof RegenPostCombatEffect eff) {
+                total += eff.percent() * entry.getValue();
             }
         }
         return total;
@@ -359,8 +357,8 @@ public class SkillTreeState {
         int total = 0;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof StarterItemsEffect(int qty, ItemType t) && t == type) {
-                total += qty * entry.getValue();
+            if (node.effect() instanceof StarterItemsEffect eff && eff.type() == type) {
+                total += eff.quantity() * entry.getValue();
             }
         }
         return total;
@@ -370,8 +368,8 @@ public class SkillTreeState {
         int count = Configuration.Skill.DEFAULT_LEVEL_UP_CHOICE_COUNT;
         for (Map.Entry<String, Integer> entry : this.skillLevels.entrySet()) {
             SkillNode node = tree.getById(entry.getKey());
-            if (node.effect() instanceof RewardChoiceEffect(int totalChoices)) {
-                count = Math.max(count, totalChoices);
+            if (node.effect() instanceof RewardChoiceEffect eff) {
+                count = Math.max(count, eff.totalChoices());
             }
         }
         return count;

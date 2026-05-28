@@ -7,15 +7,16 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import bugemon.common.CombatSummary;
 import bugemon.client.controllers.Controller;
 import bugemon.client.controllers.MetaController;
+import bugemon.client.views.ViewLoader;
+import bugemon.client.views.combat.CombatView;
+import bugemon.common.CombatSummary;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.bugemon.Bugemon;
 import bugemon.common.models.combat.Combat;
 import bugemon.common.models.combat.CombatBugemon;
 import bugemon.common.models.combat.CombatResult;
-import bugemon.common.models.combat.CombatTeam;
 import bugemon.common.models.combat.damage.Efficiency;
 import bugemon.common.models.combat.factory.CombatFactory;
 import bugemon.common.models.combat.strategy.CombatStrategy;
@@ -38,17 +39,15 @@ import bugemon.common.models.skills.SkillContext;
 import bugemon.server.services.CombatService;
 import bugemon.server.services.SaveService;
 import bugemon.server.services.SkillService;
-import bugemon.client.views.ViewLoader;
-import bugemon.client.views.combat.CombatView;
 
 /**
  * Main controller for the combat screen. Integrates step-by-step turn animation with manual player input.
  *
  * <p>
  * Implements {@link PlayerInputHandler} so that it acts as the {@link CombatStrategy} for the player side: the
- * {@link bugemon.common.models.combat.Combat} model calls back into this controller when it needs an action or a forced switch, at
- * which point the appropriate UI menu is opened. Once the player responds, the chosen {@link TurnAction} is dispatched
- * back to the model to resolve the turn.
+ * {@link bugemon.common.models.combat.Combat} model calls back into this controller when it needs an action or a forced
+ * switch, at which point the appropriate UI menu is opened. Once the player responds, the chosen {@link TurnAction} is
+ * dispatched back to the model to resolve the turn.
  *
  * <p>
  * Turn resolution produces a list of {@link TurnStep} events that are queued and replayed one at a time; each step
@@ -181,8 +180,8 @@ public class CombatController extends Controller<CombatView>
     }
 
     /**
-     * Dispatches the resolved player action back to the {@link bugemon.common.models.combat.Combat} model via the stored callback.
-     * Clears the pending callback before invoking it to prevent double-invocation.
+     * Dispatches the resolved player action back to the {@link bugemon.common.models.combat.Combat} model via the
+     * stored callback. Clears the pending callback before invoking it to prevent double-invocation.
      */
     private void resolvePlayerAction(TurnAction action) {
         if (this.pendingActionCallback != null) {
@@ -232,12 +231,10 @@ public class CombatController extends Controller<CombatView>
     private void refreshHpForStep(TurnStep step) {
         switch (step) {
             case TurnStep.AttackStep atk -> this.view.updateHp(atk.defender(), atk.defenderHpAfter());
-            case KoStep(CombatBugemon koBugemon) -> this.view.updateHp(koBugemon, 0);
+            case KoStep eff -> this.view.updateHp(eff.koBugemon(), 0);
             case TurnStep.SwitchStep sw -> this.view.switchBugemon(sw);
-            case HealBugemonStep(CombatBugemon healedBugemon, int hpAfterHeal) ->
-                this.view.updateHp(healedBugemon, hpAfterHeal);
-            case HealTeamStep(CombatTeam healedTeam, int activeHpAfterHeal) ->
-                this.view.updateHp(healedTeam.getActive(), activeHpAfterHeal);
+            case HealBugemonStep eff -> this.view.updateHp(eff.healedBugemon(), eff.hpAfterHeal());
+            case HealTeamStep eff -> this.view.updateHp(eff.healedTeam().getActive(), eff.activeHpAfterHeal());
             default -> {
                 /* ItemStep */ }
         }

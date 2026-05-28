@@ -3,9 +3,9 @@ package bugemon.client.views.combat.components;
 import java.util.Map;
 import javafx.scene.control.Button;
 
+import bugemon.client.views.components.ComponentView;
 import bugemon.common.Configuration;
 import bugemon.common.models.item.Item;
-import bugemon.client.views.components.ComponentView;
 
 /**
  * Reusable component displaying the player's inventory as a list of clickable item buttons.

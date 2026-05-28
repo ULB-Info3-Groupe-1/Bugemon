@@ -1,10 +1,10 @@
 package bugemon.client.controllers;
 
+import bugemon.client.views.LoginView;
+import bugemon.client.views.ViewLoader;
 import bugemon.server.repositories.exceptions.IdentifierNotFoundException;
 import bugemon.server.repositories.exceptions.PlayernameAlreadyExistsException;
 import bugemon.server.services.LoginService;
-import bugemon.client.views.LoginView;
-import bugemon.client.views.ViewLoader;
 
 public class LoginController extends Controller<LoginView> implements LoginView.Listener {
 

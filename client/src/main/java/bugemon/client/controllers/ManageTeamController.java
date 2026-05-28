@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import bugemon.client.views.ManageTeamView;
+import bugemon.client.views.ViewLoader;
 import bugemon.common.dto.display.BugemonDisplayDTO;
 import bugemon.common.models.player.PlayerBugemon;
 import bugemon.common.models.player.PlayerState;
@@ -12,16 +14,14 @@ import bugemon.server.services.BugemonService;
 import bugemon.server.services.TeamService;
 import bugemon.server.services.exceptions.TeamNameEmptyException;
 import bugemon.server.services.exceptions.TeamNotFoundException;
-import bugemon.client.views.ManageTeamView;
-import bugemon.client.views.ViewLoader;
 
 /**
  * Controller responsible for the team creation and editing screen.
  *
  * <p>
- * Mutates a temporary {@link bugemon.common.models.team.Team} in response to player actions, then triggers a view refresh so the
- * view can pull the updated state. The controller never pushes data directly into the view. Operates in either
- * {@link TeamFormMode#CREATE} or {@link TeamFormMode#EDIT} mode.
+ * Mutates a temporary {@link bugemon.common.models.team.Team} in response to player actions, then triggers a view
+ * refresh so the view can pull the updated state. The controller never pushes data directly into the view. Operates in
+ * either {@link TeamFormMode#CREATE} or {@link TeamFormMode#EDIT} mode.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
 

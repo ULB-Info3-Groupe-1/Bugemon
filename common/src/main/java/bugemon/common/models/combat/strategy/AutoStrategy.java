@@ -13,8 +13,8 @@ import bugemon.common.models.combat.utils.CombatContext;
  * {@link CombatStrategy} that selects actions uniformly at random, used for automated simulations.
  *
  * <p>
- * On each turn it picks a random {@link bugemon.common.models.bugemon.Attack} from the active Bugemon's move list, and on a forced
- * switch it picks a random available Bugemon.
+ * On each turn it picks a random {@link bugemon.common.models.bugemon.Attack} from the active Bugemon's move list, and
+ * on a forced switch it picks a random available Bugemon.
  */
 public class AutoStrategy implements CombatStrategy {
     private final Random random;

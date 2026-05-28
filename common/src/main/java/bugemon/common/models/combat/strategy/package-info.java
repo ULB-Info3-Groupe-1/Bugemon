@@ -2,8 +2,8 @@
  * Strategy implementations that drive combat decision-making for both the player and AI-controlled opponents.
  *
  * <p>
- * {@link bugemon.common.models.combat.strategy.CombatStrategy} is the common interface; the three concrete implementations cover
- * every use case:
+ * {@link bugemon.common.models.combat.strategy.CombatStrategy} is the common interface; the three concrete
+ * implementations cover every use case:
  * <ul>
  * <li>{@link bugemon.common.models.combat.strategy.PlayerStrategy} — forwards decisions to the UI via
  * {@link bugemon.common.models.player.PlayerInputHandler}</li>

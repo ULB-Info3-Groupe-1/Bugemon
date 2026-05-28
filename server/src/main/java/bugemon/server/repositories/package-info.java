@@ -2,9 +2,9 @@
  * Data-access layer: repository interfaces that abstract all persistence operations for the game.
  *
  * <p>
- * On startup, {@link bugemon.server.repositories.QueryLoader} scans {@code resources/sql/*.sql} and builds an in-memory map of
- * named SQL strings. Concrete repository implementations (found in {@code bugemon.server.repositories.postgres}) call
- * {@link bugemon.server.repositories.DatabaseConnection#prepareStatement} with those strings to execute queries.
+ * On startup, {@link bugemon.server.repositories.QueryLoader} scans {@code resources/sql/*.sql} and builds an in-memory
+ * map of named SQL strings. Concrete repository implementations (found in {@code bugemon.server.repositories.postgres})
+ * call {@link bugemon.server.repositories.DatabaseConnection#prepareStatement} with those strings to execute queries.
  *
  * <p>
  * Key interfaces:

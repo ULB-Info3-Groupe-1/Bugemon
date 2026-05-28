@@ -44,8 +44,10 @@ public class DamageCalculator {
      * @param attack
      *            the attack being used
      * @param attackerSkillContext
-     *            the attacker's skill bonuses; use {@link bugemon.common.models.skills.SkillContext#NONE} when no skills apply
-     * @return a {@link bugemon.common.DamageResult} containing the final damage and the {@link Efficiency} classification
+     *            the attacker's skill bonuses; use {@link bugemon.common.models.skills.SkillContext#NONE} when no
+     *            skills apply
+     * @return a {@link bugemon.common.DamageResult} containing the final damage and the {@link Efficiency}
+     *         classification
      */
     public DamageResult calculateDamage(CombatBugemon attacker, CombatBugemon defender, Attack attack,
             SkillContext attackerSkillContext) {

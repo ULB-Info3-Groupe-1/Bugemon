@@ -20,8 +20,8 @@ import bugemon.common.models.tower.reward.RewardGenerator;
  * Service that manages the tower-room reward flow.
  *
  * <p>
- * Delegates reward generation to {@link bugemon.common.models.tower.reward.RewardGenerator} and coordinates the three reward types
- * with the appropriate model mutations:
+ * Delegates reward generation to {@link bugemon.common.models.tower.reward.RewardGenerator} and coordinates the three
+ * reward types with the appropriate model mutations:
  * <ul>
  * <li>{@link bugemon.common.models.tower.reward.ItemReward} — adds items to the player's inventory</li>
  * <li>{@link bugemon.common.models.tower.reward.BonusStatsReward} — applies a stat bonus to a

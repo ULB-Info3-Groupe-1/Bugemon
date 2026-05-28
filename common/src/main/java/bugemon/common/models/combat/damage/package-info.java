@@ -2,8 +2,8 @@
  * Damage calculation sub-system for the combat model.
  *
  * <p>
- * The central class is {@link bugemon.common.models.combat.damage.DamageCalculator}, which computes the damage dealt by one
- * {@link bugemon.common.models.combat.CombatBugemon} to another using pluggable
+ * The central class is {@link bugemon.common.models.combat.damage.DamageCalculator}, which computes the damage dealt by
+ * one {@link bugemon.common.models.combat.CombatBugemon} to another using pluggable
  * {@link bugemon.common.models.combat.damage.DamageCalculator.AttackFactorFormula} and
  * {@link bugemon.common.models.combat.damage.DamageCalculator.ReductionFactorFormula} strategies.
  *

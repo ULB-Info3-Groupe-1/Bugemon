@@ -37,9 +37,10 @@ import bugemon.common.models.skills.SkillContext;
  *
  * <p>
  * A combat proceeds through repeated cycles of action request and turn resolution. Each turn, both sides choose a
- * {@link bugemon.common.models.combat.turn.TurnAction} via their respective {@link bugemon.common.models.combat.strategy.CombatStrategy};
- * {@link #resolveTurn} then executes those actions in initiative order and produces a sequence of
- * {@link bugemon.common.models.combat.turn.TurnStep} events for the controller to animate.
+ * {@link bugemon.common.models.combat.turn.TurnAction} via their respective
+ * {@link bugemon.common.models.combat.strategy.CombatStrategy}; {@link #resolveTurn} then executes those actions in
+ * initiative order and produces a sequence of {@link bugemon.common.models.combat.turn.TurnStep} events for the
+ * controller to animate.
  *
  * <p>
  * The combat ends when one team is fully KO'd or the player forfeits, at which point {@link #getResult()} returns
@@ -181,7 +182,8 @@ public class Combat {
         boolean firstIsPlayer = actions.get(0) == playerAction;
         boolean secondIsPlayer = !firstIsPlayer;
 
-        // retrieve the bugemon corresponding to the second action to later check if it died from the first
+        // retrieve the bugemon corresponding to the second action to later check if it
+        // died from the first
         // action.
         CombatTeam secondTeam = this.teamFor(!firstIsPlayer);
         CombatBugemon secondActorBefore = secondTeam.getActive();

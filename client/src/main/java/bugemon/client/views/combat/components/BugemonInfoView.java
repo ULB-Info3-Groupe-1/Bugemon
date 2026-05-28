@@ -4,10 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
+import bugemon.client.views.components.ComponentView;
 import bugemon.common.Configuration;
 import bugemon.common.models.bugemon.ElementType;
 import bugemon.common.models.combat.CombatBugemon;
-import bugemon.client.views.components.ComponentView;
 
 /**
  * Reusable combat HUD component displaying name, level, HP bar, and XP bar for a single {@link CombatBugemon}. The

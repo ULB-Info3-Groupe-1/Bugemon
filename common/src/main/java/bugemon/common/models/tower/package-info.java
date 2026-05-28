@@ -2,8 +2,9 @@
  * Core domain model for the Tower — the roguelike structure that structures a Bugemon run.
  *
  * <p>
- * A run spans floors {@value bugemon.common.Configuration.Game#FLOOR_MIN} through {@value bugemon.common.Configuration.Game#FLOOR_MAX}. Each
- * floor is represented as a {@link bugemon.common.models.tower.FloorMap}: a tree of {@link bugemon.common.models.tower.room.Room}s generated
+ * A run spans floors {@value bugemon.common.Configuration.Game#FLOOR_MIN} through
+ * {@value bugemon.common.Configuration.Game#FLOOR_MAX}. Each floor is represented as a
+ * {@link bugemon.common.models.tower.FloorMap}: a tree of {@link bugemon.common.models.tower.room.Room}s generated
  * procedurally from the run seed. The overall run state (seed, current floor, active team) is captured by
  * {@link bugemon.common.models.tower.TowerState}.
  *

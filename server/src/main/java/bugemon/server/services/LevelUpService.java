@@ -14,8 +14,8 @@ import bugemon.server.repositories.BugemonRepository;
  * Service that handles Bugemon level-up logic during a tower run.
  *
  * <p>
- * Generates a set of randomised {@link bugemon.common.models.player.BonusStats} options for the player to choose from, then
- * applies the chosen bonus and persists the updated {@link bugemon.common.models.run.RunBugemon} state.
+ * Generates a set of randomised {@link bugemon.common.models.player.BonusStats} options for the player to choose from,
+ * then applies the chosen bonus and persists the updated {@link bugemon.common.models.run.RunBugemon} state.
  */
 public class LevelUpService {
     String playerName;
@@ -52,8 +52,8 @@ public class LevelUpService {
     }
 
     /**
-     * Generates a list of randomised {@link bugemon.common.models.player.BonusStats} for the player to choose from. The number of
-     * options is determined by {@link bugemon.common.Configuration.Game#NUM_BONUS_PER_LEVEL_UP}.
+     * Generates a list of randomised {@link bugemon.common.models.player.BonusStats} for the player to choose from. The
+     * number of options is determined by {@link bugemon.common.Configuration.Game#NUM_BONUS_PER_LEVEL_UP}.
      *
      * @return an immutable list of bonus-stat options
      */

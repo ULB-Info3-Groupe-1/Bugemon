@@ -32,7 +32,9 @@ public abstract class Configuration {
         public static final String ROOM_BASE_PATH = "/png/rooms/";
         /** Classpath path to the player trainer icon displayed on the floor map. */
         public static final String PLAYER_ICON = "/png/Trainer.png";
-        /** Classpath prefix for SQL script files loaded by {@link bugemon.server.repositories.QueryLoader}. */
+        /**
+         * Classpath prefix for SQL script files loaded by {@link bugemon.server.repositories.QueryLoader}.
+         */
         public static final String SQL_BASE_PATH = "/sql/";
 
         /** Classpath paths for the application's CSS stylesheets. */
@@ -114,7 +116,9 @@ public abstract class Configuration {
 
         /** Prefix prepended to floor numbers on the floor map label (e.g. "NO 3"). */
         public static final String FLOOR_PREFIX = "NO";
-        /** Duration in milliseconds of the player-movement animation on the floor map. */
+        /**
+         * Duration in milliseconds of the player-movement animation on the floor map.
+         */
         public static final int FLOOR_MOVE_ANIMATION_MS = 500;
         /** Base font size in points used when loading the pixel-art font. */
         public static final int FONT_SIZE = 16;
@@ -145,7 +149,9 @@ public abstract class Configuration {
             // Private constructor to prevent instantiation
         }
 
-        /** Maximum number of attacks shown in the combat UI (view cannot handle more). */
+        /**
+         * Maximum number of attacks shown in the combat UI (view cannot handle more).
+         */
         public static final int ATTACKS_COUNT = 3;
         /** Minimum number of Bugemons required to start a run. */
         public static final int MIN_TEAM_SIZE = 1;

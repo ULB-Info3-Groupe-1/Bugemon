@@ -31,9 +31,9 @@ import bugemon.server.repositories.TowerRepository;
  * Service that manages the lifecycle of a tower run.
  *
  * <p>
- * Responsibilities include creating and loading {@link bugemon.common.models.tower.TowerState} instances, generating floor maps
- * via {@link bugemon.common.models.tower.utils.FloorMapFactory}, persisting and deleting run state, and building the
- * {@link bugemon.common.dto.display.FloorDisplayDTO} consumed by the floor view.
+ * Responsibilities include creating and loading {@link bugemon.common.models.tower.TowerState} instances, generating
+ * floor maps via {@link bugemon.common.models.tower.utils.FloorMapFactory}, persisting and deleting run state, and
+ * building the {@link bugemon.common.dto.display.FloorDisplayDTO} consumed by the floor view.
  */
 public class TowerService {
 
@@ -55,8 +55,9 @@ public class TowerService {
     }
 
     /**
-     * Creates a fresh tower run starting at floor {@link bugemon.common.Configuration.Game#FLOOR_MIN} using a time-based seed,
-     * wraps {@code activeTeam} in a {@link bugemon.common.models.run.RunTeam}, and stores the result as the active tower.
+     * Creates a fresh tower run starting at floor {@link bugemon.common.Configuration.Game#FLOOR_MIN} using a
+     * time-based seed, wraps {@code activeTeam} in a {@link bugemon.common.models.run.RunTeam}, and stores the result
+     * as the active tower.
      *
      * @param activeTeam
      *            the player's selected team for this run
@@ -80,8 +81,8 @@ public class TowerService {
     }
 
     /**
-     * Generates a {@link bugemon.common.models.tower.FloorMap} for the given floor using the provided seed. The same seed and
-     * floor always produce the same map layout.
+     * Generates a {@link bugemon.common.models.tower.FloorMap} for the given floor using the provided seed. The same
+     * seed and floor always produce the same map layout.
      *
      * @param seed
      *            the deterministic seed for map generation

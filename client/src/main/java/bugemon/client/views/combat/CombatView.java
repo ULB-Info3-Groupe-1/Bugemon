@@ -16,6 +16,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+import bugemon.client.views.View;
+import bugemon.client.views.combat.components.ActionMenuView;
+import bugemon.client.views.combat.components.AttackMenuView;
+import bugemon.client.views.combat.components.BugemonInfoView;
+import bugemon.client.views.combat.components.ItemMenuView;
+import bugemon.client.views.combat.components.SwitchMenuView;
+import bugemon.client.views.components.DialogZoneView;
+import bugemon.client.views.components.HoverInfoView;
 import bugemon.common.Configuration;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.combat.CombatBugemon;
@@ -26,14 +34,6 @@ import bugemon.common.models.combat.turn.TurnStep.HealBugemonStep;
 import bugemon.common.models.combat.turn.TurnStep.KoStep;
 import bugemon.common.models.combat.turn.TurnStep.SwitchStep;
 import bugemon.common.models.item.Item;
-import bugemon.client.views.View;
-import bugemon.client.views.combat.components.ActionMenuView;
-import bugemon.client.views.combat.components.AttackMenuView;
-import bugemon.client.views.combat.components.BugemonInfoView;
-import bugemon.client.views.combat.components.ItemMenuView;
-import bugemon.client.views.combat.components.SwitchMenuView;
-import bugemon.client.views.components.DialogZoneView;
-import bugemon.client.views.components.HoverInfoView;
 
 /**
  * Root view for the combat screen. Manages two {@link BugemonInfoView} HUD panels (player and opponent), both Bugemon
@@ -409,9 +409,8 @@ public class CombatView extends View {
             }
             case SwitchStep s ->
                 (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
-            case KoStep(CombatBugemon koBugemon) -> koBugemon.getName() + " est K.O. !";
-            case HealBugemonStep(CombatBugemon healedBugemon, int ignored) ->
-                healedBugemon.getName() + " récupère des PV !";
+            case KoStep eff -> eff.koBugemon().getName() + " est K.O. !";
+            case HealBugemonStep eff -> eff.healedBugemon().getName() + " récupère des PV !";
             case TurnStep.HealTeamStep ignored -> "Toute l'équipe récupère des PV !";
             case TurnStep.ItemStep ignored -> "Objet utilisé !";
             default -> "Action effectuée.";

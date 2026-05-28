@@ -13,8 +13,8 @@ import bugemon.common.models.team.Team;
  * members.
  *
  * <p>
- * Exactly one Bugémon in the pool must be marked with {@link bugemon.common.models.bugemon.Bugemon#isBoss()}; if none is found,
- * {@link #create(int, List)} throws {@link IllegalStateException}.
+ * Exactly one Bugémon in the pool must be marked with {@link bugemon.common.models.bugemon.Bugemon#isBoss()}; if none
+ * is found, {@link #create(int, List)} throws {@link IllegalStateException}.
  */
 public class BossTeamFactory extends TeamFactory {
 

@@ -10,11 +10,11 @@
  * Key records in this package:
  * <ul>
  * <li>{@link bugemon.common.dto.persistence.TowerDTO} — full run-state snapshot (seed + floor + team)</li>
- * <li>{@link bugemon.common.dto.persistence.TeamDTO} / {@link bugemon.common.dto.persistence.TeamMemberDTO} — team roster
- * persistence</li>
+ * <li>{@link bugemon.common.dto.persistence.TeamDTO} / {@link bugemon.common.dto.persistence.TeamMemberDTO} — team
+ * roster persistence</li>
  * <li>{@link bugemon.common.dto.persistence.PlayerBugemonDTO} — per-player Bugemon progression</li>
- * <li>{@link bugemon.common.dto.persistence.InventoryDTO} / {@link bugemon.common.dto.persistence.DefaultInventoryDTO} — item
- * inventory persistence</li>
+ * <li>{@link bugemon.common.dto.persistence.InventoryDTO} / {@link bugemon.common.dto.persistence.DefaultInventoryDTO}
+ * — item inventory persistence</li>
  * <li>{@link bugemon.common.dto.persistence.SkillDTO} — individual skill-tree node state</li>
  * <li>{@link bugemon.common.dto.persistence.CreateBugemonDTO} — seed-time Bugemon definition</li>
  * </ul>

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import bugemon.common.Configuration;
 import bugemon.common.CombatSummary;
+import bugemon.common.Configuration;
 import bugemon.common.LevelUpResult;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.bugemon.ElementType;

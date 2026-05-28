@@ -2,6 +2,8 @@ package bugemon.client.controllers;
 
 import java.util.List;
 
+import bugemon.client.views.RewardView;
+import bugemon.client.views.ViewLoader;
 import bugemon.common.dto.display.RunBugemonDisplayDTO;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.item.Inventory;
@@ -12,8 +14,6 @@ import bugemon.common.models.tower.reward.BonusStatsReward;
 import bugemon.common.models.tower.reward.ItemReward;
 import bugemon.common.models.tower.reward.Reward;
 import bugemon.server.services.RewardService;
-import bugemon.client.views.RewardView;
-import bugemon.client.views.ViewLoader;
 
 /**
  * Controller for the post-room reward screen.
@@ -23,7 +23,8 @@ import bugemon.client.views.ViewLoader;
  * <ul>
  * <li>{@link bugemon.common.models.tower.reward.ItemReward} — applied immediately to the inventory</li>
  * <li>{@link bugemon.common.models.tower.reward.BonusStatsReward} — applied to a player-selected Bugemon</li>
- * <li>{@link bugemon.common.models.tower.reward.AttackReward} — replaces a selected attack on a player-selected Bugemon</li>
+ * <li>{@link bugemon.common.models.tower.reward.AttackReward} — replaces a selected attack on a player-selected
+ * Bugemon</li>
  * </ul>
  */
 public class RewardController extends Controller<RewardView> implements RewardView.Listener {

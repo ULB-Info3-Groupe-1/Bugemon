@@ -9,8 +9,8 @@
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="bugemon.client.views.FloorView" styleClass="floor-container"
-    stylesheets="@../css/floor-map.css">
+    fx:controller="bugemon.client.views.FloorView"
+    styleClass="floor-container" stylesheets="@../css/floor-map.css">
 
     <!-- Header: Floor Number and Instructions -->
     <top>

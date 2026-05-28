@@ -25,9 +25,9 @@ import bugemon.server.repositories.InventoryRepository;
  * PostgreSQL implementation of {@link InventoryRepository}.
  *
  * <p>
- * Reconstructs {@link bugemon.common.models.item.Item} objects — including their polymorphic {@link bugemon.common.models.effect.Effect} —
- * from the {@code inventory} and {@code item_effects} tables. Saving replaces the entire inventory in a single
- * delete-then-insert cycle.
+ * Reconstructs {@link bugemon.common.models.item.Item} objects — including their polymorphic
+ * {@link bugemon.common.models.effect.Effect} — from the {@code inventory} and {@code item_effects} tables. Saving
+ * replaces the entire inventory in a single delete-then-insert cycle.
  */
 public class PostgresInventoryRepository extends AbstractRepository implements InventoryRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresInventoryRepository.class);

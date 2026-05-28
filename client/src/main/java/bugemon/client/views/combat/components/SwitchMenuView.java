@@ -8,9 +8,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+import bugemon.client.views.components.ComponentView;
 import bugemon.common.Configuration;
 import bugemon.common.models.combat.CombatBugemon;
-import bugemon.client.views.components.ComponentView;
 
 /**
  * Action menu listing the Bugemons available for the player to switch into. Each entry is rendered as a row containing

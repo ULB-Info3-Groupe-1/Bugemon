@@ -6,8 +6,8 @@
 <?import javafx.scene.control.Button?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="bugemon.client.views.CombatVictoryView" alignment="CENTER"
-    spacing="28">
+    fx:controller="bugemon.client.views.CombatVictoryView"
+    alignment="CENTER" spacing="28">
     <padding>
         <Insets top="56" right="56" bottom="56" left="56" />
     </padding>

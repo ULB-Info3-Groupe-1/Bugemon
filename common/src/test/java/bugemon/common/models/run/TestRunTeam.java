@@ -41,7 +41,8 @@ public class TestRunTeam {
 
     @Test
     public void getEligibleForShouldReturnEmptyWhenAllMembersAreWeak() {
-        // AQUA attack is super-effective against PYRO; team is all AQUA → none weak against AQUA
+        // AQUA attack is super-effective against PYRO; team is all AQUA → none weak
+        // against AQUA
         // Use a team where all members are weak: FLORA attack vs all-AQUA team
         RunTeam allAqua = new RunTeam("all-aqua",
                 List.of(this.aquaBugemon, new RunBugemon(new PlayerBugemon(BugemonFixtures.slowAqua()))));

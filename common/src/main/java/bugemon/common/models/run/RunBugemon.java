@@ -11,12 +11,13 @@ import bugemon.common.models.player.BonusStats;
 import bugemon.common.models.player.PlayerBugemon;
 
 /**
- * A run-scoped view of a {@link bugemon.common.models.player.PlayerBugemon} that tracks mutable current HP during combat.
+ * A run-scoped view of a {@link bugemon.common.models.player.PlayerBugemon} that tracks mutable current HP during
+ * combat.
  *
  * <p>
  * Stat queries (attack, defense, etc.) and XP mutations are delegated to the underlying
- * {@link bugemon.common.models.player.PlayerBugemon}. HP changes are local to this wrapper and do not affect the persisted Bugemon
- * until explicitly propagated by the caller.
+ * {@link bugemon.common.models.player.PlayerBugemon}. HP changes are local to this wrapper and do not affect the
+ * persisted Bugemon until explicitly propagated by the caller.
  */
 public class RunBugemon {
     private final PlayerBugemon playerBugemon;
@@ -96,8 +97,8 @@ public class RunBugemon {
     }
 
     /**
-     * Applies the given stat bonus to the underlying {@link bugemon.common.models.player.PlayerBugemon} and resets current HP to
-     * the new maximum.
+     * Applies the given stat bonus to the underlying {@link bugemon.common.models.player.PlayerBugemon} and resets
+     * current HP to the new maximum.
      *
      * @param bonus
      *            the bonus stats to apply

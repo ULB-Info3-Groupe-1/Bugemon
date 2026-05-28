@@ -27,8 +27,8 @@ public class BonusStatsGenerator {
     }
 
     /**
-     * Generates a new {@link BonusStats} by distributing {@link bugemon.common.Configuration.Game#NUM_POINTS_PER_BONUS} points
-     * randomly across the four stat categories.
+     * Generates a new {@link BonusStats} by distributing {@link bugemon.common.Configuration.Game#NUM_POINTS_PER_BONUS}
+     * points randomly across the four stat categories.
      *
      * @return a freshly generated {@link BonusStats} instance
      */

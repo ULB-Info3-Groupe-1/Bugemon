@@ -66,8 +66,8 @@ public class InventoryService {
 
     /**
      * Adds skill-unlocked starter items to {@code inventory} based on the active
-     * {@link bugemon.common.models.skills.SkillContext}. For each {@link bugemon.common.models.item.ItemType} that the skill grants bonus
-     * quantities of, a random eligible item of that type is chosen and added for each bonus unit.
+     * {@link bugemon.common.models.skills.SkillContext}. For each {@link bugemon.common.models.item.ItemType} that the
+     * skill grants bonus quantities of, a random eligible item of that type is chosen and added for each bonus unit.
      *
      * @param inventory
      *            the inventory to receive the bonus items

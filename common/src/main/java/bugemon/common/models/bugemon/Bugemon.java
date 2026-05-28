@@ -12,7 +12,8 @@ import bugemon.common.models.bugemon.exceptions.InvalidAttackCountException;
  * <p>
  * A {@code Bugemon} describes the template of a species: its name, base stats, elemental type, fixed move-set and
  * sprite. It is <b>not</b> a live battle participant; runtime state such as current HP is managed by
- * {@link bugemon.common.models.run.RunBugemon} and ownership/progression by {@link bugemon.common.models.player.PlayerBugemon}.
+ * {@link bugemon.common.models.run.RunBugemon} and ownership/progression by
+ * {@link bugemon.common.models.player.PlayerBugemon}.
  *
  * <p>
  * The compact constructor enforces all invariants: name must be non-blank, {@code hp} must be non-negative, every other

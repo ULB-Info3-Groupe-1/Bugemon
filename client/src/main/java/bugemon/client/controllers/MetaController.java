@@ -9,14 +9,15 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import bugemon.common.Configuration;
-import bugemon.server.bootstrap.GameBootstrapper;
-import bugemon.server.bootstrap.ServiceRegistry;
-import bugemon.common.CombatSummary;
-import bugemon.common.LevelUpResult;
 import bugemon.client.controllers.combat.CombatController;
 import bugemon.client.controllers.combat.CombatDefeatController;
 import bugemon.client.controllers.combat.CombatVictoryController;
+import bugemon.client.repositories.resource.ResourceMusicRepository;
+import bugemon.client.services.MusicService;
+import bugemon.client.views.View;
+import bugemon.common.CombatSummary;
+import bugemon.common.Configuration;
+import bugemon.common.LevelUpResult;
 import bugemon.common.models.bugemon.Bugemon;
 import bugemon.common.models.combat.factory.CombatFactory;
 import bugemon.common.models.music.BackgroundAmbiance;
@@ -25,13 +26,12 @@ import bugemon.common.models.player.PlayerState;
 import bugemon.common.models.run.RunTeam;
 import bugemon.common.models.team.factory.TeamFactory;
 import bugemon.common.models.tower.reward.Reward;
-import bugemon.client.repositories.resource.ResourceMusicRepository;
+import bugemon.server.bootstrap.GameBootstrapper;
+import bugemon.server.bootstrap.ServiceRegistry;
 import bugemon.server.services.BugemonService;
 import bugemon.server.services.CombatService;
 import bugemon.server.services.LoginService;
-import bugemon.client.services.MusicService;
 import bugemon.server.services.RewardService;
-import bugemon.client.views.View;
 
 /**
  * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen

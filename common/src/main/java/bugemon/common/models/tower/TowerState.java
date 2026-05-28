@@ -7,8 +7,8 @@ import bugemon.common.models.run.RunTeam;
  *
  * <p>
  * Captures the random seed (used to reproduce floor maps), the active run team, the current floor number, and the
- * floor's navigable map. This object is persisted via {@link bugemon.server.repositories.TowerRepository} so a run can be resumed
- * across sessions.
+ * floor's navigable map. This object is persisted via {@link bugemon.server.repositories.TowerRepository} so a run can
+ * be resumed across sessions.
  */
 public class TowerState {
     private final int seed;

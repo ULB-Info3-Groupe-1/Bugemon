@@ -3,8 +3,8 @@ package bugemon.client.views.combat.components;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import bugemon.common.Configuration;
 import bugemon.client.views.components.ComponentView;
+import bugemon.common.Configuration;
 
 /**
  * The main action menu displayed at the start of each manual combat turn. Presents four choices: Attack, Switch, Item,

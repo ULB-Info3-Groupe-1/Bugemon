@@ -19,7 +19,8 @@ import bugemon.server.repositories.exceptions.PlayernameAlreadyExistsException;
  *
  * <p>
  * Player creation also seeds the player's inventory via the injected {@link InventoryRepository}; a duplicate-key
- * constraint violation is translated into {@link bugemon.server.repositories.exceptions.PlayernameAlreadyExistsException}.
+ * constraint violation is translated into
+ * {@link bugemon.server.repositories.exceptions.PlayernameAlreadyExistsException}.
  */
 public class PostgresPlayerRepository extends AbstractRepository implements PlayerRepository {
     private static final Logger LOG = LoggerFactory.getLogger(PostgresPlayerRepository.class);

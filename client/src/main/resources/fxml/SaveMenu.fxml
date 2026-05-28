@@ -5,8 +5,8 @@
 <?import javafx.scene.control.Label?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="bugemon.client.views.SaveMenuView" alignment="CENTER" spacing="40"
-    styleClass="main-menu">
+    fx:controller="bugemon.client.views.SaveMenuView" alignment="CENTER"
+    spacing="40" styleClass="main-menu">
 
     <Label text="BUGÉMON" styleClass="main-title" />
 

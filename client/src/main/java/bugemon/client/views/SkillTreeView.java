@@ -24,9 +24,9 @@ import bugemon.common.models.skills.SkillTree;
 import bugemon.common.models.skills.SkillTreeState;
 
 /**
- * View for the skill tree screen. Renders {@link bugemon.common.models.skills.SkillNode} widgets on an absolute-positioned
- * {@link Pane} using pre-computed (x, y) coordinates, draws prerequisite connection lines between them, and forwards
- * left-click (unlock) and right-click (downgrade) events through {@link Listener}.
+ * View for the skill tree screen. Renders {@link bugemon.common.models.skills.SkillNode} widgets on an
+ * absolute-positioned {@link Pane} using pre-computed (x, y) coordinates, draws prerequisite connection lines between
+ * them, and forwards left-click (unlock) and right-click (downgrade) events through {@link Listener}.
  */
 public class SkillTreeView extends View {
 

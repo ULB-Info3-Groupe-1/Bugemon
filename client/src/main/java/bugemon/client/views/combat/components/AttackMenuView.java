@@ -4,9 +4,9 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import bugemon.client.views.components.ComponentView;
 import bugemon.common.Configuration;
 import bugemon.common.models.bugemon.Attack;
-import bugemon.client.views.components.ComponentView;
 
 /**
  * Action menu displaying the attacks available to the player's active Bugemon. Presents up to three attack buttons in a

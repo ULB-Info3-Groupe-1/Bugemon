@@ -16,8 +16,8 @@ import bugemon.common.models.item.ItemType;
  * <li>{@link CritBonusEffect} — increases the probability of landing a critical hit.</li>
  * <li>{@link RegenPostCombatEffect} — restores a percentage of max HP after each combat.</li>
  * <li>{@link XpMultiplierEffect} — multiplies XP gained from battles.</li>
- * <li>{@link StarterItemsEffect} — grants a quantity of items of a given {@link bugemon.common.models.item.ItemType} at the start
- * of a run.</li>
+ * <li>{@link StarterItemsEffect} — grants a quantity of items of a given {@link bugemon.common.models.item.ItemType} at
+ * the start of a run.</li>
  * <li>{@link RewardChoiceEffect} — increases the number of reward options offered after combat.</li>
  * </ul>
  */

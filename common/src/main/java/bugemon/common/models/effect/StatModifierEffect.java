@@ -8,8 +8,8 @@ import bugemon.common.StatType;
  * An {@link Effect} that applies a numerical modifier to a specific {@link bugemon.common.StatType} of the target.
  *
  * <p>
- * The modifier may be permanent or limited to one turn, depending on the {@link bugemon.common.EffectDuration}. Negative
- * values act as debuffs; positive values act as buffs.
+ * The modifier may be permanent or limited to one turn, depending on the {@link bugemon.common.EffectDuration}.
+ * Negative values act as debuffs; positive values act as buffs.
  */
 public class StatModifierEffect extends Effect {
     private final StatType stat;

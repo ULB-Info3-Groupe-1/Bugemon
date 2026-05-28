@@ -5,16 +5,18 @@ import bugemon.common.StatType;
 import bugemon.common.models.effect.Ticker;
 
 /**
- * Represents a temporary or permanent modifier applied to one stat of a {@link bugemon.common.models.combat.CombatBugemon} during
- * combat.
+ * Represents a temporary or permanent modifier applied to one stat of a
+ * {@link bugemon.common.models.combat.CombatBugemon} during combat.
  *
  * <p>
  * A {@code StatusEffect} targets a single {@link bugemon.common.StatType} and adjusts it by an integer {@code modifier}
- * (positive for a bonus, negative for a malus). Effects with {@link bugemon.common.EffectDuration#PERMANENT} never expire;
- * all other effects use an internal {@link bugemon.common.models.effect.Ticker} and expire after one tick (one turn).
+ * (positive for a bonus, negative for a malus). Effects with {@link bugemon.common.EffectDuration#PERMANENT} never
+ * expire; all other effects use an internal {@link bugemon.common.models.effect.Ticker} and expire after one tick (one
+ * turn).
  *
  * <p>
- * At end-of-turn, {@link bugemon.common.models.combat.CombatBugemon#tickEffects()} advances each effect and discards expired ones.
+ * At end-of-turn, {@link bugemon.common.models.combat.CombatBugemon#tickEffects()} advances each effect and discards
+ * expired ones.
  */
 public class StatusEffect {
     private final StatType stat;
@@ -29,8 +31,8 @@ public class StatusEffect {
      * @param modifier
      *            the signed amount to add to the stat (negative for a malus)
      * @param duration
-     *            {@link bugemon.common.EffectDuration#PERMANENT} for a lasting effect, or any other value for a one-turn
-     *            effect
+     *            {@link bugemon.common.EffectDuration#PERMANENT} for a lasting effect, or any other value for a
+     *            one-turn effect
      */
     public StatusEffect(StatType stat, int modifier, EffectDuration duration) {
         this.stat = stat;

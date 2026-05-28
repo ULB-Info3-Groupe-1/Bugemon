@@ -4,19 +4,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import bugemon.client.views.LevelUpView;
+import bugemon.client.views.ViewLoader;
 import bugemon.common.LevelUpResult;
 import bugemon.common.models.player.BonusStats;
 import bugemon.server.services.LevelUpService;
-import bugemon.client.views.LevelUpView;
-import bugemon.client.views.ViewLoader;
 
 /**
  * Controller for the level-up screen shown after combat.
  *
  * <p>
- * Processes a queue of {@link bugemon.common.LevelUpResult} entries one at a time, displaying bonus-stat options for each
- * Bugemon that gained a level. When the queue is empty it notifies the {@link bugemon.client.controllers.MetaController} so the
- * flow can continue.
+ * Processes a queue of {@link bugemon.common.LevelUpResult} entries one at a time, displaying bonus-stat options for
+ * each Bugemon that gained a level. When the queue is empty it notifies the
+ * {@link bugemon.client.controllers.MetaController} so the flow can continue.
  */
 public class LevelUpController extends Controller<LevelUpView> implements LevelUpView.Listener {
     private final LevelUpService levelUpService;

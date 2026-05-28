@@ -20,9 +20,9 @@ import bugemon.common.models.utils.Position;
  *
  * <p>
  * Generation uses a seeded random walk to grow branches from a central start node on a bounded grid. Room types are
- * then assigned according to configuration constants in {@link bugemon.common.Configuration.FloorMap}. If a valid map cannot be
- * generated within {@link bugemon.common.Configuration.FloorMap#MAX_GENERATION_ATTEMPTS} retries, an {@link IllegalStateException}
- * is thrown.
+ * then assigned according to configuration constants in {@link bugemon.common.Configuration.FloorMap}. If a valid map
+ * cannot be generated within {@link bugemon.common.Configuration.FloorMap#MAX_GENERATION_ATTEMPTS} retries, an
+ * {@link IllegalStateException} is thrown.
  *
  * <p>
  * The effective seed for each attempt is {@code seed + floor + attemptIndex}, ensuring deterministic generation per
@@ -81,7 +81,8 @@ public class FloorMapFactory {
         List<int[]> shuffledDirs = new ArrayList<>(Arrays.asList(Configuration.FloorMap.DIRECTIONS));
         Collections.shuffle(shuffledDirs, random);
 
-        // keep track of number of generated branches to return empty if could not generate enough branches.
+        // keep track of number of generated branches to return empty if could not
+        // generate enough branches.
         int numBranchesGenerated = 0;
 
         // grow the branches

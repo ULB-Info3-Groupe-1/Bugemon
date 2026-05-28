@@ -17,9 +17,9 @@ import bugemon.server.repositories.StaticRepository;
  *
  * <p>
  * Bridges {@link bugemon.common.models.skills.SkillTreeState} (mutable runtime state) with the static
- * {@link bugemon.common.models.skills.SkillTree} definition loaded from JSON. Provides methods for loading, saving, and modifying
- * skill-node levels, and for building a {@link bugemon.common.models.skills.SkillContext} that exposes active bonus values to
- * other services.
+ * {@link bugemon.common.models.skills.SkillTree} definition loaded from JSON. Provides methods for loading, saving, and
+ * modifying skill-node levels, and for building a {@link bugemon.common.models.skills.SkillContext} that exposes active
+ * bonus values to other services.
  */
 public class SkillService {
 
@@ -66,8 +66,8 @@ public class SkillService {
     }
 
     /**
-     * Builds a {@link bugemon.common.models.skills.SkillContext} from {@code state} and the static skill tree. The context is a
-     * read-only view of active bonuses used by combat and inventory services.
+     * Builds a {@link bugemon.common.models.skills.SkillContext} from {@code state} and the static skill tree. The
+     * context is a read-only view of active bonuses used by combat and inventory services.
      *
      * @param state
      *            the current skill-tree state

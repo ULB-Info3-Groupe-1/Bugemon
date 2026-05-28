@@ -10,16 +10,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
-import bugemon.common.Configuration;
-import bugemon.common.dto.display.BugemonDisplayDTO;
 import bugemon.client.controllers.ManageTeamController.TeamFormMode;
 import bugemon.client.views.components.AllBugemonsView;
 import bugemon.client.views.components.BugemonTeamView;
+import bugemon.common.Configuration;
+import bugemon.common.dto.display.BugemonDisplayDTO;
 
 /**
  * View for the team management screen. Supports both the {@code CREATE} and {@code EDIT} modes of
- * {@link bugemon.client.controllers.ManageTeamController.TeamFormMode}: edit-only buttons are hidden in create mode. Dispatches
- * player interactions through a {@link Listener}; holds no reference to any concrete controller class.
+ * {@link bugemon.client.controllers.ManageTeamController.TeamFormMode}: edit-only buttons are hidden in create mode.
+ * Dispatches player interactions through a {@link Listener}; holds no reference to any concrete controller class.
  */
 public class ManageTeamView extends View {
 

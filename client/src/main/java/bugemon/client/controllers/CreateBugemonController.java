@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
+import bugemon.client.views.CreateBugemonView;
+import bugemon.client.views.ViewLoader;
 import bugemon.common.Configuration;
 import bugemon.common.dto.persistence.CreateBugemonDTO;
 import bugemon.common.models.bugemon.Attack;
@@ -13,8 +15,6 @@ import bugemon.common.models.bugemon.ElementType;
 import bugemon.server.repositories.exceptions.BugemonNameIsEmptyException;
 import bugemon.server.services.BugemonService;
 import bugemon.server.services.exceptions.BugemonNameAlreadyExistsException;
-import bugemon.client.views.CreateBugemonView;
-import bugemon.client.views.ViewLoader;
 
 /**
  * Controller for the custom Bugemon creation screen.

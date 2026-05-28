@@ -5,8 +5,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="bugemon.client.views.RewardView" styleClass="reward-container"
-    prefWidth="760" prefHeight="560">
+    fx:controller="bugemon.client.views.RewardView"
+    styleClass="reward-container" prefWidth="760" prefHeight="560">
 
     <Label text="Récompense d'étage" styleClass="reward-title" />
 

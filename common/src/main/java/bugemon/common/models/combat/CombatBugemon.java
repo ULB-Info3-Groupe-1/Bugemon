@@ -11,9 +11,9 @@ import bugemon.common.models.combat.effect.StatusEffect;
 import bugemon.common.models.run.RunBugemon;
 
 /**
- * A combat-scoped wrapper around a {@link bugemon.common.models.run.RunBugemon} that tracks transient battle state — current HP,
- * active {@link StatusEffect}s, and participation — without permanently modifying the underlying run data until
- * {@link #syncToRunBugemon()} is called.
+ * A combat-scoped wrapper around a {@link bugemon.common.models.run.RunBugemon} that tracks transient battle state —
+ * current HP, active {@link StatusEffect}s, and participation — without permanently modifying the underlying run data
+ * until {@link #syncToRunBugemon()} is called.
  *
  * <p>
  * Effective stat accessors (e.g. {@link #getEffectiveAttack()}) sum the base stat from the underlying
@@ -168,8 +168,8 @@ public class CombatBugemon {
      * Attaches a {@link StatusEffect} to this Bugemon.
      *
      * <p>
-     * If the effect targets {@link bugemon.common.StatType#HP}, the current HP is immediately adjusted by the modifier so
-     * the Bugemon does not appear at a different HP ratio than the new maximum.
+     * If the effect targets {@link bugemon.common.StatType#HP}, the current HP is immediately adjusted by the modifier
+     * so the Bugemon does not appear at a different HP ratio than the new maximum.
      *
      * @param effect
      *            the status effect to add
@@ -212,8 +212,8 @@ public class CombatBugemon {
     }
 
     /**
-     * Persists the current HP back to the underlying {@link bugemon.common.models.run.RunBugemon}, making the combat outcome
-     * durable beyond this combat session.
+     * Persists the current HP back to the underlying {@link bugemon.common.models.run.RunBugemon}, making the combat
+     * outcome durable beyond this combat session.
      */
     public void syncToRunBugemon() {
         this.runBugemon.setCurrentHp(this.currentHp);

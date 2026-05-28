@@ -10,9 +10,9 @@ import bugemon.common.models.team.Team;
  * Aggregates all persistent state associated with a single player profile.
  *
  * <p>
- * Holds the player's name, currently selected {@link bugemon.common.models.team.Team}, {@link bugemon.common.models.item.Inventory}, and
- * {@link bugemon.common.models.skills.SkillTreeState}. A call to {@link #clear()} resets everything except the name, allowing a
- * fresh run to begin without recreating the object.
+ * Holds the player's name, currently selected {@link bugemon.common.models.team.Team},
+ * {@link bugemon.common.models.item.Inventory}, and {@link bugemon.common.models.skills.SkillTreeState}. A call to
+ * {@link #clear()} resets everything except the name, allowing a fresh run to begin without recreating the object.
  */
 public class PlayerState {
 

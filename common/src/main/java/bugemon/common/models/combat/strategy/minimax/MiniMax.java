@@ -25,8 +25,8 @@ import bugemon.common.models.item.Item;
  *
  * <p>
  * The search depth is bounded by the {@code maxDepth} value supplied at construction time (see
- * {@link bugemon.common.Configuration.Game#MIN_MAX_MAXIMAL_DEPTH}). A terminal win state is scored at ±{@value #WIN_SCORE}; leaf
- * nodes use a simple total-HP difference heuristic.
+ * {@link bugemon.common.Configuration.Game#MIN_MAX_MAXIMAL_DEPTH}). A terminal win state is scored at
+ * ±{@value #WIN_SCORE}; leaf nodes use a simple total-HP difference heuristic.
  */
 public class MiniMax {
     private static final int WIN_SCORE = 1_000_000;

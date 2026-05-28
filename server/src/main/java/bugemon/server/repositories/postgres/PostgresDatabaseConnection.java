@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import bugemon.server.repositories.DatabaseConnection;
-
 import io.github.cdimascio.dotenv.Dotenv;
 
 /**

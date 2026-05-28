@@ -12,12 +12,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
+import bugemon.client.views.components.RoomNodeView;
 import bugemon.common.Configuration;
 import bugemon.common.RoomState;
 import bugemon.common.dto.display.ConnectionDisplayDTO;
 import bugemon.common.dto.display.FloorDisplayDTO;
 import bugemon.common.dto.display.RoomDisplayDTO;
-import bugemon.client.views.components.RoomNodeView;
 
 /**
  * View for the tower floor map. Renders room nodes and connecting lines on an absolute-positioned {@link Pane} scaled

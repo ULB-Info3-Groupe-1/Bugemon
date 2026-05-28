@@ -9,8 +9,8 @@ import bugemon.server.bootstrap.GameBootstrapper;
  * Standalone entry point for the Bugemon server.
  *
  * <p>
- * For now this bootstraps the database (schema creation + static data seeding).
- * Socket networking will be wired here once the multiplayer layer is implemented.
+ * For now this bootstraps the database (schema creation + static data seeding). Socket networking will be wired here
+ * once the multiplayer layer is implemented.
  */
 public class Main {
 

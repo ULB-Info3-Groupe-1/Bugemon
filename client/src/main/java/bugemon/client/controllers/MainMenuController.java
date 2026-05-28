@@ -1,8 +1,8 @@
 package bugemon.client.controllers;
 
-import bugemon.common.models.player.PlayerState;
 import bugemon.client.views.MainMenuView;
 import bugemon.client.views.ViewLoader;
+import bugemon.common.models.player.PlayerState;
 
 /**
  * Controller for the main menu screen.

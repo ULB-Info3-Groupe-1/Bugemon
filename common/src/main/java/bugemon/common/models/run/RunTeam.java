@@ -10,8 +10,9 @@ import bugemon.common.models.team.Team;
  * Represents the player's team for the duration of an active run.
  *
  * <p>
- * Created from a persistent {@link bugemon.common.models.team.Team} via {@link #fromTeam(bugemon.common.models.team.Team)}, which wraps each
- * member in a {@link RunBugemon} with full HP. The member list is immutable after construction.
+ * Created from a persistent {@link bugemon.common.models.team.Team} via
+ * {@link #fromTeam(bugemon.common.models.team.Team)}, which wraps each member in a {@link RunBugemon} with full HP. The
+ * member list is immutable after construction.
  */
 public class RunTeam {
     private final String teamName;

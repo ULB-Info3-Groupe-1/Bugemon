@@ -11,8 +11,8 @@ import bugemon.common.models.team.Team;
  * Produces a {@link Team} filled entirely with randomly selected non-boss Bugémons.
  *
  * <p>
- * Boss Bugémons (as identified by {@link bugemon.common.models.bugemon.Bugemon#isBoss()}) are excluded from the candidate pool
- * before selection.
+ * Boss Bugémons (as identified by {@link bugemon.common.models.bugemon.Bugemon#isBoss()}) are excluded from the
+ * candidate pool before selection.
  */
 public class RandomTeamFactory extends TeamFactory {
 

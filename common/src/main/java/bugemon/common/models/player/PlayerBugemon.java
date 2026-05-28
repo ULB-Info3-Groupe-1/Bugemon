@@ -18,9 +18,9 @@ import bugemon.common.models.player.exceptions.IllegalAttackReplacementException
  * attack set.
  *
  * <p>
- * Base stats come from the underlying {@link bugemon.common.models.bugemon.Bugemon} definition; {@link BonusStats} are added on
- * top. The four attacks in {@code currentAttacks} may differ from the base Bugemon's default attacks after the player
- * replaces them via {@link #replaceAttack(Attack, Attack)}.
+ * Base stats come from the underlying {@link bugemon.common.models.bugemon.Bugemon} definition; {@link BonusStats} are
+ * added on top. The four attacks in {@code currentAttacks} may differ from the base Bugemon's default attacks after the
+ * player replaces them via {@link #replaceAttack(Attack, Attack)}.
  *
  * <p>
  * Use {@link #from(Bugemon, PlayerBugemonDTO)} to reconstruct an instance from persisted data, and

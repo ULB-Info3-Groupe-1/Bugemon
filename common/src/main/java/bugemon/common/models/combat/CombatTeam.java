@@ -130,8 +130,8 @@ public class CombatTeam {
     }
 
     /**
-     * Persists all Bugemon HP values back to their underlying {@link bugemon.common.models.run.RunBugemon} instances, making the
-     * combat outcome durable for the current run.
+     * Persists all Bugemon HP values back to their underlying {@link bugemon.common.models.run.RunBugemon} instances,
+     * making the combat outcome durable for the current run.
      */
     public void syncToRunTeam() {
         this.members.forEach(CombatBugemon::syncToRunBugemon);
