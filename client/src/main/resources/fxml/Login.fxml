@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+    fx:controller="bugemon.client.views.LoginView" alignment="CENTER" spacing="20"
+    styleClass="main-menu">
+    <Label fx:id="titleLabel" text="Connexion"
+        styleClass="main-title" />
+
+    <VBox fx:id="playerNameContainer" alignment="CENTER" spacing="5">
+        <Label text="Nom d'utilisateur" styleClass="section-label" />
+        <TextField fx:id="playerNameField" promptText="Votre pseudo"
+            maxWidth="300" />
+    </VBox>
+
+    <VBox fx:id="passwordContainer" alignment="CENTER" spacing="5">
+        <Label text="Mot de passe" styleClass="section-label" />
+        <PasswordField fx:id="passwordField"
+            promptText="Votre mot de passe" maxWidth="300" />
+    </VBox>
+
+    <VBox alignment="CENTER" spacing="10"
+        style="-fx-padding: 20 0 0 0;">
+        <Button fx:id="loginButton" text="Se connecter"
+            onAction="#onLoginClicked" styleClass="btn,btn-primary,btn-nav" />
+        <Button fx:id="createAccountButton" text="Créer un compte"
+            onAction="#onCreateAccountClicked"
+            styleClass="btn,btn-secondary,btn-nav" />
+        <Button fx:id="confirmCreateButton" text="Valider la création"
+            onAction="#onConfirmCreateClicked"
+            styleClass="btn,btn-primary,btn-nav" managed="false" visible="false" />
+        <Button fx:id="backToLoginButton" text="Retour à la connexion"
+            onAction="#onBackToLoginClicked"
+            styleClass="btn,btn-secondary,btn-nav" managed="false"
+            visible="false" />
+        <Button fx:id="quitButton" text="Quitter"
+            onAction="#onQuitClicked" styleClass="btn,btn-danger,btn-nav" />
+    </VBox>
+</VBox>

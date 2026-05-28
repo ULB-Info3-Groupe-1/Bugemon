@@ -76,7 +76,14 @@ docker compose up -d
 Vous pouvez ensuite lancer le jeu avec la commande suivante :
 
 ```bash
-mvn clean javafx:run
+# Depuis la racine du projet
+mvn javafx:run -pl client
+```
+
+Pour lancer le serveur :
+
+```bash
+mvn exec:java -pl server
 ```
 
 ## Lancer les tests
