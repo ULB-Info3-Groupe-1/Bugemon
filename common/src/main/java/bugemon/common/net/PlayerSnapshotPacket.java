@@ -19,6 +19,6 @@ import bugemon.common.models.team.Team;
  * @param skillTreeState
  *            the player's skill-tree progression
  */
-public record PlayerSnapshotPacket(Team activeTeam, Inventory inventory, SkillTreeState skillTreeState)
-        implements Packet {
+public record PlayerSnapshotPacket(Team activeTeam, Inventory inventory,
+        SkillTreeState skillTreeState) implements Packet {
 }

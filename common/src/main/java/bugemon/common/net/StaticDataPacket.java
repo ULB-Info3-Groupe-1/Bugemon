@@ -23,6 +23,6 @@ import bugemon.common.models.skills.SkillTree;
  * @param skillTree
  *            the skill-tree definition
  */
-public record StaticDataPacket(List<Bugemon> bugemons, List<Attack> attacks, List<Item> items, SkillTree skillTree)
-        implements Packet {
+public record StaticDataPacket(List<Bugemon> bugemons, List<Attack> attacks, List<Item> items,
+        SkillTree skillTree) implements Packet {
 }

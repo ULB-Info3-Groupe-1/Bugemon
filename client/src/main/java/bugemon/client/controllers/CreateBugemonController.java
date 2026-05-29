@@ -121,10 +121,8 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
     private void submit(String name, int attack, int defense, int initiative, int hp, List<Attack> attacks,
             byte[] spriteBytes) {
-        this.bugemonService
-                .createBugemon(name, this.selectedBugemonType.get(), attack, defense, initiative, hp, attacks,
-                        spriteBytes)
-                .whenComplete((status, error) -> Platform.runLater(() -> {
+        this.bugemonService.createBugemon(name, this.selectedBugemonType.get(), attack, defense, initiative, hp,
+                attacks, spriteBytes).whenComplete((status, error) -> Platform.runLater(() -> {
                     if (error != null) {
                         LOG.error("Failed to create Bugemon {}", name, error);
                         return;

@@ -123,8 +123,7 @@ public class RequestDispatcher {
             case GetStaticDataRequestPacket ignored -> this.handleGetStaticData(session);
             case SaveInventoryRequestPacket save -> this.handleSaveInventory(save, session);
             case SavePlayerBugemonRequestPacket save -> this.handleSavePlayerBugemon(save, session);
-            default -> throw new IllegalArgumentException(
-                    "Unsupported packet type: " + request.getClass().getName());
+            default -> throw new IllegalArgumentException("Unsupported packet type: " + request.getClass().getName());
         };
     }
 
@@ -165,8 +164,8 @@ public class RequestDispatcher {
 
     private PlayerSnapshotPacket handlePlayerData(ClientSession session) {
         ServiceRegistry services = session.getServices();
-        return new PlayerSnapshotPacket(services.team.getActiveTeam().orElse(null),
-                services.inventory.getInventory(), services.skill.getSkillTreeState());
+        return new PlayerSnapshotPacket(services.team.getActiveTeam().orElse(null), services.inventory.getInventory(),
+                services.skill.getSkillTreeState());
     }
 
     private PlayerSnapshotPacket handleResetGame(ClientSession session) {

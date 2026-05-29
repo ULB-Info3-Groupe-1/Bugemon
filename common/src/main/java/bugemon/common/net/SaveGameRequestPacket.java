@@ -18,6 +18,6 @@ import bugemon.common.models.team.Team;
  * @param tower
  *            the current tower-run snapshot to persist, or {@code null} to leave the saved run untouched
  */
-public record SaveGameRequestPacket(Team activeTeam, Inventory inventory, SkillTreeState skillTreeState, TowerDTO tower)
-        implements Packet {
+public record SaveGameRequestPacket(Team activeTeam, Inventory inventory, SkillTreeState skillTreeState,
+        TowerDTO tower) implements Packet {
 }

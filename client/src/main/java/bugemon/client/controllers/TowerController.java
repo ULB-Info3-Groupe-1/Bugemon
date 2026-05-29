@@ -150,8 +150,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     }
 
     /**
-     * Called by the {@link MetaController} when a tower combat ends. On defeat the run is deleted; on a boss victory the
-     * floor is advanced.
+     * Called by the {@link MetaController} when a tower combat ends. On defeat the run is deleted; on a boss victory
+     * the floor is advanced.
      *
      * @param playerWon
      *            {@code true} if the player's team won the combat
@@ -232,10 +232,8 @@ public class TowerController extends Controller<FloorView> implements FloorView.
     private void persistGame() {
         TowerDTO dto = this.towerState != null ? TowerEngine.toDTO(this.playerState.getPlayerName(), this.towerState)
                 : null;
-        this.saveService
-                .saveGame(this.playerState.getActiveTeam().orElse(null), this.playerState.getInventory(),
-                        this.playerState.getSkillTreeState(), dto)
-                .whenComplete((ignored, error) -> {
+        this.saveService.saveGame(this.playerState.getActiveTeam().orElse(null), this.playerState.getInventory(),
+                this.playerState.getSkillTreeState(), dto).whenComplete((ignored, error) -> {
                     if (error != null) {
                         LOG.warn("Failed to persist game state", error);
                     }

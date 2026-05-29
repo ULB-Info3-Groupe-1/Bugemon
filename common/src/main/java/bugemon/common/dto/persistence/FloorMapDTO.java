@@ -15,6 +15,6 @@ import bugemon.common.models.utils.Position;
  * @param currentRoomPosition
  *            grid position of the room the player is currently in
  */
-public record FloorMapDTO(int floor, List<Position> visitedRoomsPosition, Position currentRoomPosition)
-        implements Serializable {
+public record FloorMapDTO(int floor, List<Position> visitedRoomsPosition,
+        Position currentRoomPosition) implements Serializable {
 }

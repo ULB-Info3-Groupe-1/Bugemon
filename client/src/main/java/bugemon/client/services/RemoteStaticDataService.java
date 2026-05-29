@@ -7,8 +7,8 @@ import bugemon.common.net.GetStaticDataRequestPacket;
 import bugemon.common.net.StaticDataPacket;
 
 /**
- * Client-side facade for fetching the immutable game catalogue (species, attacks, items, skill tree) once at login.
- * The result is cached by the caller and reused for local combat, reward and level-up logic.
+ * Client-side facade for fetching the immutable game catalogue (species, attacks, items, skill tree) once at login. The
+ * result is cached by the caller and reused for local combat, reward and level-up logic.
  */
 public class RemoteStaticDataService {
 

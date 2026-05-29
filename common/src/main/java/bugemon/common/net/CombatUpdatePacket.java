@@ -20,6 +20,6 @@ import java.util.List;
  * @param log
  *            human-readable description of the steps that just occurred, in order
  */
-public record CombatUpdatePacket(String combatId, boolean finished, boolean playerWon, List<String> log)
-        implements Packet {
+public record CombatUpdatePacket(String combatId, boolean finished, boolean playerWon,
+        List<String> log) implements Packet {
 }

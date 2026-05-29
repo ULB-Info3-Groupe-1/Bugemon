@@ -10,8 +10,8 @@ import bugemon.client.views.ViewLoader;
  *
  * <p>
  * Offers three actions: start a new game (asks the server to wipe all player data, then rebuilds the session), continue
- * the existing game, or quit. All persistence is delegated to the server through {@link MetaController}; this controller
- * holds no service or database reference.
+ * the existing game, or quit. All persistence is delegated to the server through {@link MetaController}; this
+ * controller holds no service or database reference.
  */
 public class SaveMenuController extends Controller<SaveMenuView> implements SaveMenuView.Listener {
 

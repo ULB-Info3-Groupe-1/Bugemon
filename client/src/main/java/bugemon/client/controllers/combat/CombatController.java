@@ -274,10 +274,8 @@ public class CombatController extends Controller<CombatView>
      * tower run, if any, is persisted separately by the tower controller.
      */
     private void persistAfterCombat() {
-        this.saveService
-                .saveGame(this.playerState.getActiveTeam().orElse(null), this.playerState.getInventory(),
-                        this.playerState.getSkillTreeState(), null)
-                .whenComplete((ignored, error) -> {
+        this.saveService.saveGame(this.playerState.getActiveTeam().orElse(null), this.playerState.getInventory(),
+                this.playerState.getSkillTreeState(), null).whenComplete((ignored, error) -> {
                     if (error != null) {
                         LOG.warn("Failed to persist after combat", error);
                     }

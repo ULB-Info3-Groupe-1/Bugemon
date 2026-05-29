@@ -25,6 +25,6 @@ import bugemon.common.models.team.Team;
  * @param skillTree
  *            the static skill-tree definition
  */
-public record TowerInitDataPacket(TowerDTO savedTower, Team savedTeam, List<Item> items, SkillTree skillTree)
-        implements Packet {
+public record TowerInitDataPacket(TowerDTO savedTower, Team savedTeam, List<Item> items,
+        SkillTree skillTree) implements Packet {
 }
