@@ -1,35 +1,43 @@
 package bugemon.client.controllers;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import bugemon.client.services.RemoteTeamService;
+import bugemon.client.services.TeamScreenData;
 import bugemon.client.views.ManageTeamView;
 import bugemon.client.views.ViewLoader;
 import bugemon.common.dto.display.BugemonDisplayDTO;
 import bugemon.common.models.player.PlayerBugemon;
 import bugemon.common.models.player.PlayerState;
 import bugemon.common.models.team.Team;
-import bugemon.server.services.BugemonService;
-import bugemon.server.services.TeamService;
-import bugemon.server.services.exceptions.TeamNameEmptyException;
-import bugemon.server.services.exceptions.TeamNotFoundException;
+import bugemon.common.net.TeamOpResponsePacket;
 
 /**
  * Controller responsible for the team creation and editing screen.
  *
  * <p>
- * Mutates a temporary {@link bugemon.common.models.team.Team} in response to player actions, then triggers a view
- * refresh so the view can pull the updated state. The controller never pushes data directly into the view. Operates in
- * either {@link TeamFormMode#CREATE} or {@link TeamFormMode#EDIT} mode.
+ * On display it fetches a {@link TeamScreenData} snapshot (selectable Bugemons + saved teams) in one round-trip and
+ * answers all read queries locally against it. The working {@link Team} is mutated in memory; persistence operations
+ * (save / delete / rename / modify / set-active) are sent asynchronously through {@link RemoteTeamService}, after which
+ * the snapshot is reloaded so the view reflects the server state. Operates in either {@link TeamFormMode#CREATE} or
+ * {@link TeamFormMode#EDIT} mode.
  */
 public class ManageTeamController extends Controller<ManageTeamView> implements ManageTeamView.Listener {
 
-    private final TeamService teamService;
+    private static final Logger LOG = LoggerFactory.getLogger(ManageTeamController.class);
+
+    private final RemoteTeamService teamService;
     private final PlayerState playerState;
-    private final BugemonService bugemonService;
 
     private Team tmpTeam; // The team that gets edited in this screen
+    private TeamScreenData data; // Cached server snapshot backing all read queries
 
     /**
      * Operating modes for the team management form.
@@ -51,19 +59,15 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
      * @param metaController
      *            the application-wide navigation controller
      * @param teamService
-     *            service for team persistence
-     * @param bugemonService
-     *            service for loading player Bugemon data
+     *            remote facade for team data and persistence
      * @param playerState
      *            the current player state, used to read and set the active team
      */
-    public ManageTeamController(TeamFormMode mode, MetaController metaController, TeamService teamService,
-            BugemonService bugemonService, PlayerState playerState) {
+    public ManageTeamController(TeamFormMode mode, MetaController metaController, RemoteTeamService teamService,
+            PlayerState playerState) {
         super(metaController, ViewLoader.load(() -> new ManageTeamView(mode)));
         this.teamService = teamService;
-        this.bugemonService = bugemonService;
         this.playerState = playerState;
-
         this.view.setListener(this);
     }
 
@@ -73,16 +77,30 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         if (this.tmpTeam == null) {
             this.tmpTeam = new Team();
         }
-        this.updateAllUI();
         super.show();
+        this.reload();
+    }
+
+    /**
+     * Fetches the team-screen snapshot and refreshes the whole UI on the JavaFX thread once it arrives.
+     */
+    private void reload() {
+        this.teamService.getScreenData().whenComplete((screenData, error) -> Platform.runLater(() -> {
+            if (error != null) {
+                LOG.error("Failed to load team screen data", error);
+                return;
+            }
+            this.data = screenData;
+            this.updateAllUI();
+        }));
     }
 
     /**
      * Refreshes the available-Bugemon list, marking already-selected members as selected in the view.
      */
     private void updateDisplayedAvailableBugemons() {
-        List<BugemonDisplayDTO> allDTOs = this.bugemonService.getPlayerBugemons().stream()
-                .map(PlayerBugemon::toDisplayDTO).toList();
+        List<BugemonDisplayDTO> allDTOs = this.data.getPlayerBugemons().stream().map(PlayerBugemon::toDisplayDTO)
+                .toList();
         Set<String> selectedNames = this.tmpTeam.getMembers().stream().map(PlayerBugemon::getName)
                 .collect(Collectors.toSet());
         Set<BugemonDisplayDTO> selectedDTOs = allDTOs.stream().filter(dto -> selectedNames.contains(dto.getName()))
@@ -100,7 +118,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
         this.view.refreshWorkingTeam(memberDTOs);
         if (this.tmpTeam.isEmpty()) {
             this.view.refreshWorkingTeamNameNoTeamSelected();
-        } else if (this.teamService.isTeamSaved(this.tmpTeam)) {
+        } else if (this.data.isTeamSaved(this.tmpTeam)) {
             this.view.refreshWorkingTeamNameToShow(this.tmpTeam.getName());
         } else {
             this.view.refreshWorkingTeamNameTeamNotSaved();
@@ -114,11 +132,14 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     /** Refreshes the list of saved team names shown in the view. */
     private void updateDisplayedTeamNames() {
-        this.view.refreshTeamNames(this.teamService.getTeamNames());
+        this.view.refreshTeamNames(this.data.getTeamNames());
     }
 
-    /** Calls all four view-refresh helpers in the correct order. */
+    /** Calls all four view-refresh helpers in the correct order. Does nothing until the snapshot has loaded. */
     private void updateAllUI() {
+        if (this.data == null) {
+            return;
+        }
         this.updateWorkingTeamToShow();
         this.updateTeamSelected();
         this.updateDisplayedTeamNames();
@@ -127,7 +148,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onBugemonSelected(BugemonDisplayDTO dto) {
-        PlayerBugemon playerBugemon = this.bugemonService.getPlayerBugemon(dto.getName());
+        if (this.data == null) {
+            return;
+        }
+        PlayerBugemon playerBugemon = this.data.getPlayerBugemon(dto.getName());
         if (this.tmpTeam.contains(playerBugemon)) {
             this.tmpTeam.remove(playerBugemon);
         } else if (!this.tmpTeam.isFull()) {
@@ -147,44 +171,58 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             return;
         }
         boolean isUpdate = teamName.equals(this.tmpTeam.getName());
-        if (!isUpdate && this.teamService.teamExists(teamName)) {
+        if (!isUpdate && this.data.teamExists(teamName)) {
             this.view.showTeamNameAlreadyExistsAlert(teamName);
             return;
         }
-
         this.tmpTeam.setName(teamName);
-        if (this.validateTeam()) {
-            this.teamService.save(this.tmpTeam);
+        this.teamService.save(this.tmpTeam).whenComplete((ignored, error) -> Platform.runLater(() -> {
+            if (error != null) {
+                LOG.error("Failed to save team {}", teamName, error);
+                return;
+            }
             this.clearTmpTeam();
-            this.updateAllUI();
-        }
+            this.reload();
+        }));
     }
 
     @Override
     public void onDelete(String teamName) {
-        try {
-            this.teamService.deleteTeam(teamName);
+        this.teamService.deleteTeam(teamName).whenComplete((status, error) -> Platform.runLater(() -> {
+            if (error != null) {
+                LOG.error("Failed to delete team {}", teamName, error);
+                return;
+            }
+            if (status == TeamOpResponsePacket.Status.NOT_FOUND) {
+                this.view.showDeleteTeamNoActiveTeamAlert();
+                return;
+            }
             this.clearTmpTeam();
-            this.updateAllUI();
-        } catch (TeamNotFoundException e) {
-            this.view.showDeleteTeamNoActiveTeamAlert();
-        }
+            this.reload();
+        }));
     }
 
     @Override
     public void onRename(String newName) {
-        if (this.teamService.teamExists(newName)) {
+        if (this.data.teamExists(newName)) {
             this.view.showTeamNameAlreadyExistsAlert(newName);
             return;
         }
+        this.teamService.renameTeam(this.tmpTeam, newName).whenComplete((status, error) -> Platform.runLater(() -> {
+            if (error != null) {
+                LOG.error("Failed to rename team to {}", newName, error);
+                return;
+            }
+            this.handleRenameStatus(status);
+        }));
+    }
 
-        try {
-            this.teamService.renameTeam(this.tmpTeam, newName);
-            this.updateAllUI();
-        } catch (TeamNameEmptyException e) {
-            this.view.showEmptyTeamNameAlert();
-        } catch (TeamNotFoundException e) {
-            this.view.showSelectTeamToRenameAlert();
+    private void handleRenameStatus(TeamOpResponsePacket.Status status) {
+        switch (status) {
+            case OK -> this.reload();
+            case NAME_EMPTY -> this.view.showEmptyTeamNameAlert();
+            case NOT_FOUND -> this.view.showSelectTeamToRenameAlert();
+            default -> LOG.warn("Unexpected rename status: {}", status);
         }
     }
 
@@ -201,27 +239,35 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             this.view.showEmptyTeamAlert();
             return;
         }
-
-        try {
-            this.teamService.modify(this.tmpTeam);
-            this.updateAllUI();
-        } catch (TeamNotFoundException e) {
-            this.view.showAlertChooseTeamToModify();
-        }
+        this.teamService.modify(this.tmpTeam).whenComplete((status, error) -> Platform.runLater(() -> {
+            if (error != null) {
+                LOG.error("Failed to modify team", error);
+                return;
+            }
+            if (status == TeamOpResponsePacket.Status.NOT_FOUND) {
+                this.view.showAlertChooseTeamToModify();
+                return;
+            }
+            this.reload();
+        }));
     }
 
     @Override
     public void onTeamSelected(String teamName) {
-        try {
-            this.playerState.setActiveTeam(this.teamService.getTeam(teamName)
-                    .orElseThrow(() -> new TeamNotFoundException("Active team not found")));
-            this.teamService.setActiveTeam(teamName);
-            this.tmpTeam = this.teamService.getTeam(teamName)
-                    .orElseThrow(() -> new TeamNotFoundException("Active team not found"));
-        } catch (TeamNotFoundException e) {
+        Optional<Team> selected = this.data.getTeam(teamName);
+        if (selected.isEmpty()) {
             this.view.showTeamNotFoundAlert(teamName);
+            this.updateAllUI();
+            return;
         }
+        this.playerState.setActiveTeam(selected.get());
+        this.tmpTeam = new Team(selected.get());
         this.updateAllUI();
+        this.teamService.setActiveTeam(teamName).whenComplete((ignored, error) -> {
+            if (error != null) {
+                LOG.error("Failed to set active team {}", teamName, error);
+            }
+        });
     }
 
     @Override
@@ -255,7 +301,8 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void onReturnToMainMenu() {
-        if (!this.teamService.isTeamSaved(this.tmpTeam) && !this.tmpTeam.isEmpty()) {
+        boolean saved = this.data != null && this.data.isTeamSaved(this.tmpTeam);
+        if (!saved && !this.tmpTeam.isEmpty()) {
             if (this.view.showAlertTeamChangesNotSave()) {
                 this.clearTmpTeam();
             } else {
@@ -263,30 +310,10 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
             }
         }
         this.metaController.onMainMenu();
-
     }
 
     /** Resets the working team to an empty, nameless state. */
     private void clearTmpTeam() {
         this.tmpTeam = new Team();
-    }
-
-    /**
-     * Validates that the working team is non-null, non-empty, and has a non-blank name. Shows the appropriate alert and
-     * returns {@code false} on the first failure.
-     *
-     * @return {@code true} if the team passes all checks
-     */
-    private boolean validateTeam() {
-        if (this.tmpTeam == null || this.tmpTeam.isEmpty()) {
-            this.view.showEmptyTeamAlert();
-            return false;
-        }
-
-        if (this.tmpTeam.getName() == null || this.tmpTeam.getName().isBlank()) {
-            this.view.showEmptyTeamNameAlert();
-            return false;
-        }
-        return true;
     }
 }

@@ -15,7 +15,7 @@
   <dependencies>
     <dependency>
       <groupId>bugemon</groupId>
-      <artifactId>bugemon-server</artifactId>
+      <artifactId>bugemon-common</artifactId>
     </dependency>
 
     <!-- JavaFX -->

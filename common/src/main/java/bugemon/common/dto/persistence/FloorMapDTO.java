@@ -1,5 +1,6 @@
 package bugemon.common.dto.persistence;
 
+import java.io.Serializable;
 import java.util.List;
 
 import bugemon.common.models.utils.Position;
@@ -14,5 +15,6 @@ import bugemon.common.models.utils.Position;
  * @param currentRoomPosition
  *            grid position of the room the player is currently in
  */
-public record FloorMapDTO(int floor, List<Position> visitedRoomsPosition, Position currentRoomPosition) {
+public record FloorMapDTO(int floor, List<Position> visitedRoomsPosition, Position currentRoomPosition)
+        implements Serializable {
 }

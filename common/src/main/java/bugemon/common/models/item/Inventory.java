@@ -1,5 +1,6 @@
 package bugemon.common.models.item;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +12,10 @@ import java.util.Optional;
  * Items are keyed by identity (via {@link Item#equals}/{@link Item#hashCode}), so duplicate definitions of the same
  * item consolidate into a single entry with a cumulative quantity.
  */
-public class Inventory {
+public class Inventory implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private final Map<Item, Integer> items;
 
     /** Creates an empty inventory. */

@@ -1,5 +1,6 @@
 package bugemon.common.models.bugemon;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +46,7 @@ import bugemon.common.models.bugemon.exceptions.InvalidAttackCountException;
  *            {@code true} if this species is a boss-tier opponent
  */
 public record Bugemon(String name, int hp, int attack, int defense, int initiative, ElementType type,
-        List<Attack> attacks, String spritePath, boolean isStarter, boolean isBoss) {
+        List<Attack> attacks, String spritePath, boolean isStarter, boolean isBoss) implements Serializable {
 
     public static final int ATTACKS_COUNT = Configuration.Game.ATTACKS_COUNT;
 

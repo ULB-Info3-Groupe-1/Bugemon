@@ -1,40 +1,58 @@
 package bugemon.client.controllers;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
+import javafx.application.Platform;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import bugemon.client.services.RemoteBugemonService;
 import bugemon.client.views.CreateBugemonView;
 import bugemon.client.views.ViewLoader;
 import bugemon.common.Configuration;
-import bugemon.common.dto.persistence.CreateBugemonDTO;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.bugemon.ElementType;
-import bugemon.server.repositories.exceptions.BugemonNameIsEmptyException;
-import bugemon.server.services.BugemonService;
-import bugemon.server.services.exceptions.BugemonNameAlreadyExistsException;
+import bugemon.common.net.CreateBugemonResponsePacket;
 
 /**
  * Controller for the custom Bugemon creation screen.
  *
  * <p>
- * Manages element-type and sprite selection state, validates form input, assembles a
- * {@link bugemon.common.dto.persistence.CreateBugemonDTO}, and delegates persistence to
- * {@link bugemon.server.services.BugemonService}.
+ * The static attack catalogue is fetched once and cached for local type-filtering. On submit, the chosen sprite is read
+ * into a byte array and the whole request is sent asynchronously through {@link RemoteBugemonService}; the server's
+ * status reply is mapped to the appropriate alert on the JavaFX thread.
  */
 public class CreateBugemonController extends Controller<CreateBugemonView> implements CreateBugemonView.Listener {
 
-    private final BugemonService bugemonService;
+    private static final Logger LOG = LoggerFactory.getLogger(CreateBugemonController.class);
+
+    private final RemoteBugemonService bugemonService;
 
     private Optional<ElementType> selectedBugemonType = Optional.empty();
-    private Optional<URL> selectedBugemonSpriteUrl = Optional.empty();
+    private Optional<File> selectedBugemonSprite = Optional.empty();
+    private List<Attack> allAttacks;
 
-    public CreateBugemonController(MetaController metaController, BugemonService bugemonService) {
+    public CreateBugemonController(MetaController metaController, RemoteBugemonService bugemonService) {
         super(metaController, ViewLoader.load(CreateBugemonView::new));
         this.bugemonService = bugemonService;
         this.view.setListener(this);
+        this.loadAttacks();
+    }
+
+    /** Fetches the static attack catalogue once and refreshes the available-attack list on the JavaFX thread. */
+    private void loadAttacks() {
+        this.bugemonService.getAttacks().whenComplete((attacks, error) -> Platform.runLater(() -> {
+            if (error != null) {
+                LOG.error("Failed to load attacks", error);
+                return;
+            }
+            this.allAttacks = attacks;
+            this.updateAvailableAttacks();
+        }));
     }
 
     @Override
@@ -45,21 +63,20 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
 
     @Override
     public void onSpriteSelected(File selectedSpriteFile) {
-        try {
-            this.selectedBugemonSpriteUrl = Optional.of(selectedSpriteFile.toURI().toURL());
-            this.view.setSprite(selectedSpriteFile);
-        } catch (MalformedURLException e) {
-            this.selectedBugemonSpriteUrl = Optional.empty();
-        }
+        this.selectedBugemonSprite = Optional.of(selectedSpriteFile);
+        this.view.setSprite(selectedSpriteFile);
     }
 
     /**
-     * Refreshes the view's attack selection list to show only attacks matching the currently selected element type.
-     * Does nothing if no type has been selected yet.
+     * Refreshes the view's attack selection list to show only cached attacks matching the selected element type. Does
+     * nothing until both a type is selected and the attack catalogue has loaded.
      */
     public void updateAvailableAttacks() {
+        if (this.allAttacks == null) {
+            return;
+        }
         this.selectedBugemonType.ifPresent(bugemonType -> {
-            List<Attack> attacks = this.bugemonService.getAttacks(bugemonType);
+            List<Attack> attacks = this.allAttacks.stream().filter(attack -> attack.type() == bugemonType).toList();
             this.view.setAvailableAttacks(attacks);
         });
     }
@@ -76,28 +93,52 @@ public class CreateBugemonController extends Controller<CreateBugemonView> imple
             this.view.showInvalidFormChooseAttacks();
             return;
         }
-
-        if (this.selectedBugemonSpriteUrl.isEmpty()) {
+        if (this.selectedBugemonSprite.isEmpty()) {
             this.view.showInvalidFormChooseSprite();
             return;
         }
-
         if (this.selectedBugemonType.isEmpty()) {
             this.view.showInvalidFormChooseBugemonType();
             return;
         }
 
-        CreateBugemonDTO bugemonToCreate = this.bugemonService.createBugemon(bugemonName,
-                this.selectedBugemonType.get(), this.selectedBugemonSpriteUrl.get(), attack, defense, initiative, hp,
-                attacks);
+        byte[] spriteBytes = this.readSpriteBytes();
+        if (spriteBytes == null) {
+            this.view.showInvalidFormChooseSprite();
+            return;
+        }
+        this.submit(bugemonName, attack, defense, initiative, hp, attacks, spriteBytes);
+    }
 
+    private byte[] readSpriteBytes() {
         try {
-            this.bugemonService.saveNewBugemon(bugemonToCreate);
-            this.view.showSaveSuccessAlert(bugemonName);
-        } catch (BugemonNameIsEmptyException e) {
-            this.view.showBugemonNameEmptyAlert();
-        } catch (BugemonNameAlreadyExistsException e) {
-            this.view.showBugemonNameAlreadyUsedAlert();
+            return Files.readAllBytes(this.selectedBugemonSprite.get().toPath());
+        } catch (IOException e) {
+            LOG.error("Failed to read sprite file", e);
+            return null;
+        }
+    }
+
+    private void submit(String name, int attack, int defense, int initiative, int hp, List<Attack> attacks,
+            byte[] spriteBytes) {
+        this.bugemonService
+                .createBugemon(name, this.selectedBugemonType.get(), attack, defense, initiative, hp, attacks,
+                        spriteBytes)
+                .whenComplete((status, error) -> Platform.runLater(() -> {
+                    if (error != null) {
+                        LOG.error("Failed to create Bugemon {}", name, error);
+                        return;
+                    }
+                    this.handleCreateStatus(status, name);
+                }));
+    }
+
+    private void handleCreateStatus(CreateBugemonResponsePacket.Status status, String bugemonName) {
+        switch (status) {
+            case OK -> this.view.showSaveSuccessAlert(bugemonName);
+            case NAME_EMPTY -> this.view.showBugemonNameEmptyAlert();
+            case NAME_EXISTS -> this.view.showBugemonNameAlreadyUsedAlert();
+            default -> LOG.warn("Unexpected create status: {}", status);
         }
     }
 

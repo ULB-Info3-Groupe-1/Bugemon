@@ -3,6 +3,7 @@ package bugemon.server.repositories.postgres;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -107,7 +108,8 @@ public class DatabaseInitializer extends AbstractRepository {
         if (attack.effects() == null || attack.effects().isEmpty()) {
             return;
         }
-        try (PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql("SaveEffect"))) {
+        try (Connection connection = this.dbConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(this.getSql("SaveEffect"))) {
             for (Effect effect : attack.effects()) {
                 ps.setString(1, attack.id());
                 this.setEffectParameters(ps, effect);

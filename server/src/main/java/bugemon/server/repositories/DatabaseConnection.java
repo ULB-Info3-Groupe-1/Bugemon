@@ -1,25 +1,25 @@
 package bugemon.server.repositories;
 
-import java.sql.PreparedStatement;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Abstraction over a live database connection that produces {@link PreparedStatement} instances.
+ * Abstraction over a database connection source.
  *
  * <p>
- * Implementations are responsible for managing the underlying connection lifecycle (pooling, reconnection, etc.).
- * Callers own the returned {@link PreparedStatement} and must close it.
+ * Implementations are backed by a connection pool so that the many virtual threads serving concurrent clients each
+ * obtain their own {@link Connection} instead of sharing one (a single JDBC {@code Connection} is not thread-safe).
+ * Callers <strong>must</strong> close the returned connection — for a pooled implementation, closing returns it to the
+ * pool rather than tearing down the physical connection — ideally via try-with-resources.
  */
 public interface DatabaseConnection {
 
     /**
-     * Creates a {@link PreparedStatement} for the given SQL string.
+     * Borrows a connection from the pool.
      *
-     * @param sql
-     *            the parameterised SQL to compile
-     * @return a new prepared statement bound to the current connection
+     * @return a ready-to-use connection that the caller must close when done
      * @throws SQLException
-     *             if the connection is closed or the SQL is invalid
+     *             if no connection can be obtained
      */
-    PreparedStatement prepareStatement(String sql) throws SQLException;
+    Connection getConnection() throws SQLException;
 }

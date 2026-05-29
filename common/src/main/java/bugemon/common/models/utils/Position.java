@@ -1,5 +1,7 @@
 package bugemon.common.models.utils;
 
+import java.io.Serializable;
+
 /**
  * An immutable grid coordinate used throughout the model and view layers.
  *
@@ -13,5 +15,5 @@ package bugemon.common.models.utils;
  * @param y
  *            row index (0-based)
  */
-public record Position(int x, int y) {
+public record Position(int x, int y) implements Serializable {
 }

@@ -1,5 +1,6 @@
 package bugemon.common.models.team;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,11 +21,14 @@ import bugemon.common.models.team.exceptions.TeamAlreadyFullException;
  * Membership is enforced by Bugemon name: no two members may share the same name, and the total count may never exceed
  * the configured maximum. Violations throw unchecked exceptions from {@code bugemon.common.models.team.exceptions}.
  */
-public class Team {
-    private final List<PlayerBugemon> members;
-    private String name;
+public class Team implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private static final int MAX_SIZE = Configuration.Game.MAX_TEAM_SIZE;
+
+    private final List<PlayerBugemon> members;
+    private String name;
 
     /** Creates an empty team with no name. */
     public Team() {

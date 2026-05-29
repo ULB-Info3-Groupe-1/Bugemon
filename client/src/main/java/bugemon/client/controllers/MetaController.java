@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -12,13 +14,22 @@ import org.slf4j.LoggerFactory;
 import bugemon.client.controllers.combat.CombatController;
 import bugemon.client.controllers.combat.CombatDefeatController;
 import bugemon.client.controllers.combat.CombatVictoryController;
+import bugemon.client.net.NetworkManager;
 import bugemon.client.repositories.resource.ResourceMusicRepository;
 import bugemon.client.services.MusicService;
+import bugemon.client.services.RemoteBugemonService;
+import bugemon.client.services.RemoteInventoryService;
+import bugemon.client.services.RemoteSaveService;
+import bugemon.client.services.RemoteSkillService;
+import bugemon.client.services.RemoteStaticDataService;
+import bugemon.client.services.RemoteTeamService;
+import bugemon.client.services.RemoteTowerService;
 import bugemon.client.views.View;
 import bugemon.common.CombatSummary;
 import bugemon.common.Configuration;
 import bugemon.common.LevelUpResult;
 import bugemon.common.models.bugemon.Bugemon;
+import bugemon.common.models.combat.CombatService;
 import bugemon.common.models.combat.factory.CombatFactory;
 import bugemon.common.models.music.BackgroundAmbiance;
 import bugemon.common.models.music.SoundEffect;
@@ -26,12 +37,10 @@ import bugemon.common.models.player.PlayerState;
 import bugemon.common.models.run.RunTeam;
 import bugemon.common.models.team.factory.TeamFactory;
 import bugemon.common.models.tower.reward.Reward;
-import bugemon.server.bootstrap.GameBootstrapper;
-import bugemon.server.bootstrap.ServiceRegistry;
-import bugemon.server.services.BugemonService;
-import bugemon.server.services.CombatService;
-import bugemon.server.services.LoginService;
-import bugemon.server.services.RewardService;
+import bugemon.common.models.tower.reward.RewardGenerator;
+import bugemon.common.net.PlayerSnapshotPacket;
+import bugemon.common.net.RequestPlayerDataPacket;
+import bugemon.common.net.StaticDataPacket;
 
 /**
  * Instantiated once at startup; owns every concrete {@link Controller} and is the single authority for screen
@@ -60,7 +69,6 @@ public class MetaController {
     }
 
     private final Stage stage;
-    private final GameBootstrapper bootstrapper;
 
     private Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
 
@@ -77,13 +85,20 @@ public class MetaController {
     private TowerController towerController;
     private RewardController rewardController;
 
+    private final Random random = new Random();
     private final CombatService combatService;
     private final MusicService musicService;
-
-    private BugemonService bugemonService;
-    private RewardService rewardService;
+    private final NetworkManager network;
+    private final RemoteSaveService remoteSaveService;
+    private final RemoteSkillService remoteSkillService;
+    private final RemoteTeamService remoteTeamService;
+    private final RemoteBugemonService remoteBugemonService;
+    private final RemoteTowerService remoteTowerService;
+    private final RemoteInventoryService remoteInventoryService;
+    private final RemoteStaticDataService remoteStaticDataService;
 
     private PlayerState playerState;
+    private StaticDataPacket staticData;
 
     private CombatSummary lastCombatSummary;
     private boolean isTowerActive;
@@ -98,54 +113,77 @@ public class MetaController {
      */
     public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
-        this.bootstrapper = new GameBootstrapper();
         this.musicService = new MusicService(new ResourceMusicRepository());
-        this.combatService = new CombatService(this.bootstrapper.getRandom());
+        this.combatService = new CombatService(this.random);
+        this.network = NetworkManager.getInstance();
+        this.remoteSaveService = new RemoteSaveService(this.network);
+        this.remoteSkillService = new RemoteSkillService(this.network);
+        this.remoteTeamService = new RemoteTeamService(this.network);
+        this.remoteBugemonService = new RemoteBugemonService(this.network);
+        this.remoteTowerService = new RemoteTowerService(this.network);
+        this.remoteInventoryService = new RemoteInventoryService(this.network);
+        this.remoteStaticDataService = new RemoteStaticDataService(this.network);
     }
 
     /** Navigates to the login-menu screen to begin the application flow. */
     public void start() {
-        LoginController loginController = new LoginController(this, new LoginService(
-                this.bootstrapper.getRepositories().playerRepository, this.bootstrapper.getDefaultInventory()));
+        LoginController loginController = new LoginController(this, this.network);
         this.musicService.playBackground(BackgroundAmbiance.MENU);
         loginController.show();
     }
 
     public void onLogged(String playerName) {
-        this.initGame(playerName);
-        this.switchTo(Window.SAVE_MENU);
-
+        this.initGame(playerName, () -> this.switchTo(Window.SAVE_MENU));
     }
 
     public void onAccountCreated(String playerName) {
-        this.initGame(playerName);
-        this.switchTo(Window.MAIN_MENU);
+        this.initGame(playerName, () -> this.switchTo(Window.MAIN_MENU));
     }
 
-    private void initGame(String playerName) {
-        ServiceRegistry services = this.bootstrapper.createServices(playerName);
+    /**
+     * Requests the player's initial state snapshot from the server and, once it arrives, builds the session and runs
+     * {@code onReady}. The network round-trip happens off the JavaFX thread; session assembly and navigation are
+     * marshalled back onto it via {@link Platform#runLater}.
+     *
+     * @param playerName
+     *            the authenticated player
+     * @param onReady
+     *            navigation to perform once the session is built
+     */
+    private void initGame(String playerName, Runnable onReady) {
+        this.network.sendAsync(new RequestPlayerDataPacket(), PlayerSnapshotPacket.class)
+                .thenCombine(this.remoteStaticDataService.getStaticData(), Map::entry)
+                .whenComplete((entry, error) -> Platform.runLater(() -> {
+                    if (error != null) {
+                        LOG.error("Failed to load session data for {}", playerName, error);
+                        return;
+                    }
+                    this.staticData = entry.getValue();
+                    this.buildSession(playerName, entry.getKey());
+                    onReady.run();
+                }));
+    }
 
-        this.bugemonService = services.bugemon;
-        this.rewardService = services.reward;
-        this.playerState = new PlayerState(playerName, services.team.getActiveTeam().orElse(null),
-                services.inventory.getInventory(), services.skill.getSkillTreeState());
+    private void buildSession(String playerName, PlayerSnapshotPacket snapshot) {
+        this.playerState = new PlayerState(playerName, snapshot.activeTeam(), snapshot.inventory(),
+                snapshot.skillTreeState());
 
-        this.saveMenuController = new SaveMenuController(this, services.save, this.playerState);
+        this.saveMenuController = new SaveMenuController(this);
         this.mainMenuController = new MainMenuController(this, this.playerState);
-        this.combatController = new CombatController(this, this.combatService, services.skill, services.save,
-                this.playerState);
+        this.combatController = new CombatController(this, this.combatService, this.remoteSaveService,
+                this.staticData.skillTree(), this.playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                services.team, this.bugemonService, this.playerState);
-        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
-                this.bugemonService, this.playerState);
-        this.createBugemonController = new CreateBugemonController(this, this.bugemonService);
-        this.skillTreeController = new SkillTreeController(this, services.skill, this.playerState);
-        this.levelUpController = new LevelUpController(this, services.levelUp);
+                this.remoteTeamService, this.playerState);
+        this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this,
+                this.remoteTeamService, this.playerState);
+        this.createBugemonController = new CreateBugemonController(this, this.remoteBugemonService);
+        this.skillTreeController = new SkillTreeController(this, this.remoteSkillService, this.playerState);
+        this.levelUpController = new LevelUpController(this, this.remoteBugemonService);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.towerController = new TowerController(this, this.playerState, services.tower, services.team,
-                services.skill, services.inventory, services.save);
-        this.rewardController = new RewardController(this, this.rewardService);
+        this.towerController = new TowerController(this, this.playerState, this.remoteTowerService,
+                this.remoteSaveService);
+        this.rewardController = new RewardController(this, this.remoteInventoryService, this.remoteBugemonService);
         this.initTransitions();
     }
 
@@ -156,7 +194,8 @@ public class MetaController {
      *            the player's current run team, used to tailor reward generation
      */
     public void startRewardFlow(RunTeam runTeam) {
-        List<Reward> rewards = this.rewardService.generateRewards(runTeam);
+        List<Reward> rewards = new RewardGenerator(this.random).generate(this.staticData.attacks(),
+                this.staticData.items(), runTeam);
         this.rewardController.initialize(rewards, runTeam, this.playerState.getInventory());
         this.switchTo(Window.REWARD);
     }
@@ -265,6 +304,23 @@ public class MetaController {
         this.switchTo(Window.CREATE_BUGEMON);
     }
 
+    /**
+     * Starts a brand-new game: asks the server to wipe the player's progression, then rebuilds the session from the
+     * fresh snapshot and navigates to the main menu. The reset round-trip runs off the JavaFX thread; session rebuild
+     * and navigation are marshalled back onto it via {@link Platform#runLater}.
+     */
+    public void onNewGame() {
+        String playerName = this.playerState.getPlayerName();
+        this.remoteSaveService.resetGame().whenComplete((snapshot, error) -> Platform.runLater(() -> {
+            if (error != null) {
+                LOG.error("Failed to reset game for {}", playerName, error);
+                return;
+            }
+            this.buildSession(playerName, snapshot);
+            this.switchTo(Window.MAIN_MENU);
+        }));
+    }
+
     /** Navigates to the save/load menu. */
     public void onSaveMenu() {
         this.switchTo(Window.SAVE_MENU);
@@ -282,7 +338,7 @@ public class MetaController {
     public void onStartManualCombat() {
         this.playerState.getActiveTeam().ifPresent(team -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(team);
-            List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+            List<Bugemon> bugemons = this.staticData.bugemons();
             TeamFactory opponentFactory = this.combatService.createOpponentFactory(false);
             CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.playerState.getInventory(),
                     this.combatController, opponentFactory, Configuration.Game.FLOOR_MIN, false);
@@ -298,7 +354,7 @@ public class MetaController {
     public void onStartAutomaticCombat() {
         this.playerState.getActiveTeam().ifPresent(team -> {
             RunTeam playerRunTeam = RunTeam.fromTeam(team);
-            List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+            List<Bugemon> bugemons = this.staticData.bugemons();
             TeamFactory opponentFactory = this.combatService.createOpponentFactory(false);
             CombatFactory combatFactory = this.combatService.createAutoCombatFactory(opponentFactory,
                     Configuration.Game.FLOOR_MIN, false);
@@ -313,8 +369,7 @@ public class MetaController {
      */
     public void onTower() {
         this.isTowerActive = true;
-        this.towerController.startRun();
-        this.switchTo(Window.TOWER);
+        this.towerController.startRun(() -> this.switchTo(Window.TOWER));
     }
 
     /** Marks the tower flow as inactive without navigating away from the current screen. */
@@ -418,7 +473,7 @@ public class MetaController {
      *            {@code true} to generate a boss opponent, {@code false} for a regular combat
      */
     public void onStartTowerCombat(RunTeam runTeam, int floor, boolean isBoss) {
-        List<Bugemon> bugemons = this.bugemonService.getDefaultBugemons();
+        List<Bugemon> bugemons = this.staticData.bugemons();
         TeamFactory opponentFactory = this.combatService.createOpponentFactory(isBoss);
         CombatFactory combatFactory = this.combatService.createManualCombatFactory(this.playerState.getInventory(),
                 this.combatController, opponentFactory, floor, isBoss);

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import bugemon.client.controllers.Controller;
 import bugemon.client.controllers.MetaController;
+import bugemon.client.services.RemoteSaveService;
 import bugemon.client.views.ViewLoader;
 import bugemon.client.views.combat.CombatView;
 import bugemon.common.CombatSummary;
@@ -17,6 +18,7 @@ import bugemon.common.models.bugemon.Bugemon;
 import bugemon.common.models.combat.Combat;
 import bugemon.common.models.combat.CombatBugemon;
 import bugemon.common.models.combat.CombatResult;
+import bugemon.common.models.combat.CombatService;
 import bugemon.common.models.combat.damage.Efficiency;
 import bugemon.common.models.combat.factory.CombatFactory;
 import bugemon.common.models.combat.strategy.CombatStrategy;
@@ -36,9 +38,7 @@ import bugemon.common.models.player.PlayerInputHandler;
 import bugemon.common.models.player.PlayerState;
 import bugemon.common.models.run.RunTeam;
 import bugemon.common.models.skills.SkillContext;
-import bugemon.server.services.CombatService;
-import bugemon.server.services.SaveService;
-import bugemon.server.services.SkillService;
+import bugemon.common.models.skills.SkillTree;
 
 /**
  * Main controller for the combat screen. Integrates step-by-step turn animation with manual player input.
@@ -58,8 +58,8 @@ public class CombatController extends Controller<CombatView>
     private static final Logger LOG = LoggerFactory.getLogger(CombatController.class);
 
     private final CombatService combatService;
-    private final SkillService skillService;
-    private final SaveService saveService;
+    private final RemoteSaveService saveService;
+    private final SkillTree skillTree;
 
     private ActionCallback pendingActionCallback;
     private ActionCallback pendingSwitchCallback;
@@ -69,15 +69,15 @@ public class CombatController extends Controller<CombatView>
     private Combat combat;
     private PlayerState playerState;
 
-    public CombatController(MetaController metaController, CombatService combatService, SkillService skillService,
-            SaveService saveService, PlayerState playerState) {
+    public CombatController(MetaController metaController, CombatService combatService, RemoteSaveService saveService,
+            SkillTree skillTree, PlayerState playerState) {
         super(metaController, ViewLoader.load(CombatView::new));
         this.view.setListener(this);
         this.view.setNextListener(this);
 
         this.combatService = combatService;
-        this.skillService = skillService;
         this.saveService = saveService;
+        this.skillTree = skillTree;
         this.playerState = playerState;
     }
 
@@ -92,7 +92,7 @@ public class CombatController extends Controller<CombatView>
      *            pool of static Bugemon data passed to the factory for opponent generation
      */
     public void startCombat(RunTeam playerRunTeam, CombatFactory combatFactory, List<Bugemon> availableBugemons) {
-        SkillContext skillContext = this.skillService.buildSkillContext(this.playerState.getSkillTreeState());
+        SkillContext skillContext = new SkillContext(this.playerState.getSkillTreeState(), this.skillTree);
         this.initialize(
                 combatFactory.create(playerRunTeam, this.playerState.getInventory(), skillContext, availableBugemons));
     }
@@ -265,8 +265,23 @@ public class CombatController extends Controller<CombatView>
         LOG.info("Combat ended. Victory: {}", won);
 
         CombatSummary summary = this.combatService.finalizeCombat(this.combat, this.combat.getPlayerSkillContext());
-        this.saveService.save(this.playerState);
+        this.persistAfterCombat();
         this.metaController.onCombatFinished(won, summary);
+    }
+
+    /**
+     * Persists the player's progression after combat (Bugemon XP/levels, inventory, skills) in the background. The
+     * tower run, if any, is persisted separately by the tower controller.
+     */
+    private void persistAfterCombat() {
+        this.saveService
+                .saveGame(this.playerState.getActiveTeam().orElse(null), this.playerState.getInventory(),
+                        this.playerState.getSkillTreeState(), null)
+                .whenComplete((ignored, error) -> {
+                    if (error != null) {
+                        LOG.warn("Failed to persist after combat", error);
+                    }
+                });
     }
 
     @Override

@@ -1,5 +1,7 @@
 package bugemon.common.models.effect;
 
+import java.io.Serializable;
+
 import bugemon.common.EffectTarget;
 
 /**
@@ -9,7 +11,10 @@ import bugemon.common.EffectTarget;
  * Concrete subclasses implement {@link #accept(EffectVisitor)} to dispatch to the appropriate {@link EffectVisitor}
  * overload, enabling type-safe processing without downcasting.
  */
-public abstract class Effect {
+public abstract class Effect implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private final EffectTarget target;
 
     /**

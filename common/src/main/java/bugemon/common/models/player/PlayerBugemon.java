@@ -1,5 +1,6 @@
 package bugemon.common.models.player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,10 @@ import bugemon.common.models.player.exceptions.IllegalAttackReplacementException
  * Use {@link #from(Bugemon, PlayerBugemonDTO)} to reconstruct an instance from persisted data, and
  * {@link #toDTO(String)} / {@link #toDisplayDTO()} to convert back for persistence or UI display.
  */
-public class PlayerBugemon {
+public class PlayerBugemon implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private final Bugemon base;
     private int level;
     private int xp;

@@ -2,34 +2,41 @@ package bugemon.client.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import bugemon.client.services.RemoteBugemonService;
+import bugemon.client.services.RemoteInventoryService;
 import bugemon.client.views.RewardView;
 import bugemon.client.views.ViewLoader;
 import bugemon.common.dto.display.RunBugemonDisplayDTO;
 import bugemon.common.models.bugemon.Attack;
+import bugemon.common.models.combat.damage.Efficiency;
 import bugemon.common.models.item.Inventory;
+import bugemon.common.models.player.PlayerBugemon;
+import bugemon.common.models.player.exceptions.IllegalAttackReplacementException;
 import bugemon.common.models.run.RunBugemon;
 import bugemon.common.models.run.RunTeam;
 import bugemon.common.models.tower.reward.AttackReward;
 import bugemon.common.models.tower.reward.BonusStatsReward;
 import bugemon.common.models.tower.reward.ItemReward;
 import bugemon.common.models.tower.reward.Reward;
-import bugemon.server.services.RewardService;
 
 /**
  * Controller for the post-room reward screen.
  *
  * <p>
- * Presents the player with a choice of rewards after clearing a tower room. Handles three reward types:
- * <ul>
- * <li>{@link bugemon.common.models.tower.reward.ItemReward} — applied immediately to the inventory</li>
- * <li>{@link bugemon.common.models.tower.reward.BonusStatsReward} — applied to a player-selected Bugemon</li>
- * <li>{@link bugemon.common.models.tower.reward.AttackReward} — replaces a selected attack on a player-selected
- * Bugemon</li>
- * </ul>
+ * Rewards are applied to the model locally (pure mutations on the inventory or a run Bugemon) and the affected state is
+ * then persisted asynchronously through {@link RemoteInventoryService} / {@link RemoteBugemonService}. Three reward
+ * types are handled: items (applied immediately), stat bonuses and attack replacements (applied to a player-selected
+ * Bugemon).
  */
 public class RewardController extends Controller<RewardView> implements RewardView.Listener {
 
-    private final RewardService rewardService;
+    private static final Logger LOG = LoggerFactory.getLogger(RewardController.class);
+
+    private final RemoteInventoryService inventoryService;
+    private final RemoteBugemonService bugemonService;
 
     private RunTeam runTeam;
     private Inventory inventory;
@@ -37,9 +44,11 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     private Reward selectedReward;
     private RunBugemon selectedBugemon;
 
-    public RewardController(MetaController metaController, RewardService rewardService) {
+    public RewardController(MetaController metaController, RemoteInventoryService inventoryService,
+            RemoteBugemonService bugemonService) {
         super(metaController, ViewLoader.load(RewardView::new));
-        this.rewardService = rewardService;
+        this.inventoryService = inventoryService;
+        this.bugemonService = bugemonService;
         this.view.setListener(this);
     }
 
@@ -65,7 +74,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     public void onRewardChosen(Reward reward) {
         this.selectedReward = reward;
         if (reward instanceof ItemReward itemReward) {
-            this.rewardService.applyItemReward(itemReward, this.inventory);
+            this.applyItemReward(itemReward);
             this.view.showItemRewardApplied(itemReward);
             this.metaController.onRewardFlowFinished();
         } else {
@@ -82,7 +91,7 @@ public class RewardController extends Controller<RewardView> implements RewardVi
     public void onBugemonSelected(int index) {
         this.selectedBugemon = this.runTeam.getMembers().get(index);
         if (this.selectedReward instanceof BonusStatsReward statReward) {
-            this.rewardService.applyStatBonusReward(statReward, this.selectedBugemon);
+            this.applyStatBonusReward(statReward, this.selectedBugemon);
             this.metaController.onRewardFlowFinished();
         } else if (this.selectedReward instanceof AttackReward attackReward) {
             RunBugemonDisplayDTO dto = new RunBugemonDisplayDTO(this.selectedBugemon.getName(),
@@ -94,7 +103,46 @@ public class RewardController extends Controller<RewardView> implements RewardVi
 
     @Override
     public void onAttackChosen(Attack attack) {
-        this.rewardService.applyAttackReward((AttackReward) this.selectedReward, this.selectedBugemon, attack);
+        this.applyAttackReward((AttackReward) this.selectedReward, this.selectedBugemon, attack);
         this.metaController.onRewardFlowFinished();
+    }
+
+    private void applyItemReward(ItemReward reward) {
+        this.inventory.addItem(reward.getItem(), reward.getQuantity());
+        this.persistInventory();
+    }
+
+    private void applyStatBonusReward(BonusStatsReward reward, RunBugemon bugemon) {
+        bugemon.applyBonus(reward.getBonus());
+        this.persistBugemon(bugemon.getPlayerBugemon());
+    }
+
+    private void applyAttackReward(AttackReward reward, RunBugemon bugemon, Attack toReplace) {
+        PlayerBugemon playerBugemon = bugemon.getPlayerBugemon();
+        if (Efficiency.preview(reward.getAttack().type(), playerBugemon.getType()) == Efficiency.SUPER_EFFICIENT) {
+            return;
+        }
+        try {
+            playerBugemon.replaceAttack(toReplace, reward.getAttack());
+            this.persistBugemon(playerBugemon);
+        } catch (IllegalAttackReplacementException e) {
+            LOG.debug("Attack replacement rejected: {}", e.getMessage());
+        }
+    }
+
+    private void persistInventory() {
+        this.inventoryService.save(this.inventory).whenComplete((ignored, error) -> {
+            if (error != null) {
+                LOG.warn("Failed to persist inventory reward", error);
+            }
+        });
+    }
+
+    private void persistBugemon(PlayerBugemon playerBugemon) {
+        this.bugemonService.savePlayerBugemon(playerBugemon).whenComplete((ignored, error) -> {
+            if (error != null) {
+                LOG.warn("Failed to persist Bugemon reward", error);
+            }
+        });
     }
 }

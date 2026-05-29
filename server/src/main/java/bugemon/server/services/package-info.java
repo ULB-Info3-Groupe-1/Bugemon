@@ -13,7 +13,6 @@
  * display</li>
  * <li>{@link bugemon.client.services.MusicService} — background music and sound-effect playback</li>
  * <li>{@link bugemon.server.services.SaveService} — facade for full save and new-game reset</li>
- * <li>{@link bugemon.server.services.CombatService} — stateless damage formulas and type-effectiveness</li>
  * </ul>
  *
  * <p>

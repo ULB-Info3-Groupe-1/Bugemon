@@ -1,5 +1,6 @@
 package bugemon.common.models.skills;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +14,9 @@ import java.util.stream.Collectors;
  * Nodes are indexed by ID for O(1) lookup. The graph is a DAG: a node's {@code prerequisites} list references parent
  * node IDs, and {@link #getDependents(String)} provides the reverse direction.
  */
-public class SkillTree {
+public class SkillTree implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final List<SkillNode> nodes;
     private final Map<String, SkillNode> index;

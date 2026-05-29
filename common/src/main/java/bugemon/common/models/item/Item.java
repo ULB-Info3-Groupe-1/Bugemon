@@ -1,5 +1,6 @@
 package bugemon.common.models.item;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
@@ -18,7 +19,7 @@ import bugemon.common.models.effect.Effect;
  * fields.
  */
 public record Item(String id, @SerializedName("nom") String name, String description,
-        @SerializedName("categorie") ItemType type, @SerializedName("effet") Effect effect) {
+        @SerializedName("categorie") ItemType type, @SerializedName("effet") Effect effect) implements Serializable {
 
     @Override
     public boolean equals(Object o) {

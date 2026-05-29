@@ -1,5 +1,7 @@
 package bugemon.common.dto.persistence;
 
+import java.io.Serializable;
+
 /**
  * Serialisable reference to a Bugemon occupying a numbered slot in a team.
  *
@@ -8,5 +10,5 @@ package bugemon.common.dto.persistence;
  * @param slotPosition
  *            the 0-based index of the slot this Bugemon occupies within the team
  */
-public record TeamMemberDTO(String bugemonName, int slotPosition) {
+public record TeamMemberDTO(String bugemonName, int slotPosition) implements Serializable {
 }

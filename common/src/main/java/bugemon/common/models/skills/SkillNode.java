@@ -1,5 +1,6 @@
 package bugemon.common.models.skills;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,5 +30,5 @@ import java.util.List;
  *            IDs of nodes that must be fully unlocked first
  */
 public record SkillNode(String id, String name, String description, int x, int y, int maxLevel, int cost,
-        SkillEffect effect, List<String> prerequisites) {
+        SkillEffect effect, List<String> prerequisites) implements Serializable {
 }

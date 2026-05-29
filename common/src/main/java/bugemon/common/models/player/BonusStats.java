@@ -1,5 +1,7 @@
 package bugemon.common.models.player;
 
+import java.io.Serializable;
+
 /**
  * Stores additive stat bonuses (HP, attack, defense, initiative) accumulated by the player through skill rewards and
  * tower progression.
@@ -8,7 +10,10 @@ package bugemon.common.models.player;
  * Bonuses are applied on top of a Bugemon's base stats at the start of a run. The no-arg constructor (package private)
  * creates a zero-bonus instance used as a default.
  */
-public class BonusStats {
+public class BonusStats implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private int bonusHp;
     private int bonusAttack;
     private int bonusDefense;

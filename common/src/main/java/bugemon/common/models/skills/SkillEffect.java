@@ -1,5 +1,7 @@
 package bugemon.common.models.skills;
 
+import java.io.Serializable;
+
 import bugemon.common.StatType;
 import bugemon.common.models.bugemon.ElementType;
 import bugemon.common.models.item.ItemType;
@@ -21,7 +23,7 @@ import bugemon.common.models.item.ItemType;
  * <li>{@link RewardChoiceEffect} — increases the number of reward options offered after combat.</li>
  * </ul>
  */
-public sealed interface SkillEffect {
+public sealed interface SkillEffect extends Serializable {
 
     record StatBonusEffect(StatType stat, int bonus) implements SkillEffect {
 

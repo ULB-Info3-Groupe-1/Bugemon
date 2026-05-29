@@ -1,5 +1,6 @@
 package bugemon.server.repositories.postgres;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,7 +62,8 @@ public abstract class AbstractRepository {
      *             if the query fails or the name is unknown
      */
     protected void executeUpdate(String queryName, Object... params) {
-        try (PreparedStatement ps = this.prepare(queryName, params)) {
+        try (Connection connection = this.dbConnection.getConnection();
+                PreparedStatement ps = this.prepare(connection, queryName, params)) {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException(queryName + " failed", e);
@@ -105,7 +107,9 @@ public abstract class AbstractRepository {
      */
     protected <T> List<T> executeQuery(String queryName, RowMapper<T> mapper, Object... params) {
         List<T> result = new ArrayList<>();
-        try (PreparedStatement ps = this.prepare(queryName, params); ResultSet rs = ps.executeQuery()) {
+        try (Connection connection = this.dbConnection.getConnection();
+                PreparedStatement ps = this.prepare(connection, queryName, params);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 result.add(mapper.map(rs));
             }
@@ -140,8 +144,8 @@ public abstract class AbstractRepository {
         return results.get(0);
     }
 
-    private PreparedStatement prepare(String queryName, Object... params) throws SQLException {
-        PreparedStatement ps = this.dbConnection.prepareStatement(this.getSql(queryName));
+    private PreparedStatement prepare(Connection connection, String queryName, Object... params) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(this.getSql(queryName));
         for (int i = 0; i < params.length; i++) {
             ps.setObject(i + 1, params[i]);
         }

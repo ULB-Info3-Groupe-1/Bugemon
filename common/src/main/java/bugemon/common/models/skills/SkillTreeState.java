@@ -1,5 +1,6 @@
 package bugemon.common.models.skills;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +47,9 @@ import bugemon.common.models.skills.exceptions.IllegalNodeStateException;
  * Use {@link #restore(Map, int)} to reconstruct the state from persisted data, and {@link #clear()} to reset at the end
  * of a run.
  */
-public class SkillTreeState {
+public class SkillTreeState implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final Map<String, Integer> skillLevels;
     private int skillPoints;

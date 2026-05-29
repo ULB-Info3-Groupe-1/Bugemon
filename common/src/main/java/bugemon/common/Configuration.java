@@ -294,4 +294,19 @@ public abstract class Configuration {
          */
         public static final int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     }
+
+    /** Client/server networking constants for the TCP socket layer. */
+    public static final class Net {
+
+        private Net() {
+            // Private constructor to prevent instantiation
+        }
+
+        /** Hostname the client connects to; the server binds on all interfaces. */
+        public static final String HOST = "localhost";
+        /** TCP port the authoritative game server listens on. */
+        public static final int PORT = 12345;
+        /** Milliseconds the client waits for a server reply before failing a request. */
+        public static final int REQUEST_TIMEOUT_MS = 10000;
+    }
 }

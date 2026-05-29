@@ -7,7 +7,7 @@
   Tip: set level="DEBUG" on a logger without recompiling.
 -->
 <configuration scan="true" scanPeriod="60 seconds">
-  <conversionRule conversionWord="colorLevel" class="bugemon.server.utils.LevelColorConverter"/>
+  <conversionRule conversionWord="colorLevel" class="bugemon.client.utils.LevelColorConverter"/>
 
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>

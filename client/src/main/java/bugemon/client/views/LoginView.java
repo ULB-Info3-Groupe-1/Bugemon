@@ -137,6 +137,11 @@ public class LoginView extends View {
                 "Le nom d'utilisateur que vous avez choisi est déjà utilisé. Veuillez en choisir un autre.");
     }
 
+    public void showServerErrorAlert() {
+        this.showErrorAlert("Serveur indisponible",
+                "Impossible de contacter le serveur. Vérifiez qu'il est démarré et réessayez.");
+    }
+
     public interface Listener {
         void onLogin(String playerName, String password);
 

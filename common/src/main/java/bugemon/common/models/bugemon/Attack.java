@@ -1,5 +1,6 @@
 package bugemon.common.models.bugemon;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -40,7 +41,7 @@ public record Attack(
 
         @SerializedName("effets") List<Effect> effects
 
-) {
+) implements Serializable {
     /**
      * Returns {@code true} if this attack applies at least one {@link Effect} on use.
      */

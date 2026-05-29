@@ -1,5 +1,6 @@
 package bugemon.common.dto.persistence;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -13,5 +14,6 @@ import java.util.Map;
  * @param hpPerMember
  *            mapping from each {@link TeamMemberDTO} to the Bugemon's current HP
  */
-public record RunTeamDTO(String playerName, String teamName, Map<TeamMemberDTO, Integer> hpPerMember) {
+public record RunTeamDTO(String playerName, String teamName, Map<TeamMemberDTO, Integer> hpPerMember)
+        implements Serializable {
 }

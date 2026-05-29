@@ -1,4 +1,4 @@
-package bugemon.server.services;
+package bugemon.common.models.combat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +9,6 @@ import bugemon.common.Configuration;
 import bugemon.common.LevelUpResult;
 import bugemon.common.models.bugemon.Attack;
 import bugemon.common.models.bugemon.ElementType;
-import bugemon.common.models.combat.Combat;
-import bugemon.common.models.combat.CombatBugemon;
-import bugemon.common.models.combat.CombatResult;
-import bugemon.common.models.combat.CombatTeam;
 import bugemon.common.models.combat.damage.DamageCalculator;
 import bugemon.common.models.combat.damage.Efficiency;
 import bugemon.common.models.combat.factory.AutoCombatFactory;
@@ -29,6 +25,10 @@ import bugemon.common.models.team.factory.TeamFactory;
 
 /**
  * Handles combat lifecycle (XP finalisation, damage preview) and creates {@link CombatFactory} instances.
+ *
+ * <p>
+ * Pure game logic with no persistence dependency, so it lives in the shared module and runs directly on the client,
+ * which drives combat locally.
  */
 public class CombatService {
 
