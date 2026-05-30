@@ -5,6 +5,10 @@ import java.net.URL;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -53,6 +57,22 @@ public class Main extends Application {
     }
 
     /**
+     * Builds the application-wide window backdrop: a soft, light radial gradient painted as the {@link Scene} fill.
+     *
+     * <p>
+     * Because every view replaces the scene root (and the menu roots are transparent), painting the gradient on the
+     * scene itself shows it uniformly behind all screens without fighting per-view CSS. It is kept light so the dark
+     * menu text stays fully readable.
+     *
+     * @return the radial gradient used as the scene fill
+     */
+    private static RadialGradient buildBackground() {
+        return new RadialGradient(0, 0, 0.5, 0.35, 0.9, true, CycleMethod.NO_CYCLE,
+                new Stop(0, Color.web("#f7f9fc")), new Stop(0.55, Color.web("#e4ebf5")),
+                new Stop(1, Color.web("#cdd8e8")));
+    }
+
+    /**
      * Initialises the primary {@link Stage} and wires all game components.
      *
      * <p>
@@ -80,6 +100,7 @@ public class Main extends Application {
         stage.setMaximized(true);
 
         Scene scene = new Scene(new StackPane());
+        scene.setFill(buildBackground());
         for (String path : Configuration.Paths.Css.LOAD_ORDER) {
             scene.getStylesheets().add(loadStylesheet(path));
         }

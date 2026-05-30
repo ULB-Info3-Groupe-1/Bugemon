@@ -6,6 +6,47 @@
     -fx-padding: 14 22;
     -fx-wrap-text: true;
     -fx-text-alignment: center;
+
+    /* A transparent border is reserved up-front so that lighting it up on
+       focus does not change the node's size (no layout jitter). */
+    -fx-border-color: transparent;
+    -fx-border-width: 2.5;
+    -fx-border-radius: 6;
+
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 6, 0.0, 0, 2);
+
+    /* JavaFX 23+ CSS transitions: smooth, game-like feedback. */
+    transition: -fx-background-color 0.16s ease-out,
+                -fx-border-color 0.16s ease-out,
+                -fx-scale-x 0.12s ease-out,
+                -fx-scale-y 0.12s ease-out;
+}
+
+/* Mouse hover OR keyboard focus (Tab) both lift the button and cast a
+   stronger shadow so the active control is always obvious. */
+.btn:hover,
+.btn:focused {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 14, 0.2, 0, 5);
+}
+
+/* Keyboard focus additionally draws a bright ring — the custom background
+   removes Modena's default focus highlight, so we provide our own. */
+.btn:focused {
+    -fx-border-color: -fx-focus-color;
+}
+
+.btn:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 5, 0.0, 0, 1);
+}
+
+.btn:disabled {
+    -fx-opacity: 0.55;
+    -fx-effect: null;
+    -fx-cursor: default;
 }
 
 .btn-primary {
@@ -13,6 +54,7 @@
 }
 
 .btn-primary:hover,
+.btn-primary:focused,
 .btn-primary:active {
     -fx-background-color: color-primary-hover;
 }
@@ -22,6 +64,7 @@
 }
 
 .btn-success:hover,
+.btn-success:focused,
 .btn-success:active {
     -fx-background-color: color-success-hover;
 }
@@ -36,6 +79,7 @@
 }
 
 .btn-danger:hover,
+.btn-danger:focused,
 .btn-danger:active {
     -fx-background-color: color-danger-hover;
 }
@@ -50,6 +94,7 @@
 }
 
 .btn-warning:hover,
+.btn-warning:focused,
 .btn-warning:active {
     -fx-background-color: color-warning-hover;
 }
@@ -59,6 +104,7 @@
 }
 
 .btn-secondary:hover,
+.btn-secondary:focused,
 .btn-secondary:active {
     -fx-background-color: color-secondary-hover;
 }
@@ -68,6 +114,7 @@
 }
 
 .btn-action-blue:hover,
+.btn-action-blue:focused,
 .btn-action-blue:active {
     -fx-background-color: color-action-blue-hover;
 }
@@ -96,14 +143,40 @@
 .attack-AQUA,
 .attack-PYRO,
 .attack-LITHO {
-    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 2.5;
     -fx-border-radius: 6;
     -fx-background-radius: 6;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-cursor: hand;
     -fx-padding: 14 22;
     -fx-scale-x: 1.0;
     -fx-scale-y: 1.0;
+    transition: -fx-background-color 0.16s ease-out,
+                -fx-border-color 0.16s ease-out,
+                -fx-scale-x 0.12s ease-out,
+                -fx-scale-y 0.12s ease-out;
+}
+
+.attack-FLORA:hover,
+.attack-AQUA:hover,
+.attack-PYRO:hover,
+.attack-LITHO:hover,
+.attack-FLORA:focused,
+.attack-AQUA:focused,
+.attack-PYRO:focused,
+.attack-LITHO:focused {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 12, 0.15, 0, 4);
+}
+
+.attack-FLORA:focused,
+.attack-AQUA:focused,
+.attack-PYRO:focused,
+.attack-LITHO:focused {
+    -fx-border-color: white;
 }
 
 .attack-FLORA {
@@ -149,7 +222,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 8, 0, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
-    -fx-border-width: 0;
+    -fx-border-color: white;
 }
 
 .type-selected {

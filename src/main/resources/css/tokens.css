@@ -2,6 +2,11 @@
   -fx-font-family: "Pixels";
   -fx-font-size: 20px;
 
+  /* Bright, warm accent used for the keyboard-focus ring across every
+     control (buttons, text fields, lists). Makes Tab navigation obvious. */
+  -fx-focus-color: #ffcf33;
+  -fx-faint-focus-color: #ffcf3340;
+
   color-primary: #4682b4;
   color-primary-hover: #336699;
 

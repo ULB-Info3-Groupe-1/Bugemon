@@ -6,9 +6,10 @@
 }
 
 .main-title {
-    -fx-font-size: 38px;
+    -fx-font-size: 42px;
     -fx-font-weight: bold;
     -fx-text-fill: color-text-dark;
+    -fx-effect: dropshadow(gaussian, rgba(70, 130, 180, 0.45), 10, 0.2, 0, 3);
 }
 
 .create-team-title {
@@ -38,11 +39,18 @@
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-padding: 14 16;
+    transition: -fx-border-color 0.16s ease-out,
+                -fx-background-color 0.16s ease-out;
 }
 
-.text-field:focus {
+.text-field:hover {
+    -fx-border-color: color-secondary-hover;
+}
+
+.text-field:focused {
     -fx-border-color: color-success;
     -fx-background-color: #f4fff9;
+    -fx-effect: dropshadow(gaussian, rgba(61, 170, 110, 0.45), 8, 0.2, 0, 0);
 }
 
 .team-list-view {

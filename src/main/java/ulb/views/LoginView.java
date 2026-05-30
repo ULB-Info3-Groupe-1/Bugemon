@@ -1,5 +1,6 @@
 package ulb.views;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -44,6 +45,7 @@ public class LoginView extends View {
     @FXML
     private void initialize() {
         this.setMode(Mode.LOGIN);
+        Platform.runLater(this.playerNameField::requestFocus);
     }
 
     public void setListener(Listener listener) {
@@ -74,6 +76,10 @@ public class LoginView extends View {
         boolean isForgot = mode == Mode.FORGOT_PASSWORD;
         this.backToLoginButton.setVisible(isRegister || isForgot);
         this.backToLoginButton.setManaged(isRegister || isForgot);
+
+        this.loginButton.setDefaultButton(isLogin);
+        this.confirmCreateButton.setDefaultButton(isRegister);
+        this.backToLoginButton.setCancelButton(isRegister || isForgot);
     }
 
     @FXML

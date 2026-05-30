@@ -35,6 +35,7 @@
 .room-token {
   -fx-translate-y: 20;
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.65), 8, 0.2, 0, 2);
+  transition: -fx-scale-x 0.14s ease-out, -fx-scale-y 0.14s ease-out;
 }
 
 .room-type-icon {
@@ -97,6 +98,17 @@
 .room-node.available .room-background {
   -fx-stroke: color-available-stroke;
   -fx-stroke-width: 5;
+}
+
+.room-node.available:hover .room-background,
+.room-node.visited_available:hover .room-background {
+  -fx-stroke: color-current-highlight;
+}
+
+.room-node.available:hover .room-token,
+.room-node.visited_available:hover .room-token {
+  -fx-scale-x: 1.1;
+  -fx-scale-y: 1.1;
 }
 
 .room-node.visited .room-background {
