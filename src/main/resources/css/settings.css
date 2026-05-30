@@ -1,0 +1,92 @@
+/* Transparent wrapper that simply gives the drop-shadow room to breathe so it
+   is not clipped by the edge of the (transparent) dialog stage. */
+.settings-overlay {
+    -fx-background-color: transparent;
+    -fx-padding: 40;
+}
+
+.settings-dialog {
+    -fx-background-color: color-surface-dialog;
+    -fx-background-radius: 14;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-padding: 32 38 32 38;
+    -fx-min-width: 440;
+    -fx-pref-width: 440;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 28, 0.25, 0, 10);
+}
+
+.settings-title {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+    -fx-effect: dropshadow(gaussian, rgba(70, 130, 180, 0.40), 8, 0.2, 0, 2);
+    -fx-padding: 0 0 6 0;
+}
+
+.settings-section {
+    -fx-fill-width: true;
+}
+
+.settings-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+}
+
+.settings-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-primary;
+}
+
+/* ---- Volume slider ---- */
+.settings-slider {
+    -fx-pref-height: 26;
+}
+
+.settings-slider .track {
+    -fx-background-color: color-hp-track;
+    -fx-background-radius: 6;
+    -fx-pref-height: 10;
+}
+
+.settings-slider .thumb {
+    -fx-background-color: color-primary;
+    -fx-background-radius: 14;
+    -fx-pref-width: 24;
+    -fx-pref-height: 24;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 5, 0.0, 0, 1);
+    transition: -fx-background-color 0.14s ease-out, -fx-scale-x 0.12s ease-out, -fx-scale-y 0.12s ease-out;
+}
+
+.settings-slider .thumb:hover,
+.settings-slider:focused .thumb {
+    -fx-background-color: color-primary-hover;
+    -fx-scale-x: 1.12;
+    -fx-scale-y: 1.12;
+}
+
+.settings-slider:focused .track {
+    -fx-border-color: -fx-focus-color;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+}
+
+/* ---- Display-mode buttons ---- */
+.mode-btn {
+    -fx-font-size: 18px;
+}
+
+/* The currently active display mode reads as "locked in": green fill, gold ring. */
+.mode-btn.mode-active {
+    -fx-background-color: color-success;
+    -fx-border-color: color-gold;
+}
+
+.mode-btn.mode-active:hover,
+.mode-btn.mode-active:focused {
+    -fx-background-color: color-success-hover;
+    -fx-border-color: color-gold;
+}

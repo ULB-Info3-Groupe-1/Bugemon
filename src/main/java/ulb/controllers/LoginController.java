@@ -50,6 +50,11 @@ public class LoginController extends Controller<LoginView> implements LoginView.
     }
 
     @Override
+    public void onOpenSettings() {
+        this.metaController.openSettings();
+    }
+
+    @Override
     public void onQuit() {
         javafx.application.Platform.exit();
     }

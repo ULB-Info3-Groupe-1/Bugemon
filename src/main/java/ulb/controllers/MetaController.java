@@ -31,6 +31,7 @@ import ulb.services.CombatService;
 import ulb.services.LoginService;
 import ulb.services.MusicService;
 import ulb.services.RewardService;
+import ulb.services.SettingsService;
 import ulb.views.View;
 
 /**
@@ -59,8 +60,8 @@ public class MetaController {
         REWARD,
     }
 
-    private final Stage stage;
     private final GameBootstrapper bootstrapper;
+    private final Stage stage;
 
     private Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
 
@@ -79,6 +80,8 @@ public class MetaController {
 
     private final CombatService combatService;
     private final MusicService musicService;
+    private final SettingsService settingsService;
+    private final SettingsController settingsController;
 
     private BugemonService bugemonService;
     private RewardService rewardService;
@@ -91,16 +94,24 @@ public class MetaController {
     /**
      * Creates the meta-controller and initializes all screen controllers.
      *
-     * @param primaryStage
-     *            main JavaFX stage of the application
      * @throws IOException
      *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage) throws IOException {
-        this.stage = primaryStage;
+    public MetaController(Stage stage) {
+        this.stage = stage;
         this.bootstrapper = new GameBootstrapper();
+        this.settingsService = new SettingsService();
         this.musicService = new MusicService(new ResourceMusicRepository());
+        this.musicService.setVolume(this.settingsService.getVolume());
         this.combatService = new CombatService(this.bootstrapper.getRandom());
+        this.settingsController = new SettingsController(this.musicService, this.settingsService, this.stage);
+    }
+
+    /**
+     * Opens the settings dialog (audio volume + display mode) as a modal overlay above the current screen.
+     */
+    public void openSettings() {
+        this.settingsController.open();
     }
 
     /** Navigates to the login-menu screen to begin the application flow. */
@@ -109,6 +120,10 @@ public class MetaController {
                 this.bootstrapper.getRepositories().playerRepository, this.bootstrapper.getDefaultInventory()));
         this.musicService.playBackground(BackgroundAmbiance.MENU);
         loginController.show();
+        // Applied after the stage is shown: setting fullscreen before show() is
+        // unreliable on Windows.
+
+        this.stage.setFullScreen(this.settingsService.isFullScreen());
     }
 
     public void onLogged(String playerName) {
@@ -161,7 +176,9 @@ public class MetaController {
         this.switchTo(Window.REWARD);
     }
 
-    /** Called when the player finishes choosing rewards; returns control to the tower floor screen. */
+    /**
+     * Called when the player finishes choosing rewards; returns control to the tower floor screen.
+     */
     public void onRewardFlowFinished() {
         this.towerController.onBonusRoomExited();
     }
@@ -250,7 +267,9 @@ public class MetaController {
         }
     }
 
-    /** Routes to the team-edit screen after a defeat, allowing the player to adjust their team. */
+    /**
+     * Routes to the team-edit screen after a defeat, allowing the player to adjust their team.
+     */
     public void onCombatDefeatRetry() {
         this.onEditTeam();
     }
@@ -317,7 +336,9 @@ public class MetaController {
         this.switchTo(Window.TOWER);
     }
 
-    /** Marks the tower flow as inactive without navigating away from the current screen. */
+    /**
+     * Marks the tower flow as inactive without navigating away from the current screen.
+     */
     public void endTowerFlow() {
         this.isTowerActive = false;
     }
@@ -398,16 +419,6 @@ public class MetaController {
     }
 
     /**
-     * Delegates to {@link View#show(javafx.stage.Stage)} to display the given view on the primary stage.
-     *
-     * @param view
-     *            the view to display
-     */
-    void showView(View view) {
-        view.show(this.stage);
-    }
-
-    /**
      * Starts a tower-combat session for the given run team and navigates to the manual-combat screen.
      *
      * @param runTeam
@@ -424,5 +435,15 @@ public class MetaController {
                 this.combatController, opponentFactory, floor, isBoss);
         this.combatController.startCombat(runTeam, combatFactory, bugemons);
         this.switchTo(Window.MANUAL_COMBAT);
+    }
+
+    /**
+     * Delegates to {@link View#show(javafx.stage.Stage)} to display the given view on the primary stage.
+     *
+     * @param view
+     *            the view to display
+     */
+    void showView(View view) {
+        view.show(this.stage);
     }
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="ulb.views.SettingsView" styleClass="settings-overlay">
+
+    <VBox styleClass="settings-dialog" spacing="26"
+        alignment="TOP_CENTER" maxWidth="-Infinity" maxHeight="-Infinity">
+
+        <Label text="Paramètres" styleClass="settings-title" />
+
+        <!-- Audio -->
+        <VBox spacing="10" styleClass="settings-section">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="Volume" styleClass="settings-label" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="volumeValueLabel" text="60 %"
+                    styleClass="settings-value" />
+            </HBox>
+            <Slider fx:id="volumeSlider" min="0" max="100" value="60"
+                majorTickUnit="25" minorTickCount="0" styleClass="settings-slider" />
+        </VBox>
+
+        <!-- Display -->
+        <VBox spacing="10" styleClass="settings-section">
+            <Label text="Affichage" styleClass="settings-label" />
+            <HBox spacing="14" alignment="CENTER">
+                <Button fx:id="fullscreenButton" text="Plein écran"
+                    onAction="#onFullscreenSelected"
+                    styleClass="btn,btn-primary,mode-btn" HBox.hgrow="ALWAYS"
+                    maxWidth="Infinity" />
+                <Button fx:id="windowedButton" text="Fenêtré"
+                    onAction="#onWindowedSelected"
+                    styleClass="btn,btn-primary,mode-btn" HBox.hgrow="ALWAYS"
+                    maxWidth="Infinity" />
+            </HBox>
+        </VBox>
+
+        <Button text="Fermer" onAction="#onCloseClicked"
+            styleClass="btn,btn-secondary,btn-nav" />
+    </VBox>
+</StackPane>

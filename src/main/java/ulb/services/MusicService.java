@@ -9,6 +9,7 @@ import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ulb.Configuration;
 import ulb.models.music.BackgroundAmbiance;
 import ulb.models.music.Music;
 import ulb.models.music.SoundEffect;
@@ -33,10 +34,38 @@ public class MusicService {
     private BackgroundAmbiance currentAmbiance;
     private int sfxPlayingCount = 0;
     private boolean wasMusicPlaying = false;
+    private double volume = Configuration.Ui.DEFAULT_VOLUME;
 
     public MusicService(MusicRepository musicRepository) {
         this.musicRepository = musicRepository;
         this.activeSoundEffects = new ArrayList<>();
+    }
+
+    /**
+     * Returns the current master volume, in the range {@code [0.0, 1.0]}, applied to both background music and sound
+     * effects.
+     *
+     * @return the current master volume
+     */
+    public double getVolume() {
+        return this.volume;
+    }
+
+    /**
+     * Sets the master volume applied to background music and sound effects. The value is clamped to {@code [0.0, 1.0]}
+     * and applied immediately to the currently playing track and every active sound effect.
+     *
+     * @param volume
+     *            the desired volume; values outside {@code [0.0, 1.0]} are clamped
+     */
+    public void setVolume(double volume) {
+        this.volume = Math.max(0.0, Math.min(1.0, volume));
+        if (this.mediaPlayer != null) {
+            this.mediaPlayer.setVolume(this.volume);
+        }
+        for (MediaPlayer sfxPlayer : this.activeSoundEffects) {
+            sfxPlayer.setVolume(this.volume);
+        }
     }
 
     /**
@@ -65,6 +94,7 @@ public class MusicService {
             Media track = new Media(music.url().toExternalForm());
             this.mediaPlayer = new MediaPlayer(track);
             this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            this.mediaPlayer.setVolume(this.volume);
 
             if (this.sfxPlayingCount == 0) {
                 this.mediaPlayer.play();
@@ -97,6 +127,7 @@ public class MusicService {
         try {
             Media track = new Media(music.url().toExternalForm());
             MediaPlayer sfxPlayer = new MediaPlayer(track);
+            sfxPlayer.setVolume(this.volume);
             this.activeSoundEffects.add(sfxPlayer);
 
             if (this.sfxPlayingCount == 0 && this.mediaPlayer != null

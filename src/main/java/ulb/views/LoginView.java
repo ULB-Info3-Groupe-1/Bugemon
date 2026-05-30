@@ -112,6 +112,11 @@ public class LoginView extends View {
         this.setMode(Mode.LOGIN);
     }
 
+    @FXML
+    private void onSettingsClicked() {
+        this.listener.onOpenSettings();
+    }
+
     @Override
     public void refresh() {
         // Les champs pourraient être vidés ici si nécessaire
@@ -147,6 +152,8 @@ public class LoginView extends View {
         void onLogin(String playerName, String password);
 
         void onCreateAccount(String playerName, String password);
+
+        void onOpenSettings();
 
         void onQuit();
     }

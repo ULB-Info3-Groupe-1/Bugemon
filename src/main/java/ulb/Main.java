@@ -67,9 +67,8 @@ public class Main extends Application {
      * @return the radial gradient used as the scene fill
      */
     private static RadialGradient buildBackground() {
-        return new RadialGradient(0, 0, 0.5, 0.35, 0.9, true, CycleMethod.NO_CYCLE,
-                new Stop(0, Color.web("#f7f9fc")), new Stop(0.55, Color.web("#e4ebf5")),
-                new Stop(1, Color.web("#cdd8e8")));
+        return new RadialGradient(0, 0, 0.5, 0.35, 0.9, true, CycleMethod.NO_CYCLE, new Stop(0, Color.web("#f7f9fc")),
+                new Stop(0.55, Color.web("#e4ebf5")), new Stop(1, Color.web("#cdd8e8")));
     }
 
     /**
@@ -98,6 +97,7 @@ public class Main extends Application {
 
         stage.setTitle(Configuration.Ui.STAGE_TITLE);
         stage.setMaximized(true);
+        stage.setFullScreenExitHint("");
 
         Scene scene = new Scene(new StackPane());
         scene.setFill(buildBackground());

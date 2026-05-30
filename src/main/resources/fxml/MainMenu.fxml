@@ -25,6 +25,8 @@
         text="Lancer la Tour NO" styleClass="btn,btn-primary,btn-nav" />
     <Button onAction="#onSkillTreeClicked"
         text="Arbre de compétences" styleClass="btn,btn-primary,btn-nav" />
+    <Button fx:id="settingsButton" onAction="#onSettingsClicked"
+        text="Paramètres" styleClass="btn,btn-secondary,btn-nav" />
     <Button fx:id="saveMenuReturnButton"
         onAction="#onSaveMenuReturnButtonClicked"
         text="Retour menu de sauvegarde"

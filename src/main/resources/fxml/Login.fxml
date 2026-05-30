@@ -37,6 +37,8 @@
             onAction="#onBackToLoginClicked"
             styleClass="btn,btn-secondary,btn-nav" managed="false"
             visible="false" />
+        <Button fx:id="settingsButton" text="Paramètres"
+            onAction="#onSettingsClicked" styleClass="btn,btn-secondary,btn-nav" />
         <Button fx:id="quitButton" text="Quitter"
             onAction="#onQuitClicked" styleClass="btn,btn-danger,btn-nav" />
     </VBox>

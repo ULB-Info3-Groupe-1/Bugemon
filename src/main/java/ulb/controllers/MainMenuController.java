@@ -71,6 +71,11 @@ public class MainMenuController extends Controller<MainMenuView> implements Main
     }
 
     @Override
+    public void onOpenSettings() {
+        this.metaController.openSettings();
+    }
+
+    @Override
     public void onQuit() {
         javafx.application.Platform.exit();
     }

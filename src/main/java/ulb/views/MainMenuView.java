@@ -57,6 +57,11 @@ public class MainMenuView extends View {
     }
 
     @FXML
+    private void onSettingsClicked() {
+        this.listener.onOpenSettings();
+    }
+
+    @FXML
     private void onQuitClicked() {
         this.listener.onQuit();
     }
@@ -88,6 +93,8 @@ public class MainMenuView extends View {
         void onSaveMenuReturnButton();
 
         void onSkillTree();
+
+        void onOpenSettings();
 
         void onQuit();
     }

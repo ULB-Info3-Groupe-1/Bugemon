@@ -14,12 +14,16 @@ import javafx.stage.Stage;
 public abstract class View {
     protected Parent root;
 
-    /** Called by {@link ViewLoader} after the FXML root has been loaded and injected. */
+    /**
+     * Called by {@link ViewLoader} after the FXML root has been loaded and injected.
+     */
     public void initRoot(Parent newroot) {
         this.root = newroot;
     }
 
-    /** Returns the FXML resource path used by {@link ViewLoader} to load this view. */
+    /**
+     * Returns the FXML resource path used by {@link ViewLoader} to load this view.
+     */
     protected abstract String getPath();
 
     /**
@@ -28,7 +32,9 @@ public abstract class View {
      */
     public abstract void refresh();
 
-    /** Replaces the scene's root with this view's root, keeping the stage size stable. */
+    /**
+     * Replaces the scene's root with this view's root, keeping the stage size stable.
+     */
     public void show(Stage stage) {
         stage.getScene().setRoot(this.root);
         stage.show();

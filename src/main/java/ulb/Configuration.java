@@ -1,5 +1,7 @@
 package ulb;
 
+import java.util.List;
+
 import ulb.models.combat.damage.DamageCalculator.AttackFactorFormula;
 import ulb.models.combat.damage.DamageCalculator.ReductionFactorFormula;
 
@@ -32,7 +34,9 @@ public abstract class Configuration {
         public static final String ROOM_BASE_PATH = "/png/rooms/";
         /** Classpath path to the player trainer icon displayed on the floor map. */
         public static final String PLAYER_ICON = "/png/Trainer.png";
-        /** Classpath prefix for SQL script files loaded by {@link ulb.repositories.QueryLoader}. */
+        /**
+         * Classpath prefix for SQL script files loaded by {@link ulb.repositories.QueryLoader}.
+         */
         public static final String SQL_BASE_PATH = "/sql/";
 
         /** Classpath paths for the application's CSS stylesheets. */
@@ -56,13 +60,15 @@ public abstract class Configuration {
             public static final String MENUS = "/css/menus.css";
             /** Reward screen styles. */
             public static final String REWARD = "/css/reward.css";
+            /** Settings dialog styles. */
+            public static final String SETTINGS = "/css/settings.css";
 
             /**
              * Ordered list of stylesheets to apply to the {@link javafx.scene.Scene}. Tokens must appear before any
              * stylesheet that references them.
              */
-            public static final java.util.List<String> LOAD_ORDER = java.util.List.of(TOKENS, BASE, BUTTONS, BUGEMON,
-                    COMBAT, MENUS, REWARD);
+            public static final List<String> LOAD_ORDER = java.util.List.of(TOKENS, BASE, BUTTONS, BUGEMON, COMBAT,
+                    MENUS, REWARD, SETTINGS);
         }
 
         /** Classpath paths for FXML view descriptors. */
@@ -95,6 +101,7 @@ public abstract class Configuration {
             public static final String CREATE_BUGEMON_VIEW = "/fxml/CreateBugemon.fxml";
             public static final String SAVE_MENU_VIEW = "/fxml/SaveMenu.fxml";
             public static final String LOGIN_VIEW = "/fxml/Login.fxml";
+            public static final String SETTINGS_VIEW = "/fxml/Settings.fxml";
 
             public static final String FLOOR_VIEW = "/fxml/Floor.fxml";
             public static final String SKILL_TREE_VIEW = "/fxml/SkillTree.fxml";
@@ -114,10 +121,16 @@ public abstract class Configuration {
 
         /** Prefix prepended to floor numbers on the floor map label (e.g. "NO 3"). */
         public static final String FLOOR_PREFIX = "NO";
-        /** Duration in milliseconds of the player-movement animation on the floor map. */
+        /**
+         * Duration in milliseconds of the player-movement animation on the floor map.
+         */
         public static final int FLOOR_MOVE_ANIMATION_MS = 500;
         /** Base font size in points used when loading the pixel-art font. */
         public static final int FONT_SIZE = 16;
+        /**
+         * Initial master audio volume (0.0 = muted, 1.0 = full) applied to music and sound effects.
+         */
+        public static final double DEFAULT_VOLUME = 0.5;
     }
 
     /** Classpath prefixes for background music and sound-effect tracks. */
@@ -145,7 +158,9 @@ public abstract class Configuration {
             // Private constructor to prevent instantiation
         }
 
-        /** Maximum number of attacks shown in the combat UI (view cannot handle more). */
+        /**
+         * Maximum number of attacks shown in the combat UI (view cannot handle more).
+         */
         public static final int ATTACKS_COUNT = 3;
         /** Minimum number of Bugemons required to start a run. */
         public static final int MIN_TEAM_SIZE = 1;
