@@ -19,10 +19,13 @@ import javafx.util.Duration;
 import ulb.Configuration;
 import ulb.models.bugemon.Attack;
 import ulb.models.combat.CombatBugemon;
+import ulb.models.combat.CombatTeam;
 import ulb.models.combat.damage.Efficiency;
 import ulb.models.combat.turn.TurnStep;
 import ulb.models.combat.turn.TurnStep.AttackStep;
 import ulb.models.combat.turn.TurnStep.HealBugemonStep;
+import ulb.models.combat.turn.TurnStep.HealTeamStep;
+import ulb.models.combat.turn.TurnStep.ItemStep;
 import ulb.models.combat.turn.TurnStep.KoStep;
 import ulb.models.combat.turn.TurnStep.SwitchStep;
 import ulb.models.item.Item;
@@ -410,10 +413,11 @@ public class CombatView extends View {
             case SwitchStep s ->
                 (s.isPlayer() ? "Vous envoyez " : "L'adversaire envoie ") + s.bugemon().getName() + " !";
             case KoStep(CombatBugemon koBugemon) -> koBugemon.getName() + " est K.O. !";
-            case HealBugemonStep(CombatBugemon healedBugemon, int ignored) ->
-                healedBugemon.getName() + " récupère des PV !";
-            case TurnStep.HealTeamStep ignored -> "Toute l'équipe récupère des PV !";
-            case TurnStep.ItemStep ignored -> "Objet utilisé !";
+            case HealBugemonStep(CombatBugemon healedBugemon, int hpAfterHeal) ->
+                healedBugemon.getName() + " récupère des PV ! (Il a maintenant " + hpAfterHeal + " HP)";
+            case HealTeamStep(CombatTeam healedTeam, int activeHpAfterHeal) -> "L'équipe " + healedTeam.getName()
+                    + " récupère des PV ! ( Elle a maintenant " + activeHpAfterHeal + " HP)";
+            case ItemStep(Item item) -> item.name() + " utilisé !";
             default -> "Action effectuée.";
         };
 

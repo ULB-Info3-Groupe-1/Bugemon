@@ -181,7 +181,8 @@ public class Combat {
         boolean firstIsPlayer = actions.get(0) == playerAction;
         boolean secondIsPlayer = !firstIsPlayer;
 
-        // retrieve the bugemon corresponding to the second action to later check if it died from the first
+        // retrieve the bugemon corresponding to the second action to later check if it
+        // died from the first
         // action.
         CombatTeam secondTeam = this.teamFor(!firstIsPlayer);
         CombatBugemon secondActorBefore = secondTeam.getActive();
@@ -281,7 +282,7 @@ public class Combat {
                 }
                 return Combat.this.playerInventory.useItem(itemAction.item()).map(item -> {
                     List<TurnStep> steps = new ArrayList<>();
-                    steps.add(new ItemStep());
+                    steps.add(new ItemStep(item));
                     steps.addAll(Combat.this.effectProcessor.applySingleEffect(item.effect(), actor,
                             opposingTeam.getActive(), actingTeam));
                     return steps;

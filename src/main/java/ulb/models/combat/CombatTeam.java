@@ -153,4 +153,13 @@ public class CombatTeam {
                 this.active.getEffectiveDefense(), this.active.getEffectiveInitiative());
         return new TeamSnapshot(bugemonSnapshots, activeSnapshot);
     }
+
+    /**
+     * Returns the display name of this Bugemon.
+     *
+     * @return the Bugemon's name
+     */
+    public String getName() {
+        return this.active.getName();
+    }
 }
