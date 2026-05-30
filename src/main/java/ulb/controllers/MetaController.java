@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ulb.Configuration;
+import ulb.bootstrap.GameBootstrapper;
 import ulb.bootstrap.ServiceRegistry;
 import ulb.common.CombatSummary;
 import ulb.common.LevelUpResult;
@@ -24,8 +25,10 @@ import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
 import ulb.models.team.factory.TeamFactory;
 import ulb.models.tower.reward.Reward;
+import ulb.repositories.resource.ResourceMusicRepository;
 import ulb.services.BugemonService;
 import ulb.services.CombatService;
+import ulb.services.LoginService;
 import ulb.services.MusicService;
 import ulb.services.RewardService;
 import ulb.views.View;
@@ -57,26 +60,30 @@ public class MetaController {
     }
 
     private final Stage stage;
-    private final Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
+    private final GameBootstrapper bootstrapper;
 
-    private final SaveMenuController saveMenuController;
-    private final MainMenuController mainMenuController;
-    private final ManageTeamController createTeamController;
-    private final ManageTeamController editTeamController;
-    private final CreateBugemonController createBugemonController;
-    private final SkillTreeController skillTreeController;
-    private final CombatController combatController;
-    private final CombatVictoryController combatVictoryController;
-    private final CombatDefeatController combatDefeatController;
-    private final LevelUpController levelUpController;
-    private final TowerController towerController;
-    private final RewardController rewardController;
+    private Map<Window, Runnable> transitions = new EnumMap<>(Window.class);
+
+    private SaveMenuController saveMenuController;
+    private MainMenuController mainMenuController;
+    private ManageTeamController createTeamController;
+    private ManageTeamController editTeamController;
+    private CreateBugemonController createBugemonController;
+    private SkillTreeController skillTreeController;
+    private CombatController combatController;
+    private CombatVictoryController combatVictoryController;
+    private CombatDefeatController combatDefeatController;
+    private LevelUpController levelUpController;
+    private TowerController towerController;
+    private RewardController rewardController;
 
     private final CombatService combatService;
     private final MusicService musicService;
-    private final BugemonService bugemonService;
-    private final RewardService rewardService;
-    private final PlayerState playerState;
+
+    private BugemonService bugemonService;
+    private RewardService rewardService;
+
+    private PlayerState playerState;
 
     private CombatSummary lastCombatSummary;
     private boolean isTowerActive;
@@ -89,36 +96,57 @@ public class MetaController {
      * @throws IOException
      *             if the music fails to be initialized
      */
-    public MetaController(Stage primaryStage, ServiceRegistry services, PlayerState playerState) throws IOException {
+    public MetaController(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
-        this.combatService = services.combat;
-        this.bugemonService = services.bugemon;
-        this.musicService = services.music;
-        this.rewardService = services.reward;
-        this.playerState = playerState;
+        this.bootstrapper = new GameBootstrapper();
+        this.musicService = new MusicService(new ResourceMusicRepository());
+        this.combatService = new CombatService(this.bootstrapper.getRandom());
+    }
 
-        this.saveMenuController = new SaveMenuController(this, services.save, playerState);
-        this.mainMenuController = new MainMenuController(this, playerState);
+    /** Navigates to the login-menu screen to begin the application flow. */
+    public void start() {
+        LoginController loginController = new LoginController(this, new LoginService(
+                this.bootstrapper.getRepositories().playerRepository, this.bootstrapper.getDefaultInventory()));
+        this.musicService.playBackground(BackgroundAmbiance.MENU);
+        loginController.show();
+    }
+
+    public void onLogged(String playerName) {
+        this.initGame(playerName);
+        this.switchTo(Window.SAVE_MENU);
+
+    }
+
+    public void onAccountCreated(String playerName) {
+        this.initGame(playerName);
+        this.switchTo(Window.MAIN_MENU);
+    }
+
+    private void initGame(String playerName) {
+        ServiceRegistry services = this.bootstrapper.createServices(playerName);
+
+        this.bugemonService = services.bugemon;
+        this.rewardService = services.reward;
+        this.playerState = new PlayerState(playerName, services.team.getActiveTeam().orElse(null),
+                services.inventory.getInventory(), services.skill.getSkillTreeState());
+
+        this.saveMenuController = new SaveMenuController(this, services.save, this.playerState);
+        this.mainMenuController = new MainMenuController(this, this.playerState);
         this.combatController = new CombatController(this, this.combatService, services.skill, services.save,
-                playerState);
+                this.playerState);
         this.createTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.CREATE, this,
-                services.team, this.bugemonService, playerState);
+                services.team, this.bugemonService, this.playerState);
         this.editTeamController = new ManageTeamController(ManageTeamController.TeamFormMode.EDIT, this, services.team,
-                this.bugemonService, playerState);
+                this.bugemonService, this.playerState);
         this.createBugemonController = new CreateBugemonController(this, this.bugemonService);
-        this.skillTreeController = new SkillTreeController(this, services.skill, playerState);
+        this.skillTreeController = new SkillTreeController(this, services.skill, this.playerState);
         this.levelUpController = new LevelUpController(this, services.levelUp);
         this.combatVictoryController = new CombatVictoryController(this);
         this.combatDefeatController = new CombatDefeatController(this);
-        this.towerController = new TowerController(this, playerState, services.tower, services.team, services.skill,
-                services.inventory, services.save);
+        this.towerController = new TowerController(this, this.playerState, services.tower, services.team,
+                services.skill, services.inventory, services.save);
         this.rewardController = new RewardController(this, this.rewardService);
         this.initTransitions();
-    }
-
-    /** Navigates to the save-menu screen to begin the application flow. */
-    public void start() {
-        this.switchTo(Window.SAVE_MENU);
     }
 
     /**

@@ -1,10 +1,8 @@
 package ulb.bootstrap;
 
 import ulb.services.BugemonService;
-import ulb.services.CombatService;
 import ulb.services.InventoryService;
 import ulb.services.LevelUpService;
-import ulb.services.MusicService;
 import ulb.services.RewardService;
 import ulb.services.SaveService;
 import ulb.services.SkillService;
@@ -24,25 +22,20 @@ public class ServiceRegistry {
     public final InventoryService inventory;
     public final SkillService skill;
     public final TowerService tower;
-    public final CombatService combat;
     public final SaveService save;
     public final LevelUpService levelUp;
-    public final MusicService music;
     public final RewardService reward;
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     public ServiceRegistry(BugemonService bugemon, TeamService team, InventoryService inventory, SkillService skill,
-            TowerService tower, CombatService combat, SaveService save, LevelUpService levelUp, MusicService music,
-            RewardService reward) {
+            TowerService tower, SaveService save, LevelUpService levelUp, RewardService reward) {
         this.bugemon = bugemon;
         this.team = team;
         this.inventory = inventory;
         this.skill = skill;
         this.tower = tower;
-        this.combat = combat;
         this.save = save;
         this.levelUp = levelUp;
-        this.music = music;
         this.reward = reward;
     }
 }

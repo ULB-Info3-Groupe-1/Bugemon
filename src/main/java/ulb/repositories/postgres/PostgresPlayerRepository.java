@@ -2,6 +2,7 @@ package ulb.repositories.postgres;
 
 import java.util.Map;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,7 @@ import ulb.common.dto.persistence.InventoryDTO;
 import ulb.repositories.DatabaseConnection;
 import ulb.repositories.InventoryRepository;
 import ulb.repositories.PlayerRepository;
+import ulb.repositories.exceptions.IdentifierNotFoundException;
 import ulb.repositories.exceptions.PlayernameAlreadyExistsException;
 
 /**
@@ -31,11 +33,11 @@ public class PostgresPlayerRepository extends AbstractRepository implements Play
     }
 
     @Override
-    public void createPlayer(String playerName, DefaultInventoryDTO defaulInventory)
+    public void createPlayer(String playerName, String plainPassword, DefaultInventoryDTO defaulInventory)
             throws PlayernameAlreadyExistsException {
         LOG.debug("Creating player with name: {}", playerName);
         try {
-            this.executeUpdate("CreatePlayer", playerName);
+            this.executeUpdate("CreatePlayer", playerName, BCrypt.hashpw(plainPassword, BCrypt.gensalt(12)));
         } catch (RuntimeException e) {
             if (e.getMessage().contains("duplicate key")
                     || (e.getCause() != null && e.getCause().getMessage().contains("duplicate key"))) {
@@ -72,5 +74,14 @@ public class PostgresPlayerRepository extends AbstractRepository implements Play
     public void resetPlayerCurrentFloor(String playerName) {
         LOG.debug("Resetting current floor for playerName: {}", playerName);
         this.executeUpdate("ResetPlayerCurrentTowerFloor", playerName);
+    }
+
+    @Override
+    public boolean verifyPlayerPassword(String playerName, String password) throws IdentifierNotFoundException {
+        LOG.debug("Verifying password for playerName: {}", playerName);
+        String storedHash = this.executeQuery("GetPlayerPasswordHash", rs -> rs.getString("password_hash"), playerName)
+                .stream().findFirst()
+                .orElseThrow(() -> new IdentifierNotFoundException("Player not found with name: " + playerName));
+        return BCrypt.checkpw(password, storedHash);
     }
 }
