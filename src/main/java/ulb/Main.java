@@ -19,10 +19,8 @@ import ulb.models.player.PlayerState;
  * JavaFX entry point that bootstraps the Bugemon game.
  *
  * <p>
- * Installs the SLF4J bridge over {@code java.util.logging}, loads CSS
- * stylesheets and the pixel-art font, then wires
- * the database, services, player state and
- * {@link ulb.controllers.MetaController} before handing control to JavaFX.
+ * Installs the SLF4J bridge over {@code java.util.logging}, loads CSS stylesheets and the pixel-art font, then wires
+ * the database, services, player state and {@link ulb.controllers.MetaController} before handing control to JavaFX.
  */
 public class Main extends Application {
 
@@ -30,8 +28,7 @@ public class Main extends Application {
      * Application entry point.
      *
      * <p>
-     * Redirects all {@code java.util.logging} output through SLF4J, then delegates
-     * to
+     * Redirects all {@code java.util.logging} output through SLF4J, then delegates to
      * {@link Application#launch(String...)} to start the JavaFX runtime.
      */
     void main() {
@@ -45,11 +42,10 @@ public class Main extends Application {
      * {@link javafx.scene.Scene#getStylesheets()}.
      *
      * @param path
-     *             classpath-relative path to the CSS file (e.g.
-     *             {@code "/css/base.css"})
+     *            classpath-relative path to the CSS file (e.g. {@code "/css/base.css"})
      * @return the external-form URL string of the resource
      * @throws IllegalStateException
-     *                               if no resource exists at {@code path}
+     *             if no resource exists at {@code path}
      */
     private static String loadStylesheet(String path) {
         URL url = Main.class.getResource(path);
@@ -66,17 +62,15 @@ public class Main extends Application {
      * Steps performed:
      * <ul>
      * <li>Loads the pixel-art font from {@code /fonts/boldpixels.ttf}.</li>
-     * <li>Applies the ordered CSS stylesheets defined in
-     * {@link Configuration.Paths.Css#LOAD_ORDER}.</li>
+     * <li>Applies the ordered CSS stylesheets defined in {@link Configuration.Paths.Css#LOAD_ORDER}.</li>
      * <li>Initialises the database via {@link ulb.bootstrap.GameBootstrapper}.</li>
-     * <li>Creates all services, player state, and starts the
-     * {@link ulb.controllers.MetaController}.</li>
+     * <li>Creates all services, player state, and starts the {@link ulb.controllers.MetaController}.</li>
      * </ul>
      *
      * @param stage
-     *              the primary stage provided by the JavaFX runtime
+     *            the primary stage provided by the JavaFX runtime
      * @throws Exception
-     *                   if any initialisation step fails
+     *             if any initialisation step fails
      */
     @Override
     public void start(Stage stage) throws Exception {
