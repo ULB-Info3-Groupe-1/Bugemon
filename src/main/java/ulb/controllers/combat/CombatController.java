@@ -101,7 +101,7 @@ public class CombatController extends Controller<CombatView>
     /**
      * Initializes a new combat session.
      *
-     * @param combat
+     * @param newCombat
      *            the new Combat model instance
      */
     public void initialize(Combat newCombat) {

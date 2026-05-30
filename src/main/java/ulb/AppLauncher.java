@@ -11,12 +11,13 @@ package ulb;
 public class AppLauncher {
 
     /**
-     * Delegates immediately to {@link Main#main(String[])}.
+     * Delegates immediately to {@link Main#main()}.
      *
      * @param args
      *            command-line arguments forwarded to the JavaFX application
      */
-    public static void main(String[] args) {
-        Main.main(args);
+    void main() {
+        Main main = new Main();
+        main.main();
     }
 }

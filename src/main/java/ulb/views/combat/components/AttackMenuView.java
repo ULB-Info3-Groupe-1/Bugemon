@@ -11,7 +11,7 @@ import ulb.views.components.ComponentView;
 /**
  * Action menu displaying the attacks available to the player's active Bugemon. Presents up to three attack buttons in a
  * fixed 2×2 grid (mirroring {@link ActionMenuView}), plus a back button. Button labels and type-coloured styles are
- * applied via {@link #show(List, Trainer)} at display time.
+ * applied via {@link #show(List<Attack> attackList)} at display time.
  */
 public class AttackMenuView extends ComponentView {
 

@@ -22,6 +22,7 @@
   - [Lancer les tests](#lancer-les-tests)
   - [Générer et lire la documentation](#générer-et-lire-la-documentation)
   - [Générer le jar](#générer-le-jar)
+  - [Exécuter le jar](#exécuter-le-jar)
 
 ## Description générale
 
@@ -38,6 +39,7 @@ Bugemon est un jeu vidéo de type RPG développé en Java avec JavaFX dans le ca
 ## Prérequis
 
 Avant de lancer le projet, assurez-vous d'avoir installé les outils suivants sur votre machine :
+
 - [Java JDK](https://www.oracle.com/java/technologies/downloads/) (version 21)
 - [Maven](https://maven.apache.org/) (pour la gestion des dépendances et de la compilation)
 - [Docker](https://www.docker.com/) (pour démarrer la base de données requise via le fichier `docker-compose.yml`)
@@ -45,7 +47,7 @@ Avant de lancer le projet, assurez-vous d'avoir installé les outils suivants su
 ## Auteurs
 
 | Prénom   | Nom               |
-|----------|-------------------|
+| -------- | ----------------- |
 | Yasmina  | Bou Khaled        |
 | Philippe | Brisbois          |
 | Romain   | Dejean            |
@@ -97,4 +99,10 @@ mvn javadoc:javadoc
 
 ```bash
 mvn package
+```
+
+## Exécuter le jar
+
+```bash
+java --enable-native-access=ALL-UNNAMED -jar .\target\infof307-1.0-SNAPSHOT.jar
 ```

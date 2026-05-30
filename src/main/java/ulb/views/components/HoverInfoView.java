@@ -12,8 +12,9 @@ import ulb.models.item.Item;
 
 /**
  * Generic hover info panel that displays a title and a variable list of info lines. Callers build the content via
- * {@link #show(String, String...)} and dismiss it with {@link #hide()}. Type-based background colouring and an
- * efficiency badge can be layered on top via {@link #setType(BugemonType)} and {@link #setEfficiency(Efficiency)}.
+ * {@link #show(Attack attack, Efficiency efficiency)} and dismiss it with {@link #hide()}. Type-based background
+ * colouring and an efficiency badge can be layered on top via {@link #setType(BugemonType)} and
+ * {@link #setEfficiency(Efficiency)}.
  */
 public class HoverInfoView extends ComponentView {
 

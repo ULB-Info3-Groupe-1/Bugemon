@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<profiles version="21">
-    <profile kind="CodeFormatterProfile" name="projet-ulb" version="21">
+<profiles version="25">
+    <profile kind="CodeFormatterProfile" name="projet-ulb" version="25">
         <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
         <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
         <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
