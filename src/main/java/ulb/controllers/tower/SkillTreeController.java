@@ -17,8 +17,7 @@ import ulb.views.tower.SkillTreeView;
  * Controller for the skill-tree screen.
  *
  * <p>
- * Left-clicking a {@link ulb.models.skills.SkillNode} spends a skill point to
- * increase its level; right-clicking
+ * Left-clicking a {@link ulb.models.skills.SkillNode} spends a skill point to increase its level; right-clicking
  * refunds the point. Changes are persisted immediately after each interaction.
  */
 public class SkillTreeController extends Controller<SkillTreeView> implements SkillTreeView.Listener {
@@ -45,8 +44,7 @@ public class SkillTreeController extends Controller<SkillTreeView> implements Sk
     }
 
     /**
-     * Wires the view listener, loads the static skill tree definition, and
-     * refreshes the displayed skill state. Called
+     * Wires the view listener, loads the static skill tree definition, and refreshes the displayed skill state. Called
      * once during construction and can be called again to reset the view.
      */
     public void initialize() {
