@@ -18,7 +18,7 @@ public abstract class Controller<T extends View> {
         this.view = view;
     }
 
-    protected void show() {
+    public void show() {
         this.view.refresh();
         this.metaController.showView(this.view);
     }

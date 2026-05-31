@@ -2,8 +2,8 @@ package ulb.controllers.combat;
 
 import ulb.controllers.Controller;
 import ulb.controllers.MetaController;
-import ulb.views.CombatDefeatView;
 import ulb.views.ViewLoader;
+import ulb.views.combat.CombatDefeatView;
 
 /** Controller for the defeat screen; offers retry (→ CREATE_TEAM) or back to main menu. */
 public class CombatDefeatController extends Controller<CombatDefeatView> implements CombatDefeatView.Listener {

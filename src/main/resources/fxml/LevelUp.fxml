@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.LevelUpView">
+    fx:controller="ulb.views.tower.LevelUpView">
 
     <center>
         <VBox alignment="CENTER" spacing="28">

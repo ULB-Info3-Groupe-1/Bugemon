@@ -6,8 +6,8 @@
 <?import javafx.scene.control.PasswordField?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.LoginView" alignment="CENTER" spacing="20"
-    styleClass="main-menu">
+    fx:controller="ulb.views.menu.LoginView" alignment="CENTER"
+    spacing="20" styleClass="main-menu">
     <Label fx:id="titleLabel" text="Connexion"
         styleClass="main-title" />
 

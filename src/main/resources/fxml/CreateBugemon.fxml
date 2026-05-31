@@ -17,7 +17,7 @@
 <?import ulb.models.bugemon.ElementType?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.CreateBugemonView" alignment="CENTER"
+    fx:controller="ulb.views.team.CreateBugemonView" alignment="CENTER"
     spacing="20">
     <HBox alignment="CENTER" spacing="20">
         <VBox alignment="CENTER" spacing="20">

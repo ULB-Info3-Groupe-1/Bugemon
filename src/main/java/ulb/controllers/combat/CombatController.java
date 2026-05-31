@@ -35,9 +35,9 @@ import ulb.models.player.PlayerInputHandler;
 import ulb.models.player.PlayerState;
 import ulb.models.run.RunTeam;
 import ulb.models.skills.SkillContext;
-import ulb.services.CombatService;
-import ulb.services.SaveService;
-import ulb.services.SkillService;
+import ulb.services.game.CombatService;
+import ulb.services.game.SaveService;
+import ulb.services.game.SkillService;
 import ulb.views.ViewLoader;
 import ulb.views.combat.CombatView;
 

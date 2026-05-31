@@ -7,8 +7,8 @@
 <?import javafx.scene.text.TextFlow?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.SaveMenuView" alignment="CENTER" spacing="40"
-    styleClass="main-menu">
+    fx:controller="ulb.views.menu.SaveMenuView" alignment="CENTER"
+    spacing="40" styleClass="main-menu">
 
     <VBox alignment="CENTER" spacing="8">
         <Label text="BUGÉMON" styleClass="main-title" />

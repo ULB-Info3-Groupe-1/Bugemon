@@ -18,6 +18,16 @@ import ulb.common.LevelUpResult;
 import ulb.controllers.combat.CombatController;
 import ulb.controllers.combat.CombatDefeatController;
 import ulb.controllers.combat.CombatVictoryController;
+import ulb.controllers.menu.LoginController;
+import ulb.controllers.menu.MainMenuController;
+import ulb.controllers.menu.SaveMenuController;
+import ulb.controllers.menu.SettingsController;
+import ulb.controllers.team.CreateBugemonController;
+import ulb.controllers.team.ManageTeamController;
+import ulb.controllers.tower.LevelUpController;
+import ulb.controllers.tower.RewardController;
+import ulb.controllers.tower.SkillTreeController;
+import ulb.controllers.tower.TowerController;
 import ulb.models.bugemon.Bugemon;
 import ulb.models.combat.factory.CombatFactory;
 import ulb.models.music.BackgroundAmbiance;
@@ -27,13 +37,13 @@ import ulb.models.run.RunTeam;
 import ulb.models.team.factory.TeamFactory;
 import ulb.models.tower.reward.Reward;
 import ulb.repositories.resource.ResourceMusicRepository;
-import ulb.services.BugemonService;
-import ulb.services.CombatService;
-import ulb.services.LoginService;
-import ulb.services.MusicService;
-import ulb.services.RewardService;
-import ulb.services.SessionService;
-import ulb.services.SettingsService;
+import ulb.services.game.BugemonService;
+import ulb.services.game.CombatService;
+import ulb.services.game.RewardService;
+import ulb.services.session.LoginService;
+import ulb.services.session.SessionService;
+import ulb.services.system.MusicService;
+import ulb.services.system.SettingsService;
 import ulb.views.View;
 
 /**
@@ -239,7 +249,7 @@ public class MetaController {
      * @param won
      *            {@code true} if the player won
      * @param summary
-     *            the summary produced by {@link ulb.services.CombatService#finalizeCombat}
+     *            the summary produced by {@link ulb.services.game.CombatService#finalizeCombat}
      */
     public void onCombatFinished(boolean won, CombatSummary summary) {
         LOG.info("onCombatFinished, won: {}", won);

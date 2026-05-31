@@ -8,7 +8,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.SettingsView" styleClass="settings-overlay">
+    fx:controller="ulb.views.menu.SettingsView"
+    styleClass="settings-overlay">
 
     <VBox styleClass="settings-dialog" spacing="26"
         alignment="TOP_CENTER" maxWidth="-Infinity" maxHeight="-Infinity">

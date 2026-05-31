@@ -17,6 +17,7 @@ import ulb.repositories.BugemonRepository;
 import ulb.repositories.StaticRepository;
 import ulb.repositories.exceptions.BugemonNameIsEmptyException;
 import ulb.services.exceptions.BugemonNameAlreadyExistsException;
+import ulb.services.game.BugemonService;
 
 public class TestBugemonService {
 

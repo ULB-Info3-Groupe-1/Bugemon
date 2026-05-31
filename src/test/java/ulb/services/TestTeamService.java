@@ -19,6 +19,7 @@ import ulb.repositories.BugemonRepository;
 import ulb.repositories.TeamRepository;
 import ulb.services.exceptions.TeamNameEmptyException;
 import ulb.services.exceptions.TeamNotFoundException;
+import ulb.services.game.TeamService;
 
 public class TestTeamService {
 

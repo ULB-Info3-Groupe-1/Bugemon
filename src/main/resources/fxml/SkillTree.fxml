@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.SkillTreeView"
+    fx:controller="ulb.views.tower.SkillTreeView"
     styleClass="skill-tree-container" stylesheets="@../css/skill-tree.css">
 
     <!-- Header -->

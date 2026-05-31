@@ -1,0 +1,59 @@
+package ulb.controllers.menu;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ulb.controllers.Controller;
+import ulb.controllers.MetaController;
+import ulb.models.player.PlayerState;
+import ulb.services.game.SaveService;
+import ulb.views.ViewLoader;
+import ulb.views.menu.SaveMenuView;
+
+/**
+ * Controller for the save/load screen shown on application startup.
+ *
+ * <p>
+ * Offers three actions: start a new game (clears all player data), continue an existing game, or quit. Delegates to
+ * {@link SaveService} for persistence and to {@link MetaController} for navigation.
+ */
+public class SaveMenuController extends Controller<SaveMenuView> implements SaveMenuView.Listener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SaveMenuController.class);
+
+    private final SaveService saveService;
+    private final PlayerState playerState;
+
+    public SaveMenuController(MetaController metaController, SaveService saveService, PlayerState playerState) {
+        super(metaController, ViewLoader.load(SaveMenuView::new));
+        this.saveService = saveService;
+        this.playerState = playerState;
+
+        this.view.setListener(this);
+        this.view.setPlayerName(this.playerState.getPlayerName());
+    }
+
+    @Override
+    public void onNewGame() {
+        LOG.info("Starting new game - clearing player data");
+        this.saveService.clear(this.playerState);
+        this.metaController.onMainMenu();
+    }
+
+    @Override
+    public void onContinue() {
+        LOG.info("Continuing game - loading player data");
+        this.metaController.onMainMenu();
+    }
+
+    @Override
+    public void onLogout() {
+        LOG.info("Logging out - clearing remembered session");
+        this.metaController.onLogout();
+    }
+
+    @Override
+    public void onQuit() {
+        javafx.application.Platform.exit();
+    }
+}

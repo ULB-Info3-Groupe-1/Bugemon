@@ -1,13 +1,13 @@
 package ulb.bootstrap;
 
-import ulb.services.BugemonService;
-import ulb.services.InventoryService;
-import ulb.services.LevelUpService;
-import ulb.services.RewardService;
-import ulb.services.SaveService;
-import ulb.services.SkillService;
-import ulb.services.TeamService;
-import ulb.services.TowerService;
+import ulb.services.game.BugemonService;
+import ulb.services.game.InventoryService;
+import ulb.services.game.LevelUpService;
+import ulb.services.game.RewardService;
+import ulb.services.game.SaveService;
+import ulb.services.game.SkillService;
+import ulb.services.game.TeamService;
+import ulb.services.game.TowerService;
 
 /**
  * Immutable value object that groups every application service into a single, conveniently accessible container.
