@@ -9,7 +9,7 @@
 <?import ulb.views.components.HoverInfoView?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-    fx:controller="ulb.views.combat.CombatView">
+    fx:controller="ulb.views.combat.CombatView" styleClass="combat-arena">
     <AnchorPane>
 
         <!-- Trainer (bottom-left): sprite + info side by side -->

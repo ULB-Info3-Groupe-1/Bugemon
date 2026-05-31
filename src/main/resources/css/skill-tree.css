@@ -1,88 +1,141 @@
-.skill-tree-title {
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-    -fx-text-fill: color-text-dark;
+/* Deep "constellation" backdrop so the glowing skill nodes pop. */
+.skill-tree-container {
+    -fx-background-color: radial-gradient(focus-distance 0%, center 50% 38%, radius 100%,
+        #2b3a63 0%, #1f2942 55%, #131a2c 100%);
 }
 
+.skill-tree-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(120, 170, 255, 0.6), 14, 0.3, 0, 0);
+}
+
+/* Available skill points, shown as a gold badge. */
+.skill-tree-points {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: color-text-dark;
+    -fx-background-color: color-gold;
+    -fx-background-radius: 20;
+    -fx-padding: 6 24;
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.5), 16, 0.35, 0, 0);
+}
+
+/* ---- Legend ---- */
+.skill-legend {
+    -fx-padding: 6 0 0 0;
+}
+
+.skill-legend-item {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-padding: 4 14;
+    -fx-border-radius: 12;
+    -fx-border-width: 2;
+}
+
+.skill-legend-item.legend-active {
+    -fx-background-color: rgba(61, 220, 132, 0.85);
+    -fx-border-color: #b6ffd9;
+}
+
+.skill-legend-item.legend-available {
+    -fx-background-color: rgba(74, 163, 232, 0.85);
+    -fx-border-color: #cfe9ff;
+}
+
+.skill-legend-item.legend-locked {
+    -fx-background-color: rgba(60, 68, 88, 0.85);
+    -fx-border-color: rgba(150, 160, 185, 0.7);
+    -fx-text-fill: #c2c9d8;
+}
+
+/* ---- Skill nodes ---- */
 .skill-node {
     -fx-cursor: hand;
+    transition: -fx-scale-x 0.14s ease-out, -fx-scale-y 0.14s ease-out;
+}
+
+.skill-node:hover {
+    -fx-scale-x: 1.07;
+    -fx-scale-y: 1.07;
 }
 
 .skill-node .action-menu {
-    -fx-background-color: color-surface-dialog;
-    -fx-border-color: color-surface-border;
-    -fx-border-width: 2;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-    -fx-pref-width: -1;
-    -fx-max-width: Infinity;
+    -fx-background-color: rgba(40, 48, 66, 0.85);
+    -fx-border-width: 2.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
     -fx-padding: 12 16;
-}
-
-.skill-node:hover .action-menu {
-    -fx-background-color: #d9d6ca;
+    transition: -fx-background-color 0.16s ease-out, -fx-border-color 0.16s ease-out;
 }
 
 .skill-node .section-label {
-    -fx-text-fill: color-text-dark;
+    -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-wrap-text: true;
     -fx-text-alignment: center;
     -fx-alignment: center;
 }
 
+/* Active (fully or partially unlocked) */
 .skill-node-active .action-menu {
-    -fx-background-color: rgba(61, 170, 110, 0.9);
-    -fx-border-color: color-success-hover;
+    -fx-background-color: linear-gradient(to bottom, #3ddc84 0%, #2ea968 100%);
+    -fx-border-color: #b6ffd9;
+    -fx-effect: dropshadow(gaussian, rgba(61, 220, 132, 0.55), 18, 0.3, 0, 0);
 }
 
 .skill-node-active:hover .action-menu {
-    -fx-background-color: color-success-hover;
+    -fx-background-color: linear-gradient(to bottom, #35c577 0%, #279159 100%);
 }
 
-.skill-node-active .section-label {
-    -fx-text-fill: white;
-}
-
+/* Available (can be unlocked now) — an inviting blue glow */
 .skill-node-available .action-menu {
-    -fx-background-color: rgba(70, 130, 180, 0.5);
-    -fx-border-color: color-primary;
-    -fx-effect: none;
+    -fx-background-color: linear-gradient(to bottom, #4aa3e8 0%, #2f7fc4 100%);
+    -fx-border-color: #cfe9ff;
+    -fx-effect: dropshadow(gaussian, rgba(74, 163, 232, 0.6), 20, 0.4, 0, 0);
 }
 
 .skill-node-available:hover .action-menu {
-    -fx-background-color: rgba(51, 102, 153, 0.7);
+    -fx-background-color: linear-gradient(to bottom, #3f93d8 0%, #2972b2 100%);
 }
 
 .skill-node-available .section-label {
     -fx-text-fill: white;
 }
 
+/* Locked — dimmed and flat */
 .skill-node-locked .action-menu {
-    -fx-background-color: rgba(90, 98, 104, 0.25);
-    -fx-border-color: color-secondary;
+    -fx-background-color: rgba(38, 45, 62, 0.9);
+    -fx-border-color: rgba(120, 130, 150, 0.55);
     -fx-effect: none;
 }
 
 .skill-node-locked:hover .action-menu {
-    -fx-background-color: rgba(90, 98, 104, 0.4);
+    -fx-background-color: rgba(50, 58, 78, 0.92);
 }
 
 .skill-node-locked .section-label {
-    -fx-text-fill: color-text-light;
+    -fx-text-fill: #9aa3b5;
 }
 
+/* ---- Connections ---- */
 .skill-connection {
-    -fx-stroke: color-surface-border;
-    -fx-stroke-width: 2;
+    -fx-stroke: rgba(165, 175, 205, 0.40);
+    -fx-stroke-width: 3;
 }
 
 .skill-connection-active {
-    -fx-stroke: color-success;
-    -fx-stroke-width: 2.5;
+    -fx-stroke: #3ddc84;
+    -fx-stroke-width: 4;
+    -fx-effect: dropshadow(gaussian, rgba(61, 220, 132, 0.7), 8, 0.4, 0, 0);
 }
 
 .skill-connection-available {
-    -fx-stroke: color-primary;
-    -fx-stroke-width: 2;
+    -fx-stroke: #4aa3e8;
+    -fx-stroke-width: 3.5;
+    -fx-effect: dropshadow(gaussian, rgba(74, 163, 232, 0.55), 7, 0.35, 0, 0);
 }

@@ -48,7 +48,7 @@ public class HoverInfoView extends ComponentView {
         }
         this.titleLabel.setText(attack.name());
         this.contentBox.getChildren().clear();
-        this.contentBox.getChildren().add(new Label(sb.toString()));
+        this.contentBox.getChildren().add(this.createContentLabel(sb.toString()));
         this.setVisible(true);
         this.setManaged(true);
     }
@@ -67,7 +67,7 @@ public class HoverInfoView extends ComponentView {
         this.titleLabel.setText(item.name());
         this.contentBox.getChildren().clear();
         if (desc != null && !desc.isBlank()) {
-            this.contentBox.getChildren().add(new Label(desc));
+            this.contentBox.getChildren().add(this.createContentLabel(desc));
         }
         this.setVisible(true);
         this.setManaged(true);
@@ -77,6 +77,22 @@ public class HoverInfoView extends ComponentView {
     public void hide() {
         this.setVisible(false);
         this.setManaged(false);
+    }
+
+    /**
+     * Builds a content line that wraps to multiple lines (instead of being clipped with an ellipsis) and picks up the
+     * panel's text colouring.
+     *
+     * @param text
+     *            the line content
+     * @return the configured label
+     */
+    private Label createContentLabel(String text) {
+        Label label = new Label(text);
+        label.getStyleClass().add("hover-info-meta");
+        label.setWrapText(true);
+        label.setMaxWidth(Double.MAX_VALUE);
+        return label;
     }
 
     /**

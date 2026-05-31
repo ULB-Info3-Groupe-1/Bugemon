@@ -36,6 +36,8 @@ public class SkillTreeView extends View {
     private static final int CELL_H = 170;
     private static final int PADDING = 60;
 
+    private static final String SECTION_LABEL = "section-label";
+
     private SkillTree skillTree;
 
     private Listener listener;
@@ -66,7 +68,7 @@ public class SkillTreeView extends View {
      *            current skill tree state including point count and per-node levels
      */
     public void refreshSkillState(SkillTreeState state) {
-        this.availablePoints.setText(String.valueOf(state.getSkillPoints()));
+        this.availablePoints.setText("Points disponibles : " + state.getSkillPoints());
         this.buildTree(state);
     }
 
@@ -128,16 +130,16 @@ public class SkillTreeView extends View {
 
     private StackPane buildSkillNode(SkillNode node, SkillStatus status, int level, int minX, int minY) {
         Label nameLabel = new Label(node.name());
-        nameLabel.getStyleClass().add("section-label");
+        nameLabel.getStyleClass().add(SECTION_LABEL);
         nameLabel.setWrapText(true);
-        nameLabel.setMaxWidth(NODE_WIDTH - 8);
+        nameLabel.setMaxWidth((double) NODE_WIDTH - 8);
         nameLabel.setAlignment(Pos.CENTER);
 
         Label levelLabel = new Label(level + " / " + node.maxLevel());
-        levelLabel.getStyleClass().add("section-label");
+        levelLabel.getStyleClass().add(SECTION_LABEL);
 
         Label costLabel = new Label(node.cost() + " pt(s)");
-        costLabel.getStyleClass().add("section-label");
+        costLabel.getStyleClass().add(SECTION_LABEL);
 
         VBox content = new VBox(4, nameLabel, new HBox(NODE_WIDTH / 4.0, levelLabel, costLabel));
         content.setAlignment(Pos.CENTER);

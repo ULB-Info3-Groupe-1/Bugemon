@@ -41,8 +41,8 @@
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-border-width: 1;
-    -fx-pref-width: 220;
-    -fx-max-width: 220;
+    -fx-pref-width: 260;
+    -fx-max-width: 260;
     -fx-spacing: 8;
 }
 
@@ -162,4 +162,56 @@
 
 .menu-btn-min {
     -fx-min-width: size-menu-btn-min;
+}
+
+/* ---- Battle arena ---- */
+.combat-arena {
+    -fx-background-color: linear-gradient(to bottom,
+        #cfe8ff 0%, #bcdcff 40%, #aed7c2 68%, #8ec9a6 100%);
+}
+
+/* HUD panels read as floating "game boxes": a translucent light card with a
+   type-coloured frame, so name/HP stay legible above the arena. */
+.combat-hud-card {
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 14;
+    -fx-border-color: color-surface-border;
+    -fx-border-width: 2.5;
+    -fx-border-radius: 14;
+    -fx-padding: 12 20 14 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 14, 0.15, 0, 4);
+}
+
+.combat-hud-card.FLORA {
+    -fx-border-color: color-flora;
+}
+
+.combat-hud-card.PYRO {
+    -fx-border-color: color-pyro;
+}
+
+.combat-hud-card.AQUA {
+    -fx-border-color: color-aqua;
+}
+
+.combat-hud-card.LITHO {
+    -fx-border-color: color-litho;
+}
+
+/* ---- Floating damage numbers ---- */
+.damage-popup {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.85), 4, 0.7, 0, 1);
+}
+
+.damage-popup-super {
+    -fx-text-fill: #ffe14d;
+    -fx-font-size: 42px;
+}
+
+.damage-popup-weak {
+    -fx-text-fill: #d7dde3;
+    -fx-font-size: 28px;
 }

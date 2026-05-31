@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <fx:root type="VBox" xmlns:fx="http://javafx.com/fxml"
-    alignment="CENTER" spacing="6">
+    alignment="CENTER" spacing="6" styleClass="combat-hud-card">
 
     <VBox spacing="0">
         <HBox spacing="8" alignment="CENTER">

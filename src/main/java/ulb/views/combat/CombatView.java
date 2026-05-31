@@ -5,13 +5,19 @@ import java.util.List;
 import java.util.Map;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
+import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -429,6 +435,11 @@ public class CombatView extends View {
         this.dialogZoneView.setDialogText(dialog);
         this.dialogZoneView.setVisible(true);
         this.dialogZoneView.setManaged(true);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(180), this.dialogZoneView);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
     }
 
     /** Hides the dialog zone and restores the action-menu slot. */
@@ -470,6 +481,7 @@ public class CombatView extends View {
         redGlow.setSpread(0.8);
         forward.setOnFinished(e -> {
             defenderSprite.setEffect(redGlow);
+            this.showDamagePopup(defenderSprite, step.damageResult().damage(), step.damageResult().efficiency());
             Timeline clearFlash = new Timeline(
                     new KeyFrame(Duration.millis(300), ev -> defenderSprite.setEffect(null)));
             clearFlash.play();
@@ -477,6 +489,49 @@ public class CombatView extends View {
         });
 
         forward.play();
+    }
+
+    /**
+     * Spawns a damage number that rises and fades above the struck sprite. Its size and colour reflect the type-matchup
+     * efficiency (gold and larger when super-efficient, dimmed and smaller when resisted). No-ops for non-damaging hits
+     * or when the root is not an overlay pane.
+     */
+    private void showDamagePopup(ImageView defenderSprite, int damage, Efficiency efficiency) {
+        if (damage <= 0 || !(this.root instanceof StackPane overlay)) {
+            return;
+        }
+
+        Label popup = new Label("-" + damage);
+        popup.getStyleClass().add("damage-popup");
+        switch (efficiency) {
+            case SUPER_EFFICIENT -> popup.getStyleClass().add("damage-popup-super");
+            case NOT_VERY_EFFICIENT -> popup.getStyleClass().add("damage-popup-weak");
+            default -> {
+                // normal efficiency keeps the base style
+            }
+        }
+        popup.setMouseTransparent(true);
+        popup.setVisible(false);
+        StackPane.setAlignment(popup, Pos.TOP_LEFT);
+        overlay.getChildren().add(popup);
+
+        // Position once the label has been measured, reveal it, then float it upward and remove it when done.
+        Platform.runLater(() -> {
+            Bounds spriteBounds = overlay.sceneToLocal(defenderSprite.localToScene(defenderSprite.getBoundsInLocal()));
+            popup.setTranslateX(spriteBounds.getMinX() + (spriteBounds.getWidth() - popup.getWidth()) / 2);
+            popup.setTranslateY(spriteBounds.getMinY() + 10);
+            popup.setVisible(true);
+
+            TranslateTransition rise = new TranslateTransition(Duration.millis(900), popup);
+            rise.setByY(-70);
+            FadeTransition fade = new FadeTransition(Duration.millis(900), popup);
+            fade.setFromValue(1.0);
+            fade.setToValue(0.0);
+
+            ParallelTransition floatUp = new ParallelTransition(rise, fade);
+            floatUp.setOnFinished(done -> overlay.getChildren().remove(popup));
+            floatUp.play();
+        });
     }
 
     /**
