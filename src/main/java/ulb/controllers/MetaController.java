@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import ulb.services.CombatService;
 import ulb.services.LoginService;
 import ulb.services.MusicService;
 import ulb.services.RewardService;
+import ulb.services.SessionService;
 import ulb.services.SettingsService;
 import ulb.views.View;
 
@@ -82,6 +84,7 @@ public class MetaController {
     private final MusicService musicService;
     private final SettingsService settingsService;
     private final SettingsController settingsController;
+    private final SessionService sessionService;
 
     private BugemonService bugemonService;
     private RewardService rewardService;
@@ -105,6 +108,7 @@ public class MetaController {
         this.musicService.setVolume(this.settingsService.getVolume());
         this.combatService = new CombatService(this.bootstrapper.getRandom());
         this.settingsController = new SettingsController(this.musicService, this.settingsService, this.stage);
+        this.sessionService = new SessionService();
     }
 
     /**
@@ -114,27 +118,58 @@ public class MetaController {
         this.settingsController.open();
     }
 
-    /** Navigates to the login-menu screen to begin the application flow. */
+    /**
+     * Begins the application flow. If a player is remembered from a previous session, the login screen is skipped and
+     * the save menu is shown directly; otherwise the login screen is displayed.
+     */
     public void start() {
+        Optional<String> rememberedPlayer = this.sessionService.getLoggedInPlayer();
+        if (rememberedPlayer.isPresent()) {
+            this.autoLogin(rememberedPlayer.get());
+        } else {
+            this.showLogin();
+        }
+        // Applied after the stage is shown: setting fullscreen before show() is unreliable on Windows.
+        this.stage.setFullScreen(this.settingsService.isFullScreen());
+    }
+
+    /** Creates and shows the login screen. */
+    private void showLogin() {
         LoginController loginController = new LoginController(this, new LoginService(
                 this.bootstrapper.getRepositories().playerRepository, this.bootstrapper.getDefaultInventory()));
         this.musicService.playBackground(BackgroundAmbiance.MENU);
         loginController.show();
-        // Applied after the stage is shown: setting fullscreen before show() is
-        // unreliable on Windows.
+    }
 
-        this.stage.setFullScreen(this.settingsService.isFullScreen());
+    /** Restores a remembered session straight to the save menu; falls back to the login screen on any failure. */
+    private void autoLogin(String playerName) {
+        try {
+            this.musicService.playBackground(BackgroundAmbiance.MENU);
+            this.initGame(playerName);
+            this.switchTo(Window.SAVE_MENU);
+        } catch (RuntimeException e) {
+            LOG.warn("Auto-login failed for '{}', returning to login: {}", playerName, e.toString());
+            this.sessionService.clearLoggedInPlayer();
+            this.showLogin();
+        }
     }
 
     public void onLogged(String playerName) {
+        this.sessionService.setLoggedInPlayer(playerName);
         this.initGame(playerName);
         this.switchTo(Window.SAVE_MENU);
-
     }
 
     public void onAccountCreated(String playerName) {
+        this.sessionService.setLoggedInPlayer(playerName);
         this.initGame(playerName);
         this.switchTo(Window.MAIN_MENU);
+    }
+
+    /** Logs the current player out: forgets the remembered session and returns to the login screen. */
+    public void onLogout() {
+        this.sessionService.clearLoggedInPlayer();
+        this.showLogin();
     }
 
     private void initGame(String playerName) {

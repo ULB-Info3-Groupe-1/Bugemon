@@ -28,6 +28,7 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
         this.playerState = playerState;
 
         this.view.setListener(this);
+        this.view.setPlayerName(this.playerState.getPlayerName());
     }
 
     @Override
@@ -41,6 +42,12 @@ public class SaveMenuController extends Controller<SaveMenuView> implements Save
     public void onContinue() {
         LOG.info("Continuing game - loading player data");
         this.metaController.onMainMenu();
+    }
+
+    @Override
+    public void onLogout() {
+        LOG.info("Logging out - clearing remembered session");
+        this.metaController.onLogout();
     }
 
     @Override

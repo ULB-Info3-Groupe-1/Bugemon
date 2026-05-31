@@ -12,6 +12,24 @@
     -fx-effect: dropshadow(gaussian, rgba(70, 130, 180, 0.45), 10, 0.2, 0, 3);
 }
 
+/* Welcome line under the save-menu title. */
+.save-welcome {
+    -fx-padding: 2 0 0 0;
+}
+
+.save-welcome .text {
+    -fx-font-size: 20px;
+}
+
+.save-welcome-text {
+    -fx-fill: color-text-muted;
+}
+
+.save-welcome-name {
+    -fx-fill: color-primary;
+    -fx-font-weight: bold;
+}
+
 .create-team-title {
     -fx-font-size: 38px;
     -fx-font-weight: bold;
