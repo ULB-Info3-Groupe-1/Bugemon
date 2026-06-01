@@ -71,10 +71,7 @@ public class ManageTeamController extends Controller<ManageTeamView> implements 
 
     @Override
     public void show() {
-        this.playerState.getActiveTeam().ifPresent(t -> this.tmpTeam = new Team(t));
-        if (this.tmpTeam == null) {
-            this.tmpTeam = new Team();
-        }
+        this.tmpTeam = this.playerState.getActiveTeam().map(Team::new).orElse(new Team());
         this.updateAllUI();
         super.show();
     }
